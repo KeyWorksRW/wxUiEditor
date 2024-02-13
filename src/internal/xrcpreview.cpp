@@ -41,8 +41,8 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char generate_svg[2373];
-    extern const unsigned char xrc_preview_svg[593];
+    extern const unsigned char generate_svg[2373];  // ../art_src/generate.svg
+    extern const unsigned char xrc_preview_svg[593];  // ../art_src/xrc_preview.svg
 }
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,

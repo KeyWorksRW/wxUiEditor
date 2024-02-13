@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="17">
+  data_version="19">
   <node
     class="Project"
     art_directory="../art_src"
@@ -6739,29 +6739,49 @@
                   tooltip="Only used if Dark Mode is selected" />
               </node>
               <node
-                class="wxCheckBox"
-                label="Property Panel on Right"
-                var_name="m_check_right_propgrid"
-                tooltip="If checked, the Property panel will be moved to the right side"
-                proportion="1" />
-              <node
-                class="wxCheckBox"
-                label="Always load last project"
-                var_name="m_check_load_last"
-                proportion="1" />
-              <node
-                class="wxCheckBox"
-                label="Full project path in title bar"
-                var_name="m_check_fullpath"
-                proportion="1" />
-              <node
-                class="wxCheckBox"
-                checked="1"
-                class_access="none"
-                label="Enable WakaTime"
-                var_name="checkBox_wakatime"
-                validator_variable="m_isWakaTimeEnabled"
-                tooltip="If you have WakaTime installed, checking this will record time spent in the editor as &quot;designing&quot;. (See https://wakatime.com/about)" />
+                class="wxBoxSizer"
+                var_name="box_sizer2"
+                flags="wxEXPAND">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer3">
+                  <node
+                    class="wxCheckBox"
+                    label="Property Panel on Right"
+                    var_name="m_check_right_propgrid"
+                    tooltip="If checked, the Property panel will be moved to the right side"
+                    proportion="1" />
+                  <node
+                    class="wxCheckBox"
+                    label="Always load last project"
+                    var_name="m_check_load_last"
+                    proportion="1" />
+                  <node
+                    class="wxCheckBox"
+                    label="Full project path in title bar"
+                    var_name="m_check_fullpath"
+                    proportion="1" />
+                  <node
+                    class="wxCheckBox"
+                    checked="1"
+                    class_access="none"
+                    label="Enable WakaTime"
+                    var_name="checkBox_wakatime"
+                    validator_variable="m_isWakaTimeEnabled"
+                    tooltip="If you have WakaTime installed, checking this will record time spent in the editor as &quot;designing&quot;. (See https://wakatime.com/about)" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer4">
+                  <node
+                    class="wxCheckBox"
+                    label="Default SVG bitmaps"
+                    var_name="m_check_svg_bitmaps"
+                    tooltip="If checked, new bitmaps will default to SVG files" />
+                </node>
+              </node>
               <node
                 class="wxBoxSizer"
                 class_access="protected:"

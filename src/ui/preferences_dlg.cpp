@@ -46,22 +46,38 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_general_page_sizer->Add(m_box_dark_settings,
     wxSizerFlags().Expand().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
+    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* box_sizer3 = new wxBoxSizer(wxVERTICAL);
+
     m_check_right_propgrid = new wxCheckBox(page_general, wxID_ANY, "Property Panel on Right");
     m_check_right_propgrid->SetToolTip("If checked, the Property panel will be moved to the right side");
-    m_general_page_sizer->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
+    box_sizer3->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
 
     m_check_load_last = new wxCheckBox(page_general, wxID_ANY, "Always load last project");
-    m_general_page_sizer->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
+    box_sizer3->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
 
     m_check_fullpath = new wxCheckBox(page_general, wxID_ANY, "Full project path in title bar");
-    m_general_page_sizer->Add(m_check_fullpath, wxSizerFlags(1).Border(wxALL));
+    box_sizer3->Add(m_check_fullpath, wxSizerFlags(1).Border(wxALL));
 
     auto* checkBox_wakatime = new wxCheckBox(page_general, wxID_ANY, "Enable WakaTime");
     checkBox_wakatime->SetValue(true);
     checkBox_wakatime->SetValidator(wxGenericValidator(&m_isWakaTimeEnabled));
     checkBox_wakatime->SetToolTip(
     "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
-    m_general_page_sizer->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
+    box_sizer3->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
+
+    box_sizer2->Add(box_sizer3, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer4 = new wxBoxSizer(wxVERTICAL);
+
+    m_check_svg_bitmaps = new wxCheckBox(page_general, wxID_ANY, "Default SVG bitmaps");
+    m_check_svg_bitmaps->SetToolTip("If checked, new bitmaps will default to SVG files");
+    box_sizer4->Add(m_check_svg_bitmaps, wxSizerFlags().Border(wxALL));
+
+    box_sizer2->Add(box_sizer4, wxSizerFlags().Border(wxALL));
+
+    m_general_page_sizer->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
     m_box_code_font = new wxBoxSizer(wxHORIZONTAL);
 
@@ -217,6 +233,7 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
     m_check_high_contrast->SetValue(UserPrefs.is_HighContrast());
     m_check_fullpath->SetValue(UserPrefs.is_FullPathTitle());
+    m_check_svg_bitmaps->SetValue(UserPrefs.is_SvgImages());
 
     m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
     m_check_load_last->SetValue(UserPrefs.is_LoadLastProject());
@@ -267,9 +284,6 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     if (m_colour_ruby->GetColour() != UserPrefs.get_RubyColour())
         is_color_changed = true;
 
-    if (m_check_right_propgrid->GetValue() != UserPrefs.is_RightPropGrid())
-        is_prop_grid_changed = true;
-
     if (m_check_dark_mode->GetValue() != UserPrefs.is_DarkMode())
         is_dark_changed = true;
     if (m_check_high_contrast->GetValue() != UserPrefs.is_HighContrast())
@@ -285,6 +299,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON : Prefs::PENDING_DARK_MODE_OFF));
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
     UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
+    UserPrefs.set_SvgImages(m_check_svg_bitmaps->GetValue());
 
     UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());
     UserPrefs.set_LoadLastProject(m_check_load_last->GetValue());

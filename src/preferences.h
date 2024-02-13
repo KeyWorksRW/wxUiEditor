@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Set/Get wxUiEditor preferences
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +51,9 @@ public:
 
     bool is_FullPathTitle() const { return m_fullpath_title; }
     void set_FullPathTitle(bool value) { m_fullpath_title = value; }
+
+    bool is_SvgImages() const { return m_svg_images; }
+    void set_SvgImages(bool value) { m_svg_images = value; }
 
     bool is_LoadLastProject() const { return m_is_load_last_project; }
     void set_LoadLastProject(bool value) { m_is_load_last_project = value; }
@@ -167,6 +170,8 @@ private:
     bool m_high_constrast { false };
 
     bool m_fullpath_title { false };  // If true, the full path to the project is displayed in the title bar
+
+    bool m_svg_images { false };  // If true, SVG is the default image type
 
     bool m_enable_wakatime { true };
     bool m_is_load_last_project { false };

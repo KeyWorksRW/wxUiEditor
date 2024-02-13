@@ -24,69 +24,133 @@
 
 namespace wxue_img
 {
+    // ../art_src/book_page.png
     extern const unsigned char book_page_png[229];
+    // ../art_src/calendar.png
     extern const unsigned char calendar_png[937];
+    // ../art_src/colourPickerIcon.png
     extern const unsigned char colourPickerIcon_png[534];
+    // ../art_src/customControl.png
     extern const unsigned char customControl_png[740];
+    // ../art_src/dataviewlist_column.png
     extern const unsigned char dataviewlist_column_png[224];
+    // ../art_src/datepicker.png
     extern const unsigned char datepicker_png[1047];
+    // ../art_src/dirPicker.png
     extern const unsigned char dirPicker_png[690];
+    // ../art_src/doc_mdi_parent_frame.png
     extern const unsigned char doc_mdi_parent_frame_png[543];
+    // ../art_src/filePicker.png
     extern const unsigned char filePicker_png[705];
+    // ../art_src/fontPicker.png
     extern const unsigned char fontPicker_png[763];
+    // ../art_src/gauge.png
     extern const unsigned char gauge_png[260];
+    // ../art_src/genericdir_ctrl.png
     extern const unsigned char genericdir_ctrl_png[328];
+    // ../art_src/htmlwin.png
     extern const unsigned char htmlwin_png[1053];
+    // ../art_src/hyperlink_ctrl.png
     extern const unsigned char hyperlink_ctrl_png[329];
+    // ../art_src/infobar.png
     extern const unsigned char infobar_png[556];
+    // ../art_src/menu.png
     extern const unsigned char menu_png[795];
+    // ../art_src/menuitem.png
     extern const unsigned char menuitem_png[481];
+    // ../art_src/pagectrl.png
     extern const unsigned char pagectrl_png[601];
+    // ../art_src/propgriditem.png
     extern const unsigned char propgriditem_png[436];
+    // ../art_src/propgridpage.png
     extern const unsigned char propgridpage_png[237];
+    // ../art_src/radio_box.png
     extern const unsigned char radio_box_png[488];
+    // ../art_src/ribbon_button.png
     extern const unsigned char ribbon_button_png[220];
+    // ../art_src/ribbon_gallery_item.png
     extern const unsigned char ribbon_gallery_item_png[679];
+    // ../art_src/ribbon_page.png
     extern const unsigned char ribbon_page_png[368];
+    // ../art_src/ribbon_panel.png
     extern const unsigned char ribbon_panel_png[392];
+    // ../art_src/richtextctrl.png
     extern const unsigned char richtextctrl_png[736];
+    // ../art_src/scintilla.png
     extern const unsigned char scintilla_png[729];
+    // ../art_src/search.png
     extern const unsigned char search_png[800];
+    // ../art_src/separator.png
     extern const unsigned char separator_png[306];
+    // ../art_src/spacer.png
     extern const unsigned char spacer_png[183];
+    // ../art_src/static_line.png
     extern const unsigned char static_line_png[122];
+    // ../art_src/statusbar.png
     extern const unsigned char statusbar_png[432];
+    // ../art_src/submenu.png
     extern const unsigned char submenu_png[760];
+    // ../art_src/text_sizer.png
     extern const unsigned char text_sizer_png[157];
+    // ../art_src/timepicker.png
     extern const unsigned char timepicker_png[227];
+    // ../art_src/tree_ctrl.png
     extern const unsigned char tree_ctrl_png[246];
+    // ../art_src/treelistctrl.png
     extern const unsigned char treelistctrl_png[425];
+    // ../art_src/treelistctrlcolumn.png
     extern const unsigned char treelistctrlcolumn_png[504];
+    // ../art_src/webview.png
     extern const unsigned char webview_png[1208];
+    // ../art_src/wrap_sizer.png
     extern const unsigned char wrap_sizer_png[145];
+    // ../art_src/wxCollapsiblePane.png
     extern const unsigned char wxCollapsiblePane_png[324];
+    // ../art_src/wxDialog.png
     extern const unsigned char wxDialog_png[636];
+    // ../art_src/wxFrame.png
     extern const unsigned char wxFrame_png[424];
+    // ../art_src/wxMenuBar.png
     extern const unsigned char wxMenuBar_png[490];
+    // ../art_src/wxNotebook.png
     extern const unsigned char wxNotebook_png[177];
+    // ../art_src/wxPanel.png
     extern const unsigned char wxPanel_png[156];
+    // ../art_src/wxPropertyGridManager.png
     extern const unsigned char wxPropertyGridManager_png[225];
+    // ../art_src/wxPropertyGrid.png
     extern const unsigned char wxPropertyGrid_png[212];
+    // ../art_src/wxTimer.svg
     extern const unsigned char wxTimer_svg[4356];
+    // ../art_src/wxToolBar.png
     extern const unsigned char wxToolBar_png[554];
+    // ../art_src/wxToolbook.png
     extern const unsigned char wxToolbook_png[450];
+    // ../art_src/wxTreebook.png
     extern const unsigned char wxTreebook_png[484];
+    // ../art_src/wxWizardPageSimple.png
     extern const unsigned char wxWizardPageSimple_png[605];
+    // ../art_src/wxWizard.png
     extern const unsigned char wxWizard_png[1047];
+    // ../art_src/wxactivityIndicator.png
     extern const unsigned char wxactivityIndicator_png[796];
+    // ../art_src/wxanimation.png
     extern const unsigned char wxanimation_png[248];
+    // ../art_src/wxbannerWindow.png
     extern const unsigned char wxbannerWindow_png[835];
+    // ../art_src/wxcomboBox.png
     extern const unsigned char wxcomboBox_png[233];
+    // ../art_src/wxfileCtrl.png
     extern const unsigned char wxfileCtrl_png[255];
+    // ../art_src/wxmenuBar.png
     extern const unsigned char wxmenuBar_png[490];
+    // ../art_src/wxscrolledWindow.png
     extern const unsigned char wxscrolledWindow_png[258];
+    // ../art_src/wxsimplebook.png
     extern const unsigned char wxsimplebook_png[249];
+    // ../art_src/wxsplitterWindow.png
     extern const unsigned char wxsplitterWindow_png[266];
+    // ../art_src/wxtoolBar.png
     extern const unsigned char wxtoolBar_png[554];
 }
 

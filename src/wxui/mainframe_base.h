@@ -25,12 +25,19 @@ class NavigationPanel;
 
 namespace wxue_img
 {
+    // ../art_src/expand.svg
     extern const unsigned char expand_svg[592];
+    // ../art_src/generate.svg
     extern const unsigned char generate_svg[2373];
+    // ../art_src/hidden.svg
     extern const unsigned char hidden_svg[1885];
+    // ../art_src/magnify.svg
     extern const unsigned char magnify_svg[4035];
+    // ../art_src/save.svg
     extern const unsigned char save_svg[950];
+    // ../art_src/wxlogo.svg
     extern const unsigned char wxlogo_svg[1388];
+    // ../art_src/xrc_preview.svg
     extern const unsigned char xrc_preview_svg[593];
 }
 

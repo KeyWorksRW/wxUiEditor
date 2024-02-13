@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Set/Get wxUiEditor preferences
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+// See also: ui/preferences_dlg.cpp and ui/preferences_dlg.h
 
 #include <wx/config.h>  // wxConfig base header
 
@@ -24,6 +26,7 @@ void Prefs::ReadConfig()
     m_sizers_always_expand = config->ReadBool("always_expand", true);
     m_var_prefix = config->ReadBool("var_prefix", true);
     m_fullpath_title = config->ReadBool("fullpath_title", false);
+    m_svg_images = config->ReadBool("svg_images", false);
 
     m_enable_wakatime = config->ReadBool("enable_wakatime", true);
     m_dark_mode = config->ReadBool("dark_mode", false);
@@ -54,6 +57,7 @@ void Prefs::WriteConfig()
     config->Write("always_expand", m_sizers_always_expand);
     config->Write("var_prefix", m_var_prefix);
     config->Write("fullpath_title", m_fullpath_title);
+    config->Write("svg_images", m_svg_images);
 
     config->Write("enable_wakatime", m_enable_wakatime);
     config->Write("high_contrast", m_high_constrast);

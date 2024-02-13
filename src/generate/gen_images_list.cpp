@@ -463,22 +463,6 @@ int ImagesGenerator::GetRequiredVersion(Node* node)
     return minRequiredVer;
 }
 
-// Called by MainFrame when the user modifies a property. Return true if the generator handles
-// pushing to the undo stack.
-bool ImagesGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
-{
-    if (prop->isProp(prop_auto_update) && value != "0")
-    {
-        auto undo_update_images = std::make_shared<AutoImagesAction>(prop->getNode());
-        wxGetFrame().PushUndoAction(undo_update_images);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 //////////////////////////////////////////  Image List Functions  //////////////////////////////////////////
 
 // clang-format off

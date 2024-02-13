@@ -61,19 +61,6 @@ void InsertNodeAction::Change()
         // Add the child BEFORE any wxStdDialogButtonSizer
         m_parent->changeChildPosition(m_node, m_parent->getChildCount() - 2);
     }
-    else if (m_parent->isGen(gen_Images) && m_parent->as_bool(prop_auto_update))
-    {
-        m_pos = 0;
-        for (const auto& embedded_image: m_parent->getChildNodePtrs())
-        {
-            if (img_list::CompareImageNames(m_node, embedded_image))
-                break;
-            ++m_pos;
-        }
-        m_parent->addChild(m_node);
-        if (m_pos < (to_int) m_parent->getChildCount())
-            m_parent->changeChildPosition(m_node, m_pos);
-    }
     else
     {
         m_parent->addChild(m_node);
@@ -806,74 +793,4 @@ void SortProjectAction::Revert()
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(Project.getProjectNode());
-}
-
-///////////////////////////////// AutoImagesAction ////////////////////////////////////
-
-const char* txt_update_images_undo_string = "Update Images";
-
-AutoImagesAction::AutoImagesAction(Node* node)
-{
-    m_node = node->getSharedPtr();
-
-    m_RedoEventGenerated = true;
-    m_UndoEventGenerated = true;
-
-    m_undo_string = txt_update_images_undo_string;
-
-    std::set<std::string> image_names;
-    for (auto& iter: m_node->getChildNodePtrs())
-    {
-        image_names.insert(iter->as_string(prop_bitmap));
-    }
-
-    std::vector<std::string> new_images;
-    for (auto& child: Project.getChildNodePtrs())
-    {
-        // Note that GatherImages will update both image_names and new_images
-        img_list::GatherImages(child.get(), image_names, new_images);
-    }
-
-    auto prop_action = std::make_shared<ModifyPropertyAction>(m_node->getPropPtr(prop_auto_update), true);
-    prop_action->AllowSelectEvent(false);
-    m_actions.push_back(prop_action);
-
-    if (new_images.size())
-    {
-        for (auto& iter: new_images)
-        {
-            auto new_node = NodeCreation.createNode(gen_embedded_image, m_node.get());
-            new_node->set_value(prop_bitmap, iter);
-            auto insert_action = std::make_shared<InsertNodeAction>(new_node.get(), m_node.get(), tt_empty_cstr);
-            insert_action->AllowSelectEvent(false);
-            insert_action->SetFireCreatedEvent(true);
-            m_actions.push_back(insert_action);
-        }
-    }
-}
-
-void AutoImagesAction::Change()
-{
-    for (auto& iter: m_actions)
-    {
-        iter->Change();
-    }
-    wxGetFrame().SelectNode(m_node);
-    ProjectImages.UpdateEmbedNodes();
-}
-
-void AutoImagesAction::Revert()
-{
-    auto nav_panel = wxGetFrame().getNavigationPanel();
-    wxWindowUpdateLocker freeze(nav_panel);
-
-    for (auto& iter: m_actions)
-    {
-        iter->Revert();
-    }
-
-    // nav_panel->AddAllChildren(m_node.get());
-
-    wxGetFrame().SelectNode(m_node);
-    ProjectImages.UpdateEmbedNodes();
 }

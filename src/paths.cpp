@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for directory and file properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +62,8 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
-    if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_xrc_file))
+    if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_ruby_file) ||
+        prop->isProp(prop_rust_file) || prop->isProp(prop_xrc_file))
     {
         tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
         if (newValue.empty())
@@ -111,6 +112,48 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                                             << "\" is already in use by " << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to restore the original name.",
                                  "Duplicate python filename", wxICON_STOP);
+                    if (focus)
+                    {
+                        focus->SetFocus();
+                    }
+
+                    event.Veto();
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    return;
+                }
+            }
+            else if (prop->isProp(prop_ruby_file))
+            {
+                if (child->as_string(prop_ruby_file).filename() == filename)
+                {
+                    auto focus = wxWindow::FindFocus();
+
+                    wxMessageBox(wxString() << "The ruby filename \"" << filename.make_wxString()
+                                            << "\" is already in use by " << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                 "Duplicate ruby filename", wxICON_STOP);
+                    if (focus)
+                    {
+                        focus->SetFocus();
+                    }
+
+                    event.Veto();
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    return;
+                }
+            }
+            else if (prop->isProp(prop_rust_file))
+            {
+                if (child->as_string(prop_rust_file).filename() == filename)
+                {
+                    auto focus = wxWindow::FindFocus();
+
+                    wxMessageBox(wxString() << "The rust filename \"" << filename.make_wxString()
+                                            << "\" is already in use by " << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                 "Duplicate rust filename", wxICON_STOP);
                     if (focus)
                     {
                         focus->SetFocus();

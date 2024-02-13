@@ -1,15 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Class used to create nodes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "node_creator.h"
 
-#include "gen_enums.h"  // Enumerations for nodes
-#include "node.h"       // Node class
-#include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
+#include "gen_enums.h"    // Enumerations for nodes
+#include "node.h"         // Node class
+#include "preferences.h"  // Preferences -- Stores user preferences
+#include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
 
 NodeCreator& NodeCreation = NodeCreator::getInstance();
 
@@ -28,6 +29,17 @@ NodeDeclaration* NodeCreator::getNodeDeclaration(tt_string_view className)
     FAIL_MSG(tt_string() << "Attempt to get non-existant node declaration for " << className);
     return nullptr;
 }
+
+// clang-format off
+inline const auto lstBitmapoProps = {
+    prop_bitmap,
+    prop_current,
+    prop_disabled_bmp,
+    prop_focus_bmp,
+    prop_inactive_bitmap,
+    prop_pressed_bmp,
+};
+// clang-format on
 
 NodeSharedPtr NodeCreator::newNode(NodeDeclaration* node_decl)
 {
@@ -63,6 +75,15 @@ NodeSharedPtr NodeCreator::newNode(NodeDeclaration* node_decl)
 
         if (base >= node_info_base_count)
             break;
+    }
+
+    if (node && UserPrefs.is_SvgImages())
+    {
+        for (auto& iter: lstBitmapoProps)
+        {
+            if (node->hasProp(iter))
+                node->set_value(iter, "SVG;;[24,24]");
+        }
     }
 
     return node;

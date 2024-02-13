@@ -218,15 +218,13 @@ bool Node::createToolNode(GenName name)
     }
     else if (name == gen_embedded_image)
     {
-        auto* image_node = img_list::FindImageList();
+        auto* image_node = Project.getImagesForm();
         if (!image_node)
         {
             wxMessageBox("An Images List must be created before you can add an embedded image.",
                          "Cannot create embedded image", wxOK | wxICON_ERROR);
             return true;  // indicate that we have fully processed creation even though it's just an error message
         }
-        image_node->createChildNode(name);
-        return true;
     }
     else if (name == gen_data_string)
     {

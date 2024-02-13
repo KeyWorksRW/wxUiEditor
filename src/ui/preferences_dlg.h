@@ -59,6 +59,7 @@ protected:
     wxCheckBox* m_check_high_contrast;
     wxCheckBox* m_check_load_last;
     wxCheckBox* m_check_right_propgrid;
+    wxCheckBox* m_check_svg_bitmaps;
     wxChoice* m_choice_cpp_version;
     wxColourPickerCtrl* m_colour_cpp;
     wxColourPickerCtrl* m_colour_python;

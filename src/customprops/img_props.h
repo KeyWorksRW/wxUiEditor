@@ -20,7 +20,6 @@ struct ImageProperties
 public:
     tt_string type { s_type_names[1] };
     tt_string image;
-    tt_string alt_name;
 
     NodeProperty* node_property;
 

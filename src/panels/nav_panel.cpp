@@ -89,6 +89,9 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
         m_iconList->Add(image);
         m_iconIdx[iter->getGenName()] = index++;
     }
+    m_iconList->Add(GetSvgImage("svg", gen_image_size.x, gen_image_size.y).GetBitmap(gen_image_size));
+    m_iconIdx[gen_svg_embedded_image] = index++;
+
     m_tree_ctrl->AssignImageList(m_iconList);
 
     m_toolbar = new NavToolbar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
@@ -493,6 +496,15 @@ int NavigationPanel::GetImageIndex(Node* node)
     {
         if (node->isPropValue(prop_orientation, "wxVERTICAL"))
             name = gen_VerticalBoxSizer;
+    }
+
+    if (node->isGen(gen_embedded_image))
+    {
+        if (node->as_string(prop_bitmap).starts_with("SVG"))
+        {
+            if (auto it = m_iconIdx.find(gen_svg_embedded_image); it != m_iconIdx.end())
+                return it->second;
+        }
     }
 
     if (auto it = m_iconIdx.find(name); it != m_iconIdx.end())

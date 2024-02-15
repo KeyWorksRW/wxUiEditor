@@ -51,6 +51,7 @@ const std::map<std::string_view, std::function<wxBitmapBundle(int width, int hei
     { "wxRadioButton", bundle_wxRadioButton_svg },
     { "wxStaticText", bundle_wxStaticText_svg },
     { "wxTextCtrl", bundle_wxTextCtrl_svg },
+    { "svg", bundle_svg_svg },
 
     { "unknown", bundle_unknown_svg },
 };

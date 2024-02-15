@@ -886,7 +886,10 @@ namespace GenEnum
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_name_array_size,
-        gen_unknown = gen_name_array_size
+        gen_unknown = gen_name_array_size,
+
+        // This is not an actual generator, but is used by NavigationPanel
+        gen_svg_embedded_image,
 
     };
     extern std::map<GenEnum::GenName, const char*> map_GenNames;

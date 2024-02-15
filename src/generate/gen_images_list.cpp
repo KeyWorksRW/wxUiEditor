@@ -107,11 +107,18 @@ bool EmbeddedImageGenerator::AllowPropertyChange(wxPropertyGridEvent* event, Nod
         if (value.empty() || value.starts_with("Art"))
             return true;
 
-        tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
-        if (parts.size() <= IndexImage || parts[IndexImage].empty())
+        tt_string_vector parts_new(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        if (parts_new.size() <= IndexImage || parts_new[IndexImage].empty())
+            return true;
+        tt_string_vector parts_old(prop->as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        if (parts_old.size() <= IndexImage || parts_old[IndexImage].empty())
             return true;
 
-        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        // This happens for an SVG image where the size is being changed
+        if (parts_old[IndexImage] == parts_new[IndexImage])
+            return true;
+
+        auto* embed = ProjectImages.GetEmbeddedImage(parts_new[IndexImage]);
         if (embed && embed->form == node->getParent())
         {
             event->SetValidationFailureMessage("You've already added this image!");

@@ -52,7 +52,7 @@
         bitmap="Embed;close_btn.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;cpp_logo.svg;[16,16]" />
+        bitmap="SVG;cpp_logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;ctx_help_btn.png" />
@@ -79,7 +79,7 @@
         bitmap="Embed;empty.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;flex_grid_sizer.svg;[16,16]" />
+        bitmap="SVG;flex_grid_sizer.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;folder.svg;[24,24]" />
@@ -100,7 +100,7 @@
         bitmap="SVG;images.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;import.svg;[16,16]" />
+        bitmap="SVG;import.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;left.svg;[24,24]" />
@@ -127,7 +127,7 @@
         bitmap="Embed;project.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;python-logo-only.svg;[16,16]" />
+        bitmap="SVG;python-logo-only.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;redo.svg;[24,24]" />
@@ -172,6 +172,9 @@
         bitmap="Embed;stddialogbuttonsizer.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/svg.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;text_file.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -205,7 +208,7 @@
         bitmap="Embed;unknown.png" />
       <node
         class="embedded_image"
-        bitmap="SVG;unknown.svg;[32,32]" />
+        bitmap="SVG;unknown.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxButton.png" />
@@ -262,16 +265,13 @@
         bitmap="SVG;wxTextCtrl.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;wxTimer.png" />
-      <node
-        class="embedded_image"
-        bitmap="SVG;wxUiEditor.svg;[16,16]" />
+        bitmap="SVG;wxUiEditor.svg;[64,64]" />
       <node
         class="embedded_image"
         bitmap="SVG;xml_file.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;xrc_compare.svg;[16,16]" />
+        bitmap="SVG;xrc_compare.svg;[24,24]" />
     </node>
     <node
       class="Data">

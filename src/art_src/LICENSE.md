@@ -1,0 +1,1 @@
+Most of the SVG images in this directory are original and therefore covered by the same Apache [LICENSE.md](../../LICENSE) as the rest of the project. Some of the images are derived from other images, primarily from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page) and as such are freely usable.

@@ -70,6 +70,7 @@ namespace wxue_img
     wxBitmapBundle bundle_spin_ctrl_double_png();  // spin_ctrl_double.png
     wxBitmapBundle bundle_spinbtn_png();  // spinbtn.png
     wxBitmapBundle bundle_stddialogbuttonsizer_png();  // stddialogbuttonsizer.png
+    wxBitmapBundle bundle_svg_svg(int width, int height);
     wxBitmapBundle bundle_text_file_svg(int width, int height);
     wxBitmapBundle bundle_title_close_png();  // title_close.png
     wxBitmapBundle bundle_toggle_button_png();  // toggle_button.png
@@ -157,7 +158,7 @@ namespace wxue_img
     extern const unsigned char aligntop_svg[454];  // ../art_src/aligntop.svg
     extern const unsigned char alignvertcenter_svg[585];  // ../art_src/alignvertcenter.svg
     extern const unsigned char auitoolbar_png[476];  // ../art_src/auitoolbar.png
-    extern const unsigned char bitmap_svg[1500];  // ../art_src/bitmap.svg
+    extern const unsigned char bitmap_svg[1497];  // ../art_src/bitmap.svg
     extern const unsigned char bitmap_toggle_button_png[641];  // ../art_src/bitmap_toggle_button.png
     extern const unsigned char bmp_combo_box_png[492];  // ../art_src/bmp_combo_box.png
     extern const unsigned char bottom_svg[398];  // ../art_src/bottom.svg
@@ -203,6 +204,7 @@ namespace wxue_img
     extern const unsigned char spin_ctrl_png[300];  // ../art_src/spin_ctrl.png
     extern const unsigned char spinbtn_png[192];  // ../art_src/spinbtn.png
     extern const unsigned char stddialogbuttonsizer_png[524];  // ../art_src/stddialogbuttonsizer.png
+    extern const unsigned char svg_svg[1588];  // ../art_src/svg.svg
     extern const unsigned char text_file_svg[2648];  // ../art_src/text_file.svg
     extern const unsigned char title_close_png[144];  // ../art_src/title_close.png
     extern const unsigned char toggle_button_png[277];  // ../art_src/toggle_button.png

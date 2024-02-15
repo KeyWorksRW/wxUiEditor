@@ -7,9 +7,9 @@
 
 #include "node_creator.h"
 
-#include "gen_enums.h"    // Enumerations for nodes
-#include "node.h"         // Node class
-#include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
+#include "gen_enums.h"  // Enumerations for nodes
+#include "node.h"       // Node class
+#include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
 
 NodeCreator& NodeCreation = NodeCreator::getInstance();
 

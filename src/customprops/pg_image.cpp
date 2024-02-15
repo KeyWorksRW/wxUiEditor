@@ -25,6 +25,7 @@ using namespace wxue_img;
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node -- Node class
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
+#include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
 
 #include "art_ids.cpp"  // wxART_ strings
@@ -38,6 +39,10 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     if (prop->hasValue())
     {
         m_img_props.InitValues(prop->as_string());
+    }
+    else if (UserPrefs.is_SvgImages())
+    {
+        m_img_props.type = s_type_names[2];  // SVG
     }
 
     wxPGChoices types;
@@ -207,6 +212,12 @@ void PropertyGrid_Image::SetAutoComplete()
 wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
 {
     ImageProperties img_props;
+    if (UserPrefs.is_SvgImages())
+    {
+        img_props.type = s_type_names[2];  // SVG
+        img_props.SetWidth(24);
+        img_props.SetHeight(24);
+    }
 
     auto value = thisValue.GetString();
     if (value.size())

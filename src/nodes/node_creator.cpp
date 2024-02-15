@@ -9,7 +9,6 @@
 
 #include "gen_enums.h"    // Enumerations for nodes
 #include "node.h"         // Node class
-#include "preferences.h"  // Preferences -- Stores user preferences
 #include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
 
 NodeCreator& NodeCreation = NodeCreator::getInstance();
@@ -75,15 +74,6 @@ NodeSharedPtr NodeCreator::newNode(NodeDeclaration* node_decl)
 
         if (base >= node_info_base_count)
             break;
-    }
-
-    if (node && UserPrefs.is_SvgImages())
-    {
-        for (auto& iter: lstBitmapoProps)
-        {
-            if (node->hasProp(iter))
-                node->set_value(iter, "SVG;;[24,24]");
-        }
     }
 
     return node;

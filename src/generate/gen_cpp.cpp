@@ -891,7 +891,15 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     m_source->writeLine();
 
-    thrd_collect_img_headers.join();
+    try
+    {
+        thrd_collect_img_headers.join();
+    }
+    catch (const std::system_error& err)
+    {
+        MSG_ERROR(err.what());
+    }
+
     if (m_embedded_images.size())
     {
         std::sort(m_embedded_images.begin(), m_embedded_images.end(),

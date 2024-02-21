@@ -126,6 +126,8 @@ void MsgLogging::AddErrorMsg(tt_string_view msg)
     auto& str = m_Msgs.emplace_back("Error: ");
     str << msg << '\n';
 
+    FAIL_MSG(str);
+
     if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
     {
         m_isFirstShown = true;

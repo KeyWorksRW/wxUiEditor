@@ -363,7 +363,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         m_source->writeLine();
 
         thrd_get_events.join();
-        thrd_collect_img_headers.join();
+        try
+        {
+            thrd_collect_img_headers.join();
+        }
+        catch (const std::system_error& err)
+        {
+            MSG_ERROR(err.what());
+        }
+
         thrd_need_img_func.join();
         GenerateRubyImagesForm();
         return;
@@ -447,7 +455,15 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
-    thrd_collect_img_headers.join();
+    try
+    {
+        thrd_collect_img_headers.join();
+    }
+    catch (const std::system_error& err)
+    {
+        MSG_ERROR(err.what());
+    }
+
     if (m_embedded_images.size())
     {
         m_source->writeLine();

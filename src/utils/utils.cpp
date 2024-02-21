@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Utility functions that work with properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <array>
 #include <charconv>
+#include <cstdio>  // For snprintf
 #include <set>
 
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
@@ -527,8 +528,9 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
         var_name += "img_";
     }
 
-    for (auto iter: filename)
+    for (size_t pos = 0; pos < filename.size(); pos++)
     {
+        auto iter = static_cast<unsigned char>(filename[pos]);
         if (tt::is_alnum(iter) || iter == '_')
         {
             var_name += iter;
@@ -540,21 +542,17 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
                 // Always convert a period to an underscore in case it is preceeding the extension
                 var_name += '_';
             }
-            else if (var_name.back() != '_')
+            else if (var_name.size() && var_name.back() != '_' && pos > 0 &&
+                     static_cast<unsigned char>(filename[pos - 1]) < 128)
             {
                 var_name += '_';
             }
-            else
+            // Ignore the first byte of a UTF-8 character sequence
+            else if (iter != 0xFF)
             {
-                // convert char to hex string
-                wxString hex;
-                hex.Format("%x", static_cast<int>(iter) & 0xFF);
-
-                // Ignore any 0xff characters which are utf-8 bytes
-                if (hex != "ff")
-                {
-                    var_name += hex.ToStdString();
-                }
+                char hexString[3];
+                snprintf(hexString, sizeof(hexString), "%02x", iter);
+                var_name += hexString;
             }
         }
 

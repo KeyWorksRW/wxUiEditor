@@ -280,7 +280,15 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
     if (m_form_node->isGen(gen_Images))
     {
         thrd_get_events.join();
-        thrd_collect_img_headers.join();
+        try
+        {
+            thrd_collect_img_headers.join();
+        }
+        catch (const std::system_error& err)
+        {
+            MSG_ERROR(err.what());
+        }
+
         // GenerateRustImagesForm();
         return;
     }
@@ -308,7 +316,15 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
         }
     }
 
-    thrd_collect_img_headers.join();
+    try
+    {
+        thrd_collect_img_headers.join();
+    }
+    catch (const std::system_error& err)
+    {
+        MSG_ERROR(err.what());
+    }
+
     if (m_embedded_images.size())
     {
         m_source->writeLine();

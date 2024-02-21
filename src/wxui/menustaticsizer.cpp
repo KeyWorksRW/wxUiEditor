@@ -18,15 +18,13 @@ using namespace GenEnum;
 
 MenuStaticSizer::MenuStaticSizer() : wxMenu()
 {
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
-    menu_item->SetBitmap(wxue_img::bundle_wxStaticBoxSizer_png());
+    menu_item->SetBitmap(wxue_img::bundle_wxStaticBoxSizer_svg(24, 24));
     auto* menu_item_2 = Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
-    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticCheckBoxSizer_png());
+    menu_item_2->SetBitmap(wxue_img::bundle_wxStaticCheckBoxSizer_svg(24, 24));
     auto* menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
-    menu_item_3->SetBitmap(wxue_img::bundle_wxStaticRadioBtnSizer_png());
+    menu_item_3->SetBitmap(wxue_img::bundle_wxStaticRadioBtnSizer_svg(24, 24));
 }
 
 // ************* End of generated code ***********

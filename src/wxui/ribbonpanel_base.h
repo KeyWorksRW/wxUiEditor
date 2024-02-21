@@ -102,8 +102,6 @@ namespace wxue_img
     extern const unsigned char treelistctrlcolumn_png[504];
     // ../art_src/webview.png
     extern const unsigned char webview_png[1208];
-    // ../art_src/wrap_sizer.png
-    extern const unsigned char wrap_sizer_png[145];
     // ../art_src/wxCollapsiblePane.png
     extern const unsigned char wxCollapsiblePane_png[324];
     // ../art_src/wxDialog.png

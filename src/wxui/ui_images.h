@@ -83,7 +83,8 @@ namespace wxue_img
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_unknown_png();  // unknown.png
     wxBitmapBundle bundle_unknown_svg(int width, int height);
-    wxBitmapBundle bundle_wxButton_png();  // wxButton.png
+    wxBitmapBundle bundle_wrap_sizer_svg(int width, int height);
+    wxBitmapBundle bundle_wxButton_svg(int width, int height);
     wxBitmapBundle bundle_wxCheckBox_svg(int width, int height);
     wxBitmapBundle bundle_wxCheckListBox_png();  // wxCheckListBox.png
     wxBitmapBundle bundle_wxChoice_png();  // wxChoice.png
@@ -96,9 +97,9 @@ namespace wxue_img
     wxBitmapBundle bundle_wxRadioButton_svg(int width, int height);
     wxBitmapBundle bundle_wxRearrangeCtrl_png();  // wxRearrangeCtrl.png
     wxBitmapBundle bundle_wxSimpleHtmlListBox_png();  // wxSimpleHtmlListBox.png
-    wxBitmapBundle bundle_wxStaticBoxSizer_png();  // wxStaticBoxSizer.png
-    wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();  // wxStaticCheckBoxSizer.png
-    wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();  // wxStaticRadioBtnSizer.png
+    wxBitmapBundle bundle_wxStaticBoxSizer_svg(int width, int height);
+    wxBitmapBundle bundle_wxStaticCheckBoxSizer_svg(int width, int height);
+    wxBitmapBundle bundle_wxStaticRadioBtnSizer_svg(int width, int height);
     wxBitmapBundle bundle_wxStaticText_svg(int width, int height);
     wxBitmapBundle bundle_wxTextCtrl_svg(int width, int height);
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
@@ -134,7 +135,6 @@ namespace wxue_img
     wxImage image_toolseparator_png();
     wxImage image_toolspacer_png();
     wxImage image_unknown_png();
-    wxImage image_wxButton_png();
     wxImage image_wxCheckListBox_png();
     wxImage image_wxChoice_png();
     wxImage image_wxComboBox_png();
@@ -147,9 +147,6 @@ namespace wxue_img
     wxImage image_wxPython_png();
     wxImage image_wxRearrangeCtrl_png();
     wxImage image_wxSimpleHtmlListBox_png();
-    wxImage image_wxStaticBoxSizer_png();
-    wxImage image_wxStaticCheckBoxSizer_png();
-    wxImage image_wxStaticRadioBtnSizer_png();
 
     extern const unsigned char alignbottom_svg[450];  // ../art_src/alignbottom.svg
     extern const unsigned char aligncenter_svg[620];  // ../art_src/aligncenter.svg
@@ -185,7 +182,7 @@ namespace wxue_img
     extern const unsigned char new_project_svg[962];  // ../art_src/new-project.svg
     extern const unsigned char notebook_aui_svg[1537];  // ../art_src/notebook_aui.svg
     extern const unsigned char notebook_choice_svg[2042];  // ../art_src/notebook_choice.svg
-    extern const unsigned char notebook_list_svg[1255];  // ../art_src/notebook_list.svg
+    extern const unsigned char notebook_list_svg[1237];  // ../art_src/notebook_list.svg
     extern const unsigned char notebook_svg[1157];  // ../art_src/notebook.svg
     extern const unsigned char popup_window_svg[1211];  // ../art_src/popup_window.svg
     extern const unsigned char project_png[899];  // ../art_src/project.png
@@ -217,7 +214,8 @@ namespace wxue_img
     extern const unsigned char undo_svg[633];  // ../art_src/undo.svg
     extern const unsigned char unknown_png[1699];  // ../art_src/unknown.png
     extern const unsigned char unknown_svg[1309];  // ../art_src/unknown.svg
-    extern const unsigned char wxButton_png[500];  // ../art_src/wxButton.png
+    extern const unsigned char wrap_sizer_svg[326];  // ../art_src/wrap_sizer.svg
+    extern const unsigned char wxButton_svg[615];  // ../art_src/wxButton.svg
     extern const unsigned char wxCheckBox_svg[374];  // ../art_src/wxCheckBox.svg
     extern const unsigned char wxCheckListBox_png[498];  // ../art_src/wxCheckListBox.png
     extern const unsigned char wxChoice_png[330];  // ../art_src/wxChoice.png
@@ -232,9 +230,9 @@ namespace wxue_img
     extern const unsigned char wxRadioButton_svg[165];  // ../art_src/wxRadioButton.svg
     extern const unsigned char wxRearrangeCtrl_png[332];  // ../art_src/wxRearrangeCtrl.png
     extern const unsigned char wxSimpleHtmlListBox_png[676];  // ../art_src/wxSimpleHtmlListBox.png
-    extern const unsigned char wxStaticBoxSizer_png[199];  // ../art_src/wxStaticBoxSizer.png
-    extern const unsigned char wxStaticCheckBoxSizer_png[341];  // ../art_src/wxStaticCheckBoxSizer.png
-    extern const unsigned char wxStaticRadioBtnSizer_png[367];  // ../art_src/wxStaticRadioBtnSizer.png
+    extern const unsigned char wxStaticBoxSizer_svg[2279];  // ../art_src/wxStaticBoxSizer.svg
+    extern const unsigned char wxStaticCheckBoxSizer_svg[2506];  // ../art_src/wxStaticCheckBoxSizer.svg
+    extern const unsigned char wxStaticRadioBtnSizer_svg[2337];  // ../art_src/wxStaticRadioBtnSizer.svg
     extern const unsigned char wxStaticText_svg[1236];  // ../art_src/wxStaticText.svg
     extern const unsigned char wxTextCtrl_svg[1313];  // ../art_src/wxTextCtrl.svg
     extern const unsigned char wxUiEditor_svg[4311];  // ../art_src/wxUiEditor.svg

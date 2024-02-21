@@ -579,7 +579,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                             }
                             if (!is_found)
                             {
-                                wxFileName wx_file(embed->filename);
+                                wxFileName wx_file(embed->filename.make_wxString());
                                 wxDateTime file_time;
                                 wx_file.GetTimes(nullptr, &file_time, nullptr);
                                 if (file_time != embed->date_time)

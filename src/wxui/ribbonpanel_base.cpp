@@ -93,7 +93,6 @@ namespace wxue_img
     extern const unsigned char treelistctrl_png[425];  // ../art_src/treelistctrl.png
     extern const unsigned char treelistctrlcolumn_png[504];  // ../art_src/treelistctrlcolumn.png
     extern const unsigned char webview_png[1208];  // ../art_src/webview.png
-    extern const unsigned char wrap_sizer_png[145];  // ../art_src/wrap_sizer.png
     extern const unsigned char wxCollapsiblePane_png[324];  // ../art_src/wxCollapsiblePane.png
     extern const unsigned char wxDialog_png[636];  // ../art_src/wxDialog.png
     extern const unsigned char wxFrame_png[424];  // ../art_src/wxFrame.png
@@ -243,11 +242,12 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         sizer_bar_basic->AddTool(gen_VerticalBoxSizer,
             wxue_img::bundle_sizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Vertical wxBoxSizer",
             wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_basic->AddTool(NewStaticSizer, wxue_img::bundle_wxStaticBoxSizer_png().GetBitmap(wxDefaultSize),
-            "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
+        sizer_bar_basic->AddTool(NewStaticSizer,
+            wxue_img::bundle_wxStaticBoxSizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStaticBoxSizer",
+            wxRIBBON_BUTTON_DROPDOWN);
         sizer_bar_basic->AddTool(gen_wxWrapSizer,
-            wxueImage(wxue_img::wrap_sizer_png, sizeof(wxue_img::wrap_sizer_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "wxWrapSizer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wrap_sizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxWrapSizer",
+            wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_basic->Realize();
 
@@ -299,8 +299,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         common_bar_controls->AddTool(gen_wxRadioButton,
             wxue_img::bundle_wxRadioButton_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRadioButton",
             wxRIBBON_BUTTON_NORMAL);
-        common_bar_controls->AddTool(NewButton, wxue_img::bundle_wxButton_png().GetBitmap(wxDefaultSize), "Buttons",
-            wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_controls->AddTool(NewButton,
+            wxue_img::bundle_wxButton_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Buttons", wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(NewSpin, wxue_img::bundle_spin_ctrl_png().GetBitmap(wxDefaultSize), "Spin controls",
             wxRIBBON_BUTTON_DROPDOWN);
     }
@@ -1437,13 +1437,6 @@ namespace wxue_img
         173,45,118,116,116,48,59,59,155,90,173,150,66,8,10,33,168,209,104,152,145,145,193,103,207,158,49,16,8,252,43,233,
         127,126,138,103,103,103,220,223,223,143,88,59,33,33,1,241,241,241,208,106,181,191,189,251,29,47,199,80,217,253,
         198,166,116,0,0,0,0,73,69,78,68,174,66,96,130
-    };
-    // ../art_src/wrap_sizer.png
-    const unsigned char wrap_sizer_png[145] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,0,67,73,68,65,84,56,203,99,96,24,106,128,17,198,248,207,192,240,159,74,6,
-        50,162,8,80,195,96,100,51,152,104,21,20,52,51,152,133,218,193,129,55,124,70,195,120,240,132,49,62,61,163,97,76,
-        122,24,147,106,233,208,11,227,33,28,121,67,6,0,0,153,222,26,12,44,155,144,21,0,0,0,0,73,69,78,68,174,66,96,130
     };
     // ../art_src/wxCollapsiblePane.png
     const unsigned char wxCollapsiblePane_png[324] {

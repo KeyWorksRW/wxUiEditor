@@ -110,21 +110,7 @@ void PropertyGrid_Image::RefreshChildren()
             wxBitmapBundle bundle;
             if (m_img_props.image.size())
             {
-                if (m_img_props.type == "XPM")
-                {
-                    wxImage img = ProjectImages.GetPropertyBitmap(m_img_props.CombineValues(), false);
-                    if (img.IsOk())
-                    {
-                        // SetValueImage expects a bitmap with an alpha channel, so if it doesn't have one, make one now.
-                        // Note that if this was an XPM file, then the mask will be converted to an alpha channel which is
-                        // what we want.
-
-                        if (!img.HasAlpha())
-                            img.InitAlpha();
-                        bundle = wxBitmapBundle::FromBitmap(img);
-                    }
-                }
-                else
+                if (m_img_props.type != "XPM")
                 {
                     if (auto img = ProjectImages.GetPropertyImageBundle(m_img_props.CombineValues(),
                                                                         wxGetFrame().getSelectedNode());
@@ -134,6 +120,20 @@ void PropertyGrid_Image::RefreshChildren()
                         {
                             bundle = img->bundle;
                         }
+                    }
+                }
+                else  // XPM
+                {
+                    wxImage img = ProjectImages.GetPropertyBitmap(m_img_props.CombineValues(), false);
+                    if (img.IsOk())
+                    {
+                        // SetValueImage expects a bitmap with an alpha channel, so if it doesn't have one, make one now.
+                        // Note that if this was an XPM file, then the mask will be converted to an alpha channel which
+                        // is what we want.
+
+                        if (!img.HasAlpha())
+                            img.InitAlpha();
+                        bundle = wxBitmapBundle::FromBitmap(img);
                     }
                 }
             }
@@ -161,6 +161,8 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.make_wxString());
     Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
+
+    // CombineDefaultSize uses m_size
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
 }
 
@@ -232,7 +234,6 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             {
                 if (m_isEmbeddedImage && index > 0)
                 {
-                    // REVIEW: [KeyWorks - 04-19-2022] This will only work if we only allow two iamge types (Embed and SVG)
                     img_props.type = s_type_names[2];  // SVG image type
                 }
                 else

@@ -22,7 +22,7 @@ MenuButton::MenuButton() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_wxButton, "Insert wxButton");
-    menu_item->SetBitmap(wxue_img::bundle_wxButton_png());
+    menu_item->SetBitmap(wxue_img::bundle_wxButton_svg(24, 24));
     auto* menu_item_2 = Append(gen_wxBitmapToggleButton, "Insert wxBitmapToggleButton");
     menu_item_2->SetBitmap(wxue_img::bundle_toggle_button_png());
     auto* menu_item_5 = Append(gen_CloseButton, "Insert Close Button");

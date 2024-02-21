@@ -22,9 +22,10 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler -- Project class
+#include "pugixml.hpp"        // xml parser
 #include "utils.h"            // Miscellaneous utility functions
 
-#include "pugixml.hpp"  // xml parser
+#include "../../wxWidgets/3rdparty/lunasvg/source/element.h"
 
 // clang-format off
 
@@ -50,6 +51,18 @@ namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
 }
+
+namespace lunasvg
+{
+    // returns ElementID::unknown if name is not found
+    extern ElementID elementid(const std::string& name);
+
+    // returns PropertyID::unknown if name is not found
+    extern PropertyID csspropertyid(const std::string& name);
+
+    // returns PropertyID::unknown if name is not found
+    extern PropertyID propertyid(const std::string& name);
+}  // namespace lunasvg
 
 bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size);
 
@@ -1319,17 +1332,33 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     auto result = doc.load_file_string(path);
     if (!result)
     {
+        // BUGBUG: [Randalphwa - 02-15-2024] If someone edits the SVG file by hand, or uses a tool that doesn't produce
+        // valid XML, then we'll get an error here. We need to let the user know, but not if code is being generated
+        // from a command line, and not if there are a lot of files with errors.
+        //
+        // tldr; Find a way to collect errors/warnings and present them all at once.
         wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
             .ShowModal();
         return false;
     }
 
     auto root = doc.first_child();  // this should be the <svg> element.
-    root.remove_attributes();       // we don't need any of the attributes
+    if (root.name() == "svg")
+    {
+        root.remove_attribute("inkscape:version");
+        root.remove_attribute("sodipodi:docname");
+        root.remove_attribute("xml:space");
+        root.remove_attribute("xmlns");
+        root.remove_attribute("xmlns:inkscape");
+        root.remove_attribute("xmlns:sodipodi");
+        root.remove_attribute("xmlns:svg");
+        root.remove_attribute("xmlns:xlink");
+    }
 
     // Remove some inkscape nodes that we don't need
     root.remove_child("sodipodi:namedview");
     root.remove_child("metadata");
+    root.remove_child("title");
 
     std::ostringstream xml_stream;
     doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
@@ -1362,6 +1391,33 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     embed->array_size = (compressed_size | (org_size << 32));
     embed->array_data = std::make_unique<unsigned char[]>(compressed_size);
     memcpy(embed->array_data.get(), read_stream->GetBufferStart(), compressed_size);
+
+    // We don't actually use this size, but we set it here just in case we want it later.
+    wxSize size { -1, -1 };
+    if (auto width_attribute = root.attribute("width"); width_attribute)
+    {
+        size.x = width_attribute.as_int();
+        if (auto height_attribute = root.attribute("height"); height_attribute)
+        {
+            size.y = height_attribute.as_int();
+        }
+    }
+    else if (auto viewBox_attribute = root.attribute("viewBox"); viewBox_attribute)
+    {
+        tt_string_vector parts(viewBox_attribute.as_sview(), ' ', tt::TRIM::left);
+        if (parts.size() == 4)
+        {
+            size.x = parts[2].atoi();
+            size.y = parts[3].atoi();
+        }
+    }
+
+    while (size.x > 256 || size.y > 256)
+    {
+        size.x /= 2;
+        size.y /= 2;
+    }
+    embed->size = size;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFile file_original(path.make_wxString(), wxFile::read);

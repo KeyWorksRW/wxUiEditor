@@ -290,6 +290,8 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
+
+    ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/3rdparty/lunasvg/include
 )
 
 target_include_directories(check_build PRIVATE
@@ -308,6 +310,8 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
+
+    ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/3rdparty/lunasvg/include
 )
 
 ####################### Testing #######################

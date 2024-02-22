@@ -528,13 +528,15 @@ namespace GenEnum
 
         prop_folder_golang_output_folder,
         prop_golang_file,
+        prop_golang_import_list,
+        prop_golang_inherit_name,
         prop_golang_insert,
         prop_golang_line_length,
         prop_golang_output_folder,
-        prop_golang_import_list,
 
         prop_folder_lua_output_folder,
         prop_lua_file,
+        prop_lua_inherit_name,
         prop_lua_insert,
         prop_lua_line_length,
         prop_lua_output_folder,
@@ -542,6 +544,7 @@ namespace GenEnum
 
         prop_folder_perl_output_folder,
         prop_perl_file,
+        prop_perl_inherit_name,
         prop_perl_insert,
         prop_perl_line_length,
         prop_perl_output_folder,
@@ -549,6 +552,7 @@ namespace GenEnum
 
         prop_folder_rust_output_folder,
         prop_rust_file,
+        prop_rust_inherit_name,
         prop_rust_insert,
         prop_rust_line_length,
         prop_rust_output_folder,

@@ -251,7 +251,7 @@
 		<property name="golang_file" type="file"
 			help="The filename to use if generating code for wxRuby."/>
 		<property name="golang_inherit_name" type="string"
-			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Golang panel will include a sample for creating an inherited class."/>
 		<property name="insert_golang_code" type="code_edit"
 			help="Specify the code to insert into the Go file after the generated import statements. This can be any valid Go code for use before the class definition."/>
 		<property name="golang_import_list" type="include_files"
@@ -262,7 +262,7 @@
 		<property name="lua_file" type="file"
 			help="The filename to use if generating code for wxRuby."/>
 		<property name="lua_inherit_name" type="string"
-			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
+			help="The name to use for an inherited class. If specified, the Inherit tab in the Lua panel will include a sample for creating an inherited class."/>
 		<property name="insert_lua_code" type="code_edit"
 			help="Specify the code to insert into the Lua file after the generated import statements. This can be any valid Lua code for use before the class definition."/>
 		<property name="lua_require_list" type="include_files"

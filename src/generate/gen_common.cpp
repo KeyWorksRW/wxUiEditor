@@ -756,7 +756,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                 FAIL_MSG(tt_string(description) << " was not converted to a bundle ahead of time!")
 
                 // This should never happen, but if it does, at least generate something that will compile
-                code << "wxNullBitmsap";
+                code << "wxNullBitmap";
             }
         }
         else
@@ -764,7 +764,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             FAIL_MSG(tt_string(description) << " was not converted to a bundle ahead of time!")
 
             // This should never happen, but if it does, at least generate something that will compiler
-            code << "wxNullBitmsap";
+            code << "wxNullBitmap";
         }
     }
 

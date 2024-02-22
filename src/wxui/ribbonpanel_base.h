@@ -82,16 +82,12 @@ namespace wxue_img
     extern const unsigned char search_png[800];
     // ../art_src/separator.png
     extern const unsigned char separator_png[306];
-    // ../art_src/spacer.png
-    extern const unsigned char spacer_png[183];
     // ../art_src/static_line.png
     extern const unsigned char static_line_png[122];
     // ../art_src/statusbar.png
     extern const unsigned char statusbar_png[432];
     // ../art_src/submenu.png
     extern const unsigned char submenu_png[760];
-    // ../art_src/text_sizer.png
-    extern const unsigned char text_sizer_png[157];
     // ../art_src/timepicker.png
     extern const unsigned char timepicker_png[227];
     // ../art_src/tree_ctrl.png
@@ -104,22 +100,14 @@ namespace wxue_img
     extern const unsigned char webview_png[1208];
     // ../art_src/wxCollapsiblePane.png
     extern const unsigned char wxCollapsiblePane_png[324];
-    // ../art_src/wxDialog.png
-    extern const unsigned char wxDialog_png[636];
-    // ../art_src/wxFrame.png
-    extern const unsigned char wxFrame_png[424];
     // ../art_src/wxMenuBar.png
     extern const unsigned char wxMenuBar_png[490];
-    // ../art_src/wxNotebook.png
-    extern const unsigned char wxNotebook_png[177];
     // ../art_src/wxPanel.png
     extern const unsigned char wxPanel_png[156];
     // ../art_src/wxPropertyGridManager.png
     extern const unsigned char wxPropertyGridManager_png[225];
     // ../art_src/wxPropertyGrid.png
     extern const unsigned char wxPropertyGrid_png[212];
-    // ../art_src/wxTimer.svg
-    extern const unsigned char wxTimer_svg[4356];
     // ../art_src/wxToolBar.png
     extern const unsigned char wxToolBar_png[554];
     // ../art_src/wxToolbook.png

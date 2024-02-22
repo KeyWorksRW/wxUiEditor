@@ -55,6 +55,7 @@ namespace wxue_img
     wxBitmapBundle bundle_notebook_list_svg(int width, int height);
     wxBitmapBundle bundle_popup_window_svg(int width, int height);
     wxBitmapBundle bundle_project_png();  // project.png
+    wxBitmapBundle bundle_prop_sheet_dlg_svg(int width, int height);
     wxBitmapBundle bundle_python_logo_only_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_ribbon_bar_png();  // ribbon_bar.png
@@ -66,12 +67,14 @@ namespace wxue_img
     wxBitmapBundle bundle_sizer_svg(int width, int height);
     wxBitmapBundle bundle_sizer_horizontal_svg(int width, int height);
     wxBitmapBundle bundle_slider_png();  // slider.png
+    wxBitmapBundle bundle_spacer_svg(int width, int height);
     wxBitmapBundle bundle_spin_ctrl_png();  // spin_ctrl.png
     wxBitmapBundle bundle_spin_ctrl_double_png();  // spin_ctrl_double.png
     wxBitmapBundle bundle_spinbtn_png();  // spinbtn.png
-    wxBitmapBundle bundle_stddialogbuttonsizer_png();  // stddialogbuttonsizer.png
+    wxBitmapBundle bundle_stddialogbuttonsizer_svg(int width, int height);
     wxBitmapBundle bundle_svg_svg(int width, int height);
     wxBitmapBundle bundle_text_file_svg(int width, int height);
+    wxBitmapBundle bundle_text_sizer_svg(int width, int height);
     wxBitmapBundle bundle_title_close_png();  // title_close.png
     wxBitmapBundle bundle_toggle_button_png();  // toggle_button.png
     wxBitmapBundle bundle_tool_png();  // tool.png
@@ -90,7 +93,9 @@ namespace wxue_img
     wxBitmapBundle bundle_wxChoice_png();  // wxChoice.png
     wxBitmapBundle bundle_wxComboBox_png();  // wxComboBox.png
     wxBitmapBundle bundle_wxCommandLinkButton_png();  // wxCommandLinkButton.png
+    wxBitmapBundle bundle_wxDialog_svg(int width, int height);
     wxBitmapBundle bundle_wxEditListBox_png();  // wxEditListBox.png
+    wxBitmapBundle bundle_wxFrame_svg(int width, int height);
     wxBitmapBundle bundle_wxListBox_png();  // wxListBox.png
     wxBitmapBundle bundle_wxListView_png();  // wxListView.png
     wxBitmapBundle bundle_wxPython_png();  // wxPython.png
@@ -102,6 +107,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxStaticRadioBtnSizer_svg(int width, int height);
     wxBitmapBundle bundle_wxStaticText_svg(int width, int height);
     wxBitmapBundle bundle_wxTextCtrl_svg(int width, int height);
+    wxBitmapBundle bundle_wxTimer_svg(int width, int height);
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
     wxBitmapBundle bundle_xml_file_svg(int width, int height);
     wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
@@ -126,7 +132,6 @@ namespace wxue_img
     wxImage image_spin_ctrl_double_png();
     wxImage image_spin_ctrl_png();
     wxImage image_spinbtn_png();
-    wxImage image_stddialogbuttonsizer_png();
     wxImage image_title_close_png();
     wxImage image_toggle_button_png();
     wxImage image_toolStretchable_png();
@@ -148,61 +153,64 @@ namespace wxue_img
     wxImage image_wxRearrangeCtrl_png();
     wxImage image_wxSimpleHtmlListBox_png();
 
-    extern const unsigned char alignbottom_svg[450];  // ../art_src/alignbottom.svg
-    extern const unsigned char aligncenter_svg[620];  // ../art_src/aligncenter.svg
-    extern const unsigned char alignleft_svg[482];  // ../art_src/alignleft.svg
-    extern const unsigned char alignright_svg[479];  // ../art_src/alignright.svg
-    extern const unsigned char aligntop_svg[454];  // ../art_src/aligntop.svg
-    extern const unsigned char alignvertcenter_svg[585];  // ../art_src/alignvertcenter.svg
+    extern const unsigned char alignbottom_svg[506];  // ../art_src/alignbottom.svg
+    extern const unsigned char aligncenter_svg[676];  // ../art_src/aligncenter.svg
+    extern const unsigned char alignleft_svg[537];  // ../art_src/alignleft.svg
+    extern const unsigned char alignright_svg[533];  // ../art_src/alignright.svg
+    extern const unsigned char aligntop_svg[510];  // ../art_src/aligntop.svg
+    extern const unsigned char alignvertcenter_svg[642];  // ../art_src/alignvertcenter.svg
     extern const unsigned char auitoolbar_png[476];  // ../art_src/auitoolbar.png
-    extern const unsigned char bitmap_svg[1497];  // ../art_src/bitmap.svg
+    extern const unsigned char bitmap_svg[1564];  // ../art_src/bitmap.svg
     extern const unsigned char bitmap_toggle_button_png[641];  // ../art_src/bitmap_toggle_button.png
     extern const unsigned char bmp_combo_box_png[492];  // ../art_src/bmp_combo_box.png
-    extern const unsigned char bottom_svg[398];  // ../art_src/bottom.svg
-    extern const unsigned char check3state_svg[149];  // ../art_src/check3state.svg
+    extern const unsigned char bottom_svg[484];  // ../art_src/bottom.svg
+    extern const unsigned char check3state_svg[234];  // ../art_src/check3state.svg
     extern const unsigned char close_btn_png[956];  // ../art_src/close_btn.png
-    extern const unsigned char cpp_logo_svg[563];  // ../art_src/cpp_logo.svg
+    extern const unsigned char cpp_logo_svg[664];  // ../art_src/cpp_logo.svg
     extern const unsigned char ctx_help_btn_png[1140];  // ../art_src/ctx_help_btn.png
-    extern const unsigned char data_list_svg[988];  // ../art_src/data_list.svg
+    extern const unsigned char data_list_svg[1088];  // ../art_src/data_list.svg
     extern const unsigned char dataview_ctrl_png[231];  // ../art_src/dataview_ctrl.png
     extern const unsigned char dataviewlist_ctrl_png[685];  // ../art_src/dataviewlist_ctrl.png
     extern const unsigned char dataviewtree_ctrl_png[238];  // ../art_src/dataviewtree_ctrl.png
-    extern const unsigned char debug_logo_svg[11515];  // ../art_src/debug_logo.svg
+    extern const unsigned char debug_logo_svg[11593];  // ../art_src/debug_logo.svg
     extern const unsigned char default_png[518];  // ../art_src/default.png
     extern const unsigned char empty_png[101];  // ../art_src/empty.png
-    extern const unsigned char flex_grid_sizer_svg[239];  // ../art_src/flex_grid_sizer.svg
-    extern const unsigned char folder_svg[578];  // ../art_src/folder.svg
-    extern const unsigned char grid_bag_sizer_svg[181];  // ../art_src/grid_bag_sizer.svg
-    extern const unsigned char grid_sizer_svg[384];  // ../art_src/grid_sizer.svg
-    extern const unsigned char grid_svg[1800];  // ../art_src/grid.svg
+    extern const unsigned char flex_grid_sizer_svg[330];  // ../art_src/flex_grid_sizer.svg
+    extern const unsigned char folder_svg[670];  // ../art_src/folder.svg
+    extern const unsigned char grid_bag_sizer_svg[272];  // ../art_src/grid_bag_sizer.svg
+    extern const unsigned char grid_sizer_svg[483];  // ../art_src/grid_sizer.svg
+    extern const unsigned char grid_svg[1863];  // ../art_src/grid.svg
     extern const unsigned char hide_png[242];  // ../art_src/hide.png
-    extern const unsigned char images_svg[2265];  // ../art_src/images.svg
-    extern const unsigned char import_svg[2388];  // ../art_src/import.svg
-    extern const unsigned char left_svg[355];  // ../art_src/left.svg
-    extern const unsigned char new_project_svg[962];  // ../art_src/new-project.svg
-    extern const unsigned char notebook_aui_svg[1537];  // ../art_src/notebook_aui.svg
-    extern const unsigned char notebook_choice_svg[2042];  // ../art_src/notebook_choice.svg
-    extern const unsigned char notebook_list_svg[1237];  // ../art_src/notebook_list.svg
-    extern const unsigned char notebook_svg[1157];  // ../art_src/notebook.svg
-    extern const unsigned char popup_window_svg[1211];  // ../art_src/popup_window.svg
+    extern const unsigned char images_svg[2344];  // ../art_src/images.svg
+    extern const unsigned char import_svg[2454];  // ../art_src/import.svg
+    extern const unsigned char left_svg[437];  // ../art_src/left.svg
+    extern const unsigned char new_project_svg[1062];  // ../art_src/new-project.svg
+    extern const unsigned char notebook_aui_svg[1615];  // ../art_src/notebook_aui.svg
+    extern const unsigned char notebook_choice_svg[2122];  // ../art_src/notebook_choice.svg
+    extern const unsigned char notebook_list_svg[1313];  // ../art_src/notebook_list.svg
+    extern const unsigned char notebook_svg[1232];  // ../art_src/notebook.svg
+    extern const unsigned char popup_window_svg[1282];  // ../art_src/popup_window.svg
     extern const unsigned char project_png[899];  // ../art_src/project.png
-    extern const unsigned char python_logo_only_svg[886];  // ../art_src/python-logo-only.svg
-    extern const unsigned char redo_svg[855];  // ../art_src/redo.svg
+    extern const unsigned char prop_sheet_dlg_svg[12368];  // ../art_src/prop_sheet_dlg.svg
+    extern const unsigned char python_logo_only_svg[985];  // ../art_src/python-logo-only.svg
+    extern const unsigned char redo_svg[913];  // ../art_src/redo.svg
     extern const unsigned char ribbon_bar_png[844];  // ../art_src/ribbon_bar.png
     extern const unsigned char ribbon_buttonbar_png[300];  // ../art_src/ribbon_buttonbar.png
     extern const unsigned char ribbon_gallery_png[215];  // ../art_src/ribbon_gallery.png
-    extern const unsigned char right_svg[573];  // ../art_src/right.svg
-    extern const unsigned char ruby_logo_svg[879];  // ../art_src/ruby_logo.svg
+    extern const unsigned char right_svg[677];  // ../art_src/right.svg
+    extern const unsigned char ruby_logo_svg[967];  // ../art_src/ruby_logo.svg
     extern const unsigned char scrollbar_png[214];  // ../art_src/scrollbar.png
-    extern const unsigned char sizer_horizontal_svg[224];  // ../art_src/sizer_horizontal.svg
-    extern const unsigned char sizer_svg[223];  // ../art_src/sizer.svg
+    extern const unsigned char sizer_horizontal_svg[302];  // ../art_src/sizer_horizontal.svg
+    extern const unsigned char sizer_svg[302];  // ../art_src/sizer.svg
     extern const unsigned char slider_png[248];  // ../art_src/slider.png
+    extern const unsigned char spacer_svg[263];  // ../art_src/spacer.svg
     extern const unsigned char spin_ctrl_double_png[219];  // ../art_src/spin_ctrl_double.png
     extern const unsigned char spin_ctrl_png[300];  // ../art_src/spin_ctrl.png
     extern const unsigned char spinbtn_png[192];  // ../art_src/spinbtn.png
-    extern const unsigned char stddialogbuttonsizer_png[524];  // ../art_src/stddialogbuttonsizer.png
-    extern const unsigned char svg_svg[1588];  // ../art_src/svg.svg
-    extern const unsigned char text_file_svg[2648];  // ../art_src/text_file.svg
+    extern const unsigned char stddialogbuttonsizer_svg[1676];  // ../art_src/stddialogbuttonsizer.svg
+    extern const unsigned char svg_svg[1653];  // ../art_src/svg.svg
+    extern const unsigned char text_file_svg[2720];  // ../art_src/text_file.svg
+    extern const unsigned char text_sizer_svg[311];  // ../art_src/text_sizer.svg
     extern const unsigned char title_close_png[144];  // ../art_src/title_close.png
     extern const unsigned char toggle_button_png[277];  // ../art_src/toggle_button.png
     extern const unsigned char toolStretchable_png[578];  // ../art_src/toolStretchable.png
@@ -210,34 +218,37 @@ namespace wxue_img
     extern const unsigned char tool_png[629];  // ../art_src/tool.png
     extern const unsigned char toolseparator_png[581];  // ../art_src/toolseparator.png
     extern const unsigned char toolspacer_png[459];  // ../art_src/toolspacer.png
-    extern const unsigned char top_svg[352];  // ../art_src/top.svg
-    extern const unsigned char undo_svg[633];  // ../art_src/undo.svg
+    extern const unsigned char top_svg[435];  // ../art_src/top.svg
+    extern const unsigned char undo_svg[689];  // ../art_src/undo.svg
     extern const unsigned char unknown_png[1699];  // ../art_src/unknown.png
-    extern const unsigned char unknown_svg[1309];  // ../art_src/unknown.svg
-    extern const unsigned char wrap_sizer_svg[326];  // ../art_src/wrap_sizer.svg
-    extern const unsigned char wxButton_svg[615];  // ../art_src/wxButton.svg
-    extern const unsigned char wxCheckBox_svg[374];  // ../art_src/wxCheckBox.svg
+    extern const unsigned char unknown_svg[1426];  // ../art_src/unknown.svg
+    extern const unsigned char wrap_sizer_svg[435];  // ../art_src/wrap_sizer.svg
+    extern const unsigned char wxButton_svg[693];  // ../art_src/wxButton.svg
+    extern const unsigned char wxCheckBox_svg[463];  // ../art_src/wxCheckBox.svg
     extern const unsigned char wxCheckListBox_png[498];  // ../art_src/wxCheckListBox.png
     extern const unsigned char wxChoice_png[330];  // ../art_src/wxChoice.png
     extern const unsigned char wxComboBox_png[233];  // ../art_src/wxComboBox.png
     extern const unsigned char wxCommandLinkButton_png[582];  // ../art_src/wxCommandLinkButton.png
+    extern const unsigned char wxDialog_svg[4614];  // ../art_src/wxDialog.svg
     extern const unsigned char wxEditListBox_png[707];  // ../art_src/wxEditListBox.png
+    extern const unsigned char wxFrame_svg[2940];  // ../art_src/wxFrame.svg
     extern const unsigned char wxListBox_png[310];  // ../art_src/wxListBox.png
     extern const unsigned char wxListView_png[356];  // ../art_src/wxListView.png
     extern const unsigned char wxPython_1_5x_png[765];  // ../art_src/wxPython_1_5x.png
     extern const unsigned char wxPython_2x_png[251];  // ../art_src/wxPython_2x.png
     extern const unsigned char wxPython_png[399];  // ../art_src/wxPython.png
-    extern const unsigned char wxRadioButton_svg[165];  // ../art_src/wxRadioButton.svg
+    extern const unsigned char wxRadioButton_svg[252];  // ../art_src/wxRadioButton.svg
     extern const unsigned char wxRearrangeCtrl_png[332];  // ../art_src/wxRearrangeCtrl.png
     extern const unsigned char wxSimpleHtmlListBox_png[676];  // ../art_src/wxSimpleHtmlListBox.png
-    extern const unsigned char wxStaticBoxSizer_svg[2279];  // ../art_src/wxStaticBoxSizer.svg
-    extern const unsigned char wxStaticCheckBoxSizer_svg[2506];  // ../art_src/wxStaticCheckBoxSizer.svg
-    extern const unsigned char wxStaticRadioBtnSizer_svg[2337];  // ../art_src/wxStaticRadioBtnSizer.svg
-    extern const unsigned char wxStaticText_svg[1236];  // ../art_src/wxStaticText.svg
-    extern const unsigned char wxTextCtrl_svg[1313];  // ../art_src/wxTextCtrl.svg
-    extern const unsigned char wxUiEditor_svg[4311];  // ../art_src/wxUiEditor.svg
-    extern const unsigned char xml_file_svg[1073];  // ../art_src/xml_file.svg
-    extern const unsigned char xrc_compare_svg[367];  // ../art_src/xrc_compare.svg
+    extern const unsigned char wxStaticBoxSizer_svg[2367];  // ../art_src/wxStaticBoxSizer.svg
+    extern const unsigned char wxStaticCheckBoxSizer_svg[2592];  // ../art_src/wxStaticCheckBoxSizer.svg
+    extern const unsigned char wxStaticRadioBtnSizer_svg[2423];  // ../art_src/wxStaticRadioBtnSizer.svg
+    extern const unsigned char wxStaticText_svg[1342];  // ../art_src/wxStaticText.svg
+    extern const unsigned char wxTextCtrl_svg[1417];  // ../art_src/wxTextCtrl.svg
+    extern const unsigned char wxTimer_svg[4440];  // ../art_src/wxTimer.svg
+    extern const unsigned char wxUiEditor_svg[4381];  // ../art_src/wxUiEditor.svg
+    extern const unsigned char xml_file_svg[1176];  // ../art_src/xml_file.svg
+    extern const unsigned char xrc_compare_svg[438];  // ../art_src/xrc_compare.svg
 }
 
 // ************* End of generated code ***********

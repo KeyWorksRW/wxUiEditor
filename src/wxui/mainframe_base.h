@@ -26,19 +26,19 @@ class NavigationPanel;
 namespace wxue_img
 {
     // ../art_src/expand.svg
-    extern const unsigned char expand_svg[592];
+    extern const unsigned char expand_svg[648];
     // ../art_src/generate.svg
-    extern const unsigned char generate_svg[2373];
+    extern const unsigned char generate_svg[2435];
     // ../art_src/hidden.svg
-    extern const unsigned char hidden_svg[1885];
+    extern const unsigned char hidden_svg[1993];
     // ../art_src/magnify.svg
-    extern const unsigned char magnify_svg[4035];
+    extern const unsigned char magnify_svg[4117];
     // ../art_src/save.svg
-    extern const unsigned char save_svg[950];
+    extern const unsigned char save_svg[1064];
     // ../art_src/wxlogo.svg
-    extern const unsigned char wxlogo_svg[1388];
+    extern const unsigned char wxlogo_svg[1476];
     // ../art_src/xrc_preview.svg
-    extern const unsigned char xrc_preview_svg[593];
+    extern const unsigned char xrc_preview_svg[689];
 }
 
 class MainFrameBase : public wxFrame

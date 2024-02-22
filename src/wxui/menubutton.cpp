@@ -32,7 +32,7 @@ MenuButton::MenuButton() : wxMenu()
     auto* menu_item3 = Append(gen_wxContextHelpButton, "Insert wxContextHelpButton");
     menu_item3->SetBitmap(wxue_img::bundle_ctx_help_btn_png());
     auto* menu_item_3 = Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
-    menu_item_3->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_png());
+    menu_item_3->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_svg(24, 24));
     auto* menu_item2 = Append(gen_wxToggleButton, "Insert wxToggleButton");
     menu_item2->SetBitmap(wxue_img::bundle_toggle_button_png());
 }

@@ -14,6 +14,14 @@
 
 #include "tt_string.h"
 
+namespace fs = std::filesystem;
+
+#ifdef __cpp_lib_char8_t
+    #define CHAR8_T_CAST (char8_t const*)
+#else
+    #define CHAR8_T_CAST (char const*)
+#endif
+
 bool tt_string::is_sameas(std::string_view str, tt::CASE checkcase) const
 {
     if (size() != str.size())
@@ -673,6 +681,12 @@ bool tt_string::dir_exists() const
     return (file.exists() && file.is_directory());
 }
 
+std::filesystem::file_time_type tt_string::last_write_time() const
+{
+    fs::path path(CHAR8_T_CAST c_str());
+    return std::filesystem::last_write_time(path);
+}
+
 bool tt_string::ChangeDir(bool is_dir) const
 {
     if (empty())
@@ -682,7 +696,6 @@ bool tt_string::ChangeDir(bool is_dir) const
         if (is_dir)
         {
 #if defined(_WIN32)
-
             auto dir = std::filesystem::directory_entry(std::filesystem::path(to_utf16()));
 #else
             auto dir = std::filesystem::directory_entry(std::filesystem::path(c_str()));

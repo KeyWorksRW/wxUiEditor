@@ -128,6 +128,9 @@
         bitmap="Embed;project.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/prop_sheet_dlg.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;python-logo-only.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -161,6 +164,9 @@
         bitmap="Embed;slider.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/spacer.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="Embed;spin_ctrl.png" />
       <node
         class="embedded_image"
@@ -173,10 +179,16 @@
         bitmap="Embed;stddialogbuttonsizer.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/stddialogbuttonsizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;../art_src/svg.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;text_file.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/text_sizer.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;title_close.png" />
@@ -233,7 +245,13 @@
         bitmap="Embed;wxCommandLinkButton.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/wxDialog.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="Embed;wxEditListBox.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/wxFrame.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxListBox.png" />
@@ -267,6 +285,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;wxTextCtrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/wxTimer.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;wxUiEditor.svg;[64,64]" />
@@ -1134,12 +1155,12 @@
                   wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxDialog.png"
+                    bitmap="SVG;../art_src/wxDialog.svg;[24,24]"
                     help="wxDialog"
                     id="CreateNewDialog" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxFrame.png"
+                    bitmap="SVG;../art_src/wxFrame.svg;[24,24]"
                     help="wxFrame"
                     id="CreateNewFrame" />
                   <node
@@ -1149,7 +1170,7 @@
                     id="CreateNewPanel" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;wxNotebook.png"
+                    bitmap="SVG;../art_src/prop_sheet_dlg.svg;[24,24]"
                     help="wxPropertySheetDialog"
                     id="CreateNewPropertySheet" />
                   <node
@@ -1345,17 +1366,17 @@
                   wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;stddialogbuttonsizer.png"
+                    bitmap="SVG;../art_src/stddialogbuttonsizer.svg;[24,24]"
                     help="wxStdDialogButtonSizer"
                     id="gen_wxStdDialogButtonSizer" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;text_sizer.png"
+                    bitmap="SVG;../art_src/text_sizer.svg;[24,24]"
                     help="wxTextSizerWrapper"
                     id="gen_TextSizer" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;spacer.png"
+                    bitmap="SVG;../art_src/spacer.svg;[24,24]"
                     help="spacer"
                     id="gen_spacer" />
                 </node>
@@ -4405,7 +4426,7 @@
           var_name="menu_item3" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;stddialogbuttonsizer.png"
+          bitmap="SVG;../art_src/stddialogbuttonsizer.svg;[24,24]"
           id="gen_wxStdDialogButtonSizer"
           label="Insert wxStdDialogButtonSizer"
           var_name="menu_item_3" />

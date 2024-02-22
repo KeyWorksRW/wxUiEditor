@@ -319,7 +319,7 @@
         <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"/>
     </gen>
 
-    <gen class="wxPropertySheetDialog" image="wxNotebook" type="propsheetform">
+    <gen class="wxPropertySheetDialog" image="prop_sheet_dlg" type="propsheetform">
         <inherits class="Dialog Window Settings"/>
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>

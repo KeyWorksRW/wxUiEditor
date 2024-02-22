@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect id="sizer" x="0.5" y="0.5" width="29" height="29" style="fill:none;stroke:rgb(255,0,0);stroke-width:1.63px;"/>
+    <g id="List">
+        <path d="M4.684,25L18.475,25" style="fill:none;stroke:black;stroke-width:1.19px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+        <path d="M4.684,20.01L24.153,20.01" style="fill:none;stroke:black;stroke-width:1.19px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+        <path d="M4.683,15.02L20.29,15.02" style="fill:none;stroke:black;stroke-width:1.19px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+        <path d="M4.78,10.03L23.45,10.03" style="fill:none;stroke:black;stroke-width:1.19px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+        <path d="M4.5,5.04L25.132,5.04" style="fill:none;stroke:black;stroke-width:1.19px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+    </g>
+</svg>

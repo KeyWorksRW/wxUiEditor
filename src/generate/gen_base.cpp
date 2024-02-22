@@ -581,13 +581,20 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                             {
                                 wxFileName wx_file(embed->filename.make_wxString());
                                 wxDateTime file_time;
-                                wx_file.GetTimes(nullptr, &file_time, nullptr);
-                                if (file_time != embed->date_time)
+                                if (wx_file.GetTimes(nullptr, &file_time, nullptr))
                                 {
-                                    ProjectImages.UpdateEmbeddedImage(embed);
-                                    embed->date_time = file_time;
+                                    if (file_time != embed->date_time)
+                                    {
+                                        ProjectImages.UpdateEmbeddedImage(embed);
+                                        embed->date_time = file_time;
+                                    }
+                                    m_embedded_images.emplace_back(embed);
                                 }
-                                m_embedded_images.emplace_back(embed);
+                                else
+                                {
+                                    MSG_INFO(tt_string() << "Unable to get file time for " << embed->filename);
+                                }
+
                             }
                         }
                     }

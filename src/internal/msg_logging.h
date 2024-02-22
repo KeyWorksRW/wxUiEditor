@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Message logging class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+#include <vector>  // std::vector
 
 // In a Debug build, we use our custom logging class to retrieve wxWidgets messages. In a Release build with INTERNAL_TESTING
 // set, we still have the custom class and window, but there is no log window to derive from, or messages from wxWidgets to
@@ -47,10 +49,10 @@ public:
 
 private:
     MsgFrame* m_msgFrame { nullptr };
-    std::vector<tt_string> m_Msgs;
 
     bool m_bDestroyed { true };
     bool m_isFirstShown { false };  // If false, and PREFS_MSG_WINDOW is set, then show the window
 };
 
 extern MsgLogging* g_pMsgLogging;
+extern std::vector<tt_string> g_log_msgs;

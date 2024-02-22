@@ -248,6 +248,10 @@ int App::OnRun()
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
             g_pMsgLogging = new MsgLogging();
+            if (g_log_msgs.size())
+            {
+                g_pMsgLogging->ShowLogger();
+            }
 #endif
 
 #if defined(_DEBUG)
@@ -379,6 +383,11 @@ int App::OnRun()
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
         g_pMsgLogging = new MsgLogging();
+        if (g_log_msgs.size())
+        {
+            g_pMsgLogging->ShowLogger();
+        }
+
 #endif
 
 #if defined(_DEBUG)

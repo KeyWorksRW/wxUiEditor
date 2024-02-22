@@ -13,12 +13,13 @@
 #include "preferences.h"  // Set/Get wxUiEditor preferences
 
 MsgLogging* g_pMsgLogging { nullptr };
+std::vector<tt_string> g_log_msgs;
 
 void MsgLogging::ShowLogger()
 {
     if (m_bDestroyed)
     {
-        m_msgFrame = new MsgFrame(&m_Msgs, &m_bDestroyed);
+        m_msgFrame = new MsgFrame(&g_log_msgs, &m_bDestroyed);
         m_bDestroyed = false;
     }
 
@@ -33,13 +34,18 @@ void MsgLogging::CloseLogger()
 
 void MsgLogging::AddInfoMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
-        return;
+    if (wxGetApp().isMainFrameClosing())
+        return;  // no point in adding messages if we are shutting down
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
-        auto& str = m_Msgs.emplace_back(msg);
+        auto& str = g_log_msgs.emplace_back(msg);
         str << '\n';
+
+        if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+        {
+            return;
+        }
 
         if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
         {
@@ -49,6 +55,11 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
 
         else if (!m_bDestroyed)
             m_msgFrame->AddInfoMsg(str);
+    }
+
+    if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+    {
+        return;
     }
 
     auto frame = wxGetMainFrame();
@@ -66,13 +77,18 @@ void MsgLogging::Clear()
 
 void MsgLogging::AddEventMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
-        return;
+    if (wxGetApp().isMainFrameClosing())
+        return;  // no point in adding messages if we are shutting down
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_EVENT)
     {
-        auto& str = m_Msgs.emplace_back("Event: ");
+        auto& str = g_log_msgs.emplace_back("Event: ");
         str << msg << '\n';
+
+        if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+        {
+            return;
+        }
 
         if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
         {
@@ -84,6 +100,11 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
             m_msgFrame->AddEventMsg(str);
     }
 
+    if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+    {
+        return;
+    }
+
     auto frame = wxGetMainFrame();
     if (frame && frame->IsShown())
         frame->setRightStatusField(tt_string("Event: ") << msg);
@@ -91,13 +112,18 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
 
 void MsgLogging::AddWarningMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
-        return;
+    if (wxGetApp().isMainFrameClosing())
+        return;  // no point in adding messages if we are shutting down
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
-        auto& str = m_Msgs.emplace_back("Warning: ");
+        auto& str = g_log_msgs.emplace_back("Warning: ");
         str << msg << '\n';
+
+        if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+        {
+            return;
+        }
 
         if (!m_isFirstShown)
         {
@@ -108,9 +134,14 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
         else if (!m_bDestroyed)
         {
             // Only add the message if the window was already displayed. Otherwise, it will have already added the
-            // message from m_Msgs.
+            // message from g_log_msgs.
             m_msgFrame->AddWarningMsg(str.view_stepover());
         }
+    }
+
+    if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+    {
+        return;
     }
 
     auto frame = wxGetMainFrame();
@@ -120,13 +151,18 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
 
 void MsgLogging::AddErrorMsg(tt_string_view msg)
 {
-    if (wxGetApp().isMainFrameClosing() || !g_pMsgLogging)
-        return;
+    if (wxGetApp().isMainFrameClosing())
+        return;  // no point in adding messages if we are shutting down
 
-    auto& str = m_Msgs.emplace_back("Error: ");
+    auto& str = g_log_msgs.emplace_back("Error: ");
     str << msg << '\n';
 
     FAIL_MSG(str);
+
+    if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+    {
+        return;
+    }
 
     if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
     {
@@ -160,7 +196,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
     {
         case wxLOG_Error:
             {
-                auto& str = m_Msgs.emplace_back("wxError: ");
+                auto& str = g_log_msgs.emplace_back("wxError: ");
                 str << msg.utf8_string() << '\n';
 
                 if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
@@ -188,7 +224,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
         case wxLOG_Warning:
             if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
             {
-                auto& str = m_Msgs.emplace_back("wxWarning: ");
+                auto& str = g_log_msgs.emplace_back("wxWarning: ");
                 str << msg.utf8_string() << '\n';
 
                 if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
@@ -217,7 +253,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
         case wxLOG_Message:
             if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
             {
-                auto& str = m_Msgs.emplace_back("wxInfo: ");
+                auto& str = g_log_msgs.emplace_back("wxInfo: ");
                 str << msg.utf8_string() << '\n';
 
                 if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)

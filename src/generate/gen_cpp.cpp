@@ -938,6 +938,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     if (m_form_node->isGen(gen_Images))
     {
+        // thrd_collect_img_headers.join() has already been called
         thrd_need_img_func.join();
         GenerateImagesForm();
         return;

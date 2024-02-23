@@ -7,12 +7,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <map>
 #include <mutex>
-#include <filesystem>
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
-
 
 #include "node_classes.h"  // Forward defintions of Node classes
 

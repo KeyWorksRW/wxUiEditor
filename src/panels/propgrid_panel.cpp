@@ -1635,6 +1635,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             {
                 embed->form = node_prop->getNode()->getParent();
             }
+            // If there is an Images List node and it is set to auto add, then fall through
+            // to the section below that adds the image to the Images List node.
             else if (!Project.getImagesForm() || !Project.getImagesForm()->as_bool(prop_auto_add))
             {
                 modifyProperty(node_prop, value);
@@ -1698,13 +1700,14 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     }
     else
     {
-        parent = Project.getImagesForm();
+        auto image_list_node = Project.getImagesForm();
         auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-        if (!embed || embed->form != parent)
+        if (!embed || embed->form != image_list_node)
         {
+            embed->form = image_list_node;
             auto filename = parts[IndexImage].filename();
             size_t pos = 0;
-            for (const auto& embedded_image: parent->getChildNodePtrs())
+            for (const auto& embedded_image: image_list_node->getChildNodePtrs())
             {
                 auto& description_a = embedded_image->as_string(prop_bitmap);
                 tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
@@ -1718,9 +1721,9 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
             auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
-            auto new_embedded = NodeCreation.createNode(gen_embedded_image, parent);
+            auto new_embedded = NodeCreation.createNode(gen_embedded_image, image_list_node);
             new_embedded->set_value(prop_bitmap, value);
-            auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), parent, tt_empty_cstr, pos);
+            auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), image_list_node, tt_empty_cstr, pos);
             insert_action->AllowSelectEvent(false);
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
@@ -1730,7 +1733,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             group->Add(prop_bitmap_action);
 
             wxGetFrame().PushUndoAction(group);
-            return;  // The group Undo will handle modifying the bitmap property, so simply return
+            return;  // The group action will handle modifying the bitmap property, so simply return
         }
     }
 

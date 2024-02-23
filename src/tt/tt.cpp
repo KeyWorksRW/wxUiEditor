@@ -15,6 +15,7 @@
 using namespace tt;
 
 const std::string tt::emptystring;
+std::error_code tt::error_code;
 
 const char* tt::next_utf8_char(const char* psz) noexcept
 {

@@ -650,7 +650,7 @@ tt_string& tt_string::make_relative(tt_string_view relative_to)
         auto original = fs::absolute(fs::path(CHAR8_T_CAST c_str()));
         auto relative = fs::absolute(fs::path(CHAR8_T_CAST relative_to.ToStdString().c_str()));
 
-        return assign_path(fs::relative(original, relative));
+        return assign_path(fs::relative(original, relative, tt::error_code));
     }
     catch (const std::exception& /* e */)
     {
@@ -665,7 +665,7 @@ tt_string& tt_string::make_absolute()
         try
         {
             fs::path path(CHAR8_T_CAST c_str());
-            return assign_path(fs::absolute(path));
+            return assign_path(fs::absolute(path, tt::error_code));
         }
         catch (const std::exception& /* e */)
         {
@@ -682,7 +682,9 @@ bool tt_string::file_exists() const
     try
     {
         fs::path path(CHAR8_T_CAST c_str());
-        auto file = fs::directory_entry(path);
+        auto file = fs::directory_entry(path, tt::error_code);
+        if (tt::error_code)
+            return false;
         return (file.exists() && !file.is_directory());
     }
     catch (const std::exception& /* e */)
@@ -699,7 +701,9 @@ bool tt_string::dir_exists() const
     try
     {
         fs::path path(CHAR8_T_CAST c_str());
-        auto file = fs::directory_entry(path);
+        auto file = fs::directory_entry(path, tt::error_code);
+        if (tt::error_code)
+            return false;
         return (file.exists() && file.is_directory());
     }
     catch (const std::exception& /* e */)
@@ -711,13 +715,13 @@ bool tt_string::dir_exists() const
 std::filesystem::file_time_type tt_string::last_write_time() const
 {
     fs::path path(CHAR8_T_CAST c_str());
-    return fs::last_write_time(path);
+    return fs::last_write_time(path, tt::error_code);
 }
 
 std::uintmax_t tt_string::file_size() const
 {
     fs::path path(CHAR8_T_CAST c_str());
-    return fs::file_size(path);
+    return fs::file_size(path, tt::error_code);
 }
 
 bool tt_string::ChangeDir(bool is_dir) const
@@ -730,21 +734,21 @@ bool tt_string::ChangeDir(bool is_dir) const
         fs::path path(CHAR8_T_CAST c_str());
         if (is_dir)
         {
-            auto dir = std::filesystem::directory_entry(path);
+            auto dir = std::filesystem::directory_entry(path, tt::error_code);
             if (dir.exists())
             {
-                fs::current_path(dir);
-                return true;
+                fs::current_path(dir, tt::error_code);
+                return (!tt::error_code);
             }
         }
         else
         {
             path.remove_filename();
-            auto dir = std::filesystem::directory_entry(path);
+            auto dir = std::filesystem::directory_entry(path, tt::error_code);
             if (dir.exists())
             {
-                fs::current_path(dir);
-                return true;
+                fs::current_path(dir, tt::error_code);
+                return (!tt::error_code);
             }
         }
     }

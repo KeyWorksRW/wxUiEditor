@@ -434,8 +434,7 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
                 m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeArrayName(embed, path);
-                wxFileName wx_file(embed->filename.make_wxString());
-                wx_file.GetTimes(nullptr, &embed->date_time, nullptr);
+                embed->file_time = embed->filename.last_write_time();
                 embed->form = form;
 
                 // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
@@ -566,8 +565,7 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                wxFileName wx_file(embed->filename.make_wxString());
-                wx_file.GetTimes(nullptr, &embed->date_time, nullptr);
+                embed->file_time = embed->filename.last_write_time();
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
                 // better compression.
@@ -944,6 +942,7 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
                 m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeArrayName(embed, path);
+                embed->file_time = embed->filename.last_write_time();
                 embed->form = form;
                 embed->size = image.GetSize();
 
@@ -1372,8 +1371,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
     auto* embed = m_map_embedded[path.filename().as_str()].get();
     InitializeArrayName(embed, path);
-    wxFileName wx_file(embed->filename.make_wxString());
-    wx_file.GetTimes(nullptr, &embed->date_time, nullptr);
+    embed->file_time = embed->filename.last_write_time();
     embed->form = form;
 
     size_t org_size = (stream.GetLength() & 0xFFFFFFFF);

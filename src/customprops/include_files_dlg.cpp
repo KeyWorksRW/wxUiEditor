@@ -237,9 +237,6 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
     }
 
     tt_cwd cwd(true);
-#if defined(_WIN32)
-    path.forwardslashestoback();
-#endif  // _WIN32
     wxFileDialog dialog(this, title.make_wxString(), path.make_wxString(), wxEmptyString, filter.make_wxString(),
                         wxFD_OPEN | wxFD_CHANGE_DIR);
     if (dialog.ShowModal() == wxID_OK)

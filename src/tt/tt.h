@@ -44,6 +44,9 @@ namespace tt
 
     extern const std::string emptystring;
 
+    // This is primarily used by tt_string when it calls std::systemfile functions.
+    extern std::error_code error_code;
+
     // clang-format off
 
     // These functions are provided for convenience since they cast a char to unsigned char before calling the std::

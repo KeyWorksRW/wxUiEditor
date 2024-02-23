@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   std::string with additional methods
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,14 @@
 #include <sstream>  // for std::stringstream
 
 #include "tt_string.h"
+
+namespace fs = std::filesystem;
+
+#ifdef __cpp_lib_char8_t
+    #define CHAR8_T_CAST (char8_t const*)
+#else
+    #define CHAR8_T_CAST (char const*)
+#endif
 
 bool tt_string::is_sameas(std::string_view str, tt::CASE checkcase) const
 {
@@ -611,15 +619,25 @@ tt_string& tt_string::append_filename(std::string_view filename)
     return *this;
 }
 
-tt_string& tt_string::assignCwd()
+tt_string& tt_string::assign_path(std::filesystem::path path)
 {
 #ifdef _WIN32
     clear();
-    tt::utf16to8(std::filesystem::current_path().c_str(), *this);
+    tt::utf16to8(path.wstring(), *this);
 #else
-    assign(std::filesystem::current_path().c_str());
+    assign(path.string());
 #endif
     return *this;
+}
+
+std::filesystem::path tt_string::make_path() const
+{
+    return fs::path(CHAR8_T_CAST c_str());
+}
+
+tt_string& tt_string::assignCwd()
+{
+    return assign_path(fs::current_path());
 }
 
 tt_string& tt_string::make_relative(tt_string_view relative_to)
@@ -627,9 +645,16 @@ tt_string& tt_string::make_relative(tt_string_view relative_to)
     if (empty())
         return *this;
 
-    wxFileName file(make_wxString());
-    file.MakeRelativeTo(relative_to.make_wxString());
-    assign(file.GetFullPath().utf8_string());
+    try
+    {
+        auto original = fs::absolute(fs::path(CHAR8_T_CAST c_str()));
+        auto relative = fs::absolute(fs::path(CHAR8_T_CAST relative_to.ToStdString().c_str()));
+
+        return assign_path(fs::relative(original, relative, tt::error_code));
+    }
+    catch (const std::exception& /* e */)
+    {
+    }
     return *this;
 }
 
@@ -637,14 +662,14 @@ tt_string& tt_string::make_absolute()
 {
     if (!empty())
     {
-#ifdef _WIN32
-        auto current = std::filesystem::path(to_utf16());
-        clear();
-        tt::utf16to8(std::filesystem::absolute(current).wstring(), *this);
-#else
-        auto current = std::filesystem::path(c_str());
-        assign(std::filesystem::absolute(current).string());
-#endif
+        try
+        {
+            fs::path path(CHAR8_T_CAST c_str());
+            return assign_path(fs::absolute(path, tt::error_code));
+        }
+        catch (const std::exception& /* e */)
+        {
+        }
     }
     return *this;
 }
@@ -653,61 +678,77 @@ bool tt_string::file_exists() const
 {
     if (empty())
         return false;
-#ifdef _WIN32
-    auto file = std::filesystem::directory_entry(std::filesystem::path(to_utf16()));
-#else
-    auto file = std::filesystem::directory_entry(std::filesystem::path(c_str()));
-#endif
-    return (file.exists() && !file.is_directory());
+
+    try
+    {
+        fs::path path(CHAR8_T_CAST c_str());
+        auto file = fs::directory_entry(path, tt::error_code);
+        if (tt::error_code)
+            return false;
+        return (file.exists() && !file.is_directory());
+    }
+    catch (const std::exception& /* e */)
+    {
+    }
+    return false;
 }
 
 bool tt_string::dir_exists() const
 {
     if (empty())
         return false;
-#ifdef _WIN32
-    auto file = std::filesystem::directory_entry(std::filesystem::path(to_utf16()));
-#else
-    auto file = std::filesystem::directory_entry(std::filesystem::path(c_str()));
-#endif
-    return (file.exists() && file.is_directory());
+
+    try
+    {
+        fs::path path(CHAR8_T_CAST c_str());
+        auto file = fs::directory_entry(path, tt::error_code);
+        if (tt::error_code)
+            return false;
+        return (file.exists() && file.is_directory());
+    }
+    catch (const std::exception& /* e */)
+    {
+    }
+    return false;
+}
+
+std::filesystem::file_time_type tt_string::last_write_time() const
+{
+    fs::path path(CHAR8_T_CAST c_str());
+    return fs::last_write_time(path, tt::error_code);
+}
+
+std::uintmax_t tt_string::file_size() const
+{
+    fs::path path(CHAR8_T_CAST c_str());
+    return fs::file_size(path, tt::error_code);
 }
 
 bool tt_string::ChangeDir(bool is_dir) const
 {
     if (empty())
         return false;
+
     try
     {
+        fs::path path(CHAR8_T_CAST c_str());
         if (is_dir)
         {
-#if defined(_WIN32)
-
-            auto dir = std::filesystem::directory_entry(std::filesystem::path(to_utf16()));
-#else
-            auto dir = std::filesystem::directory_entry(std::filesystem::path(c_str()));
-#endif  // _WIN32
+            auto dir = std::filesystem::directory_entry(path, tt::error_code);
             if (dir.exists())
             {
-                std::filesystem::current_path(dir);
-                return true;
+                fs::current_path(dir, tt::error_code);
+                return (!tt::error_code);
             }
         }
         else
         {
-            tt_string tmp(*this);
-            tmp.remove_filename();
-            if (tmp.empty())
-                return false;
-#if defined(_WIN32)
-            auto dir = std::filesystem::directory_entry(std::filesystem::path(tmp.to_utf16()));
-#else
-            auto dir = std::filesystem::directory_entry(std::filesystem::path(tmp.c_str()));
-#endif  // _WIN32
+            path.remove_filename();
+            auto dir = std::filesystem::directory_entry(path, tt::error_code);
             if (dir.exists())
             {
-                std::filesystem::current_path(dir);
-                return true;
+                fs::current_path(dir, tt::error_code);
+                return (!tt::error_code);
             }
         }
     }
@@ -849,17 +890,17 @@ bool tt_string::MkDir(const tt_string& path, bool recursive)
     if (path.empty())
         return false;
 
-#ifdef _WIN32
-    auto dir_path = std::filesystem::path(path.to_utf16());
-    if (recursive)
-        return std::filesystem::create_directories(dir_path);
-    else
-        return std::filesystem::create_directory(dir_path);
-#else
-    auto dir_path = std::filesystem::path(path.c_str());
-    if (recursive)
-        return std::filesystem::create_directories(dir_path);
-    else
-        return std::filesystem::create_directory(dir_path);
-#endif
+    try
+    {
+        fs::path dir_path(CHAR8_T_CAST path.c_str());
+
+        if (recursive)
+            return fs::create_directories(dir_path);
+        else
+            return fs::create_directory(dir_path);
+    }
+    catch (const std::exception& /* e */)
+    {
+    }
+    return false;
 }

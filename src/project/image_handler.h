@@ -7,11 +7,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <map>
 #include <mutex>
 
-#include <wx/bmpbndl.h>   // includes wx/bitmap.h, wxBitmapBundle class interface
-#include <wx/datetime.h>  // wxDateTime
+#include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
@@ -30,8 +30,8 @@ struct EmbeddedImage
     tt_string filename;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
-    wxSize size;           // dimensions of the first image in the array
-    wxDateTime date_time;  // time the file was last modified
+    wxSize size;                                // dimensions of the first image in the array
+    std::filesystem::file_time_type file_time;  // time the file was last modified
     wxBitmapType type;
 };
 

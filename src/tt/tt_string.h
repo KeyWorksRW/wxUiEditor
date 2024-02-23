@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   std::string with additional methods
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +32,17 @@ public:
     tt_string(const tt_string& str) : std_base(str) {}
     tt_string(const std::string& str) : std_base(str) {}
 
-    tt_string(const std::filesystem::directory_entry& dir) : std_base(dir.path().string(), dir.path().string().size()) {}
+#ifdef _WIN32
+    tt_string(std::filesystem::path path) { tt::utf16to8(path.generic_wstring(), *this); }
+#else
+    tt_string(std::filesystem::path path) { *this = path.string(); }
+#endif
+
+#ifdef _WIN32
+    tt_string(const std::filesystem::directory_entry& dir) { tt::utf16to8(dir.path().generic_wstring(), *this); }
+#else
+    tt_string(const std::filesystem::directory_entry& dir) { *this = dir.path().string(); }
+#endif
 
 #if wxUSE_UNICODE_UTF8
     tt_string(const wxString& str) { *this = str.ToStdString(); }
@@ -54,6 +64,8 @@ public:
     // FromUTF8() is very efficient if wxUSE_UNICODE_UTF8 is defined as no UTF conversion is
     // done.
     wxString make_wxString() const { return wxString::FromUTF8(data(), size()); }
+
+    std::filesystem::path make_path() const;
 
     // Caution: std::string_view will be invalid if tt_string is modified or destroyed.
     tt_string_view subview(size_t start = 0) const;
@@ -295,11 +307,20 @@ public:
     // Replaces current string with the full path to the current working directory.
     tt_string& assignCwd();
 
+    tt_string& assign_path(std::filesystem::path path);
+
     // Returns true if the current string refers to an existing file.
     bool file_exists() const;
 
     // Returns true if the current string refers to an existing directory.
     bool dir_exists() const;
+
+    // Retrieves the last write time of the current file.
+    //
+    // Throws std::filesystem::filesystem_error on underlying OS API errors.
+    std::filesystem::file_time_type last_write_time() const;
+
+    std::uintmax_t file_size() const;
 
     // Confirms current string is an existing directory and then changes to that directory.
     //

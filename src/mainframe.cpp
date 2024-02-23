@@ -476,10 +476,6 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         filename = "MyProject";
     }
     tt_string path = Project.getProjectPath();
-#if defined(_WIN32)
-    path.forwardslashestoback();
-#endif  // _WIN32
-
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
     wxFileDialog dialog(this, "Save Project As", path.make_wxString(), filename.make_wxString(),
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
@@ -581,9 +577,6 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
 void MainFrame::OnAppendCrafter(wxCommandEvent&)
 {
     tt_cwd cwd(true);
-#if defined(_WIN32)
-    cwd.forwardslashestoback();
-#endif  // _WIN32
     wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString,
                      "wxCrafter Project File (*.wxcp)|*.wxcp||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -610,9 +603,6 @@ void MainFrame::OnAppendDialogBlocks(wxCommandEvent&)
 void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 {
     tt_cwd cwd(true);
-#if defined(_WIN32)
-    cwd.forwardslashestoback();
-#endif  // _WIN32
     wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString,
                      "wxFormBuilder Project File (*.fbp)|*.fbp||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -626,9 +616,6 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 void MainFrame::OnAppendGlade(wxCommandEvent&)
 {
     tt_cwd cwd(true);
-#if defined(_WIN32)
-    cwd.forwardslashestoback();
-#endif  // _WIN32
     wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString,
                      "wxGlade Project File (*.wxg)|*.wxg||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -642,9 +629,6 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
 void MainFrame::OnAppendSmith(wxCommandEvent&)
 {
     tt_cwd cwd(true);
-#if defined(_WIN32)
-    cwd.forwardslashestoback();
-#endif  // _WIN32
     wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString, "wxSmith File (*.wxs)|*.wxs||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -658,9 +642,6 @@ void MainFrame::OnAppendSmith(wxCommandEvent&)
 void MainFrame::OnAppendXRC(wxCommandEvent&)
 {
     tt_cwd cwd(true);
-#if defined(_WIN32)
-    cwd.forwardslashestoback();
-#endif  // _WIN32
     wxFileDialog dlg(this, "Open or Import Project", cwd.make_wxString(), wxEmptyString, "XRC File (*.xrc)|*.xrc||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)

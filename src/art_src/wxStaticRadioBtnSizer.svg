@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
-    <rect x="0.5" y="0.398" width="29" height="29.102" style="fill:none;stroke:rgb(128,128,128);stroke-width:5px;"/>
+    <rect x="0.5" y="0.398" width="29" height="29.102" style="fill:none;stroke:rgb(191,191,191);stroke-width:5px;"/>
     <g id="List">
         <path d="M4.684,24.5L18.475,24.5" style="fill:none;stroke:black;stroke-width:0.97px;stroke-linecap:round;stroke-linejoin:round;"/>
         <path d="M4.684,20.847L24.153,20.847" style="fill:none;stroke:black;stroke-width:0.97px;stroke-linecap:round;stroke-linejoin:round;"/>
         <path d="M4.684,17.193L20.288,17.015" style="fill:none;stroke:black;stroke-width:0.97px;stroke-linecap:round;stroke-linejoin:round;"/>
         <path d="M4.684,13.362L23.351,13.181" style="fill:none;stroke:black;stroke-width:0.97px;stroke-linecap:round;stroke-linejoin:round;"/>
         <path d="M4.684,9.528L25.316,9.5" style="fill:none;stroke:black;stroke-width:0.97px;stroke-linecap:round;stroke-linejoin:round;"/>
-        <rect x="2.826" y="2.822" width="24.323" height="4.178" style="fill:rgb(128,128,128);"/>
+        <rect x="2.826" y="2.822" width="24.323" height="4.178" style="fill:rgb(191,191,191);"/>
     </g>
     <g id="text">
         <path d="M10.248,5.287L9,5.287L9,0.069L9.472,0.069L9.472,4.334L10.248,4.334L10.248,5.287Z" style="fill-rule:nonzero;"/>

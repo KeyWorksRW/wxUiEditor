@@ -42,7 +42,7 @@ namespace wxue_data
     // ../xml/containers.xml
     extern const unsigned char containers[5007]; // 27415
     // ../xml/data_ctrls.xml
-    extern const unsigned char data_ctrls[7982]; // 43786
+    extern const unsigned char data_ctrls[7981]; // 43789
     // ../xml/forms.xml
     extern const unsigned char forms[6060]; // 30334
     // ../xml/interfaces.xml

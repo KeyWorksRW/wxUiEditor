@@ -163,7 +163,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menuFile = new wxMenu();
     auto* menuItem3 = new wxMenuItem(m_menuFile, id_DifferentProject, "&Different Project...\tCtrl+D", "Open a project",
         wxITEM_NORMAL);
-    menuItem3->SetBitmap(wxue_img::bundle_wxUiEditor_svg(16, 16));
+    menuItem3->SetBitmap(wxue_img::bundle_wxUiEditor_svg(20, 20));
     m_menuFile->Append(menuItem3);
     auto* menuItem = new wxMenuItem(m_menuFile, id_NewProject, "&New Project...\tCtrl+N", "Create an empty project",
         wxITEM_NORMAL);
@@ -217,6 +217,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menuFile->AppendSeparator();
     auto* menu_preferences = new wxMenuItem(m_menuFile, id_PreferencesDlg, "&Preferences...", "Various global preferences",
         wxITEM_NORMAL);
+    menu_preferences->SetBitmap(wxue_img::bundle_preferences_svg(16, 16));
     m_menuFile->Append(menu_preferences);
     m_menuFile->AppendSeparator();
     auto* menu_quit = new wxMenuItem(m_menuFile, wxID_EXIT, wxEmptyString);

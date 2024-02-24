@@ -976,7 +976,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_COMBO_BOX, "wxComboBox");
-        menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+        menu_item->SetBitmap(GetSvgImage("wxComboBox", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_LIST_BOX, "wxListBox");
         menu_item->SetBitmap(GetInternalImage("wxListBox"));
         AppendSubMenu(sub_menu, "&Change widget to");
@@ -985,7 +985,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOX, "wxChoice");
-        menu_item->SetBitmap(GetInternalImage("wxChoice"));
+        menu_item->SetBitmap(GetSvgImage("wxChoice", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_LIST_BOX, "wxListBox");
         menu_item->SetBitmap(GetInternalImage("wxListBox"));
         AppendSubMenu(sub_menu, "&Change widget to");
@@ -994,9 +994,9 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOX, "wxChoice");
-        menu_item->SetBitmap(GetInternalImage("wxChoice"));
+        menu_item->SetBitmap(GetSvgImage("wxChoice", dpi_size));
         menu_item = sub_menu->Append(MenuChangeTo_COMBO_BOX, "wxComboBox");
-        menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+        menu_item->SetBitmap(GetSvgImage("wxComboBox", dpi_size));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     else if (node->isGen(gen_wxAuiNotebook))
@@ -1227,9 +1227,9 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
 
     sub_menu->AppendSeparator();
     menu_item = sub_menu->Append(MenuADD_TOOL_COMBOBOX, "Combobox");
-    menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+    menu_item->SetBitmap(GetSvgImage("wxComboBox", dpi_size));
     menu_item = sub_menu->Append(MenuADD_TOOL_SLIDER, "Slider");
-    menu_item->SetBitmap(GetInternalImage("slider"));
+    menu_item->SetBitmap(GetSvgImage("slider", dpi_size));
     menu_item = sub_menu->Append(MenuADD_TOOL_SPINCTRL, "Spin control");
     menu_item->SetBitmap(GetInternalImage("spin_ctrl"));
     sub_menu->AppendSeparator();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-miterlimit:1;">
+    <g>
+        <rect x="2.5" y="2.5" width="25" height="25" style="fill:rgb(204,204,204);"/>
+        <path d="M2,28L2,2" style="fill:none;stroke:rgb(217,217,217);stroke-width:0.92px;"/>
+        <path d="M2.085,27.983L2.085,1.983" style="fill:none;stroke:rgb(217,217,217);stroke-width:0.92px;"/>
+        <path d="M28,2L2,2" style="fill:none;stroke:rgb(217,217,217);stroke-width:0.92px;"/>
+        <path d="M28.034,2.068L2.034,2.068" style="fill:none;stroke:rgb(217,217,217);stroke-width:0.92px;"/>
+        <path d="M28,3L28,27.5" style="fill:none;stroke:rgb(115,115,115);stroke-width:0.92px;"/>
+        <path d="M27.949,2.966L27.949,27.721" style="fill:none;stroke:rgb(115,115,115);stroke-width:0.92px;"/>
+        <path d="M28,28L3,28" style="fill:none;stroke:rgb(115,115,115);stroke-width:0.92px;"/>
+        <path d="M28,27.847L3,27.847" style="fill:none;stroke:rgb(115,115,115);stroke-width:0.92px;"/>
+    </g>
+    <rect id="outer" x="0" y="0" width="30" height="30" style="fill:none;"/>
+</svg>

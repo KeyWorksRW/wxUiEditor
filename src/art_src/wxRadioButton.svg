@@ -2,7 +2,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
     <g id="Layer1">
-        <ellipse cx="14.989" cy="14.996" rx="10.841" ry="10.847" style="fill:none;stroke:rgb(31,140,188);stroke-width:8.27px;"/>
+        <circle cx="6" cy="15" r="4" style="fill:none;stroke:rgb(31,140,188);stroke-width:3.05px;"/>
     </g>
     <rect id="outer" x="0" y="0" width="30" height="30" style="fill:none;"/>
+    <path d="M20.134,10.641L17.582,10.641L17.582,20.342L16.546,20.342L16.546,10.641L14,10.641L14,9.491L20.134,9.491L20.134,10.641Z" style="fill-rule:nonzero;"/>
+    <path d="M24.888,12.594L22.767,16.513L24.851,20.342L23.673,20.342L22.434,17.83C22.356,17.674 22.263,17.477 22.157,17.24L22.132,17.24C22.111,17.285 22.015,17.482 21.842,17.83L20.578,20.342L19.413,20.342L21.565,16.544L19.506,12.594L20.683,12.594L21.904,15.242C21.994,15.439 22.083,15.641 22.169,15.848L22.194,15.848L23.772,12.594L24.888,12.594Z" style="fill-rule:nonzero;"/>
+    <path d="M29,20.267C28.762,20.428 28.447,20.509 28.057,20.509C26.951,20.509 26.398,19.752 26.398,18.239L26.398,13.653L25.313,13.653L25.313,12.594L26.398,12.594L26.398,10.702L27.409,10.301L27.409,12.594L29,12.594L29,13.653L27.409,13.653L27.409,18.019C27.409,18.539 27.481,18.91 27.625,19.132C27.769,19.354 28.007,19.465 28.34,19.465C28.595,19.465 28.815,19.379 29,19.207L29,20.267Z" style="fill-rule:nonzero;"/>
 </svg>

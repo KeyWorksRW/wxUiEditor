@@ -27,6 +27,8 @@ class CodeDisplay : public CodeDisplayBase, public WriteCode
 public:
     CodeDisplay(wxWindow* parent, int panel_type);
 
+    void SetColor(int style, const wxColour& color);
+
     // Clears scintilla and internal buffer, removes read-only flag in scintilla
     void Clear() override;
 

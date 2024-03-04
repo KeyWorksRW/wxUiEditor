@@ -86,6 +86,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
             m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
             m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
         }
+        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, UserPrefs.get_XrcAttributeColour());
     }
     else if (panel_type == GEN_LANG_PYTHON)
     {
@@ -826,4 +827,9 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
             }
         }
     }
+}
+
+void CodeDisplay::SetColor(int style, const wxColour& color)
+{
+    m_scintilla->StyleSetForeground(style, color);
 }

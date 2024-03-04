@@ -451,3 +451,9 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
         }
     }
 }
+
+void BasePanel::SetColor(int style, const wxColour& color)
+{
+    m_cppPanel->SetColor(style, color);
+    m_hPanel->SetColor(style, color);
+}

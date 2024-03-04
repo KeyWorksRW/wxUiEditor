@@ -50,6 +50,10 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
     if (panel_type == GEN_LANG_XRC)
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
+        // [Randalphwa - 03-04-2024] Default tab width for wxSTC_LEX_XML appears to be 8 at
+        // least in wxWidgets 3.3, but we want 4 for XRC to improve readability.
+        m_scintilla->SetTabWidth(4);
+
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 

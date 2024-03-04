@@ -618,7 +618,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
 
     auto is_event = wxGetFrame().getPropPanel()->IsEventPageShowing();
-    PANEL_PAGE page = wxGetFrame().getGeneratedPanel()->GetPanelPage();
+    PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
     if (m_panel_type != GEN_LANG_CPLUSPLUS && page != CPP_PANEL)
         return;  // Nothing to search for in secondary pages of non-C++ languages

@@ -715,7 +715,7 @@
             help="Text to display in help description box."/>
     </gen>
 
-    <gen class="propGridCategory" image="book_page" type="propgrid_category">
+    <gen class="propGridCategory" image="propgrid_cat" type="propgrid_category">
         <property name="var_name" type="string"
             help="Instance name and an internal name of the property category.">m_propertyGridItem</property>
         <property name="label" type="string_escapes"

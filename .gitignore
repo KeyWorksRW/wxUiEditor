@@ -3,6 +3,7 @@ bld/
 .private/
 __pycache__/
 tests/quick_test/
+Affinity/
 
 # File extensions to ignore
 *.1

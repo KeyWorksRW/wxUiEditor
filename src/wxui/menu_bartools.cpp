@@ -32,11 +32,11 @@ MenuBarTools::MenuBarTools() : wxMenu()
     menu_item_5->SetBitmap(wxue_img::bundle_toolStretchable_png());
     AppendSeparator();
     auto* menu_item_3 = Append(gen_wxComboBox, "Add Combobox", "Add a wxComboBox control", wxITEM_NORMAL);
-    menu_item_3->SetBitmap(wxue_img::bundle_wxComboBox_png());
+    menu_item_3->SetBitmap(wxue_img::bundle_wxComboBox_svg(24, 24));
     auto* menu_item_6 = Append(gen_wxSlider, "Add Slider", "Add a wxSlider control", wxITEM_NORMAL);
-    menu_item_6->SetBitmap(wxue_img::bundle_slider_png());
+    menu_item_6->SetBitmap(wxue_img::bundle_slider_svg(24, 24));
     auto* menu_item_7 = Append(gen_wxSpinCtrl, "Add Spin Control", "Add a wxSpinCtrl control", wxITEM_NORMAL);
-    menu_item_7->SetBitmap(wxue_img::bundle_spin_ctrl_png());
+    menu_item_7->SetBitmap(wxue_img::bundle_spin_ctrl_svg(24, 24));
 }
 
 // ************* End of generated code ***********

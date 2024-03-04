@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <rect x="0.196" y="12.235" width="29.51" height="5.531" style="fill:none;stroke:rgb(128,128,128);stroke-width:0.52px;"/>
+    <rect x="0.809" y="13" width="3.518" height="4.136" style="fill:rgb(52,168,83);stroke:rgb(128,128,128);stroke-width:0.08px;"/>
+    <rect x="5.476" y="13" width="3.518" height="4.136" style="fill:rgb(52,168,83);stroke:rgb(128,128,128);stroke-width:0.08px;"/>
+    <rect x="10.143" y="13" width="3.518" height="4.136" style="fill:rgb(52,168,83);stroke:rgb(128,128,128);stroke-width:0.08px;"/>
+    <rect x="14.809" y="13" width="3.518" height="4.136" style="fill:rgb(52,168,83);stroke:rgb(128,128,128);stroke-width:0.08px;"/>
+    <rect id="outer" x="0" y="0" width="30" height="30" style="fill:none;"/>
+</svg>

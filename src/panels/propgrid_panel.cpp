@@ -1702,7 +1702,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     {
         auto image_list_node = Project.getImagesForm();
         auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-        if (!embed || embed->form != image_list_node)
+        if (embed && embed->form != image_list_node)
         {
             embed->form = image_list_node;
             auto filename = parts[IndexImage].filename();

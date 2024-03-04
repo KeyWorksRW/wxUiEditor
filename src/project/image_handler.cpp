@@ -1046,6 +1046,14 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
     }
     else if (parts[IndexType].contains("SVG"))
     {
+        // The user is allowed to change the dimensions of an SVG image, but that doesn't mean
+        // it's a new image. So first check to see if we already have the image.
+
+        if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
+        {
+            return &result->second;
+        }
+
         if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->getForm()))
         {
             return &m_bundles[lookup_str];

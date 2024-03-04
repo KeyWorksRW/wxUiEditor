@@ -18,15 +18,13 @@ using namespace GenEnum;
 
 MenuSpin::MenuSpin() : wxMenu()
 {
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
-    menu_item->SetBitmap(wxue_img::bundle_spin_ctrl_png());
+    menu_item->SetBitmap(wxue_img::bundle_spin_ctrl_svg(24, 24));
     auto* menu_item_2 = Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
-    menu_item_2->SetBitmap(wxue_img::bundle_spin_ctrl_double_png());
+    menu_item_2->SetBitmap(wxue_img::bundle_spin_ctrl_double_svg(24, 24));
     auto* menu_item_3 = Append(gen_wxSpinButton, "Insert wxSpinButton");
-    menu_item_3->SetBitmap(wxue_img::bundle_spinbtn_png());
+    menu_item_3->SetBitmap(wxue_img::bundle_spinbtn_svg(24, 24));
 }
 
 // ************* End of generated code ***********

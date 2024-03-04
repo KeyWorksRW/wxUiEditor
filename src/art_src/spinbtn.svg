@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="arrows">
+        <g id="arrow_box">
+            <rect x="10.25" y="14.566" width="9.5" height="8.684" style="fill:rgb(140,225,242);stroke:black;stroke-width:0.47px;"/>
+            <path d="M15.282,21.342L12.284,17L18.38,17.037L15.282,21.342Z" style="fill:none;stroke:black;stroke-width:0.45px;"/>
+        </g>
+        <g id="arrow_box1" serif:id="arrow_box">
+            <rect x="10.25" y="6.75" width="9.5" height="8.395" style="fill:rgb(141,225,242);stroke:black;stroke-width:0.46px;"/>
+            <path d="M15.331,9L18.329,13.342L12.233,13.306L15.331,9Z" style="fill:none;stroke:black;stroke-width:0.45px;"/>
+        </g>
+    </g>
+    <rect id="outer" x="0" y="0" width="30" height="30" style="fill:none;"/>
+</svg>

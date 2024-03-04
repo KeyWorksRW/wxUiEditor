@@ -18,15 +18,13 @@ using namespace GenEnum;
 
 MenuCombobox::MenuCombobox() : wxMenu()
 {
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_wxComboBox, "Insert wxComboBox");
-    menu_item->SetBitmap(wxue_img::bundle_wxComboBox_png());
+    menu_item->SetBitmap(wxue_img::bundle_wxComboBox_svg(24, 24));
     auto* menu_item_2 = Append(gen_wxChoice, "Insert wxChoice");
-    menu_item_2->SetBitmap(wxue_img::bundle_wxChoice_png());
+    menu_item_2->SetBitmap(wxue_img::bundle_wxChoice_svg(24, 24));
     auto* menu_item_3 = Append(gen_wxBitmapComboBox, "Insert wxBitmapComboBox");
-    menu_item_3->SetBitmap(wxue_img::bundle_bmp_combo_box_png());
+    menu_item_3->SetBitmap(wxue_img::bundle_bmp_combo_box_svg(24, 24));
 }
 
 // ************* End of generated code ***********

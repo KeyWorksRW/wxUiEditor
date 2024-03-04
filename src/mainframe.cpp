@@ -223,7 +223,8 @@ MainFrame::MainFrame() :
     item->SetBitmap(bundle_import_svg(16, 16));
     submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
                         "Duplicate the current form via Export and Import XRC");
-    submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...", "Dialog with multiple XRC tests");
+    item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...", "Dialog with multiple XRC tests");
+    item->SetBitmap(bundle_xrc_tests_svg(16, 16));
     menuInternal->AppendSubMenu(submenu_xrc, "&XRC");
 
     if (tt::file_exists("python\\py_main.py"))
@@ -259,7 +260,7 @@ MainFrame::MainFrame() :
     m_menubar->Append(menuInternal, "&Internal");
 
     #if defined(_DEBUG)
-    m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_import_svg(24, 24), "Dialog with multiple XRC tests");
+    m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_xrc_tests_svg(24, 24), "Dialog with multiple XRC tests");
     #endif
 
     m_toolbar->Realize();

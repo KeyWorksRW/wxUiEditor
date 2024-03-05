@@ -77,7 +77,16 @@ public:
     PropGridPanel* getPropPanel() { return m_property_panel; }
     NavigationPanel* getNavigationPanel() { return m_nav_panel; }
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
-    BasePanel* getGeneratedPanel() { return m_generatedPanel; }
+
+    BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetPythonPanel() { return m_pythonPanel; }
+    BasePanel* GetRubyPanel() { return m_rubyPanel; }
+    BasePanel* GetXrcPanel() { return m_xrcPanel; }
+    BasePanel* GetGolangPanel() { return m_golangPanel; }
+    BasePanel* GetLuaPanel() { return m_luaPanel; }
+    BasePanel* GetPerlPanel() { return m_perlPanel; }
+    BasePanel* GetRustPanel() { return m_rustPanel; }
+
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
 
@@ -354,7 +363,7 @@ private:
     MockupParent* m_mockupPanel;
     DocViewPanel* m_docviewPanel { nullptr };
 
-    BasePanel* m_generatedPanel { nullptr };
+    BasePanel* m_cppPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
 
     // Language panels

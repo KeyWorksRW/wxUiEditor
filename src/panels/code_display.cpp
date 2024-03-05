@@ -13,6 +13,7 @@
 
 #include "base_panel.h"      // BasePanel -- Code generation panel
 #include "code.h"            // Code -- Helper class for generating code
+#include "font_prop.h"       // FontProp -- Font properties
 #include "image_handler.h"   // ImageHandler class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
@@ -50,6 +51,10 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
     if (panel_type == GEN_LANG_XRC)
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
+        // [Randalphwa - 03-04-2024] Default tab width for wxSTC_LEX_XML appears to be 8 at
+        // least in wxWidgets 3.3, but we want 4 for XRC to improve readability.
+        m_scintilla->SetTabWidth(4);
+
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 
@@ -64,24 +69,21 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 m_scintilla->StyleSetBackground(idx, bg);
             }
 
-            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
-            m_scintilla->StyleSetForeground(wxSTC_H_TAG, wxColour("#80ccff"));
             m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour("#85e085"));
             m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, wxColour("#ff6666"));
             m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, wxColour("#ff6666"));
-            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour("#85e085"));
             m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour("#85e085"));
         }
         else
         {
-            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
-            m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
             m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
             m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
             m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
             m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
         }
+        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, UserPrefs.get_XrcAttributeColour());
+        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, UserPrefs.get_XrcDblStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_H_TAG, UserPrefs.get_XrcTagColour());
     }
     else if (panel_type == GEN_LANG_PYTHON)
     {
@@ -89,7 +91,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
-        tt_string wxPython_keywords("ToolBar MenuBar BitmapBundle Bitmap MemoryInputStream Window");
+        tt_string wxPython_keywords("ToolBar MenuBar BitmapBundle Bitmap SizerFlags MemoryInputStream Window");
 
         for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
@@ -107,7 +109,6 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPython_keywords.c_str());
-        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.get_PythonColour());
 
         if (UserPrefs.is_DarkMode())
         {
@@ -124,21 +125,17 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
             luminance = .80;
             auto light_green = HSLToWxColour(hue, saturation, luminance);
 
-            m_scintilla->StyleSetForeground(wxSTC_P_WORD, wxColour("#80ccff"));
-            // m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(wxSTC_P_STRING, light_green);
             m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, wxColour("#ff6666"));
         }
         else
         {
-            m_scintilla->StyleSetForeground(wxSTC_P_WORD, *wxBLUE);
-            m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour(0, 128, 0));
             m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
         }
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.get_PythonColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD, UserPrefs.get_PythonKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, UserPrefs.get_PythonNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_STRING, UserPrefs.get_PythonStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, UserPrefs.get_PythonCommentColour());
     }
     else if (panel_type == GEN_LANG_RUBY)
     {
@@ -147,7 +144,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // We don't set ruby keywords because we can't colorize them differently from the
         // wxWidgets keywords.
 
-        tt_string wxRuby_keywords("ToolBar MenuBar BitmapBundle Bitmap Window Wx");
+        tt_string wxRuby_keywords("ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL Colour "
+                                  "ToolBar MenuBar BitmapBundle Bitmap ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
+                                  "TAB_TRAVERSAL FILTER_DIGITS SizerFlags TextValidator Window Wx");
 
         // clang-format on
 
@@ -171,7 +170,6 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // the wxWidgets keywords.
 
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
-        m_scintilla->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
 
         if (UserPrefs.is_DarkMode())
         {
@@ -182,17 +180,16 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 m_scintilla->StyleSetForeground(idx, fg);
                 m_scintilla->StyleSetBackground(idx, bg);
             }
-
-            m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, wxColour("#ff6666"));
         }
-        else
-        {
-            m_scintilla->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
-        }
+        m_scintilla->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING, UserPrefs.get_RubyStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING_Q, UserPrefs.get_RubyStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING_QQ, UserPrefs.get_RubyStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING_QX, UserPrefs.get_RubyStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING_QR, UserPrefs.get_RubyStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_STRING_QW, UserPrefs.get_RubyStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, UserPrefs.get_RubyCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, UserPrefs.get_RubyNumberColour());
     }
 #if defined(_DEBUG)
     // The following language panels are experimental and only appear in a Debug build
@@ -489,17 +486,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
                 wxColour(0, 192, 0);
             }
         }
-        m_scintilla->StyleSetForeground(wxSTC_C_STRING, clr_green);
-        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, clr_green);
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, clr_green);
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, clr_green);
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, clr_green);
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, clr_green);
 
         if (UserPrefs.is_DarkMode())
         {
-            m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColourToDarkForeground(UserPrefs.get_CppColour()));
-            m_scintilla->StyleSetForeground(wxSTC_C_WORD, wxColourToDarkForeground(*wxBLUE));
             if (UserPrefs.is_HighContrast())
             {
                 m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour("#569CD6"));
@@ -508,21 +497,31 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
             {
                 m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
             }
-            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, wxColour("#ff6666"));
         }
         else
         {
-            m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
-            m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
             m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
         }
+
+        m_scintilla->StyleSetForeground(wxSTC_C_STRING, UserPrefs.get_CppStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, UserPrefs.get_CppStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD, UserPrefs.get_CppKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, UserPrefs.get_CppNumberColour());
     }
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not cross-platform.
     // See issue #597.
-    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+
+    // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 
@@ -614,7 +613,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
 
     auto is_event = wxGetFrame().getPropPanel()->IsEventPageShowing();
-    PANEL_PAGE page = wxGetFrame().getGeneratedPanel()->GetPanelPage();
+    PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
     if (m_panel_type != GEN_LANG_CPLUSPLUS && page != CPP_PANEL)
         return;  // Nothing to search for in secondary pages of non-C++ languages
@@ -822,4 +821,14 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
             }
         }
     }
+}
+
+void CodeDisplay::SetColor(int style, const wxColour& color)
+{
+    m_scintilla->StyleSetForeground(style, color);
+}
+
+void CodeDisplay::SetCodeFont(const wxFont& font)
+{
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 }

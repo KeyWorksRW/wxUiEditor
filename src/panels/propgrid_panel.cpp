@@ -2317,7 +2317,7 @@ void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
 {
     CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().getSelectedNode());
 
-    wxGetFrame().getGeneratedPanel()->OnNodeSelected(custom_event);
+    wxGetFrame().GetCppPanel()->OnNodeSelected(custom_event);
 }
 
 tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const

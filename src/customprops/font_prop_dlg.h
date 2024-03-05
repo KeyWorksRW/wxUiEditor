@@ -19,9 +19,13 @@ class FontPropDlg : public FontPropDlgBase
 {
 public:
     FontPropDlg(wxWindow* parent, NodeProperty* prop);
+    FontPropDlg(wxWindow* parent, const wxString& font_description);
     const wxString& GetResults() { return m_value; }
+    tt_string_view GetFontDescription() { return m_font_description; }
 
 protected:
+    void Initialize();  // Call this from either of the constructors
+
     void UpdateFontInfo();
     // Handlers for FontPropDlgBase events
     void OnCustomRadio(wxCommandEvent& WXUNUSED(event)) override;
@@ -40,6 +44,7 @@ protected:
     void OnOK(wxCommandEvent& WXUNUSED(event)) override;
 
     wxString m_value;
+    tt_string m_font_description;
 
 private:
     wxFontEnumerator m_font_enum;

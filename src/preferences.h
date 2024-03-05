@@ -32,7 +32,6 @@ public:
 
     void ReadConfig();
     void WriteConfig();
-
     // Add borders around all new sizers
     bool is_SizersAllBorders() const { return m_sizers_all_borders; }
 
@@ -81,15 +80,48 @@ public:
 
     const tt_string& get_CppWidgetsVersion() const { return m_cpp_widgets_version; }
     void set_CppWidgetsVersion(const tt_string& version) { m_cpp_widgets_version = version; }
+    const tt_string& get_PythonVersion() const { return m_python_version; }
+    void set_PythonVersion(const tt_string& version) { m_python_version = version; }
+    const tt_string& get_RubyVersion() const { return m_ruby_version; }
+    void set_RubyVersion(const tt_string& version) { m_ruby_version = version; }
 
     const wxColour& get_CppColour() const { return m_colour_cpp; }
     void set_CppColour(const wxColour& colour) { m_colour_cpp = colour; }
+    const wxColour& get_CppCommentColour() const { return m_colour_cpp_comment; }
+    void set_CppCommentColour(const wxColour& colour) { m_colour_cpp_comment = colour; }
+    const wxColour& get_CppKeywordColour() const { return m_colour_cpp_keyword; }
+    void set_CppKeywordColour(const wxColour& colour) { m_colour_cpp_keyword = colour; }
+    const wxColour& get_CppNumberColour() const { return m_colour_cpp_number; }
+    void set_CppNumberColour(const wxColour& colour) { m_colour_cpp_number = colour; }
+    const wxColour& get_CppStringColour() const { return m_colour_cpp_string; }
+    void set_CppStringColour(const wxColour& colour) { m_colour_cpp_string = colour; }
 
     const wxColour& get_PythonColour() const { return m_colour_python; }
     void set_PythonColour(const wxColour& colour) { m_colour_python = colour; }
+    const wxColour& get_PythonKeywordColour() const { return m_colour_python_keyword; }
+    void set_PythonKeywordColour(const wxColour& colour) { m_colour_python_keyword = colour; }
+    const wxColour& get_PythonNumberColour() const { return m_colour_python_number; }
+    void set_PythonNumberColour(const wxColour& colour) { m_colour_python_number = colour; }
+    const wxColour& get_PythonStringColour() const { return m_colour_python_string; }
+    void set_PythonStringColour(const wxColour& colour) { m_colour_python_string = colour; }
+    const wxColour& get_PythonCommentColour() const { return m_colour_python_comment; }
+    void set_PythonCommentColour(const wxColour& colour) { m_colour_python_comment = colour; }
 
     const wxColour& get_RubyColour() const { return m_colour_ruby; }
     void set_RubyColour(const wxColour& colour) { m_colour_ruby = colour; }
+    const wxColour& get_RubyCommentColour() const { return m_colour_ruby_comment; }
+    void set_RubyCommentColour(const wxColour& colour) { m_colour_ruby_comment = colour; }
+    const wxColour& get_RubyNumberColour() const { return m_colour_ruby_number; }
+    void set_RubyNumberColour(const wxColour& colour) { m_colour_ruby_number = colour; }
+    const wxColour& get_RubyStringColour() const { return m_colour_ruby_string; }
+    void set_RubyStringColour(const wxColour& colour) { m_colour_ruby_string = colour; }
+
+    const wxColour& get_XrcAttributeColour() const { return m_colour_xrc_attribute; }
+    void set_XrcAttributeColour(const wxColour& colour) { m_colour_xrc_attribute = colour; }
+    const wxColour& get_XrcDblStringColour() const { return m_colour_xrc_dblstring; }
+    void set_XrcDblStringColour(const wxColour& colour) { m_colour_xrc_dblstring = colour; }
+    const wxColour& get_XrcTagColour() const { return m_colour_xrc_tag; }
+    void set_XrcTagColour(const wxColour& colour) { m_colour_xrc_tag = colour; }
 
     void set_SizersAllBorders(bool setting) { m_sizers_all_borders = setting; }
     void set_SizersExpand(bool setting) { m_sizers_always_expand = setting; }
@@ -150,11 +182,31 @@ private:
     PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };
 
     tt_string m_cpp_widgets_version { "3.2" };
-    tt_string m_code_display_font { "modern,10" };
+    tt_string m_python_version { "4.2" };
+    tt_string m_ruby_version { "0.9" };
+
+    tt_string m_code_display_font;
 
     wxColour m_colour_cpp { wxColour("#FF00FF") };
+    wxColour m_colour_cpp_comment { wxColour("#008000") };
+    wxColour m_colour_cpp_keyword { wxColour("#0000FF") };
+    wxColour m_colour_cpp_number { wxColour("#FF0000") };
+    wxColour m_colour_cpp_string { wxColour("#008000") };
+
     wxColour m_colour_python { wxColour("#FF00FF") };
+    wxColour m_colour_python_comment { wxColour("#008000") };
+    wxColour m_colour_python_keyword { wxColour("#0000FF") };
+    wxColour m_colour_python_number { wxColour("#FF0000") };
+    wxColour m_colour_python_string { wxColour("#008000") };
+
     wxColour m_colour_ruby { wxColour("#FF00FF") };
+    wxColour m_colour_ruby_comment { wxColour("#008000") };
+    wxColour m_colour_ruby_number { wxColour("#FF000000") };
+    wxColour m_colour_ruby_string { wxColour("#008000") };
+
+    wxColour m_colour_xrc_attribute { wxColour("#FF00FF") };
+    wxColour m_colour_xrc_dblstring { wxColour("#008000") };
+    wxColour m_colour_xrc_tag { wxColour("#0000FF") };
 
     size_t m_dark_mode_pending { 0 };  // 0 = no change, 1 = dark_mode_on, 2 = dark_mode_off
 

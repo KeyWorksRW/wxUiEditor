@@ -9,14 +9,15 @@
 
 #pragma once
 
+#include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/clrpicker.h>
+#include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
-#include <wx/font.h>
-#include <wx/fontpicker.h>
 #include <wx/gdicmn.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 
 class PreferencesDlg : public wxDialog
@@ -38,21 +39,23 @@ protected:
 
     // Event handlers
 
+    void OnFontButton(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnOK(wxCommandEvent& event);
 
     // Validator variables
 
     bool m_isWakaTimeEnabled { true };
-    wxString m_cpp_line_length;
-    wxString m_python_line_length;
-    wxString m_ruby_line_length;
+    wxString m_cpp_line_length { "110" };
+    wxString m_python_line_length { "90" };
+    wxString m_ruby_line_length { "80" };
 
     // Class member variables
 
     wxBoxSizer* m_box_code_font;
     wxBoxSizer* m_box_dark_settings;
     wxBoxSizer* m_general_page_sizer;
+    wxButton* m_btn_font;
     wxCheckBox* m_check_cpp_snake_case;
     wxCheckBox* m_check_dark_mode;
     wxCheckBox* m_check_fullpath;
@@ -61,10 +64,25 @@ protected:
     wxCheckBox* m_check_right_propgrid;
     wxCheckBox* m_check_svg_bitmaps;
     wxChoice* m_choice_cpp_version;
+    wxChoice* m_choice_python_version;
+    wxChoice* m_choice_ruby_version;
     wxColourPickerCtrl* m_colour_cpp;
+    wxColourPickerCtrl* m_colour_cpp_comment;
+    wxColourPickerCtrl* m_colour_cpp_keyword;
+    wxColourPickerCtrl* m_colour_cpp_number;
+    wxColourPickerCtrl* m_colour_cpp_string;
     wxColourPickerCtrl* m_colour_python;
+    wxColourPickerCtrl* m_colour_python_comment;
+    wxColourPickerCtrl* m_colour_python_keyword;
+    wxColourPickerCtrl* m_colour_python_number;
+    wxColourPickerCtrl* m_colour_python_string;
     wxColourPickerCtrl* m_colour_ruby;
-    wxFontPickerCtrl* m_code_font_picker;
+    wxColourPickerCtrl* m_colour_ruby_comment;
+    wxColourPickerCtrl* m_colour_ruby_number;
+    wxColourPickerCtrl* m_colour_ruby_string;
+    wxColourPickerCtrl* m_colour_xrc_attribute;
+    wxColourPickerCtrl* m_colour_xrc_string;
+    wxColourPickerCtrl* m_colour_xrc_tag;
 };
 
 // ************* End of generated code ***********

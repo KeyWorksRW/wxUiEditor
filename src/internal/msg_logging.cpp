@@ -157,7 +157,12 @@ void MsgLogging::AddErrorMsg(tt_string_view msg)
     auto& str = g_log_msgs.emplace_back("Error: ");
     str << msg << '\n';
 
-    FAIL_MSG(str);
+    // [Randalphwa - 03-04-2024]
+    // If AddErrorMsg is called during an event handler then FAIL_MSG can be called multiple
+    // times. While std::unique_lock prevents re-entrance, it can still result in a crash. If
+    // you really need to stop in this call, set a breakpoint and stop in the debugger. Do
+    // *not* call FAIL_MSG(str);
+    // FAIL_MSG(str);
 
     if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
     {

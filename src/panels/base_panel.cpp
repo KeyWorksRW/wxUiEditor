@@ -40,7 +40,7 @@ const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic
 
 const char* g_python_keywords = "False None True and as assert async break class continue def del elif else except finally "
                                 "for from global if import in is lambda "
-                                "nonlocal not or pass raise return try while with yield";
+                                "nonlocal not or pass raise return self try while with yield";
 
 const char* g_ruby_keywords = "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else"
                               " elsif end ensure false for if in module next nil not or redo require rescue retry"
@@ -450,4 +450,16 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
             m_cppPanel->OnNodeSelected(event.getNode());
         }
     }
+}
+
+void BasePanel::SetColor(int style, const wxColour& color)
+{
+    m_cppPanel->SetColor(style, color);
+    m_hPanel->SetColor(style, color);
+}
+
+void BasePanel::SetCodeFont(const wxFont& font)
+{
+    m_cppPanel->SetCodeFont(font);
+    m_hPanel->SetCodeFont(font);
 }

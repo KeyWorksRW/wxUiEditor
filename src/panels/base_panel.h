@@ -43,10 +43,13 @@ public:
 
     void OnNodeSelected(CustomEvent& event);
 
+    void SetColor(int style, const wxColour& color);
+    void SetCodeFont(const wxFont& font);
+
 protected:
 private:
     CodeDisplay* m_cppPanel;
-    CodeDisplay* m_hPanel;
+    CodeDisplay* m_hPanel;  // Header, inherit, info panel
     CodeDisplay* m_derived_src_panel { nullptr };
     CodeDisplay* m_derived_hdr_panel { nullptr };
     wxAuiNotebook* m_notebook;

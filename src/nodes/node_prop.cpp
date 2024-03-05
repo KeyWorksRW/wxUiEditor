@@ -290,7 +290,7 @@ wxColour NodeProperty::as_color() const
             return wxColour(result->second);
         else
         {
-            FAIL_MSG(tt_string("Unknown CSS color: ") << m_value);
+            MSG_ERROR(tt_string("Unknown CSS color: ") << m_value);
             return wxNullColour;
         }
     }

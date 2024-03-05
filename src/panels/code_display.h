@@ -28,6 +28,7 @@ public:
     CodeDisplay(wxWindow* parent, int panel_type);
 
     void SetColor(int style, const wxColour& color);
+    void SetCodeFont(const wxFont& font);
 
     // Clears scintilla and internal buffer, removes read-only flag in scintilla
     void Clear() override;

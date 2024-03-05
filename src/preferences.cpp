@@ -80,6 +80,8 @@ void Prefs::WriteConfig()
         config->Write("dark_mode", m_dark_mode_pending & PENDING_DARK_MODE_ON ? true : false);
     }
 
+    config->Write("code_display_font", m_code_display_font.make_wxString());
+
     config->SetPath("/");
 }
 

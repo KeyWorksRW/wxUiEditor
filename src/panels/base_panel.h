@@ -44,6 +44,7 @@ public:
     void OnNodeSelected(CustomEvent& event);
 
     void SetColor(int style, const wxColour& color);
+    void SetCodeFont(const wxFont& font);
 
 protected:
 private:

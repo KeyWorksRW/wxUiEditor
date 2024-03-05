@@ -150,7 +150,7 @@ private:
     PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };
 
     tt_string m_cpp_widgets_version { "3.2" };
-    tt_string m_code_display_font { "modern,10" };
+    tt_string m_code_display_font;
 
     wxColour m_colour_cpp { wxColour("#FF00FF") };
     wxColour m_colour_python { wxColour("#FF00FF") };

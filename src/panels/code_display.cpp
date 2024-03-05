@@ -526,8 +526,12 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not cross-platform.
     // See issue #597.
-    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+
+    // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 
@@ -832,4 +836,9 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
 void CodeDisplay::SetColor(int style, const wxColour& color)
 {
     m_scintilla->StyleSetForeground(style, color);
+}
+
+void CodeDisplay::SetCodeFont(const wxFont& font)
+{
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 }

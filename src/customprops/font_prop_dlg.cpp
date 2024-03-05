@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing Font Property
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,16 @@
 FontPropDlg::FontPropDlg(wxWindow* parent, NodeProperty* prop) : FontPropDlgBase(parent)
 {
     m_value = prop->as_wxString();
+    Initialize();
+}
+
+FontPropDlg::FontPropDlg(wxWindow* parent, const wxString& font_description) : FontPropDlgBase(parent)
+{
+    m_value = font_description;
+    Initialize();
+}
+void FontPropDlg::Initialize()
+{
     if (m_value.size())
     {
         m_custom_font.Convert(m_value.utf8_string());
@@ -239,6 +249,7 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
         m_system_font.Underlined(m_checkSystemUnderlined->GetValue());
         m_system_font.Strikethrough(m_checkSystemStrikeThrough->GetValue());
         m_value = m_system_font.as_wxString();
+        m_font_description = m_system_font.as_string();
     }
     else
     {
@@ -258,6 +269,7 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
         else
             m_custom_font.FaceName(facename);
         m_value = m_custom_font.as_wxString();
+        m_font_description = m_custom_font.as_string();
     }
 
     event.Skip();

@@ -22,9 +22,6 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
 
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
-
     if (!wxFrame::Create(parent, id, title, pos, size, style, name))
         return false;
 
@@ -41,7 +38,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     menu_file->Append(menu_item_clear);
     auto* menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
-    menu_item_hide->SetBitmap(wxue_img::bundle_hide_png());
+    menu_item_hide->SetBitmap(wxue_img::bundle_hide_svg(24, 24));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, "&File");
 
@@ -63,13 +60,15 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     SetMenuBar(menubar);
 
     m_tool_bar = CreateToolBar();
-    m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_TOOLBAR));
+    m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString,
+        wxue_img::bundle_saveas_svg(FromDIP(24), FromDIP(24)));
 
     m_tool_bar->AddSeparator();
-    auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT,
-        wxART_TOOLBAR));
+    auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString,
+        wxue_img::bundle_clear_svg(FromDIP(24), FromDIP(24)));
 
-    m_tool_bar->AddTool(id_hide, wxEmptyString, wxue_img::bundle_hide_png());
+    m_tool_bar->AddTool(id_hide, wxEmptyString,
+        wxue_img::bundle_hide_svg(FromDIP(24), FromDIP(24)));
 
     m_tool_bar->Realize();
 

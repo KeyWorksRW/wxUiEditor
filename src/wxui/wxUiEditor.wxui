@@ -14,7 +14,13 @@
       base_file="ui_images">
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/CustomControl.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;alignbottom.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/DialogBlocks.png" />
       <node
         class="embedded_image"
         bitmap="SVG;aligncenter.svg;[24,24]" />
@@ -30,9 +36,6 @@
       <node
         class="embedded_image"
         bitmap="SVG;alignvertcenter.svg;[24,24]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;auitoolbar.png" />
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/auitoolbar.svg;[24,24]" />
@@ -57,6 +60,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;check3state.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/clear.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/close_btn.svg;[24,24]" />
@@ -95,6 +101,9 @@
         bitmap="SVG;../art_src/dirPicker.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;../art_src/duplicate.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="Embed;empty.png" />
       <node
         class="embedded_image"
@@ -113,6 +122,9 @@
         bitmap="SVG;../art_src/gauge.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;generate.svg;[20,16]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;grid.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -122,7 +134,7 @@
         bitmap="SVG;grid_sizer.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;hide.png" />
+        bitmap="SVG;../art_src/hide.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;images.svg;[24,24]" />
@@ -182,9 +194,6 @@
         bitmap="SVG;redo.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;ribbon_bar.png" />
-      <node
-        class="embedded_image"
         bitmap="SVG;../art_src/ribbon_bar.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -201,6 +210,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;ruby_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/saveas.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/scintilla.svg;[24,24]" />
@@ -236,9 +248,6 @@
         bitmap="SVG;../art_src/static_line.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;stddialogbuttonsizer.png" />
-      <node
-        class="embedded_image"
         bitmap="SVG;../art_src/stddialogbuttonsizer.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -260,19 +269,19 @@
         bitmap="SVG;../art_src/toggle_button.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;tool.png" />
+        bitmap="SVG;../art_src/tool.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;toolStretchable.png" />
+        bitmap="SVG;../art_src/toolStretchable.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;tool_dropdown.png" />
+        bitmap="SVG;../art_src/tool_dropdown.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;toolseparator.png" />
+        bitmap="SVG;../art_src/toolseparator.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;toolspacer.png" />
+        bitmap="SVG;../art_src/toolspacer.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;top.svg;[24,24]" />
@@ -317,10 +326,16 @@
         bitmap="Embed;wxEditListBox.png" />
       <node
         class="embedded_image"
+        bitmap="Embed;../art_src/wxFB.png" />
+      <node
+        class="embedded_image"
         bitmap="SVG;../art_src/wxFrame.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="Embed;wxListBox.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxGlade.png" />
       <node
         class="embedded_image"
         bitmap="Embed;wxListView.png" />
@@ -335,7 +350,7 @@
         bitmap="SVG;../art_src/wxPropertyGridManager.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="Embed;wxPython.png" />
+        bitmap="SVG;../art_src/wxPython.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;wxRadioButton.svg;[24,24]" />
@@ -354,6 +369,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/wxSplitterWindow.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxSmith.png" />
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/wxStaticBoxSizer.svg;[24,24]" />
@@ -392,10 +410,19 @@
         bitmap="SVG;../art_src/wxWizardPageSimple.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="Embed;../art_src/wxcrafter.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxlogo.svg;[20,16]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;xml_file.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;xrc_compare.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;xrc_preview.svg;[20,16]" />
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/xrc_tests.svg;[24,24]" />
@@ -711,7 +738,7 @@
             var_name="m_menuFile">
             <node
               class="wxMenuItem"
-              bitmap="SVG;wxUiEditor.svg;[20,20]"
+              bitmap="SVG;wxUiEditor.svg;[16,16]"
               help="Open a project"
               id="id_DifferentProject"
               label="&amp;Different Project..."
@@ -759,7 +786,7 @@
               wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().isModified());@@}[python:OnUpdateUI]" />
             <node
               class="wxMenuItem"
-              bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"
+              bitmap="SVG;../art_src/saveas.svg;[16,16]"
               help="Save current project to a different filename"
               id="id_SaveProjectAs"
               label="Save &amp;As...&#09;Ctrl-Shift+S"
@@ -773,6 +800,7 @@
               label="&amp;Append">
               <node
                 class="wxMenuItem"
+                bitmap="Embed;../art_src/wxcrafter.png"
                 help="Append wxCrafter project into current project"
                 id="id_AppendCrafter"
                 label="wxCrafter Project..."
@@ -780,6 +808,7 @@
                 wxEVT_MENU="OnAppendCrafter" />
               <node
                 class="wxMenuItem"
+                bitmap="Embed;../art_src/wxFB.png"
                 help="Append wxFormBuilder project into current project"
                 id="id_AppendFormBuilder"
                 label="wxFormBuilder Project..."
@@ -787,6 +816,7 @@
                 wxEVT_MENU="OnAppendFormBuilder" />
               <node
                 class="wxMenuItem"
+                bitmap="Embed;../art_src/wxGlade.png"
                 help="Append wxGlade project into current project"
                 id="id_AppendGlade"
                 label="wxGlade Project..."
@@ -794,6 +824,7 @@
                 wxEVT_MENU="OnAppendGlade" />
               <node
                 class="wxMenuItem"
+                bitmap="Embed;../art_src/wxSmith.png"
                 help="Append wxSmith project into current project"
                 id="id_AppendSmith"
                 label="wxSmith Project..."
@@ -801,6 +832,7 @@
                 wxEVT_MENU="OnAppendSmith" />
               <node
                 class="wxMenuItem"
+                bitmap="Embed;../art_src/DialogBlocks.png"
                 help="Append wxCrafter project into current project"
                 id="id_AppendCrafter"
                 label="DialogBlocks Project..."
@@ -899,6 +931,7 @@
               wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
             <node
               class="wxMenuItem"
+              bitmap="SVG;../art_src/duplicate.svg;[24,24]"
               help="Delete selected object without using clipboard."
               label="Duplicate"
               var_name="menu_duplicate"
@@ -1094,7 +1127,7 @@
             var_name="m_menuTools">
             <node
               class="wxMenuItem"
-              bitmap="SVG;generate.svg;[16,16]"
+              bitmap="SVG;generate.svg;[20,20]"
               help="Generates code for the selected language"
               id="id_GenerateCode"
               label="Generate &amp;Code..."
@@ -1102,7 +1135,7 @@
               wxEVT_MENU="OnGenerateCode" />
             <node
               class="wxMenuItem"
-              bitmap="SVG;xrc_preview.svg;[16,16]"
+              bitmap="SVG;xrc_preview.svg;[20,20]"
               class_access="protected:"
               help="Preview form using XRC and/or C++"
               id="id_PreviewForm"
@@ -1122,14 +1155,14 @@
             var_name="m_menuHelp">
             <node
               class="wxMenuItem"
-              bitmap="Art;wxART_HELP|wxART_MENU"
+              bitmap="SVG;../art_src/wxUiEditor.svg;[20,20]"
               id="wxID_ABOUT"
               label=""
               var_name="menu_help"
               wxEVT_MENU="OnAbout" />
             <node
               class="wxMenuItem"
-              bitmap="SVG;wxlogo.svg;[16,16]"
+              bitmap="SVG;wxlogo.svg;[20,20]"
               help="Open wxWidgets documentation in your default browser."
               label="wxWidgets Documentation"
               var_name="menu_item_6"
@@ -1137,7 +1170,7 @@
               wxEVT_UPDATE_UI="OnUpdateBrowseDocs" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;wxPython.png"
+              bitmap="SVG;../art_src/python-logo-only.svg;[20,20]"
               help="Open wxPython documentation in your default browser."
               label="wxPython Documentation"
               var_name="menu_item_9"
@@ -1145,7 +1178,7 @@
               wxEVT_UPDATE_UI="OnUpdateBrowsePython" />
             <node
               class="wxMenuItem"
-              bitmap="SVG;ruby_logo.svg;[16,16]"
+              bitmap="SVG;ruby_logo.svg;[20,20]"
               help="Open wxRuby documentation in your default browser."
               label="wxRuby Documentation"
               var_name="menu_item_10"
@@ -1901,7 +1934,7 @@
                     id="gen_wxToolBar" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;tool.png"
+                    bitmap="SVG;../art_src/tool.svg;[24,24]"
                     id="BarTools"
                     kind="wxRIBBON_BUTTON_DROPDOWN" />
                   <node
@@ -1913,7 +1946,7 @@
                     id="gen_wxAuiToolBar" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;tool.png"
+                    bitmap="SVG;../art_src/tool.svg;[24,24]"
                     id="AuiBarTools"
                     kind="wxRIBBON_BUTTON_DROPDOWN" />
                 </node>
@@ -1955,7 +1988,7 @@
                     id="gen_ribbonButton" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;toolspacer.png"
+                    bitmap="SVG;../art_src/toolspacer.svg;[24,24]"
                     help="Tool Separator"
                     id="gen_ribbonSeparator" />
                   <node
@@ -2070,7 +2103,7 @@
                     id="gen_wxTimer" />
                   <node
                     class="ribbonTool"
-                    bitmap="Embed;customControl.png"
+                    bitmap="SVG;../art_src/CustomControl.svg;[24,24]"
                     help="CustomControl"
                     id="gen_CustomControl" />
                 </node>
@@ -2746,7 +2779,7 @@
               wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
               <node
                 class="BookPage"
-                bitmap="SVG;cpp_logo.svg;[16,16]"
+                bitmap="SVG;cpp_logo.svg;[24,24]"
                 label="C++"
                 var_name="cpp_page"
                 background_colour="wxSYS_COLOUR_BTNFACE"
@@ -2822,7 +2855,7 @@
               </node>
               <node
                 class="BookPage"
-                bitmap="Embed;wxPython.png"
+                bitmap="SVG;../art_src/python-logo-only.svg;[24,24]"
                 label="Python"
                 var_name="python_page"
                 background_colour="wxSYS_COLOUR_BTNFACE"
@@ -2871,7 +2904,7 @@
               </node>
               <node
                 class="BookPage"
-                bitmap="SVG;ruby_logo.svg;[16,16]"
+                bitmap="SVG;ruby_logo.svg;[24,24]"
                 label="Ruby"
                 var_name="ruby_page"
                 background_colour="wxSYS_COLOUR_BTNFACE"
@@ -4433,7 +4466,7 @@
         use_derived_class="0">
         <node
           class="wxMenuItem"
-          bitmap="Embed;tool.png"
+          bitmap="SVG;../art_src/tool.svg;[24,24]"
           help="Insert a normal button tool"
           id="gen_auitool"
           label="Add Tool"
@@ -4447,21 +4480,21 @@
           var_name="menu_item_2" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;toolseparator.png"
+          bitmap="SVG;../art_src/toolseparator.svg;[24,24]"
           help="Add space to separate tools"
           id="gen_toolSeparator"
           label="Add Separator"
           var_name="menu_item_9" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;toolspacer.png"
+          bitmap="SVG;../art_src/toolspacer.svg;[24,24]"
           help="Add space to separate tools"
           id="gen_auitool_spacer"
           label="Add Spacer"
           var_name="menu_item_4" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;toolStretchable.png"
+          bitmap="SVG;../art_src/toolStretchable.svg;[24,24]"
           help="Add space to separate tools"
           id="gen_auitool_stretchable"
           label="Add Stretchable Space"
@@ -4549,27 +4582,27 @@
         use_derived_class="0">
         <node
           class="wxMenuItem"
-          bitmap="Embed;tool.png"
+          bitmap="SVG;../art_src/tool.svg;[24,24]"
           help="Insert a normal button tool"
           id="gen_tool"
           label="Add Tool" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;tool_dropdown.png"
+          bitmap="SVG;../art_src/tool_dropdown.svg;[24,24]"
           help="Add Dropdown tool that you can add menu items to."
           id="gen_tool_dropdown"
           label="Add Dropdown"
           var_name="menu_item_2" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;toolspacer.png"
+          bitmap="SVG;../art_src/toolspacer.svg;[24,24]"
           help="Add space to separate tools"
           id="gen_toolSeparator"
           label="Add Space"
           var_name="menu_item_4" />
         <node
           class="wxMenuItem"
-          bitmap="Embed;toolStretchable.png"
+          bitmap="SVG;../art_src/toolStretchable.svg;[24,24]"
           help="Add space to separate tools"
           id="gen_toolStretchable"
           label="Add Stretchable Space"
@@ -6501,7 +6534,7 @@
               wxEVT_MENU="OnClear" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;hide.png"
+              bitmap="SVG;../art_src/hide.svg;[24,24]"
               id="id_hide"
               label="&amp;Hide"
               var_name="menu_item_hide"
@@ -6546,7 +6579,7 @@
           var_name="m_tool_bar">
           <node
             class="tool"
-            bitmap="Art;wxART_FILE_SAVE_AS|wxART_TOOLBAR"
+            bitmap="SVG;../art_src/saveas.svg;[24,24]"
             id="wxID_SAVEAS"
             label=""
             var_name="tool_saveas"
@@ -6555,13 +6588,13 @@
             class="toolSeparator" />
           <node
             class="tool"
-            bitmap="Art;wxART_CUT|wxART_TOOLBAR"
+            bitmap="SVG;../art_src/clear.svg;[24,24]"
             label=""
             var_name="tool_item_clear"
             wxEVT_TOOL="OnClear" />
           <node
             class="tool"
-            bitmap="Embed;hide.png"
+            bitmap="SVG;../art_src/hide.svg;[24,24]"
             id="id_hide"
             label=""
             var_name="tool_hide"

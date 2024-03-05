@@ -1069,6 +1069,8 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
 void NavPopupMenu::MenuAddStandardCommands(Node* node)
 {
+    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+
     AddSeparatorIfNeeded();
     m_isPasteAllowed = false;
     if (node->isGen(gen_embedded_image))
@@ -1127,7 +1129,8 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
 
     if (!node->isGen(gen_Images) && !node->isGen(gen_Data))
     {
-        Append(MenuDUPLICATE, "Duplicate");
+        menu_item = Append(MenuDUPLICATE, "Duplicate");
+        menu_item->SetBitmap(GetSvgImage("duplicate", dpi_size));
     }
 }
 

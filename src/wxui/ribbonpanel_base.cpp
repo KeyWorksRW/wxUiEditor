@@ -35,7 +35,6 @@ static wxImage wxueImage(const unsigned char* data, size_t size_data)
 
 namespace wxue_img
 {
-    extern const unsigned char customControl_png[740];  // ../art_src/customControl.png
     extern const unsigned char dataviewlist_column_png[224];  // ../art_src/dataviewlist_column.png
     extern const unsigned char doc_mdi_parent_frame_png[543];  // ../art_src/doc_mdi_parent_frame.png
     extern const unsigned char genericdir_ctrl_png[328];  // ../art_src/genericdir_ctrl.png
@@ -455,14 +454,14 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     {
         bars_bar_tool->AddTool(gen_wxToolBar,
             wxue_img::bundle_wxToolBar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_tool->AddTool(BarTools, wxue_img::bundle_tool_png().GetBitmap(wxDefaultSize), wxEmptyString,
-            wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_tool->AddTool(BarTools,
+            wxue_img::bundle_tool_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_tool->AddSeparator();
         bars_bar_tool->AddTool(gen_wxAuiToolBar,
             wxue_img::bundle_auitoolbar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxAuiToolBar",
             wxRIBBON_BUTTON_NORMAL);
-        bars_bar_tool->AddTool(AuiBarTools, wxue_img::bundle_tool_png().GetBitmap(wxDefaultSize), wxEmptyString,
-            wxRIBBON_BUTTON_DROPDOWN);
+        bars_bar_tool->AddTool(AuiBarTools,
+            wxue_img::bundle_tool_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
     }
     bars_bar_tool->Realize();
 
@@ -484,8 +483,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         bars_bar_ribbon->AddTool(gen_ribbonButton,
             wxueImage(wxue_img::ribbon_button_png, sizeof(wxue_img::ribbon_button_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Ribbon Button", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(gen_ribbonSeparator, wxue_img::bundle_toolspacer_png().GetBitmap(wxDefaultSize),
-            "Tool Separator", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_ribbonSeparator,
+            wxue_img::bundle_toolspacer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Tool Separator",
+            wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_ribbonGalleryItem,
             wxueImage(wxue_img::ribbon_gallery_item_png, sizeof(wxue_img::ribbon_gallery_item_png)).Rescale(
             FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "Ribbon Gallery Item", wxRIBBON_BUTTON_NORMAL);
@@ -552,8 +552,8 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         other_bar_ctrls->AddTool(gen_wxTimer,
             wxue_img::bundle_wxTimer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTimer", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_CustomControl,
-            wxueImage(wxue_img::customControl_png, sizeof(wxue_img::customControl_png)).Rescale(
-            FromDIP(22), FromDIP(22), wxIMAGE_QUALITY_BILINEAR), "CustomControl", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_CustomControl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "CustomControl",
+            wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();
 
@@ -612,32 +612,6 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
 namespace wxue_img
 {
-    // ../art_src/customControl.png
-    const unsigned char customControl_png[740] {
-        137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,
-        0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,2,150,73,68,65,84,56,203,181,149,203,107,19,81,20,135,191,59,147,38,77,154,
-        144,196,164,15,147,86,5,5,75,213,133,21,116,37,10,186,42,130,139,22,164,136,139,254,5,162,224,194,93,87,22,220,
-        248,90,40,42,22,5,17,23,130,40,20,65,93,212,86,55,21,17,36,109,85,218,154,58,109,90,218,52,77,141,121,118,238,184,
-        177,147,230,209,24,169,94,184,195,157,51,247,124,252,206,185,247,204,17,228,135,193,191,25,194,124,0,70,223,80,
-        146,218,154,154,178,59,199,181,112,137,173,181,121,123,137,45,157,203,113,241,176,3,64,8,192,232,29,76,148,133,
-        78,205,126,7,224,86,231,206,146,111,231,6,230,105,242,122,203,194,123,143,56,177,0,8,85,37,35,101,65,78,102,34,
-        26,183,187,118,109,24,239,149,142,70,206,62,25,197,233,107,193,182,78,148,80,85,0,20,128,140,148,5,51,172,77,113,
-        254,96,160,0,244,96,56,204,189,55,223,24,249,18,55,109,215,58,219,248,185,24,38,181,170,23,248,155,224,180,174,
-        147,249,61,181,104,148,211,109,126,90,183,57,0,120,254,97,142,238,199,95,249,152,243,18,146,62,110,132,150,185,
-        254,122,194,132,95,237,218,203,100,68,51,253,51,186,158,7,175,133,111,0,50,21,231,216,190,250,188,210,209,5,252,
-        245,13,228,12,131,172,148,184,221,30,94,206,166,11,162,113,41,165,138,45,197,185,203,200,252,173,187,51,56,137,
-        99,75,67,65,254,1,144,122,145,143,68,41,218,83,2,110,9,238,160,251,209,39,2,117,86,38,82,10,110,143,106,134,7,16,
-        139,45,209,211,230,55,223,223,141,47,17,195,138,162,235,149,193,0,134,167,17,13,168,173,161,64,109,114,113,142,
-        243,237,65,142,238,241,1,48,22,78,114,121,100,26,167,63,80,18,85,9,120,38,149,98,125,229,172,29,174,37,22,225,217,
-        153,118,211,54,24,138,210,247,94,195,238,111,42,130,26,165,224,53,104,241,72,44,204,241,170,39,15,237,31,14,211,
-        63,245,3,167,215,111,166,201,0,164,97,20,94,183,74,80,128,227,91,29,230,250,254,219,48,119,167,211,88,93,110,50,
-        82,154,183,9,64,17,2,251,250,2,169,4,5,104,113,217,204,245,211,201,24,30,151,11,85,8,172,138,178,161,143,82,205,
-        239,106,36,146,175,182,164,197,129,52,12,20,33,42,250,88,170,1,71,29,77,156,120,56,134,195,238,32,232,243,17,73,
-        167,255,232,83,81,177,42,4,46,139,5,185,178,72,71,192,198,129,186,44,169,149,120,85,63,229,138,138,21,33,136,45,
-        47,115,97,127,144,67,187,61,0,92,26,248,204,208,170,109,115,138,179,82,162,168,42,137,108,46,95,190,186,220,188,
-        98,1,96,183,115,51,20,101,88,139,147,200,234,104,70,93,85,71,110,182,166,83,3,243,127,213,216,226,185,92,89,251,
-        139,147,205,102,107,250,47,205,244,23,242,202,43,28,111,13,237,245,0,0,0,0,73,69,78,68,174,66,96,130
-    };
     // ../art_src/dataviewlist_column.png
     const unsigned char dataviewlist_column_png[224] {
         137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,

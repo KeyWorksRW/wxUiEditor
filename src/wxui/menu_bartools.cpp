@@ -18,18 +18,16 @@ using namespace GenEnum;
 
 MenuBarTools::MenuBarTools() : wxMenu()
 {
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_tool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
-    menu_item->SetBitmap(wxue_img::bundle_tool_png());
+    menu_item->SetBitmap(wxue_img::bundle_tool_svg(24, 24));
     auto* menu_item_2 = Append(gen_tool_dropdown, "Add Dropdown", "Add Dropdown tool that you can add menu items to.",
         wxITEM_NORMAL);
-    menu_item_2->SetBitmap(wxue_img::bundle_tool_dropdown_png());
+    menu_item_2->SetBitmap(wxue_img::bundle_tool_dropdown_svg(24, 24));
     auto* menu_item_4 = Append(gen_toolSeparator, "Add Space", "Add space to separate tools", wxITEM_NORMAL);
-    menu_item_4->SetBitmap(wxue_img::bundle_toolspacer_png());
+    menu_item_4->SetBitmap(wxue_img::bundle_toolspacer_svg(24, 24));
     auto* menu_item_5 = Append(gen_toolStretchable, "Add Stretchable Space", "Add space to separate tools", wxITEM_NORMAL);
-    menu_item_5->SetBitmap(wxue_img::bundle_toolStretchable_png());
+    menu_item_5->SetBitmap(wxue_img::bundle_toolStretchable_svg(24, 24));
     AppendSeparator();
     auto* menu_item_3 = Append(gen_wxComboBox, "Add Combobox", "Add a wxComboBox control", wxITEM_NORMAL);
     menu_item_3->SetBitmap(wxue_img::bundle_wxComboBox_svg(24, 24));

@@ -457,7 +457,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     {
         pugi::xml_document doc;
         Project.getProjectNode()->createDoc(doc);
-        if (doc.save_file_stream(Project.getProjectFile(), "  ", pugi::format_indent_attributes))
+        if (doc.save_file(Project.getProjectFile(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             ProjectSaved();
@@ -526,7 +526,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
 
         pugi::xml_document doc;
         Project.getProjectNode()->createDoc(doc);
-        if (doc.save_file_stream(filename, "  ", pugi::format_indent_attributes))
+        if (doc.save_file(filename, "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             m_isImported = false;

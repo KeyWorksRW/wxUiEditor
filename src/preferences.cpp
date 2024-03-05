@@ -36,14 +36,35 @@ void Prefs::ReadConfig()
     m_is_cpp_snake_case = config->ReadBool("cpp_snake_case", true);
 
     m_cpp_widgets_version = config->Read("cpp_widgets_version", "3.2");
+    m_python_version = config->Read("python_version", "4.2");
+    m_ruby_version = config->Read("ruby_version", "0.9");
 
     m_colour_cpp = config->Read("cpp_colour", "#FF00FF");
+    m_colour_cpp_comment = config->Read("cpp_comment_colour", "#008000");
+    m_colour_cpp_keyword = config->Read("cpp_keyword_colour", "#0000FF");
+    m_colour_cpp_number = config->Read("cpp_number_colour", "#FF0000");
+    m_colour_cpp_string = config->Read("cpp_string_colour", "#008000");
+
     m_colour_python = config->Read("python_colour", "#FF00FF");
+    m_colour_python_comment = config->Read("python_comment_colour", "#008000");
+    m_colour_python_keyword = config->Read("python_keyword_colour", "#0000FF");
+    m_colour_python_number = config->Read("python_number_colour", "#FF0000");
+    m_colour_python_string = config->Read("python_string_colour", "#008000");
+
     m_colour_ruby = config->Read("ruby_colour", "#FF00FF");
+    m_colour_ruby_comment = config->Read("ruby_comment_colour", "#008000");
+    m_colour_ruby_number = config->Read("ruby_number_colour", "#FF0000");
+    m_colour_ruby_string = config->Read("ruby_string_colour", "#008000");
+
+    m_colour_xrc_attribute = config->Read("xrc_colour", "#FF00FF");
+    m_colour_xrc_dblstring = config->Read("xrc_dblstring_colour", "#008000");
+    m_colour_xrc_tag = config->Read("xrc_tag_colour", "#0000FF");
 
     m_cpp_line_length = config->Read("cpp_line_length", 110);
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
+
+    m_code_display_font = config->Read("code_display_font", "");
 
     config->SetPath("/");
 }
@@ -63,13 +84,33 @@ void Prefs::WriteConfig()
     config->Write("high_contrast", m_high_constrast);
     config->Write("load_last_project", m_is_load_last_project);
     config->Write("right_propgrid", m_is_right_propgrid);
+
     config->Write("cpp_snake_case", m_is_cpp_snake_case);
 
     config->Write("cpp_widgets_version", m_cpp_widgets_version.make_wxString());
+    config->Write("python_version", m_python_version.make_wxString());
+    config->Write("ruby_version", m_ruby_version.make_wxString());
 
     config->Write("cpp_colour", m_colour_cpp.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("cpp_comment_colour", m_colour_cpp_comment.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("cpp_keyword_colour", m_colour_cpp_keyword.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("cpp_number_colour", m_colour_cpp_number.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("cpp_string_colour", m_colour_cpp_string.GetAsString(wxC2S_HTML_SYNTAX));
+
     config->Write("python_colour", m_colour_python.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("python_comment_colour", m_colour_python_comment.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("python_keyword_colour", m_colour_python_keyword.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("python_number_colour", m_colour_python_number.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("python_string_colour", m_colour_python_string.GetAsString(wxC2S_HTML_SYNTAX));
+
     config->Write("ruby_colour", m_colour_ruby.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("ruby_comment_colour", m_colour_ruby_comment.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("ruby_number_colour", m_colour_ruby_number.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("ruby_string_colour", m_colour_ruby_string.GetAsString(wxC2S_HTML_SYNTAX));
+
+    config->Write("xrc_colour", m_colour_xrc_attribute.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("xrc_dblstring_colour", m_colour_xrc_dblstring.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("xrc_tag_colour", m_colour_xrc_tag.GetAsString(wxC2S_HTML_SYNTAX));
 
     config->Write("cpp_line_length", m_cpp_line_length);
     config->Write("python_line_length", m_python_line_length);

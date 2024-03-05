@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Dark Mode and High Contrast Dark Mode are now available in the Prefences dialog on Windows.
+- The font used in the code panels can now be set in the Preferences dialog.
 - XPM files are now supported in wxPython and wxRuby3.
 - Setting a static bitmap's scale mode will now use wxGenericStaticBitmap in wxPython (4.2.1) and wxRuby3 (0.9.3) to ensure that all platforms will support the scaling.
 - Added wxBitmapToggleButton for all languages.
@@ -17,6 +18,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- The graphics in the Navigation panel and the Ribbon toolbar have been replaced with new SVG images that will scale better on high DPI displays. Because the new graphics were created from scratch, they may look quite different from the old ones.
+- Additional colors for the Code display panels can be set in Preferences (support for C++, Python, Ruby and XRC).
 - The `hide_children` property in the `wxStaticBoxSizer` has been removed since the `hidden` property does exactly the same thing. Projects where `hide_children` was set will be automatically converted to use `hidden` instead.
 - The Image List file now includes wxue_img::image_ functions for each image in the list, replacing the `extern` declarations that were previously used. A new `add_externs` property has been added -- check that if you still need the extern declarations.
 - wxIntegerValidator and wxFloatingPointValidator now support setting either min or max, and are generated as separate calls. Previously, you had to set both of them to have either one generated.

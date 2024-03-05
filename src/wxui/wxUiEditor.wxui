@@ -6922,12 +6922,10 @@
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
-                  class="wxFontPickerCtrl"
-                  var_name="m_code_font_picker"
-                  minimum_size="-1,-1d"
-                  tooltip="This font will be used for all of the Code panels"
-                  flags="wxEXPAND"
-                  proportion="1" />
+                  class="wxButton"
+                  label="Font"
+                  var_name="m_btn_font"
+                  wxEVT_BUTTON="OnFontButton" />
               </node>
             </node>
           </node>
@@ -6939,7 +6937,8 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-              var_name="page_sizer_2">
+              var_name="page_sizer_2"
+              flags="wxEXPAND">
               <node
                 class="wxBoxSizer">
                 <node
@@ -6952,6 +6951,7 @@
                 <node
                   class="wxTextCtrl"
                   class_access="none"
+                  value="110"
                   var_name="text_cpp_line_length"
                   validator_style="wxFILTER_DIGITS"
                   validator_variable="m_cpp_line_length"
@@ -6972,14 +6972,14 @@
                   var_name="static_text" />
                 <node
                   class="wxChoice"
-                  contents="&quot;3.1&quot; &quot;3.2&quot;"
+                  contents="&quot;3.1&quot; &quot;3.2&quot; &quot;3.3&quot;"
                   selection_string="3.2"
                   var_name="m_choice_cpp_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
               <node
-                class="wxBoxSizer"
-                var_name="box_sizer_8">
+                class="wxGridSizer"
+                var_name="grid_sizer3">
                 <node
                   class="wxStaticText"
                   class_access="none"
@@ -6988,7 +6988,48 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
+                  colour="#FF00FF"
                   var_name="m_colour_cpp" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;C++ keyword color:"
+                  var_name="staticText9"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#0000FF"
+                  var_name="m_colour_cpp_keyword" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText10"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_cpp_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText11"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_cpp_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText12"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_cpp_string" />
               </node>
             </node>
           </node>
@@ -7014,6 +7055,7 @@
                 <node
                   class="wxTextCtrl"
                   class_access="none"
+                  value="90"
                   var_name="text_python_line_length"
                   validator_style="wxFILTER_DIGITS"
                   validator_variable="m_python_line_length"
@@ -7021,16 +7063,72 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer_6">
+                var_name="box_sizer7">
                 <node
                   class="wxStaticText"
                   class_access="none"
-                  label="wxWidgets &amp;keyword color:"
+                  label="wxPython version"
+                  var_name="static_text3" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;4.2&quot;"
+                  selection_string="4.2"
+                  var_name="m_choice_python_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer2">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;wxWidgets keyword color:"
                   var_name="staticText"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
+                  colour="#FF00FF"
                   var_name="m_colour_python" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;wxWidgets keyword color:"
+                  var_name="staticText5"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#0000FF"
+                  var_name="m_colour_python_keyword" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText6"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_python_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText7"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_python_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText8"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_python_string" />
               </node>
             </node>
           </node>
@@ -7056,6 +7154,7 @@
                 <node
                   class="wxTextCtrl"
                   class_access="none"
+                  value="80"
                   var_name="text_ruby_line_length"
                   validator_style="wxFILTER_DIGITS"
                   validator_variable="m_ruby_line_length"
@@ -7063,17 +7162,110 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer_7">
+                var_name="box_sizer6">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxRuby version"
+                  var_name="static_text2" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.9&quot;"
+                  selection_string="0.9"
+                  var_name="m_choice_ruby_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer4">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText_6"
+                  var_name="staticText13"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
+                  colour="#FF00FF"
                   var_name="m_colour_ruby" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText15"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_ruby_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText16"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_ruby_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText17"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_ruby_string" />
               </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="XRC"
+            var_name="page_xrc"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer2">
+              <node
+                class="wxGridSizer">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Attribute color:"
+                  var_name="staticText3"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_xrc_attribute" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText4"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_xrc_string" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Tag color:"
+                  var_name="staticText2"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#0000FF"
+                  var_name="m_colour_xrc_tag" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer5" />
             </node>
           </node>
         </node>

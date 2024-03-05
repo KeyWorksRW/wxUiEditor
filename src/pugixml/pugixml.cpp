@@ -4532,13 +4532,13 @@ FILE* open_file_wide(const wchar_t* path, const wchar_t* mode)
 }
 #endif
 
-FILE* open_file(const char* path, const char* mode)
+FILE* open_file(const std::string& path, const char* mode)
 {
 #if defined(_MSC_VER) && _MSC_VER >= 1400
     FILE* file = 0;
-    return fopen_s(&file, path, mode) == 0 ? file : 0;
+    return fopen_s(&file, path.c_str(), mode) == 0 ? file : 0;
 #else
-    return fopen(path, mode);
+    return fopen(path.c_str(), mode);
 #endif
 }
 
@@ -6837,7 +6837,7 @@ namespace pugi
     {
         reset();
 
-        auto_deleter<FILE> file(impl::open_file(path.c_str(), "rb"), impl::close_file);
+        auto_deleter<FILE> file(impl::open_file(path, "rb"), impl::close_file);
 
         return impl::load_file_impl(static_cast<xml_document_struct*>(_root), file.data, options, encoding, &_buffer);
     }
@@ -6978,9 +6978,10 @@ namespace pugi
         return false;
     }
 
-    bool xml_document::save_file(const char* path_, const char* indent, unsigned int flags, xml_encoding encoding) const
+    bool xml_document::save_file(const std::string& path, const char* indent, unsigned int flags,
+                                 xml_encoding encoding) const
     {
-        auto_deleter<FILE> file(impl::open_file(path_, (flags & format_save_file_text) ? "w" : "wb"), impl::close_file);
+        auto_deleter<FILE> file(impl::open_file(path, (flags & format_save_file_text) ? "w" : "wb"), impl::close_file);
 
         return impl::save_file_impl(*this, file.data, indent, flags, encoding) && fclose(file.release()) == 0;
     }

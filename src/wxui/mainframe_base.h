@@ -22,10 +22,6 @@ class NavigationPanel;
 
 namespace wxue_img
 {
-    // ../art_src/DialogBlocks_1_5x.png
-    extern const unsigned char DialogBlocks_1_5x_png[931];
-    // ../art_src/DialogBlocks_2x.png
-    extern const unsigned char DialogBlocks_2x_png[796];
     // ../art_src/expand.svg
     extern const unsigned char expand_svg[648];
     // ../art_src/hidden.svg
@@ -34,14 +30,6 @@ namespace wxue_img
     extern const unsigned char magnify_svg[4117];
     // ../art_src/save.svg
     extern const unsigned char save_svg[1064];
-    // ../art_src/wxFB_1_5x.png
-    extern const unsigned char wxFB_1_5x_png[2162];
-    // ../art_src/wxFB_2x.png
-    extern const unsigned char wxFB_2x_png[5606];
-    // ../art_src/wxSmith_1_5x.png
-    extern const unsigned char wxSmith_1_5x_png[1407];
-    // ../art_src/wxSmith_2x.png
-    extern const unsigned char wxSmith_2x_png[2211];
 }
 
 class MainFrameBase : public wxFrame
@@ -56,6 +44,7 @@ public:
         id_AlignRight,
         id_AlignTop,
         id_AppendCrafter,
+        id_AppendDialogBlocks,
         id_AppendFormBuilder,
         id_AppendGlade,
         id_AppendSmith,

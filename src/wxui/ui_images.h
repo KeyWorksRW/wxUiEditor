@@ -18,8 +18,8 @@ namespace wxue_img
     wxImage get_image(const unsigned char* data, size_t size_data);
 
     wxBitmapBundle bundle_CustomControl_svg(int width, int height);
-    wxBitmapBundle bundle_alignbottom_svg(int width, int height);
     wxBitmapBundle bundle_DialogBlocks_png();  // DialogBlocks.png
+    wxBitmapBundle bundle_alignbottom_svg(int width, int height);
     wxBitmapBundle bundle_aligncenter_svg(int width, int height);
     wxBitmapBundle bundle_alignleft_svg(int width, int height);
     wxBitmapBundle bundle_alignright_svg(int width, int height);
@@ -123,8 +123,9 @@ namespace wxue_img
     wxBitmapBundle bundle_wxEditListBox_png();  // wxEditListBox.png
     wxBitmapBundle bundle_wxFB_png();  // wxFB.png
     wxBitmapBundle bundle_wxFrame_svg(int width, int height);
-    wxBitmapBundle bundle_wxListBox_png();  // wxListBox.png
     wxBitmapBundle bundle_wxGlade_png();  // wxGlade.png
+    wxBitmapBundle bundle_wxSmith_png();  // wxSmith.png
+    wxBitmapBundle bundle_wxListBox_png();  // wxListBox.png
     wxBitmapBundle bundle_wxListView_png();  // wxListView.png
     wxBitmapBundle bundle_wxPanel_svg(int width, int height);
     wxBitmapBundle bundle_wxPropertyGrid_svg(int width, int height);
@@ -136,7 +137,6 @@ namespace wxue_img
     wxBitmapBundle bundle_wxSimpleHtmlListBox_png();  // wxSimpleHtmlListBox.png
     wxBitmapBundle bundle_wxSimplebook_svg(int width, int height);
     wxBitmapBundle bundle_wxSplitterWindow_svg(int width, int height);
-    wxBitmapBundle bundle_wxSmith_png();  // wxSmith.png
     wxBitmapBundle bundle_wxStaticBoxSizer_svg(int width, int height);
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_svg(int width, int height);
     wxBitmapBundle bundle_wxStaticRadioBtnSizer_svg(int width, int height);
@@ -185,6 +185,8 @@ namespace wxue_img
     wxImage image_wxcrafter_png();
 
     extern const unsigned char CustomControl_svg[7855];  // ../art_src/CustomControl.svg
+    extern const unsigned char DialogBlocks_1_5x_png[931];  // ../art_src/DialogBlocks_1_5x.png
+    extern const unsigned char DialogBlocks_2x_png[796];  // ../art_src/DialogBlocks_2x.png
     extern const unsigned char DialogBlocks_png[547];  // ../art_src/DialogBlocks.png
     extern const unsigned char alignbottom_svg[506];  // ../art_src/alignbottom.svg
     extern const unsigned char aligncenter_svg[676];  // ../art_src/aligncenter.svg
@@ -192,7 +194,7 @@ namespace wxue_img
     extern const unsigned char alignright_svg[533];  // ../art_src/alignright.svg
     extern const unsigned char aligntop_svg[510];  // ../art_src/aligntop.svg
     extern const unsigned char alignvertcenter_svg[642];  // ../art_src/alignvertcenter.svg
-    extern const unsigned char auitoolbar_svg[7731];  // ../art_src/auitoolbar.svg
+    extern const unsigned char auitoolbar_svg[7811];  // ../art_src/auitoolbar.svg
     extern const unsigned char bitmap_svg[1564];  // ../art_src/bitmap.svg
     extern const unsigned char bitmap_toggle_button_svg[1688];  // ../art_src/bitmap_toggle_button.svg
     extern const unsigned char bmp_combo_box_svg[1762];  // ../art_src/bmp_combo_box.svg
@@ -288,6 +290,8 @@ namespace wxue_img
     extern const unsigned char wxCommandLinkButton_svg[3399];  // ../art_src/wxCommandLinkButton.svg
     extern const unsigned char wxDialog_svg[4638];  // ../art_src/wxDialog.svg
     extern const unsigned char wxEditListBox_png[707];  // ../art_src/wxEditListBox.png
+    extern const unsigned char wxFB_1_5x_png[2162];  // ../art_src/wxFB_1_5x.png
+    extern const unsigned char wxFB_2x_png[5606];  // ../art_src/wxFB_2x.png
     extern const unsigned char wxFB_png[609];  // ../art_src/wxFB.png
     extern const unsigned char wxFrame_svg[2968];  // ../art_src/wxFrame.svg
     extern const unsigned char wxGlade_png[224];  // ../art_src/wxGlade.png
@@ -302,6 +306,8 @@ namespace wxue_img
     extern const unsigned char wxScrolledWindow_svg[535];  // ../art_src/wxScrolledWindow.svg
     extern const unsigned char wxSimpleHtmlListBox_png[676];  // ../art_src/wxSimpleHtmlListBox.png
     extern const unsigned char wxSimplebook_svg[3182];  // ../art_src/wxSimplebook.svg
+    extern const unsigned char wxSmith_1_5x_png[1407];  // ../art_src/wxSmith_1_5x.png
+    extern const unsigned char wxSmith_2x_png[2211];  // ../art_src/wxSmith_2x.png
     extern const unsigned char wxSmith_png[797];  // ../art_src/wxSmith.png
     extern const unsigned char wxSplitterWindow_svg[3078];  // ../art_src/wxSplitterWindow.svg
     extern const unsigned char wxStaticBoxSizer_svg[2367];  // ../art_src/wxStaticBoxSizer.svg
@@ -320,7 +326,7 @@ namespace wxue_img
     extern const unsigned char wxlogo_svg[1476];  // ../art_src/wxlogo.svg
     extern const unsigned char xml_file_svg[1176];  // ../art_src/xml_file.svg
     extern const unsigned char xrc_compare_svg[438];  // ../art_src/xrc_compare.svg
-    extern const unsigned char xrc_preview_svg[2066];  // ../art_src/xrc_preview.svg
+    extern const unsigned char xrc_preview_svg[2147];  // ../art_src/xrc_preview.svg
     extern const unsigned char xrc_tests_svg[1886];  // ../art_src/xrc_tests.svg
 }
 

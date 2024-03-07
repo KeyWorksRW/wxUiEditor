@@ -24,8 +24,6 @@
 
 namespace wxue_img
 {
-    // ../art_src/customControl.png
-    extern const unsigned char customControl_png[740];
     // ../art_src/dataviewlist_column.png
     extern const unsigned char dataviewlist_column_png[224];
     // ../art_src/doc_mdi_parent_frame.png

@@ -23,8 +23,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -37,9 +35,9 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_notebook = new wxNotebook(this, wxID_ANY);
     {
         wxWithImages::Images bundle_list;
-        bundle_list.push_back(wxue_img::bundle_cpp_logo_svg(16, 16));
-        bundle_list.push_back(wxue_img::bundle_wxPython_png());
-        bundle_list.push_back(wxue_img::bundle_ruby_logo_svg(16, 16));
+        bundle_list.push_back(wxue_img::bundle_cpp_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_python_logo_only_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_ruby_logo_svg(24, 24));
         m_notebook->SetImages(bundle_list);
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));

@@ -9,12 +9,9 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -27,18 +24,12 @@ namespace wxue_img
 {
     // ../art_src/expand.svg
     extern const unsigned char expand_svg[648];
-    // ../art_src/generate.svg
-    extern const unsigned char generate_svg[2435];
     // ../art_src/hidden.svg
     extern const unsigned char hidden_svg[1993];
     // ../art_src/magnify.svg
     extern const unsigned char magnify_svg[4117];
     // ../art_src/save.svg
     extern const unsigned char save_svg[1064];
-    // ../art_src/wxlogo.svg
-    extern const unsigned char wxlogo_svg[1476];
-    // ../art_src/xrc_preview.svg
-    extern const unsigned char xrc_preview_svg[689];
 }
 
 class MainFrameBase : public wxFrame
@@ -53,6 +44,7 @@ public:
         id_AlignRight,
         id_AlignTop,
         id_AppendCrafter,
+        id_AppendDialogBlocks,
         id_AppendFormBuilder,
         id_AppendGlade,
         id_AppendSmith,

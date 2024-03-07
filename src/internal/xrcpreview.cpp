@@ -18,33 +18,6 @@
 
 #include "xrcpreview.h"
 
-#include <wx/mstream.h>  // memory stream classes
-#include <wx/zstream.h>  // zlib stream classes
-
-#include <memory>  // for std::make_unique
-
-// Convert compressed SVG string into a wxBitmapBundle
-#ifdef __cpp_inline_variables
-inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-#else
-static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-#endif
-{
-    auto str = std::make_unique<char[]>(size_svg);
-    wxMemoryInputStream stream_in(data, size_data);
-    wxZlibInputStream zlib_strm(stream_in);
-    zlib_strm.Read(str.get(), size_svg);
-    return wxBitmapBundle::FromSVG(str.get(), def_size);
-};
-
-namespace wxue_img
-{
-    extern const unsigned char generate_svg[2435];  // ../art_src/generate.svg
-    extern const unsigned char xrc_preview_svg[689];  // ../art_src/xrc_preview.svg
-}
-
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
@@ -73,12 +46,12 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* btn_3 = new wxButton(this, wxID_ANY, "&Generate...");
-        btn_3->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 2435, 7248, wxSize(16, 16)));
+        btn_3->SetBitmap(wxue_img::bundle_generate_svg(16, 16));
     btn_3->SetToolTip("Choose a form then generate the XRC code");
     box_sizer_2->Add(btn_3, wxSizerFlags().Border(wxALL));
 
     m_btn_preview = new wxButton(this, wxID_ANY, "&Preview...");
-        m_btn_preview->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 689, 1806, wxSize(16, 16)));
+        m_btn_preview->SetBitmap(wxue_img::bundle_xrc_preview_svg(16, 16));
     m_btn_preview->SetToolTip("Use wxXmlResource to load and display the contents");
     box_sizer_2->Add(m_btn_preview, wxSizerFlags().Border(wxALL));
 

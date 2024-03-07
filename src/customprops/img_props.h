@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Handles property grid image properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,7 @@
 
 class NodeProperty;
 
-inline constexpr std::array<const char*, 5> s_type_names = { "Art", "Embed", "SVG", "XPM" };
+inline constexpr std::array<const char*, 4> s_type_names = { "Embed", "SVG", "Art", "XPM" };
 
 struct ImageProperties
 {

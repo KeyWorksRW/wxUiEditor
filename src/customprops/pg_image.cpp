@@ -30,6 +30,11 @@ using namespace wxue_img;
 
 #include "art_ids.cpp"  // wxART_ strings
 
+#define EMBED_INDEX 0
+#define SVG_INDEX   1
+#define ART_INDEX   2
+#define XPM_INDEX   3
+
 wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Image, wxPGProperty);
 
 PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop) : wxPGProperty(label, wxPG_LABEL)
@@ -42,24 +47,24 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     }
     else if (UserPrefs.is_SvgImages())
     {
-        m_img_props.type = s_type_names[2];  // SVG
+        m_img_props.type = s_type_names[SVG_INDEX];  // SVG
     }
 
     wxPGChoices types;
 
     if (prop->getNode()->isGen(gen_embedded_image))
     {
-        types.Add(s_type_names[1]);  // Embed
-        types.Add(s_type_names[2]);  // SVG
+        types.Add(s_type_names[EMBED_INDEX]);
+        types.Add(s_type_names[SVG_INDEX]);
         m_isEmbeddedImage = true;
     }
     else
     {
         // These need to match the array in img_props.h
-        types.Add(s_type_names[0]);  // Art
-        types.Add(s_type_names[1]);  // Embed
-        types.Add(s_type_names[2]);  // SVG
-        types.Add(s_type_names[3]);  // XPM
+        types.Add(s_type_names[EMBED_INDEX]);
+        types.Add(s_type_names[SVG_INDEX]);
+        types.Add(s_type_names[ART_INDEX]);
+        types.Add(s_type_names[XPM_INDEX]);
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
@@ -216,7 +221,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
     ImageProperties img_props;
     if (UserPrefs.is_SvgImages())
     {
-        img_props.type = s_type_names[2];  // SVG
+        img_props.type = s_type_names[SVG_INDEX];
         img_props.SetWidth(24);
         img_props.SetHeight(24);
     }
@@ -234,7 +239,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             {
                 if (m_isEmbeddedImage && index > 0)
                 {
-                    img_props.type = s_type_names[2];  // SVG image type
+                    img_props.type = s_type_names[SVG_INDEX];  // SVG image type
                 }
                 else
                 {

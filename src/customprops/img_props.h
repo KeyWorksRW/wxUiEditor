@@ -18,7 +18,7 @@ inline constexpr std::array<const char*, 4> s_type_names = { "Embed", "SVG", "Ar
 struct ImageProperties
 {
 public:
-    tt_string type { s_type_names[1] };
+    tt_string type { s_type_names[0] };
     tt_string image;
 
     NodeProperty* node_property;

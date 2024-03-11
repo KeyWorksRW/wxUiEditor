@@ -18,14 +18,13 @@ using namespace GenEnum;
 
 MenuRibbonType::MenuRibbonType() : wxMenu()
 {
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
 
     auto* menu_item = Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
-    menu_item->SetBitmap(wxue_img::bundle_ribbon_buttonbar_png());
+    menu_item->SetBitmap(wxue_img::bundle_ribbon_buttonbar_svg(24, 24));
     auto* menu_item_2 = Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
+    menu_item_2->SetBitmap(wxue_img::bundle_ribbon_toolbar_svg(24, 24));
     auto* menu_item_3 = Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
-    menu_item_3->SetBitmap(wxue_img::bundle_ribbon_gallery_png());
+    menu_item_3->SetBitmap(wxue_img::bundle_ribbon_gallery_svg(24, 24));
 }
 
 // ************* End of generated code ***********

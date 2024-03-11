@@ -9,11 +9,8 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/ribbon/art.h>
 #include <wx/ribbon/bar.h>
@@ -21,60 +18,6 @@
 #include <wx/ribbon/page.h>
 #include <wx/ribbon/toolbar.h>
 #include <wx/sizer.h>
-
-namespace wxue_img
-{
-    // ../art_src/dataviewlist_column.png
-    extern const unsigned char dataviewlist_column_png[224];
-    // ../art_src/doc_mdi_parent_frame.png
-    extern const unsigned char doc_mdi_parent_frame_png[543];
-    // ../art_src/genericdir_ctrl.png
-    extern const unsigned char genericdir_ctrl_png[328];
-    // ../art_src/htmlwin.png
-    extern const unsigned char htmlwin_png[1053];
-    // ../art_src/hyperlink_ctrl.png
-    extern const unsigned char hyperlink_ctrl_png[329];
-    // ../art_src/infobar.png
-    extern const unsigned char infobar_png[556];
-    // ../art_src/menu.png
-    extern const unsigned char menu_png[795];
-    // ../art_src/menuitem.png
-    extern const unsigned char menuitem_png[481];
-    // ../art_src/ribbon_button.png
-    extern const unsigned char ribbon_button_png[220];
-    // ../art_src/ribbon_gallery_item.png
-    extern const unsigned char ribbon_gallery_item_png[679];
-    // ../art_src/ribbon_page.png
-    extern const unsigned char ribbon_page_png[368];
-    // ../art_src/ribbon_panel.png
-    extern const unsigned char ribbon_panel_png[392];
-    // ../art_src/separator.png
-    extern const unsigned char separator_png[306];
-    // ../art_src/statusbar.png
-    extern const unsigned char statusbar_png[432];
-    // ../art_src/submenu.png
-    extern const unsigned char submenu_png[760];
-    // ../art_src/tree_ctrl.png
-    extern const unsigned char tree_ctrl_png[246];
-    // ../art_src/treelistctrl.png
-    extern const unsigned char treelistctrl_png[425];
-    // ../art_src/treelistctrlcolumn.png
-    extern const unsigned char treelistctrlcolumn_png[504];
-    // ../art_src/webview.png
-    extern const unsigned char webview_png[1208];
-    // ../art_src/wxMenuBar.png
-    extern const unsigned char wxMenuBar_png[490];
-    // ../art_src/wxactivityIndicator.png
-    extern const unsigned char wxactivityIndicator_png[796];
-    // ../art_src/wxanimation.png
-    extern const unsigned char wxanimation_png[248];
-    // ../art_src/wxbannerWindow.png
-    extern const unsigned char wxbannerWindow_png[835];
-    // ../art_src/wxfileCtrl.png
-    extern const unsigned char wxfileCtrl_png[255];
-    // ../art_src/wxmenuBar.png
-    extern const unsigned char wxmenuBar_png[490];
-}
 
 class RibbonPanelBase : public wxPanel
 {

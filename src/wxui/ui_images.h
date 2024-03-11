@@ -39,13 +39,16 @@ namespace wxue_img
     wxBitmapBundle bundle_cpp_logo_svg(int width, int height);
     wxBitmapBundle bundle_ctx_help_btn_svg(int width, int height);
     wxBitmapBundle bundle_data_list_svg(int width, int height);
-    wxBitmapBundle bundle_dataview_ctrl_png();  // dataview_ctrl.png
-    wxBitmapBundle bundle_dataviewlist_ctrl_png();  // dataviewlist_ctrl.png
-    wxBitmapBundle bundle_dataviewtree_ctrl_png();  // dataviewtree_ctrl.png
+    wxBitmapBundle bundle_dataview_column_svg(int width, int height);
+    wxBitmapBundle bundle_dataview_ctrl_svg(int width, int height);
+    wxBitmapBundle bundle_dataviewlist_column_svg(int width, int height);
+    wxBitmapBundle bundle_dataviewlist_ctrl_svg(int width, int height);
+    wxBitmapBundle bundle_dataviewtree_ctrl_svg(int width, int height);
     wxBitmapBundle bundle_datepicker_svg(int width, int height);
     wxBitmapBundle bundle_debug_logo_svg(int width, int height);
     wxBitmapBundle bundle_default_png();  // default.png
     wxBitmapBundle bundle_dirPicker_svg(int width, int height);
+    wxBitmapBundle bundle_doc_mdi_parent_frame_svg(int width, int height);
     wxBitmapBundle bundle_duplicate_svg(int width, int height);
     wxBitmapBundle bundle_empty_png();  // empty.png
     wxBitmapBundle bundle_filePicker_svg(int width, int height);
@@ -54,13 +57,19 @@ namespace wxue_img
     wxBitmapBundle bundle_fontPicker_svg(int width, int height);
     wxBitmapBundle bundle_gauge_svg(int width, int height);
     wxBitmapBundle bundle_generate_svg(int width, int height);
+    wxBitmapBundle bundle_genericdir_ctrl_svg(int width, int height);
     wxBitmapBundle bundle_grid_svg(int width, int height);
     wxBitmapBundle bundle_grid_bag_sizer_svg(int width, int height);
     wxBitmapBundle bundle_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_hide_svg(int width, int height);
+    wxBitmapBundle bundle_htmlwin_svg(int width, int height);
+    wxBitmapBundle bundle_hyperlink_ctrl_svg(int width, int height);
     wxBitmapBundle bundle_images_svg(int width, int height);
     wxBitmapBundle bundle_import_svg(int width, int height);
+    wxBitmapBundle bundle_infobar_svg(int width, int height);
     wxBitmapBundle bundle_left_svg(int width, int height);
+    wxBitmapBundle bundle_menu_svg(int width, int height);
+    wxBitmapBundle bundle_menuitem_svg(int width, int height);
     wxBitmapBundle bundle_new_project_svg(int width, int height);
     wxBitmapBundle bundle_notebook_svg(int width, int height);
     wxBitmapBundle bundle_notebook_aui_svg(int width, int height);
@@ -78,15 +87,22 @@ namespace wxue_img
     wxBitmapBundle bundle_radio_box_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_ribbon_bar_svg(int width, int height);
-    wxBitmapBundle bundle_ribbon_buttonbar_png();  // ribbon_buttonbar.png
-    wxBitmapBundle bundle_ribbon_gallery_png();  // ribbon_gallery.png
+    wxBitmapBundle bundle_ribbon_button_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_buttonbar_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_gallery_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_gallery_item_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_page_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_panel_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_separator_svg(int width, int height);
+    wxBitmapBundle bundle_ribbon_toolbar_svg(int width, int height);
     wxBitmapBundle bundle_richtextctrl_svg(int width, int height);
     wxBitmapBundle bundle_right_svg(int width, int height);
     wxBitmapBundle bundle_ruby_logo_svg(int width, int height);
     wxBitmapBundle bundle_saveas_svg(int width, int height);
     wxBitmapBundle bundle_scintilla_svg(int width, int height);
-    wxBitmapBundle bundle_scrollbar_png();  // scrollbar.png
+    wxBitmapBundle bundle_scrollbar_svg(int width, int height);
     wxBitmapBundle bundle_search_svg(int width, int height);
+    wxBitmapBundle bundle_separator_svg(int width, int height);
     wxBitmapBundle bundle_sizer_svg(int width, int height);
     wxBitmapBundle bundle_sizer_horizontal_svg(int width, int height);
     wxBitmapBundle bundle_slider_svg(int width, int height);
@@ -95,7 +111,9 @@ namespace wxue_img
     wxBitmapBundle bundle_spin_ctrl_double_svg(int width, int height);
     wxBitmapBundle bundle_spinbtn_svg(int width, int height);
     wxBitmapBundle bundle_static_line_svg(int width, int height);
+    wxBitmapBundle bundle_statusbar_svg(int width, int height);
     wxBitmapBundle bundle_stddialogbuttonsizer_svg(int width, int height);
+    wxBitmapBundle bundle_submenu_svg(int width, int height);
     wxBitmapBundle bundle_svg_svg(int width, int height);
     wxBitmapBundle bundle_text_file_svg(int width, int height);
     wxBitmapBundle bundle_text_sizer_svg(int width, int height);
@@ -108,34 +126,42 @@ namespace wxue_img
     wxBitmapBundle bundle_toolseparator_svg(int width, int height);
     wxBitmapBundle bundle_toolspacer_svg(int width, int height);
     wxBitmapBundle bundle_top_svg(int width, int height);
+    wxBitmapBundle bundle_tree_ctrl_svg(int width, int height);
+    wxBitmapBundle bundle_treelistctrl_svg(int width, int height);
+    wxBitmapBundle bundle_treelistctrlcolumn_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_unknown_png();  // unknown.png
     wxBitmapBundle bundle_unknown_svg(int width, int height);
+    wxBitmapBundle bundle_webview_svg(int width, int height);
     wxBitmapBundle bundle_wrap_sizer_svg(int width, int height);
+    wxBitmapBundle bundle_wxAnimation_svg(int width, int height);
+    wxBitmapBundle bundle_wxBannerWindow_svg(int width, int height);
     wxBitmapBundle bundle_wxButton_svg(int width, int height);
     wxBitmapBundle bundle_wxCheckBox_svg(int width, int height);
-    wxBitmapBundle bundle_wxCheckListBox_png();  // wxCheckListBox.png
+    wxBitmapBundle bundle_wxCheckListBox_svg(int width, int height);
     wxBitmapBundle bundle_wxChoice_svg(int width, int height);
     wxBitmapBundle bundle_wxCollapsiblePane_svg(int width, int height);
     wxBitmapBundle bundle_wxComboBox_svg(int width, int height);
     wxBitmapBundle bundle_wxCommandLinkButton_svg(int width, int height);
     wxBitmapBundle bundle_wxDialog_svg(int width, int height);
-    wxBitmapBundle bundle_wxEditListBox_png();  // wxEditListBox.png
+    wxBitmapBundle bundle_wxEditListBox_svg(int width, int height);
     wxBitmapBundle bundle_wxFB_png();  // wxFB.png
+    wxBitmapBundle bundle_wxFileCtrl_svg(int width, int height);
     wxBitmapBundle bundle_wxFrame_svg(int width, int height);
     wxBitmapBundle bundle_wxGlade_png();  // wxGlade.png
-    wxBitmapBundle bundle_wxSmith_png();  // wxSmith.png
-    wxBitmapBundle bundle_wxListBox_png();  // wxListBox.png
-    wxBitmapBundle bundle_wxListView_png();  // wxListView.png
+    wxBitmapBundle bundle_wxListBox_svg(int width, int height);
+    wxBitmapBundle bundle_wxListView_svg(int width, int height);
+    wxBitmapBundle bundle_wxMenuBar_svg(int width, int height);
     wxBitmapBundle bundle_wxPanel_svg(int width, int height);
     wxBitmapBundle bundle_wxPropertyGrid_svg(int width, int height);
     wxBitmapBundle bundle_wxPropertyGridManager_svg(int width, int height);
     wxBitmapBundle bundle_wxPython_svg(int width, int height);
     wxBitmapBundle bundle_wxRadioButton_svg(int width, int height);
-    wxBitmapBundle bundle_wxRearrangeCtrl_png();  // wxRearrangeCtrl.png
+    wxBitmapBundle bundle_wxRearrangeCtrl_svg(int width, int height);
     wxBitmapBundle bundle_wxScrolledWindow_svg(int width, int height);
-    wxBitmapBundle bundle_wxSimpleHtmlListBox_png();  // wxSimpleHtmlListBox.png
+    wxBitmapBundle bundle_wxSimpleHtmlListBox_svg(int width, int height);
     wxBitmapBundle bundle_wxSimplebook_svg(int width, int height);
+    wxBitmapBundle bundle_wxSmith_png();  // wxSmith.png
     wxBitmapBundle bundle_wxSplitterWindow_svg(int width, int height);
     wxBitmapBundle bundle_wxStaticBoxSizer_svg(int width, int height);
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_svg(int width, int height);
@@ -149,6 +175,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
     wxBitmapBundle bundle_wxWizard_svg(int width, int height);
     wxBitmapBundle bundle_wxWizardPageSimple_svg(int width, int height);
+    wxBitmapBundle bundle_wxactivityIndicator_svg(int width, int height);
     wxBitmapBundle bundle_wxcrafter_png();  // wxcrafter.png
     wxBitmapBundle bundle_wxlogo_svg(int width, int height);
     wxBitmapBundle bundle_xml_file_svg(int width, int height);
@@ -159,26 +186,14 @@ namespace wxue_img
     wxImage image_DialogBlocks_1_5x_png();
     wxImage image_DialogBlocks_2x_png();
     wxImage image_DialogBlocks_png();
-    wxImage image_dataview_ctrl_png();
-    wxImage image_dataviewlist_ctrl_png();
-    wxImage image_dataviewtree_ctrl_png();
     wxImage image_default_png();
     wxImage image_empty_png();
-    wxImage image_ribbon_buttonbar_png();
-    wxImage image_ribbon_gallery_png();
-    wxImage image_scrollbar_png();
     wxImage image_title_close_png();
     wxImage image_unknown_png();
-    wxImage image_wxCheckListBox_png();
-    wxImage image_wxEditListBox_png();
     wxImage image_wxFB_1_5x_png();
     wxImage image_wxFB_2x_png();
     wxImage image_wxFB_png();
     wxImage image_wxGlade_png();
-    wxImage image_wxListBox_png();
-    wxImage image_wxListView_png();
-    wxImage image_wxRearrangeCtrl_png();
-    wxImage image_wxSimpleHtmlListBox_png();
     wxImage image_wxSmith_1_5x_png();
     wxImage image_wxSmith_2x_png();
     wxImage image_wxSmith_png();
@@ -208,13 +223,16 @@ namespace wxue_img
     extern const unsigned char cpp_logo_svg[664];  // ../art_src/cpp_logo.svg
     extern const unsigned char ctx_help_btn_svg[686];  // ../art_src/ctx_help_btn.svg
     extern const unsigned char data_list_svg[1088];  // ../art_src/data_list.svg
-    extern const unsigned char dataview_ctrl_png[231];  // ../art_src/dataview_ctrl.png
-    extern const unsigned char dataviewlist_ctrl_png[685];  // ../art_src/dataviewlist_ctrl.png
-    extern const unsigned char dataviewtree_ctrl_png[238];  // ../art_src/dataviewtree_ctrl.png
+    extern const unsigned char dataview_column_svg[6420];  // ../art_src/dataview_column.svg
+    extern const unsigned char dataview_ctrl_svg[12477];  // ../art_src/dataview_ctrl.svg
+    extern const unsigned char dataviewlist_column_svg[8955];  // ../art_src/dataviewlist_column.svg
+    extern const unsigned char dataviewlist_ctrl_svg[18308];  // ../art_src/dataviewlist_ctrl.svg
+    extern const unsigned char dataviewtree_ctrl_svg[12886];  // ../art_src/dataviewtree_ctrl.svg
     extern const unsigned char datepicker_svg[3836];  // ../art_src/datepicker.svg
     extern const unsigned char debug_logo_svg[11593];  // ../art_src/debug_logo.svg
     extern const unsigned char default_png[518];  // ../art_src/default.png
     extern const unsigned char dirPicker_svg[2772];  // ../art_src/dirPicker.svg
+    extern const unsigned char doc_mdi_parent_frame_svg[7676];  // ../art_src/doc_mdi_parent_frame.svg
     extern const unsigned char duplicate_svg[2742];  // ../art_src/duplicate.svg
     extern const unsigned char empty_png[101];  // ../art_src/empty.png
     extern const unsigned char filePicker_svg[54464];  // ../art_src/filePicker.svg
@@ -223,13 +241,19 @@ namespace wxue_img
     extern const unsigned char fontPicker_svg[4008];  // ../art_src/fontPicker.svg
     extern const unsigned char gauge_svg[285];  // ../art_src/gauge.svg
     extern const unsigned char generate_svg[2435];  // ../art_src/generate.svg
+    extern const unsigned char genericdir_ctrl_svg[7243];  // ../art_src/genericdir_ctrl.svg
     extern const unsigned char grid_bag_sizer_svg[272];  // ../art_src/grid_bag_sizer.svg
     extern const unsigned char grid_sizer_svg[483];  // ../art_src/grid_sizer.svg
     extern const unsigned char grid_svg[1863];  // ../art_src/grid.svg
     extern const unsigned char hide_svg[994];  // ../art_src/hide.svg
+    extern const unsigned char htmlwin_svg[3983];  // ../art_src/htmlwin.svg
+    extern const unsigned char hyperlink_ctrl_svg[2905];  // ../art_src/hyperlink_ctrl.svg
     extern const unsigned char images_svg[2344];  // ../art_src/images.svg
     extern const unsigned char import_svg[2454];  // ../art_src/import.svg
+    extern const unsigned char infobar_svg[1411];  // ../art_src/infobar.svg
     extern const unsigned char left_svg[437];  // ../art_src/left.svg
+    extern const unsigned char menu_svg[2449];  // ../art_src/menu.svg
+    extern const unsigned char menuitem_svg[2783];  // ../art_src/menuitem.svg
     extern const unsigned char new_project_svg[1062];  // ../art_src/new-project.svg
     extern const unsigned char notebook_aui_svg[1615];  // ../art_src/notebook_aui.svg
     extern const unsigned char notebook_choice_svg[2122];  // ../art_src/notebook_choice.svg
@@ -247,15 +271,22 @@ namespace wxue_img
     extern const unsigned char radio_box_svg[9527];  // ../art_src/radio_box.svg
     extern const unsigned char redo_svg[913];  // ../art_src/redo.svg
     extern const unsigned char ribbon_bar_svg[2353];  // ../art_src/ribbon_bar.svg
-    extern const unsigned char ribbon_buttonbar_png[300];  // ../art_src/ribbon_buttonbar.png
-    extern const unsigned char ribbon_gallery_png[215];  // ../art_src/ribbon_gallery.png
+    extern const unsigned char ribbon_button_svg[878];  // ../art_src/ribbon_button.svg
+    extern const unsigned char ribbon_buttonbar_svg[2154];  // ../art_src/ribbon_buttonbar.svg
+    extern const unsigned char ribbon_gallery_item_svg[1636];  // ../art_src/ribbon_gallery_item.svg
+    extern const unsigned char ribbon_gallery_svg[4899];  // ../art_src/ribbon_gallery.svg
+    extern const unsigned char ribbon_page_svg[1420];  // ../art_src/ribbon_page.svg
+    extern const unsigned char ribbon_panel_svg[1185];  // ../art_src/ribbon_panel.svg
+    extern const unsigned char ribbon_separator_svg[1705];  // ../art_src/ribbon_separator.svg
+    extern const unsigned char ribbon_toolbar_svg[6716];  // ../art_src/ribbon_toolbar.svg
     extern const unsigned char richtextctrl_svg[2949];  // ../art_src/richtextctrl.svg
     extern const unsigned char right_svg[677];  // ../art_src/right.svg
     extern const unsigned char ruby_logo_svg[967];  // ../art_src/ruby_logo.svg
     extern const unsigned char saveas_svg[5968];  // ../art_src/saveas.svg
     extern const unsigned char scintilla_svg[53987];  // ../art_src/scintilla.svg
-    extern const unsigned char scrollbar_png[214];  // ../art_src/scrollbar.png
+    extern const unsigned char scrollbar_svg[593];  // ../art_src/scrollbar.svg
     extern const unsigned char search_svg[1485];  // ../art_src/search.svg
+    extern const unsigned char separator_svg[4312];  // ../art_src/separator.svg
     extern const unsigned char sizer_horizontal_svg[302];  // ../art_src/sizer_horizontal.svg
     extern const unsigned char sizer_svg[302];  // ../art_src/sizer.svg
     extern const unsigned char slider_svg[303];  // ../art_src/slider.svg
@@ -264,7 +295,9 @@ namespace wxue_img
     extern const unsigned char spin_ctrl_svg[827];  // ../art_src/spin_ctrl.svg
     extern const unsigned char spinbtn_svg[355];  // ../art_src/spinbtn.svg
     extern const unsigned char static_line_svg[208];  // ../art_src/static_line.svg
+    extern const unsigned char statusbar_svg[1782];  // ../art_src/statusbar.svg
     extern const unsigned char stddialogbuttonsizer_svg[1676];  // ../art_src/stddialogbuttonsizer.svg
+    extern const unsigned char submenu_svg[3295];  // ../art_src/submenu.svg
     extern const unsigned char svg_svg[1653];  // ../art_src/svg.svg
     extern const unsigned char text_file_svg[2720];  // ../art_src/text_file.svg
     extern const unsigned char text_sizer_svg[311];  // ../art_src/text_sizer.svg
@@ -277,34 +310,42 @@ namespace wxue_img
     extern const unsigned char toolseparator_svg[1732];  // ../art_src/toolseparator.svg
     extern const unsigned char toolspacer_svg[1671];  // ../art_src/toolspacer.svg
     extern const unsigned char top_svg[435];  // ../art_src/top.svg
+    extern const unsigned char tree_ctrl_svg[8474];  // ../art_src/tree_ctrl.svg
+    extern const unsigned char treelistctrl_svg[10580];  // ../art_src/treelistctrl.svg
+    extern const unsigned char treelistctrlcolumn_svg[10615];  // ../art_src/treelistctrlcolumn.svg
     extern const unsigned char undo_svg[689];  // ../art_src/undo.svg
     extern const unsigned char unknown_png[1699];  // ../art_src/unknown.png
     extern const unsigned char unknown_svg[1426];  // ../art_src/unknown.svg
+    extern const unsigned char webview_svg[1251];  // ../art_src/webview.svg
     extern const unsigned char wrap_sizer_svg[435];  // ../art_src/wrap_sizer.svg
+    extern const unsigned char wxAnimation_svg[4486];  // ../art_src/wxAnimation.svg
+    extern const unsigned char wxBannerWindow_svg[9158];  // ../art_src/wxBannerWindow.svg
     extern const unsigned char wxButton_svg[693];  // ../art_src/wxButton.svg
     extern const unsigned char wxCheckBox_svg[782];  // ../art_src/wxCheckBox.svg
-    extern const unsigned char wxCheckListBox_png[498];  // ../art_src/wxCheckListBox.png
+    extern const unsigned char wxCheckListBox_svg[8745];  // ../art_src/wxCheckListBox.svg
     extern const unsigned char wxChoice_svg[2432];  // ../art_src/wxChoice.svg
     extern const unsigned char wxCollapsiblePane_svg[3838];  // ../art_src/wxCollapsiblePane.svg
     extern const unsigned char wxComboBox_svg[304];  // ../art_src/wxComboBox.svg
     extern const unsigned char wxCommandLinkButton_svg[3399];  // ../art_src/wxCommandLinkButton.svg
     extern const unsigned char wxDialog_svg[4638];  // ../art_src/wxDialog.svg
-    extern const unsigned char wxEditListBox_png[707];  // ../art_src/wxEditListBox.png
+    extern const unsigned char wxEditListBox_svg[5160];  // ../art_src/wxEditListBox.svg
     extern const unsigned char wxFB_1_5x_png[2162];  // ../art_src/wxFB_1_5x.png
     extern const unsigned char wxFB_2x_png[5606];  // ../art_src/wxFB_2x.png
     extern const unsigned char wxFB_png[609];  // ../art_src/wxFB.png
+    extern const unsigned char wxFileCtrl_svg[10142];  // ../art_src/wxFileCtrl.svg
     extern const unsigned char wxFrame_svg[2968];  // ../art_src/wxFrame.svg
     extern const unsigned char wxGlade_png[224];  // ../art_src/wxGlade.png
-    extern const unsigned char wxListBox_png[310];  // ../art_src/wxListBox.png
-    extern const unsigned char wxListView_png[356];  // ../art_src/wxListView.png
+    extern const unsigned char wxListBox_svg[8503];  // ../art_src/wxListBox.svg
+    extern const unsigned char wxListView_svg[16898];  // ../art_src/wxListView.svg
+    extern const unsigned char wxMenuBar_svg[1441];  // ../art_src/wxMenuBar.svg
     extern const unsigned char wxPanel_svg[332];  // ../art_src/wxPanel.svg
     extern const unsigned char wxPropertyGridManager_svg[19542];  // ../art_src/wxPropertyGridManager.svg
     extern const unsigned char wxPropertyGrid_svg[18564];  // ../art_src/wxPropertyGrid.svg
     extern const unsigned char wxPython_svg[12402];  // ../art_src/wxPython.svg
     extern const unsigned char wxRadioButton_svg[594];  // ../art_src/wxRadioButton.svg
-    extern const unsigned char wxRearrangeCtrl_png[332];  // ../art_src/wxRearrangeCtrl.png
+    extern const unsigned char wxRearrangeCtrl_svg[8240];  // ../art_src/wxRearrangeCtrl.svg
     extern const unsigned char wxScrolledWindow_svg[535];  // ../art_src/wxScrolledWindow.svg
-    extern const unsigned char wxSimpleHtmlListBox_png[676];  // ../art_src/wxSimpleHtmlListBox.png
+    extern const unsigned char wxSimpleHtmlListBox_svg[8995];  // ../art_src/wxSimpleHtmlListBox.svg
     extern const unsigned char wxSimplebook_svg[3182];  // ../art_src/wxSimplebook.svg
     extern const unsigned char wxSmith_1_5x_png[1407];  // ../art_src/wxSmith_1_5x.png
     extern const unsigned char wxSmith_2x_png[2211];  // ../art_src/wxSmith_2x.png
@@ -322,6 +363,7 @@ namespace wxue_img
     extern const unsigned char wxUiEditor_svg[4381];  // ../art_src/wxUiEditor.svg
     extern const unsigned char wxWizardPageSimple_svg[1092];  // ../art_src/wxWizardPageSimple.svg
     extern const unsigned char wxWizard_svg[6433];  // ../art_src/wxWizard.svg
+    extern const unsigned char wxactivityIndicator_svg[2129];  // ../art_src/wxactivityIndicator.svg
     extern const unsigned char wxcrafter_png[701];  // ../art_src/wxcrafter.png
     extern const unsigned char wxlogo_svg[1476];  // ../art_src/wxlogo.svg
     extern const unsigned char xml_file_svg[1176];  // ../art_src/xml_file.svg

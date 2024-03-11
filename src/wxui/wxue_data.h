@@ -34,7 +34,7 @@ namespace wxue_data
     std::string get_widgets();
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6181]; // 39002
+    extern const unsigned char bars[6183]; // 39008
     // ../xml/boxes.xml
     extern const unsigned char boxes[2436]; // 14348
     // ../xml/buttons.xml

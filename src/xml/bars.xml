@@ -807,6 +807,6 @@
             help="The bitmap to display for the item. Note that all items must have equally sized bitmaps. "/>
     </gen>
 
-    <gen class="ribbonSeparator" image="toolspacer" type="ribbontool"/>
+    <gen class="ribbonSeparator" image="ribbon_separator" type="ribbontool"/>
 
 </GeneratorDefinitions>

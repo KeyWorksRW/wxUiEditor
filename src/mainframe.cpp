@@ -126,11 +126,13 @@ MainFrame::MainFrame() :
     bundle.AddIcon(bundle_debug_logo_svg(32, 32).GetIcon(wxSize(32, 32)));
     bundle.AddIcon(bundle_debug_logo_svg(48, 48).GetIcon(wxSize(48, 48)));
     bundle.AddIcon(bundle_debug_logo_svg(64, 64).GetIcon(wxSize(64, 64)));
+    bundle.AddIcon(bundle_debug_logo_svg(128, 128).GetIcon(wxSize(128, 128)));
 #else
     bundle.AddIcon(bundle_wxUiEditor_svg(16, 16).GetIcon(wxSize(16, 16)));
     bundle.AddIcon(bundle_wxUiEditor_svg(32, 32).GetIcon(wxSize(32, 32)));
     bundle.AddIcon(bundle_wxUiEditor_svg(48, 48).GetIcon(wxSize(48, 48)));
     bundle.AddIcon(bundle_wxUiEditor_svg(64, 64).GetIcon(wxSize(64, 64)));
+    bundle.AddIcon(bundle_wxUiEditor_svg(128, 128).GetIcon(wxSize(128, 128)));
 #endif  // _DEBUG
 
     SetIcons(bundle);

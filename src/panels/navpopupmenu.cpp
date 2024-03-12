@@ -388,7 +388,7 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
     wxMenuItem* menu_item;
     wxMenu* sub_menu;
 
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
     bool isTopSizer = (node->getParent()->isForm() || node->getParent()->isContainer());
 
     sub_menu = new wxMenu;
@@ -491,7 +491,7 @@ void NavPopupMenu::CreateCommonMenu(Node* node)
 void NavPopupMenu::MenuAddCommands(Node* node)
 {
     wxMenuItem* menu_item;
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     if (node->isForm())
@@ -861,7 +861,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
 void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 {
     m_sizer_node = child;
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
 
     auto sub_menu = new wxMenu;
     auto menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
@@ -896,7 +896,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
     wxMenuItem* menu_item;
     wxMenu* sub_menu;
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
     AddSeparatorIfNeeded();
 
     sub_menu = new wxMenu;
@@ -1069,7 +1069,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
 void NavPopupMenu::MenuAddStandardCommands(Node* node)
 {
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
 
     AddSeparatorIfNeeded();
     m_isPasteAllowed = false;
@@ -1206,7 +1206,7 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
 {
     auto sub_menu = new wxMenu;
     wxMenuItem* menu_item;
-    auto dpi_size = wxGetFrame().FromDIP(wxSize(16, 16));
+    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
 
     AppendSubMenu(sub_menu, "Tools");
 

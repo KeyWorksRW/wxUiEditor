@@ -115,6 +115,10 @@ MainFrame::MainFrame() :
     m_ImportHistory(9, wxID_FILE1 + 1000)
 #endif  // _DEBUG
 {
+    m_dpi_menu_size = FromDIP(wxSize(16, 16));
+    m_dpi_toolbar_size = FromDIP(wxSize(16, 16));
+    m_dpi_ribbon_size = FromDIP(wxSize(24, 24));
+
     wxIconBundle bundle;
 
 #if defined(_DEBUG)

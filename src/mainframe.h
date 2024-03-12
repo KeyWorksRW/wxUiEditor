@@ -192,6 +192,10 @@ public:
         return FindChildSizerItem(node.get(), include_splitter);
     }
 
+    const wxSize& GetMenuDpiSize() { return m_dpi_menu_size; }
+    const wxSize& GetRibbonDpiSize() { return m_dpi_ribbon_size; }
+    const wxSize& GetToolbarDpiSize() { return m_dpi_toolbar_size; }
+
     // This is the only variable length field, and therefore can hold the most text
     void setRightStatusField(const tt_string text) { setStatusField(text, m_posRightStatusField); }
 
@@ -401,6 +405,10 @@ private:
     wxMenu* m_submenu_import_recent;
 
 #endif  // _DEBUG
+
+    wxSize m_dpi_menu_size;
+    wxSize m_dpi_ribbon_size;
+    wxSize m_dpi_toolbar_size;
 
     wxInfoBar* m_info_bar { nullptr };
 

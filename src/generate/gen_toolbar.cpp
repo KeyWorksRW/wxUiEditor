@@ -13,7 +13,8 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "ui_images.h"
+#include "utils.h"  // Utility functions that work with properties
 
 #include "gen_toolbar.h"
 
@@ -54,21 +55,21 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         wxToolBarToolBase* added_tool = nullptr;
         if (childObj->isGen(gen_tool))
         {
-            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
-            if (!bmp.IsOk())
-                bmp = GetInternalImage("default");
+            auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
+                bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap,
                                           (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
                                           wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
-            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
-            if (!bmp.IsOk())
-                bmp = GetInternalImage("default");
+            auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
+                bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap, wxITEM_DROPDOWN,
                                           childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
@@ -345,21 +346,21 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         auto childObj = node->getChild(i);
         if (childObj->isGen(gen_tool))
         {
-            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
-            if (!bmp.IsOk())
-                bmp = GetInternalImage("default");
+            auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
+                bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
+            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap,
                              (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help), wxEmptyString,
                              nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
-            auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
-            if (!bmp.IsOk())
-                bmp = GetInternalImage("default");
+            auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
+                bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
+            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap, wxITEM_DROPDOWN,
                              childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))

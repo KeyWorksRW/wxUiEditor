@@ -23,7 +23,8 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler -- Project class
 #include "pugixml.hpp"        // xml parser
-#include "utils.h"            // Miscellaneous utility functions
+#include "ui_images.h"
+#include "utils.h"  // Miscellaneous utility functions
 
 #include "../../wxWidgets/3rdparty/lunasvg/source/element.h"
 
@@ -202,7 +203,7 @@ wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description, Node*
         return GetPropertyBitmapBundle(description, node);
     }
     else
-        return GetInternalImage("unknown");
+        return wxue_img::bundle_unknown_svg(32, 32);
 }
 
 wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool check_image)
@@ -1234,7 +1235,7 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description,
     tt_string_vector parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
     {
-        return GetInternalImage("unknown");
+        return wxue_img::bundle_unknown_svg(32, 32);
     }
 
     if (auto result = m_bundles.find(ConvertToLookup(parts)); result != m_bundles.end())
@@ -1257,7 +1258,7 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description,
         return result->bundle;
     }
 
-    return GetInternalImage("unknown");
+    return wxue_img::bundle_unknown_svg(32, 32);
 }
 
 const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector& parts, Node* node)

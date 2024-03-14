@@ -75,7 +75,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
                 auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
                 if (embed)
                 {
-                    name = "wxue_img::" + embed->array_name;
+                    name = "wxue_img::" + embed->imgs[0].array_name;
                 }
             }
 
@@ -104,7 +104,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             {
                 if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
                 {
-                    code.Str("get_animation(").Str("$").Str(embed->array_name) += ")";
+                    code.Str("get_animation(").Str("$").Str(embed->imgs[0].array_name) += ")";
                     found_embedded = true;
                 }
             }

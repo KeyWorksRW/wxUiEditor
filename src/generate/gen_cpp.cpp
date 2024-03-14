@@ -905,7 +905,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
         std::sort(m_embedded_images.begin(), m_embedded_images.end(),
                   [](const EmbeddedImage* a, const EmbeddedImage* b)
                   {
-                      return (a->array_name.compare(b->array_name) < 0);
+                      return (a->imgs[0].array_name.compare(b->imgs[0].array_name) < 0);
                   });
     }
 
@@ -1408,14 +1408,15 @@ void BaseCodeGenerator::GenerateCppHandlers()
     {
         for (auto& iter_img: m_embedded_images)
         {
-            if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_SVG &&
-                m_type_generated.find(iter_img->type) == m_type_generated.end())
+            if (iter_img->imgs[0].type != wxBITMAP_TYPE_BMP && iter_img->imgs[0].type != wxBITMAP_TYPE_SVG &&
+                m_type_generated.find(iter_img->imgs[0].type) == m_type_generated.end())
             {
-                m_source->writeLine(tt_string("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
+                m_source->writeLine(tt_string("if (!wxImage::FindHandler(") << g_map_types[iter_img->imgs[0].type] << "))");
                 m_source->Indent();
-                m_source->writeLine(tt_string("\twxImage::AddHandler(new ") << g_map_handlers[iter_img->type] << ");");
+                m_source->writeLine(tt_string("\twxImage::AddHandler(new ")
+                                    << g_map_handlers[iter_img->imgs[0].type] << ");");
                 m_source->Unindent();
-                m_type_generated.insert(iter_img->type);
+                m_type_generated.insert(iter_img->imgs[0].type);
             }
         }
         m_source->writeLine();

@@ -23,16 +23,21 @@ struct ImageBundle
     std::vector<tt_string> lst_filenames;
 };
 
-struct EmbeddedImage
+struct ImageInfo
 {
-    Node* form;  // the form node the image is declared in
-    tt_string array_name;
     tt_string filename;
+    tt_string array_name;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
-    wxSize size;                                // dimensions of the first image in the array
     std::filesystem::file_time_type file_time;  // time the file was last modified
     wxBitmapType type;
+};
+
+struct EmbeddedImage
+{
+    Node* form;                   // the form node the image is declared in
+    std::vector<ImageInfo> imgs;  // InitializeEmbedStructure() will always create at least one entry
+    wxSize size;                  // dimensions of the first image in the array
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
@@ -131,7 +136,7 @@ protected:
     void CollectNodeBundles(Node* node, Node* form);
 
     // Converts filename to a valid string name and sets EmbeddedImage::array_name
-    void InitializeArrayName(EmbeddedImage* embed, tt_string_view path);
+    void InitializeEmbedStructure(EmbeddedImage* embed, tt_string_view path, Node* form);
 
     bool AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock);
 

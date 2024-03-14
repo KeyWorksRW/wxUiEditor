@@ -399,7 +399,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
                     code.clear();
                     images_file_imported = true;
                 }
-                if (iter->type == wxBITMAP_TYPE_SVG)
+                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
                 {
                     m_source->writeLine("import zlib");
                     m_source->writeLine("import base64");
@@ -408,7 +408,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
             }
             else if (!svg_import_libs)
             {
-                if (iter->type == wxBITMAP_TYPE_SVG)
+                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
                 {
                     m_source->writeLine("import zlib");
                     m_source->writeLine("import base64");
@@ -575,7 +575,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     std::sort(m_embedded_images.begin(), m_embedded_images.end(),
               [](const EmbeddedImage* a, const EmbeddedImage* b)
               {
-                  return (a->array_name.compare(b->array_name) < 0);
+                  return (a->imgs[0].array_name.compare(b->imgs[0].array_name) < 0);
               });
 }
 
@@ -701,11 +701,11 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             {
                 svg_name = embed->form->as_string(prop_python_file).filename();
                 svg_name.remove_extension();
-                svg_name << '.' << embed->array_name;
+                svg_name << '.' << embed->imgs[0].array_name;
             }
             else
             {
-                svg_name = embed->array_name;
+                svg_name = embed->imgs[0].array_name;
             }
             code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
             code += "wx.BitmapBundle.FromSVG(_svg_string_";
@@ -732,7 +732,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             {
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
+                    code.CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap)"));
                     AddPythonImageName(code, embed);
                     code += ".Bitmap)";
                     is_embed_success = true;
@@ -754,14 +754,14 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             {
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap"));
+                    code.CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap"));
                     AddPythonImageName(code, embed);
 
                     code += ".Bitmap";
 
                     if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
                     {
-                        code.Comma().CheckLineLength(embed2->array_name.size() + sizeof(".Bitmap)"));
+                        code.Comma().CheckLineLength(embed2->imgs[0].array_name.size() + sizeof(".Bitmap)"));
                         AddPythonImageName(code, embed2);
                         code += ".Bitmap)";
                     }
@@ -792,7 +792,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
                 {
                     if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]); embed)
                     {
-                        code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap"));
+                        code.CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap"));
                         AddPythonImageName(code, embed);
 
                         code += ".Bitmap";

@@ -484,7 +484,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                     code.clear();
                     images_file_imported = true;
                 }
-                if (iter->type == wxBITMAP_TYPE_SVG)
+                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
                 {
                     if (!zlib_requirement_written)
                     {
@@ -506,7 +506,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             }
             else if (!svg_import_libs)
             {
-                if (iter->type == wxBITMAP_TYPE_SVG)
+                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
                 {
                     if (!zlib_requirement_written)
                     {
@@ -802,11 +802,11 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             {
                 svg_name = embed->form->as_string(prop_ruby_file).filename();
                 svg_name.remove_extension();
-                svg_name << ".$" << embed->array_name;
+                svg_name << ".$" << embed->imgs[0].array_name;
             }
             else
             {
-                svg_name = "$" + embed->array_name;
+                svg_name = "$" + embed->imgs[0].array_name;
             }
             code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
             code += "Wx::BitmapBundle.from_svg(_svg_string_";
@@ -844,18 +844,18 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
             }
             if (const EmbeddedImage* embed1 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed1)
             {
-                code.Str("wxue_get_bundle(").Str("$").Str(embed1->array_name);
+                code.Str("wxue_get_bundle(").Str("$").Str(embed1->imgs[0].array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
                     if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
                     {
-                        code.Comma().Str("$").Str(embed2->array_name);
+                        code.Comma().Str("$").Str(embed2->imgs[0].array_name);
                     }
                     if (bundle->lst_filenames.size() > 2)
                     {
                         if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
                         {
-                            code.Comma().Str("$").Str(embed3->array_name);
+                            code.Comma().Str("$").Str(embed3->imgs[0].array_name);
                         }
                     }
                 }

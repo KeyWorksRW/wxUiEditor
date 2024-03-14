@@ -579,19 +579,19 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                             }
                             if (!is_found)
                             {
-                                if (embed->filename.file_exists())
+                                if (embed->imgs[0].filename.file_exists())
                                 {
-                                    auto file_time = embed->filename.last_write_time();
-                                    if (file_time != embed->file_time)
+                                    auto file_time = embed->imgs[0].filename.last_write_time();
+                                    if (file_time != embed->imgs[0].file_time)
                                     {
                                         ProjectImages.UpdateEmbeddedImage(embed);
-                                        embed->file_time = file_time;
+                                        embed->imgs[0].file_time = file_time;
                                     }
                                     m_embedded_images.emplace_back(embed);
                                 }
                                 else
                                 {
-                                    MSG_INFO(tt_string() << "Unable to get file time for " << embed->filename);
+                                    MSG_INFO(tt_string() << "Unable to get file time for " << embed->imgs[0].filename);
                                 }
                             }
                         }

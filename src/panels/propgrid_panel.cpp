@@ -1627,7 +1627,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     {
         tt_string image_path(parts[IndexImage]);
         auto* embed = ProjectImages.GetEmbeddedImage(image_path);
-        if (embed && image_path == embed->filename)
+        if (embed && image_path == embed->imgs[0].filename)
         {
             // If the user is adding a node to a gen_Images node, then be sure that the embed
             // entry form is pointing to the gen_Images node.

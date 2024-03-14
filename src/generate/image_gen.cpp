@@ -39,11 +39,11 @@ void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
             is_namespace_written = true;
             code.Str("namespace wxue_img").OpenBrace();
         }
-        code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->array_name);
-        code.Str("[").itoa(iter_array->array_size & 0xFFFFFFFF).Str("];");
-        if (iter_array->filename.size())
+        code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->imgs[0].array_name);
+        code.Str("[").itoa(iter_array->imgs[0].array_size & 0xFFFFFFFF).Str("];");
+        if (iter_array->imgs[0].filename.size())
         {
-            code.Str("  // ").Str(iter_array->filename);
+            code.Str("  // ").Str(iter_array->imgs[0].filename);
         }
     }
 
@@ -78,14 +78,14 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
 
             // SVG images store the original size in the high 32 bits
-            size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
+            size_t max_pos = (iter_array->imgs[0].array_size & 0xFFFFFFFF);
 
-            if (iter_array->filename.size())
+            if (iter_array->imgs[0].filename.size())
             {
-                code.Eol(eol_if_needed).Str("// ").Str(iter_array->filename);
+                code.Eol(eol_if_needed).Str("// ").Str(iter_array->imgs[0].filename);
             }
             code.Eol();
-            code.Str("const unsigned char ").Str(iter_array->array_name);
+            code.Str("const unsigned char ").Str(iter_array->imgs[0].array_name);
             code.Str("[").itoa(max_pos).Str("] {");
             m_source->writeLine(code);
             code.clear();
@@ -97,7 +97,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             {
                 for (; pos < max_pos && code.size() < cpp_line_length; ++pos)
                 {
-                    code.itoa(iter_array->array_data[pos]) += ",";
+                    code.itoa(iter_array->imgs[0].array_data[pos]) += ",";
                 }
                 if (pos >= max_pos && code.GetCode().back() == ',')
                 {
@@ -120,12 +120,12 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             {
                 continue;
             }
-            if (iter_array->filename.size())
+            if (iter_array->imgs[0].filename.size())
             {
-                code.Eol().Str("# ").Str(iter_array->filename);
+                code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
             }
-            code.Eol().Str(iter_array->array_name);
-            if (iter_array->type == wxBITMAP_TYPE_SVG)
+            code.Eol().Str(iter_array->imgs[0].array_name);
+            if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
             {
                 code.Str(" = (");
             }
@@ -135,7 +135,8 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
+            auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
+                                         GEN_LANG_PYTHON);
             if (encoded.size())
             {
                 encoded.back() += ")";
@@ -148,12 +149,12 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             {
                 continue;
             }
-            if (iter_array->filename.size())
+            if (iter_array->imgs[0].filename.size())
             {
-                code.Eol().Str("# ").Str(iter_array->filename);
+                code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
             }
-            code.Eol().Str("$").Str(iter_array->array_name);
-            if (iter_array->type == wxBITMAP_TYPE_SVG)
+            code.Eol().Str("$").Str(iter_array->imgs[0].array_name);
+            if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
             {
                 code.Str(" = (");
             }
@@ -163,7 +164,8 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+            auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
+                                         GEN_LANG_RUBY);
             if (encoded.size())
             {
                 // Remove the trailing '+' character
@@ -208,12 +210,13 @@ void BaseCodeGenerator::WriteImagePostHeader()
             m_header->Indent();
             is_namespace_written = true;
         }
-        if (iter_array->filename.size())
+        if (iter_array->imgs[0].filename.size())
         {
-            m_header->writeLine(tt_string("// ") << iter_array->filename);
+            m_header->writeLine(tt_string("// ") << iter_array->imgs[0].filename);
         }
         m_header->writeLine(tt_string("extern const unsigned char ")
-                            << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
+                            << iter_array->imgs[0].array_name << '[' << (iter_array->imgs[0].array_size & 0xFFFFFFFF)
+                            << "];");
     }
 
     if (is_namespace_written)
@@ -352,12 +355,12 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
-        if (iter_array->filename.size())
+        if (iter_array->imgs[0].filename.size())
         {
-            code.Eol().Str("# ").Str(iter_array->filename);
+            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
         }
-        code.Eol().Str(iter_array->array_name);
-        if (iter_array->type == wxBITMAP_TYPE_SVG)
+        code.Eol().Str(iter_array->imgs[0].array_name);
+        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
         {
             code.Str(" = (");
         }
@@ -368,7 +371,8 @@ void BaseCodeGenerator::GeneratePythonImagesForm()
 
         m_source->writeLine(code);
         code.clear();
-        auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
+        auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
+                                     GEN_LANG_PYTHON);
         if (encoded.size())
         {
             encoded.back() += ")";
@@ -423,12 +427,12 @@ void BaseCodeGenerator::GenerateRubyImagesForm()
         if (iter_array->form != m_form_node)
             continue;
 
-        if (iter_array->filename.size())
+        if (iter_array->imgs[0].filename.size())
         {
-            code.Eol().Str("# ").Str(iter_array->filename);
+            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
         }
-        code.Eol().Str("$").Str(iter_array->array_name);
-        if (iter_array->type == wxBITMAP_TYPE_SVG)
+        code.Eol().Str("$").Str(iter_array->imgs[0].array_name);
+        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
         {
             code.Str(" = (");
         }
@@ -438,7 +442,8 @@ void BaseCodeGenerator::GenerateRubyImagesForm()
         }
         m_source->writeLine(code);
         code.clear();
-        auto encoded = base64_encode(iter_array->array_data.get(), iter_array->array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+        auto encoded =
+            base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
         if (encoded.size())
         {
             // Remove the trailing '+' character
@@ -462,7 +467,7 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed)
 
         code.Str(import_name).Str(".");
     }
-    code.Str(embed->array_name);
+    code.Str(embed->imgs[0].array_name);
 }
 
 // ******************************* Bundle Code Generation *******************************
@@ -512,9 +517,9 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
 
     if (code.is_cpp())
     {
-        tt_string name = "wxue_img::" + embed->array_name;
-        code.Eol() << "\twxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-        code.itoa(embed->array_size >> 32).Comma();
+        tt_string name = "wxue_img::" + embed->imgs[0].array_name;
+        code.Eol() << "\twxueBundleSVG(" << name << ", " << (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
+        code.itoa(embed->imgs[0].array_size >> 32).Comma();
         if (get_bitmap)
         {
             code.FormFunction("FromDIP(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
@@ -534,11 +539,11 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         {
             svg_name = embed->form->as_string(prop_python_file).filename();
             svg_name.remove_extension();
-            svg_name << '.' << embed->array_name;
+            svg_name << '.' << embed->imgs[0].array_name;
         }
         else
         {
-            svg_name = embed->array_name;
+            svg_name = embed->imgs[0].array_name;
         }
         code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
         code.Eol() += "\twx.BitmapBundle.FromSVG(_svg_string_";
@@ -546,7 +551,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     else if (code.is_ruby())
     {
         tt_string svg_name;
-        svg_name = "$" + embed->array_name;
+        svg_name = "$" + embed->imgs[0].array_name;
         code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
         code += "Wx::BitmapBundle.from_svg(_svg_string_";
         code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
@@ -637,18 +642,18 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
     if (code.is_ruby())
     {
         // Ruby has a single function that will create a bundle from 1 to 3 images
-        code.Str("wxue_get_bundle(").Str("$").Str(embed->array_name);
+        code.Str("wxue_get_bundle(").Str("$").Str(embed->imgs[0].array_name);
         if (bundle->lst_filenames.size() > 1)
         {
             if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
-                code.Comma().Str("$").Str(embed2->array_name);
+                code.Comma().Str("$").Str(embed2->imgs[0].array_name);
             }
             if (bundle->lst_filenames.size() > 2)
             {
                 if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
                 {
-                    code.Comma().Str("$").Str(embed3->array_name);
+                    code.Comma().Str("$").Str(embed3->imgs[0].array_name);
                 }
             }
         }
@@ -684,7 +689,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
     {
         code.Eol().Tab() << "wxueImage(";
 
-        name = "wxue_img::" + embed->array_name;
+        name = "wxue_img::" + embed->imgs[0].array_name;
 
         code << name << ", sizeof(" << name << "))";
         code << ".Rescale(";
@@ -696,7 +701,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         {
             code.Eol().Tab() << "wxueImage(";
 
-            name = "wxue_img::" + embed->array_name;
+            name = "wxue_img::" + embed->imgs[0].array_name;
 
             code << name << ", sizeof(" << name << "))";
         }
@@ -722,12 +727,12 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         if (code.is_cpp())
         {
             code << "wxueImage(";
-            name = "wxue_img::" + embed->array_name;
+            name = "wxue_img::" + embed->imgs[0].array_name;
             code << name << ", sizeof(" << name << ")), wxueImage(";
 
             if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
-                name = "wxue_img::" + embed2->array_name;
+                name = "wxue_img::" + embed2->imgs[0].array_name;
                 name.remove_extension();
                 code << name << ", sizeof(" << name << ")))";
             }
@@ -738,12 +743,12 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         }
         else if (code.is_python())
         {
-            code.CheckLineLength(embed->array_name.size() + sizeof(".Bitmap)"));
+            code.CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap)"));
             AddPythonImageName(code, embed);
             code += ".Bitmap";
             if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
-                code.Comma().CheckLineLength(embed2->array_name.size() + sizeof(".Bitmap)"));
+                code.Comma().CheckLineLength(embed2->imgs[0].array_name.size() + sizeof(".Bitmap)"));
                 AddPythonImageName(code, embed2);
                 code += ".Bitmap";
             }
@@ -778,7 +783,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
                     auto embed_img = ProjectImages.GetEmbeddedImage(iter);
                     if (embed_img)
                     {
-                        name_img = "wxue_img::" + embed_img->array_name;
+                        name_img = "wxue_img::" + embed_img->imgs[0].array_name;
                     }
                 }
                 code.Eol().Str("bitmaps.push_back(wxueImage(") << name_img << ", sizeof(" << name_img << ")));";

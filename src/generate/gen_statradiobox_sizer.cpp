@@ -83,7 +83,8 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         code.as_string(prop_radiobtn_var_name) << " = new wxRadioButton(";
-        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+        code.Comma().Pos().Comma().WxSize().Comma().Add("wxRB_SINGLE").EndFunction();
 
         auto cur_size = code.size();
         if (GenValidatorSettings(code); code.size() > cur_size)

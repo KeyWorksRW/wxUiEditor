@@ -35,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - Fixed wxPython and wxRuby3 code generation for creating a wxPropertySheetDialog class.
 - When importing XRC files, a form's class name is correctly set if specified in the XRC file.
 - wxStyledTextCtrl::SetTabWidth() now generates code correctly (generated if tabs are enabled and tab width is not the default value of 8)
+- wxStaticBoxSizers that use a wxRadioButton now work correctly in wxUiEditor's UI on Linux, and code generation has been updated to work on wxGTK allowing the button to be unchecked when the app is built with wxWidgets 3.3 or later.
 
 ## [Released (1.2.0)]
 

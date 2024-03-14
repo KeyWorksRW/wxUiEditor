@@ -49,7 +49,7 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 
-    m_radio_custom = new wxRadioButton(this, wxID_ANY, "Custom Colour");
+    m_radio_custom = new wxRadioButton(this, wxID_ANY, "Custom Colour", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
     m_staticbox_custom = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_custom), wxVERTICAL);
     m_staticbox_custom->GetStaticBox()->Enable(false);
 

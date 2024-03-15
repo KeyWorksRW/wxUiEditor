@@ -41,7 +41,9 @@ struct EmbeddedImage
 
     // Note that this will update any file within EmbeddedImage whose file_time has changed
     // since the file was first loaded.
-    wxBitmapBundle get_bundle();
+    //
+    // size parameter is only used for SVG files
+    wxBitmapBundle get_bundle(wxSize size = { -1, -1});
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
@@ -133,6 +135,9 @@ public:
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
     void CollectBundles();
+
+    // Returns nullptr if the image is not found
+    EmbeddedImage* FindEmbedded(std::string_view);
 
 protected:
     bool CheckNode(Node* node);

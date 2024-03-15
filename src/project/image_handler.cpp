@@ -117,6 +117,15 @@ bool ImageHandler::UpdateEmbedNodes()
     return is_changed;
 }
 
+EmbeddedImage* ImageHandler::FindEmbedded(std::string_view filename)
+{
+    if (auto result = m_map_embedded.find(filename); result != m_map_embedded.end())
+    {
+        return result->second.get();
+    }
+    return nullptr;
+}
+
 bool ImageHandler::CheckNode(Node* node)
 {
     if (node->isFormParent())
@@ -136,18 +145,10 @@ bool ImageHandler::CheckNode(Node* node)
             if (parts[IndexType] != "Embed" || parts.size() <= IndexImage)
                 continue;
 
-            auto result = m_map_embedded.find(parts[IndexImage].filename());
-            if (result == m_map_embedded.end())
-            {
-                // If the image file could not be loaded, we end up here. This can happen by trying to add a SVG image to
-                // a Embed image type
-                // FAIL_MSG("We get here if a bitmap did not get added to m_map_embedded -- that shouldn't happen")
-                // AddEmbeddedImage(parts[IndexImage], node_form);
-                continue;
-            }
-
-            auto embed = result->second.get();
+            auto* embed = FindEmbedded(parts[IndexImage].filename());
             ASSERT(embed)
+            if (!embed)
+                continue;
 
             if (node_form->isGen(gen_Images))
             {
@@ -1235,11 +1236,10 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description,
         return wxue_img::bundle_unknown_svg(32, 32);
     }
 
-    EmbeddedImage* embed = nullptr;
-    if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result != m_map_embedded.end())
+    auto* embed = FindEmbedded(parts[IndexImage].filename());
+    if (embed)
     {
-        embed = result->second.get();
-        return embed->get_bundle();
+        return embed->get_bundle(parts.size() > 2 ? GetSizeInfo(parts[IndexSize]) : wxDefaultSize);
     }
 
     if (auto result = m_bundles.find(ConvertToLookup(parts)); result != m_bundles.end())
@@ -1460,7 +1460,8 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description)
     return wxBitmapBundle::FromSVG(str.get(), GetSizeInfo(size_description));
 }
 
-wxBitmapBundle EmbeddedImage::get_bundle()
+// size parameter is only used for SVG files
+wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
 {
     if (imgs[0].type == wxBITMAP_TYPE_SVG)
     {
@@ -1474,7 +1475,7 @@ wxBitmapBundle EmbeddedImage::get_bundle()
         wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
         wxZlibInputStream zlib_strm(stream_in);
         zlib_strm.Read(str.get(), org_size);
-        return wxBitmapBundle::FromSVG(str.get(), size);
+        return wxBitmapBundle::FromSVG(str.get(), override_size == wxDefaultSize ? size : override_size);
     }
 
     wxVector<wxBitmap> bitmaps;

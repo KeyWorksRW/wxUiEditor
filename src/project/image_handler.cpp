@@ -305,12 +305,8 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
 
 EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
 {
-    // REVIEW: [KeyWorks - 05-03-2022] Do we still need this lock?
-    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
-
     if (auto result = m_map_embedded.find(path.filename()); result != m_map_embedded.end())
     {
-        std::unique_lock<std::mutex> retrieve_lock(m_mutex_embed_retrieve);
         return result->second.get();
     }
     else
@@ -321,8 +317,6 @@ EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
 
 bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animation)
 {
-    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
-
     if (!path.file_exists())
     {
         if (m_project_node->hasValue(prop_art_directory))
@@ -342,13 +336,11 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
     if (m_map_embedded.find(path.filename().as_str()) != m_map_embedded.end())
         return false;
 
-    auto final_result = AddNewEmbeddedImage(path, form, add_lock);
+    auto final_result = AddNewEmbeddedImage(path, form);
     if (is_animation || !final_result)
         return final_result;
 
     // Note that path may now contain the prop_art_directory prefix
-
-    add_lock.lock();
 
     if (auto pos = path.find_last_of('.'); tt::is_found(pos))
     {
@@ -357,14 +349,12 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
             path.Replace("_16x16.", "_24x24.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
             path.Replace("_24x24.", "_32x32.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
         }
         else if (path.contains("_24x24."))
@@ -372,14 +362,12 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
             path.Replace("_24x24.", "_36x36.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
             path.Replace("_36x36.", "_48x48.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
         }
         else
@@ -387,26 +375,22 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
             path.insert(pos, "_1_25x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
             path.Replace("_1_25x", "_1_5x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
             path.Replace("_1_5x", "_1_75x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
             path.Replace("_1_75x", "_2x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form, add_lock);
-                add_lock.lock();
+                AddNewEmbeddedImage(path, form);
             }
         }
     }
@@ -414,12 +398,11 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
     return final_result;
 }
 
-bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock)
+bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form)
 {
     wxFFileInputStream stream(path.make_wxString());
     if (!stream.IsOk())
     {
-        add_lock.unlock();
         return false;
     }
 
@@ -436,12 +419,6 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
                 m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeEmbedStructure(embed, path, form);
-
-                // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
-                // image until we're done. I.e., GetEmbeddedImage() won't return until retrieve_lock is released.
-
-                std::unique_lock<std::mutex> retrieve_lock(m_mutex_embed_retrieve);
-                add_lock.unlock();
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
                 // better compression.
@@ -499,7 +476,6 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
         }
     }
 
-    add_lock.unlock();
     return false;
 }
 

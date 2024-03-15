@@ -142,7 +142,7 @@ protected:
     // Converts filename to a valid string name and sets EmbeddedImage::array_name
     void InitializeEmbedStructure(EmbeddedImage* embed, tt_string_view path, Node* form);
 
-    bool AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock);
+    bool AddNewEmbeddedImage(tt_string path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
     EmbeddedImage* AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed = nullptr);
@@ -160,9 +160,6 @@ protected:
 
 private:
     NodeSharedPtr m_project_node { nullptr };
-
-    std::mutex m_mutex_embed_add;
-    std::mutex m_mutex_embed_retrieve;
 
     std::map<std::string, wxImage> m_images;
 

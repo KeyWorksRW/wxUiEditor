@@ -38,6 +38,8 @@ struct EmbeddedImage
     Node* form;                   // the form node the image is declared in
     std::vector<ImageInfo> imgs;  // InitializeEmbedStructure() will always create at least one entry
     wxSize size;                  // dimensions of the first image in the array
+
+    wxBitmapBundle get_bundle();
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
@@ -141,7 +143,7 @@ protected:
     bool AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock);
 
     // Reads the image and stores it in m_map_embedded
-    bool AddEmbeddedBundleImage(tt_string path, Node* form);
+    EmbeddedImage* AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed = nullptr);
 
     bool AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string path, Node* form);
 

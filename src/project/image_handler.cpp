@@ -295,7 +295,8 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
         return (check_image ? GetInternalImage("unknown") : image);
     }
 
-    // If it's not embedded, then cache it so that we don't read it from disk again
+    // If it's not embedded, then cache it so that we don't read it from disk again. This will
+    // be for xpm files.
     if (!parts[IndexType].contains("Embed") && result == m_images.end())
         m_images[path] = image;
 
@@ -778,7 +779,8 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
         }
     }
 
-    if (!AddEmbeddedBundleImage(path, form))
+    auto* embed = AddEmbeddedBundleImage(path, form);
+    if (!embed)
     {
         return false;
     }
@@ -803,7 +805,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
             path.Replace("_16x16.", "_24x24.");
             if (path.file_exists())
             {
-                if (auto added = AddEmbeddedBundleImage(path, form); added)
+                if (auto added = AddEmbeddedBundleImage(path, form, embed); added)
                 {
                     img_bundle.lst_filenames.emplace_back(path);
                 }
@@ -811,7 +813,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
             path.Replace("_24x24.", "_32x32.");
             if (path.file_exists())
             {
-                if (auto added = AddEmbeddedBundleImage(path, form); added)
+                if (auto added = AddEmbeddedBundleImage(path, form, embed); added)
                 {
                     img_bundle.lst_filenames.emplace_back(path);
                 }
@@ -822,7 +824,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
             path.Replace("_24x24.", "_36x36.");
             if (path.file_exists())
             {
-                if (auto added = AddEmbeddedBundleImage(path, form); added)
+                if (auto added = AddEmbeddedBundleImage(path, form, embed); added)
                 {
                     img_bundle.lst_filenames.emplace_back(path);
                 }
@@ -830,7 +832,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
             path.Replace("_36x36.", "_48x48.");
             if (path.file_exists())
             {
-                if (auto added = AddEmbeddedBundleImage(path, form); added)
+                if (auto added = AddEmbeddedBundleImage(path, form, embed); added)
                 {
                     img_bundle.lst_filenames.emplace_back(path);
                 }
@@ -860,7 +862,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                     additional_path << map_pos->first << file_extension;
                     if (additional_path.file_exists())
                     {
-                        if (auto added = AddEmbeddedBundleImage(additional_path, form); added)
+                        if (auto added = AddEmbeddedBundleImage(additional_path, form, embed); added)
                         {
                             img_bundle.lst_filenames.emplace_back(additional_path);
                             // ++file_count;
@@ -878,7 +880,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                 additional_path.Replace(map_pos->first, map_pos->second);
                 if (additional_path.file_exists())
                 {
-                    if (auto added = AddEmbeddedBundleImage(additional_path, form); added)
+                    if (auto added = AddEmbeddedBundleImage(additional_path, form, embed); added)
                     {
                         img_bundle.lst_filenames.emplace_back(additional_path);
                         // ++file_count;
@@ -897,7 +899,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
 
     if (img_bundle.lst_filenames.size() == 1)
     {
-        if (auto embed = GetEmbeddedImage(img_bundle.lst_filenames[0]); embed)
+        if (embed = GetEmbeddedImage(img_bundle.lst_filenames[0]); embed)
         {
             wxMemoryInputStream stream(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
             wxImage image;
@@ -910,7 +912,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
         wxVector<wxBitmap> bitmaps;
         for (auto& iter: img_bundle.lst_filenames)
         {
-            if (auto embed = GetEmbeddedImage(iter); embed)
+            if (embed = GetEmbeddedImage(iter); embed)
             {
                 wxMemoryInputStream stream(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
                 wxImage image;
@@ -926,12 +928,12 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
     return true;
 }
 
-bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
+EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed)
 {
     wxFFileInputStream stream(path.make_wxString());
     if (!stream.IsOk())
     {
-        return false;
+        return nullptr;
     }
     wxImageHandler* handler;
     auto& list = wxImage::GetHandlers();
@@ -943,17 +945,25 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
-                auto embed = m_map_embedded[path.filename().as_str()].get();
-                InitializeEmbedStructure(embed, path, form);
-                embed->size = image.GetSize();
+                if (embed)
+                {
+                    embed->imgs.push_back(ImageInfo());
+                }
+                size_t idx = embed ? embed->imgs.size() - 1 : 0;
+                if (!embed)
+                {
+                    m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
+                    embed = m_map_embedded[path.filename().as_str()].get();
+                    InitializeEmbedStructure(embed, path, form);
+                    embed->size = image.GetSize();
+                }
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up
                 // with better compression.
 
                 if (isConvertibleMime(handler->GetMimeType()))
                 {
-                    embed->imgs[0].type = wxBITMAP_TYPE_PNG;
+                    embed->imgs[idx].type = wxBITMAP_TYPE_PNG;
 
                     wxMemoryOutputStream save_stream;
 
@@ -966,9 +976,10 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
                     stream.SeekI(0);
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
-                        embed->imgs[0].array_size = read_stream->GetBufferSize();
-                        embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                        memcpy(embed->imgs[0].array_data.get(), read_stream->GetBufferStart(), embed->imgs[0].array_size);
+                        embed->imgs[idx].array_size = read_stream->GetBufferSize();
+                        embed->imgs[idx].array_data = std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
+                        memcpy(embed->imgs[idx].array_data.get(), read_stream->GetBufferStart(),
+                               embed->imgs[idx].array_size);
                     }
                     else
                     {
@@ -983,27 +994,33 @@ bool ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form)
     #endif
 #endif
 
-                        embed->imgs[0].type = handler->GetType();
-                        embed->imgs[0].array_size = stream.GetSize();
-                        embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                        stream.Read(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
+                        embed->imgs[idx].type = handler->GetType();
+                        embed->imgs[idx].array_size = stream.GetSize();
+                        embed->imgs[idx].array_data = std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
+                        stream.Read(embed->imgs[idx].array_data.get(), embed->imgs[idx].array_size);
                     }
                 }
                 else
                 {
-                    embed->imgs[0].type = handler->GetType();
+                    embed->imgs[idx].type = handler->GetType();
 
                     stream.SeekI(0);
-                    embed->imgs[0].array_size = stream.GetSize();
-                    embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                    stream.Read(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
+                    embed->imgs[idx].array_size = stream.GetSize();
+                    embed->imgs[idx].array_data = std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
+                    stream.Read(embed->imgs[idx].array_data.get(), embed->imgs[idx].array_size);
                 }
 
-                return true;
+                // TODO: [Randalphwa - 03-14-2024] Remove this once m_bundles is no longer used
+                if (embed->imgs.size() > 1)
+                {
+                    AddEmbeddedBundleImage(path, form);
+                }
+
+                return embed;
             }
         }
     }
-    return false;
+    return nullptr;
 }
 
 ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, Node* node)
@@ -1239,13 +1256,20 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description,
         return wxue_img::bundle_unknown_svg(32, 32);
     }
 
+    EmbeddedImage* embed = nullptr;
+    if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result != m_map_embedded.end())
+    {
+        embed = result->second.get();
+        return embed->get_bundle();
+    }
+
     if (auto result = m_bundles.find(ConvertToLookup(parts)); result != m_bundles.end())
     {
         // At this point we know that the bundle has been stored, but the actual size for
         // display can change any time the property is used to retrieve the bundle.
         if (description.starts_with("SVG;"))
         {
-            if (auto* embed = GetEmbeddedImage(parts[IndexImage]); embed)
+            if (embed = GetEmbeddedImage(parts[IndexImage]); embed)
             {
                 ASSERT(parts.size() > IndexSize);
                 return LoadSVG(embed, parts[IndexSize]);
@@ -1455,6 +1479,33 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description)
     wxZlibInputStream zlib_strm(stream_in);
     zlib_strm.Read(str.get(), org_size);
     return wxBitmapBundle::FromSVG(str.get(), GetSizeInfo(size_description));
+}
+
+wxBitmapBundle EmbeddedImage::get_bundle()
+{
+    if (imgs[0].type == wxBITMAP_TYPE_SVG)
+    {
+        size_t org_size = (imgs[0].array_size >> 32);
+        auto str = std::make_unique<char[]>(org_size);
+        wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
+        wxZlibInputStream zlib_strm(stream_in);
+        zlib_strm.Read(str.get(), org_size);
+        return wxBitmapBundle::FromSVG(str.get(), size);
+    }
+
+    wxVector<wxBitmap> bitmaps;
+    for (auto& iter: imgs)
+    {
+        wxMemoryInputStream stream(iter.array_data.get(), iter.array_size);
+        wxImage image;
+        image.LoadFile(stream);
+        ASSERT(image.IsOk())
+        if (image.IsOk())
+        {
+            bitmaps.push_back(image);
+        }
+    }
+    return wxBitmapBundle::FromBitmaps(bitmaps);
 }
 
 tt_string ImageHandler::GetBundleFuncName(const tt_string& description)

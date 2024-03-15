@@ -39,6 +39,8 @@ struct EmbeddedImage
     std::vector<ImageInfo> imgs;  // InitializeEmbedStructure() will always create at least one entry
     wxSize size;                  // dimensions of the first image in the array
 
+    // Note that this will update any file within EmbeddedImage whose file_time has changed
+    // since the file was first loaded.
     wxBitmapBundle get_bundle();
 };
 
@@ -70,7 +72,7 @@ public:
 
     // Call this is the image file has been modified. This will update the array_data and
     // array_size for the image from the updated image file.
-    void UpdateEmbeddedImage(EmbeddedImage* embed);
+    static void UpdateEmbeddedImage(EmbeddedImage* embed, size_t index = 0);
 
     wxImage GetImage(const tt_string& description);
 

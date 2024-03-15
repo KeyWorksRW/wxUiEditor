@@ -503,10 +503,12 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form, std::unique_l
     return false;
 }
 
-void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed)
+// Note that this is a static function
+void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed, size_t index)
 {
     if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
     {
+        ASSERT_MSG(index == 0, "Embedded SVG images should only have a single image")
         // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
         // leading spaces, etc.
         pugi::xml_document doc;
@@ -551,7 +553,7 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed)
         return;
     }
 
-    wxFFileInputStream stream(embed->imgs[0].filename.make_wxString());
+    wxFFileInputStream stream(embed->imgs[index].filename.make_wxString());
     if (!stream.IsOk())
         return;
 
@@ -565,14 +567,14 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                embed->imgs[0].file_time = embed->imgs[0].filename.last_write_time();
+                embed->imgs[index].file_time = embed->imgs[index].filename.last_write_time();
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
                 // better compression.
 
                 if (isConvertibleMime(handler->GetMimeType()))
                 {
-                    embed->imgs[0].type = wxBITMAP_TYPE_PNG;
+                    embed->imgs[index].type = wxBITMAP_TYPE_PNG;
 
                     wxMemoryOutputStream save_stream;
 
@@ -585,23 +587,24 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed)
                     stream.SeekI(0);
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
-                        embed->imgs[0].array_size = read_stream->GetBufferSize();
-                        embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                        memcpy(embed->imgs[0].array_data.get(), read_stream->GetBufferStart(), embed->imgs[0].array_size);
+                        embed->imgs[index].array_size = read_stream->GetBufferSize();
+                        embed->imgs[index].array_data = std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
+                        memcpy(embed->imgs[index].array_data.get(), read_stream->GetBufferStart(),
+                               embed->imgs[index].array_size);
                     }
                     else
                     {
-                        embed->imgs[0].array_size = stream.GetSize();
-                        embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                        stream.Read(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
+                        embed->imgs[index].array_size = stream.GetSize();
+                        embed->imgs[index].array_data = std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
+                        stream.Read(embed->imgs[index].array_data.get(), embed->imgs[index].array_size);
                     }
                 }
                 else
                 {
                     stream.SeekI(0);
-                    embed->imgs[0].array_size = stream.GetSize();
-                    embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                    stream.Read(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
+                    embed->imgs[index].array_size = stream.GetSize();
+                    embed->imgs[index].array_data = std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
+                    stream.Read(embed->imgs[index].array_data.get(), embed->imgs[index].array_size);
                 }
 
                 return;
@@ -1485,6 +1488,11 @@ wxBitmapBundle EmbeddedImage::get_bundle()
 {
     if (imgs[0].type == wxBITMAP_TYPE_SVG)
     {
+        auto file_time = imgs[0].filename.last_write_time();
+        if (file_time != imgs[0].file_time)
+        {
+            ImageHandler::UpdateEmbeddedImage(this, 0);
+        }
         size_t org_size = (imgs[0].array_size >> 32);
         auto str = std::make_unique<char[]>(org_size);
         wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
@@ -1494,9 +1502,14 @@ wxBitmapBundle EmbeddedImage::get_bundle()
     }
 
     wxVector<wxBitmap> bitmaps;
-    for (auto& iter: imgs)
+    for (size_t index = 0; index < imgs.size(); ++index)
     {
-        wxMemoryInputStream stream(iter.array_data.get(), iter.array_size);
+        auto file_time = imgs[index].filename.last_write_time();
+        if (file_time != imgs[index].file_time)
+        {
+            ImageHandler::UpdateEmbeddedImage(this, index);
+        }
+        wxMemoryInputStream stream(imgs[index].array_data.get(), imgs[index].array_size);
         wxImage image;
         image.LoadFile(stream);
         ASSERT(image.IsOk())

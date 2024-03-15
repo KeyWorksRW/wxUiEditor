@@ -1533,24 +1533,22 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 
                 if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
                 {
-                    if (auto bundle = GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+                    auto embed = GetEmbeddedImage(parts[IndexImage]);
+                    ASSERT(embed);  // should be impossible not to have an embed here
+                    if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
                     {
-                        auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
-                        if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
-                        {
-                            name << "wxue_img::bundle_" << embed->imgs[0].array_name << "(";
+                        name << "wxue_img::bundle_" << embed->imgs[0].array_name << "(";
 
-                            wxSize svg_size { -1, -1 };
-                            if (parts[IndexSize].size())
-                            {
-                                svg_size = GetSizeInfo(parts[IndexSize]);
-                            }
-                            name << svg_size.x << ", " << svg_size.y << ")";
-                        }
-                        else
+                        wxSize svg_size { -1, -1 };
+                        if (parts[IndexSize].size())
                         {
-                            name << "wxue_img::bundle_" << embed->imgs[0].array_name << "()";
+                            svg_size = GetSizeInfo(parts[IndexSize]);
                         }
+                        name << svg_size.x << ", " << svg_size.y << ")";
+                    }
+                    else
+                    {
+                        name << "wxue_img::bundle_" << embed->imgs[0].array_name << "()";
                     }
                     break;
                 }

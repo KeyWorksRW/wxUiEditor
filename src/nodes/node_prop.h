@@ -120,7 +120,6 @@ public:
     wxString as_wxString() const { return m_value.make_wxString(); }
 
     wxBitmapBundle as_bitmap_bundle() const;
-    const ImageBundle* as_image_bundle() const;
 
     const tt_string& as_string() const { return m_value; }
 

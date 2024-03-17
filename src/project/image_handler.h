@@ -17,9 +17,9 @@
 
 class wxAnimation;
 
+// This simply contains a list of the filenames that would be used to create a bundle.
 struct ImageBundle
 {
-    wxBitmapBundle bundle;
     std::vector<tt_string> lst_filenames;
 };
 
@@ -43,7 +43,7 @@ struct EmbeddedImage
     // since the file was first loaded.
     //
     // size parameter is only used for SVG files
-    wxBitmapBundle get_bundle(wxSize size = { -1, -1});
+    wxBitmapBundle get_bundle(wxSize size = { -1, -1 });
 };
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
@@ -166,10 +166,13 @@ protected:
 private:
     NodeSharedPtr m_project_node { nullptr };
 
-    std::map<std::string, wxImage> m_images;
-
     // std::string is the entire property for the image
     std::map<std::string, ImageBundle> m_bundles;
+
+    // This stores XPM images or any other non-embedded, non-art images
+    //
+    // std::string is parts[IndexImage].filename()
+    std::map<std::string, wxImage, std::less<>> m_images;
 
     // std::string is parts[IndexImage].filename()
     std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;

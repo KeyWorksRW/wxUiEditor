@@ -454,8 +454,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                     wxWizard wizard;
                     if (form_node->hasValue(prop_bitmap))
                     {
-                        auto bundle = form_node->as_image_bundle(prop_bitmap);
-                        if (!wizard.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title), bundle->bundle,
+                        auto bundle = form_node->as_wxBitmapBundle(prop_bitmap);
+                        if (!wizard.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title), bundle,
                                            DlgPoint(this, form_node, prop_pos), GetStyleInt(form_node)))
                         {
                             wxMessageBox("Unable to create wizard", "C++ Preview");
@@ -511,8 +511,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                         pages.emplace_back(wiz_page);
                         if (page->hasValue(prop_bitmap))
                         {
-                            auto bundle = page->as_image_bundle(prop_bitmap);
-                            wiz_page->Create(&wizard, nullptr, nullptr, bundle->bundle);
+                            auto bundle = page->as_wxBitmapBundle(prop_bitmap);
+                            wiz_page->Create(&wizard, nullptr, nullptr, bundle);
                         }
                         else
                             wiz_page->Create(&wizard);

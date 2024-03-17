@@ -32,10 +32,10 @@ void ImageProperties::InitValues(tt_string_view value)
         }
         else
         {
-            auto img_bundle = ProjectImages.GetPropertyImageBundle(value);
-            if (img_bundle)
+            auto* embed = ProjectImages.GetEmbeddedImage(image);
+            if (embed)
             {
-                m_size = img_bundle->bundle.GetDefaultSize();
+                m_size = embed->size;
             }
             else
             {

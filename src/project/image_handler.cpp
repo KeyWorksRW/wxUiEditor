@@ -218,8 +218,7 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
 
     tt_string path = parts[IndexImage];
 
-    auto result = m_images.find(path);
-    if (result != m_images.end())
+    if (auto result = m_images.find(path.filename()); result != m_images.end())
     {
         image = result->second;
     }
@@ -271,7 +270,7 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
             path = m_project_node->as_string(prop_art_directory);
             path.append_filename(parts[IndexImage]);
 
-            if (result = m_images.find(path); result != m_images.end())
+            if (result = m_images.find(path.filename()); result != m_images.end())
             {
                 image = result->second;
             }
@@ -298,8 +297,8 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
 
     // If it's not embedded, then cache it so that we don't read it from disk again. This will
     // be for xpm files.
-    if (!parts[IndexType].contains("Embed") && result == m_images.end())
-        m_images[path] = image;
+    if (!parts[IndexType].contains("Embed") && !m_images.contains(parts[IndexImage].filename()))
+        m_images[path.filename().as_str()] = image;
 
     return image;
 }
@@ -752,7 +751,6 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
             img_bundle.lst_filenames.emplace_back(path);
             if (auto embed = GetEmbeddedImage(path); embed)
             {
-                img_bundle.bundle = LoadSVG(embed, parts[IndexSize]);
                 m_bundles[lookup_str] = std::move(img_bundle);
                 return true;
             }
@@ -884,7 +882,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
             wxMemoryInputStream stream(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
             wxImage image;
             image.LoadFile(stream);
-            img_bundle.bundle = wxBitmapBundle::FromBitmap(image);
+            // img_bundle.bundle = wxBitmapBundle::FromBitmap(image);
         }
     }
     else
@@ -901,7 +899,7 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                 bitmaps.push_back(image);
             }
         }
-        img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
+        // img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
     }
 
     m_bundles[lookup_str] = std::move(img_bundle);
@@ -1018,17 +1016,6 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
 
     if (parts[IndexType].contains("Art"))
     {
-        if (parts[IndexArtID].contains("|"))
-        {
-            tt_string_vector id_client(parts[IndexArtID], '|');
-            img_bundle.bundle = wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
-        }
-        else
-        {
-            img_bundle.bundle = wxArtProvider::GetBitmapBundle(parts[IndexArtID].make_wxString(),
-                                                               wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
-        }
-
         m_bundles[lookup_str] = std::move(img_bundle);
         return &m_bundles[lookup_str];
     }
@@ -1162,7 +1149,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
 
     if (img_bundle.lst_filenames.size() == 1)
     {
-        img_bundle.bundle = wxBitmapBundle::FromBitmap(image_first);
+        // img_bundle.bundle = wxBitmapBundle::FromBitmap(image_first);
     }
     else
     {
@@ -1189,7 +1176,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
             }
         }
 
-        img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
+        // img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
     }
 
     m_bundles[lookup_str] = std::move(img_bundle);
@@ -1242,24 +1229,23 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description,
         return embed->get_bundle(parts.size() > 2 ? GetSizeInfo(parts[IndexSize]) : wxDefaultSize);
     }
 
-    if (auto result = m_bundles.find(ConvertToLookup(parts)); result != m_bundles.end())
+    if (parts[IndexType].contains("Art"))
     {
-        // At this point we know that the bundle has been stored, but the actual size for
-        // display can change any time the property is used to retrieve the bundle.
-        if (description.starts_with("SVG;"))
+        if (parts[IndexArtID].contains("|"))
         {
-            if (embed = GetEmbeddedImage(parts[IndexImage]); embed)
-            {
-                ASSERT(parts.size() > IndexSize);
-                return LoadSVG(embed, parts[IndexSize]);
-            }
+            tt_string_vector id_client(parts[IndexArtID], '|');
+            return wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
         }
-        return result->second.bundle;
+        else
+        {
+            return wxArtProvider::GetBitmapBundle(parts[IndexArtID].make_wxString(),
+                                                  wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
+        }
     }
 
-    if (auto result = ProcessBundleProperty(parts, node); result)
+    if (auto result = m_images.find(parts[IndexImage].filename()); result != m_images.end())
     {
-        return result->bundle;
+        return wxBitmapBundle::FromBitmap(result->second);
     }
 
     return wxue_img::bundle_unknown_svg(32, 32);

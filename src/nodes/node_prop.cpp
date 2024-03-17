@@ -349,15 +349,6 @@ wxBitmapBundle NodeProperty::as_bitmap_bundle() const
         return bundle;
 }
 
-const ImageBundle* NodeProperty::as_image_bundle() const
-{
-    auto bundle_ptr = ProjectImages.GetPropertyImageBundle(m_value);
-    if (!bundle_ptr || !bundle_ptr->bundle.IsOk())
-        return nullptr;
-    else
-        return bundle_ptr;
-}
-
 wxAnimation NodeProperty::as_animation() const
 {
     return ProjectImages.GetPropertyAnimation(m_value);

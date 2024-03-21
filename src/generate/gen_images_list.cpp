@@ -220,8 +220,8 @@ void BaseCodeGenerator::GenerateImagesForm()
             tt_string code;
             code.reserve(Project.as_size_t(prop_cpp_line_length) + 16);
             // SVG images store the original size in the high 32 bits
-            size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
-            code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";
+            size_t max_pos = (iter_array->imgs[0].array_size & 0xFFFFFFFF);
+            code << "const unsigned char " << iter_array->imgs[0].array_name << '[' << max_pos << "] {";
             m_source->writeLine(code);
 
             size_t pos = 0;
@@ -231,7 +231,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 // -8 to account for 4 indent + max 3 chars for number + comma
                 for (; pos < max_pos && code.size() < Project.as_size_t(prop_cpp_line_length) - 8; ++pos)
                 {
-                    code << (to_int) iter_array->array_data[pos] << ',';
+                    code << (to_int) iter_array->imgs[0].array_data[pos] << ',';
                 }
                 if (pos >= max_pos && code.back() == ',')
                     code.pop_back();
@@ -254,8 +254,8 @@ void BaseCodeGenerator::GenerateImagesForm()
                 bundle && bundle->lst_filenames.size())
             {
                 auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                if (embed->type == wxBITMAP_TYPE_ICO || embed->type == wxBITMAP_TYPE_CUR ||
-                    embed->type == wxBITMAP_TYPE_GIF || embed->type == wxBITMAP_TYPE_ANI)
+                if (embed->imgs[0].type == wxBITMAP_TYPE_ICO || embed->imgs[0].type == wxBITMAP_TYPE_CUR ||
+                    embed->imgs[0].type == wxBITMAP_TYPE_GIF || embed->imgs[0].type == wxBITMAP_TYPE_ANI)
                 {
                     // Ignore types that can't be placed into a bundle. Technically, a .gif
                     // file could be added to a bundle, but use of .git instead of .png
@@ -268,15 +268,15 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->writeLine();
                 tt_string code("wxBitmapBundle bundle_");
 
-                if (embed->type == wxBITMAP_TYPE_SVG)
+                if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
                 {
-                    code << embed->array_name << "(int width, int height)";
+                    code << embed->imgs[0].array_name << "(int width, int height)";
                     m_source->writeLine(code);
                     m_source->writeLine("{");
                     m_source->Indent();
                     code = "return get_bundle_svg(";
-                    code << embed->array_name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-                    code << (embed->array_size >> (to_size_t) 32) << ", wxSize(width, height));";
+                    code << embed->imgs[0].array_name << ", " << (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
+                    code << (embed->imgs[0].array_size >> (to_size_t) 32) << ", wxSize(width, height));";
                     m_source->writeLine(code);
                     m_source->Unindent();
                     m_source->writeLine("}");
@@ -284,14 +284,14 @@ void BaseCodeGenerator::GenerateImagesForm()
                 }
                 else
                 {
-                    code << embed->array_name << "()";
+                    code << embed->imgs[0].array_name << "()";
                     m_source->writeLine(code);
                     m_source->writeLine("{");
                     m_source->Indent();
                     if (bundle->lst_filenames.size() == 1)
                     {
                         code = "return wxBitmapBundle::FromBitmap(wxBitmap(get_image(";
-                        code << embed->array_name << ", " << embed->array_size << ")));";
+                        code << embed->imgs[0].array_name << ", " << embed->imgs[0].array_size << ")));";
                         m_source->writeLine(code);
                     }
                     else
@@ -306,8 +306,8 @@ void BaseCodeGenerator::GenerateImagesForm()
                             ASSERT_MSG(embed, tt_string("Unable to locate embedded image for ") << iter);
                             if (embed)
                             {
-                                code << "\t\tbitmaps.push_back(get_image(" << embed->array_name << ", sizeof("
-                                     << embed->array_name << ")));\n";
+                                code << "\t\tbitmaps.push_back(get_image(" << embed->imgs[0].array_name << ", sizeof("
+                                     << embed->imgs[0].array_name << ")));\n";
                             }
                         }
                         code += "return wxBitmapBundle::FromBitmaps(bitmaps);";
@@ -328,17 +328,17 @@ void BaseCodeGenerator::GenerateImagesForm()
         {
             // Unlike the wxBitmapBundle functions above, the wxImage functions work on a much wider variety of
             // images, including ICO, CUR, and GIT. The only types that don't work are .svg and .ani.
-            if (embed->type == wxBITMAP_TYPE_SVG || embed->type == wxBITMAP_TYPE_ANI)
+            if (embed->imgs[0].type == wxBITMAP_TYPE_SVG || embed->imgs[0].type == wxBITMAP_TYPE_ANI)
                 continue;
 
             m_source->writeLine();
             tt_string code("wxImage image_");
-            code << embed->array_name << "()";
+            code << embed->imgs[0].array_name << "()";
             m_source->writeLine(code);
             m_source->writeLine("{");
             m_source->Indent();
             code = "return get_image(";
-            code << embed->array_name << ", " << embed->array_size << ");";
+            code << embed->imgs[0].array_name << ", " << embed->imgs[0].array_size << ");";
             m_source->writeLine(code);
             m_source->Unindent();
             m_source->writeLine("}");
@@ -395,21 +395,21 @@ void BaseCodeGenerator::GenerateImagesForm()
                 bundle && bundle->lst_filenames.size())
             {
                 auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                if (embed->type == wxBITMAP_TYPE_ICO || embed->type == wxBITMAP_TYPE_CUR ||
-                    embed->type == wxBITMAP_TYPE_GIF || embed->type == wxBITMAP_TYPE_ANI)
+                if (embed->imgs[0].type == wxBITMAP_TYPE_ICO || embed->imgs[0].type == wxBITMAP_TYPE_CUR ||
+                    embed->imgs[0].type == wxBITMAP_TYPE_GIF || embed->imgs[0].type == wxBITMAP_TYPE_ANI)
                 {
                     // Don't generate bundle functions for image types that are probably being used for something else
                     continue;
                 }
 
                 tt_string code("wxBitmapBundle bundle_");
-                if (embed->type == wxBITMAP_TYPE_SVG)
+                if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
                 {
-                    code << embed->array_name << "(int width, int height);";
+                    code << embed->imgs[0].array_name << "(int width, int height);";
                 }
                 else
                 {
-                    code << embed->array_name << "();";
+                    code << embed->imgs[0].array_name << "();";
                     if (bundle->lst_filenames[0].size())
                     {
                         code << "  // " << bundle->lst_filenames[0].filename();
@@ -429,10 +429,10 @@ void BaseCodeGenerator::GenerateImagesForm()
         {
             // Unlike the wxBitmapBundle functions above, the wxImage functions work on a much wider variety of
             // images, including ICO, CUR, and GIT. The only types that don't work are .svg and .ani.
-            if (embed->type == wxBITMAP_TYPE_SVG || embed->type == wxBITMAP_TYPE_ANI)
+            if (embed->imgs[0].type == wxBITMAP_TYPE_SVG || embed->imgs[0].type == wxBITMAP_TYPE_ANI)
                 continue;
             tt_string code("wxImage image_");
-            code << embed->array_name << "();";
+            code << embed->imgs[0].array_name << "();";
             m_header->writeLine(code);
         }
 
@@ -445,10 +445,10 @@ void BaseCodeGenerator::GenerateImagesForm()
                     continue;
 
                 tt_string line("extern const unsigned char ");
-                line << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];";
-                if (iter_array->filename.size())
+                line << iter_array->imgs[0].array_name << '[' << (iter_array->imgs[0].array_size & 0xFFFFFFFF) << "];";
+                if (iter_array->imgs[0].filename.size())
                 {
-                    line << "  // " << iter_array->filename;
+                    line << "  // " << iter_array->imgs[0].filename;
                 }
                 m_header->writeLine(line);
             }

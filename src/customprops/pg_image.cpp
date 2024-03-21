@@ -117,14 +117,10 @@ void PropertyGrid_Image::RefreshChildren()
             {
                 if (m_img_props.type != "XPM")
                 {
-                    if (auto img = ProjectImages.GetPropertyImageBundle(m_img_props.CombineValues(),
-                                                                        wxGetFrame().getSelectedNode());
-                        img)
+                    auto* embed = ProjectImages.FindEmbedded(m_img_props.CombineValues());
+                    if (embed)
                     {
-                        if (img->bundle.IsOk())
-                        {
-                            bundle = img->bundle;
-                        }
+                        bundle = embed->get_bundle(m_img_props.GetSize());
                     }
                 }
                 else  // XPM

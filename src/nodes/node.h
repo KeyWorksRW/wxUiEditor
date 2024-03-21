@@ -305,14 +305,6 @@ public:
             return wxNullBitmap;
     }
 
-    const ImageBundle* as_image_bundle(PropName name) const
-    {
-        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-            return m_properties[result->second].as_image_bundle();
-        else
-            return nullptr;
-    }
-
     wxBitmap as_wxBitmap(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

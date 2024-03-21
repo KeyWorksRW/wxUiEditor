@@ -30,6 +30,7 @@ public:
     void SetWidth(int width) { m_size.x = width; }
     void SetHeight(int height) { m_size.y = height; }
     void SetSize(wxSize size) { m_size = size; }
+    wxSize GetSize() { return m_size; }
 
     void SetAnimationType() { m_isAnimationType = true; }
     bool IsAnimationType() { return m_isAnimationType; }

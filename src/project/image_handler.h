@@ -17,25 +17,34 @@
 
 class wxAnimation;
 
+// This simply contains a list of the filenames that would be used to create a bundle.
 struct ImageBundle
 {
-    wxBitmapBundle bundle;
     std::vector<tt_string> lst_filenames;
 };
 
-struct EmbeddedImage
+struct ImageInfo
 {
-    Node* form;  // the form node the image is declared in
-    tt_string array_name;
     tt_string filename;
+    tt_string array_name;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
-    wxSize size;                                // dimensions of the first image in the array
     std::filesystem::file_time_type file_time;  // time the file was last modified
     wxBitmapType type;
 };
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
+struct EmbeddedImage
+{
+    Node* form;                   // the form node the image is declared in
+    std::vector<ImageInfo> imgs;  // InitializeEmbedStructure() will always create at least one entry
+    wxSize size;                  // dimensions of the first image in the array
+
+    // Note that this will update any file within EmbeddedImage whose file_time has changed
+    // since the file was first loaded.
+    //
+    // size parameter is only used for SVG files
+    wxBitmapBundle get_bundle(wxSize size = { -1, -1 });
+};
 
 class ImageHandler
 {
@@ -63,11 +72,11 @@ public:
 
     // Call this is the image file has been modified. This will update the array_data and
     // array_size for the image from the updated image file.
-    void UpdateEmbeddedImage(EmbeddedImage* embed);
+    static void UpdateEmbeddedImage(EmbeddedImage* embed, size_t index = 0);
 
     wxImage GetImage(const tt_string& description);
 
-    wxBitmapBundle GetBitmapBundle(const tt_string& description, Node* node);
+    wxBitmapBundle GetBitmapBundle(const tt_string& description);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -81,7 +90,7 @@ public:
         return GetPropertyBitmap(parts, check_image);
     }
 
-    wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description, Node* node);
+    wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
@@ -121,9 +130,12 @@ public:
     bool AddEmbeddedImage(tt_string path, Node* form, bool is_animation = false);
     EmbeddedImage* GetEmbeddedImage(tt_string_view path);
 
-    // This will collect bundles for the entire project -- it initializes
-    // std::map<std::string, ImageBundle> m_bundles for every image.
+    // This will collect bundles for the entire project -- it initializes m_bundles and
+    // m_map_embedded for every image.
     void CollectBundles();
+
+    // Returns nullptr if the image is not found
+    EmbeddedImage* FindEmbedded(std::string_view);
 
 protected:
     bool CheckNode(Node* node);
@@ -131,13 +143,16 @@ protected:
     void CollectNodeBundles(Node* node, Node* form);
 
     // Converts filename to a valid string name and sets EmbeddedImage::array_name
-    void InitializeArrayName(EmbeddedImage* embed, tt_string_view path);
+    void InitializeEmbedStructure(EmbeddedImage* embed, tt_string_view path, Node* form);
 
-    bool AddNewEmbeddedImage(tt_string path, Node* form, std::unique_lock<std::mutex>& add_lock);
+    // This will update both m_bundles and m_map_embedded
+    bool AddNewEmbeddedImage(tt_string path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
-    bool AddEmbeddedBundleImage(tt_string path, Node* form);
+    EmbeddedImage* AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed = nullptr);
 
+    // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
+    // depending on the type of the image file.
     bool AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string path, Node* form);
 
     inline bool AddNewEmbeddedBundle(const tt_string& description, tt_string path, Node* form)
@@ -146,19 +161,22 @@ protected:
         return AddNewEmbeddedBundle(parts, path, form);
     }
 
-    // Reads the image and stores it in m_map_embedded
+    // Reads the image, remove unused metadat, compresses it and stores it in m_map_embedded
     bool AddSvgBundleImage(tt_string path, Node* form);
+
+    // Read the image, compresses it and stores it in m_map_embedded
+    bool AddXpmBundleImage(tt_string path, Node* form);
 
 private:
     NodeSharedPtr m_project_node { nullptr };
 
-    std::mutex m_mutex_embed_add;
-    std::mutex m_mutex_embed_retrieve;
-
-    std::map<std::string, wxImage> m_images;
-
     // std::string is the entire property for the image
     std::map<std::string, ImageBundle> m_bundles;
+
+    // This stores XPM images or any other non-embedded, non-art images
+    //
+    // std::string is parts[IndexImage].filename()
+    std::map<std::string, wxImage, std::less<>> m_images;
 
     // std::string is parts[IndexImage].filename()
     std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;

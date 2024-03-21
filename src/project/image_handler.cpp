@@ -1494,16 +1494,6 @@ bool ImageHandler::AddXpmBundleImage(tt_string path, Node* form)
     return true;
 }
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description)
-{
-    size_t org_size = (embed->imgs[0].array_size >> 32);
-    auto str = std::make_unique<char[]>(org_size);
-    wxMemoryInputStream stream_in(embed->imgs[0].array_data.get(), embed->imgs[0].array_size & 0xFFFFFFFF);
-    wxZlibInputStream zlib_strm(stream_in);
-    zlib_strm.Read(str.get(), org_size);
-    return wxBitmapBundle::FromSVG(str.get(), GetSizeInfo(size_description));
-}
-
 // size parameter is only used for SVG files
 wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
 {

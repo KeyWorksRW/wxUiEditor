@@ -46,8 +46,6 @@ struct EmbeddedImage
     wxBitmapBundle get_bundle(wxSize size = { -1, -1 });
 };
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description);
-
 class ImageHandler
 {
 private:

@@ -342,7 +342,7 @@ wxBitmap NodeProperty::as_bitmap() const
 
 wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 {
-    auto bundle = ProjectImages.GetBitmapBundle(m_value, m_node);
+    auto bundle = ProjectImages.GetBitmapBundle(m_value);
     if (!bundle.IsOk())
         return wxNullBitmap;
     else

@@ -196,12 +196,12 @@ wxImage ImageHandler::GetImage(const tt_string& description)
         return GetInternalImage("unknown");
 }
 
-wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description, Node* node)
+wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description)
 {
     if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
         description.starts_with("Art;") || description.starts_with("SVG;"))
     {
-        return GetPropertyBitmapBundle(description, node);
+        return GetPropertyBitmapBundle(description);
     }
     else
         return wxue_img::bundle_unknown_svg(32, 32);
@@ -1232,7 +1232,7 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
     }
 }
 
-wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description, Node* node)
+wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description)
 {
     tt_string_vector parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)

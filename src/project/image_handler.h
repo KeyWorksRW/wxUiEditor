@@ -76,7 +76,7 @@ public:
 
     wxImage GetImage(const tt_string& description);
 
-    wxBitmapBundle GetBitmapBundle(const tt_string& description, Node* node);
+    wxBitmapBundle GetBitmapBundle(const tt_string& description);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -90,7 +90,7 @@ public:
         return GetPropertyBitmap(parts, check_image);
     }
 
-    wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description, Node* node);
+    wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.

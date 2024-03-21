@@ -195,6 +195,10 @@ wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description)
         return wxue_img::bundle_unknown_svg(32, 32);
 }
 
+// This gets called by PropertyGrid_Image::RefreshChildren() in pg_image.cpp when an XPM file
+// is encountered.
+//
+// Primary caller is ProcessBundleProperty() for retrieving all the images in a bundle.
 wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool check_image)
 {
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
@@ -303,6 +307,8 @@ EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
     }
 }
 
+// This is called in BaseCodeGenerator::CollectImageHeaders (gen_base.cpp) when an animation file is found that
+// was not previously loaded.
 bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animation)
 {
     if (!path.file_exists())
@@ -642,6 +648,7 @@ bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
     return true;
 }
 
+// This gets called whenever a project is loaded or imported.
 void ImageHandler::CollectBundles()
 {
     if (m_allow_ui)
@@ -704,6 +711,8 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
     }
 }
 
+// This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
+// depending on the type of the image file.
 bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string path, Node* form)
 {
     ASSERT(parts.size() > 1)

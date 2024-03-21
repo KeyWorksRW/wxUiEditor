@@ -130,8 +130,8 @@ public:
     bool AddEmbeddedImage(tt_string path, Node* form, bool is_animation = false);
     EmbeddedImage* GetEmbeddedImage(tt_string_view path);
 
-    // This will collect bundles for the entire project -- it initializes
-    // std::map<std::string, ImageBundle> m_bundles for every image.
+    // This will collect bundles for the entire project -- it initializes m_bundles and
+    // m_map_embedded for every image.
     void CollectBundles();
 
     // Returns nullptr if the image is not found
@@ -145,11 +145,14 @@ protected:
     // Converts filename to a valid string name and sets EmbeddedImage::array_name
     void InitializeEmbedStructure(EmbeddedImage* embed, tt_string_view path, Node* form);
 
+    // This will update both m_bundles and m_map_embedded
     bool AddNewEmbeddedImage(tt_string path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
     EmbeddedImage* AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed = nullptr);
 
+    // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
+    // depending on the type of the image file.
     bool AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string path, Node* form);
 
     inline bool AddNewEmbeddedBundle(const tt_string& description, tt_string path, Node* form)

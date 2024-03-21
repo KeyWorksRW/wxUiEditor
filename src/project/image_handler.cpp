@@ -53,18 +53,6 @@ namespace wxue_img
     extern const unsigned char pulsing_unknown_gif[377];
 }
 
-namespace lunasvg
-{
-    // returns ElementID::unknown if name is not found
-    extern ElementID elementid(const std::string& name);
-
-    // returns PropertyID::unknown if name is not found
-    extern PropertyID csspropertyid(const std::string& name);
-
-    // returns PropertyID::unknown if name is not found
-    extern PropertyID propertyid(const std::string& name);
-}  // namespace lunasvg
-
 bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size);
 
 // Convert a data array into a wxAnimation

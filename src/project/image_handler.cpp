@@ -889,33 +889,6 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
         }
     }
 
-    if (img_bundle.lst_filenames.size() == 1)
-    {
-        if (embed = GetEmbeddedImage(img_bundle.lst_filenames[0]); embed)
-        {
-            wxMemoryInputStream stream(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
-            wxImage image;
-            image.LoadFile(stream);
-            // img_bundle.bundle = wxBitmapBundle::FromBitmap(image);
-        }
-    }
-    else
-    {
-        wxVector<wxBitmap> bitmaps;
-        for (auto& iter: img_bundle.lst_filenames)
-        {
-            if (embed = GetEmbeddedImage(iter); embed)
-            {
-                wxMemoryInputStream stream(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
-                wxImage image;
-                image.LoadFile(stream);
-                ASSERT(image.IsOk())
-                bitmaps.push_back(image);
-            }
-        }
-        // img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
-    }
-
     m_bundles[lookup_str] = std::move(img_bundle);
     return true;
 }

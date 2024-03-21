@@ -199,6 +199,32 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
     out.emplace_back();
     out.emplace_back(")");
 
+    if (auto* data_form = Project.getDataForm(); data_form && data_form->getChildCount())
+    {
+        out.emplace_back();
+        out.emplace_back();
+        var_name = Project.as_string(prop_cmake_varname);
+        var_name += "_data";
+        out.at(out.size() - 1) << "set (" << var_name;
+        out.emplace_back();
+
+        for (auto& iter: data_form->getChildNodePtrs())
+        {
+            tt_string base_file = iter->as_string(prop_data_file);
+            if (base_file.size())
+            {
+                base_file.make_relative(cur_dir);
+                base_file.backslashestoforward();
+
+                out.emplace_back();
+                out.at(out.size() - 1) << "    ${CMAKE_CURRENT_LIST_DIR}/" << base_file;
+            }
+        }
+
+        out.emplace_back();
+        out.emplace_back(")");
+    }
+
     // flag == 2 if a temporary file is being written
     if (flag == 2)
     {

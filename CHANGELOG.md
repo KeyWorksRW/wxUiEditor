@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Added support for all four validators in wxRuby3 0.9.3 and up.
 - Non-derived C++ class headers now support protected: class methods in addition to the public: ones that were already supported.
 - New Data List form allowing you to embed text, xml and binary files into your application.
+- Any generated .cmake file will also include a separate list of data files that can be used in the `add_custom_command` and `add_custom_target` commands of a CMakeLists.txt file.
 - Images list has a new auto_add property that will automatically add new images to the list when they are added to any control.
 
 ### Changed

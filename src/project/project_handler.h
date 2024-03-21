@@ -177,6 +177,10 @@ public:
     // either return that Node* or nullptr if no ImagesList class is found.
     Node* getImagesForm();
 
+    // This will assume any Data class will be the first or second child of the project, and
+    // will either return that Node* or nullptr if no Data class is found.
+    Node* getDataForm();
+
     // Sets project property value only if the property exists, returns false if it doesn't
     // exist.
     template <typename T>
@@ -201,6 +205,7 @@ private:
     Node* m_form_BundleBitmaps { nullptr };
     Node* m_form_Animation { nullptr };
     Node* m_ImagesForm { nullptr };
+    Node* m_DataForm { nullptr };
 
     tt_string m_projectFile;
     tt_string m_projectPath;

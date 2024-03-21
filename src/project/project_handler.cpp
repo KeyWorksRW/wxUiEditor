@@ -616,6 +616,22 @@ Node* ProjectHandler::getImagesForm()
     return m_ImagesForm;
 }
 
+Node* ProjectHandler::getDataForm()
+{
+    if (!m_DataForm)
+    {
+        if (m_project_node->getChildCount() > 0 && m_project_node->getChild(0)->isGen(gen_Data))
+        {
+            m_DataForm = m_project_node->getChild(0);
+        }
+        else if (m_project_node->getChildCount() > 1 && m_project_node->getChild(1)->isGen(gen_Data))
+        {
+            m_DataForm = m_project_node->getChild(1);
+        }
+    }
+    return m_DataForm;
+}
+
 int ProjectHandler::get_WidgetsMinorVersion()
 {
     tt_string_view version = m_project_node->as_string(prop_wxWidgets_version);

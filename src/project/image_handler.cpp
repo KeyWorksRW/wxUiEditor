@@ -744,6 +744,8 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
         }
     }
 
+    // At this point, the image file has been found.
+
     if (parts[IndexType].starts_with("SVG"))
     {
         if (AddSvgBundleImage(path, form))
@@ -755,6 +757,21 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                 return true;
             }
         }
+        return false;  // presumably an invalid SVG file
+    }
+
+    else if (parts[IndexType].starts_with("XPM"))
+    {
+        if (AddXpmBundleImage(path, form))
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+            if (auto embed = GetEmbeddedImage(path); embed)
+            {
+                m_bundles[lookup_str] = std::move(img_bundle);
+                return true;
+            }
+        }
+        return false;  // presumably an invalid XPM file
     }
 
     auto* embed = AddEmbeddedBundleImage(path, form);
@@ -1030,7 +1047,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
             return nullptr;
         }
     }
-    else if (parts[IndexType].contains("SVG"))
+    else if (parts[IndexType].contains("SVG") || parts[IndexType].contains("XPM"))
     {
         // The user is allowed to change the dimensions of an SVG image, but that doesn't mean
         // it's a new image. So first check to see if we already have the image.
@@ -1436,6 +1453,47 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     return true;
 }
 
+bool ImageHandler::AddXpmBundleImage(tt_string path, Node* form)
+{
+    wxFFileInputStream stream(path.make_wxString());
+    if (!stream.IsOk())
+    {
+        return false;
+    }
+    size_t org_size = (stream.GetLength() & 0xFFFFFFFF);
+
+    wxImage image;
+    if (!image.LoadFile(stream, wxBITMAP_TYPE_XPM))
+    {
+        return false;
+    }
+
+    m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
+    auto* embed = m_map_embedded[path.filename().as_str()].get();
+    InitializeEmbedStructure(embed, path, form);
+    embed->size = image.GetSize();
+
+    wxMemoryOutputStream memory_stream;
+    wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+    stream.SeekI(0);
+
+    if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+    {
+        // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+        return false;
+    }
+    save_strem.Close();
+    auto compressed_size = memory_stream.TellO();
+
+    auto read_stream = memory_stream.GetOutputStreamBuffer();
+    embed->imgs[0].type = wxBITMAP_TYPE_XPM;
+    embed->imgs[0].array_size = (compressed_size | (org_size << 32));
+    embed->imgs[0].array_data = std::make_unique<unsigned char[]>(compressed_size);
+    memcpy(embed->imgs[0].array_data.get(), read_stream->GetBufferStart(), compressed_size);
+
+    return true;
+}
+
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, tt_string_view size_description)
 {
     size_t org_size = (embed->imgs[0].array_size >> 32);
@@ -1462,6 +1520,23 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         wxZlibInputStream zlib_strm(stream_in);
         zlib_strm.Read(str.get(), org_size);
         return wxBitmapBundle::FromSVG(str.get(), override_size == wxDefaultSize ? size : override_size);
+    }
+    else if (imgs[0].type == wxBITMAP_TYPE_XPM)
+    {
+        auto file_time = imgs[0].filename.last_write_time();
+        if (file_time != imgs[0].file_time)
+        {
+            ImageHandler::UpdateEmbeddedImage(this, 0);
+        }
+        size_t org_size = (imgs[0].array_size >> 32);
+        auto str = std::make_unique<char[]>(org_size);
+        wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
+        wxZlibInputStream zlib_strm(stream_in);
+        zlib_strm.Read(str.get(), org_size);
+        wxMemoryInputStream stream(str.get(), org_size);
+        wxImage image;
+        image.LoadFile(stream, wxBITMAP_TYPE_XPM);
+        return wxBitmapBundle::FromBitmap(image);
     }
 
     wxVector<wxBitmap> bitmaps;

@@ -160,8 +160,11 @@ protected:
         return AddNewEmbeddedBundle(parts, path, form);
     }
 
-    // Reads the image and stores it in m_map_embedded
+    // Reads the image, remove unused metadat, compresses it and stores it in m_map_embedded
     bool AddSvgBundleImage(tt_string path, Node* form);
+
+    // Read the image, compresses it and stores it in m_map_embedded
+    bool AddXpmBundleImage(tt_string path, Node* form);
 
 private:
     NodeSharedPtr m_project_node { nullptr };

@@ -27,7 +27,7 @@ struct ImageInfo
 {
     tt_string filename;
     tt_string array_name;
-    size_t array_size;
+    uint64_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
     std::filesystem::file_time_type file_time;  // time the file was last modified
     wxBitmapType type;

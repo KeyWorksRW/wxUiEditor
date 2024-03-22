@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - New Data List form allowing you to embed text, xml and binary files into your application.
 - Any generated .cmake file will also include a separate list of data files that can be used in the `add_custom_command` and `add_custom_target` commands of a CMakeLists.txt file.
 - Images list has a new auto_add property that will automatically add new images to the list when they are added to any control.
+- The size of the Icons in the tree control (Navigation Panel) can be set in the Preferences dialog. On Windows, these settings will be scaled to the current DPI setting.
 
 ### Changed
 

@@ -72,6 +72,9 @@ public:
     int get_RubyLineLength() const { return m_ruby_line_length; }
     void set_RubyLineLength(int length) { m_ruby_line_length = length; }
 
+    int get_IconSize() const { return m_icon_size; }
+    void set_IconSize(int size) { m_icon_size = size; }
+
     // Use this string to construct a FontProperty() to get the values
     const tt_string& get_CodeDisplayFont() const { return m_code_display_font; }
 
@@ -213,6 +216,8 @@ private:
     int m_cpp_line_length { 110 };
     int m_python_line_length { 90 };
     int m_ruby_line_length { 80 };
+
+    int m_icon_size { 20 };
 
     bool m_sizers_all_borders { true };
     bool m_sizers_always_expand { true };

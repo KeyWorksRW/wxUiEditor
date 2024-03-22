@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 // Purpose:   Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +23,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
+#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
@@ -68,8 +69,9 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
     m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
 
     int index = 0;
-    wxSize gen_image_size = parent->FromDIP(wxSize(GenImageSize, GenImageSize));
-    m_iconList = new wxImageList(gen_image_size.x, gen_image_size.y);
+    wxSize gen_image_size = parent->FromDIP(wxSize(UserPrefs.get_IconSize(), UserPrefs.get_IconSize()));
+
+    wxVector<wxBitmapBundle> bundles;
     for (auto iter: NodeCreation.getNodeDeclarationArray())
     {
         if (!iter)
@@ -80,19 +82,13 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
 
         if (auto bundle = iter->GetBitmapBundle(gen_image_size.x, gen_image_size.y); bundle.IsOk())
         {
-            m_iconList->Add(bundle.GetBitmap(gen_image_size));
+            bundles.push_back(bundle);
             m_iconIdx[iter->getGenName()] = index++;
-            continue;
         }
-
-        auto image = iter->GetImage().Scale(gen_image_size.x, gen_image_size.y, wxIMAGE_QUALITY_BILINEAR);
-        m_iconList->Add(image);
-        m_iconIdx[iter->getGenName()] = index++;
     }
-    m_iconList->Add(GetSvgImage("svg", gen_image_size.x, gen_image_size.y).GetBitmap(gen_image_size));
+    bundles.push_back(GetSvgImage("svg", gen_image_size.x, gen_image_size.y));
     m_iconIdx[gen_svg_embedded_image] = index++;
-
-    m_tree_ctrl->AssignImageList(m_iconList);
+    m_tree_ctrl->SetImages(bundles);
 
     m_toolbar = new NavToolbar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
     m_toolbar->Realize();

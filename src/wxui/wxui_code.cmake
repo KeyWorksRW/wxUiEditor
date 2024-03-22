@@ -68,3 +68,21 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
 
 )
+
+set (wxue_generated_code_data
+
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/forms.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/widgets.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/containers.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/bars.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/project.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/sizers.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/text_ctrls.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/buttons.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/boxes.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/data_ctrls.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/mdi.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/pickers.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/interfaces.xml
+
+)

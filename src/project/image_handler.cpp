@@ -507,14 +507,14 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed, size_t index)
         wxMemoryOutputStream memory_stream;
         wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
 
-        size_t org_size = (stream.GetLength() & 0xFFFFFFFF);
+        uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
 
         if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
         {
             return;
         }
         save_strem.Close();
-        auto compressed_size = memory_stream.TellO();
+        auto compressed_size = static_cast<uint64_t>(memory_stream.TellO());
 
         auto read_stream = memory_stream.GetOutputStreamBuffer();
         embed->imgs[0].array_size = (compressed_size | (org_size << 32));
@@ -1372,7 +1372,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     auto* embed = m_map_embedded[path.filename().as_str()].get();
     InitializeEmbedStructure(embed, path, form);
 
-    size_t org_size = (stream.GetLength() & 0xFFFFFFFF);
+    uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
 
     if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
     {
@@ -1380,7 +1380,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
         return false;
     }
     save_strem.Close();
-    auto compressed_size = memory_stream.TellO();
+    auto compressed_size = static_cast<uint64_t>(memory_stream.TellO());
 
     auto read_stream = memory_stream.GetOutputStreamBuffer();
     embed->imgs[0].type = wxBITMAP_TYPE_SVG;
@@ -1444,7 +1444,7 @@ bool ImageHandler::AddXpmBundleImage(tt_string path, Node* form)
     {
         return false;
     }
-    size_t org_size = (stream.GetLength() & 0xFFFFFFFF);
+    uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
 
     wxImage image;
     if (!image.LoadFile(stream, wxBITMAP_TYPE_XPM))
@@ -1488,7 +1488,7 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         {
             ImageHandler::UpdateEmbeddedImage(this, 0);
         }
-        size_t org_size = (imgs[0].array_size >> 32);
+        uint64_t org_size = (imgs[0].array_size >> 32);
         auto str = std::make_unique<char[]>(org_size);
         wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
         wxZlibInputStream zlib_strm(stream_in);
@@ -1502,7 +1502,7 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         {
             ImageHandler::UpdateEmbeddedImage(this, 0);
         }
-        size_t org_size = (imgs[0].array_size >> 32);
+        uint64_t org_size = (imgs[0].array_size >> 32);
         auto str = std::make_unique<char[]>(org_size);
         wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
         wxZlibInputStream zlib_strm(stream_in);

@@ -6964,7 +6964,8 @@
               class="wxBoxSizer"
               class_access="protected:"
               orientation="wxVERTICAL"
-              var_name="m_general_page_sizer">
+              var_name="m_general_page_sizer"
+              flags="wxEXPAND">
               <node
                 class="wxBoxSizer"
                 class_access="protected:"
@@ -7029,15 +7030,29 @@
               </node>
               <node
                 class="wxBoxSizer"
+                var_name="box_sizer8">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Icon Size:"
+                  var_name="static_text4"
+                  tooltip="The size of the icons used in toolbars and tree controls"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;16&quot; &quot;18&quot; &quot;20&quot; &quot;22&quot; &quot;24&quot; &quot;26&quot; &quot;28&quot; &quot;30&quot; &quot;32&quot;"
+                  var_name="m_choice_icon_size" />
+              </node>
+              <node
+                class="wxBoxSizer"
                 class_access="protected:"
                 var_name="m_box_code_font"
                 flags="wxEXPAND">
                 <node
                   class="wxStaticText"
                   class_access="none"
-                  label="Code Font:"
+                  label="&amp;Code Font:"
                   var_name="staticText_2"
-                  wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxButton"

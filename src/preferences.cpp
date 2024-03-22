@@ -64,6 +64,8 @@ void Prefs::ReadConfig()
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
 
+    m_icon_size = config->Read("icon_size", 20);
+
     m_code_display_font = config->Read("code_display_font", "");
 
     config->SetPath("/");
@@ -115,6 +117,8 @@ void Prefs::WriteConfig()
     config->Write("cpp_line_length", m_cpp_line_length);
     config->Write("python_line_length", m_python_line_length);
     config->Write("ruby_line_length", m_ruby_line_length);
+
+    config->Write("icon_size", m_icon_size);
 
     if (m_dark_mode_pending & PENDING_DARK_MODE_ENABLE)
     {

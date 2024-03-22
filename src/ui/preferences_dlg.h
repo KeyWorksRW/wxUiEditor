@@ -64,6 +64,7 @@ protected:
     wxCheckBox* m_check_right_propgrid;
     wxCheckBox* m_check_svg_bitmaps;
     wxChoice* m_choice_cpp_version;
+    wxChoice* m_choice_icon_size;
     wxChoice* m_choice_python_version;
     wxChoice* m_choice_ruby_version;
     wxColourPickerCtrl* m_colour_cpp;

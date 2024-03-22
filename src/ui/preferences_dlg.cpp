@@ -78,10 +78,29 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_general_page_sizer->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
+    auto* box_sizer8 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* static_text4 = new wxStaticText(page_general, wxID_ANY, "&Icon Size:");
+    static_text4->SetToolTip("The size of the icons used in toolbars and tree controls");
+    box_sizer8->Add(static_text4, wxSizerFlags().Center().Border(wxALL));
+
+    m_choice_icon_size = new wxChoice(page_general, wxID_ANY);
+    m_choice_icon_size->Append("16");
+    m_choice_icon_size->Append("18");
+    m_choice_icon_size->Append("20");
+    m_choice_icon_size->Append("22");
+    m_choice_icon_size->Append("24");
+    m_choice_icon_size->Append("26");
+    m_choice_icon_size->Append("28");
+    m_choice_icon_size->Append("30");
+    m_choice_icon_size->Append("32");
+    box_sizer8->Add(m_choice_icon_size, wxSizerFlags().Border(wxALL));
+
+    m_general_page_sizer->Add(box_sizer8, wxSizerFlags().Border(wxALL));
+
     m_box_code_font = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText_2 = new wxStaticText(page_general, wxID_ANY, "Code Font:");
-    staticText_2->Wrap(200);
+    auto* staticText_2 = new wxStaticText(page_general, wxID_ANY, "&Code Font:");
     m_box_code_font->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
     m_btn_font = new wxButton(page_general, wxID_ANY, "Font");
@@ -405,6 +424,8 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_python_line_length = std::to_string(UserPrefs.get_PythonLineLength());
     m_ruby_line_length = std::to_string(UserPrefs.get_RubyLineLength());
 
+    m_choice_icon_size->SetStringSelection(std::to_string(UserPrefs.get_IconSize()));
+
     FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
     m_btn_font->SetLabel(font_prop.as_wxString());
     m_btn_font->SetFont(font_prop.GetFont());
@@ -628,11 +649,15 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     fix_line_length();
     UserPrefs.set_RubyLineLength(line_length);
 
+    auto old_size = UserPrefs.get_IconSize();
+    UserPrefs.set_IconSize(tt::atoi(m_choice_icon_size->GetStringSelection().ToStdString()));
+    bool is_icon_size_changed = old_size != UserPrefs.get_IconSize();
+
     // UserPrefs.set_CodeDisplayFont(m_code_font_picker->GetSelectedFontInfo());
 
     UserPrefs.WriteConfig();
 
-    if (is_prop_grid_changed || is_dark_changed)
+    if (is_prop_grid_changed || is_dark_changed || is_icon_size_changed)
     {
         tt_string msg("You must close and reopen wxUiEditor for");
         if (is_prop_grid_changed)
@@ -643,8 +668,14 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         }
         if (is_dark_changed)
             msg += " the Dark Mode";
+        if (is_icon_size_changed)
+        {
+            if (!msg.ends_with("for"))
+                msg += " and";
+            msg += " Icon Size";
+        }
 
-        msg += " settings to take effect.";
+        msg += " setting(s) to take effect.";
 
         wxMessageBox(msg);
     }

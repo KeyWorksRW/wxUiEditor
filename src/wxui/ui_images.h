@@ -225,7 +225,7 @@ namespace wxue_img
     extern const unsigned char data_list_svg[1088];  // ../art_src/data_list.svg
     extern const unsigned char dataview_column_svg[6420];  // ../art_src/dataview_column.svg
     extern const unsigned char dataview_ctrl_svg[12477];  // ../art_src/dataview_ctrl.svg
-    extern const unsigned char dataviewlist_column_svg[8955];  // ../art_src/dataviewlist_column.svg
+    extern const unsigned char dataviewlist_column_svg[9048];  // ../art_src/dataviewlist_column.svg
     extern const unsigned char dataviewlist_ctrl_svg[18308];  // ../art_src/dataviewlist_ctrl.svg
     extern const unsigned char dataviewtree_ctrl_svg[12886];  // ../art_src/dataviewtree_ctrl.svg
     extern const unsigned char datepicker_svg[3836];  // ../art_src/datepicker.svg

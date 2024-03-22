@@ -922,6 +922,20 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, 
                     InitializeEmbedStructure(embed, path, form);
                     embed->size = image.GetSize();
                 }
+                else if (idx != 0)
+                {
+                    embed->imgs[idx].filename = path;
+                    embed->imgs[idx].file_time = embed->imgs[idx].filename.last_write_time();
+                    if (auto result = FileNameToVarName(path.filename()); result)
+                    {
+                        embed->imgs[idx].array_name = result.value();
+                    }
+                    else
+                    {
+                        embed->imgs[idx].array_name = embed->imgs[0].array_name;
+                        embed->imgs[idx].array_name << "_" << idx;
+                    }
+                }
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up
                 // with better compression.

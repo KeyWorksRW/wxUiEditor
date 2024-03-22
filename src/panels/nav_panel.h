@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -90,8 +90,6 @@ private:
 
     std::map<Node*, wxTreeItemId> m_node_tree_map;
     std::map<wxTreeItemId, Node*> m_tree_node_map;
-
-    wxImageList* m_iconList;
 
     std::map<GenName, int> m_iconIdx;
 

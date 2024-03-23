@@ -7,6 +7,7 @@
 
 // clang-format off
 
+#include <wx/button.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
@@ -80,7 +81,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* box_sizer8 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* static_text4 = new wxStaticText(page_general, wxID_ANY, "&Icon Size:");
+    auto* static_text4 = new wxStaticText(page_general, wxID_ANY, "Tree &Icon Size:");
     static_text4->SetToolTip("The size of the icons used in toolbars and tree controls");
     box_sizer8->Add(static_text4, wxSizerFlags().Center().Border(wxALL));
 
@@ -100,13 +101,11 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_box_code_font = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText_2 = new wxStaticText(page_general, wxID_ANY, "&Code Font:");
-    m_box_code_font->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
+    m_btn_font = new wxCommandLinkButton(page_general, wxID_ANY, "Font", "Font for code panels");
+    m_box_code_font->Add(m_btn_font, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_btn_font = new wxButton(page_general, wxID_ANY, "Font");
-    m_box_code_font->Add(m_btn_font, wxSizerFlags().Border(wxALL));
-
-    m_general_page_sizer->Add(m_box_code_font, wxSizerFlags().Expand().Border(wxALL));
+    m_general_page_sizer->Add(m_box_code_font,
+    wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
     page_general->SetSizerAndFit(m_general_page_sizer);
 
     auto* page_cpp = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -427,14 +426,14 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_choice_icon_size->SetStringSelection(std::to_string(UserPrefs.get_IconSize()));
 
     FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
-    m_btn_font->SetLabel(font_prop.as_wxString());
-    m_btn_font->SetFont(font_prop.GetFont());
+    m_btn_font->SetMainLabel(font_prop.as_wxString());
 
 #if defined(__WXMSW__)
     m_box_dark_settings->ShowItems(true);
     m_general_page_sizer->Layout();
-    Fit();
 #endif
+
+    Fit();
 
     // This will transfer data from the validator variables to the controls
     event.Skip();
@@ -442,12 +441,11 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 
 void PreferencesDlg::OnFontButton(wxCommandEvent& WXUNUSED(event))
 {
-    FontPropDlg dlg(this, m_btn_font->GetLabel());
+    FontPropDlg dlg(this, m_btn_font->GetMainLabel());
     if (dlg.ShowModal() == wxID_OK)
     {
         FontProperty font_prop(dlg.GetFontDescription());
-        m_btn_font->SetLabel(dlg.GetResults());
-        m_btn_font->SetFont(font_prop.GetFont());
+        m_btn_font->SetMainLabel(dlg.GetResults());
         Fit();
     }
 }
@@ -617,9 +615,9 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         }
     }
 
-    if (UserPrefs.get_CodeDisplayFont() != m_btn_font->GetLabel().utf8_string())
+    if (UserPrefs.get_CodeDisplayFont() != m_btn_font->GetMainLabel().utf8_string())
     {
-        FontProperty font_prop(tt_string_view(m_btn_font->GetLabel().utf8_string()));
+        FontProperty font_prop(tt_string_view(m_btn_font->GetMainLabel().utf8_string()));
         auto font = font_prop.GetFont();
         UserPrefs.set_CodeDisplayFont(font_prop.as_string());
         wxGetFrame().GetCppPanel()->SetCodeFont(font);

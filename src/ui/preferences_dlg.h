@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/clrpicker.h>
 #include <wx/colour.h>
+#include <wx/commandlinkbutton.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -55,7 +55,6 @@ protected:
     wxBoxSizer* m_box_code_font;
     wxBoxSizer* m_box_dark_settings;
     wxBoxSizer* m_general_page_sizer;
-    wxButton* m_btn_font;
     wxCheckBox* m_check_cpp_snake_case;
     wxCheckBox* m_check_dark_mode;
     wxCheckBox* m_check_fullpath;
@@ -84,6 +83,7 @@ protected:
     wxColourPickerCtrl* m_colour_xrc_attribute;
     wxColourPickerCtrl* m_colour_xrc_string;
     wxColourPickerCtrl* m_colour_xrc_tag;
+    wxCommandLinkButton* m_btn_font;
 };
 
 // ************* End of generated code ***********

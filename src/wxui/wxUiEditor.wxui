@@ -7034,7 +7034,7 @@
                 <node
                   class="wxStaticText"
                   class_access="none"
-                  label="&amp;Icon Size:"
+                  label="Tree &amp;Icon Size:"
                   var_name="static_text4"
                   tooltip="The size of the icons used in toolbars and tree controls"
                   alignment="wxALIGN_CENTER_VERTICAL" />
@@ -7047,17 +7047,14 @@
                 class="wxBoxSizer"
                 class_access="protected:"
                 var_name="m_box_code_font"
+                borders="wxBOTTOM|wxRIGHT|wxLEFT"
                 flags="wxEXPAND">
                 <node
-                  class="wxStaticText"
-                  class_access="none"
-                  label="&amp;Code Font:"
-                  var_name="staticText_2"
-                  alignment="wxALIGN_CENTER_VERTICAL" />
-                <node
-                  class="wxButton"
-                  label="Font"
+                  class="wxCommandLinkButton"
+                  main_label="Font"
+                  note="Font for code panels"
                   var_name="m_btn_font"
+                  borders="wxBOTTOM|wxRIGHT|wxLEFT"
                   wxEVT_BUTTON="OnFontButton" />
               </node>
             </node>

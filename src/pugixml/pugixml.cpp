@@ -49,6 +49,10 @@ using namespace pugi;
 #include <stdlib.h>
 #include <string.h>
 
+#if __has_include(<format>)
+    #include <format>
+#endif
+
 #include <cstring>
 #include <fstream>
 #include <istream>

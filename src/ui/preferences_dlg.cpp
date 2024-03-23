@@ -430,9 +430,9 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 
 #if defined(__WXMSW__)
     m_box_dark_settings->ShowItems(true);
-    m_general_page_sizer->Layout();
 #endif
 
+    m_general_page_sizer->Layout();
     Fit();
 
     // This will transfer data from the validator variables to the controls
@@ -446,6 +446,7 @@ void PreferencesDlg::OnFontButton(wxCommandEvent& WXUNUSED(event))
     {
         FontProperty font_prop(dlg.GetFontDescription());
         m_btn_font->SetMainLabel(dlg.GetResults());
+        m_general_page_sizer->Layout();
         Fit();
     }
 }

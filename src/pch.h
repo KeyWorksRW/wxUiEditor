@@ -40,10 +40,6 @@
 
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
-#if !wxCHECK_VERSION(3, 3, 0)
-    #error "You must have wxWidgets 3.3.0 or later to build this project."
-#endif
-
 #if defined(__WINDOWS__)
     #include <wx/msw/wrapcctl.h>  // Wrapper for the standard <commctrl.h> header
 

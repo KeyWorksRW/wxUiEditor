@@ -40,6 +40,10 @@ All notable changes to this project will be documented in this file.
 - wxStyledTextCtrl::SetTabWidth() now generates code correctly (generated if tabs are enabled and tab width is not the default value of 8)
 - wxStaticBoxSizers that use a wxRadioButton now work correctly in wxUiEditor's UI on Linux, and code generation has been updated to work on wxGTK allowing the button to be unchecked when the app is built with wxWidgets 3.3 or later.
 
+### Additional Note
+
+Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to display SVG images in the Mockup Panel. In most cases, you won't see a difference between what wxUiEditor displays and what your own code displays. However, there are times where NanoSVG displays an SVG image incorrectly and LunaSVG displays it correctly. LunaSVG will be integrated into wxWidgets 3.3 in the near future, but until you can use that version, then it's possible your SVG images won't display the way you intended them to in your application, even though they look fine in wxUiEditor.
+
 ## [Released (1.2.0)]
 
 ### Added

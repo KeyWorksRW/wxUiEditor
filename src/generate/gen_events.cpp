@@ -359,7 +359,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                 if (a->getNode()->as_string(prop_id) == b->getNode()->as_string(prop_id))
                     return (a->getNode()->as_string(prop_var_name) < b->getNode()->as_string(prop_var_name));
                 else
-                return (a->getNode()->as_string(prop_id) < b->getNode()->as_string(prop_id));
+                    return (a->getNode()->as_string(prop_id) < b->getNode()->as_string(prop_id));
             }
             else
                 return (a->get_value() < b->get_value());

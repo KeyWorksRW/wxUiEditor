@@ -153,8 +153,10 @@ void Node::copyEventsFrom(Node* from)
     {
         if (iter.second.get_value().size())
         {
-            auto event = getEvent(iter.second.get_name());
-            event->set_value(iter.second.get_value());
+            if (auto* event = getEvent(iter.second.get_name()); event)
+            {
+                event->set_value(iter.second.get_value());
+            }
         }
     }
 }

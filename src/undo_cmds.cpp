@@ -435,6 +435,30 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
             new_node->set_value(prop, old_node->as_string(prop));
         }
     }
+
+    if (old_node->hasProp(prop_var_name) && old_node->as_string(prop_class_access) != "none")
+    {
+        new_node->set_value(prop_var_name, old_node->as_string(prop_var_name));
+    }
+
+    if (old_node->isGen(gen_wxComboBox) && new_node->isGen(gen_wxChoice))
+    {
+        auto map_old_events = old_node->getMapEvents();
+        if (auto event = map_old_events.find("wxEVT_COMBOBOX"); event != map_old_events.end())
+        {
+            if (event->second.get_value().size())
+            {
+                auto* new_event = new_node->getEvent("wxEVT_CHOICE");
+                if (new_event)
+                {
+                    new_event->set_value(event->second.get_value());
+                }
+            }
+        }
+    }
+
+    // Copy all identical events that have handlers
+    new_node->copyEventsFrom(old_node);
 }
 
 ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)

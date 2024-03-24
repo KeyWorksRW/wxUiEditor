@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - The ability to generate only a C++ header file without a source file has been removed.
 - Books now display images on pages by default. If you don't want the images, you can uncheck the `display_images` property.
 - Before generating code, any images that you used are checked to see if they have been modified since you created them, and if so, the new file is loaded before generating the code.
+- When using the context menu to change a widgets from one type to another, all identical events will have their handler names preserved, and if the var_name is used for class access, that will be preserved as well.
 
 ### Fixed
 

@@ -456,6 +456,9 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
             }
         }
     }
+
+    // Copy all identical events that have handlers
+    new_node->copyEventsFrom(old_node);
 }
 
 ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)

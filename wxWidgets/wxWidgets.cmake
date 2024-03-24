@@ -644,15 +644,15 @@ set (common_sources
     # Using C++ also works but is not how the official build of lunasvg is done
     # If this is enabled, then the plutovg sources in wxCLib.cmake must be
     # disabled
-    3rdparty/lunasvg/source/plutovg/plutovg-blend.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-dash.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-ft-math.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-ft-raster.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-ft-stroker.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-geometry.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-paint.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg-rle.cpp
-    3rdparty/lunasvg/source/plutovg/plutovg.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-blend.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-dash.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-ft-math.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-ft-raster.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-ft-stroker.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-geometry.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-paint.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg-rle.cpp
+    # 3rdparty/lunasvg/source/plutovg/plutovg.cpp
 )
 
 set (msw_sources

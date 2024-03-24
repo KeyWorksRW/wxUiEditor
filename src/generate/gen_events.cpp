@@ -349,7 +349,23 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 
     auto sort_by_event_name = [](NodeEvent* a, NodeEvent* b)
     {
-        return (a->get_name() < b->get_name());
+        // If the event names are the same, then sort by the event handler name
+        if (a->get_name() == b->get_name())
+        {
+            // If the event handler names are the same, then sort by the property id
+            if (a->get_value() == b->get_value())
+            {
+                // If the property id's are the same, then sort by the node's var_name
+                if (a->getNode()->as_string(prop_id) == b->getNode()->as_string(prop_id))
+                    return (a->getNode()->as_string(prop_var_name) < b->getNode()->as_string(prop_var_name));
+                else
+                return (a->getNode()->as_string(prop_id) < b->getNode()->as_string(prop_id));
+            }
+            else
+                return (a->get_value() < b->get_value());
+        }
+        else
+            return (a->get_name() < b->get_name());
     };
 
     // Sort events by event name
@@ -374,7 +390,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                 {
                     if (!is_cpp())
                     {
-                        m_source->writeLine("# You cannot use C++ lambda functions as an event handler in wxPython.");
+                        m_source->writeLine("# You can only use C++ lambda functions as an event handler C++ code.");
                     }
                     else
                     {
@@ -436,7 +452,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                     {
                         if (!is_cpp())
                         {
-                            m_source->writeLine("# You cannot use C++ lambda functions as an event handler in wxPython.");
+                            m_source->writeLine("# You can only use C++ lambda functions as an event handler C++ code.");
                         }
                         else
                         {

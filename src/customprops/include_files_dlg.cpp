@@ -75,9 +75,9 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
     // Event handlers
     Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnOK, this, wxID_OK);
     btn_add->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnAdd, this);
-    m_btn_remove->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnRemove, this);
-    m_btn_move_up->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnMoveUp, this);
     m_btn_move_down->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnMoveDown, this);
+    m_btn_move_up->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnMoveUp, this);
+    m_btn_remove->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnRemove, this);
     m_btn_sort->Bind(wxEVT_BUTTON, &IncludeFilesDialog::OnSort, this);
     Bind(wxEVT_INIT_DIALOG, &IncludeFilesDialog::OnInit, this);
     m_listbox->Bind(wxEVT_LISTBOX, &IncludeFilesDialog::OnItemSelected, this);

@@ -107,9 +107,9 @@ bool NodeSearchDlg::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_INIT_DIALOG, &NodeSearchDlg::OnInit, this);
     m_listbox->Bind(wxEVT_LISTBOX, &NodeSearchDlg::OnSelectLocated, this);
     radioBtn_Generators->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnGenerators, this);
-    radio_variables->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnVariables, this);
-    radioBtn_Labels->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnLabels, this);
     radioBtn_IDs->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnIDs, this);
+    radioBtn_Labels->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnLabels, this);
+    radio_variables->Bind(wxEVT_RADIOBUTTON, &NodeSearchDlg::OnVariables, this);
     m_text_search->Bind(wxEVT_TEXT, &NodeSearchDlg::OnSearchText, this);
 
     return true;

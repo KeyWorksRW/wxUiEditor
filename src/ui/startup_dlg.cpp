@@ -143,9 +143,9 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     SetSizerAndFit(dlg_sizer);
 
     // Event handlers
-    hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlg::OnOpen, this);
     hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlg::OnImport, this);
     hyperlink_3->Bind(wxEVT_HYPERLINK, &StartupDlg::OnNew, this);
+    hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlg::OnOpen, this);
     Bind(wxEVT_INIT_DIALOG, &StartupDlg::OnInit, this);
 
     return true;

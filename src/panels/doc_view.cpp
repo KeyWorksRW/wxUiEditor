@@ -48,10 +48,10 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
     SetSizerAndFit(m_parent_sizer);
 
     // Event handlers
-    Bind(wxEVT_TOOL, &DocViewPanel::OnHome, this, wxID_HOME);
     Bind(wxEVT_TOOL, &DocViewPanel::OnBack, this, wxID_BACKWARD);
-    Bind(wxEVT_TOOL, &DocViewPanel::OnForward, this, wxID_FORWARD);
     Bind(wxEVT_TOOL, &DocViewPanel::OnCPlus, this, ID_CPLUS);
+    Bind(wxEVT_TOOL, &DocViewPanel::OnForward, this, wxID_FORWARD);
+    Bind(wxEVT_TOOL, &DocViewPanel::OnHome, this, wxID_HOME);
     Bind(wxEVT_TOOL, &DocViewPanel::OnPython, this, ID_PYTHON);
     Bind(wxEVT_TOOL, &DocViewPanel::OnRuby, this, ID_RUBY);
     Bind(wxEVT_UPDATE_UI, &DocViewPanel::OnUpdateBack, this, wxID_BACKWARD);

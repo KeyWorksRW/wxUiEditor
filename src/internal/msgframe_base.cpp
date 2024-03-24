@@ -172,15 +172,15 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     m_aui_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
     btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
     Bind(wxEVT_CLOSE_WINDOW, &MsgFrameBase::OnClose, this);
-    Bind(wxEVT_MENU, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
     Bind(wxEVT_MENU, &MsgFrameBase::OnClear, this, wxID_CLEAR);
-    Bind(wxEVT_MENU, &MsgFrameBase::OnHide, this, id_hide);
-    Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
+    Bind(wxEVT_MENU, &MsgFrameBase::OnHide, this, id_hide);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
-    Bind(wxEVT_TOOL, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
+    Bind(wxEVT_MENU, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
+    Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_TOOL, &MsgFrameBase::OnClear, this, tool_item_clear->GetId());
     Bind(wxEVT_TOOL, &MsgFrameBase::OnHide, this, id_hide);
+    Bind(wxEVT_TOOL, &MsgFrameBase::OnSaveAs, this, wxID_SAVEAS);
 
     return true;
 }

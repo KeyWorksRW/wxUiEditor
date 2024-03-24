@@ -61,8 +61,8 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     // Event handlers
     Bind(wxEVT_BUTTON, &ImportWinRes::OnOk, this, wxID_OK);
-    m_btnSelectAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnSelectAll, this);
     m_btnClearAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnClearAll, this);
+    m_btnSelectAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnSelectAll, this);
     m_fileResource->Bind(wxEVT_FILEPICKER_CHANGED, &ImportWinRes::OnResourceFile, this);
     Bind(wxEVT_INIT_DIALOG, &ImportWinRes::OnInit, this);
 

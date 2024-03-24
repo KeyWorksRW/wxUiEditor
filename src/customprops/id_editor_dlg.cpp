@@ -136,8 +136,8 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_comboPrefixes->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnComboSelect, this);
     m_comboSuffix->Bind(wxEVT_COMBOBOX, &IDEditorDlg::OnComboSelect, this);
     Bind(wxEVT_INIT_DIALOG, &IDEditorDlg::OnInit, this);
-    m_radioBtn_Standard->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnStandardID, this);
     m_radioBtn_Custom->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnCustomID, this);
+    m_radioBtn_Standard->Bind(wxEVT_RADIOBUTTON, &IDEditorDlg::OnStandardID, this);
     m_textID->Bind(wxEVT_TEXT,
         [this](wxCommandEvent& event)
         {
@@ -148,12 +148,12 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         {
             OnComboSelect(event);
         });
-    m_textID->Bind(wxEVT_TEXT_ENTER,
+    m_textValue->Bind(wxEVT_TEXT_ENTER,
         [this](wxCommandEvent& event)
         {
             OnComboSelect(event);
         });
-    m_textValue->Bind(wxEVT_TEXT_ENTER,
+    m_textID->Bind(wxEVT_TEXT_ENTER,
         [this](wxCommandEvent& event)
         {
             OnComboSelect(event);

@@ -169,21 +169,21 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     // Event handlers
     Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnClose, this, wxID_CLOSE);
+    m_btn_commit->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnCommit, this);
     btn->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectAllFolders, this);
-    btn_2->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectNoFolders, this);
     btn_3->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectAllForms, this);
+    btn_2->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectNoFolders, this);
     btn_4->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnSelectNoForms, this);
     btn_5->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnUpdate, this);
-    m_btn_commit->Bind(wxEVT_BUTTON, &GlobalCustomIDS::OnCommit, this);
     m_combo_prefixes->Bind(wxEVT_COMBOBOX_CLOSEUP, &GlobalCustomIDS::OnUpdate, this);
     m_combo_suffixes->Bind(wxEVT_COMBOBOX_CLOSEUP, &GlobalCustomIDS::OnUpdate, this);
     Bind(wxEVT_INIT_DIALOG, &GlobalCustomIDS::OnInit, this);
     m_lb_folders->Bind(wxEVT_LISTBOX, &GlobalCustomIDS::OnSelectFolders, this);
     m_lb_forms->Bind(wxEVT_LISTBOX, &GlobalCustomIDS::OnSelectForms, this);
-    m_text_old_prefix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
     m_combo_prefixes->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
-    m_text_old_suffix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
     m_combo_suffixes->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
+    m_text_old_prefix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
+    m_text_old_suffix->Bind(wxEVT_TEXT_ENTER, &GlobalCustomIDS::OnUpdate, this);
 
     return true;
 }

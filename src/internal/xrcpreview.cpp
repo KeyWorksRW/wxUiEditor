@@ -135,12 +135,12 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     wxPersistentRegisterAndRestore(this, "XrcPreview");
 
     // Event handlers
-    btn_3->Bind(wxEVT_BUTTON, &XrcPreview::OnGenerate, this);
-    m_btn_preview->Bind(wxEVT_BUTTON, &XrcPreview::OnPreview, this);
-    m_btn_import->Bind(wxEVT_BUTTON, &XrcPreview::OnImport, this);
-    m_btn__export->Bind(wxEVT_BUTTON, &XrcPreview::OnExport, this);
-    btn3->Bind(wxEVT_BUTTON, &XrcPreview::OnDuplicate, this);
     btn_2->Bind(wxEVT_BUTTON, &XrcPreview::OnClear, this);
+    btn3->Bind(wxEVT_BUTTON, &XrcPreview::OnDuplicate, this);
+    m_btn__export->Bind(wxEVT_BUTTON, &XrcPreview::OnExport, this);
+    btn_3->Bind(wxEVT_BUTTON, &XrcPreview::OnGenerate, this);
+    m_btn_import->Bind(wxEVT_BUTTON, &XrcPreview::OnImport, this);
+    m_btn_preview->Bind(wxEVT_BUTTON, &XrcPreview::OnPreview, this);
     Bind(wxEVT_INIT_DIALOG, &XrcPreview::OnInit, this);
     m_searchCtrl->Bind(wxEVT_SEARCHCTRL_SEARCH_BTN, &XrcPreview::OnSearch, this);
 

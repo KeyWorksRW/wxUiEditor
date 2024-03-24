@@ -4234,12 +4234,10 @@
               var_name="staticText_2"
               alignment="wxALIGN_CENTER_VERTICAL" />
             <node
-              class="wxComboBox"
+              class="wxChoice"
               class_access="none"
               contents="&quot;Box&quot; &quot;FlexGrid&quot; &quot;Grid&quot; &quot;GridBag&quot; &quot;StaticBox&quot; &quot;Wrap&quot;"
               selection_string="Box"
-              style="wxCB_READONLY"
-              var_name="comboBox"
               validator_variable="m_sizer_type" />
           </node>
           <node
@@ -4410,9 +4408,10 @@
               label="&amp;Type:"
               alignment="wxALIGN_CENTER_VERTICAL" />
             <node
-              class="wxComboBox"
+              class="wxChoice"
               contents="&quot;Tool&quot; &quot;Button&quot; &quot;Gallery&quot;"
               selection_string="Tool"
+              var_name="m_comboBox"
               validator_variable="m_panel_type" />
           </node>
           <node

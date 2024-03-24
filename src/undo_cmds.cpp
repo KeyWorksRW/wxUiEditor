@@ -435,6 +435,11 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
             new_node->set_value(prop, old_node->as_string(prop));
         }
     }
+
+    if (old_node->hasProp(prop_var_name) && old_node->as_string(prop_class_access) != "none")
+    {
+        new_node->set_value(prop_var_name, old_node->as_string(prop_var_name));
+    }
 }
 
 ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)

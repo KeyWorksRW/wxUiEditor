@@ -189,8 +189,10 @@ target_include_directories(wxWidgets33 PRIVATE
     src/stc/scintilla/src
 
     3rdparty/lunasvg/include
-    3rdparty/lunasvg/source/plutovg
-    #  3rdparty/lunasvg/3rdparty/plutovg
+
+    # if using C++ plutovg sources, uncomment source/plutovg and comment 3rdparty/plutovg
+    # 3rdparty/lunasvg/source/plutovg
+    3rdparty/lunasvg/3rdparty/plutovg
 )
 
 target_include_directories(wxCLib PRIVATE
@@ -201,7 +203,9 @@ target_include_directories(wxCLib PRIVATE
     src/zlib
     3rdparty/pcre/src/wx
     src/expat/expat/lib
-    # 3rdparty/lunasvg/3rdparty/plutovg
+
+    # Comment the following line if using C++ plutovg sources
+    3rdparty/lunasvg/3rdparty/plutovg
 )
 
 if (BUILD_SHARED_LIBS)

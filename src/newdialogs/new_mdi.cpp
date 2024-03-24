@@ -169,19 +169,19 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         {
             event.Skip();
         });
-    folder_name->Bind(wxEVT_TEXT,
-        [this](wxCommandEvent&)
-        {VerifyClassName();
-        });
     app_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
         });
-    view_classname->Bind(wxEVT_TEXT,
+    doc_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
         });
-    doc_classname->Bind(wxEVT_TEXT,
+    folder_name->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {VerifyClassName();
+        });
+    view_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
         });

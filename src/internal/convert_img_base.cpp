@@ -216,8 +216,8 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     // Event handlers
     m_btnConvert->Bind(wxEVT_BUTTON, &ConvertImageBase::OnConvert, this);
     m_check_make_png->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnCheckPngConversion, this);
-    m_ForceHdrMask->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnForceHdrMask, this);
     m_ConvertAlphaChannel->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnConvertAlpha, this);
+    m_ForceHdrMask->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnForceHdrMask, this);
     m_ForceXpmMask->Bind(wxEVT_CHECKBOX, &ConvertImageBase::OnForceXpmMask, this);
     m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ConvertImageBase::OnPageChanged, this);
     m_comboHdrMask->Bind(wxEVT_COMBOBOX, &ConvertImageBase::OnComboHdrMask, this);

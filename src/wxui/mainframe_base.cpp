@@ -380,16 +380,43 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     // Event handlers
     Bind(wxEVT_CLOSE_WINDOW, &MainFrameBase::OnClose, this);
-    Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
-    Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendCrafter);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendDialogBlocks, this, id_AppendDialogBlocks);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
+    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnBrowsePython, this, menu_item_9->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseRuby, this, menu_item_10->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignBottom);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignCenterHorizontal);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignCenterVertical);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignLeft);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignRight);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignTop);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderBottom);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderLeft);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderRight);
+    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderTop);
+    Bind(wxEVT_MENU, &MainFrameBase::OnCopy, this, wxID_COPY);
+    Bind(wxEVT_MENU, &MainFrameBase::OnCut, this, wxID_CUT);
+    Bind(wxEVT_MENU, &MainFrameBase::OnDelete, this, wxID_DELETE);
     Bind(wxEVT_MENU, &MainFrameBase::OnDifferentProject, this, id_DifferentProject);
-    Bind(wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            Project.NewProject(true);
-        },
-        id_NewProject);
+    Bind(wxEVT_MENU, &MainFrameBase::OnDuplicate, this, menu_duplicate->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnEditCustomIds, this, menu_item_8->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnFindDialog, this, wxID_FIND);
+    Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
+    Bind(wxEVT_MENU, &MainFrameBase::OnInsertWidget, this, id_insert_widget);
     Bind(wxEVT_MENU, &MainFrameBase::OnOpenProject, this, id_OpenProject);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPaste, this, wxID_PASTE);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreferencesDlg, this, id_PreferencesDlg);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
+    Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
+    Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
@@ -397,47 +424,12 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
             Project.NewProject(false);
         },
         menu_import->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
-    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
-    Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendCrafter);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendDialogBlocks, this, id_AppendDialogBlocks);
-    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
-    Bind(wxEVT_MENU, &MainFrameBase::OnPreferencesDlg, this, id_PreferencesDlg);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().Undo();
+            Project.NewProject(true);
         },
-        wxID_UNDO);
-    Bind(wxEVT_MENU, &MainFrameBase::OnEditCustomIds, this, menu_item_8->GetId());
-    Bind(wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            wxGetFrame().Redo();
-        },
-        wxID_REDO);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &MainFrameBase::OnCut, this, wxID_CUT);
-    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnCopy, this, wxID_COPY);
-    Bind(wxEVT_MENU, &MainFrameBase::OnPaste, this, wxID_PASTE);
-    Bind(wxEVT_MENU, &MainFrameBase::OnBrowsePython, this, menu_item_9->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnDelete, this, wxID_DELETE);
-    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseRuby, this, menu_item_10->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnDuplicate, this, menu_duplicate->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnFindDialog, this, wxID_FIND);
-    Bind(wxEVT_MENU, &MainFrameBase::OnInsertWidget, this, id_insert_widget);
-    Bind(wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            wxGetFrame().MoveNode(MoveDirection::Up);
-        },
-        id_MoveUp);
+        id_NewProject);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&)
         {
@@ -456,36 +448,35 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
             wxGetFrame().MoveNode(MoveDirection::Right);
         },
         id_MoveRight);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignLeft);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignCenterHorizontal);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignRight);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignTop);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignCenterVertical);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignBottom);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderLeft);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderRight);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderTop);
-    Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderBottom);
-    Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
-    Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
-    Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event)
+    Bind(wxEVT_MENU,
+        [](wxCommandEvent&)
         {
-            event.Enable(wxGetFrame().isModified());
+            wxGetFrame().MoveNode(MoveDirection::Up);
         },
-        wxID_SAVE);
-    Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event)
+        id_MoveUp);
+    Bind(wxEVT_MENU,
+        [](wxCommandEvent&)
         {
-            event.Enable(wxGetFrame().CanUndo());
-        },
-        wxID_UNDO);
-    Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event)
-        {
-            event.Enable(wxGetFrame().CanRedo());
+            wxGetFrame().Redo();
         },
         wxID_REDO);
+    Bind(wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().Undo();
+        },
+        wxID_UNDO);
+    Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+    Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
+    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
+    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowsePython, this, menu_item_9->GetId());
+    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseRuby, this, menu_item_10->GetId());
+    Bind(wxEVT_UPDATE_UI,
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanCopyNode());
+        },
+        menu_duplicate->GetId());
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)
         {
@@ -495,24 +486,33 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)
         {
-            event.Enable(wxGetFrame().CanPasteNode());
-        },
-        wxID_PASTE);
-    Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event)
-        {
             event.Enable(wxGetFrame().CanCopyNode());
         },
         wxID_DELETE);
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)
         {
-            event.Enable(wxGetFrame().CanCopyNode());
+            event.Enable(wxGetFrame().CanPasteNode());
         },
-        menu_duplicate->GetId());
-    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowsePython, this, menu_item_9->GetId());
-    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
-    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseRuby, this, menu_item_10->GetId());
+        wxID_PASTE);
+    Bind(wxEVT_UPDATE_UI,
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanRedo());
+        },
+        wxID_REDO);
+    Bind(wxEVT_UPDATE_UI,
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanUndo());
+        },
+        wxID_UNDO);
+    Bind(wxEVT_UPDATE_UI,
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().isModified());
+        },
+        wxID_SAVE);
 
     return true;
 }

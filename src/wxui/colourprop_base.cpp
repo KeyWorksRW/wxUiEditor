@@ -74,8 +74,8 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     Bind(wxEVT_BUTTON, &ColourPropBase::OnOK, this, wxID_OK);
     m_colourPicker->Bind(wxEVT_COLOURPICKER_CHANGED, &ColourPropBase::OnColourChanged, this);
     Bind(wxEVT_INIT_DIALOG, &ColourPropBase::OnInit, this);
-    m_radio_default->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnSetDefault, this);
     m_radio_custom->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnRadioCustomColour, this);
+    m_radio_default->Bind(wxEVT_RADIOBUTTON, &ColourPropBase::OnSetDefault, this);
 
     return true;
 }

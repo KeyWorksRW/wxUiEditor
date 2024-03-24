@@ -192,20 +192,20 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     // Event handlers
     Bind(wxEVT_BUTTON, &FontPropDlgBase::OnOK, this, wxID_OK);
-    m_checkSystemUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_checkCustomStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
     m_checkSystemStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
     m_checkCustomUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
-    m_checkCustomStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
-    m_comboSymbolSize->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnSymbolSize, this);
-    m_comboSystemStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
-    m_comboSystemWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
+    m_checkSystemUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_comboFacenames->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFacename, this);
     m_comboFamily->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFamily, this);
     m_comboCustomStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
+    m_comboSystemStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
+    m_comboSymbolSize->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnSymbolSize, this);
     m_comboCustomWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
-    m_comboFacenames->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFacename, this);
+    m_comboSystemWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
     Bind(wxEVT_INIT_DIALOG, &FontPropDlgBase::OnInit, this);
-    m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);
     m_radioCustom->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnCustomRadio, this);
+    m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);
     m_spinCustomPointSize->Bind(wxEVT_SPINCTRLDOUBLE, &FontPropDlgBase::OnPointSize, this);
     m_spinCustomPointSize->Bind(wxEVT_TEXT, &FontPropDlgBase::OnEditPointSize, this);
 

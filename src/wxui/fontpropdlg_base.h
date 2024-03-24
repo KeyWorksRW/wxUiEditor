@@ -10,6 +10,7 @@
 #pragma once
 
 #include <wx/checkbox.h>
+#include <wx/choice.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -59,13 +60,13 @@ protected:
     wxCheckBox* m_checkCustomUnderlined;
     wxCheckBox* m_checkSystemStrikeThrough;
     wxCheckBox* m_checkSystemUnderlined;
-    wxComboBox* m_comboCustomStyles;
-    wxComboBox* m_comboCustomWeight;
+    wxChoice* m_comboCustomStyles;
+    wxChoice* m_comboCustomWeight;
+    wxChoice* m_comboFamily;
+    wxChoice* m_comboSymbolSize;
+    wxChoice* m_comboSystemStyles;
+    wxChoice* m_comboSystemWeight;
     wxComboBox* m_comboFacenames;
-    wxComboBox* m_comboFamily;
-    wxComboBox* m_comboSymbolSize;
-    wxComboBox* m_comboSystemStyles;
-    wxComboBox* m_comboSystemWeight;
     wxRadioButton* m_radioCustom;
     wxStaticBoxSizer* m_custom_box;
     wxRadioButton* m_radioSystem;

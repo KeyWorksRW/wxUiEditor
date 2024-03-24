@@ -441,6 +441,12 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
         new_node->set_value(prop_var_name, old_node->as_string(prop_var_name));
     }
 
+    if (old_node->hasValue(prop_validator_variable))
+    {
+        new_node->set_value(prop_validator_variable, old_node->as_string(prop_validator_variable));
+        new_node->set_value(prop_validator_data_type, old_node->as_string(prop_validator_data_type));
+    }
+
     if (old_node->isGen(gen_wxComboBox) && new_node->isGen(gen_wxChoice))
     {
         auto map_old_events = old_node->getMapEvents();

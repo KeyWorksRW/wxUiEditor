@@ -53,7 +53,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_staticText = new wxStaticText(this, wxID_ANY, "&Type:");
     box_sizer_2->Add(m_staticText, wxSizerFlags().Center().Border(wxALL));
 
-    m_comboBox = new wxComboBox(this, wxID_ANY);
+    m_comboBox = new wxChoice(this, wxID_ANY);
     m_comboBox->Append("Tool");
     m_comboBox->Append("Button");
     m_comboBox->Append("Gallery");

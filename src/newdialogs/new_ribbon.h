@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <wx/combobox.h>
+#include <wx/choice.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -51,7 +51,7 @@ private:
     // Class member variables
 
     wxBoxSizer* m_class_sizer;
-    wxComboBox* m_comboBox;
+    wxChoice* m_comboBox;
     wxInfoBar* m_infoBar;
     wxSpinCtrl* m_spinCtrlPages;
     wxStaticText* m_staticText;
@@ -63,7 +63,7 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
+// ***********************************************
     // ***********************************************
 
 public:

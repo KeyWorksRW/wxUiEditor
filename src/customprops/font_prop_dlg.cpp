@@ -204,7 +204,7 @@ void FontPropDlg::UpdateFontInfo()
     }
     else
     {
-        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetValue().mb_str()));
+        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
         if (m_spinCustomPointSize->GetValue() <= 0.0)
         {
             m_custom_font.PointSize(wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
@@ -213,7 +213,7 @@ void FontPropDlg::UpdateFontInfo()
         {
             m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
         }
-        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetValue().mb_str()));
+        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
         m_custom_font.Weight(font_weight_pairs.GetValue((const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
         m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
@@ -254,12 +254,12 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
     else
     {
         m_custom_font.setDefGuiFont(false);
-        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetValue().mb_str()));
+        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
         if (m_spinCustomPointSize->GetValue() <= 0.0)
             m_custom_font.PointSize(-1.0);
         else
             m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
-        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetValue().mb_str()));
+        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
         m_custom_font.Weight(font_weight_pairs.GetValue((const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
         m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());

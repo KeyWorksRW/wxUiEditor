@@ -9,7 +9,7 @@
 
 #include <wx/button.h>
 #include <wx/checkbox.h>
-#include <wx/combobox.h>
+#include <wx/choice.h>
 #include <wx/stattext.h>
 #include <wx/valgen.h>
 #include <wx/valtext.h>
@@ -56,17 +56,16 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Parent sizer type:");
     box_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
-    auto* comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        0, nullptr, wxCB_READONLY);
-    comboBox->Append("Box");
-    comboBox->Append("FlexGrid");
-    comboBox->Append("Grid");
-    comboBox->Append("GridBag");
-    comboBox->Append("StaticBox");
-    comboBox->Append("Wrap");
+    auto* m_choice = new wxChoice(this, wxID_ANY);
+    m_choice->Append("Box");
+    m_choice->Append("FlexGrid");
+    m_choice->Append("Grid");
+    m_choice->Append("GridBag");
+    m_choice->Append("StaticBox");
+    m_choice->Append("Wrap");
     m_sizer_type = "Box";  // set validator variable
-    comboBox->SetValidator(wxGenericValidator(&m_sizer_type));
-    box_sizer->Add(comboBox, wxSizerFlags().Border(wxALL));
+    m_choice->SetValidator(wxGenericValidator(&m_sizer_type));
+    box_sizer->Add(m_choice, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 

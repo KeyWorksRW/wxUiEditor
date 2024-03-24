@@ -29,8 +29,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_7 = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "Si&ze:");
     box_sizer_11->Add(staticText_7, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboSymbolSize = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboSymbolSize = new wxChoice(m_system_box->GetStaticBox(), wxID_ANY);
     box_sizer_11->Add(m_comboSymbolSize, wxSizerFlags().Border(wxALL));
 
     box_sizer_10->Add(box_sizer_11, wxSizerFlags().Border(wxALL));
@@ -40,8 +39,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_8 = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "&Style:");
     box_sizer_15->Add(staticText_8, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboSystemStyles = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboSystemStyles = new wxChoice(m_system_box->GetStaticBox(), wxID_ANY);
     box_sizer_15->Add(m_comboSystemStyles, wxSizerFlags().Border(wxALL));
 
     box_sizer_10->Add(box_sizer_15, wxSizerFlags().Border(wxALL));
@@ -51,8 +49,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_9 = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "&Weight:");
     box_sizer_16->Add(staticText_9, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboSystemWeight = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboSystemWeight = new wxChoice(m_system_box->GetStaticBox(), wxID_ANY);
     box_sizer_16->Add(m_comboSystemWeight, wxSizerFlags().Border(wxALL));
 
     box_sizer_10->Add(box_sizer_16, wxSizerFlags().Border(wxALL));
@@ -96,8 +93,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "F&amily:");
     box_sizer->Add(staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboFamily = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        0, nullptr, wxCB_READONLY);
+    m_comboFamily = new wxChoice(m_custom_box->GetStaticBox(), wxID_ANY);
     box_sizer->Add(m_comboFamily, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(box_sizer, wxSizerFlags().Border(wxALL));
@@ -107,8 +103,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_2 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "Styl&e:");
     box_sizer_2->Add(staticText_2, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboCustomStyles = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboCustomStyles = new wxChoice(m_custom_box->GetStaticBox(), wxID_ANY);
     box_sizer_2->Add(m_comboCustomStyles, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
@@ -118,8 +113,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* staticText_3 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "We&ight:");
     box_sizer_4->Add(staticText_3, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboCustomWeight = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition,
-        wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboCustomWeight = new wxChoice(m_custom_box->GetStaticBox(), wxID_ANY);
     box_sizer_4->Add(m_comboCustomWeight, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
@@ -196,13 +190,13 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_checkSystemStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
     m_checkCustomUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
     m_checkSystemUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_comboFamily->Bind(wxEVT_CHOICE, &FontPropDlgBase::OnFamily, this);
+    m_comboCustomStyles->Bind(wxEVT_CHOICE, &FontPropDlgBase::OnStyle, this);
+    m_comboSystemStyles->Bind(wxEVT_CHOICE, &FontPropDlgBase::OnStyle, this);
+    m_comboSymbolSize->Bind(wxEVT_CHOICE, &FontPropDlgBase::OnSymbolSize, this);
+    m_comboCustomWeight->Bind(wxEVT_CHOICE, &FontPropDlgBase::OnWeight, this);
+    m_comboSystemWeight->Bind(wxEVT_CHOICE, &FontPropDlgBase::OnWeight, this);
     m_comboFacenames->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFacename, this);
-    m_comboFamily->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFamily, this);
-    m_comboCustomStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
-    m_comboSystemStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
-    m_comboSymbolSize->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnSymbolSize, this);
-    m_comboCustomWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
-    m_comboSystemWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
     Bind(wxEVT_INIT_DIALOG, &FontPropDlgBase::OnInit, this);
     m_radioCustom->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnCustomRadio, this);
     m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);

@@ -3181,10 +3181,9 @@
                   var_name="staticText_7"
                   borders="wxTOP|wxRIGHT|wxLEFT" />
                 <node
-                  class="wxComboBox"
-                  style="wxCB_READONLY"
+                  class="wxChoice"
                   var_name="m_comboSymbolSize"
-                  wxEVT_COMBOBOX="OnSymbolSize" />
+                  wxEVT_CHOICE="OnSymbolSize" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -3197,10 +3196,9 @@
                   var_name="staticText_8"
                   borders="wxTOP|wxRIGHT|wxLEFT" />
                 <node
-                  class="wxComboBox"
-                  style="wxCB_READONLY"
+                  class="wxChoice"
                   var_name="m_comboSystemStyles"
-                  wxEVT_COMBOBOX="OnStyle" />
+                  wxEVT_CHOICE="OnStyle" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -3213,10 +3211,9 @@
                   var_name="staticText_9"
                   borders="wxTOP|wxRIGHT|wxLEFT" />
                 <node
-                  class="wxComboBox"
-                  style="wxCB_READONLY"
+                  class="wxChoice"
                   var_name="m_comboSystemWeight"
-                  wxEVT_COMBOBOX="OnWeight" />
+                  wxEVT_CHOICE="OnWeight" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -3281,10 +3278,9 @@
                   var_name="staticText"
                   borders="wxTOP|wxRIGHT|wxLEFT" />
                 <node
-                  class="wxComboBox"
-                  style="wxCB_READONLY"
+                  class="wxChoice"
                   var_name="m_comboFamily"
-                  wxEVT_COMBOBOX="OnFamily" />
+                  wxEVT_CHOICE="OnFamily" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -3297,10 +3293,9 @@
                   var_name="staticText_2"
                   borders="wxTOP|wxRIGHT|wxLEFT" />
                 <node
-                  class="wxComboBox"
-                  style="wxCB_READONLY"
+                  class="wxChoice"
                   var_name="m_comboCustomStyles"
-                  wxEVT_COMBOBOX="OnStyle" />
+                  wxEVT_CHOICE="OnStyle" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -3313,10 +3308,9 @@
                   var_name="staticText_3"
                   borders="wxTOP|wxRIGHT|wxLEFT" />
                 <node
-                  class="wxComboBox"
-                  style="wxCB_READONLY"
+                  class="wxChoice"
                   var_name="m_comboCustomWeight"
-                  wxEVT_COMBOBOX="OnWeight" />
+                  wxEVT_CHOICE="OnWeight" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -4240,12 +4234,10 @@
               var_name="staticText_2"
               alignment="wxALIGN_CENTER_VERTICAL" />
             <node
-              class="wxComboBox"
+              class="wxChoice"
               class_access="none"
               contents="&quot;Box&quot; &quot;FlexGrid&quot; &quot;Grid&quot; &quot;GridBag&quot; &quot;StaticBox&quot; &quot;Wrap&quot;"
               selection_string="Box"
-              style="wxCB_READONLY"
-              var_name="comboBox"
               validator_variable="m_sizer_type" />
           </node>
           <node
@@ -4416,9 +4408,10 @@
               label="&amp;Type:"
               alignment="wxALIGN_CENTER_VERTICAL" />
             <node
-              class="wxComboBox"
+              class="wxChoice"
               contents="&quot;Tool&quot; &quot;Button&quot; &quot;Gallery&quot;"
               selection_string="Tool"
+              var_name="m_comboBox"
               validator_variable="m_panel_type" />
           </node>
           <node

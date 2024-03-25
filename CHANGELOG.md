@@ -1,7 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [unreleased (1.2.1)]
+## [unreleased (1.2.2)]
+
+### Added
+### Changed
+### Fixed
+
+## [Released (1.2.1)]
 
 ### Added
 

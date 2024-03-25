@@ -418,3 +418,13 @@ set (xml_list
     xml/widgets.xml
 
 )
+
+set (workflow_list
+    ../.github/workflows/build-ubuntu-setup.yml
+    ../.github/workflows/build-win-setup.yml
+    ../.github/workflows/check_build.yml
+    ../.github/workflows/cleanup-workflows.yml
+    ../.github/workflows/codeql-analysis.yml
+    ../.github/workflows/daily_build.yml
+    ../.github/workflows/test_clang_format.yml
+)

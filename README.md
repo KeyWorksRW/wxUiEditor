@@ -1,4 +1,4 @@
-# ![logo](src/art_src/logo64.png) wxUiEditor
+# ![logo](src/art_src/wxUiEditor.svg) wxUiEditor
 
 This WYSIWYG tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating either C++, [wxPython](https://wxpython.org/), [wxRuby3](https://github.com/mcorino/wxRuby3) or XRC code. It supports almost all of the wxWidgets UI controls along with bitmap bundles and SVG files.
 

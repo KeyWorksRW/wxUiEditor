@@ -26,8 +26,6 @@
 #include "ui_images.h"
 #include "utils.h"  // Miscellaneous utility functions
 
-#include "../../wxWidgets/3rdparty/lunasvg/source/element.h"
-
 // clang-format off
 
 std::vector<std::pair<std::string_view, std::string_view>> map_bundle_extensions = {

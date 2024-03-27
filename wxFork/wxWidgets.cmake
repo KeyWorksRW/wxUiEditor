@@ -376,90 +376,93 @@ set (common_sources
     ../../wxWidgets/src/stc/lexilla/src/Lexilla.cxx
 
     ../../wxWidgets/src/stc/lexilla/lexers/LexA68k.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexAbaqus.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexAda.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexAPDL.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexAsm.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexAsn1.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexASY.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexAU3.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexAVE.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexAVS.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexAbaqus.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexAda.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexAsciidoc.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexAsm.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexAsn1.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexBaan.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexBash.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexBasic.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexBatch.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexBibTeX.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexBullant.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexCaml.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexCIL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexCLW.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexCmake.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexCOBOL.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexCPP.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexCSS.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexCaml.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexCmake.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexCoffeeScript.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexConf.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexCPP.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexCrontab.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexCsound.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexCSS.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexD.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexDataflex.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexDiff.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexDMAP.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexDMIS.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexDataflex.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexDiff.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexECL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexEDIFACT.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexEScript.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexEiffel.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexErlang.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexErrorList.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexEScript.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexFSharp.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexFlagship.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexForth.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexFortran.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexFSharp.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexGAP.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexGDScript.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexGui4Cli.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexHTML.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexHaskell.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexHex.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexHollywood.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexHTML.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexIndent.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexInno.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexJSON.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexKix.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexJulia.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexKVIrc.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexKix.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexLaTeX.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexLisp.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexLout.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexLua.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexMMIXAL.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexMPT.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexMSSQL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMagik.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMake.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMarkdown.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMatlab.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMaxima.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMetapost.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexMMIXAL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexModula.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexMPT.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexMSSQL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexMySQL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexNim.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexNimrod.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexNsis.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexNull.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexOpal.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexOScript.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexPascal.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexOpal.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPB.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexPerl.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPLM.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPO.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPOV.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexPS.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexPascal.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexPerl.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPowerPro.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPowerShell.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexProgress.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexProps.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexPS.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexPython.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexR.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexRaku.cxx
@@ -468,15 +471,15 @@ set (common_sources
     ../../wxWidgets/src/stc/lexilla/lexers/LexRuby.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexRust.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexSAS.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexSML.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexSQL.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexSTTXT.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexScriptol.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexSmalltalk.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexSML.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexSorcus.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexSpecman.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexSpice.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexSQL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexStata.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexSTTXT.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexTACL.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexTADS3.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexTAL.cxx
@@ -485,19 +488,20 @@ set (common_sources
     ../../wxWidgets/src/stc/lexilla/lexers/LexTeX.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexTxt2tags.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexVB.cxx
-    ../../wxWidgets/src/stc/lexilla/lexers/LexVerilog.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexVHDL.cxx
+    ../../wxWidgets/src/stc/lexilla/lexers/LexVerilog.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexVisualProlog.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexX12.cxx
     ../../wxWidgets/src/stc/lexilla/lexers/LexYAML.cxx
 
     ../../wxWidgets/src/stc/lexilla/lexlib/Accessor.cxx
-    ../../wxWidgets/src/stc/lexilla/lexlib/CharacterCategory.cxx
-    ../../wxWidgets/src/stc/lexilla/lexlib/CharacterSet.cxx
+    ../../wxWidgets/src/stc/lexilla/lexlib/LexCharacterCategory.cxx
+    ../../wxWidgets/src/stc/lexilla/lexlib/LexCharacterSet.cxx
     ../../wxWidgets/src/stc/lexilla/lexlib/DefaultLexer.cxx
+    ../../wxWidgets/src/stc/lexilla/lexlib/InList.cxx
+    ../../wxWidgets/src/stc/lexilla/lexlib/LexAccessor.cxx
     ../../wxWidgets/src/stc/lexilla/lexlib/LexerBase.cxx
     ../../wxWidgets/src/stc/lexilla/lexlib/LexerModule.cxx
-    ../../wxWidgets/src/stc/lexilla/lexlib/LexerNoExceptions.cxx
     ../../wxWidgets/src/stc/lexilla/lexlib/LexerSimple.cxx
     ../../wxWidgets/src/stc/lexilla/lexlib/PropSetSimple.cxx
     ../../wxWidgets/src/stc/lexilla/lexlib/StyleContext.cxx
@@ -510,6 +514,8 @@ set (common_sources
     ../../wxWidgets/src/stc/scintilla/src/CaseConvert.cxx
     ../../wxWidgets/src/stc/scintilla/src/CaseFolder.cxx
     ../../wxWidgets/src/stc/scintilla/src/CellBuffer.cxx
+    ../../wxWidgets/src/stc/scintilla/src/CharacterCategory.cxx
+    ../../wxWidgets/src/stc/scintilla/src/CharacterSet.cxx
     ../../wxWidgets/src/stc/scintilla/src/CharClassify.cxx
     ../../wxWidgets/src/stc/scintilla/src/ContractionState.cxx
     ../../wxWidgets/src/stc/scintilla/src/DBCS.cxx
@@ -518,6 +524,7 @@ set (common_sources
     ../../wxWidgets/src/stc/scintilla/src/EditModel.cxx
     ../../wxWidgets/src/stc/scintilla/src/EditView.cxx
     ../../wxWidgets/src/stc/scintilla/src/Editor.cxx
+	../../wxWidgets/src/stc/scintilla/src/EditView.cxx
     ../../wxWidgets/src/stc/scintilla/src/Indicator.cxx
     ../../wxWidgets/src/stc/scintilla/src/KeyMap.cxx
     ../../wxWidgets/src/stc/scintilla/src/LineMarker.cxx

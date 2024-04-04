@@ -77,7 +77,6 @@ if (WIN32)
     list(APPEND wxCLib_sources src/tiff/libtiff/tif_win32.c)
 endif()
 
-
 if (WIN32)
     add_library(wxWidgets33 ${common_sources} ${msw_sources} )
 elseif (APPLE)
@@ -88,13 +87,11 @@ endif()
 
 if (UNIX)
     set (wxCLib_platform_files
-        # src/gtk/treeentry_gtk.c
         src/tiff/libtiff/tif_unix.c
         src/tiff/libtiff/libtiff.def
     )
 else()
     set (wxCLib_platform_files src/tiff/libtiff/tif_win32.c)
-    # set (wxCLib_platform_files "")
 endif()
 
 add_library(wxCLib STATIC
@@ -189,9 +186,6 @@ target_include_directories(wxWidgets33 PRIVATE
     src/stc/scintilla/src
 
     3rdparty/lunasvg/include
-
-    # if using C++ plutovg sources, uncomment source/plutovg and comment 3rdparty/plutovg
-    # 3rdparty/lunasvg/source/plutovg
     3rdparty/lunasvg/3rdparty/plutovg
 )
 
@@ -204,7 +198,6 @@ target_include_directories(wxCLib PRIVATE
     3rdparty/pcre/src/wx
     src/expat/expat/lib
 
-    # Comment the following line if using C++ plutovg sources
     3rdparty/lunasvg/3rdparty/plutovg
 )
 

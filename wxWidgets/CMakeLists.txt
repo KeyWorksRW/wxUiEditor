@@ -213,3 +213,10 @@ if (BUILD_SHARED_LIBS)
         target_link_libraries(wxWidgets33 PRIVATE wxCLib Winmm Ws2_32 Rpcrt4 Comctl32)
     endif()
 endif()
+
+include(CMakePackageConfigHelpers)
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/cmake/wxWidgetsConfig.cmake.in"
+    "${CMAKE_CURRENT_LIST_DIR}/wxWidgetsConfig.cmake"
+    @ONLY
+)

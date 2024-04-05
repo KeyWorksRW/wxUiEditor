@@ -158,7 +158,7 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
-set(stageDir ${CMAKE_CURRENT_BINARY_DIR}/stage)
+set(stageDir ${CMAKE_CURRENT_BINARY_DIR})
 
 include(GNUInstallDirs)
 

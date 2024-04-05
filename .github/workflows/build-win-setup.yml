@@ -38,5 +38,5 @@ jobs:
       with:
         name: Executables
         path: |
-          build/stage/bin/Release/wxUiEditor.exe
+          build/bin/Release/wxUiEditor.exe
           build/wxUiEditor-*-win64.exe

@@ -335,7 +335,10 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
                 if (result == result::created || result == result::needs_writing)
                 {
                     ++results.file_count;
-                    pClassList->emplace_back(iter.get()->as_string(prop_cmake_file));
+                    if (is_testing)
+                    {
+                        pClassList->emplace_back(iter.get()->as_string(prop_cmake_file));
+                    }
                 }
             }
         }

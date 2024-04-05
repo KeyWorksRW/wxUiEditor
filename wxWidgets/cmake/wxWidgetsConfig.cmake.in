@@ -5,13 +5,13 @@ set(wxWidgets_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/include")
 
 # Set the path/names of the libraries to link to
 set(wxWidgets_LIB_DIRS
-    "$<$<CONFIG:Debug>:@CMAKE_BINARY_DIR@/stage/lib/Debug>"
-    "$<$<CONFIG:Release>:@CMAKE_BINARY_DIR@/stage/lib/Release>"
+    "$<$<CONFIG:Debug>:@CMAKE_BINARY_DIR@/lib/Debug>"
+    "$<$<CONFIG:Release>:@CMAKE_BINARY_DIR@/lib/Release>"
 )
 
 # Set the names of the libraries to link to
 if(BUILD_SHARED_LIBS)
     set(wxWidgets_LIBRARIES wxWidgets33)
 else()
-    set(wxWidgets_LIBRARIES "wxWidgets33 wxCLib")
+    set(wxWidgets_LIBRARIES "wxWidgets33" "wxCLib")
 endif()

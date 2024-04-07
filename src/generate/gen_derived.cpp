@@ -9,14 +9,16 @@
 
     There are several situations we need to deal with here:
 
-    This could be a non-derived class (prop_use_derived_class is false) in which case the header file is empty, and we don't
-   use the derived class name or derived filename even if specified.
+    This could be a non-derived class (prop_use_derived_class is false) in which case the
+    header file is empty, and we don't use the derived class name or derived filename
+    even if specified.
 
-    This could be a derived class, but either the class name or the filename is empty. In that case, we can't write to disk,
-   but we can mockup a temporary class name if needed as well as a temporary filename.
+    This could be a derived class, but either the class name or the filename is empty. In
+    that case, we can't write to disk, but we can mockup a temporary class name if needed
+    as well as a temporary filename.
 
-    If we are trying to write to disk, we have to return result::exists if a non-derived class, result::ignored if filename
-   or classname is empty.
+    If we are trying to write to disk, we have to return result::exists if a non-derived
+    class, result::ignored if filename or classname is empty.
 
 */
 
@@ -378,22 +380,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                 }
 
-                wxString prototype;
-
-                // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
-                // called.
-                if (event->getEventInfo()->get_name().is_sameas("wxEVT_INIT_DIALOG") ||
-                    (close_type_button && m_form_node->as_bool(prop_persist)))
-                {
-                    // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
-                    prototype.Format("%s(%s& event)", event_code.c_str(), event->getEventInfo()->get_event_class().c_str());
-                }
-                else
-                {
-                    prototype.Format("%s(%s& WXUNUSED(event))", event_code.c_str(),
-                                     event->getEventInfo()->get_event_class().c_str());
-                }
-                m_header->writeLine(tt_string("void ") << prototype.ToStdString() << " override;");
+                m_header->writeLine(tt_string("void ") << event_code << '(' << event->getEventInfo()->get_event_class()
+                                                       << "& event) override;");
 
                 if (panel_type != HDR_PANEL)
                 {
@@ -414,7 +402,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                             continue;
                     }
                     m_source->writeLine();
-                    m_source->writeLine(tt_string() << "void " << derived_name << "::" << prototype.ToStdString());
+                    m_source->writeLine(tt_string() << "void " << derived_name << "::" << event_code << '('
+                                                    << event->getEventInfo()->get_event_class() << "& WXUNUSED(event))");
                     m_source->writeLine("{");
                     m_source->Indent();
                     auto name = event->getEventInfo()->get_name();

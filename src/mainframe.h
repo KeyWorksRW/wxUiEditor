@@ -368,7 +368,6 @@ private:
     DocViewPanel* m_docviewPanel { nullptr };
 
     BasePanel* m_cppPanel { nullptr };
-    BasePanel* m_derivedPanel { nullptr };
 
     // Language panels
     BasePanel* m_pythonPanel { nullptr };

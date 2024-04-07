@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 ### Changed
 ### Fixed
+- Fixed generation of event handlers in C++ derived classes.
 
 ## [Released (1.2.1)]
 

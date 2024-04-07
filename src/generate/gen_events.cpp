@@ -925,20 +925,9 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         m_source->writeLine(ruby_begin_cmt_block, indent::none);
         m_source->writeLine(undefined_handlers);
         m_source->writeLine(ruby_end_cmt_block, indent::none);
-    }
 
-    if (found_user_handlers)
-    {
-        m_header->writeLine("# Unimplemented Event handler functions");
-    }
-    else
-    {
         m_header->writeLine("# Event handler functions");
+        m_header->writeLine(undefined_handlers);
     }
-    m_header->writeLine(code);
-
-    if (!inherited_class)
-    {
-        m_header->Unindent();
-    }
+    m_header->Unindent();
 }

@@ -582,7 +582,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     tt_string inherit_name = m_form_node->as_string(prop_ruby_inherit_name);
     if (inherit_name.empty())
     {
-        inherit_name += " < " + m_form_node->as_string(prop_class_name);
+        inherit_name += "Sample < " + m_form_node->as_string(prop_class_name);
     }
     if (inherit_name.size())
     {
@@ -680,6 +680,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine("\tend", indent::none);
     }
+    m_header->ResetIndent();
+    m_header->writeLine("end", indent::none);
 
     thrd_need_img_func.join();
 

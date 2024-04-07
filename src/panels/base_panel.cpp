@@ -462,4 +462,9 @@ void BasePanel::SetCodeFont(const wxFont& font)
 {
     m_cppPanel->SetCodeFont(font);
     m_hPanel->SetCodeFont(font);
+    if (m_panel_type == GEN_LANG_CPLUSPLUS)
+    {
+        m_derived_src_panel->SetCodeFont(font);
+        m_derived_hdr_panel->SetCodeFont(font);
+    }
 }

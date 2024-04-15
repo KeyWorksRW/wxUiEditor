@@ -11,6 +11,9 @@ In addition to creating new projects, the following project types can be importe
 - **DialogBlocks** (Click [here](docs/import_dialogblocks.md) for more information)
 - **XRC** (including exports from **DialogBlocks**)
 - **Windows Resource Dialogs** (Click [here](docs/import_winres.md) for more information)
+## Installing
+
+For Windows, you can either run the wxUiEditor-_ver_-win64.exe installer from [releases](https://github.com/KeyWorksRW/wxUiEditor/releases) or run `winget install wxUiEditor` from a command line. For Linux, wxUiEditor-_ver_-Linux.deb and wxUiEditor-_ver_-Linux.rpm are available in the [releases](https://github.com/KeyWorksRW/wxUiEditor/releases) section.
 
 ## Status
 

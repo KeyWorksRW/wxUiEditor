@@ -258,13 +258,13 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
-                class_name = "Images List";
+                class_name = "Images";
             }
             else if (form->isGen(gen_Data))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
-                class_name = "Data List";
+                class_name = "Data";
             }
 
             if (class_name.is_sameas(iter_class))

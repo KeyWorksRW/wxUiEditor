@@ -38,7 +38,7 @@
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_textCtrl</property>
-        <property name="value" type="string_escapes"
+        <property name="value" type="string_edit_escapes"
             help="Sets the initial contents of the control."/>
         <property name="hint" type="string_escapes"
             help="Sets a hint to be shown when the control is empty and does not have the focus."/>

@@ -46,6 +46,38 @@ extern const char* g_xrc_keywords;
 
 const int node_marker = 1;
 
+// clang-format off
+
+// These are base wxWidgets classes that may be in generated code, or in member variables
+// a user adds.
+static const char* lst_widgets_keywords[] = {
+
+    "wxArrayInt",
+    "wxAuiToolBarItem",
+    "wxBitmap",
+    "wxBitmapBundle",
+    "wxColour",
+    "wxDocument",
+    "wxFileHistory",
+    "wxFont",
+    "wxIcon",
+    "wxImage",
+    "wxListItem",
+    "wxMemoryInputStream",
+    "wxMenuBar",
+    "wxObject",
+    "wxSize",
+    "wxSizerFlags",
+    "wxString",
+    "wxToolBar",
+    "wxToolBarToolBase",
+    "wxVector",
+    "wxWindow",
+    "wxZlibInputStream",
+
+};
+// clang-format on
+
 CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
 {
     if (panel_type == GEN_LANG_XRC)
@@ -91,7 +123,14 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
-        tt_string wxPython_keywords("ToolBar MenuBar BitmapBundle Bitmap SizerFlags MemoryInputStream Window");
+        tt_string wxPython_keywords;
+        for (auto* iter: lst_widgets_keywords)
+        {
+            if (wxPython_keywords.size())
+                wxPython_keywords << ' ' << (iter + 2);
+            else
+                wxPython_keywords = (iter + 2);
+        }
 
         for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
@@ -144,11 +183,13 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         // We don't set ruby keywords because we can't colorize them differently from the
         // wxWidgets keywords.
 
-        tt_string wxRuby_keywords("ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL Colour "
-                                  "ToolBar MenuBar BitmapBundle Bitmap ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
-                                  "TAB_TRAVERSAL FILTER_DIGITS SizerFlags TextValidator Window Wx");
-
-        // clang-format on
+        tt_string wxRuby_keywords("ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL "
+                                  "ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
+                                  "TAB_TRAVERSAL FILTER_DIGITS Wx");
+        for (auto& iter: lst_widgets_keywords)
+        {
+            wxRuby_keywords << ' ' << (iter + 2);
+        }
 
         for (auto iter: NodeCreation.getNodeDeclarationArray())
         {
@@ -441,8 +482,14 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
 
         // Add regular classes that have different generator class names
 
-        tt_string widget_keywords(
-            "wxToolBar wxMenuBar wxBitmapBundle wxBitmap wxImage wxMemoryInputStream wxVector wxWindow wxZlibInputStream");
+        tt_string widget_keywords;
+        for (auto iter: lst_widgets_keywords)
+        {
+            if (widget_keywords.size())
+                widget_keywords << ' ' << iter;
+            else
+                widget_keywords = iter;
+        }
 
         for (auto iter: NodeCreation.getNodeDeclarationArray())
         {

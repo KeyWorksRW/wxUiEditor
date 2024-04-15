@@ -237,7 +237,7 @@ namespace wxue_img
     extern const unsigned char empty_png[101];  // ../art_src/empty.png
     extern const unsigned char filePicker_svg[54464];  // ../art_src/filePicker.svg
     extern const unsigned char flex_grid_sizer_svg[330];  // ../art_src/flex_grid_sizer.svg
-    extern const unsigned char folder_svg[514];  // ../art_src/folder.svg
+    extern const unsigned char folder_svg[605];  // ../art_src/folder.svg
     extern const unsigned char fontPicker_svg[4008];  // ../art_src/fontPicker.svg
     extern const unsigned char gauge_svg[285];  // ../art_src/gauge.svg
     extern const unsigned char generate_svg[2435];  // ../art_src/generate.svg
@@ -268,7 +268,7 @@ namespace wxue_img
     extern const unsigned char propgriditem_svg[16566];  // ../art_src/propgriditem.svg
     extern const unsigned char propgridpage_svg[19172];  // ../art_src/propgridpage.svg
     extern const unsigned char python_logo_only_svg[985];  // ../art_src/python-logo-only.svg
-    extern const unsigned char radio_box_svg[10809];  // ../art_src/radio_box.svg
+    extern const unsigned char radio_box_svg[10907];  // ../art_src/radio_box.svg
     extern const unsigned char redo_svg[913];  // ../art_src/redo.svg
     extern const unsigned char ribbon_bar_svg[2353];  // ../art_src/ribbon_bar.svg
     extern const unsigned char ribbon_button_svg[878];  // ../art_src/ribbon_button.svg
@@ -352,8 +352,8 @@ namespace wxue_img
     extern const unsigned char wxSmith_png[797];  // ../art_src/wxSmith.png
     extern const unsigned char wxSplitterWindow_svg[3078];  // ../art_src/wxSplitterWindow.svg
     extern const unsigned char wxStaticBoxSizer_svg[2367];  // ../art_src/wxStaticBoxSizer.svg
-    extern const unsigned char wxStaticCheckBoxSizer_svg[2469];  // ../art_src/wxStaticCheckBoxSizer.svg
-    extern const unsigned char wxStaticRadioBtnSizer_svg[2288];  // ../art_src/wxStaticRadioBtnSizer.svg
+    extern const unsigned char wxStaticCheckBoxSizer_svg[2559];  // ../art_src/wxStaticCheckBoxSizer.svg
+    extern const unsigned char wxStaticRadioBtnSizer_svg[2374];  // ../art_src/wxStaticRadioBtnSizer.svg
     extern const unsigned char wxStaticText_svg[1342];  // ../art_src/wxStaticText.svg
     extern const unsigned char wxTextCtrl_svg[1417];  // ../art_src/wxTextCtrl.svg
     extern const unsigned char wxTimer_svg[4440];  // ../art_src/wxTimer.svg

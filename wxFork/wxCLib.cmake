@@ -160,15 +160,15 @@ set (wxCLib_sources
     ../../wxWidgets/src/expat/expat/lib/xmltok.c
 
     # plutovg used by lunasvg
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-blend.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-dash.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-math.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-raster.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-stroker.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-geometry.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-paint.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-rle.c
-    ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-blend.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-dash.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-math.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-raster.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-stroker.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-geometry.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-paint.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg-rle.c
+    # ../../wxWidgets/3rdparty/lunasvg/3rdparty/plutovg/plutovg.c
 
     # wxBase
     ../../wxWidgets/src/common/extended.c

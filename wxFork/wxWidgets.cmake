@@ -627,26 +627,37 @@ set (common_sources
 )
 
 set (lunasvg_sources
-    ../../wxWidgets/3rdparty/lunasvg/source/canvas.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/clippathelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/defselement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/element.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/gelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/geometryelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/graphicselement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/layoutcontext.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/lunasvg.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/markerelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/maskelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/paintelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/parser.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/property.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/stopelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/styledelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/styleelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/svgelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/symbolelement.cpp
-    ../../wxWidgets/3rdparty/lunasvg/source/useelement.cpp
+    ../../wxlunasvg/source/canvas.cpp
+    ../../wxlunasvg/source/clippathelement.cpp
+    ../../wxlunasvg/source/defselement.cpp
+    ../../wxlunasvg/source/element.cpp
+    ../../wxlunasvg/source/gelement.cpp
+    ../../wxlunasvg/source/geometryelement.cpp
+    ../../wxlunasvg/source/graphicselement.cpp
+    ../../wxlunasvg/source/layoutcontext.cpp
+    ../../wxlunasvg/source/lunasvg.cpp
+    ../../wxlunasvg/source/markerelement.cpp
+    ../../wxlunasvg/source/maskelement.cpp
+    ../../wxlunasvg/source/paintelement.cpp
+    ../../wxlunasvg/source/parser.cpp
+    ../../wxlunasvg/source/property.cpp
+    ../../wxlunasvg/source/stopelement.cpp
+    ../../wxlunasvg/source/styledelement.cpp
+    ../../wxlunasvg/source/styleelement.cpp
+    ../../wxlunasvg/source/svgelement.cpp
+    ../../wxlunasvg/source/symbolelement.cpp
+    ../../wxlunasvg/source/useelement.cpp
+
+    ../../wxlunasvg/source/plutovg/plutovg-blend.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-dash.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-ft-math.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-ft-raster.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-ft-stroker.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-geometry.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-paint.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-rle.cpp
+    ../../wxlunasvg/source/plutovg/plutovg.cpp
+    ../../wxlunasvg/source/plutovg/plutovg-private.cpp
 )
 
 set (msw_sources

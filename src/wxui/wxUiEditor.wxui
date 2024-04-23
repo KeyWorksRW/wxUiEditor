@@ -3757,6 +3757,107 @@
             OKButtonClicked="OnOK" />
         </node>
       </node>
+      <node
+        class="wxDialog"
+        class_name="SysHeaderDlg"
+        persist="1"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Add System Header(s)"
+        minimum_size="400,-1d"
+        base_file="..\customprops\sys_header_dlg.cpp"
+        local_src_includes="node.h;node_prop.h;project_handler.h"
+        system_src_includes="wx/filedlg.h"
+        header_preamble="class NodeProperty;"
+        system_hdr_includes="wx/filehistory.h"
+        class_members="&quot;tt_string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;int m_language = GEN_LANG_CPLUSPLUS;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
+        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const tt_string&amp; GetResults() const { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
+        private_members="1"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer2">
+            <node
+              class="wxCollapsiblePane"
+              class_access="none"
+              collapsed="1"
+              label="Description"
+              var_name="collapsible_pane"
+              flags="wxEXPAND">
+              <node
+                class="wxBoxSizer"
+                minimum_size="-1,-1d">
+                <node
+                  class="wxTextCtrl"
+                  style="wxTE_MULTILINE|wxTE_READONLY|wxTE_NO_VSCROLL"
+                  value="Start by selecting or adding a root directory. This should either be a directory in your $INCLUDE environment, or one that is passed to the compiler using -I. Header files will then be displayed automatically relative to this directory. Check the ones you want to add."
+                  var_name="m_text_ctrl"
+                  background_colour="#F0F0F0"
+                  minimum_size="200,-1d"
+                  window_style="wxBORDER_NONE"
+                  flags="wxEXPAND"
+                  proportion="1" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer4"
+            borders="wxTOP|wxRIGHT|wxLEFT">
+            <node
+              class="wxStaticText"
+              label="&amp;Include Directory Root:"
+              var_name="m_static_text" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer3"
+            borders="wxBOTTOM|wxRIGHT|wxLEFT"
+            flags="wxEXPAND">
+            <node
+              class="wxComboBox"
+              var_name="m_combo_root"
+              tooltip="The directory you pass to the C++ compiler"
+              proportion="1"
+              wxEVT_COMBOBOX="OnRootSelected" />
+            <node
+              class="wxButton"
+              class_access="none"
+              label="Directory..."
+              var_name="btn"
+              wxEVT_BUTTON="OnDirectory" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer6"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStaticText"
+              label="Header File(s)"
+              var_name="m_static_text3" />
+            <node
+              class="wxCheckListBox"
+              style="wxLB_SORT"
+              type="wxLB_MULTIPLE"
+              var_name="m_check_list_files"
+              validator_variable="m_file_indexes"
+              minimum_size="-1,90d"
+              flags="wxEXPAND"
+              proportion="1" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
+        </node>
+      </node>
     </node>
     <node
       class="folder"

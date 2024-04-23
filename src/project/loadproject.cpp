@@ -56,8 +56,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 #endif
         if (allow_ui)
         {
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR)
-                .ShowModal();
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
         }
         return false;
     }

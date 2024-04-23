@@ -100,6 +100,9 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "sys_header_dlg.h"    // SysHeaderDlg class
+#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+
 void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {
     m_prop = prop;
@@ -158,6 +161,26 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
 void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
 {
+    if (m_prop->isProp(prop_system_src_includes) || m_prop->isProp(prop_system_hdr_includes))
+    {
+        SysHeaderDlg dlg(this);
+        dlg.Initialize(m_prop);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            tt_string_vector files(dlg.GetResults(), ';');
+            for (auto& iter: files)
+            {
+                auto item = iter.make_wxString();
+                if (m_listbox->FindString(item) == wxNOT_FOUND)
+                {
+                    m_listbox->Append(item);
+                }
+            }
+            SetButtonsEnableState();
+        }
+        return;
+    }
+
     tt_string path;
     tt_string cur_file;
     if (m_prop->isProp(prop_local_hdr_includes) || m_prop->isProp(prop_local_src_includes) ||
@@ -179,37 +202,6 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         if (path.empty())
         {
             path = Project.getProjectPath();
-        }
-    }
-    else  // if (m_prop->get_name() == prop_system_hdr_includes)
-    {
-        // Get the path to the WXWIN (wxWidgets) include directory
-        wxString wxwin_path;
-        if (!wxGetEnv("WXWIN", &wxwin_path))
-        {
-            // Get the INCLUDE environment variable, and parse out the first path that has wxWidgets in it.
-            wxString include_paths;
-            if (wxGetEnv("INCLUDE", &include_paths))
-            {
-                wxStringTokenizer tokenizer(include_paths, ";");
-                while (tokenizer.HasMoreTokens())
-                {
-                    wxString include_path = tokenizer.GetNextToken();
-                    if (include_path.Contains("wxWidgets"))
-                    {
-                        path = include_path;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            path = wxwin_path.utf8_string();
-            if (!path.contains("include"))
-            {
-                path += "/include";
-            }
         }
     }
 

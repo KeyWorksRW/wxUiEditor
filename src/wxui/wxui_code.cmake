@@ -9,6 +9,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/edit_custom_mockup_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../customprops/sys_header_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../import/import_winres_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/code_compare.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/debugsettings.cpp

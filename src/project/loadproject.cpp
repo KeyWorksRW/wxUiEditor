@@ -46,15 +46,19 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
     auto result = doc.load_file_string(file);
     if (!result)
     {
+        tt_string msg;
+        msg << "Parsing error in file: " << file;
+        msg << "\nError description: " << result.description();
+        msg << "\nError line: " << result.line;
+        msg << "\nError column: " << result.column;
 #if defined(_DEBUG)
-        FAIL_MSG(result.detailed_msg);
-#else
+        FAIL_MSG(msg);
+#endif
         if (allow_ui)
         {
-            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR)
                 .ShowModal();
         }
-#endif
         return false;
     }
 

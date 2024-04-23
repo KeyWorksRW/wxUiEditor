@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Class for reading and writing line-oriented strings/files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2019-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2019-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,8 @@
 void tt_string_vector::SetString(std::string_view str, char separator, tt::TRIM trim)
 {
     clear();
+    if (str.empty())
+        return;
 
     // If the separator is a quote, then assume each substring is contained within quotes.
     if (separator == '"')

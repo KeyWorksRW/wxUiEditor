@@ -90,11 +90,6 @@ set (file_list
     generate/gen_ruby.cpp          # Generate wxRuby3 code
     generate/gen_xrc.cpp           # Generate XRC
 
-    generate/gen_golang.cpp        # Generate wxGo code (experimental)
-    generate/gen_lua.cpp           # Generate wxLua code (experimental)
-    generate/gen_perl.cpp          # Generate wxPerl code (experimental)
-    generate/gen_rust.cpp          # Generate wxRust2 code (experimental)
-
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object
     # can be used in a Dialog or Frame, then the generator must also be able to

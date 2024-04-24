@@ -476,10 +476,6 @@ namespace GenEnum
         prop_window_style,
         prop_wrap,
         prop_wrap_flags,
-        prop_wxGo_version,
-        prop_wxLua_version,
-        prop_wxPerl_version,
-        prop_wxRust_version,
         prop_wxWidgets_version,
         prop_xml_condensed_format,
         prop_xrc_art_directory,
@@ -525,38 +521,6 @@ namespace GenEnum
         prop_ruby_output_folder,
         prop_ruby_project_preamble,
         prop_wxRuby_version,
-
-        prop_folder_golang_output_folder,
-        prop_golang_file,
-        prop_golang_import_list,
-        prop_golang_inherit_name,
-        prop_golang_insert,
-        prop_golang_line_length,
-        prop_golang_output_folder,
-
-        prop_folder_lua_output_folder,
-        prop_lua_file,
-        prop_lua_inherit_name,
-        prop_lua_insert,
-        prop_lua_line_length,
-        prop_lua_output_folder,
-        prop_lua_require_list,
-
-        prop_folder_perl_output_folder,
-        prop_perl_file,
-        prop_perl_inherit_name,
-        prop_perl_insert,
-        prop_perl_line_length,
-        prop_perl_output_folder,
-        prop_perl_package_list,
-
-        prop_folder_rust_output_folder,
-        prop_rust_file,
-        prop_rust_inherit_name,
-        prop_rust_insert,
-        prop_rust_line_length,
-        prop_rust_output_folder,
-        prop_rust_module_list,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
@@ -709,10 +673,6 @@ namespace GenEnum
         gen_Code,
         gen_wxPython,
         gen_wxRuby,
-        gen_wxGo,
-        gen_wxLua,
-        gen_wxPerl,
-        gen_wxRust,
         gen_XRC,
 
         gen_LanguageSettings,  // Using this will pull in all the language settings
@@ -720,12 +680,8 @@ namespace GenEnum
         gen_CPlusSettings,
         gen_DerivedCPlusSettings,
         gen_CPlusHeaderSettings,
-        gen_GolangSettings,
-        gen_LuaSettings,
-        gen_PerlSettings,
         gen_PythonSettings,
         gen_RubySettings,
-        gen_RustSettings,
 
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
         // just for organtizing forms in the Navigation panel.

@@ -160,8 +160,6 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                         m_language |= GEN_LANG_CPLUSPLUS;
                     else if (tt::contains(xml_prop.text().as_view(), "XRC"))
                         m_language |= GEN_LANG_XRC;
-                    else if (tt::contains(xml_prop.text().as_view(), "Lua"))
-                        m_language |= GEN_LANG_LUA;
 
                     // wxFormBuilder also generates PHP code, but wxUiEditor currently doesn't support that since
                     // wxPHP is not being actively maintained.
@@ -680,10 +678,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             newobject->set_value(prop_python_file, m_baseFile);
         if (m_language & GEN_LANG_XRC)
             newobject->set_value(prop_xrc_file, m_baseFile);
-#if defined(INTERNAL_TESTING)
-        if (m_language & GEN_LANG_LUA)
-            newobject->set_value(prop_lua_file, m_baseFile);
-#endif
         // We don't want to use the same file for the next form, so we clear it.
         m_baseFile.clear();
     }

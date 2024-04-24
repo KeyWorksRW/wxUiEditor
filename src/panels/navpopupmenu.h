@@ -161,7 +161,6 @@ public:
         MenuSingleGenCpp,
         MenuSingleGenPython,
         MenuSingleGenRuby,
-        MenuSingleGenRust,
         MenuSingleGenXRC,
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,

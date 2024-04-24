@@ -213,16 +213,6 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
             result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
-#if defined(INTERNAL_TESTING)
-        else if (language == GEN_LANG_GOLANG && folder->hasValue(prop_folder_golang_output_folder))
-            result = folder->as_string(prop_folder_golang_output_folder);
-        else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
-            result = folder->as_string(prop_folder_lua_output_folder);
-        else if (language == GEN_LANG_PERL && folder->hasValue(prop_folder_perl_output_folder))
-            result = folder->as_string(prop_folder_perl_output_folder);
-        else if (language == GEN_LANG_RUST && folder->hasValue(prop_folder_rust_output_folder))
-            result = folder->as_string(prop_folder_rust_output_folder);
-#endif
     }
 
     // Even if the node has a folder parent, there may not be a directory set for it, so check
@@ -240,16 +230,6 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
             result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
-#if defined(INTERNAL_TESTING)
-        else if (language == GEN_LANG_GOLANG && m_project_node->hasValue(prop_golang_output_folder))
-            result = m_project_node->as_string(prop_golang_output_folder);
-        else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
-            result = m_project_node->as_string(prop_lua_output_folder);
-        else if (language == GEN_LANG_PERL && m_project_node->hasValue(prop_perl_output_folder))
-            result = m_project_node->as_string(prop_perl_output_folder);
-        else if (language == GEN_LANG_RUST && m_project_node->hasValue(prop_rust_output_folder))
-            result = m_project_node->as_string(prop_rust_output_folder);
-#endif
     }
 
     if (result.empty())
@@ -273,20 +253,6 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
         case GEN_LANG_XRC:
             base_file = form->as_string(prop_xrc_file);
             break;
-#if defined(INTERNAL_TESTING)
-        case GEN_LANG_GOLANG:
-            base_file = form->as_string(prop_golang_file);
-            break;
-        case GEN_LANG_LUA:
-            base_file = form->as_string(prop_lua_file);
-            break;
-        case GEN_LANG_PERL:
-            base_file = form->as_string(prop_perl_file);
-            break;
-        case GEN_LANG_RUST:
-            base_file = form->as_string(prop_rust_file);
-            break;
-#endif
     }
 
     if (base_file.empty())

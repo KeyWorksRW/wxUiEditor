@@ -583,12 +583,6 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
                     class_info->AddBaseClass(getNodeDeclaration("C++ Derived Class Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxPython Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxRuby Settings"));
-#if defined(INTERNAL_TESTING)
-                    class_info->AddBaseClass(getNodeDeclaration("wxGo Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxLua Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxPerl Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxRust Settings"));
-#endif  // INTERNAL_TESTING
 
                     elem_base = elem_base.next_sibling("inherits");
                     continue;

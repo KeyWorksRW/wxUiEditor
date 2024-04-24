@@ -6,10 +6,6 @@
         <inherits class="C++"/>
         <inherits class="wxPython"/>
         <inherits class="wxRuby"/>
-        <inherits class="wxGo"/>
-        <inherits class="wxLua"/>
-        <inherits class="wxPerl"/>
-        <inherits class="wxRust"/>
         <inherits class="XRC"/>
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">

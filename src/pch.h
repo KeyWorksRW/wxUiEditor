@@ -128,11 +128,6 @@ enum
     GEN_LANG_PYTHON = 1 << 1,
     GEN_LANG_RUBY = 1 << 2,
     GEN_LANG_XRC = 1 << 3,
-
-    GEN_LANG_GOLANG = 1 << 4,  // experimental
-    GEN_LANG_LUA = 1 << 5,     // experimental
-    GEN_LANG_PERL = 1 << 6,    // experimental
-    GEN_LANG_RUST = 1 << 7,    // experimental
 };
 
 // Used to index fields in a bitmap property

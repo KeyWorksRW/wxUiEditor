@@ -46,13 +46,13 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6060]; // 30334
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10572]; // 51556
+    extern const unsigned char interfaces[10079]; // 46401
     // ../xml/mdi.xml
     extern const unsigned char mdi[1791]; // 5631
     // ../xml/pickers.xml
     extern const unsigned char pickers[2481]; // 10224
     // ../xml/project.xml
-    extern const unsigned char project[1466]; // 5265
+    extern const unsigned char project[1449]; // 5164
     // ../xml/sizers.xml
     extern const unsigned char sizers[2296]; // 12909
     // ../xml/text_ctrls.xml

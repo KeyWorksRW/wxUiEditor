@@ -214,22 +214,6 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
             global_list = &g_map_ruby_prefix;
             break;
 
-        case GEN_LANG_GOLANG:
-            // wxGo doesn't have modules
-            return {};
-
-        case GEN_LANG_LUA:
-            // wxLua doesn't have modules
-            return {};
-
-        case GEN_LANG_PERL:
-            // wxPerl doesn't appear to have modules, but needs verification
-            return {};
-
-        case GEN_LANG_RUST:
-            // wxRust doesn't appear to have modules, but needs verification
-            return {};
-
         case GEN_LANG_CPLUSPLUS:
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
             return {};
@@ -286,43 +270,6 @@ void Code::Init(Node* node, int language)
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
-    }
-
-    // The following are experimental languages, which means the line length property will be
-    // zero under a non-internal release build.
-
-    else if (language == GEN_LANG_GOLANG)
-    {
-        m_language_wxPrefix = "wx.";
-        m_lang_assignment = " := ";
-        m_break_length = Project.as_size_t(prop_golang_line_length);
-        if (m_break_length < 80)
-            m_break_length = 80;
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        m_language_wxPrefix = "wx.";
-        m_break_length = Project.as_size_t(prop_lua_line_length);
-        if (m_break_length < 80)
-            m_break_length = 80;
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_PERL)
-    {
-        m_language_wxPrefix = "Wx::";
-        m_break_length = Project.as_size_t(prop_perl_line_length);
-        if (m_break_length < 80)
-            m_break_length = 80;
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_RUST)
-    {
-        m_language_wxPrefix = "wx::";
-        m_break_length = Project.as_size_t(prop_rust_line_length);
-        if (m_break_length < 80)
-            m_break_length = 80;
-        m_break_length -= m_indent_size;
     }
 
     else
@@ -466,14 +413,6 @@ Code& Code::AddAuto()
     if (is_cpp() && is_local_var())
     {
         *this += "auto* ";
-    }
-    else if (is_perl())
-    {
-        *this += "my ";
-    }
-    else if (is_rust())
-    {
-        *this += "let ";
     }
     return *this;
 }
@@ -673,7 +612,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
 {
     if (!add_operator)
     {
-        if (text.is_sameprefix("wx") && (is_golang() || is_lua() || is_python() || is_ruby() || is_rust()))
+        if (text.is_sameprefix("wx") && (is_python() || is_ruby()))
         {
             if (is_ruby())
                 *this << m_language_wxPrefix << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
@@ -687,7 +626,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
     }
     else
     {
-        if (is_cpp() || is_perl())
+        if (is_cpp())
         {
             *this << "->" << text;
         }
@@ -709,7 +648,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
                 *this += ConvertToSnakeCase(text);
             }
         }
-        else if (is_golang() || is_lua() || is_python() || is_ruby() || is_rust())
+        else if (is_python() || is_ruby())
         {
             *this << '.';
             if (text.is_sameprefix("wx"))
@@ -779,10 +718,6 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "self.";
     }
-    else if (is_golang())
-    {
-        *this += "f.";
-    }
     else if (is_ruby())
     {
         *this += ConvertToSnakeCase(text);
@@ -799,7 +734,7 @@ Code& Code::Class(tt_string_view text)
     {
         *this += text;
     }
-    else if (is_python() || is_rust())
+    else if (is_python())
     {
         if (text.is_sameprefix("wx"))
         {
@@ -830,7 +765,7 @@ Code& Code::Object(tt_string_view class_name)
     {
         *this += class_name;
     }
-    else if (is_python() || is_rust())
+    else if (is_python())
     {
         if (class_name.is_sameprefix("wx"))
         {
@@ -862,10 +797,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
 {
     if (assign)
     {
-        if (is_golang())
-            *this += " := ";
-        else
-            *this += " = ";
+        *this += " = ";
     }
     if (is_cpp())
     {
@@ -910,10 +842,6 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
             {
                 *this << language_prefix << class_name.substr(2);
             }
-            else if (is_golang())
-            {
-                *this << m_language_wxPrefix << "New" << class_name.substr(2);
-            }
             else
             {
                 *this << m_language_wxPrefix << class_name.substr(2);
@@ -927,10 +855,6 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
         {
             *this += ".new";
         }
-        else if (is_rust())
-        {
-            *this += "::new";
-        }
     }
 
     *this += '(';
@@ -939,10 +863,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
 
 Code& Code::Assign(tt_string_view class_name)
 {
-    if (is_golang())
-        *this += " := ";
-    else
-        *this += " = ";
+    *this += " = ";
     if (class_name.empty())
         return *this;
 
@@ -993,10 +914,6 @@ Code& Code::NodeName(Node* node)
     if (is_ruby() && !node->isForm() && !node->isLocal())
     {
         *this += "@";
-    }
-    else if (is_perl())
-    {
-        *this += "$";
     }
 
     // We don't create these, preferring to add them like the above, however the user can

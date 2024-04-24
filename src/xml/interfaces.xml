@@ -247,50 +247,6 @@
 			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
 	</gen>
 
-	<gen class="wxGo Settings" type="interface" enable="internal">
-		<property name="golang_file" type="file"
-			help="The filename to use if generating code for wxRuby."/>
-		<property name="golang_inherit_name" type="string"
-			help="The name to use for an inherited class. If specified, the Inherit tab in the Golang panel will include a sample for creating an inherited class."/>
-		<property name="insert_golang_code" type="code_edit"
-			help="Specify the code to insert into the Go file after the generated import statements. This can be any valid Go code for use before the class definition."/>
-		<property name="golang_import_list" type="include_files"
-			help="Specifies the Go modules that should be imported. These will be placed in quotes and added using the import command."/>
-	</gen>
-
-	<gen class="wxLua Settings" type="interface" enable="internal">
-		<property name="lua_file" type="file"
-			help="The filename to use if generating code for wxRuby."/>
-		<property name="lua_inherit_name" type="string"
-			help="The name to use for an inherited class. If specified, the Inherit tab in the Lua panel will include a sample for creating an inherited class."/>
-		<property name="insert_lua_code" type="code_edit"
-			help="Specify the code to insert into the Lua file after the generated import statements. This can be any valid Lua code for use before the class definition."/>
-		<property name="lua_require_list" type="include_files"
-			help="Specifies the Lua modules that are required for this module. These will be placed in quotes and added using the require command."/>
-	</gen>
-
-	<gen class="wxPerl Settings" type="interface" enable="internal">
-		<property name="perl_file" type="file"
-			help="The filename to use if generating code for wxRuby."/>
-		<property name="perl_inherit_name" type="string"
-			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
-		<property name="insert_perl_code" type="code_edit"
-			help="Specify the code to insert into the Perl file after the generated import statements. This can be any valid Perl code for use before the class definition."/>
-		<property name="perl_package_list" type="include_files"
-			help="Specifies the Perl packages that are required for this module. These will be added via the use command."/>
-	</gen>
-
-	<gen class="wxRust Settings" type="interface" enable="internal">
-		<property name="rust_file" type="file"
-			help="The filename to use if generating code for wxRuby."/>
-		<property name="rust_inherit_name" type="string"
-			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
-		<property name="insert_rust_code" type="code_edit"
-			help="Specify the code to insert into the Rust file after the generated import statements. This can be any valid Rust code for use before the class definition."/>
-		<property name="rust_module_list" type="include_files"
-			help="Specifies the Rust modules that are used in this module. These will be added via the use command."/>
-	</gen>
-
 	<gen class="XRC Settings" type="interface">
 		<property name="xrc_file" type="file"
 			help="The filename to use if generating XRC (wxPython can override this with its own file name)."/>
@@ -386,50 +342,6 @@
 			help="If checked, all RuboCop warnings will be disabled within the generated code."> 0</property>
 		<property name="ruby_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block and any disabled RuboCop warnings."/>
-	</gen>
-
-	<gen class="wxGo" type="interface" enable="internal">
-		<property name="wxGo_version" type="option"
-			help="Specifies the minimum version of wxGo needed to run the generated code.">
-			<option name="0.3.0"/> 0.3.0 </property>
-		<property name="golang_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all Go code."/>
-		<property name="golang_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			100</property>
-	</gen>
-
-	<gen class="wxLua" type="interface" enable="internal">
-		<property name="wxLua_version" type="option"
-			help="Specifies the minimum version of wxLua needed to run the generated code.">
-			<option name="3.2.0"/> 3.2.0 </property>
-		<property name="lua_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all Lua code."/>
-		<property name="lua_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			100</property>
-	</gen>
-
-	<gen class="wxPerl" type="interface" enable="internal">
-		<property name="wxPerl_version" type="option"
-			help="Specifies the minimum version of wxPerl needed to run the generated code.">
-			<option name="0.3.0"/> 0.3.0 </property>
-		<property name="perl_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all Perl code."/>
-		<property name="perl_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			80</property>
-	</gen>
-
-	<gen class="wxRust" type="interface" enable="internal">
-		<property name="wxRust_version" type="option"
-			help="Specifies the minimum version of wxRust needed to run the generated code.">
-			<option name="0.8.0"/> 0.8.0 </property>
-		<property name="rust_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all Rust code."/>
-		<property name="rust_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			100</property>
 	</gen>
 
 	<gen class="Folder C++ Overrides" type="interface">

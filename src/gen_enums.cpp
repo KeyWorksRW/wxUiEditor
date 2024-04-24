@@ -459,10 +459,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_window_style, "window_style" },
     { prop_wrap, "wrap" },
     { prop_wrap_flags, "wrap_flags" },
-    { prop_wxGo_version, "wxGo_version" },
-    { prop_wxLua_version, "wxLua_version" },
-    { prop_wxPerl_version, "wxPerl_version" },
-    { prop_wxRust_version, "wxRust_version" },
     { prop_wxWidgets_version, "wxWidgets_version" },
     { prop_xml_condensed_format, "xml_condensed_format" },
     { prop_xrc_art_directory, "xrc_art_directory" },
@@ -506,38 +502,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_ruby_output_folder, "ruby_output_folder" },
     { prop_ruby_project_preamble, "ruby_project_preamble" },
     { prop_wxRuby_version, "wxRuby_version" },
-
-    { prop_folder_golang_output_folder, "folder_golang_output_folder" },
-    { prop_golang_file, "golang_file" },
-    { prop_golang_import_list, "golang_import_list" },
-    { prop_golang_inherit_name, "golang_inherit_name" },
-    { prop_golang_insert, "insert_golang_code" },
-    { prop_golang_line_length, "golang_line_length" },
-    { prop_golang_output_folder, "golang_output_folder" },
-
-    { prop_folder_lua_output_folder, "folder_lua_output_folder" },
-    { prop_lua_file, "lua_file" },
-    { prop_lua_inherit_name, "lua_inherit_name" },
-    { prop_lua_insert, "insert_lua_code" },
-    { prop_lua_line_length, "lua_line_length" },
-    { prop_lua_output_folder, "lua_output_folder" },
-    { prop_lua_require_list, "lua_require_list" },
-
-    { prop_folder_perl_output_folder, "folder_perl_output_folder" },
-    { prop_perl_file, "perl_file" },
-    { prop_perl_inherit_name, "perl_inherit_name" },
-    { prop_perl_insert, "insert_perl_code" },
-    { prop_perl_line_length, "perl_line_length" },
-    { prop_perl_output_folder, "perl_output_folder" },
-    { prop_perl_package_list, "perl_package_list" },
-
-    { prop_folder_rust_output_folder, "folder_rust_output_folder" },
-    { prop_rust_file, "rust_file" },
-    { prop_rust_inherit_name, "rust_inherit_name" },
-    { prop_rust_insert, "insert_rust_code" },
-    { prop_rust_line_length, "rust_line_length" },
-    { prop_rust_output_folder, "rust_output_folder" },
-    { prop_rust_module_list, "rust_module_list" },
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -662,10 +626,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_XRC, "XRC" },
     { gen_wxPython, "wxPython" },
     { gen_wxRuby, "wxRuby" },
-    { gen_wxGo, "wxGo" },
-    { gen_wxLua, "wxLua" },
-    { gen_wxPerl, "wxPerl" },
-    { gen_wxRust, "wxRust" },
 
     { gen_LanguageSettings, "Language Settings" },
 
@@ -674,10 +634,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_CPlusHeaderSettings, "C++ Header Settings" },
     { gen_PythonSettings, "wxPython Settings" },
     { gen_RubySettings, "wxRuby Settings" },
-    { gen_GolangSettings, "wxGo Settings" },
-    { gen_LuaSettings, "wxLua Settings" },
-    { gen_PerlSettings, "wxPerl Settings" },
-    { gen_RustSettings, "wxRust Settings" },
 
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
     // just for organtizing forms in the Navigation panel.

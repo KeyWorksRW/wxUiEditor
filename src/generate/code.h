@@ -8,12 +8,7 @@
 /*
 
     This class is used to generate code for any language that wxUiEditor supports.
-    Currently this is C++, Python and Ruby, with experimental support for Go, Lua,
-    Perl and Rust.
-
-    With 7 possible languages, the generators should use this class as much as possible
-    for all the code they generate, so that there is a single location to make
-    language-specific changes.
+    Currently this is C++, wxPython and wxRuby3.
 
 */
 
@@ -84,13 +79,6 @@ public:
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
     bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
-
-    // The following are experimental languages
-
-    bool is_golang() const { return m_language == GEN_LANG_GOLANG; }
-    bool is_lua() const { return m_language == GEN_LANG_LUA; }
-    bool is_perl() const { return m_language == GEN_LANG_PERL; }
-    bool is_rust() const { return m_language == GEN_LANG_RUST; }
 
     bool is_local_var() const;
 
@@ -166,8 +154,6 @@ public:
     Code& Tab(int nTabs = 1);
 
     // If C++ and node is a local variable, will add "auto* "
-    // If Perl, it will add "my "
-    // If Rust, it will add "let "
     Code& AddAuto();
 
     void EnableAutoLineBreak(bool auto_break = true) { m_auto_break = auto_break; }
@@ -221,36 +207,6 @@ public:
     Code& AddIfRuby(tt_string_view text)
     {
         if (is_ruby())
-            Add(text);
-        return *this;
-    }
-
-    // The following AddIf...() functions are for the experimental languages
-
-    Code& AddIfGolang(tt_string_view text)
-    {
-        if (is_golang())
-            Add(text);
-        return *this;
-    }
-
-    Code& AddIfLua(tt_string_view text)
-    {
-        if (is_lua())
-            Add(text);
-        return *this;
-    }
-
-    Code& AddIfPerl(tt_string_view text)
-    {
-        if (is_perl())
-            Add(text);
-        return *this;
-    }
-
-    Code& AddIfRust(tt_string_view text)
-    {
-        if (is_rust())
             Add(text);
         return *this;
     }
@@ -316,7 +272,7 @@ public:
     // Adds wxClass or wx.Class
     Code& Class(tt_string_view text);
 
-    // Adds " := " for wxGo, " = " for other languages.
+    // Adds " = "
     // If class_name is specified, adds the " = new wxClass;" for C++ or normal
     // class assignment for other languages.
     Code& Assign(tt_string_view class_name = tt_empty_cstr);

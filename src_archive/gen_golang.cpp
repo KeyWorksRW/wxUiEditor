@@ -6,7 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 /*
-    This is a work in progress. It is not yet functional enough to be used.
+    [Randalphwa - 07-13-2023]
+    This was an experimental module, and is no longer supported.
 */
 
 #include <set>

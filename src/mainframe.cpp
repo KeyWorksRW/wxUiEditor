@@ -92,11 +92,9 @@ enum
     id_GenerateCpp,
     id_GeneratePython,
     id_GenerateRuby,
-    id_GenerateRust,
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
-    id_GenSingleRust,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -211,11 +209,9 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_GenSingleCpp, "&Generate Single C++", "Generate C++ src/hdr files for seletected form.");
     menuInternal->Append(id_GenSinglePython, "&Generate Single Python", "Generate Python file for seletected form.");
     menuInternal->Append(id_GenSingleRuby, "&Generate Single Ruby", "Generate Ruby file for seletected form.");
-    menuInternal->Append(id_GenSingleRust, "&Generate Single Rust", "Generate Rust file for seletected form.");
 
     // menuInternal->Append(id_GeneratePython, "&Generate Python", "Generate all python files from current project.");
     // menuInternal->Append(id_GenerateRuby, "&Generate Ruby", "Generate all ruby files from current project.");
-    // menuInternal->Append(id_GenerateRust, "&Generate Rust", "Generate all rust files from current project.");
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     ////////////////////// Debug-only menu items //////////////////////
@@ -431,11 +427,9 @@ MainFrame::MainFrame() :
     Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
     Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
     Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
-    Bind(wxEVT_MENU, &MainFrame::OnGenSingleRust, this, id_GenSingleRust);
 
     // Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
     // Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
-    // Bind(wxEVT_MENU, &MainFrame::OnGenerateRust, this, id_GenerateRust);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -1378,19 +1372,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
     m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-
-#if defined(_DEBUG)
-
-    m_golangPanel = new BasePanel(m_notebook, this, GEN_LANG_GOLANG);
-    m_notebook->AddPage(m_golangPanel, "Golang", false, wxWithImages::NO_IMAGE);
-    m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
-    m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-    m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-    m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-    m_rustPanel = new BasePanel(m_notebook, this, GEN_LANG_RUST);
-    m_notebook->AddPage(m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
-
-#endif  // _DEBUG
 
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);

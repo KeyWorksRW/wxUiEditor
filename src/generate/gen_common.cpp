@@ -1312,10 +1312,7 @@ void GenToolCode(Code& code)
     if (node->as_bool(prop_disabled) || (node->as_string(prop_id) == "wxID_ANY" && node->getInUseEventCount()))
     {
         code.AddAuto().NodeName();
-        if (code.is_golang())
-            code += " := ";
-        else
-            code += " = ";
+        code += " = ";
         need_variable_result = false;  // make certain we don't add this again
     }
 

@@ -313,13 +313,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case MenuSingleGenRust:
-            {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleRust(dummy);
-            }
-            break;
-
         case MenuSingleGenXRC:
             {
                 wxCommandEvent dummy;
@@ -499,7 +492,6 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         Append(MenuSingleGenCpp, "Generate C++ for this form");
         Append(MenuSingleGenPython, "Generate Python for this form");
         Append(MenuSingleGenRuby, "Generate Ruby for this form");
-        Append(MenuSingleGenRust, "Generate Rust for this form");
         Append(MenuSingleGenXRC, "Generate XRC for this form");
         AppendSeparator();
     }

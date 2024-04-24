@@ -82,10 +82,6 @@ public:
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
-    BasePanel* GetGolangPanel() { return m_golangPanel; }
-    BasePanel* GetLuaPanel() { return m_luaPanel; }
-    BasePanel* GetPerlPanel() { return m_perlPanel; }
-    BasePanel* GetRustPanel() { return m_rustPanel; }
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
@@ -269,7 +265,6 @@ public:
     void OnGenSingleCpp(wxCommandEvent& event);
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
-    void OnGenSingleRust(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
 #endif
 
@@ -321,7 +316,6 @@ protected:
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnGeneratePython(wxCommandEvent& event);
     void OnGenerateRuby(wxCommandEvent& event);
-    void OnGenerateRust(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.
@@ -373,14 +367,6 @@ private:
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
-
-    // The following panels are experimental and may not work correctly. They are only
-    // displayed in a Debug build.
-
-    BasePanel* m_golangPanel { nullptr };
-    BasePanel* m_luaPanel { nullptr };
-    BasePanel* m_perlPanel { nullptr };
-    BasePanel* m_rustPanel { nullptr };
 
 #if defined(INTERNAL_TESTING)
     ImportPanel* m_imnportPanel { nullptr };

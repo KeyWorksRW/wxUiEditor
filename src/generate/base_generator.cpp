@@ -685,14 +685,6 @@ static const std::set<GenEnum::PropName> set_output_files = {
     prop_python_file,
     prop_ruby_file,
     prop_xrc_file,
-
-    // experimental
-
-    prop_golang_file,
-    prop_lua_file,
-    prop_perl_file,
-    prop_rust_file,
-
 };
 
 std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)

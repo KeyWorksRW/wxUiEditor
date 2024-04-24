@@ -60,13 +60,6 @@ public:
     void GeneratePythonClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateRubyClass(PANEL_PAGE panel_type = NOT_PANEL);
 
-    // The following languages are experimental and may not work correctly
-
-    void GenerateGoLangClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateLuaClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePerlClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateRustClass(PANEL_PAGE panel_type = NOT_PANEL);
-
     // GenerateDerivedClass() is in gen_derived.cpp
 
     // Returns result::fail, result::exists, result::created, or result::ignored

@@ -131,12 +131,8 @@ const auto gen_ignore_list = {
     gen_CPlusSettings,
     gen_DerivedCPlusSettings,
     gen_CPlusHeaderSettings,
-    gen_GolangSettings,
-    gen_LuaSettings,
-    gen_PerlSettings,
     gen_PythonSettings,
     gen_RubySettings,
-    gen_RustSettings,
 
     gen_unknown,
 

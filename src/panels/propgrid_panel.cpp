@@ -156,13 +156,6 @@ static std::map<int, std::string> s_lang_category_prefix = {
     { GEN_LANG_PYTHON, "wxPython" },
     { GEN_LANG_RUBY, "wxRuby" },
     { GEN_LANG_XRC, "XRC" },
-
-    // experimental languages
-
-    { GEN_LANG_GOLANG, "wxGo" },
-    { GEN_LANG_LUA, "wxLua" },
-    { GEN_LANG_PERL, "wxPerl" },
-    { GEN_LANG_RUST, "wxRust" },
 };
 
 void PropGridPanel::Create()
@@ -1972,17 +1965,6 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("XRC"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
-        if (Project.getCodePreference(node) != GEN_LANG_XRC)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
     else if (name.contains("wxPython"))
     {
         if (UserPrefs.is_DarkMode())
@@ -2005,46 +1987,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("wxGo"))
+    else if (name.contains("XRC"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#007a99"));
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#66e0ff"));  // Light Gopher Blue
-        if (Project.getCodePreference(node) != GEN_LANG_GOLANG)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxLua"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#4d0099"));
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#bf80ff"));  // light purple
-        if (Project.getCodePreference(node) != GEN_LANG_LUA)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxPerl"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#6f5a2a"));
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#eae0c8"));  // Pearl
-        if (Project.getCodePreference(node) != GEN_LANG_PERL)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxRust"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e320b"));
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f49871"));  // Light Rust
-        if (Project.getCodePreference(node) != GEN_LANG_RUST)
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
+        if (Project.getCodePreference(node) != GEN_LANG_XRC)
         {
             m_prop_grid->Collapse(id);
         }
@@ -2229,24 +2178,6 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
 
         case GEN_LANG_XRC:
             ChangeOutputFile(prop_xrc_file);
-            break;
-
-            // The following are experimental
-
-        case GEN_LANG_GOLANG:
-            ChangeOutputFile(prop_golang_file);
-            break;
-
-        case GEN_LANG_LUA:
-            ChangeOutputFile(prop_lua_file);
-            break;
-
-        case GEN_LANG_PERL:
-            ChangeOutputFile(prop_perl_file);
-            break;
-
-        case GEN_LANG_RUST:
-            ChangeOutputFile(prop_rust_file);
             break;
     }
 }

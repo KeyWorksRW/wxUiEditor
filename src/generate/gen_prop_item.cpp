@@ -33,7 +33,7 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     {
         tt_string name("wx");
         name << code.node()->as_string(prop_type) << "Property";
-        code.Function("Append(").AddIfCpp("new ").AddIfGolang("New").Add(name).AddIfRuby(".new").Str("(");
+        code.Function("Append(").AddIfCpp("new ").Add(name).AddIfRuby(".new").Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
     }
 

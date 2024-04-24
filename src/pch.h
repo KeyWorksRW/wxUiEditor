@@ -36,6 +36,7 @@
 #if defined(__clang__)
     // suppress warnings caused by wxCHECKED_DELETE
     #pragma clang diagnostic ignored "-Wunused-local-typedef"
+    #pragma clang diagnostic ignored "-Wignored-attributes"
 #endif
 
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
@@ -79,6 +80,9 @@
 
     // warning: definition of implicit copy constructor for '...' is deprecated
     #pragma clang diagnostic ignored "-Wdeprecated-copy"
+
+    //  warning: attribute declaration must precede definition
+    #pragma clang diagnostic ignored "-Wignored-attributes"
 #endif
 
 #include <map>

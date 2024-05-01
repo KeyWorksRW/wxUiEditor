@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for the Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -362,7 +362,10 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
     }
-
+    else if (class_name == "CloseButton")
+    {
+        code << "wxBitmapButton* " << node->getNodeName() << ';';
+    }
     else if (class_name == "StaticCheckboxBoxSizer")
     {
         if (node->hasValue(prop_checkbox_var_name))

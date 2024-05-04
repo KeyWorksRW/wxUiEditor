@@ -56,6 +56,7 @@
 #include "../customprops/pg_point.h"            // CustomPointProperty -- custom wxPGProperty for handling wxPoint
 #include "../customprops/rearrange_prop.h"      // RearrangeProperty -- Property editor for rearranging items
 #include "../customprops/sb_fields_prop.h"      // SBarFieldsProperty -- Property editor for status bar fields
+#include "../customprops/tt_file_property.h"    // ttFileProperty -- Property editor for file names
 #include "../customprops/txt_string_prop.h"     // EditStringProperty -- dialog for editing single-line strings
 
 #include "id_lists.h"  // wxID_ strings
@@ -461,282 +462,249 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
     wxPGProperty* new_pg_property = nullptr;
 
-    if (type == type_bitlist)
+    switch (type)
     {
-        auto propInfo = prop->getPropDeclaration();
-
-        wxPGChoices bit_flags;
-        int index = 0;
-        for (auto& iter: propInfo->getOptions())
-        {
-            bit_flags.Add(iter.name.make_wxString(), 1 << index++);
-        }
-
-        int val = GetBitlistValue(prop->as_string(), bit_flags);
-        new_pg_property = new wxFlagsProperty(prop->declName().make_wxString(), wxPG_LABEL, bit_flags, val);
-
-        wxFlagsProperty* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
-        if (flagsProp)
-        {
-            for (size_t i = 0; i < flagsProp->GetItemCount(); i++)
+        case type_bitlist:
             {
-                auto id = flagsProp->Item(static_cast<unsigned int>(i));
-                auto& label = id->GetLabel();
+                auto propInfo = prop->getPropDeclaration();
+
+                wxPGChoices bit_flags;
+                int index = 0;
                 for (auto& iter: propInfo->getOptions())
                 {
-                    if (iter.name == label.ToStdString())
+                    bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                }
+
+                int val = GetBitlistValue(prop->as_string(), bit_flags);
+                new_pg_property = new wxFlagsProperty(prop->declName().make_wxString(), wxPG_LABEL, bit_flags, val);
+
+                wxFlagsProperty* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
+                if (flagsProp)
+                {
+                    for (size_t i = 0; i < flagsProp->GetItemCount(); i++)
                     {
-                        if (iter.help.size())
+                        auto id = flagsProp->Item(static_cast<unsigned int>(i));
+                        auto& label = id->GetLabel();
+                        for (auto& iter: propInfo->getOptions())
                         {
-                            wxString description = iter.help;
-                            description.Replace("\\n", "\n", true);
-                            m_prop_grid->SetPropertyHelpString(id, description);
+                            if (iter.name == label.ToStdString())
+                            {
+                                if (iter.help.size())
+                                {
+                                    wxString description = iter.help;
+                                    description.Replace("\\n", "\n", true);
+                                    m_prop_grid->SetPropertyHelpString(id, description);
+                                }
+                                break;
+                            }
                         }
-                        break;
                     }
                 }
             }
-        }
-    }
-    else if (type == type_option || type == type_editoption)
-    {
-        auto propInfo = prop->getPropDeclaration();
+            return new_pg_property;
 
-        auto value = prop->as_string();
-        const tt_string* pHelp = nullptr;
-
-        wxPGChoices constants;
-        int i = 0;
-        for (auto& iter: propInfo->getOptions())
-        {
-            constants.Add(iter.name, i++);
-            if (iter.name == value)
+        case type_option:
+        case type_editoption:
             {
-                pHelp = &iter.help;
+                auto propInfo = prop->getPropDeclaration();
+
+                auto value = prop->as_string();
+                const tt_string* pHelp = nullptr;
+
+                wxPGChoices constants;
+                int i = 0;
+                for (auto& iter: propInfo->getOptions())
+                {
+                    constants.Add(iter.name, i++);
+                    if (iter.name == value)
+                    {
+                        pHelp = &iter.help;
+                    }
+                }
+
+                if (type == type_editoption)
+                {
+                    new_pg_property = new wxEditEnumProperty(prop->declName().make_wxString(), wxPG_LABEL, constants);
+                }
+                else
+                {
+                    new_pg_property = new wxEnumProperty(prop->declName().make_wxString(), wxPG_LABEL, constants);
+                }
+
+                new_pg_property->SetValueFromString(value);
+
+                tt_string description = GetPropHelp(prop);
+                if (description.empty())
+                {
+                    description << value;
+                }
+                else
+                {
+                    description << "\n\n" << value;
+                }
+                if (pHelp)
+                {
+                    if (description.size())
+                        description << "\n\n";
+                    description << *pHelp;
+                }
+
+                new_pg_property->SetHelpString(description.make_wxString());
             }
-        }
+            return new_pg_property;
 
-        if (type == type_editoption)
-        {
-            new_pg_property = new wxEditEnumProperty(prop->declName().make_wxString(), wxPG_LABEL, constants);
-        }
-        else
-        {
-            new_pg_property = new wxEnumProperty(prop->declName().make_wxString(), wxPG_LABEL, constants);
-        }
-
-        new_pg_property->SetValueFromString(value);
-
-        tt_string description = GetPropHelp(prop);
-        if (description.empty())
-        {
-            description << value;
-        }
-        else
-        {
-            description << "\n\n" << value;
-        }
-        if (pHelp)
-        {
-            if (description.size())
-                description << "\n\n";
-            description << *pHelp;
-        }
-
-        new_pg_property->SetHelpString(description.make_wxString());
-    }
-    else if (type == type_wxColour)
-    {
-        auto value = prop->as_string();
-        new_pg_property = new EditColourProperty(prop->declName().make_wxString(), prop);
-    }
-    else if (type == type_file)
-    {
-        new_pg_property = new wxFileProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
-
-        // In order for the wxFileProperty file dialog to have the correct initial directory, you must
-        // specify a *FULL* path for wxPG_FILE_INITIAL_PATH.
-
-        if (prop->isProp(prop_base_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getBaseDirectory(prop->getNode()));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
-        }
-        else if (prop->isProp(prop_derived_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getDerivedDirectory(prop->getNode()));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
-        }
-        else if (prop->isProp(prop_xrc_file) || prop->isProp(prop_combined_xrc_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XRC filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getBaseDirectory(prop->getNode(), GEN_LANG_XRC));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
-        }
-        else if (prop->isProp(prop_python_file) || prop->isProp(prop_python_combined_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Python filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
-                                          Project.getBaseDirectory(prop->getNode(), GEN_LANG_PYTHON));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Python Files|*.py");
-        }
-        else if (prop->isProp(prop_ruby_file) || prop->isProp(prop_ruby_combined_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Ruby filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getBaseDirectory(prop->getNode(), GEN_LANG_RUBY));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Ruby Files|*.rb;*.rbw");
-        }
-        else if (prop->isProp(prop_cmake_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "CMake filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
-                                          Project.getBaseDirectory(prop->getNode(), GEN_LANG_CPLUSPLUS));
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "CMake Files|*.cmake");
-        }
-        else if (prop->isProp(prop_header))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-        }
-        else if (prop->isProp(prop_data_file))
-        {
-            if (prop->getNode()->isGen(gen_data_xml))
+        case type_wxColour:
             {
-                new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XML file");
-                new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XML/XRC Files|*.xml;*.xrc");
-            }
-            else
-            {
-                new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Data file");
-                new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Files|*.*");
-            }
-            tt_string path;
-            if (prop->as_string().size())
-            {
-                path = prop->as_string();
-                path.remove_filename();
-            }
-            else
-            {
-                auto result = Project.GetOutputPath(prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
-                path = result.first;
-                if (result.second)  // true if the the base filename was returned
-                    path.remove_filename();
-            }
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, path.make_wxString());
-        }
-        else if (prop->isProp(prop_derived_header))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived Header");
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
-        }
-        else if (prop->isProp(prop_local_pch_file))
-        {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Precompiled header");
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-
-            // Often the project file will be kept in a sub-directory, with the precompiled header file in the parent
-            // directory. If we can find a standard precompiled header filename in the parent directory, then use that
-            // as the starting directory.
-
-            tt_string pch(Project.getProjectPath());
-            pch.append_filename("../");
-            pch.append_filename("pch.h");
-            if (pch.file_exists())
-            {
-                pch.remove_filename();
-                pch.make_absolute();
-                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
-                return new_pg_property;
+                auto value = prop->as_string();
+                return new EditColourProperty(prop->declName().make_wxString(), prop);
             }
 
-            pch.replace_filename("stdafx.h");  // Older Microsoft standard filename
-            if (pch.file_exists())
+        case type_file:
             {
-                pch.remove_filename();
-                pch.make_absolute();
-                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
-                return new_pg_property;
-            }
+                switch (prop->get_name())
+                {
+                    case prop_base_file:
+                    case prop_derived_file:
+                    case prop_xrc_file:
+                    case prop_combined_xrc_file:
+                    case prop_folder_combined_xrc_file:
+                    case prop_python_file:
+                    case prop_python_combined_file:
+                    case prop_ruby_file:
+                    case prop_ruby_combined_file:
+                    case prop_cmake_file:
+                    case prop_folder_cmake_file:
+                    case prop_derived_header:
+                    case prop_output_file:
+                    case prop_data_file:
+                        return new ttFileProperty(prop);
 
-            pch.replace_filename("precomp.h");  // Less common, but sometimes used
-            if (pch.file_exists())
+                    default:
+                        break;
+                }
+
+                new_pg_property = new wxFileProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
+
+                switch (prop->get_name())
+                {
+#if 0
+// REVIEW: [Randalphwa - 05-17-2024] Currently prop_header is used for both the header file and any
+// preamble. If it does get broken into two properties, then this should be added to ttFileProperty,
+// and the case statement moved into the switch statement above.
+
+                    case prop_header:
+                        new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
+                        new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
+                        new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
+                        new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
+                        return new_pg_property;
+#endif
+
+                    case prop_local_pch_file:
+                        {
+                            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Precompiled header");
+                            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
+
+                            // Often the project file will be kept in a sub-directory, with the precompiled header file in
+                            // the parent directory. If we can find a standard precompiled header filename in the parent
+                            // directory, then use that as the starting directory.
+
+                            tt_string pch(Project.getProjectPath());
+                            pch.append_filename("../");
+                            pch.append_filename("pch.h");
+                            if (pch.file_exists())
+                            {
+                                pch.remove_filename();
+                                pch.make_absolute();
+                                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
+                                return new_pg_property;
+                            }
+
+                            pch.replace_filename("stdafx.h");  // Older Microsoft standard filename
+                            if (pch.file_exists())
+                            {
+                                pch.remove_filename();
+                                pch.make_absolute();
+                                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
+                                return new_pg_property;
+                            }
+
+                            pch.replace_filename("precomp.h");  // Less common, but sometimes used
+                            if (pch.file_exists())
+                            {
+                                pch.remove_filename();
+                                pch.make_absolute();
+                                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
+                                return new_pg_property;
+                            }
+
+                            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath().make_wxString());
+                        }
+                        return new_pg_property;
+
+                    default:
+                        FAIL_MSG(tt_string("Unsupported file property: ") << prop->declName());
+                        return new_pg_property;
+                }
+            }
+            break;
+
+        case type_stringlist:
             {
-                pch.remove_filename();
-                pch.make_absolute();
-                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
-                return new_pg_property;
+                new_pg_property =
+                    new wxArrayStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
+                if (prop->value().size() > 0 && prop->value()[0] != '"')
+                {
+                    wxVariant delimiter(";");
+                    new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+                }
+                else
+                {
+                    wxVariant delimiter("\"");
+                    new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+                }
             }
+            return new_pg_property;
 
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath().make_wxString());
-        }
-    }
-    else if (type == type_stringlist)
-    {
-        new_pg_property = new wxArrayStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
-        if (prop->value().size() > 0 && prop->value()[0] != '"')
-        {
-            wxVariant delimiter(";");
-            new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
-        }
-        else
-        {
-            wxVariant delimiter("\"");
-            new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
-        }
-    }
-    else if (type == type_stringlist_semi)
-    {
-        new_pg_property = new wxArrayStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
-        wxVariant delimiter(";");
-        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
-    }
-    else if (type == type_stringlist_escapes)
-    {
-        new_pg_property = new wxArrayStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
-        wxVariant var_quote("\"");
-        new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
-    }
-    else if (type == type_uintpairlist)
-    {
-        new_pg_property = new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
-    }
-    else  // Unknown property
-    {
-        new_pg_property = new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
-        new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING, wxVariant(true, "true"));
+        case type_stringlist_semi:
+            {
+                new_pg_property =
+                    new wxArrayStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
+                wxVariant delimiter(";");
+                new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
+            }
+            return new_pg_property;
+
+        case type_stringlist_escapes:
+            {
+                new_pg_property =
+                    new wxArrayStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_wxArrayString());
+                wxVariant var_quote("\"");
+                new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
+            }
+            return new_pg_property;
+
+        case type_uintpairlist:
+            return new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
+
+        default:  // Unknown property
+            {
+                new_pg_property = new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
+                new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING, wxVariant(true, "true"));
 
 #if defined(INTERNAL_TESTING)
-        for (auto& iter: umap_PropTypes)
-        {
-            if (iter.second == type)
-            {
-                MSG_ERROR(tt_string("NodeProperty type is unsupported: ") << iter.first);
-                break;
-            }
-        }
+                for (auto& iter: umap_PropTypes)
+                {
+                    if (iter.second == type)
+                    {
+                        MSG_ERROR(tt_string("NodeProperty type is unsupported: ") << iter.first);
+                        break;
+                    }
+                }
 #endif
-    }
-
-    return new_pg_property;
+            }
+            return new_pg_property;
+    }  // end switch (type)
 }
 
 void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory& category, PropNameSet& prop_set,

@@ -50,6 +50,8 @@ set (file_list
     customprops/font_prop_dlg.cpp       # Dialog for editing Font Property
     customprops/img_props.cpp           # Handles property grid image properties
 
+    customprops/tt_file_property.cpp    # Version of wxFileProperty specific to wxUiEditor
+
     customprops/pg_image.cpp            # Custom property grid class for images
     customprops/pg_animation.cpp        # Custom property grid class for animations
     customprops/pg_point.cpp            # Custom wxPGProperty for wxPoint

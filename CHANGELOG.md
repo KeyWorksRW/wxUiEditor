@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 ## [unreleased (1.2.2)]
 
 ### Added
+
 ### Changed
+
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.
 - Fixed inability to hand-edit the location of a generated file
+- Add missing events to wxPropertyGrid and wxPropertyGridManager
 
 ## [Released (1.2.1)]
 

@@ -549,10 +549,32 @@
             <option name="wxPG_EX_ENABLE_TLP_TRACKING"
                 help="This enables top-level window tracking which allows wxPropertyGrid to notify the application of last-minute property value changes by user. This style is not enabled by default because it may cause crashes when wxPropertyGrid is used with wxAUI or similar system. If you are not in fact using any system that may change wxPropertyGrid's top-level parent window on its own, then it is recommended to enable this style."/>
         </property>
+        <event name="wxEVT_PG_SELECTED" class="wxPropertyGridEvent"
+            help="Generated when a property selection has been changed."/>
         <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent"
             help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
         <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent"
             help="Property value is modified."/>
+        <event name="wxEVT_PG_HIGHLIGHTED" class="wxPropertyGridEvent"
+            help="Generated when mouse moves over a property."/>
+        <event name="wxEVT_PG_RIGHT_CLICK" class="wxPropertyGridEvent"
+            help="Generated when a property is clicked with the right mouse button."/>
+        <event name="wxEVT_PG_DOUBLE_CLICK" class="wxPropertyGridEvent"
+            help="Generated when a property is double-clicked with the left mouse button."/>
+        <event name="wxEVT_PG_ITEM_COLLAPSED" class="wxPropertyGridEvent"
+            help="Generated when a user collapses a property or category."/>
+        <event name="wxEVT_PG_ITEM_EXPANDED" class="wxPropertyGridEvent"
+            help="Generated when a user expands a property or category."/>
+        <event name="wxEVT_PG_LABEL_EDIT_BEGIN" class="wxPropertyGridEvent"
+            help="Generated when a user is about to begin editing a property label. You can veto this event to prevent the action."/>
+        <event name="wxEVT_PG_LABEL_EDIT_ENDING" class="wxPropertyGridEvent"
+            help="Generated when a user is about to end editing a property label. You can veto this event to prevent the action."/>
+        <event name="wxEVT_PG_COL_BEGIN_DRAG" class="wxPropertyGridEvent"
+            help="Generated when a user starts resizing a column. You can veto this event to prevent the action."/>
+        <event name="wxEVT_PG_COL_DRAGGING" class="wxPropertyGridEvent"
+            help="Generated when a column resize by the user is in progress. This event is also generated when a user double-clicks the splitter in order to recenter it."/>
+        <event name="wxEVT_PG_COL_END_DRAG" class="wxPropertyGridEvent"
+            help="Generated when a user finishes resizing a column."/>
     </gen>
 
     <gen class="wxPropertyGridManager" image="wxPropertyGridManager" type="propgridman">
@@ -637,11 +659,35 @@
                 help="Don't show divider above toolbar, on Windows."/>
 			<option name="wxPG_EX_TOOLBAR_SEPARATOR"
                 help="Show a separator below the toolbar."/> wxPG_EX_MODE_BUTTONS </property>
-        <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent"
-            help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
-        <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent"
-            help="Property value is modified."/>
-    </gen>
+                <event name="wxEVT_PG_SELECTED" class="wxPropertyGridEvent"
+                help="Generated when a property selection has been changed."/>
+            <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent"
+                help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
+            <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent"
+                help="Property value is modified."/>
+            <event name="wxEVT_PG_HIGHLIGHTED" class="wxPropertyGridEvent"
+                help="Generated when mouse moves over a property."/>
+            <event name="wxEVT_PG_RIGHT_CLICK" class="wxPropertyGridEvent"
+                help="Generated when a property is clicked with the right mouse button."/>
+            <event name="wxEVT_PG_DOUBLE_CLICK" class="wxPropertyGridEvent"
+                help="Generated when a property is double-clicked with the left mouse button."/>
+            <event name="wxEVT_PG_ITEM_COLLAPSED" class="wxPropertyGridEvent"
+                help="Generated when a user collapses a property or category."/>
+            <event name="wxEVT_PG_ITEM_EXPANDED" class="wxPropertyGridEvent"
+                help="Generated when a user expands a property or category."/>
+            <event name="wxEVT_PG_LABEL_EDIT_BEGIN" class="wxPropertyGridEvent"
+                help="Generated when a user is about to begin editing a property label. You can veto this event to prevent the action."/>
+            <event name="wxEVT_PG_LABEL_EDIT_ENDING" class="wxPropertyGridEvent"
+                help="Generated when a user is about to end editing a property label. You can veto this event to prevent the action."/>
+            <event name="wxEVT_PG_PAGE_CHANGED" class="wxPropertyGridEvent"
+                help="Generated when a property manager page is changed"/>
+            <event name="wxEVT_PG_COL_BEGIN_DRAG" class="wxPropertyGridEvent"
+                help="Generated when a user starts resizing a column. You can veto this event to prevent the action."/>
+            <event name="wxEVT_PG_COL_DRAGGING" class="wxPropertyGridEvent"
+                help="Generated when a column resize by the user is in progress. This event is also generated when a user double-clicks the splitter in order to recenter it."/>
+            <event name="wxEVT_PG_COL_END_DRAG" class="wxPropertyGridEvent"
+                help="Generated when a user finishes resizing a column."/>
+        </gen>
 
     <gen class="propGridPage" image="propgridpage" type="propgridpage">
         <property name="var_name" type="string"

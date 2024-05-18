@@ -14,6 +14,14 @@
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 
+// The following handlers must be explicitly added
+
+#include <wx/xrc/xh_aui.h>             // XRC resource handler for wxAUI
+#include <wx/xrc/xh_auitoolb.h>        // XML resource handler for wxAuiToolBar
+#include <wx/xrc/xh_ribbon.h>          // XML resource handler for wxRibbon related classes
+#include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
+#include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
+
 #include "../wxui/ui_images.h"
 
 #include "xrcpreview.h"
@@ -260,6 +268,8 @@ void XrcPreview::OnGenerate(wxCommandEvent& WXUNUSED(event))
     m_scintilla->ScrollToLine(line);
 }
 
+extern bool g_isXrcResourceInitalized;
+
 void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
 {
     auto xrc_text = m_scintilla->GetText();
@@ -277,7 +287,22 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     }
 
     wxMemoryInputStream stream(xrc_text.data(), xrc_text.size());
-    auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument(stream));
+    wxXmlParseError err_details;
+    auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
+    if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
+    {
+    #if __has_include(<format>)
+        std::string msg =
+            std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
+                        err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset);
+    #else
+        wxString msg;
+        msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", err_details.message, err_details.line,
+                   err_details.column, err_details.offset);
+    #endif
+        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+        return;
+    }
     if (!xmlDoc->IsOk())
     {
         wxMessageBox("Invalid XRC -- wxXmlDocument can't parse it.", "XRC Dialog Preview");
@@ -285,7 +310,17 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     }
 
     auto xrc_resource = wxXmlResource::Get();
-    xrc_resource->InitAllHandlers();
+    if (!g_isXrcResourceInitalized)
+    {
+        g_isXrcResourceInitalized = true;
+
+        xrc_resource->InitAllHandlers();
+        xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
+        xrc_resource->AddHandler(new wxAuiXmlHandler);
+        xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
+        xrc_resource->AddHandler(new wxRibbonXmlHandler);
+        xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
+    }
 
     wxString res_name("wxuiDlgPreview");
 

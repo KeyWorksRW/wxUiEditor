@@ -376,10 +376,10 @@ set (debug_files
 
 set (doc_list
 
+    generate/SUPPORTED.md
     ../CHANGELOG.md
     ../README.md
     ../docs/build_notes.md
-    ../docs/DEV_NOTES.md
     ../docs/images.md
     ../docs/release_prep.md
     ../docs/import_crafter.md
@@ -387,11 +387,12 @@ set (doc_list
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
     ../docs/xrc.md
-    generate/CONTENTS.md
-    generate/README.md
-    nodes/README.md
-    winres/README.md
-    xml/README.md
+
+    ../dev_docs/dev_notes.md
+    ../dev_docs/xml_interface.md
+    ../dev_docs/generators.md
+    ../dev_docs/windows_res.md
+    ../dev_docs/node_classes.md
 
 )
 

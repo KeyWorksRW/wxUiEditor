@@ -9,10 +9,11 @@
     #include <format>
 #endif
 
-#include <wx/mstream.h>  // Memory stream classes
-#include <wx/sizer.h>    // provide wxSizer class for layout
-#include <wx/wizard.h>   // wxWizard class: a GUI control presenting the user with a
-#include <wx/xml/xml.h>  // wxXmlDocument - XML parser & data holder class
+#include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
+#include <wx/mstream.h>      // Memory stream classes
+#include <wx/sizer.h>        // provide wxSizer class for layout
+#include <wx/wizard.h>       // wxWizard class: a GUI control presenting the user with a
+#include <wx/xml/xml.h>      // wxXmlDocument - XML parser & data holder class
 
 // The following handlers must be explicitly added
 
@@ -30,6 +31,7 @@
 #include "mainapp.h"                    // App -- Main application class
 #include "mainframe.h"                  // MainFrame -- Main window frame
 #include "node.h"                       // Node class
+#include "panels/base_panel.h"          // BasePanel -- Code generation panel
 #include "preferences.h"                // Preferences -- Stores user preferences
 #include "project_handler.h"            // ProjectHandler class
 #include "utils.h"                      // Utility functions that work with properties
@@ -42,7 +44,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 void PreviewXrc(Node* form_node);
 void Preview(Node* form_node);
 
-static bool g_isXrcResourceInitalized { false };
+bool g_isXrcResourceInitalized { false };
 
 extern const char* txt_dlg_name;  // Defined in gen_xrc.cpp ("_wxue_temp_dlg")
 
@@ -83,6 +85,17 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         default:
             wxMessageBox("This type of form cannot be previewed.", "Preview");
             return;
+    }
+
+    if (static_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_xrcPanel)
+    {
+        PreviewXrc(form_node);
+        return;
+    }
+    else if (static_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_cppPanel)
+    {
+        PreviewCpp(form_node);
+        return;
     }
 
     Preview(form_node);
@@ -213,7 +226,7 @@ void PreviewXrc(Node* form_node)
 
     try
     {
-        auto doc_str = GenerateXrcStr(form_node, xrc::previewing);
+        auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxXmlParseError err_details;
         auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
@@ -253,6 +266,7 @@ void PreviewXrc(Node* form_node)
                 {
                     wxString dlg_name =
                         form_node->isGen(gen_wxDialog) ? form_node->as_wxString(prop_class_name) : wxString(txt_dlg_name);
+
                     if (auto* dlg = xrc_resource->LoadDialog(wxGetMainFrame(), dlg_name); dlg)
                     {
                         wxGetMainFrame()->setPreviewDlgPtr(dlg);  // so event handlers can access it

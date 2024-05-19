@@ -14,14 +14,6 @@
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 
-// The following handlers must be explicitly added
-
-#include <wx/xrc/xh_aui.h>             // XRC resource handler for wxAUI
-#include <wx/xrc/xh_auitoolb.h>        // XML resource handler for wxAuiToolBar
-#include <wx/xrc/xh_ribbon.h>          // XML resource handler for wxRibbon related classes
-#include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
-#include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
-
 #include "../wxui/ui_images.h"
 
 #include "xrcpreview.h"
@@ -179,6 +171,14 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     #include <wx/mstream.h>     // Memory stream classes
     #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
     #include <wx/xrc/xmlres.h>  // XML resources
+
+// The following handlers must be explicitly added
+
+    #include <wx/xrc/xh_aui.h>             // XRC resource handler for wxAUI
+    #include <wx/xrc/xh_auitoolb.h>        // XML resource handler for wxAuiToolBar
+    #include <wx/xrc/xh_ribbon.h>          // XML resource handler for wxRibbon related classes
+    #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
+    #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
     #include "../import/import_wxsmith.h"  // Import a wxSmith file
     #include "gen_xrc.h"                   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class

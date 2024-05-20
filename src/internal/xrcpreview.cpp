@@ -166,6 +166,9 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////////////////////////////////////////////////////////////////
 
 #if defined(INTERNAL_TESTING)
+    #if __has_include(<format>)
+        #include <format>
+    #endif
 
     #include <wx/filedlg.h>     // wxFileDialog base header
     #include <wx/mstream.h>     // Memory stream classes

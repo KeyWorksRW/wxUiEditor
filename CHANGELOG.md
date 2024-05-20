@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Code generation for wxAnimationCtrl will now automatically switch to using wxGenericAnimationCtrl when a .ANI file is specified, ensuring that the .ANI file will display correctly when run on wxGTK. The `Use generic` property has been removed.
+
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.
 - Fixed inability to hand-edit the location of a generated file

@@ -31,7 +31,7 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
 
     wxPGChoices types;
 
-    types.Add(s_type_names[1]);  // Embed
+    types.Add(s_type_names[0]);  // Embed
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));

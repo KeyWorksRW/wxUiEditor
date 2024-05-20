@@ -42,7 +42,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         wxString pattern;
         if (m_img_props.IsAnimationType())
         {
-            pattern = "Animation files|*.*|Gif|*.gif|Ani|*.ani||";
+            pattern = "Animation files|*.gif;*.ani|Gif|*.gif|Ani|*.ani||";
         }
         else
         {

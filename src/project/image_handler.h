@@ -125,7 +125,7 @@ public:
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
-    wxAnimation GetPropertyAnimation(const tt_string& description);
+    void GetPropertyAnimation(const tt_string& description, wxAnimation* p_animate);
 
     bool AddEmbeddedImage(tt_string path, Node* form, bool is_animation = false);
     EmbeddedImage* GetEmbeddedImage(tt_string_view path);

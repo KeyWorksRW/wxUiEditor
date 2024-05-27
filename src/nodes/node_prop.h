@@ -104,7 +104,7 @@ public:
     // Use with caution! This allows you to modify the property string directly.
     auto as_raw_ptr() { return &m_value; }
 
-    wxAnimation as_animation() const;
+    void as_animation(wxAnimation* p_animation) const;
     wxBitmap as_bitmap() const;
     wxColour as_color() const;
     wxFont as_font() const;

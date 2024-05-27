@@ -1,12 +1,13 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAnimationCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/animate.h>          // wxAnimation and wxAnimationCtrl
 #include <wx/generic/animate.h>  // wxGenericAnimationCtrl
+#include <wx/scopedptr.h>        // wxScopedPtr: scoped smart pointer class
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
@@ -22,38 +23,38 @@
 
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto get_animation = [](Node* node)
+    if (tt::contains(node->as_string(prop_animation), ".ani", tt::CASE::either))
     {
+        auto widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
+                                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                                 GetStyleInt(node));
+        auto animation = widget->CreateAnimation();
         if (auto prop = node->getPropPtr(prop_animation); prop)
-            return prop->as_animation();
-        else
-            return wxAnimation();
-    };
-
-    auto animation = get_animation(node);
-
-    if (!node->as_bool(prop_use_generic))
-    {
-        auto widget =
-            new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
-                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+            prop->as_animation(&animation);
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
         if (animation.IsOk())
+        {
+            widget->SetAnimation(animation);
             widget->Play();
-
+        }
         return widget;
     }
     else
     {
         auto widget =
-            new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
-                                       DlgSize(parent, node, prop_size), GetStyleInt(node));
+            new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation, DlgPoint(parent, node, prop_pos),
+                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+        auto animation = widget->CreateAnimation();
+        if (auto prop = node->getPropPtr(prop_animation); prop)
+            prop->as_animation(&animation);
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
         if (animation.IsOk())
+        {
+            widget->SetAnimation(animation);
             widget->Play();
-
+        }
         return widget;
     }
 }
@@ -218,8 +219,6 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
-    if (node->as_bool(prop_use_generic))
-        InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
     return true;
 }
 

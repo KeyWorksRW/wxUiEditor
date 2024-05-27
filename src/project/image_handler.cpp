@@ -1271,15 +1271,13 @@ const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector& 
     }
 }
 
-wxAnimation ImageHandler::GetPropertyAnimation(const tt_string& description)
+void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimation* p_animation)
 {
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-    wxAnimation image;
-
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
-        return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
     }
 
     tt_string path = parts[IndexImage];
@@ -1304,21 +1302,19 @@ wxAnimation ImageHandler::GetPropertyAnimation(const tt_string& description)
         if (embed)
         {
             wxMemoryInputStream stream(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
-            image.Load(stream);
+            p_animation->Load(stream);
         }
     }
     else
     {
         // This handles Header files
-        GetAnimationImage(image, path);
+        // GetAnimationImage(image, path);
     }
 
-    if (!image.IsOk())
+    if (!p_animation->IsOk())
     {
-        return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
     }
-
-    return image;
 }
 
 bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)

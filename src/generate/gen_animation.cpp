@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAnimationCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,32 +32,35 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto animation = get_animation(node);
 
-    // wxGTK is the only platform that has a native control, but it only plays .GIF animations, whereas
-    // wxGenericAnimationCtrl plays .ani files as well.
-    auto widget =
-        new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
+    if (!node->as_bool(prop_use_generic))
+    {
+        auto widget =
+            new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
+                                DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    if (animation.IsOk())
-        widget->Play();
+        widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+        if (animation.IsOk())
+            widget->Play();
 
-    return widget;
+        return widget;
+    }
+    else
+    {
+        auto widget =
+            new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
+                                       DlgSize(parent, node, prop_size), GetStyleInt(node));
+
+        widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+        if (animation.IsOk())
+            widget->Play();
+
+        return widget;
+    }
 }
 
 bool AnimationGenerator::ConstructionCode(Code& code)
 {
-    if (code.get_language() != GEN_LANG_RUBY)
-    {
-        code.AddAuto().NodeName().CreateClass(code.node()->hasValue(prop_animation) &&
-                                              !code.node()->as_string(prop_animation).contains(".gif", tt::CASE::either));
-    }
-    else
-    {
-        // wxRuby3 0.9.4 doesn't support the generic version of wxAnimationCtrl
-        code.AddAuto().NodeName().CreateClass();
-    }
-
+    code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     if (code.hasValue(prop_animation))
     {
@@ -163,17 +166,10 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    if (node->hasValue(prop_animation) && node->as_string(prop_animation).contains(".gif", tt::CASE::either))
-    {
+    if (!node->as_bool(prop_use_generic))
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
-    }
     else
-    {
-        // Either no file was specified, or it isn't a .gif file. Non-gif files on wxGTK *must* use wxGenericAnimationCtrl.
-        // All non-wxGTK files use wxAnimationCtrl which is based on wxGenericAnimationCtrl so it makes no difference if
-        // they are specified as wxAnimationCtrl or wxGenericAnimationCtrl.
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
-    }
     GenXrcStylePosSize(node, item);
 
     if (node->hasValue(prop_animation))
@@ -222,7 +218,7 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
-    if (node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either))
+    if (node->as_bool(prop_use_generic))
         InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
     return true;
 }

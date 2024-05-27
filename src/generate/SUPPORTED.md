@@ -62,7 +62,7 @@ This does _not_ mean that the class is fully supported in every language -- this
 | Class | C++ | Python | Ruby | XRC | file |
 -----------|-----|--------|------|------|------|
 | wxActivityIndicator | yes | yes | yes | yes | ../src/generate/gen_activity.cpp |
-| wxAnimationCtrl | yes | yes | yes | yes | ../src/generate/gen_animation.cpp |
+| wxAnimationCtrl | yes | ??? | yes | --- | ../src/generate/gen_animation.cpp |
 | wxAuiToolBar | yes | yes | yes | yes | ../src/generate/gen_aui_toolbar.cpp |
 | wxBannerWindow | yes | yes | yes | yes | ../src/generate/gen_banner_window.cpp |
 | wxBitmapComboBox | ??? | ??? | ??? | --- | ../src/generate/gen_bitmap_combo.cpp |
@@ -126,12 +126,6 @@ This does _not_ mean that the class is fully supported in every language -- this
 | wxTreeListCtrl | yes | no | no | no | ../src/generate/gen_tree_list.cpp |
 | wxWebView | yes | yes | no | no | ../src/generate/gen_web_view.cpp |
 | wxWizardPageSimple | yes | yes | yes | yes | ../src/generate/gen_wizard.cpp |
-
-# Generic classes
-
-| Class | C++ | Python | Ruby | XRC | file |
------------|-----|--------|------|------|------|
-| wxGenericAnimationCtrl | yes | yes | no | yes | ../src/generate/gen_animation.cpp |
 
 # Objects
 

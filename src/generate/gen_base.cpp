@@ -80,12 +80,6 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
                     // Remove the pointer, wxTimer needs to be a class.
                     code.Replace("*", "");
                 }
-                else if (node->isGen(gen_wxAnimationCtrl) && node->hasValue(prop_animation) &&
-                         !node->as_string(prop_animation).contains(".gif", tt::CASE::either))
-                {
-                    // If the file type isn't a gif, then we need to use wxGenericAnimationCtrl
-                    code.Replace("wxAnimationCtrl", "wxGenericAnimationCtrl");
-                }
                 if (code.empty() && node->isGen(gen_auitool))
                 {
                     code += "wxAuiToolBarItem* " + node->as_string(prop_var_name) + ';';

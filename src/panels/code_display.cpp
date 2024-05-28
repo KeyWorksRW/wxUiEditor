@@ -56,6 +56,7 @@ static const char* lst_widgets_keywords[] = {
     "wxDocument",
     "wxFileHistory",
     "wxFont",
+    "wxGenericAnimationCtrl",
     "wxIcon",
     "wxImage",
     "wxListItem",

@@ -349,9 +349,9 @@ wxBitmapBundle NodeProperty::as_bitmap_bundle() const
         return bundle;
 }
 
-wxAnimation NodeProperty::as_animation() const
+void NodeProperty::as_animation(wxAnimation* p_animate) const
 {
-    return ProjectImages.GetPropertyAnimation(m_value);
+    ProjectImages.GetPropertyAnimation(m_value, p_animate);
 }
 
 tt_string NodeProperty::as_escape_text() const

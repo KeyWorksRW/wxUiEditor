@@ -327,6 +327,15 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 if (prop->type() == type_bool)
                 {
                     prop->set_value(iter.as_bool());
+
+                    // wxGTK is the only OS that uses a native wxAnimationCtrl, so setting generic has no actual effect
+                    // on other platforms. On wxGTK, you can't just switch to wxGenericAnimationCtrl, you have to also
+                    // retrieve wxAnimation from wxGenericAnimationCtrl -- if you don't, the app will crash. Since this
+                    // is only needed to display .ANI files on wxGTK, we remove the generic flag.
+                    if (prop->get_name() == prop_use_generic && new_node->isGen(gen_wxAnimationCtrl))
+                    {
+                        prop->set_value(false);
+                    }
                 }
                 else if (prop->get_name() == prop_contents && Project.getOriginalProjectVersion() < 18)
                 {
@@ -350,6 +359,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                         prop->set_value(iter.as_sview());
                     }
                 }
+
                 // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
                 // friendly name, and bit flag conflict resolution.
 

@@ -1,12 +1,13 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAnimationCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/animate.h>          // wxAnimation and wxAnimationCtrl
 #include <wx/generic/animate.h>  // wxGenericAnimationCtrl
+#include <wx/scopedptr.h>        // wxScopedPtr: scoped smart pointer class
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
@@ -22,84 +23,53 @@
 
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto get_animation = [](Node* node)
+    if (tt::contains(node->as_string(prop_animation), ".ani", tt::CASE::either))
     {
+        auto widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
+                                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                                 GetStyleInt(node));
+        auto animation = widget->CreateAnimation();
         if (auto prop = node->getPropPtr(prop_animation); prop)
-            return prop->as_animation();
-        else
-            return wxAnimation();
-    };
-
-    auto animation = get_animation(node);
-
-    if (!node->as_bool(prop_use_generic))
-    {
-        auto widget =
-            new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
-                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+            prop->as_animation(&animation);
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
         if (animation.IsOk())
+        {
+            widget->SetAnimation(animation);
             widget->Play();
-
+        }
         return widget;
     }
     else
     {
         auto widget =
-            new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
-                                       DlgSize(parent, node, prop_size), GetStyleInt(node));
+            new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation, DlgPoint(parent, node, prop_pos),
+                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+        auto animation = widget->CreateAnimation();
+        if (auto prop = node->getPropPtr(prop_animation); prop)
+            prop->as_animation(&animation);
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
         if (animation.IsOk())
+        {
+            widget->SetAnimation(animation);
             widget->Play();
-
+        }
         return widget;
     }
 }
 
 bool AnimationGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
-    if (code.hasValue(prop_animation))
+    if (code.get_language() == GEN_LANG_RUBY)
     {
-        tt_view_vector parts(code.node()->as_string(prop_animation), ';');
-        if (code.is_cpp())
-        {
-            tt_string name(parts[IndexImage].filename());
-            name.remove_extension();
-            name.LeftTrim();
-            if (parts[IndexType].starts_with("Embed"))
-            {
-                auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-                if (embed)
-                {
-                    name = "wxue_img::" + embed->imgs[0].array_name;
-                }
-            }
-
-            code << "wxueAnimation(" << name << ", sizeof(" << name << "))";
-        }
-        else if (code.is_python())
-        {
-            tt_string name(parts[IndexImage]);
-            name.make_absolute();
-            if (!name.file_exists())
-            {
-                name = Project.ArtDirectory();
-                name.append_filename(parts[IndexImage]);
-                name.make_absolute();
-            }
-            auto form_path = MakePythonPath(code.node());
-            name.make_relative(form_path);
-            name.backslashestoforward();
-
-            code.Str("wx.adv.Animation(").QuotedString(name) += ")";
-        }
-        else if (code.is_ruby())
+        // wxRuby3 1.0.0 doesn't support the generic version of wxAnimationCtrl
+        code.AddAuto().NodeName().CreateClass();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+        if (code.hasValue(prop_animation))
         {
             bool found_embedded = false;
+            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
             if (parts.size() > IndexImage)
             {
                 if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
@@ -112,16 +82,18 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             {
                 code.Str("Wx::Animation.new");
             }
-        }
-        else
-        {
-            if (code.is_ruby())
-                code.Str("Wx::Animation.new");
-            else
-                code.Add("wxNullAnimation");
+            code.PosSizeFlags(false);
         }
     }
-    code.PosSizeFlags(false);
+    else
+    {
+        // The generic version is required to display .ANI files on wxGTK.
+        code.AddAuto().NodeName().CreateClass(code.node()->hasValue(prop_animation) &&
+                                              code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either));
+        code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
+        code.PosSizeFlags(false);
+    }
+
     if (code.hasValue(prop_inactive_bitmap))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
@@ -151,6 +123,68 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.EndFunction();
     }
 
+    if (code.hasValue(prop_animation))
+    {
+        code.Eol().OpenBrace();
+        if (code.is_cpp())
+        {
+            code += "auto ";
+        }
+
+        tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+        if (code.is_cpp())
+        {
+            code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
+            tt_string name(parts[IndexImage].filename());
+            name.remove_extension();
+            name.LeftTrim();
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+                if (embed)
+                {
+                    name = "wxue_img::" + embed->imgs[0].array_name;
+                }
+            }
+
+            code.Eol() << "wxueAnimation(" << name << ", sizeof(" << name << ")";
+            code.Comma().Str("animate").EndFunction();
+            code.Eol().NodeName().Function("SetAnimation(animate").EndFunction().CloseBrace();
+        }
+        else if (code.is_python())
+        {
+            code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
+            bool found_embedded = false;
+            if (parts.size() > IndexImage)
+            {
+                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                {
+                    code.Eol().Str("stream = io.BytesIO(").Str(embed->imgs[0].array_name).Str(".GetData())");
+                    code.Eol().Str("animate.Load(stream)");
+                    found_embedded = true;
+                }
+            }
+            if (!found_embedded)
+            {
+                tt_string name(parts[IndexImage]);
+                name.make_absolute();
+                if (!name.file_exists())
+                {
+                    name = Project.ArtDirectory();
+                    name.append_filename(parts[IndexImage]);
+                    name.make_absolute();
+                }
+                auto form_path = MakePythonPath(code.node());
+                name.make_relative(form_path);
+                name.backslashestoforward();
+
+                code.Eol().Str("animate.LoadFile(").QuotedString(name) += ")";
+            }
+            code.Eol().NodeName().Function("SetAnimation(animate").EndFunction().CloseBrace();
+        }
+        // wxRuby3 code is handled at the top of this function
+    }
+
     return true;
 }
 
@@ -166,10 +200,14 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    if (!node->as_bool(prop_use_generic))
+    // wxGenericAnimationCtrl is required to display .ANI files on wxGTK. Since the other platforms effecitvely use
+    // wxGenericAnimationCtrl any way (since there are no native implementations of wxAnimationCtrl) this shouldn't
+    // make any difference for them.
+    if (node->hasValue(prop_animation) && node->as_string(prop_animation).contains(".gif", tt::CASE::either))
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     else
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
+
     GenXrcStylePosSize(node, item);
 
     if (node->hasValue(prop_animation))
@@ -218,7 +256,7 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
-    if (node->as_bool(prop_use_generic))
+    if (node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either))
         InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
     return true;
 }
@@ -226,5 +264,6 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 bool AnimationGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
 {
     set_imports.insert("import wx.adv");
+    set_imports.insert("import io");
     return true;
 }

@@ -110,11 +110,11 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         {
             code += "auto ";
         }
-        code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
 
         tt_view_vector parts(code.node()->as_string(prop_animation), ';');
         if (code.is_cpp())
         {
+            code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
             tt_string name(parts[IndexImage].filename());
             name.remove_extension();
             name.LeftTrim();
@@ -133,19 +133,34 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         }
         else if (code.is_python())
         {
-            tt_string name(parts[IndexImage]);
-            name.make_absolute();
-            if (!name.file_exists())
+            code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
+            bool found_embedded = false;
+            if (parts.size() > IndexImage)
             {
-                name = Project.ArtDirectory();
-                name.append_filename(parts[IndexImage]);
-                name.make_absolute();
+                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                {
+                    code.Eol().Str("stream = io.BytesIO(").Str(embed->imgs[0].array_name).Str(".GetData())");
+                    code.Eol().Str("animate.Load(stream)");
+                    found_embedded = true;
+                }
             }
-            auto form_path = MakePythonPath(code.node());
-            name.make_relative(form_path);
-            name.backslashestoforward();
+            if (!found_embedded)
+            {
+                tt_string name(parts[IndexImage]);
+                name.make_absolute();
+                if (!name.file_exists())
+                {
+                    name = Project.ArtDirectory();
+                    name.append_filename(parts[IndexImage]);
+                    name.make_absolute();
+                }
+                auto form_path = MakePythonPath(code.node());
+                name.make_relative(form_path);
+                name.backslashestoforward();
 
-            code.Str("wx.adv.Animation(").QuotedString(name) += ")";
+                code.Eol().Str("animate.LoadFile(").QuotedString(name) += ")";
+            }
+            code.Eol().NodeName().Function("SetAnimation(animate").EndFunction().CloseBrace();
         }
         else if (code.is_ruby())
         {
@@ -251,5 +266,6 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 bool AnimationGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
 {
     set_imports.insert("import wx.adv");
+    set_imports.insert("import io");
     return true;
 }

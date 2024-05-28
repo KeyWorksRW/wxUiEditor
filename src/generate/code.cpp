@@ -559,6 +559,11 @@ Code& Code::Add(tt_string_view text)
                 *this += "Wx::NULL_BITMAP";
                 return *this;
             }
+            else if (text == "wxNullAnimation")
+            {
+                *this += "Wx::NULL_ANIMATION";
+                return *this;
+            }
         }
 
         if (text.find('|') != tt::npos)

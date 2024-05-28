@@ -61,19 +61,39 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool AnimationGenerator::ConstructionCode(Code& code)
 {
-    if (code.get_language() != GEN_LANG_RUBY)
+    if (code.get_language() == GEN_LANG_RUBY)
+    {
+        // wxRuby3 1.0.0 doesn't support the generic version of wxAnimationCtrl
+        code.AddAuto().NodeName().CreateClass();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+        if (code.hasValue(prop_animation))
+        {
+            bool found_embedded = false;
+            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+            if (parts.size() > IndexImage)
+            {
+                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                {
+                    code.Str("get_animation(").Str("$").Str(embed->imgs[0].array_name) += ")";
+                    found_embedded = true;
+                }
+            }
+            if (!found_embedded)
+            {
+                code.Str("Wx::Animation.new");
+            }
+            code.PosSizeFlags(false);
+        }
+    }
+    else
     {
         // The generic version is required to display .ANI files on wxGTK.
         code.AddAuto().NodeName().CreateClass(code.node()->hasValue(prop_animation) &&
                                               code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either));
+        code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
+        code.PosSizeFlags(false);
     }
-    else
-    {
-        // wxRuby3 0.9.4 doesn't support the generic version of wxAnimationCtrl
-        code.AddAuto().NodeName().CreateClass();
-    }
-    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
-    code.PosSizeFlags(false);
+
     if (code.hasValue(prop_inactive_bitmap))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
@@ -162,29 +182,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             }
             code.Eol().NodeName().Function("SetAnimation(animate").EndFunction().CloseBrace();
         }
-        else if (code.is_ruby())
-        {
-            bool found_embedded = false;
-            if (parts.size() > IndexImage)
-            {
-                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
-                {
-                    code.Str("get_animation(").Str("$").Str(embed->imgs[0].array_name) += ")";
-                    found_embedded = true;
-                }
-            }
-            if (!found_embedded)
-            {
-                code.Str("Wx::Animation.new");
-            }
-        }
-        else
-        {
-            if (code.is_ruby())
-                code.Str("Wx::Animation.new");
-            else
-                code.Add("wxNullAnimation");
-        }
+        // wxRuby3 code is handled at the top of this function
     }
 
     return true;

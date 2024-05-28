@@ -7,10 +7,13 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPthon code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
+
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.
 - Fixed inability to hand-edit the location of a generated file
 - Add missing events to wxPropertyGrid and wxPropertyGridManager
+- wxPython now correctly loads embedded animation files for wx.adv.AnimationCtrl
 
 ## [Released (1.2.1)]
 

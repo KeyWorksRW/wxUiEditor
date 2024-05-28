@@ -61,10 +61,57 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool AnimationGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    if (code.get_language() != GEN_LANG_RUBY)
+    {
+        // The generic version is required to display .ANI files on wxGTK.
+        code.AddAuto().NodeName().CreateClass(code.node()->hasValue(prop_animation) &&
+                                              code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either));
+    }
+    else
+    {
+        // wxRuby3 0.9.4 doesn't support the generic version of wxAnimationCtrl
+        code.AddAuto().NodeName().CreateClass();
+    }
+    code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
+    code.PosSizeFlags(false);
+    if (code.hasValue(prop_inactive_bitmap))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
+        if (code.is_cpp())
+        {
+            tt_string bundle_code;
+            GenerateBundleCode(code.node()->as_string(prop_inactive_bitmap), bundle_code);
+            code.CheckLineLength(bundle_code.size());
+            code += bundle_code;
+        }
+        else if (code.is_python())
+        {
+            bool is_list_created = PythonBitmapList(code, prop_inactive_bitmap);
+            if (is_list_created)
+            {
+                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
+            else
+            {
+                code.Bundle(prop_inactive_bitmap);
+            }
+        }
+        else if (code.is_ruby())
+        {
+            code.Bundle(prop_inactive_bitmap);
+        }
+        code.EndFunction();
+    }
+
     if (code.hasValue(prop_animation))
     {
+        code.Eol().OpenBrace();
+        if (code.is_cpp())
+        {
+            code += "auto ";
+        }
+        code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
+
         tt_view_vector parts(code.node()->as_string(prop_animation), ';');
         if (code.is_cpp())
         {
@@ -80,7 +127,9 @@ bool AnimationGenerator::ConstructionCode(Code& code)
                 }
             }
 
-            code << "wxueAnimation(" << name << ", sizeof(" << name << "))";
+            code.Eol() << "wxueAnimation(" << name << ", sizeof(" << name << ")";
+            code.Comma().Str("animate").EndFunction();
+            code.Eol().NodeName().Function("SetAnimation(animate").EndFunction().CloseBrace();
         }
         else if (code.is_python())
         {
@@ -122,35 +171,6 @@ bool AnimationGenerator::ConstructionCode(Code& code)
                 code.Add("wxNullAnimation");
         }
     }
-    code.PosSizeFlags(false);
-    if (code.hasValue(prop_inactive_bitmap))
-    {
-        code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
-        if (code.is_cpp())
-        {
-            tt_string bundle_code;
-            GenerateBundleCode(code.node()->as_string(prop_inactive_bitmap), bundle_code);
-            code.CheckLineLength(bundle_code.size());
-            code += bundle_code;
-        }
-        else if (code.is_python())
-        {
-            bool is_list_created = PythonBitmapList(code, prop_inactive_bitmap);
-            if (is_list_created)
-            {
-                code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
-            }
-            else
-            {
-                code.Bundle(prop_inactive_bitmap);
-            }
-        }
-        else if (code.is_ruby())
-        {
-            code.Bundle(prop_inactive_bitmap);
-        }
-        code.EndFunction();
-    }
 
     return true;
 }
@@ -167,10 +187,14 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    if (!node->as_bool(prop_use_generic))
+    // wxGenericAnimationCtrl is required to display .ANI files on wxGTK. Since the other platforms effecitvely use
+    // wxGenericAnimationCtrl any way (since there are no native implementations of wxAnimationCtrl) this shouldn't
+    // make any difference for them.
+    if (node->hasValue(prop_animation) && node->as_string(prop_animation).contains(".gif", tt::CASE::either))
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     else
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
+
     GenXrcStylePosSize(node, item);
 
     if (node->hasValue(prop_animation))
@@ -219,6 +243,8 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
+    if (node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either))
+        InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
     return true;
 }
 

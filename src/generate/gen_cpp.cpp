@@ -101,15 +101,13 @@ static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
 // Convert a data array into a wxAnimation
 #ifdef __cpp_inline_variables
-inline wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+inline void wxueAnimation(const unsigned char* data, size_t size_data, wxAnimation& animation)
 #else
-static wxAnimation wxueAnimation(const unsigned char* data, size_t size_data)
+static void wxueAnimation(const unsigned char* data, size_t size_data, wxAnimation& animation)
 #endif
 {
     wxMemoryInputStream strm(data, size_data);
-    wxAnimation animation;
     animation.Load(strm);
-    return animation;
 };
 )===";
 

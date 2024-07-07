@@ -38,9 +38,16 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_radio_wxFormBuilder->SetFocus();
 
+#if !defined(__WINDOWS__)
+    // Setup will typically set the cwd to /home/.../Desktop -- there won't be any projects here, so change it to the
+    // standard Unix home directory.
+    wxFileName::SetCwd(wxGetHomeDir());
+    m_static_cwd->SetLabel(wxFileName::GetCwd());
+#else
     tt_string cwd;
     cwd.assignCwd();
     m_static_cwd->SetLabel(cwd.make_wxString());
+#endif
 
     auto config = wxConfig::Get();
     config->SetPath("/preferences");

@@ -1277,12 +1277,20 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
 
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
-        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+        wxMemoryInputStream stream(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+        p_animation->Load(stream);
+        return;
     }
 
     tt_string path = parts[IndexImage];
     if (!path.file_exists())
     {
+        if (path == Project.as_string(prop_art_directory))
+        {
+            wxMemoryInputStream stream(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+            p_animation->Load(stream);
+            return;
+        }
         path = Project.as_string(prop_art_directory);
         path.append_filename(parts[IndexImage]);
     }

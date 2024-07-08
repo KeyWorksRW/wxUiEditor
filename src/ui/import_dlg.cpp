@@ -38,17 +38,6 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_radio_wxFormBuilder->SetFocus();
 
-#if !defined(__WINDOWS__)
-    // Setup will typically set the cwd to /home/.../Desktop -- there won't be any projects here, so change it to the
-    // standard Unix home directory.
-    wxFileName::SetCwd(wxGetHomeDir());
-    m_static_cwd->SetLabel(wxFileName::GetCwd());
-#else
-    tt_string cwd;
-    cwd.assignCwd();
-    m_static_cwd->SetLabel(cwd.make_wxString());
-#endif
-
     auto config = wxConfig::Get();
     config->SetPath("/preferences");
     auto import_type = config->Read("import_type", IMPORT_FB);
@@ -64,6 +53,33 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
         m_combo_recent_dirs->Select(0);
         wxFileName::SetCwd(m_combo_recent_dirs->GetValue());
         m_static_cwd->SetLabel(m_combo_recent_dirs->GetValue());
+
+        wxDir dir;
+        wxArrayString files;
+
+        m_checkListProjects->Clear();
+
+        if (m_radio_wxCrafter->GetValue())
+            dir.GetAllFiles(".", &files, "*.wxcp");
+        else if (m_radio_wxFormBuilder->GetValue())
+            dir.GetAllFiles(".", &files, "*.fbp");
+        else if (m_radio_wxSmith->GetValue())
+            dir.GetAllFiles(".", &files, "*.wxs");
+        else if (m_radio_wxGlade->GetValue())
+            dir.GetAllFiles(".", &files, "*.wxg");
+        else if (m_radio_XRC->GetValue())
+            dir.GetAllFiles(".", &files, "*.xrc");
+        else if (m_radio_DialogBlocks->GetValue())
+            dir.GetAllFiles(".", &files, "*.pjd");
+        else if (m_radio_WindowsResource->GetValue())
+        {
+            dir.GetAllFiles(".", &files, "*.rc");
+            dir.GetAllFiles(".", &files, "*.dlg");
+            CheckResourceFiles(files);
+        }
+
+        if (files.size())
+            m_checkListProjects->InsertItems(files, 0);
     }
 #endif  // _DEBUG
 
@@ -101,33 +117,6 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
             m_radio_wxFormBuilder->SetValue(true);
             break;
     }
-
-    wxDir dir;
-    wxArrayString files;
-
-    m_checkListProjects->Clear();
-
-    if (m_radio_wxCrafter->GetValue())
-        dir.GetAllFiles(".", &files, "*.wxcp");
-    else if (m_radio_wxFormBuilder->GetValue())
-        dir.GetAllFiles(".", &files, "*.fbp");
-    else if (m_radio_wxSmith->GetValue())
-        dir.GetAllFiles(".", &files, "*.wxs");
-    else if (m_radio_wxGlade->GetValue())
-        dir.GetAllFiles(".", &files, "*.wxg");
-    else if (m_radio_XRC->GetValue())
-        dir.GetAllFiles(".", &files, "*.xrc");
-    else if (m_radio_DialogBlocks->GetValue())
-        dir.GetAllFiles(".", &files, "*.pjd");
-    else if (m_radio_WindowsResource->GetValue())
-    {
-        dir.GetAllFiles(".", &files, "*.rc");
-        dir.GetAllFiles(".", &files, "*.dlg");
-        CheckResourceFiles(files);
-    }
-
-    if (files.size())
-        m_checkListProjects->InsertItems(files, 0);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Because m_combo_recent_dirs was created hidden and is shown in Debug builds.

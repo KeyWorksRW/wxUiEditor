@@ -5440,11 +5440,10 @@
               var_name="m_btnAddFile"
               tooltip="You can add multiple formbuilder projects to a single wxUiEdtior project."
               alignment="wxALIGN_CENTER_VERTICAL"
-              borders="wxTOP|wxRIGHT|wxLEFT"
               wxEVT_BUTTON="OnDirectory" />
             <node
               class="wxStaticText"
-              label="..."
+              label="Set directory to list project files"
               style="wxST_ELLIPSIZE_MIDDLE"
               var_name="m_static_cwd"
               alignment="wxALIGN_CENTER_VERTICAL"

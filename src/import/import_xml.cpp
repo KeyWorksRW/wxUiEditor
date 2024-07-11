@@ -1294,7 +1294,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                 return CreateXrcNode(xml_obj, page.get(), sizeritem);
             }
         }
-        else if (parent && parent->isGen(gen_wxPanel))
+        else if (parent && (parent->isGen(gen_wxPanel) || parent->isGen(gen_PanelForm) || parent->isGen(gen_wxDialog)))
         {
             auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, parent);
             if (sizer)

@@ -35,6 +35,6 @@ public:
 
 private:
     wxPoint m_point { wxDefaultPosition };
-    bool m_dpi_scaling { false };
+    // bool m_dpi_scaling { false };
     DataType m_prop_type;
 };

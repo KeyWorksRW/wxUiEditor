@@ -277,7 +277,7 @@ bool WizardFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);

@@ -187,7 +187,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -195,7 +195,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);
@@ -239,14 +239,14 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");

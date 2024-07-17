@@ -39,8 +39,8 @@ namespace code
         eol_always
     };
 
-    constexpr const bool no_dlg_units = false;
-    constexpr const bool allow_dlg_units = true;
+    constexpr const bool no_dpi_scaling = false;
+    constexpr const bool allow_dpi_scaling = true;
 
 };  // namespace code
 
@@ -363,8 +363,8 @@ public:
     // Empty strings generate wxEmptyString for C++, '' for Ruby and "" for other languages.
     Code& QuotedString(tt_string_view text);
 
-    // Will either generate wxSize(...) or ConvertDialogToPixels(wxSize(...))
-    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, bool enable_dlg_units = allow_dlg_units);
+    // Will either generate wxSize(...) or FromDIP(wxSize(...))
+    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, bool enable_dpi_scaling = allow_dpi_scaling);
 
     // If scale_border_size is true, will add the language-specific code for
     // "FromDIP(wxSize(prop_border_size,-1)).x". Otherwise, it will just add
@@ -381,7 +381,7 @@ public:
     Code& AddComment(tt_string_view text);
 
     // Will either generate wxPoint(...) or ConvertDialogToPixels(wxPoint(...))
-    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, bool enable_dlg_units = allow_dlg_units);
+    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, bool enable_dpi_scaling = allow_dpi_scaling);
 
     // Check for pos, size, style, window_style, and window name, and generate code if needed
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"

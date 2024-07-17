@@ -273,7 +273,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -281,7 +281,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))
@@ -305,14 +305,14 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))

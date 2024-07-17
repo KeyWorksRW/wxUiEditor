@@ -154,31 +154,6 @@ tt_string GetParentName(Node* node)
     return tt_string("internal error");
 }
 
-void GenPos(Node* node, tt_string& code)
-{
-    auto point = node->as_wxPoint(prop_pos);
-    if (point.x != -1 || point.y != -1)
-    {
-        if (node->as_string(prop_pos).contains("d", tt::CASE::either))
-        {
-            code << "ConvertDialogToPixels(wxPoint(" << point.x << ", " << point.y << "))";
-        }
-        else
-        {
-            code << "wxPoint(" << point.x << ", " << point.y << ")";
-        }
-    }
-    else
-        code << "wxDefaultPosition";
-}
-
-void GenSize(Node* node, tt_string& code)
-{
-    if (node->as_wxSize(prop_size) != wxDefaultSize)
-        code << GenerateWxSize(node, prop_size);
-    else
-        code << "wxDefaultSize";
-}
 
 static void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
@@ -1281,21 +1256,6 @@ tt_string GenerateIconCode(const tt_string& description)
         code << "#endif\n";
     }
 
-    return code;
-}
-
-tt_string GenerateWxSize(Node* node, PropName prop)
-{
-    tt_string code;
-    auto size = node->as_wxSize(prop);
-    if (node->as_string(prop).contains("d", tt::CASE::either))
-    {
-        code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
-    }
-    else
-    {
-        code << "wxSize(" << size.x << ", " << size.y << ")";
-    }
     return code;
 }
 

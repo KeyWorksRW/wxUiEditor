@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Helper class for generating code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,7 @@
 #include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "mainapp.h"          // App class
+#include "mainframe.h"        // MainFrame class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
@@ -1213,8 +1214,15 @@ Code& Code::QuotedString(tt_string_view text)
     return *this;
 }
 
-Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
+Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
 {
+    auto cur_pos = size();
+    auto size = m_node->as_wxSize(prop_name);
+    if (m_node->as_string(prop_name).contains("d", tt::CASE::either))
+    {
+        size = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(size);
+    }
+
     if (is_ruby())
     {
         if (m_node->as_wxSize(prop_name) == wxDefaultSize)
@@ -1224,22 +1232,19 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
             return *this;
         }
 
-        auto cur_pos = size();
-        bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
-        if (dialog_units && enable_dlg_units)
+        if (enable_dpi_scaling)
         {
-            CheckLineLength(sizeof(", convert_dialog_to_pixels(Wx::Size.new(999, 999))"));
-            FormFunction("ConvertDialogToPixels(");
+            CheckLineLength(sizeof(", from_DIP(Wx::Size.new(999, 999))"));
         }
         else
         {
-            CheckLineLength((sizeof(" Wx::Size.new") - 1));
+            CheckLineLength(sizeof("Wx::Size.new(999, 999)"));
         }
 
-        auto size = m_node->as_wxSize(prop_name);
+        if (enable_dpi_scaling)
+            FormFunction("FromDIP(");
         Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
-
-        if (dialog_units && enable_dlg_units)
+        if (enable_dpi_scaling)
             *this += ')';
 
         if (m_auto_break && this->size() > m_break_at)
@@ -1259,32 +1264,26 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
         return *this;
     }
 
-    auto cur_pos = size();
-
-    bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
-    if (dialog_units && enable_dlg_units)
+    if (enable_dpi_scaling)
     {
         if (is_cpp())
         {
-            CheckLineLength(sizeof("ConvertDialogToPixels(wxSize(999, 999))"));
-            FormFunction("ConvertDialogToPixels(");
+            CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
         }
         else if (is_python())
         {
-            CheckLineLength(sizeof("self.ConvertDialogToPixels(wxSize(999, 999))"));
-            FormFunction("ConvertDialogToPixels(");
-        }
-        else if (is_ruby())
-        {
-            CheckLineLength(sizeof("convert_pixels_to_dialog(Wx::Size(999, 999))"));
-            FormFunction("convert_pixels_to_dialog(");
+            CheckLineLength(sizeof("self.FromDIP(wxSize(999, 999))"));
         }
     }
+    else
+    {
+        CheckLineLength(sizeof("wxSize(999, 999)"));
+    }
 
-    auto size = m_node->as_wxSize(prop_name);
+    if (enable_dpi_scaling)
+        FormFunction("FromDIP(");
     Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-
-    if (dialog_units && enable_dlg_units)
+    if (enable_dpi_scaling)
         *this += ')';
 
     if (m_auto_break && this->size() > m_break_at)
@@ -1295,8 +1294,15 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dlg_units)
     return *this;
 }
 
-Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
+Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dpi_scaling)
 {
+    auto cur_pos = size();
+    auto point = m_node->as_wxPoint(prop_name);
+    if (m_node->as_string(prop_name).contains("d", tt::CASE::either))
+    {
+        point = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(point);
+    }
+
     if (is_ruby())
     {
         if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
@@ -1306,22 +1312,19 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
             return *this;
         }
 
-        auto cur_pos = size();
-        bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
-        if (dialog_units && enable_dlg_units)
+        if (enable_dpi_scaling)
         {
-            CheckLineLength(sizeof(", convert_dialog_to_pixels(Wx::Point.new(999, 999))"));
-            FormFunction("ConvertDialogToPixels(");
+            CheckLineLength(sizeof(", from_DIP(Wx::Point.new(999, 999))"));
         }
         else
         {
-            CheckLineLength((sizeof(" Wx::Point.new") - 1));
+            CheckLineLength(sizeof("Wx::Point.new(999, 999)"));
         }
 
-        auto size = m_node->as_wxSize(prop_name);
-        Class("Wx::Point.new(").itoa(size.x).Comma().itoa(size.y) << ')';
-
-        if (dialog_units && enable_dlg_units)
+        if (enable_dpi_scaling)
+            FormFunction("FromDIP(");
+        Class("Wx::Point.new(").itoa(point.x).Comma().itoa(point.y) << ')';
+        if (enable_dpi_scaling)
             *this += ')';
 
         if (m_auto_break && this->size() > m_break_at)
@@ -1341,19 +1344,19 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dlg_units)
         return *this;
     }
 
-    auto cur_pos = size();
-
-    bool dialog_units = m_node->as_string(prop_name).contains("d", tt::CASE::either);
-    if (dialog_units && enable_dlg_units)
+    if (is_cpp())
     {
-        CheckLineLength(sizeof("self.ConvertDialogToPixels(wxPoint(999, 999))"));
-        FormFunction("ConvertDialogToPixels(");
+        CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
+    }
+    else if (is_python())
+    {
+        CheckLineLength(sizeof("self.FromDIP(wxPoint(999, 999))"));
     }
 
-    auto size = m_node->as_wxSize(prop_name);
-    Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
-
-    if (dialog_units && enable_dlg_units)
+    if (enable_dpi_scaling)
+        FormFunction("FromDIP(");
+    Class("wxPoint(").itoa(point.x).Comma().itoa(point.y) << ')';
+    if (enable_dpi_scaling)
         *this += ')';
 
     if (m_auto_break && this->size() > m_break_at)

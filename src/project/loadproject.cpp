@@ -314,10 +314,22 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     }
                 };
 
+                // If there is a mainframe window, then convert dialog units to pixels since
+                // starting with wxUiEditor 21 (1.3.0) all positions and sizes are scaled
+                // automatically using FromDIP().
+                if (Project.getProjectVersion() < 21 && allow_ui &&
+                    (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
+                    tt::contains(prop->as_string(), 'd', tt::CASE::either))
+                {
+                    auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(prop->as_size());
+                    prop->set_value(pixel_value);
+                    Project.ForceProjectVersion(21);
+                }
+
                 // wxUiEditor 1.2.0 mistakenly added both prop_hidden and prop_hide_children.
                 // 1.2.1 removes the duplicate prop_hide_children, so this sets prop_hidden to
                 // true if prop_hide_children is true.
-                if (prop->get_name() == prop_hide_children && new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
+                else if (prop->get_name() == prop_hide_children && new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
                 {
                     new_node->set_value(prop_hidden, true);
                     prop->set_value(false);

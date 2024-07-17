@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Custom property grid class for wxPoint
+// Purpose:   Custom property grid class for wxPoint/wxSize
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include "node.h"             // Node -- Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+#include "mainframe.h"        // MainFrame -- Main window frame
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
@@ -49,8 +50,8 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 
     if (type != CustomPointProperty::type_SVG)
     {
-        AddPrivateChild(new wxBoolProperty("using dialog units", wxPG_LABEL, m_dialog_units));
-        Item(2)->SetHelpString("When checked, values will be converted to dialog units by calling ConvertDialogToPixels().");
+        AddPrivateChild(new wxBoolProperty("support high dpi", wxPG_LABEL, m_dpi_scaling));
+        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");
     }
 }
 
@@ -63,7 +64,7 @@ void CustomPointProperty::RefreshChildren()
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
         if (m_prop_type != type_SVG)
-            Item(2)->SetValue(m_dialog_units);
+            Item(2)->SetValue(m_dpi_scaling);
     }
 }
 
@@ -74,7 +75,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
         return value;
 
     wxPoint point { m_point };
-    bool dialog_units = m_dialog_units;
+    bool dpi_scaling = m_dpi_scaling;
 
     switch (childIndex)
     {
@@ -87,13 +88,13 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
             break;
 
         case 2:
-            dialog_units = childValue.GetBool();
+            dpi_scaling = childValue.GetBool();
     }
 
     value.clear();
     value << point.x << ',' << point.y;
-    if (dialog_units)
-        value << 'd';
+    if (dpi_scaling)
+        value << 's';
 
     return value;
 }
@@ -104,7 +105,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
     {
         m_point.x = -1;
         m_point.y = -1;
-        m_dialog_units = Project.as_bool(prop_dialog_units);
+        m_dpi_scaling = Project.as_bool(prop_dialog_units);
     }
     else
     {
@@ -118,14 +119,20 @@ void CustomPointProperty::InitValues(tt_string_view value)
         {
             m_point.x = -1;
             m_point.y = -1;
-            m_dialog_units = Project.as_bool(prop_dialog_units);
+            m_dpi_scaling = Project.as_bool(prop_dialog_units);
             return;
         }
 
         // We don't need to trim, because tt::atoi() skips leading whitespace
         m_point.x = tt::atoi(parts[0]);
         m_point.y = tt::atoi(parts[1]);
-        m_dialog_units = tt::contains(value, "d", tt::CASE::either);
+        m_dpi_scaling = tt::contains(value, "s", tt::CASE::either);
+        if (!m_dpi_scaling && tt::contains(value, "d", tt::CASE::either))
+        {
+            m_point = wxGetApp().getMainFrame()->ConvertDialogToPixels(m_point);
+            m_dpi_scaling = true;
+        }
+
     }
 }
 
@@ -133,7 +140,7 @@ tt_string CustomPointProperty::CombineValues()
 {
     tt_string value;
     value << m_point.x << ',' << m_point.y;
-    if (m_dialog_units)
-        value << 'd';
+    if (m_dpi_scaling)
+        value << 's';
     return value;
 }

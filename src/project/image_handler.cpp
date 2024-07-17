@@ -128,7 +128,7 @@ bool ImageHandler::CheckNode(Node* node)
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
         {
             tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
-            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage)
+            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage || parts[IndexImage].filename().empty())
                 continue;
 
             auto* embed = FindEmbedded(parts[IndexImage].filename());

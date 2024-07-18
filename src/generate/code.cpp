@@ -1268,23 +1268,32 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
     {
         if (is_cpp())
         {
-            CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
+            if (Project.is_wxWidgets31())
+            {
+                CheckLineLength(sizeof("wxSize(999, 999)"));
+                Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
+            }
+            else
+            {
+                CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
+                FormFunction("FromDIP(");
+                Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
+                *this += ')';
+            }
         }
         else if (is_python())
         {
             CheckLineLength(sizeof("self.FromDIP(wxSize(999, 999))"));
+            FormFunction("FromDIP(");
+            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
+            *this += ')';
         }
     }
     else
     {
         CheckLineLength(sizeof("wxSize(999, 999)"));
+        Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
     }
-
-    if (enable_dpi_scaling)
-        FormFunction("FromDIP(");
-    Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-    if (enable_dpi_scaling)
-        *this += ')';
 
     if (m_auto_break && this->size() > m_break_at)
     {

@@ -16,8 +16,8 @@
 
 wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                  DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -202,8 +202,8 @@ bool RibbonBarFormGenerator::GetRubyImports(Node*, std::set<std::string>& set_im
 
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                  DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);

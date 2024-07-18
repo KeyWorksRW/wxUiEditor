@@ -24,7 +24,7 @@ wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
     // resized when the pane is collapsed or expanded.
 
     auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                        DlgPoint(node, prop_pos), DlgSize(node, prop_size),
                                         GetStyleInt(node) | wxCP_NO_TLW_RESIZE);
 
     if (getMockup()->IsShowingHidden())

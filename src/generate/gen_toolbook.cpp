@@ -19,8 +19,8 @@
 
 wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                 DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), GetStyleInt(node));
 
     wxBookCtrlBase::Images bundle_list;
     for (size_t idx_child = 0; idx_child < node->getChildCount(); ++idx_child)

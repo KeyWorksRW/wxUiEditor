@@ -19,7 +19,7 @@
 wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                     DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_bool(prop_markup))
         widget->SetLabelMarkup(node->as_wxString(prop_label));
@@ -186,8 +186,8 @@ void ToggleButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
 wxObject* BitmapToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxBitmapToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullBitmap, DlgPoint(parent, node, prop_pos),
-                                 DlgSize(parent, node, prop_size), GetStyleInt(node));
+        new wxBitmapToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullBitmap, DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetValue((node->as_bool(prop_pressed)));
 

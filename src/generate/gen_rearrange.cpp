@@ -29,11 +29,11 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
             msg += "XRC";
         auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg.make_wxString(), wxDefaultPosition,
                                         wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
-        widget->Wrap(DlgPoint(parent, 150));
+        widget->Wrap(DlgPoint(150));
         return widget;
     }
-    auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                      DlgSize(parent, node, prop_size), wxArrayInt(), wxArrayString(),
+    auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                      DlgSize(node, prop_size), wxArrayInt(), wxArrayString(),
                                       node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);

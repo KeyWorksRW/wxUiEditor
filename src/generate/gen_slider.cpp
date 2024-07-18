@@ -20,8 +20,8 @@
 wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_value),
-                               node->as_int(prop_minValue), node->as_int(prop_maxValue), DlgPoint(parent, node, prop_pos),
-                               DlgSize(parent, node, prop_size), GetStyleInt(node));
+                               node->as_int(prop_minValue), node->as_int(prop_maxValue), DlgPoint(node, prop_pos),
+                               DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetValue(node->as_int(prop_position));
     if (node->as_int(prop_line_size) > 0)

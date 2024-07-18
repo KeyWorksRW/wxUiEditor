@@ -24,7 +24,7 @@
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
 #if defined(__WXGTK__)
     if (widget->IsSingleLine())

@@ -17,8 +17,8 @@
 
 wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                   DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ChoicebookGenerator::OnPageChanged, this);

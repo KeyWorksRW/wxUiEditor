@@ -19,8 +19,8 @@
 
 wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                              DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                              DlgSize(node, prop_size), GetStyleInt(node));
     if (!node->hasValue(prop_extra_style))
     {
         int ex_style = 0;

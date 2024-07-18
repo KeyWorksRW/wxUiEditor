@@ -22,7 +22,7 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxBitmapBundle(prop_bitmap),
-                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+                                  DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 #if defined(_DEBUG)
     // auto default_size = node->as_wxBitmapBundle(prop_bitmap).GetDefaultSize();
 #endif  // _DEBUG

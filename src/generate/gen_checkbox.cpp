@@ -22,7 +22,7 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto widget =
         new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                       DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value | GetStyleInt(node));
+                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value | GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
         widget->SetValue(true);
@@ -108,7 +108,7 @@ wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
     long style_value = wxCHK_3STATE | GetStyleInt(node);
 
     auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value);
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value);
 
     auto& state = node->as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")

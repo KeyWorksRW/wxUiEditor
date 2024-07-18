@@ -30,8 +30,8 @@ public:
 
 wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                     DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                     DlgSize(node, prop_size), GetStyleInt(node));
 
     wxObjectDataPtr<DataViewModel> model;
     model = new DataViewModel;
@@ -187,8 +187,8 @@ std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, int language)
 
 wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                         DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -318,8 +318,8 @@ std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, int language)
 
 wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                         DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

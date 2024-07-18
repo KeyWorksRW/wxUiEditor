@@ -22,8 +22,8 @@ using namespace code;
 
 wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                                 DlgSize(parent, node, prop_size), GetStyleInt(node), node->as_int(prop_min),
+    auto widget = new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), GetStyleInt(node), node->as_int(prop_min),
                                  node->as_int(prop_max), node->as_int(prop_initial));
 
     if (node->as_bool(prop_hexadecimal))
@@ -151,11 +151,11 @@ wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
         auto* widget =
             new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxSpinCtrlDouble not available in wxRuby3",
                              wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
-        widget->Wrap(DlgPoint(parent, 150));
+        widget->Wrap(DlgPoint(150));
         return widget;
     }
     auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                       DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node),
+                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
                                        node->as_double(prop_min), node->as_double(prop_max), node->as_double(prop_initial),
                                        node->as_double(prop_inc));
 

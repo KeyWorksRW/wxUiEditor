@@ -18,7 +18,7 @@
 wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                   DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+                                   DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_hint))
     {

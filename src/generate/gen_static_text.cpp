@@ -26,12 +26,12 @@ wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         widget =
             new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                    DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+                                    DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
     }
     else
     {
-        widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
+                                  DlgSize(node, prop_size), GetStyleInt(node));
     }
 
     if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)

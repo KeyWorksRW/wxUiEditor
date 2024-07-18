@@ -21,8 +21,8 @@ using namespace code;
 wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                           DlgSize(parent, node, prop_size), 0, nullptr, node->as_int(prop_type) | GetStyleInt(node));
+        new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                           DlgSize(node, prop_size), 0, nullptr, node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())

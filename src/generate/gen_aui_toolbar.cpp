@@ -19,8 +19,8 @@
 
 wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
+    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                   DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
     if (node->hasValue(prop_margins))
     {
@@ -308,8 +308,8 @@ bool AuiToolBarFormGenerator::GetRubyImports(Node*, std::set<std::string>& set_i
 
 wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
+    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                   DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
     if (node->hasValue(prop_margins))
     {

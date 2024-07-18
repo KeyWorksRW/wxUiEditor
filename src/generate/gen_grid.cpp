@@ -18,8 +18,8 @@
 
 wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto grid = new wxGrid(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                           DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto grid = new wxGrid(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                           DlgSize(node, prop_size), GetStyleInt(node));
 
     wxGridUpdateLocker prevent_updates(grid);
 

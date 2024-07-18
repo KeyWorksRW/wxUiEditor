@@ -24,7 +24,7 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     auto widget = new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), choices,
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), choices,
                                  node->as_int(prop_majorDimension), GetStyleInt(node, "rb_"));
 
     if (int selection = node->as_int(prop_selection); (to_size_t) selection < choices.Count())

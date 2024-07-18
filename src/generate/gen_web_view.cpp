@@ -29,18 +29,18 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
             msg += "XRC";
         auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg.make_wxString(), wxDefaultPosition,
                                         wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
-        widget->Wrap(DlgPoint(parent, 150));
+        widget->Wrap(DlgPoint(150));
         return widget;
     }
 #if defined(WIN32)
     auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
-                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), wxWebViewBackendDefault,
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), wxWebViewBackendDefault,
                                  GetStyleInt(node));
 #else
     auto* widget =
         new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxWebView mockup currently only available for Windows",
                          wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
-    widget->Wrap(DlgPoint(parent, 150));
+    widget->Wrap(DlgPoint(150));
 #endif
 
     return widget;

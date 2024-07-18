@@ -18,8 +18,8 @@
 
 wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                   DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetEffects((wxShowEffect) node->as_mockup(prop_show_effect, "info_"),
                        (wxShowEffect) node->as_mockup(prop_hide_effect, "info_"));

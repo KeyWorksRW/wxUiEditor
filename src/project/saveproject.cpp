@@ -71,7 +71,7 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
                     parts[1].backslashestoforward();
                     description << ';' << parts[1];
 
-                    if (parts.size() > 2 && parts[0].starts_with("SVG"))
+                    if (parts.size() > 2 && (parts[0].starts_with("SVG") || parts[0].starts_with("Art")))
                     {
                         description << ';' << parts[2];
                     }

@@ -310,7 +310,6 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     if (Project.getProjectVersion() < 18)
                     {
                         Project.ForceProjectVersion(18);
-                        Project.setProjectUpdated();
                     }
                 };
 
@@ -342,7 +341,6 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(convertToWxSize(iter.value()));
                     prop->set_value(pixel_value);
                     Project.ForceProjectVersion(21);
-                    Project.setProjectUpdated();
                     continue;
                 }
 

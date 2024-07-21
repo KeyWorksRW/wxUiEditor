@@ -108,6 +108,10 @@ public:
     auto getOriginalProjectVersion() const { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }
 
+    // Call this after the user has been warned about saving a project file that is incompatible
+    // with older versions of wxUiEditor
+    void UpdateOriginalProjectVersion() { m_OriginalProjectVersion = m_ProjectVersion; }
+
     // Call setProjectUpdated() if the project file's minimum version needs to be updated
     void setProjectUpdated() { m_isProject_updated = true; }
     // Call isProjectUpdated() to determine if the project file's minimum version needs to be updated

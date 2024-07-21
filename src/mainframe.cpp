@@ -455,6 +455,17 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
         OnSaveAsProject(event);
     else
     {
+        if (Project.getOriginalProjectVersion() != Project.getProjectVersion())
+        {
+            if (wxMessageBox(
+                    "A project saved with this version of wxUiEditor is not compatible with older versions of wxUiEditor.\n"
+                    "Continue with save?",
+                    "Save Project", wxYES_NO) == wxNO)
+            {
+                return;
+            }
+            Project.UpdateOriginalProjectVersion();  // Don't ask again
+        }
         pugi::xml_document doc;
         Project.getProjectNode()->createDoc(doc);
         if (doc.save_file(Project.getProjectFile(), "  ", pugi::format_indent_attributes))

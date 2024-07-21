@@ -47,6 +47,7 @@ void ImageProperties::InitValues(tt_string_view value)
                 if (bmp.IsOk())
                 {
                     m_size = bmp.GetSize();
+                    m_def_art_size = m_size;
                 }
                 else
                 {
@@ -68,7 +69,11 @@ tt_string ImageProperties::CombineValues()
     tt_string value;
     image.backslashestoforward();
     value << type << ';' << image;
-    if (type == "SVG" || type == "Art")
+    if (type == "SVG")
+    {
+        value << ";[" << m_size.x << ',' << m_size.y << "]";
+    }
+    else if (type == "Art" && m_size != m_def_art_size)
     {
         value << ";[" << m_size.x << ',' << m_size.y << "]";
     }

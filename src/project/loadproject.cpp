@@ -319,11 +319,31 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // automatically using FromDIP().
                 if (Project.getProjectVersion() < 21 && allow_ui &&
                     (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
-                    tt::contains(prop->as_string(), 'd', tt::CASE::either))
+                    tt::contains(iter.value(), 'd', tt::CASE::either))
                 {
-                    auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(prop->as_size());
+                    auto convertToWxSize = [](std::string_view value) -> wxSize
+                    {
+                        wxSize result { -1, -1 };
+                        if (value.size())
+                        {
+                            tt_view_vector tokens(value, ',');
+                            if (tokens.size())
+                            {
+                                if (tokens[0].size())
+                                    result.x = tokens[0].atoi();
+
+                                if (tokens.size() > 1 && tokens[1].size())
+                                    result.y = tokens[1].atoi();
+                            }
+                        }
+                        return result;
+                    };
+
+                    auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(convertToWxSize(iter.value()));
                     prop->set_value(pixel_value);
                     Project.ForceProjectVersion(21);
+                    Project.setProjectUpdated();
+                    continue;
                 }
 
                 // wxUiEditor 1.2.0 mistakenly added both prop_hidden and prop_hide_children.

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Save a wxUiEditor project file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,6 +9,7 @@
 #include "mainapp.h"         // App -- Main application class
 #include "node.h"            // Node class
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
+#include "project_handler.h"  // ProjectHandler class
 
 #include "pugixml.hpp"
 
@@ -20,6 +21,10 @@ void Node::createDoc(pugi::xml_document& doc)
     auto node = root.append_child("node");
 
     int project_version = minRequiredVer;
+    if (Project.isProjectUpdated())
+    {
+        project_version = Project.getProjectVersion();
+    }
     addNodeToDoc(node, project_version);
     root.append_attribute("data_version") = project_version;
 }

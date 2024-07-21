@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <wx/artprov.h>
 
 #include <charconv>  // for std::to_chars
 
@@ -153,7 +155,6 @@ tt_string GetParentName(Node* node)
     ASSERT_MSG(parent, tt_string() << node->getNodeName() << " has no parent!");
     return tt_string("internal error");
 }
-
 
 static void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
@@ -488,6 +489,12 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         // Note that current documentation states that the client is required, but the header file says otherwise
         if (art_client.size())
             code << art_client;
+        auto bmp =
+            wxArtProvider::GetBitmap(art_id.make_wxString(), wxART_MAKE_CLIENT_ID_FROM_STR(art_client.make_wxString()));
+        if (bmp.IsOk())
+        {
+            code << ", wxSize(" << bmp.GetSize().GetWidth() << ", " << bmp.GetSize().GetHeight() << "))";
+        }
         code << ')';
     }
 

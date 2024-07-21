@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/artprov.h>  // wxArtProvider class
+
 #include "img_props.h"        // ImageProperties
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node -- Node class
@@ -26,7 +28,7 @@ void ImageProperties::InitValues(tt_string_view value)
         if (type == "Header" && image.extension().is_sameas(".xpm", tt::CASE::either))
             type = "XPM";
 
-        if (type == "SVG" && mstr.size() > IndexImage + 1)
+        if ((type == "SVG" || type == "Art")  && mstr.size() > IndexImage + 1)
         {
             m_size = GetSizeInfo(mstr[IndexSize]);
         }
@@ -36,6 +38,21 @@ void ImageProperties::InitValues(tt_string_view value)
             if (embed)
             {
                 m_size = embed->size;
+            }
+            else if (type == "Art" && mstr.size() > IndexImage)
+            {
+                tt_view_vector art_str(mstr[IndexArtID], '|', tt::TRIM::both);
+                wxString art_id = art_str[0].make_wxString();
+                auto bmp = wxArtProvider::GetBitmap(art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                if (bmp.IsOk())
+                {
+                    m_size = bmp.GetSize();
+                }
+                else
+                {
+                    m_size.x = -1;
+                    m_size.y = -1;
+                }
             }
             else
             {
@@ -51,7 +68,7 @@ tt_string ImageProperties::CombineValues()
     tt_string value;
     image.backslashestoforward();
     value << type << ';' << image;
-    if (type == "SVG")
+    if (type == "SVG" || type == "Art")
     {
         value << ";[" << m_size.x << ',' << m_size.y << "]";
     }

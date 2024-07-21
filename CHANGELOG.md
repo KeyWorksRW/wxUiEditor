@@ -1,14 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [unreleased (1.2.2)]
+## [unreleased (1.3.0)]
 
 ### Added
 
 - File menu now has a Reload Project command to reload the current project file from disk.
+- You can now change the size of Art images instead of using their default size.
 
 ### Changed
 
+- All coordinates using dialog units will automatically be converted to physical pixels. For C++ using wxWidgets 3.2 or higher along with wxPython and wxRuby, and FromDIP() will be called to scale the UI as needed on high DPI displays. For C++ using wxWidgets 3.1, the physical coordinates will be converted to dialog units and the generated code will call ConvertDialogToPixels().
 - Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPthon code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
 
 ### Fixed

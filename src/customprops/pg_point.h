@@ -20,7 +20,9 @@ public:
     {
         type_size,
         type_point,
-        type_SVG
+        type_SVG,
+        type_ART,
+        type_BITMAP
     };
 
     CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type = CustomPointProperty::type_size);
@@ -35,6 +37,6 @@ public:
 
 private:
     wxPoint m_point { wxDefaultPosition };
-    // bool m_dpi_scaling { false };
+    bool m_dpi_scaling { true };
     DataType m_prop_type;
 };

@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/artprov.h>
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
 #include "pg_point.h"
@@ -13,6 +14,11 @@
 #include "node.h"             // Node -- Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+
+// No scaling is always supported if there is a 'n' at the end of the size/point string. However, no
+// UI is shown to the user unless NO_SCALING_OPTION is defined.
+
+// #define NO_SCALING_OPTION
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
@@ -48,9 +54,9 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         AddPrivateChild(new wxIntProperty("height", wxPG_LABEL, m_point.y));
     }
 
-#if 0
-// Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
-// itself as all scaling is done automatically.
+#if NO_SCALING_OPTION
+    // Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
+    // itself as all scaling is done automatically.
     if (type != CustomPointProperty::type_SVG)
     {
         AddPrivateChild(new wxBoolProperty("support high dpi", wxPG_LABEL, m_dpi_scaling));
@@ -67,7 +73,7 @@ void CustomPointProperty::RefreshChildren()
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
-#if 0
+#if NO_SCALING_OPTION
         if (m_prop_type != type_SVG)
             Item(2)->SetValue(m_dpi_scaling);
 #endif
@@ -81,9 +87,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
         return value;
 
     wxPoint point { m_point };
-#if 0
     bool dpi_scaling = m_dpi_scaling;
-#endif
 
     switch (childIndex)
     {
@@ -95,7 +99,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
             point.y = childValue.GetLong();
             break;
 
-#if 0
+#if NO_SCALING_OPTION
         case 2:
             dpi_scaling = childValue.GetBool();
             break;
@@ -104,6 +108,8 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
 
     value.clear();
     value << point.x << ',' << point.y;
+    if (!dpi_scaling)
+        value << 'n';
 
     return value;
 }
@@ -114,7 +120,6 @@ void CustomPointProperty::InitValues(tt_string_view value)
     {
         m_point.x = -1;
         m_point.y = -1;
-        // m_dpi_scaling = Project.as_bool(prop_dialog_units);
     }
     else
     {
@@ -124,24 +129,34 @@ void CustomPointProperty::InitValues(tt_string_view value)
         else
             parts.SetString(value, ',');
 
-        if (parts.size() < 2)
+        if (parts.size() < 2 || m_prop_type == type_BITMAP)
         {
             m_point.x = -1;
             m_point.y = -1;
-            // m_dpi_scaling = Project.as_bool(prop_dialog_units);
+            return;
+        }
+
+        if (m_prop_type == type_ART && parts.size() > 1)
+        {
+            m_point.x = tt::atoi(parts[0]);
+            m_point.y = tt::atoi(parts[1]);
             return;
         }
 
         // We don't need to trim, because tt::atoi() skips leading whitespace
         m_point.x = tt::atoi(parts[0]);
         m_point.y = tt::atoi(parts[1]);
+
         // If mainframe window was created before the project was loaded, then any values with 'd' should already have been
         // converted to pixels. This just ensures it still works in case we missed something.
-        // ASSERT(!tt::contains(value, 'd', tt::CASE::either));
+        ASSERT_MSG(!tt::contains(value, 'd', tt::CASE::either), "'d' in size/point not converted when project loaded.");
         if (tt::contains(value, 'd', tt::CASE::either))
         {
             m_point = wxGetApp().getMainFrame()->ConvertDialogToPixels(m_point);
         }
+
+        if (tt::contains(value, 'n', tt::CASE::either))
+            m_dpi_scaling = false;
     }
 }
 
@@ -149,5 +164,7 @@ tt_string CustomPointProperty::CombineValues()
 {
     tt_string value;
     value << m_point.x << ',' << m_point.y;
+    if (!m_dpi_scaling)
+        value << 'n';
     return value;
 }

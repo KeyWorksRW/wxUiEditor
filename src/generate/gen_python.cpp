@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/artprov.h>
+
 #include <set>
 #include <thread>
 #include <unordered_set>
@@ -684,6 +686,20 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
         // Note that current documentation states that the client is required, but the header file says otherwise
         if (art_client.size())
             code.Comma().Add(art_client);
+
+        if (parts.size() > IndexSize && parts[IndexSize].size())
+        {
+            wxSize svg_size { -1, -1 };
+            svg_size = GetSizeInfo(parts[IndexSize]);
+
+            if (svg_size != wxDefaultSize)
+            {
+                code.Comma();
+                code.CheckLineLength(sizeof("wx.Size(999, 999)))"));
+                code << "wx.Size(" << svg_size.x << ", " << svg_size.y << ')';
+            }
+        }
+
         code << ')';
         return true;
     }

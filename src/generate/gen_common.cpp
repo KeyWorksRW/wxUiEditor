@@ -489,11 +489,16 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         // Note that current documentation states that the client is required, but the header file says otherwise
         if (art_client.size())
             code << art_client;
-        auto bmp =
-            wxArtProvider::GetBitmap(art_id.make_wxString(), wxART_MAKE_CLIENT_ID_FROM_STR(art_client.make_wxString()));
-        if (bmp.IsOk())
+
+        if (parts.size() > IndexSize && parts[IndexSize].size())
         {
-            code << ", wxSize(" << bmp.GetSize().GetWidth() << ", " << bmp.GetSize().GetHeight() << "))";
+            wxSize svg_size { -1, -1 };
+            svg_size = GetSizeInfo(parts[IndexSize]);
+
+            if (svg_size != wxDefaultSize)
+            {
+                code << ", wxSize(" << svg_size.x << ", " << svg_size.y << ')';
+            }
         }
         code << ')';
     }

@@ -299,7 +299,12 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
         }
         catch (const std::system_error& err)
         {
+#if defined(_DEBUG)
             MSG_ERROR(err.what());
+#else
+            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error", wxICON_ERROR | wxOK);
+            dlg_error.ShowModal();
+#endif  // _DEBUG
         }
 
         GeneratePythonImagesForm();
@@ -376,7 +381,12 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     }
     catch (const std::system_error& err)
     {
+#if defined(_DEBUG)
         MSG_ERROR(err.what());
+#else
+        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error", wxICON_ERROR | wxOK);
+        dlg_error.ShowModal();
+#endif  // _DEBUG
     }
 
     if (m_embedded_images.size())

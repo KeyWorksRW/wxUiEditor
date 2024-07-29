@@ -18,17 +18,20 @@ jobs:
     - run: mkdir ${{github.workspace}}/build
 
     - name: Configure CMake
-      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      # run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
     - name: Build wxUiEditor
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
+      # run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
+      run: cmake --build ${{github.workspace}}/build --config RelWithDebInfo --target wxUiEditor
 
     - name: Create Windows Artifact
       uses: actions/upload-artifact@v4
       with:
         name: WindowsExecutable
         path: |
-          build/bin/Release/wxUiEditor.exe
+          build/bin/RelWithDebInfo/wxUiEditor.exe
+
 
   buildUnix:
     runs-on: ubuntu-20.04

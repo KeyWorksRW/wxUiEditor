@@ -114,6 +114,7 @@ protected:
     virtual void OnPaste(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPreferencesDlg(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPreviewXrc(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReloadProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAsProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnToggleExpandLayout(wxCommandEvent& event) { event.Skip(); }

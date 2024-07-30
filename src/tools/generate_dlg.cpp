@@ -82,19 +82,18 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_handler.h"    // ImageHandler class
+#include "mainapp.h"          // App -- Main application class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
 #include "../wxui/dlg_gen_results.h"
 
-#if defined(INTERNAL_TESTING)
 static bool gen_base_code = true;
 static bool gen_derived_code = false;
 static bool gen_python_code = false;
 static bool gen_ruby_code = false;
 static bool gen_xrc_code = false;
-#endif
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
 // in generate/gen_codefiles.cpp
@@ -139,56 +138,51 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         GenerateDlg dlg(this);
         if (dlg.ShowModal() == wxID_OK)
         {
-            if (dlg.is_gen_base())
+            gen_base_code = dlg.is_gen_base();
+            if (gen_base_code)
             {
                 GenerateCppFiles(results);
                 code_generated = true;
-#if defined(INTERNAL_TESTING)
-                gen_base_code = true;
-#endif
             }
-            if (dlg.is_gen_inherited())
+
+            gen_derived_code = dlg.is_gen_inherited();
+            if (gen_derived_code)
             {
                 GenInhertedClass(results);
                 code_generated = true;
-#if defined(INTERNAL_TESTING)
-                gen_derived_code = true;
-#endif
             }
-            if (dlg.is_gen_python())
+
+            gen_python_code = dlg.is_gen_python();
+            if (gen_python_code)
             {
                 GeneratePythonFiles(results);
                 code_generated = true;
-#if defined(INTERNAL_TESTING)
-                gen_python_code = true;
-#endif
             }
-            if (dlg.is_gen_ruby())
+
+            gen_ruby_code = dlg.is_gen_ruby();
+            if (gen_ruby_code)
             {
                 GenerateRubyFiles(results);
                 code_generated = true;
-#if defined(INTERNAL_TESTING)
-                gen_ruby_code = true;
-#endif
             }
-            if (dlg.is_gen_xrc())
+
+            gen_xrc_code = dlg.is_gen_xrc();
+            if (gen_xrc_code)
             {
                 GenerateXrcFiles(results);
                 code_generated = true;
-#if defined(INTERNAL_TESTING)
-                gen_xrc_code = true;
-#endif
             }
 
-#if defined(INTERNAL_TESTING)
-            auto* config = wxConfig::Get();
-            config->SetPath("/preferences");
-            config->Write("gen_base_code", gen_base_code);
-            config->Write("gen_python_code", gen_python_code);
-            config->Write("gen_ruby_code", gen_ruby_code);
-            config->Write("gen_xrc_code", gen_xrc_code);
-            config->SetPath("/");
-#endif
+            if (wxGetApp().isTestingMenuEnabled())
+            {
+                auto* config = wxConfig::Get();
+                config->SetPath("/preferences");
+                config->Write("gen_base_code", gen_base_code);
+                config->Write("gen_python_code", gen_python_code);
+                config->Write("gen_ruby_code", gen_ruby_code);
+                config->Write("gen_xrc_code", gen_xrc_code);
+                config->SetPath("/");
+            }
         }
     }
 
@@ -229,15 +223,16 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-#if defined(INTERNAL_TESTING)
-    auto* config = wxConfig::Get();
-    config->SetPath("/preferences");
-    gen_base_code = config->ReadBool("gen_base_code", true);
-    gen_python_code = config->ReadBool("gen_python_code", false);
-    gen_ruby_code = config->ReadBool("gen_ruby_code", false);
-    gen_xrc_code = config->ReadBool("gen_xrc_code", false);
-    config->SetPath("/");
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        auto* config = wxConfig::Get();
+        config->SetPath("/preferences");
+        gen_base_code = config->ReadBool("gen_base_code", true);
+        gen_python_code = config->ReadBool("gen_python_code", false);
+        gen_ruby_code = config->ReadBool("gen_ruby_code", false);
+        gen_xrc_code = config->ReadBool("gen_xrc_code", false);
+        config->SetPath("/");
+    }
 
     auto output_type = Project.getOutputType();
 
@@ -331,24 +326,25 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         // We get here if a new language preference has been added but we haven't updated this
         // dialog to support it yet.
     }
-#if defined(INTERNAL_TESTING)
-    if (output_type & OUTPUT_PYTHON)
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        m_gen_python_code = gen_python_code;
+        if (output_type & OUTPUT_PYTHON)
+        {
+            m_gen_python_code = gen_python_code;
+        }
+        if (output_type & OUTPUT_RUBY)
+        {
+            m_gen_ruby_code = gen_ruby_code;
+        }
+        if (output_type & OUTPUT_CPLUS)
+        {
+            m_gen_base_code = gen_base_code;
+        }
+        if (output_type & OUTPUT_XRC)
+        {
+            m_gen_xrc_code = gen_xrc_code;
+        }
     }
-    if (output_type & OUTPUT_RUBY)
-    {
-        m_gen_ruby_code = gen_ruby_code;
-    }
-    if (output_type & OUTPUT_CPLUS)
-    {
-        m_gen_base_code = gen_base_code;
-    }
-    if (output_type & OUTPUT_XRC)
-    {
-        m_gen_xrc_code = gen_xrc_code;
-    }
-#endif
 
     // Some checkboxes may be hidden at this point, so we need to resize the dialog to fit.
 

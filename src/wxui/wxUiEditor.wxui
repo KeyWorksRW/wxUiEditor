@@ -859,6 +859,12 @@
               var_name="menu_import"
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@// Specifying false tells NewProject to import@@Project.NewProject(false);@@}" />
             <node
+              class="wxMenuItem"
+              help="Reload current project from disk, losing any current changes"
+              label="Reload Project..."
+              var_name="menu_item3"
+              wxEVT_MENU="OnReloadProject" />
+            <node
               class="separator" />
             <node
               class="wxMenuItem"

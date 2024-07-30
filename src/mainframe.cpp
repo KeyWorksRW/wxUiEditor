@@ -2215,3 +2215,13 @@ void MainFrame::OnDifferentProject(wxCommandEvent& WXUNUSED(event))
         }
     }
 }
+
+void MainFrame::OnReloadProject(wxCommandEvent& WXUNUSED(event))
+{
+    if (wxMessageBox(wxString() << "This will lose any changes you have made since the last save.\n\n"
+                                   "Are you sure you want to reload the project?",
+                     "Reload Project", wxICON_WARNING | wxYES_NO) == wxYES)
+    {
+        Project.LoadProject(Project.getProjectFile());
+    }
+}

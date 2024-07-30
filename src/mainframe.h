@@ -297,6 +297,7 @@ protected:
     void OnOpenRecentProject(wxCommandEvent& event);
     void OnPaste(wxCommandEvent& event) override;
     void OnPreferencesDlg(wxCommandEvent& event) override;
+    void OnReloadProject(wxCommandEvent& event) override;
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
     void OnUpdateBrowseDocs(wxUpdateUIEvent& event) override;

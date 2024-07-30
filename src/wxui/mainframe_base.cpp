@@ -178,6 +178,9 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import Project...");
     menu_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
     m_menuFile->Append(menu_import);
+    auto* menu_item3 = new wxMenuItem(m_menuFile, wxID_ANY, "Reload Project...",
+        "Reload current project from disk, losing any current changes", wxITEM_NORMAL);
+    m_menuFile->Append(menu_item3);
     m_menuFile->AppendSeparator();
     auto* menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, "&Save\tCtrl+S", "Save current project", wxITEM_NORMAL);
     menu_item->SetBitmap(wxueBundleSVG(wxue_img::save_svg, 1064, 2928, wxSize(16, 16)));
@@ -414,6 +417,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MainFrameBase::OnPaste, this, wxID_PASTE);
     Bind(wxEVT_MENU, &MainFrameBase::OnPreferencesDlg, this, id_PreferencesDlg);
     Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
+    Bind(wxEVT_MENU, &MainFrameBase::OnReloadProject, this, menu_item3->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);

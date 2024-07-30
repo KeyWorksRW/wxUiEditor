@@ -740,7 +740,6 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     Project.NewProject();
 }
 
-
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size);
 
 #if defined(_DEBUG)
@@ -2220,7 +2219,7 @@ void MainFrame::OnDifferentProject(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnReloadProject(wxCommandEvent& WXUNUSED(event))
 {
     if (wxMessageBox(wxString() << "This will lose any changes you have made since the last save.\n\n"
-                         "Are you sure you want to reload the project?",
+                                   "Are you sure you want to reload the project?",
                      "Reload Project", wxICON_WARNING | wxYES_NO) == wxYES)
     {
         Project.LoadProject(Project.getProjectFile());

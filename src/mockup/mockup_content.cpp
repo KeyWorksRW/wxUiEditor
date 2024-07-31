@@ -47,6 +47,9 @@ void MockupContent::RemoveNodes()
     SetSizer(nullptr);
 
     m_parent_sizer = nullptr;
+
+    if (m_variant != wxWINDOW_VARIANT_NORMAL)
+        ResetWindowVariant();
 }
 
 // This is called by MockupParent in order to create all child components
@@ -58,6 +61,8 @@ void MockupContent::CreateAllGenerators()
 
     ASSERT(m_mockupParent->getSelectedForm());
     auto form = m_mockupParent->getSelectedForm();
+    if (m_variant != wxWINDOW_VARIANT_NORMAL)
+        ResetWindowVariant();
 
     if (form->isGen(gen_wxWizard))
     {
@@ -95,6 +100,28 @@ void MockupContent::CreateAllGenerators()
     }
     else
     {
+        if (form->hasProp(prop_variant) && form->as_string(prop_variant) != "normal")
+        {
+            if (m_variant != wxWINDOW_VARIANT_NORMAL)
+                ResetWindowVariant();
+
+            if (form->isPropValue(prop_variant, "small"))
+            {
+                SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+                m_variant = wxWINDOW_VARIANT_SMALL;
+            }
+            else if (form->isPropValue(prop_variant, "mini"))
+            {
+                SetWindowVariant(wxWINDOW_VARIANT_MINI);
+                m_variant = wxWINDOW_VARIANT_MINI;
+            }
+            else if (form->isPropValue(prop_variant, "large"))
+            {
+                SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+                m_variant = wxWINDOW_VARIANT_LARGE;
+            }
+        }
+
         if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||
             form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_wxPropertySheetDialog))
         {
@@ -672,4 +699,39 @@ void MockupContent::SelectNode(wxObject* wxobject)
     {
         wxGetFrame().SelectNode(result->second);
     }
+}
+
+void MockupContent::ResetWindowVariant()
+{
+    // Essentially this is the opposite of wxWindowBase::DoSetWindowVariant found in wxWidgets/src/common/wincmn.cpp -- this
+    // just multiplies rather than divides if smaller, or divides rather than multiplies if larger.
+
+    if (m_variant == wxWINDOW_VARIANT_NORMAL)
+        return;
+
+    wxFont font = GetFont();
+    double size = font.GetFractionalPointSize();
+
+    switch (m_variant)
+    {
+        case wxWINDOW_VARIANT_SMALL:
+            size *= 1.2;
+            break;
+
+        case wxWINDOW_VARIANT_MINI:
+            size *= 1.2 * 1.2;
+            break;
+
+        case wxWINDOW_VARIANT_LARGE:
+            size /= 1.2;
+            break;
+
+        default:
+            FAIL_MSG("unexpected window variant");
+            break;
+    }
+
+    font.SetFractionalPointSize(size);
+    SetFont(font);
+    m_variant = wxWINDOW_VARIANT_NORMAL;
 }

@@ -41,11 +41,15 @@ public:
     static void SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win);
 
 protected:
+    // The opposite of wxWindowBase::DoSetWindowVariant, this restores a windows variant to wxWINDOW_VARIANT_NORMAL
+    void ResetWindowVariant();
     void CreateChildren(Node*, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer = nullptr);
 
 private:
     MockupParent* m_mockupParent;
     wxBoxSizer* m_parent_sizer { nullptr };
+
+    wxWindowVariant m_variant { wxWINDOW_VARIANT_NORMAL };
 
     // wxObject and Node are always paired, but we need to quickly lookup the pair given either a wxObject, or a
     // Node. We store two maps to maximize speed of either lookup.

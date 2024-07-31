@@ -124,6 +124,7 @@ bool FrameFormGenerator::SettingsCode(Code& code)
         else
             code += "wxFrame";
         code += "::Create(parent, id, title, pos, size, style, name))";
+        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
         code.Eol().Tab().Str("return false;");
     }
     else if (code.is_python())

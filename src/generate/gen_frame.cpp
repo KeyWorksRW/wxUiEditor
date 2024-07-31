@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFrame generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,10 +32,6 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         {
             code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
             code.EndFunction();
-        }
-        if (code.node()->as_wxSize(prop_size) != wxDefaultSize)
-        {
-            code.Eol(eol_if_needed).FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
         }
     }
     else if (code.is_python())

@@ -1214,14 +1214,10 @@ Code& Code::QuotedString(tt_string_view text)
     return *this;
 }
 
-Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
+Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
     auto cur_pos = size();
     auto size = m_node->as_wxSize(prop_name);
-    if (m_node->as_string(prop_name).contains("d", tt::CASE::either))
-    {
-        size = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(size);
-    }
 
     if (is_ruby())
     {
@@ -1232,7 +1228,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
             return *this;
         }
 
-        if (enable_dpi_scaling)
+        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
         {
             CheckLineLength(sizeof(", from_DIP(Wx::Size.new(999, 999))"));
         }
@@ -1241,10 +1237,10 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
             CheckLineLength(sizeof("Wx::Size.new(999, 999)"));
         }
 
-        if (enable_dpi_scaling)
+        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
             FormFunction("FromDIP(");
         Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
-        if (enable_dpi_scaling)
+        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
             *this += ')';
 
         if (m_auto_break && this->size() > m_break_at)
@@ -1264,7 +1260,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
         return *this;
     }
 
-    if (enable_dpi_scaling)
+    if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
     {
         if (is_cpp())
         {
@@ -1303,12 +1299,13 @@ Code& Code::WxSize(GenEnum::PropName prop_name, bool enable_dpi_scaling)
     return *this;
 }
 
-Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dpi_scaling)
+Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
     auto cur_pos = size();
     auto point = m_node->as_wxPoint(prop_name);
     if (m_node->as_string(prop_name).contains("d", tt::CASE::either))
     {
+        FAIL_MSG("Pos() should not be used with a string that contains 'd'");
         point = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(point);
     }
 
@@ -1321,20 +1318,18 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dpi_scaling)
             return *this;
         }
 
-        if (enable_dpi_scaling)
+        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
         {
             CheckLineLength(sizeof(", from_DIP(Wx::Point.new(999, 999))"));
+            FormFunction("FromDIP(");
+            Class("Wx::Point.new(").itoa(point.x).Comma().itoa(point.y) << ')';
+            *this += ')';
         }
         else
         {
             CheckLineLength(sizeof("Wx::Point.new(999, 999)"));
+            Class("Wx::Point.new(").itoa(point.x).Comma().itoa(point.y) << ')';
         }
-
-        if (enable_dpi_scaling)
-            FormFunction("FromDIP(");
-        Class("Wx::Point.new(").itoa(point.x).Comma().itoa(point.y) << ')';
-        if (enable_dpi_scaling)
-            *this += ')';
 
         if (m_auto_break && this->size() > m_break_at)
         {
@@ -1353,21 +1348,25 @@ Code& Code::Pos(GenEnum::PropName prop_name, bool enable_dpi_scaling)
         return *this;
     }
 
-    if (is_cpp())
+    if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
     {
-        CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
-    }
-    else if (is_python())
-    {
-        CheckLineLength(sizeof("self.FromDIP(wxPoint(999, 999))"));
-    }
-
-    if (enable_dpi_scaling)
+        if (is_cpp())
+        {
+            CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
+        }
+        else if (is_python())
+        {
+            CheckLineLength(sizeof("self.FromDIP(wxPoint(999, 999))"));
+        }
         FormFunction("FromDIP(");
-    Class("wxPoint(").itoa(point.x).Comma().itoa(point.y) << ')';
-    if (enable_dpi_scaling)
+        Class("wxPoint(").itoa(point.x).Comma().itoa(point.y) << ')';
         *this += ')';
-
+    }
+    else
+    {
+        CheckLineLength(sizeof("wxPoint(999, 999)"));
+        Class("wxPoint(").itoa(point.x).Comma().itoa(point.y) << ')';
+    }
     if (m_auto_break && this->size() > m_break_at)
     {
         InsertLineBreak(cur_pos);

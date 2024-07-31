@@ -31,6 +31,13 @@ namespace code
 
     enum
     {
+        no_scaling = 0,
+        conditional_scaling = 1,  // only if non-form and prop != prop_size
+        force_scaling = 2
+    };
+
+    enum
+    {
         // Will add eol if empty.
         eol_if_empty = 1,
         // Will not add eol if empty, or there is already an eol at the end of
@@ -363,9 +370,6 @@ public:
     // Empty strings generate wxEmptyString for C++, '' for Ruby and "" for other languages.
     Code& QuotedString(tt_string_view text);
 
-    // Will either generate wxSize(...) or FromDIP(wxSize(...))
-    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, bool enable_dpi_scaling = allow_dpi_scaling);
-
     // If scale_border_size is true, will add the language-specific code for
     // "FromDIP(wxSize(prop_border_size,-1)).x". Otherwise, it will just add
     // prop_border_size
@@ -380,8 +384,11 @@ public:
     // Will prefix text with "// " for C++ or "# " for Python
     Code& AddComment(tt_string_view text);
 
-    // Will either generate wxPoint(...) or ConvertDialogToPixels(wxPoint(...))
-    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, bool enable_dpi_scaling = allow_dpi_scaling);
+    // Will either generate wxSize(...) or FromDIP(wxSize(...))
+    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, int enable_dpi_scaling = conditional_scaling);
+
+    // Will either generate wxPoint(...) or FromDIP(wxPoint(...))
+    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, int enable_dpi_scaling = conditional_scaling);
 
     // Check for pos, size, style, window_style, and window name, and generate code if needed
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"

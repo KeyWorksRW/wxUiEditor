@@ -684,6 +684,8 @@
 				help="About 33% smaller than normal."/>
 			<option name="large"
 				help="About 35% larger than normal."/> normal </property>
+		<property name="minimum_size" type="wxSize"
+			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done."/>
 		<property name="maximum_size" type="wxSize"
 			help="Sets the maximum allowable size of the window."/>
 		<property name="pos" type="wxPoint"

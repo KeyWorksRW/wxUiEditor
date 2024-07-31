@@ -103,6 +103,19 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
 
 bool FrameFormGenerator::SettingsCode(Code& code)
 {
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     if (code.is_cpp())
     {
         if (auto icon_code = GenerateIconCode(code.node()->as_string(prop_icon)); icon_code.size())

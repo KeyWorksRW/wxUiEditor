@@ -381,18 +381,22 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 {
     if (auto minsize = node->as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
     {
+        ASSERT_MSG(!node->as_string(prop_minimum_size).contains("d", tt::CASE::either),
+                   "Minimum size should not contain 'd' for dialog units");
         if (node->as_string(prop_minimum_size).contains("d", tt::CASE::either))
             window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
         else
-            window->SetMinSize(minsize);
+            window->SetMinSize(convert_win->FromDIP(minsize));
     }
 
     if (auto maxsize = node->as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
+        ASSERT_MSG(!node->as_string(prop_maximum_size).contains("d", tt::CASE::either),
+                   "Maximum size should not contain 'd' for dialog units");
         if (node->as_string(prop_maximum_size).contains("d", tt::CASE::either))
             window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
         else
-            window->SetMaxSize(maxsize);
+            window->SetMaxSize(convert_win->FromDIP(maxsize));
     }
 
     if (auto& variant = node->as_string(prop_variant); variant.size() && variant != "normal")

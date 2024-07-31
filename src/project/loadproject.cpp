@@ -316,7 +316,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // If there is a mainframe window, then convert dialog units to pixels since
                 // starting with wxUiEditor 21 (1.3.0) all positions and sizes are scaled
                 // automatically using FromDIP().
-                if (Project.getProjectVersion() < 21 && allow_ui &&
+                if (Project.getOriginalProjectVersion() < 21 && allow_ui &&
                     (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
                     tt::contains(iter.value(), 'd', tt::CASE::either))
                 {

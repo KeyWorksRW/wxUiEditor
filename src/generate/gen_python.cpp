@@ -740,7 +740,7 @@ bool PythonBundleCode(Code& code, GenEnum::PropName prop)
             {
                 svg_size = GetSizeInfo(parts[IndexSize]);
             }
-            code.Comma().Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+            code.Comma().Str("wx.Size(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         }
 
         else if (description.starts_with("XPM"))

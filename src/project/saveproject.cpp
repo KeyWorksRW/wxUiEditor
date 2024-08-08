@@ -1,14 +1,15 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Save a wxUiEditor project file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "base_generator.h"  // BaseGenerator class
-#include "mainapp.h"         // App -- Main application class
-#include "node.h"            // Node class
-#include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
+#include "base_generator.h"   // BaseGenerator class
+#include "mainapp.h"          // App -- Main application class
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "prop_decl.h"        // PropChildDeclaration and PropDeclaration classes
 
 #include "pugixml.hpp"
 
@@ -20,6 +21,10 @@ void Node::createDoc(pugi::xml_document& doc)
     auto node = root.append_child("node");
 
     int project_version = minRequiredVer;
+    if (Project.isProjectUpdated())
+    {
+        project_version = Project.getProjectVersion();
+    }
     addNodeToDoc(node, project_version);
     root.append_attribute("data_version") = project_version;
 }
@@ -66,7 +71,7 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
                     parts[1].backslashestoforward();
                     description << ';' << parts[1];
 
-                    if (parts.size() > 2 && parts[0].starts_with("SVG"))
+                    if (parts.size() > 2 && (parts[0].starts_with("SVG") || parts[0].starts_with("Art")))
                     {
                         description << ';' << parts[2];
                     }

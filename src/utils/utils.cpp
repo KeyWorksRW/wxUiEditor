@@ -13,6 +13,7 @@
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
+#include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "utils.h"         // Utility functions that work with properties
@@ -250,34 +251,20 @@ tt_string ConvertEscapeSlashes(tt_string_view str)
     return result;
 }
 
-wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop)
+wxPoint DlgPoint(Node* node, GenEnum::PropName prop)
 {
-    if (node->as_string(prop).contains("d", tt::CASE::either))
-    {
-        return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->as_wxPoint(prop));
-    }
-    else
-    {
-        return node->as_wxPoint(prop);
-    }
+    return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxPoint(prop));
 }
 
-wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
+wxSize DlgSize(Node* node, GenEnum::PropName prop)
 {
-    if (node->as_string(prop).contains("d", tt::CASE::either))
-    {
-        return wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(node->as_wxSize(prop));
-    }
-    else
-    {
-        return node->as_wxSize(prop);
-    }
+    return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxSize(prop));
 }
 
-int DlgPoint(wxObject* parent, int width)
+int DlgPoint(int width)
 {
     wxPoint pt = { width, -1 };
-    wxStaticCast(parent, wxWindow)->ConvertDialogToPixels(pt);
+    wxGetMainFrame()->getWindow()->FromDIP(pt);
     return pt.x;
 }
 

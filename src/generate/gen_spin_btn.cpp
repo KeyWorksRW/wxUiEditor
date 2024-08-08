@@ -19,8 +19,8 @@ using namespace code;
 
 wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                   DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetRange(node->as_int(prop_min), node->as_int(prop_max));
     widget->SetValue(node->as_int(prop_initial));

@@ -30,29 +30,29 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
     const auto& book_type = node->as_string(prop_book_type);
     if (book_type == "wxPROPSHEET_CHOICEBOOK")
     {
-        widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                  DlgSize(node, prop_size), GetStyleInt(node));
     }
 
     else if (book_type == "wxPROPSHEET_LISTBOOK")
     {
-        widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node));
     }
     else if (book_type == "wxPROPSHEET_TREEBOOK")
     {
-        widget = new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node));
     }
     else if (book_type == "wxPROPSHEET_TOOLBOOK")
     {
-        widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node));
     }
     else  // default to wxPROPSHEET_NOTEBOOK
     {
-        widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node));
     }
 
     if (node->hasValue(prop_extra_style))
@@ -69,6 +69,13 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
     }
+
+    if (node->isPropValue(prop_variant, "small"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    else if (node->isPropValue(prop_variant, "mini"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    else if (node->isPropValue(prop_variant, "large"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
 
     return widget;
 }
@@ -208,6 +215,19 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
 
 bool PropSheetDlgGenerator::SettingsCode(Code& code)
 {
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     if (code.is_python())
     {
         if (code.hasValue(prop_extra_style))
@@ -273,7 +293,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -281,7 +301,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))
@@ -305,14 +325,14 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))

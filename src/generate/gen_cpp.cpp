@@ -1103,11 +1103,11 @@ void BaseCodeGenerator::GenerateCppClassHeader()
         }
         if (m_form_node->hasProp(prop_pos))
         {
-            code.Eol(eol_if_needed).Str("static const wxPoint form_pos() { return ").Pos(prop_pos, no_dlg_units) += "; }";
+            code.Eol(eol_if_needed).Str("static const wxPoint form_pos() { return ").Pos(prop_pos, no_dpi_scaling) += "; }";
         }
         if (m_form_node->hasProp(prop_size))
         {
-            code.Eol(eol_if_needed).Str("static const wxSize form_size() { return  ").WxSize(prop_size, no_dlg_units) +=
+            code.Eol(eol_if_needed).Str("static const wxSize form_size() { return  ").WxSize(prop_size, no_dpi_scaling) +=
                 "; }";
         }
         if (m_form_node->hasProp(prop_title))

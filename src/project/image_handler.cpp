@@ -122,14 +122,20 @@ bool ImageHandler::CheckNode(Node* node)
     Node* node_form = node->getForm();
 
     auto node_position = m_project_node->getChildPosition(node_form);
+    tt_string art_directory;
+    if (Project.getProjectNode()->hasValue(prop_art_directory))
+        art_directory = Project.getProjectNode()->as_string(prop_art_directory);
 
     for (auto& iter: node->getPropsVector())
     {
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
         {
             tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
-            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage || parts[IndexImage].filename().empty())
+            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage || parts[IndexImage].filename().empty() ||
+                parts[IndexImage] == art_directory)
+            {
                 continue;
+            }
 
             auto* embed = FindEmbedded(parts[IndexImage].filename());
             ASSERT(embed)

@@ -17,9 +17,8 @@
 
 wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
-                             DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
+                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_max_point_size))
     {

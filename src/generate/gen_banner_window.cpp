@@ -25,7 +25,7 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxBannerWindow not available in wxRuby3",
                                         wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
-        widget->Wrap(DlgPoint(parent, 150));
+        widget->Wrap(DlgPoint(150));
         return widget;
     }
     auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),

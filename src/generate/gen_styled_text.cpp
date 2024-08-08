@@ -168,9 +168,8 @@ inline wxImage wxueImage(const unsigned char* long_parameter_name,size_t another
 
 wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto scintilla =
-        new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                             DlgSize(parent, node, prop_size), GetStyleInt(node), node->as_wxString(prop_var_name));
+    auto scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                          DlgSize(node, prop_size), GetStyleInt(node), node->as_wxString(prop_var_name));
 
     // By default, scintilla sets this margin width to 16. We want to shut off all margins unless the user specifically
     // requests one.

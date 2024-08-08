@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDialog generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +21,8 @@
 // This is only used for Mockup Preview and XrcCompare -- it is not used by the Mockup panel
 wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                              DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                              GetStyleInt(node));
 
     if (node->hasValue(prop_extra_style))
     {
@@ -39,12 +39,20 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
     }
 
+    if (node->isPropValue(prop_variant, "small"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    else if (node->isPropValue(prop_variant, "mini"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    else if (node->isPropValue(prop_variant, "large"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+
     return widget;
 }
 
 bool DialogFormGenerator::ConstructionCode(Code& code)
 {
-    bool dialog_units = code.node()->as_string(prop_size).contains("d", tt::CASE::either);
+    ASSERT_MSG(!code.node()->as_string(prop_size).contains("d", tt::CASE::either),
+               "Dialog units should not be used for wxDialog")
     if (code.is_cpp())
     {
         code.Str("bool ").as_string(prop_class_name);
@@ -64,11 +72,8 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.as_string(prop_derived_class);
         else
             code += "wxDialog";
-        code += "::Create(parent, id, title, pos, ";
-        if (dialog_units)
-            code += "ConvertDialogToPixels(size), style, name))";
-        else
-            code += "size, style, name))";
+        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), ";
+        code += "wxWindow::FromDIP(size), style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())
@@ -142,6 +147,19 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
 
 bool DialogFormGenerator::SettingsCode(Code& code)
 {
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     if (code.is_python())
     {
         if (code.hasValue(prop_extra_style))
@@ -194,19 +212,61 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     }
     else
     {
-        code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
         if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
         }
 
-        if (form->as_wxSize(prop_size) == wxDefaultSize)
+        if (form->as_wxSize(prop_size) != wxDefaultSize)
         {
-            code.Eol().FormFunction("Fit(").EndFunction();
+            // If both size.x and size.y are set to non-default values, then set the window size and
+            // call Layout() to layout the child controls to match the new size. However, if one
+            // dimension has a default value, then we need to call Fit() first to calculate what
+            // that size should be, then call SetSize() and Layout().
+
+            code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
+            auto size = code.node()->as_wxSize(prop_size);
+            if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
+            {
+                Code code_temp = code;
+                code_temp.clear();
+                code_temp.FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                auto comment_column = code_temp.size() + 2;
+
+                code_temp = code;
+                code_temp.clear();
+                code_temp.FormFunction("Fit(").EndFunction();
+                while (code_temp.size() < comment_column)
+                    code_temp += ' ';
+                code.Eol().Str(code_temp);
+                if (size.x == wxDefaultCoord)
+                    code += "// calculate width";
+                else
+                    code += "// calculate height";
+
+                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code.Str("  // set specified and calculated size dimensions");
+
+                code_temp = code;
+                code_temp.clear();
+                code_temp.FormFunction("Layout(").EndFunction();
+                while (code_temp.size() < comment_column)
+                    code_temp += ' ';
+                code.Eol().Str(code_temp).Str("// change layout to match SetSize() value");
+            }
+            else
+            {
+                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code.Eol().FormFunction("Layout(").EndFunction();
+            }
+        }
+        else
+        {
+            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
         }
     }
 
@@ -265,7 +325,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -273,7 +333,7 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))
@@ -297,14 +357,14 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->hasValue(prop_style))
@@ -352,6 +412,10 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     auto item = object;
     GenXrcObjectAttributes(node, item, "wxDialog");
 
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        ADD_ITEM_PROP(prop_variant, "variant")
+    }
     ADD_ITEM_PROP(prop_title, "title")
 
     if (node->hasValue(prop_style))

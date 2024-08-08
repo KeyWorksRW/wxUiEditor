@@ -164,14 +164,14 @@ using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
 // When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
 // wxUiEditor.exe.manifest and ../CMakeLists.txt
 
-constexpr const char* txtVersion = "wxUiEditor 1.2.1.0";
+constexpr const char* txtVersion = "wxUiEditor 1.2.9.0";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2024 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
 // This is the highest project number supported by this build of wxUiEditor. It should be
 // updated after every release, if there are any changes to the project format that might
 // require a newer version.
-constexpr const int curSupportedVer = 20;
+constexpr const int curSupportedVer = 21;
 
 // This is the default minimum required version for all generators. It is the version used by
 // the 1.0.0 release.
@@ -183,6 +183,7 @@ constexpr const int minRequiredVer = 15;
 // 1.1.2 == version 18
 // 1.2.0 == version 19 (1.2.0)
 // 1.2.1 == version 20 (1.2.1)
+// 1.3.0 == version 21 (1.3.0)
 
 // Use when you need to return an empty const tt_string&
 extern tt_string tt_empty_cstr;

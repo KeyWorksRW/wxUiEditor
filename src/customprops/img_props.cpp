@@ -5,8 +5,10 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "img_props.h"        // ImageProperties
+#include <wx/artprov.h>  // wxArtProvider class
+
 #include "image_handler.h"    // ImageHandler class
+#include "img_props.h"        // ImageProperties
 #include "node.h"             // Node -- Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
@@ -26,7 +28,7 @@ void ImageProperties::InitValues(tt_string_view value)
         if (type == "Header" && image.extension().is_sameas(".xpm", tt::CASE::either))
             type = "XPM";
 
-        if (type == "SVG" && mstr.size() > IndexImage + 1)
+        if ((type == "SVG" || type == "Art") && mstr.size() > IndexImage + 1)
         {
             m_size = GetSizeInfo(mstr[IndexSize]);
         }
@@ -36,6 +38,22 @@ void ImageProperties::InitValues(tt_string_view value)
             if (embed)
             {
                 m_size = embed->size;
+            }
+            else if (type == "Art" && mstr.size() > IndexImage)
+            {
+                tt_view_vector art_str(mstr[IndexArtID], '|', tt::TRIM::both);
+                wxString art_id = art_str[0].make_wxString();
+                auto bmp = wxArtProvider::GetBitmap(art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                if (bmp.IsOk())
+                {
+                    m_size = bmp.GetSize();
+                    m_def_art_size = m_size;
+                }
+                else
+                {
+                    m_size.x = -1;
+                    m_size.y = -1;
+                }
             }
             else
             {
@@ -52,6 +70,10 @@ tt_string ImageProperties::CombineValues()
     image.backslashestoforward();
     value << type << ';' << image;
     if (type == "SVG")
+    {
+        value << ";[" << m_size.x << ',' << m_size.y << "]";
+    }
+    else if (type == "Art" && m_size != m_def_art_size)
     {
         value << ";[" << m_size.x << ',' << m_size.y << "]";
     }

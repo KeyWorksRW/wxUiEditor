@@ -20,7 +20,7 @@
 wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_defaultfolder),
-                                       DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node),
+                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
                                        node->as_wxString(prop_filter), node->as_int(prop_defaultfilter));
 
     widget->ShowHidden(node->as_bool(prop_show_hidden));

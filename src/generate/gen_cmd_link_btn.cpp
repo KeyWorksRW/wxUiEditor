@@ -19,8 +19,8 @@
 wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_main_label),
-                                          node->as_wxString(prop_note), DlgPoint(parent, node, prop_pos),
-                                          DlgSize(parent, node, prop_size), GetStyleInt(node));
+                                          node->as_wxString(prop_note), DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                          GetStyleInt(node));
 
     if (node->as_bool(prop_default))
         widget->SetDefault();

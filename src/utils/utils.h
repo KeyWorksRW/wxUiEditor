@@ -35,14 +35,14 @@ const char* ConvertFontFamilyToString(wxFontFamily family);
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
 tt_string ConvertEscapeSlashes(tt_string_view str);
 
-// If the property specifies dialog units, then parent will be used to do the conversion
-wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
+// This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
+wxPoint DlgPoint(Node* node, GenEnum::PropName prop);
 
-// Given a width (wxPoint::x) this will convert it into dialog units.
-int DlgPoint(wxObject* parent, int width);
+// This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
+wxSize DlgSize(Node* node, GenEnum::PropName prop);
 
-// If the property specifies dialog units, then parent will be used to do the conversion
-wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
+// Given a width (wxPoint::x) this will convert it using FromDIP()
+int DlgPoint(int width);
 
 // Convert a filename to a valid variable name. This will handle filnames with leading
 // numbers, utf8 characters, and other characters that are not valid in a variable name.

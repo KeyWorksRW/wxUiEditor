@@ -65,10 +65,6 @@ tt_string GenerateBitmapCode(const tt_string& description);
 // with "#if wxCHECK_VERSION(3, 1, 6)" and caller must supply #else and #endif.
 bool GenerateBundleCode(const tt_string& description, tt_string& code);
 
-// Will generate "wxDefaultPosition" if prop_pos is -1;-1
-void GenPos(Node* node, tt_string& code);
-void GenSize(Node* node, tt_string& code);
-
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.
 //
@@ -89,11 +85,6 @@ void GenValidatorSettings(Code& code);
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.
 tt_string GenerateIconCode(const tt_string& description);
-
-// Generates wxSize(x,y) or ConvertDialogToPixels(wxSize(x,y))
-//
-// wxSize will be converted to dialog units if the size contains a 'd' character.
-tt_string GenerateWxSize(Node* node, PropName prop);
 
 // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
 // Generates wxNullColour if the property is empty.

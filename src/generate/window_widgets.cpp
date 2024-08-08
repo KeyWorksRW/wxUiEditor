@@ -17,8 +17,8 @@
 
 wxObject* ScrolledCanvasGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolled<wxWindow>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                           DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxScrolled<wxWindow>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                           DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -66,8 +66,8 @@ bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                          DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                          DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

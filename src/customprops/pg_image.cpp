@@ -7,7 +7,8 @@
 
 #include <array>
 
-#include <wx/arrstr.h>             // wxArrayString class
+#include <wx/arrstr.h>  // wxArrayString class
+#include <wx/artprov.h>
 #include <wx/dir.h>                // wxDir is a class for enumerating the files in a directory
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -72,8 +73,34 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
-    AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_SVG));
-    Item(IndexSize)->SetHelpString("Default size -- ignored unless it's a SVG file.");
+    if (m_isEmbeddedImage)
+    {
+        if (m_img_props.type == s_type_names[SVG_INDEX])
+        {
+            AddPrivateChild(new CustomPointProperty("Size", prop, CustomPointProperty::type_SVG));
+        }
+        else
+        {
+            AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_BITMAP));
+        }
+    }
+    else
+    {
+        if (m_img_props.type == s_type_names[SVG_INDEX])
+        {
+            AddPrivateChild(new CustomPointProperty("Size", prop, CustomPointProperty::type_SVG));
+        }
+        else if (m_img_props.type == s_type_names[ART_INDEX])
+        {
+            AddPrivateChild(new CustomPointProperty("Size", prop, CustomPointProperty::type_ART));
+        }
+        else
+        {
+            AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_BITMAP));
+        }
+    }
+
+    Item(IndexSize)->SetHelpString("Default size -- ignored unless it's an SVG or ART file.");
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -83,7 +110,7 @@ void PropertyGrid_Image::RefreshChildren()
     {
         m_img_props.InitValues(value.utf8_string());
 
-        if (m_img_props.type == "SVG")
+        if (m_img_props.type == "SVG" || m_img_props.type == "Art")
         {
             Item(IndexSize)->SetLabel("Size");
         }
@@ -249,6 +276,12 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                     img_props.SetWidth(24);
                     img_props.SetHeight(24);
                 }
+                else if (img_props.type == "Art")
+                {
+                    auto copy = value;
+                    // img_props.SetWidth(24);
+                    // img_props.SetHeight(24);
+                }
             }
             break;
 
@@ -256,6 +289,18 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             {
                 if (img_props.type == "Art")
                 {
+                    auto mstr = childValue.GetString().utf8_string();
+                    tt_view_vector art_str(mstr, '|', tt::TRIM::both);
+                    wxString art_id = art_str[0].make_wxString();
+                    auto bmp = wxArtProvider::GetBitmap(art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                    if (bmp.IsOk())
+                    {
+                        img_props.SetSize(bmp.GetSize());
+                    }
+                    else
+                    {
+                        img_props.SetSize(wxDefaultSize);
+                    }
                     img_props.image.assign_wx(childValue.GetString());
                 }
                 else

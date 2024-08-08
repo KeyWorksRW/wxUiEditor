@@ -20,8 +20,8 @@
 
 wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                    DlgSize(node, prop_size), GetStyleInt(node));
     if (node->as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
         widget->SetArtProvider(new wxAuiGenericTabArt());
     else if (node->as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))

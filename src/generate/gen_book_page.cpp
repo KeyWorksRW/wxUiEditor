@@ -33,13 +33,13 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         ASSERT(grandparent && grandparent->isGen(gen_wxTreebook));
 
         auto grand_window = getMockup()->GetMockupContent()->Get_wxObject(grandparent);
-        widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                             DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                             DlgSize(node, prop_size), GetStyleInt(node));
     }
     else
     {
-        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                             DlgSize(parent, node, prop_size), GetStyleInt(node));
+        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                             GetStyleInt(node));
     }
 
     if (node_parent->isGen(gen_BookPage))

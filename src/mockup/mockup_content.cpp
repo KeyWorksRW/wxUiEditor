@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Mockup of a form's contents
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +47,9 @@ void MockupContent::RemoveNodes()
     SetSizer(nullptr);
 
     m_parent_sizer = nullptr;
+
+    if (m_variant != wxWINDOW_VARIANT_NORMAL)
+        ResetWindowVariant();
 }
 
 // This is called by MockupParent in order to create all child components
@@ -58,6 +61,8 @@ void MockupContent::CreateAllGenerators()
 
     ASSERT(m_mockupParent->getSelectedForm());
     auto form = m_mockupParent->getSelectedForm();
+    if (m_variant != wxWINDOW_VARIANT_NORMAL)
+        ResetWindowVariant();
 
     if (form->isGen(gen_wxWizard))
     {
@@ -95,6 +100,28 @@ void MockupContent::CreateAllGenerators()
     }
     else
     {
+        if (form->hasProp(prop_variant) && form->as_string(prop_variant) != "normal")
+        {
+            if (m_variant != wxWINDOW_VARIANT_NORMAL)
+                ResetWindowVariant();
+
+            if (form->isPropValue(prop_variant, "small"))
+            {
+                SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+                m_variant = wxWINDOW_VARIANT_SMALL;
+            }
+            else if (form->isPropValue(prop_variant, "mini"))
+            {
+                SetWindowVariant(wxWINDOW_VARIANT_MINI);
+                m_variant = wxWINDOW_VARIANT_MINI;
+            }
+            else if (form->isPropValue(prop_variant, "large"))
+            {
+                SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+                m_variant = wxWINDOW_VARIANT_LARGE;
+            }
+        }
+
         if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||
             form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_wxPropertySheetDialog))
         {
@@ -354,18 +381,22 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 {
     if (auto minsize = node->as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
     {
+        ASSERT_MSG(!node->as_string(prop_minimum_size).contains("d", tt::CASE::either),
+                   "Minimum size should not contain 'd' for dialog units");
         if (node->as_string(prop_minimum_size).contains("d", tt::CASE::either))
             window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
         else
-            window->SetMinSize(minsize);
+            window->SetMinSize(convert_win->FromDIP(minsize));
     }
 
     if (auto maxsize = node->as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
+        ASSERT_MSG(!node->as_string(prop_maximum_size).contains("d", tt::CASE::either),
+                   "Maximum size should not contain 'd' for dialog units");
         if (node->as_string(prop_maximum_size).contains("d", tt::CASE::either))
             window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
         else
-            window->SetMaxSize(maxsize);
+            window->SetMaxSize(convert_win->FromDIP(maxsize));
     }
 
     if (auto& variant = node->as_string(prop_variant); variant.size() && variant != "normal")
@@ -672,4 +703,39 @@ void MockupContent::SelectNode(wxObject* wxobject)
     {
         wxGetFrame().SelectNode(result->second);
     }
+}
+
+void MockupContent::ResetWindowVariant()
+{
+    // Essentially this is the opposite of wxWindowBase::DoSetWindowVariant found in wxWidgets/src/common/wincmn.cpp -- this
+    // just multiplies rather than divides if smaller, or divides rather than multiplies if larger.
+
+    if (m_variant == wxWINDOW_VARIANT_NORMAL)
+        return;
+
+    wxFont font = GetFont();
+    double size = font.GetFractionalPointSize();
+
+    switch (m_variant)
+    {
+        case wxWINDOW_VARIANT_SMALL:
+            size *= 1.2;
+            break;
+
+        case wxWINDOW_VARIANT_MINI:
+            size *= 1.2 * 1.2;
+            break;
+
+        case wxWINDOW_VARIANT_LARGE:
+            size /= 1.2;
+            break;
+
+        default:
+            FAIL_MSG("unexpected window variant");
+            break;
+    }
+
+    font.SetFractionalPointSize(size);
+    SetFont(font);
+    m_variant = wxWINDOW_VARIANT_NORMAL;
 }

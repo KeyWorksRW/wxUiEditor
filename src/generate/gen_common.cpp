@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <wx/artprov.h>
 
 #include <charconv>  // for std::to_chars
 
@@ -152,32 +154,6 @@ tt_string GetParentName(Node* node)
 
     ASSERT_MSG(parent, tt_string() << node->getNodeName() << " has no parent!");
     return tt_string("internal error");
-}
-
-void GenPos(Node* node, tt_string& code)
-{
-    auto point = node->as_wxPoint(prop_pos);
-    if (point.x != -1 || point.y != -1)
-    {
-        if (node->as_string(prop_pos).contains("d", tt::CASE::either))
-        {
-            code << "ConvertDialogToPixels(wxPoint(" << point.x << ", " << point.y << "))";
-        }
-        else
-        {
-            code << "wxPoint(" << point.x << ", " << point.y << ")";
-        }
-    }
-    else
-        code << "wxDefaultPosition";
-}
-
-void GenSize(Node* node, tt_string& code)
-{
-    if (node->as_wxSize(prop_size) != wxDefaultSize)
-        code << GenerateWxSize(node, prop_size);
-    else
-        code << "wxDefaultSize";
 }
 
 static void GenStyle(Node* node, tt_string& code, const char* prefix)
@@ -513,6 +489,17 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         // Note that current documentation states that the client is required, but the header file says otherwise
         if (art_client.size())
             code << art_client;
+
+        if (parts.size() > IndexSize && parts[IndexSize].size())
+        {
+            wxSize svg_size { -1, -1 };
+            svg_size = GetSizeInfo(parts[IndexSize]);
+
+            if (svg_size != wxDefaultSize)
+            {
+                code << ", wxSize(" << svg_size.x << ", " << svg_size.y << ')';
+            }
+        }
         code << ')';
     }
 
@@ -1281,21 +1268,6 @@ tt_string GenerateIconCode(const tt_string& description)
         code << "#endif\n";
     }
 
-    return code;
-}
-
-tt_string GenerateWxSize(Node* node, PropName prop)
-{
-    tt_string code;
-    auto size = node->as_wxSize(prop);
-    if (node->as_string(prop).contains("d", tt::CASE::either))
-    {
-        code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
-    }
-    else
-    {
-        code << "wxSize(" << size.x << ", " << size.y << ")";
-    }
     return code;
 }
 

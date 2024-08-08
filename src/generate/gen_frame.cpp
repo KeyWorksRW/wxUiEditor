@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFrame generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -39,8 +39,8 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Add("class ").NodeName().Add("(wx.Frame):\n");
         code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
-        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
-        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos, code::force_scaling);
+        code.Comma().Add("size=").WxSize(prop_size, code::force_scaling);
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
@@ -72,8 +72,11 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         }
         code.Comma().Str("title = ").QuotedString(prop_title);
         // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
-        code.Comma().CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE")).Str("size = ").WxSize(prop_size);
+        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos, code::force_scaling);
+        code.Comma()
+            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
+            .Str("size = ")
+            .WxSize(prop_size, code::force_scaling);
         code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
         if (code.hasValue(prop_window_name))
         {
@@ -103,6 +106,19 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
 
 bool FrameFormGenerator::SettingsCode(Code& code)
 {
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     if (code.is_cpp())
     {
         if (auto icon_code = GenerateIconCode(code.node()->as_string(prop_icon)); icon_code.size())
@@ -113,7 +129,7 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     }
     else
     {
-        // TODO: [Randalphwa - 12-31-2022] Add Python code for setting icon
+        // TODO: [Randalphwa - 12-31-2022] Add Python and Ruby code for setting icon
     }
 
     if (code.is_cpp())
@@ -123,7 +139,7 @@ bool FrameFormGenerator::SettingsCode(Code& code)
             code.as_string(prop_derived_class);
         else
             code += "wxFrame";
-        code += "::Create(parent, id, title, pos, size, style, name))";
+        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
         code.Eol().Tab().Str("return false;");
     }
     else if (code.is_python())
@@ -147,11 +163,11 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     const auto max_size = frame->as_wxSize(prop_maximum_size);
     if (min_size != wxDefaultSize)
     {
-        code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
+        code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
     }
     if (max_size != wxDefaultSize)
     {
-        code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+        code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
     }
 
     if (code.hasValue(prop_window_extra_style))
@@ -234,7 +250,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -242,7 +258,7 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);
@@ -287,14 +303,14 @@ bool FrameFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
@@ -346,13 +362,17 @@ bool FrameFormGenerator::BaseClassNameCode(Code& code)
 
 int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    object.append_attribute("class").set_value("wxFrame");
-    object.append_attribute("name").set_value(node->as_string(prop_class_name));
+    // We use item so that the macros in base_generator.h work, and the code looks the same as other
+    // widget XRC generatorsl
+    auto item = object;
 
-    if (node->hasValue(prop_title))
+    GenXrcObjectAttributes(node, item, "wxDialog");
+    if (!node->isPropValue(prop_variant, "normal"))
     {
-        object.append_child("title").text().set(node->as_string(prop_title));
+        ADD_ITEM_PROP(prop_variant, "variant")
     }
+    ADD_ITEM_PROP(prop_title, "title")
+
     if (node->hasValue(prop_center))
     {
         if (node->as_string(prop_center) == "wxVERTICAL" || node->as_string(prop_center) == "wxHORIZONTAL" ||

@@ -95,7 +95,7 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->as_wxString(prop_label), node->as_wxBitmap(prop_bitmap),
-                          DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+                          DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

@@ -37,9 +37,8 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
         wildcard = wxFileSelectorDefaultWildcardStr;
     }
 
-    auto widget =
-        new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), msg, wildcard,
-                             DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), msg,
+                                       wildcard, DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

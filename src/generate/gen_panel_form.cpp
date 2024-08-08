@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxPanel Form generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,8 +19,8 @@
 
 wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                              DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                              GetStyleInt(node));
     if (!node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
@@ -35,6 +35,13 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
     }
+
+    if (node->isPropValue(prop_variant, "small"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    else if (node->isPropValue(prop_variant, "mini"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    else if (node->isPropValue(prop_variant, "large"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
 
     return widget;
 }
@@ -55,8 +62,8 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Add("class ").NodeName().Add("(wx.Panel):\n");
         code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
-        code.Comma().Add("pos=").Pos(prop_pos);
-        code.Comma().Add("size=").WxSize(prop_size);
+        code.Comma().Add("pos=").Pos(prop_pos, code::force_scaling);
+        code.Comma().Add("size=").WxSize(prop_size, code::force_scaling);
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
@@ -102,6 +109,19 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
 
 bool PanelFormGenerator::SettingsCode(Code& code)
 {
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
@@ -133,26 +153,47 @@ bool PanelFormGenerator::SettingsCode(Code& code)
 
 bool PanelFormGenerator::AfterChildrenCode(Code& code)
 {
-    Node* panel;
+    Node* form;
     auto* node = code.node();
+    Node* form_sizer = nullptr;
     if (node->isForm())
     {
-        panel = node;
-        ASSERT_MSG(panel->getChildCount(), "Trying to generate code for a wxPanel with no children.")
-        if (!panel->getChildCount())
+        form = node;
+        ASSERT_MSG(form->getChildCount(), "Trying to generate code for a wxform with no children.")
+        if (!form->getChildCount())
             return true;  // empty dialog, so nothing to do
-        ASSERT_MSG(panel->getChild(0)->isSizer(), "Expected first child of a wxPanel to be a sizer.");
-        if (panel->getChild(0)->isSizer())
-            node = panel->getChild(0);
+        ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of a wxform to be a sizer.");
+        if (form->getChild(0)->isSizer())
+            form_sizer = form->getChild(0);
     }
     else
     {
-        panel = node->getForm();
+        form = node->getForm();
     }
 
-    const auto min_size = panel->as_wxSize(prop_minimum_size);
-    const auto max_size = panel->as_wxSize(prop_maximum_size);
-    const auto size = panel->as_wxSize(prop_size);
+    const auto min_size = form->as_wxSize(prop_minimum_size);
+    const auto max_size = form->as_wxSize(prop_maximum_size);
+    const auto size = form->as_wxSize(prop_size);
+
+    if (!form_sizer)
+    {
+        if (min_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+        }
+        if (max_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+        }
+
+        // Note that without a sizer, we cannot calculate a default dimension
+        if (size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+        }
+
+        return true;
+    }
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize && size == wxDefaultSize)
     {
@@ -160,17 +201,65 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
     }
     else
     {
-        code.FormFunction("SetSizer(").NodeName(node).EndFunction();
-        if (size == wxDefaultSize)
+        if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("Fit(").EndFunction();
+            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+        }
+        if (max_size != wxDefaultSize)
+        {
+            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+        }
+
+        if (form->as_wxSize(prop_size) != wxDefaultSize)
+        {
+            // If both size.x and size.y are set to non-default values, then set the window size and
+            // call Layout() to layout the child controls to match the new size. However, if one
+            // dimension has a default value, then we need to call Fit() first to calculate what
+            // that size should be, then call SetSize() and Layout().
+
+            code.FormFunction("SetSizer(").NodeName(form_sizer).EndFunction();
+            if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
+            {
+                Code code_temp = code;
+                code_temp.clear();
+                code_temp.FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                auto comment_column = code_temp.size() + 2;
+
+                code_temp = code;
+                code_temp.clear();
+                code_temp.FormFunction("Fit(").EndFunction();
+                while (code_temp.size() < comment_column)
+                    code_temp += ' ';
+                code.Eol().Str(code_temp);
+                if (size.x == wxDefaultCoord)
+                    code += "// calculate width";
+                else
+                    code += "// calculate height";
+
+                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code.Str("  // set specified and calculated size dimensions");
+
+                code_temp = code;
+                code_temp.clear();
+                code_temp.FormFunction("Layout(").EndFunction();
+                while (code_temp.size() < comment_column)
+                    code_temp += ' ';
+                code.Eol().Str(code_temp).Str("// change layout to match SetSize() value");
+            }
+            else
+            {
+                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code.Eol().FormFunction("Layout(").EndFunction();
+            }
+        }
+        else
+        {
+            code.FormFunction("SetSizerAndFit(").NodeName(form_sizer).EndFunction();
         }
     }
 
-    if (size != wxDefaultSize)
-    {
-        code.Eol().FormFunction("SetSize(").WxSize(prop_size).EndFunction();
-    }
+    // REVIEW: [Randalphwa - 08-08-2024] gen_dialog checks for a child that has focus and sets it
+    // here. Should we do the same for wxPanel?
 
     return true;
 }
@@ -187,7 +276,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
@@ -195,7 +284,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);
@@ -239,14 +328,14 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     if (position == wxDefaultPosition)
         code.Str("wxDefaultPosition");
     else
-        code.Pos(prop_pos, no_dlg_units);
+        code.Pos(prop_pos, no_dpi_scaling);
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
         code.Str("wxDefaultSize");
     else
-        code.WxSize(prop_size, no_dlg_units);
+        code.WxSize(prop_size, no_dpi_scaling);
 
     if (style.empty() && win_style.empty())
         code.Comma().Str("long style = 0");
@@ -306,6 +395,10 @@ int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     item.append_attribute("class").set_value("wxPanel");
     object.append_attribute("name").set_value(node->as_string(prop_class_name));
 
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        ADD_ITEM_PROP(prop_variant, "variant")
+    }
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 

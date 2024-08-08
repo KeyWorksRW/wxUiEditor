@@ -18,8 +18,8 @@ using namespace code;
 
 wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                                 DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
+    auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->hasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
         widget->SetHint(node->as_wxString(prop_hint));

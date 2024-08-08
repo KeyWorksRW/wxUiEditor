@@ -310,14 +310,44 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     if (Project.getProjectVersion() < 18)
                     {
                         Project.ForceProjectVersion(18);
-                        Project.setProjectUpdated();
                     }
                 };
+
+                // If there is a mainframe window, then convert dialog units to pixels since
+                // starting with wxUiEditor 21 (1.3.0) all positions and sizes are scaled
+                // automatically using FromDIP().
+                if (Project.getOriginalProjectVersion() < 21 && allow_ui &&
+                    (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
+                    tt::contains(iter.value(), 'd', tt::CASE::either))
+                {
+                    auto convertToWxSize = [](std::string_view value) -> wxSize
+                    {
+                        wxSize result { -1, -1 };
+                        if (value.size())
+                        {
+                            tt_view_vector tokens(value, ',');
+                            if (tokens.size())
+                            {
+                                if (tokens[0].size())
+                                    result.x = tokens[0].atoi();
+
+                                if (tokens.size() > 1 && tokens[1].size())
+                                    result.y = tokens[1].atoi();
+                            }
+                        }
+                        return result;
+                    };
+
+                    auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(convertToWxSize(iter.value()));
+                    prop->set_value(pixel_value);
+                    Project.ForceProjectVersion(21);
+                    continue;
+                }
 
                 // wxUiEditor 1.2.0 mistakenly added both prop_hidden and prop_hide_children.
                 // 1.2.1 removes the duplicate prop_hide_children, so this sets prop_hidden to
                 // true if prop_hide_children is true.
-                if (prop->get_name() == prop_hide_children && new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
+                else if (prop->get_name() == prop_hide_children && new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
                 {
                     new_node->set_value(prop_hidden, true);
                     prop->set_value(false);

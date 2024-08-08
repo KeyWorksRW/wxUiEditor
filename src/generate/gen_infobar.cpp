@@ -24,7 +24,7 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxInfoBar not available in wxRuby3",
                                         wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
-        widget->Wrap(DlgPoint(parent, 150));
+        widget->Wrap(DlgPoint(150));
         return widget;
     }
     m_infobar = new wxInfoBar(wxStaticCast(parent, wxWindow));

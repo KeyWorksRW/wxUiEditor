@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Custom property grid class for wxPoint
+// Purpose:   Custom property grid class for wxPoint/wxSize
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,9 @@ public:
     {
         type_size,
         type_point,
-        type_SVG
+        type_SVG,
+        type_ART,
+        type_BITMAP
     };
 
     CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type = CustomPointProperty::type_size);
@@ -35,6 +37,6 @@ public:
 
 private:
     wxPoint m_point { wxDefaultPosition };
-    bool m_dialog_units { false };
+    bool m_dpi_scaling { true };
     DataType m_prop_type;
 };

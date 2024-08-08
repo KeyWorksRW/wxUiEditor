@@ -17,8 +17,8 @@
 
 wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                   DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_int(prop_html_borders) >= 0)
         widget->SetBorders(wxStaticCast(parent, wxWindow)->FromDIP(node->as_int(prop_html_borders)));

@@ -38,4 +38,5 @@ public:
 private:
     bool m_isAnimationType { false };
     wxSize m_size { wxDefaultSize };
+    wxSize m_def_art_size { wxDefaultSize };
 };

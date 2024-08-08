@@ -72,8 +72,8 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.as_string(prop_derived_class);
         else
             code += "wxDialog";
-        code += "::Create(parent, id, title, pos, ";
-        code += "size, style, name))";
+        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), ";
+        code += "wxWindow::FromDIP(size), style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())

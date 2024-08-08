@@ -259,12 +259,10 @@ else()
 endif()
 
 if (MSVC)
-    # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
-    target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
-    target_compile_options(check_build PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
+    target_compile_options(wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
+    target_compile_options(check_build PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
 
-    target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>")
 
     # Assume the manifest is in the resource file

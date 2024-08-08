@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 
 - File menu now has a Reload Project command to reload the current project file from disk.
 - You can now change the size of Art images instead of using their default size.
+- Dialogs now support the variant property
+- Position and Size properties are now _always_ scaled when your generated code is run under Windows with a high DPI setting.
 
 ### Changed
 
@@ -18,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Fixed inability to hand-edit the location of a generated file
 - Add missing events to wxPropertyGrid and wxPropertyGridManager
 - wxPython now correctly loads embedded animation files for wx.adv.AnimationCtrl
+- XRC generation now includes variant property settings for forms
 
 ## [Released (1.2.1)]
 

@@ -253,6 +253,17 @@
         <category name="Window Settings">
             <property name="id" type="id"
                 help="The identifier for the panel.">wxID_ANY</property>
+            <property name="variant" type="option" help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
+                <option name="normal"
+                    help="Normal size"/>
+                <option name="small"
+                    help="About 25% smaller than normal."/>
+                <option name="mini"
+                    help="About 33% smaller than normal."/>
+                <option name="large"
+                    help="About 35% larger than normal."/>
+                normal
+            </property>
             <property name="pos" type="wxPoint"
                 help="Window position. The default is (-1, -1) which indicates that wxWidgets should generate a default position for the window."/>
             <property name="size" type="wxSize"

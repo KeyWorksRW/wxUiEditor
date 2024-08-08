@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxPanel Form generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,8 +19,8 @@
 
 wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                              DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                              GetStyleInt(node));
     if (!node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
@@ -35,6 +35,13 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
     }
+
+    if (node->isPropValue(prop_variant, "small"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    else if (node->isPropValue(prop_variant, "mini"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    else if (node->isPropValue(prop_variant, "large"))
+        widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
 
     return widget;
 }
@@ -102,6 +109,19 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
 
 bool PanelFormGenerator::SettingsCode(Code& code)
 {
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
@@ -306,6 +326,10 @@ int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     item.append_attribute("class").set_value("wxPanel");
     object.append_attribute("name").set_value(node->as_string(prop_class_name));
 
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        ADD_ITEM_PROP(prop_variant, "variant")
+    }
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 

@@ -33,9 +33,9 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
         return widget;
     }
 #if defined(WIN32)
-    auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
-                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), wxWebViewBackendDefault,
-                                 GetStyleInt(node));
+    auto widget =
+        wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url), DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), wxWebViewBackendDefault, GetStyleInt(node));
 #else
     auto* widget =
         new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxWebView mockup currently only available for Windows",

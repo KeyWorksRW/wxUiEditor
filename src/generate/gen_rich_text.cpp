@@ -18,8 +18,7 @@
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                     GetStyleInt(node) | wxRE_MULTILINE);
+                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
 
     if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));

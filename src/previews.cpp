@@ -395,8 +395,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                 {
                     wxDialog dlg;
                     if (!dlg.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title),
-                                    DlgPoint(form_node, prop_pos), DlgSize(form_node, prop_size),
-                                    GetStyleInt(form_node)))
+                                    DlgPoint(form_node, prop_pos), DlgSize(form_node, prop_size), GetStyleInt(form_node)))
                     {
                         wxMessageBox("Unable to create dialog", "C++ Preview");
                         return;

@@ -7,8 +7,8 @@
 
 #include <wx/artprov.h>  // wxArtProvider class
 
-#include "img_props.h"        // ImageProperties
 #include "image_handler.h"    // ImageHandler class
+#include "img_props.h"        // ImageProperties
 #include "node.h"             // Node -- Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
@@ -28,7 +28,7 @@ void ImageProperties::InitValues(tt_string_view value)
         if (type == "Header" && image.extension().is_sameas(".xpm", tt::CASE::either))
             type = "XPM";
 
-        if ((type == "SVG" || type == "Art")  && mstr.size() > IndexImage + 1)
+        if ((type == "SVG" || type == "Art") && mstr.size() > IndexImage + 1)
         {
             m_size = GetSizeInfo(mstr[IndexSize]);
         }

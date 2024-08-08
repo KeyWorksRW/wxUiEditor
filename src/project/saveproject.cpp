@@ -5,11 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "base_generator.h"  // BaseGenerator class
-#include "mainapp.h"         // App -- Main application class
-#include "node.h"            // Node class
-#include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
+#include "base_generator.h"   // BaseGenerator class
+#include "mainapp.h"          // App -- Main application class
+#include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "prop_decl.h"        // PropChildDeclaration and PropDeclaration classes
 
 #include "pugixml.hpp"
 

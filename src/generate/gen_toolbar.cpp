@@ -20,8 +20,8 @@
 
 wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
+    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
 
     if (node->hasValue(prop_margins))
     {
@@ -312,8 +312,8 @@ void ToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
 
 wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
+    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->hasValue(prop_margins))
     {

@@ -18,9 +18,8 @@
 
 wxObject* CtxHelpButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP, DlgPoint(node, prop_pos),
-                                DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP, DlgPoint(node, prop_pos),
+                                          DlgSize(node, prop_size), GetStyleInt(node));
 
     return widget;
 }

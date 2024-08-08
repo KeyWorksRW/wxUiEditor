@@ -23,8 +23,8 @@ using namespace code;
 wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node), node->as_int(prop_min),
-                                 node->as_int(prop_max), node->as_int(prop_initial));
+                                 DlgSize(node, prop_size), GetStyleInt(node), node->as_int(prop_min), node->as_int(prop_max),
+                                 node->as_int(prop_initial));
 
     if (node->as_bool(prop_hexadecimal))
         widget->SetBase(16);

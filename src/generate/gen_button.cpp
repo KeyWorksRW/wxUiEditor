@@ -16,8 +16,8 @@
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString,
-                               DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString, DlgPoint(node, prop_pos),
+                               DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_label))
     {

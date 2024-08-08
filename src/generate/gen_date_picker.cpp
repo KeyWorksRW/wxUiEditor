@@ -17,9 +17,8 @@
 
 wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
-                             DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
+                                       DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_style).contains("wxDP_ALLOWNONE"))
         widget->SetNullText(node->as_wxString(prop_null_text));

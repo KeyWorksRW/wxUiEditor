@@ -32,9 +32,9 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->Wrap(DlgPoint(150));
         return widget;
     }
-    auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                      DlgSize(node, prop_size), wxArrayInt(), wxArrayString(),
-                                      node->as_int(prop_type) | GetStyleInt(node));
+    auto widget =
+        new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                            wxArrayInt(), wxArrayString(), node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())

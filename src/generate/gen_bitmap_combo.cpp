@@ -18,8 +18,7 @@
 wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr,
-                                       GetStyleInt(node));
+                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));

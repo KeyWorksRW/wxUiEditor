@@ -38,8 +38,8 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                             DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                             GetStyleInt(node));
     }
 
     if (node_parent->isGen(gen_BookPage))

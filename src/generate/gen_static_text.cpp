@@ -24,9 +24,8 @@ wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
     wxStaticTextBase* widget;
     if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)
     {
-        widget =
-            new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                    DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
+                                         DlgSize(node, prop_size), GetStyleInt(node));
     }
     else
     {

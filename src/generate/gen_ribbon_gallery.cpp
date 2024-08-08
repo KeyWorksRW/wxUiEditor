@@ -19,8 +19,8 @@
 
 wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos),
-                                      DlgSize(node, prop_size), 0);
+    auto widget =
+        new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

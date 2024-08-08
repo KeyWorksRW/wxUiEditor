@@ -394,7 +394,8 @@ public:
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
     //
     // If the only style specified is def_style, then it will not be added.
-    Code& PosSizeFlags(int enable_dpi_scaling = conditional_scaling, bool uses_def_validator = false, tt_string_view def_style = tt_empty_cstr);
+    Code& PosSizeFlags(int enable_dpi_scaling = conditional_scaling, bool uses_def_validator = false,
+                       tt_string_view def_style = tt_empty_cstr);
 
     // Call this when you need to force a specific style such as "wxCHK_3STATE"
     Code& PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator = true);

@@ -20,9 +20,8 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
         style_value |= wxALIGN_RIGHT;
 
-    auto widget =
-        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value | GetStyleInt(node));
+    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value | GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
         widget->SetValue(true);

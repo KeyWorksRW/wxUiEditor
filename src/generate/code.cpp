@@ -1490,13 +1490,13 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     return *this;
 }
 
-Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
+Code& Code::PosSizeFlags(int enable_dpi_scaling, bool uses_def_validator, tt_string_view def_style)
 {
     if (m_node->hasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
         Comma();
-        Pos().Comma().WxSize().Comma();
+        Pos(prop_pos, enable_dpi_scaling).Comma().WxSize(prop_size, enable_dpi_scaling).Comma();
         Style();
         if (uses_def_validator)
             Comma().Add("wxDefaultValidator");
@@ -1527,7 +1527,7 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
     if (style_needed)
     {
         Comma();
-        Pos().Comma().WxSize().Comma().Style();
+        Pos(prop_pos, enable_dpi_scaling).Comma().WxSize(prop_size, enable_dpi_scaling).Comma().Style();
         if (def_style.size() && ends_with(def_style))
         {
             erase(size() - def_style.size());
@@ -1538,12 +1538,12 @@ Code& Code::PosSizeFlags(bool uses_def_validator, tt_string_view def_style)
     else if (m_node->as_wxSize(prop_size) != wxDefaultSize)
     {
         Comma();
-        Pos().Comma().WxSize();
+        Pos(prop_pos, enable_dpi_scaling).Comma().WxSize(prop_size, enable_dpi_scaling);
     }
     else if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
     {
         Comma();
-        Pos();
+        Pos(prop_pos, enable_dpi_scaling);
     }
     EndFunction();
     return *this;

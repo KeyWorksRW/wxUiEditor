@@ -841,9 +841,10 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
             if (m_node->hasValue(prop_derived_params))
             {
                 *this += m_node->as_string(prop_derived_params);
+                RightTrim();
                 if (back() != ',')
-                    *this += ", ";
-                if (back() != ' ')
+                    Comma();
+                else
                     *this += ' ';
             }
             return *this;
@@ -890,6 +891,15 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     }
 
     *this += '(';
+    if (m_node->hasValue(prop_derived_params))
+    {
+        *this += m_node->as_string(prop_derived_params);
+        RightTrim();
+        if (back() != ',')
+            Comma();
+        else
+            *this += ' ';
+    }
     return *this;
 }
 

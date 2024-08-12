@@ -139,7 +139,18 @@ bool FrameFormGenerator::SettingsCode(Code& code)
             code.as_string(prop_derived_class);
         else
             code += "wxFrame";
-        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
+        code += "::Create(";
+        if (code.node()->hasValue(prop_derived_params))
+        {
+            code += code.node()->as_string(prop_derived_params);
+            code.RightTrim();
+            if (code.back() != ',')
+                code.Comma();
+            else
+                code += ' ';
+        }
+
+        code += "parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
         code.Eol().Tab().Str("return false;");
     }
     else if (code.is_python())

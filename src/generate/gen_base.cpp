@@ -231,10 +231,17 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     {
         tt_string header("#include \"");
         header << node->as_string(prop_derived_header) << '"';
-        set_src.insert(header);
+        if (node->isForm())
+        {
+            set_hdr.insert(header);
+        }
+        else
+        {
+            set_src.insert(header);
+        }
     }
 
-    if (node->hasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
+    if (!node->isForm() && node->hasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
     {
         set_hdr.insert(tt_string() << "class " << node->as_string(prop_derived_class) << ';');
     }

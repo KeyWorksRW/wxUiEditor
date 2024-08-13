@@ -139,9 +139,9 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
 
 bool RibbonBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_derived_class))
+    if (code.hasValue(prop_subclass))
     {
-        code.as_string(prop_derived_class);
+        code.as_string(prop_subclass);
     }
     else
     {

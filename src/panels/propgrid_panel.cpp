@@ -574,7 +574,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_ruby_combined_file:
                     case prop_cmake_file:
                     case prop_folder_cmake_file:
-                    case prop_derived_header:
+                    case prop_subclass_header:
                     case prop_output_file:
                     case prop_data_file:
                         return new ttFileProperty(prop);

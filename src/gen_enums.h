@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -430,6 +430,9 @@ namespace GenEnum
         prop_stc_wrap_visual_location,
         prop_stock_id,
         prop_style,
+        prop_subclass,
+        prop_subclass_header,
+        prop_subclass_params,
         prop_symbol_margin,
         prop_symbol_mouse_sensitive,
         prop_sync_hover_colour,

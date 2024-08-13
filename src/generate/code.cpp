@@ -834,9 +834,9 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     if (is_cpp())
     {
         *this += "new ";
-        if (m_node->hasValue(prop_derived_class))
+        if (m_node->hasValue(prop_subclass))
         {
-            *this += m_node->as_string(prop_derived_class);
+            *this += m_node->as_string(prop_subclass);
             *this += '(';
             if (m_node->hasValue(prop_derived_params))
             {

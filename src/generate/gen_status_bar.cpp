@@ -86,7 +86,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     else
         num_fields = node->as_int(prop_fields);
 
-    if (node->hasValue(prop_derived_class))
+    if (node->hasValue(prop_subclass))
     {
         code.AddAuto().NodeName();
         code.CreateClass(false, "", true);

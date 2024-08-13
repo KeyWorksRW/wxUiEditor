@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -413,6 +413,9 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_stc_wrap_visual_location, "wrap_visual_location" },
     { prop_stock_id, "stock_id" },
     { prop_style, "style" },
+    { prop_subclass, "subclass" },
+    { prop_subclass_header, "subclass_header" },
+    { prop_subclass_params, "subclass_params" },
     { prop_symbol_margin, "symbol_margin" },
     { prop_symbol_mouse_sensitive, "symbol_mouse_sensitive" },
     { prop_sync_hover_colour, "sync_hover_colour" },

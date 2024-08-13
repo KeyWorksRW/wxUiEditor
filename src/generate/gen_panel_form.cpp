@@ -197,7 +197,7 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize && size == wxDefaultSize)
     {
-        code.FormFunction("SetSizerAndFit(").NodeName(node).EndFunction();
+        code.FormFunction("SetSizerAndFit(").NodeName(form_sizer).EndFunction();
     }
     else
     {

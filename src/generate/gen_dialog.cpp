@@ -228,7 +228,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
             // dimension has a default value, then we need to call Fit() first to calculate what
             // that size should be, then call SetSize() and Layout().
 
-            code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
+            code.Eol(eol_if_needed).FormFunction("SetSizer(").NodeName(child_node).EndFunction();
             auto size = code.node()->as_wxSize(prop_size);
             if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
             {
@@ -266,7 +266,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         }
         else
         {
-            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
+            code.Eol(eol_if_needed).FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
         }
     }
 

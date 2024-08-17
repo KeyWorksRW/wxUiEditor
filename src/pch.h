@@ -83,6 +83,10 @@
 
     //  warning: attribute declaration must precede definition
     #pragma clang diagnostic ignored "-Wignored-attributes"
+
+    // warning: unused typedef 'complete'
+    #pragma clang diagnostic ignored "-Wunused-local-typedef"
+
 #endif
 
 #include <map>

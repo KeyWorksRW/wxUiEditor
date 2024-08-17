@@ -168,7 +168,7 @@
 			help="Sets the font for the dialog. This should not be used if you don't want the font to be inherited by the dialog's children"/>
 		<property name="window_name" type="string_escapes"
 			help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual dialog boxes."/>
-		<property name="derived_class" type="string"
+		<property name="subclass" type="string"
 			help="If you have derived a class from wxDialog and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property. Note that your base class must specify a constructor with no parameters to match a wxDialog() constructor."/>
 	</gen>
 
@@ -759,12 +759,12 @@
 			help="Sets the font for this window. This should not be used for a parent window if you don't want its font to be inherited by its children"/>
 		<property name="context_help" type="string_escapes"
 			help="Sets the help text to be used as context-sensitive help for this window."/>
-		<property name="derived_class" type="string"
-			help="If you have derived a class from a wxWidget class and you want this component to use your derived class, then specify that class name here. You will need to add the header file for your class to the derived_header property."/>
-		<property name="derived_params" type="string_escapes"
-			help="Specifies additional parameters to insert before the normal wxWidget class parameters."/>
-		<property name="derived_header" type="file"
-			help="Specify the name of the header file that declares your derived class."/>
+		<property name="subclass" type="string"
+			help="If you have derived a class from a wxWidget class and you want this component to use your subclass, then specify that class name here. You will need to add the header file for your class to the subclass_header property."/>
+		<property name="subclass_params" type="string_escapes"
+			help="Specifies additional parameters to insert before the normal wxWidget parameters when Create() is called."/>
+		<property name="subclass_header" type="file"
+			help="Specify the name of the header file that declares your subclass."/>
 		<property name="window_name" type="string_escapes"/>
 		<property name="platforms" type="bitlist">
 			<option name="Windows"

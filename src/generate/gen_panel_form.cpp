@@ -125,8 +125,8 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->hasValue(prop_derived_class))
-            code.as_string(prop_derived_class);
+        if (code.node()->hasValue(prop_subclass))
+            code.as_string(prop_subclass);
         else
             code += "wxPanel";
         code += "::Create(parent, id, pos, size, style, name))";
@@ -373,9 +373,9 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
 bool PanelFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_derived_class))
+    if (code.hasValue(prop_subclass))
     {
-        code.as_string(prop_derived_class);
+        code.as_string(prop_subclass);
     }
     else
     {

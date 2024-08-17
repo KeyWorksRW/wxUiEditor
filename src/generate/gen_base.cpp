@@ -227,16 +227,23 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 
     generator->GetIncludes(node, set_src, set_hdr, m_language);
 
-    if (node->hasValue(prop_derived_header))
+    if (node->hasValue(prop_subclass_header))
     {
         tt_string header("#include \"");
-        header << node->as_string(prop_derived_header) << '"';
-        set_src.insert(header);
+        header << node->as_string(prop_subclass_header) << '"';
+        if (node->isForm())
+        {
+            set_hdr.insert(header);
+        }
+        else
+        {
+            set_src.insert(header);
+        }
     }
 
-    if (node->hasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
+    if (!node->isForm() && node->hasValue(prop_subclass) && !node->isPropValue(prop_class_access, "none"))
     {
-        set_hdr.insert(tt_string() << "class " << node->as_string(prop_derived_class) << ';');
+        set_hdr.insert(tt_string() << "class " << node->as_string(prop_subclass) << ';');
     }
 
     // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes contain properties for
@@ -323,9 +330,9 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 
     if (class_name.starts_with("wx"))
     {
-        if (node->hasValue(prop_derived_class))
+        if (node->hasValue(prop_subclass))
         {
-            code << node->as_string(prop_derived_class) << "* " << node->getNodeName() << ';';
+            code << node->as_string(prop_subclass) << "* " << node->getNodeName() << ';';
         }
         else
         {

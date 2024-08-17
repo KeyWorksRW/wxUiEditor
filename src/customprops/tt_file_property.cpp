@@ -107,9 +107,9 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             break;
 
         // Currently this is for a wxFrame window
-        case prop_derived_header:
+        case prop_subclass_header:
             root_path = Project.getProjectPath();
-            title = "Derived Header";
+            title = "Subclass Header";
             wildcard = "Header Files|*.h;*.hh;*.hpp;*.hxx";
             break;
 

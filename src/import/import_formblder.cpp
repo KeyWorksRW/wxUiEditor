@@ -892,12 +892,12 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         tt_string_vector parts(xml_prop.text().as_view(), ';', tt::TRIM::both);
         if (parts[0].empty())
             return;
-        if (auto prop = newobject->getPropPtr(prop_derived_class); prop)
+        if (auto prop = newobject->getPropPtr(prop_subclass); prop)
         {
             prop->set_value(parts[0]);
             if (parts.size() > 0 && !parts[1].contains("forward_declare"))
             {
-                prop = newobject->getPropPtr(prop_derived_header);
+                prop = newobject->getPropPtr(prop_subclass_header);
                 if (prop)
                 {
                     prop->set_value(parts[1]);

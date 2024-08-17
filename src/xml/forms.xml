@@ -313,7 +313,7 @@
             <property name="font" type="wxFont"
                 help="Sets the font for the panel. This should not be used if you don't want the font to be inherited by its children."/>
             <property name="window_name" type="string_escapes"/>
-            <property name="derived_class" type="string"
+            <property name="subclass" type="string"
                 help="If you have derived a class from wxPanel and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property."/>
         </category>
 

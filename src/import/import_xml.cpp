@@ -54,7 +54,7 @@ namespace xrc_import
         { "hover", prop_current },
         { "htmlcode", prop_html_content },
         { "inactive-bitmap", prop_inactive_bitmap },
-        { "include_file", prop_derived_header },
+        { "include_file", prop_subclass_header },
         { "linesize", prop_line_size },
         { "longhelp", prop_statusbar },  // Used by toolbar tools
         { "minsize", prop_min_size },
@@ -616,7 +616,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
         }
         else if (iter.name() == "subclass")
         {
-            new_node->set_value(prop_derived_class, iter.value());
+            new_node->set_value(prop_subclass, iter.value());
         }
     }
 }
@@ -1026,19 +1026,19 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         {
                             if (parts[0].contains(".h"))
                             {
-                                node->set_value(prop_derived_header, parts[0]);
+                                node->set_value(prop_subclass_header, parts[0]);
                             }
                             else if (parts.size() > 1)
                             {
-                                node->set_value(prop_derived_class, parts[0]);
+                                node->set_value(prop_subclass, parts[0]);
                                 if (parts[1].size())
-                                    node->set_value(prop_derived_header, parts[1]);
+                                    node->set_value(prop_subclass_header, parts[1]);
                             }
                         }
                     }
                     else
                     {
-                        node->set_value(prop_derived_class, value);
+                        node->set_value(prop_subclass, value);
                     }
                 }
                 return;

@@ -68,8 +68,8 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         }
 
         code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->hasValue(prop_derived_class))
-            code.as_string(prop_derived_class);
+        if (code.node()->hasValue(prop_subclass))
+            code.as_string(prop_subclass);
         else
             code += "wxDialog";
         code += "::Create(parent, id, title, wxWindow::FromDIP(pos), ";
@@ -386,9 +386,9 @@ bool DialogFormGenerator::HeaderCode(Code& code)
 
 bool DialogFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_derived_class))
+    if (code.hasValue(prop_subclass))
     {
-        code.as_string(prop_derived_class);
+        code.as_string(prop_subclass);
     }
     else
     {

@@ -293,7 +293,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             auto derived_name = ExtractQuotedString(derived_class);
             if (derived_name != type_name)
             {
-                form->set_value(prop_derived_class, derived_name);
+                form->set_value(prop_subclass, derived_name);
             }
         }
 

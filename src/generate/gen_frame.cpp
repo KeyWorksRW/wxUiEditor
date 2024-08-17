@@ -135,11 +135,22 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->hasValue(prop_derived_class))
-            code.as_string(prop_derived_class);
+        if (code.node()->hasValue(prop_subclass))
+            code.as_string(prop_subclass);
         else
             code += "wxFrame";
-        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
+        code += "::Create(";
+        if (code.node()->hasValue(prop_subclass_params))
+        {
+            code += code.node()->as_string(prop_subclass_params);
+            code.RightTrim();
+            if (code.back() != ',')
+                code.Comma();
+            else
+                code += ' ';
+        }
+
+        code += "parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
         code.Eol().Tab().Str("return false;");
     }
     else if (code.is_python())
@@ -348,9 +359,9 @@ bool FrameFormGenerator::HeaderCode(Code& code)
 
 bool FrameFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_derived_class))
+    if (code.hasValue(prop_subclass))
     {
-        code.as_string(prop_derived_class);
+        code.as_string(prop_subclass);
     }
     else
     {

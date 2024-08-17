@@ -269,9 +269,9 @@ bool MenuBarFormGenerator::HeaderCode(Code& code)
 
 bool MenuBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_derived_class))
+    if (code.hasValue(prop_subclass))
     {
-        code.as_string(prop_derived_class);
+        code.as_string(prop_subclass);
     }
     else
     {
@@ -346,9 +346,9 @@ bool PopupMenuGenerator::HeaderCode(Code& code)
 
 bool PopupMenuGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_derived_class))
+    if (code.hasValue(prop_subclass))
     {
-        code.as_string(prop_derived_class);
+        code.as_string(prop_subclass);
     }
     else
     {

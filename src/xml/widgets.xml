@@ -69,8 +69,8 @@
 
     <gen class="gen_CustomControl" image="CustomControl" type="widget">
         <inherits class="wxWindow">
-            <hide name="derived_class"/>
-            <hide name="derived_header"/>
+            <hide name="subclass"/>
+            <hide name="subclass_header"/>
         </inherits>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>

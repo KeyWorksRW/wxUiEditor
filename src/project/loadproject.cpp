@@ -488,13 +488,34 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
             }
             else  // property was not found
             {
-                if (find_prop->second == prop_base_hdr_includes)
+                // In version 1.3.0, the wxWindow property derived class property names have been
+                // replaced with subclass names.
+                if (find_prop->second == prop_derived_class)
+                {
+                    new_node->set_value(prop_subclass, iter.value());
+                    Project.setProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
+                else if (find_prop->second == prop_derived_header)
+                {
+                    new_node->set_value(prop_subclass_header, iter.value());
+                    Project.setProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
+                else if (find_prop->second == prop_derived_params)
+                {
+                    new_node->set_value(prop_subclass_params, iter.value());
+                    Project.setProjectUpdated();
+                    Project.ForceProjectVersion(curSupportedVer);
+                }
+
+                else if (find_prop->second == prop_base_hdr_includes)
                 {
                     new_node->set_value(prop_header_preamble, iter.value());
                     Project.setProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
-                if (find_prop->second == prop_base_src_includes)
+                else if (find_prop->second == prop_base_src_includes)
                 {
                     new_node->set_value(prop_source_preamble, iter.value());
                     Project.setProjectUpdated();

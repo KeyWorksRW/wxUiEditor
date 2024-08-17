@@ -22,7 +22,8 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 {
     m_prop_type = type;
 
-    if (type == CustomPointProperty::type_SVG && prop->hasValue() && prop->as_string().contains("["))
+    if ((type == CustomPointProperty::type_SVG || type == CustomPointProperty::type_ART) && prop->hasValue() &&
+        prop->as_string().contains("["))
     {
         tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
@@ -51,7 +52,8 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 
     // Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
     // itself as all scaling is done automatically.
-    if (type != CustomPointProperty::type_SVG)
+    if (type != CustomPointProperty::type_SVG && type != CustomPointProperty::type_ART &&
+        type != CustomPointProperty::type_BITMAP)
     {
         AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
         Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays. Requires wxWidgets 3.2 or later, "
@@ -67,7 +69,7 @@ void CustomPointProperty::RefreshChildren()
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
-        if (m_prop_type != type_SVG)
+        if (m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
             Item(2)->SetValue(m_dpi_scaling);
     }
 }
@@ -98,7 +100,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
 
     value.clear();
     value << point.x << ',' << point.y;
-    if (!dpi_scaling)
+    if (!dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
         value << 'n';
 
     return value;
@@ -153,7 +155,7 @@ tt_string CustomPointProperty::CombineValues()
 {
     tt_string value;
     value << m_point.x << ',' << m_point.y;
-    if (!m_dpi_scaling)
+    if (!m_dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
         value << 'n';
     return value;
 }

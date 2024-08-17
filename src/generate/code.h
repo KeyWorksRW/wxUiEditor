@@ -32,8 +32,9 @@ namespace code
     enum
     {
         no_scaling = 0,
-        conditional_scaling = 1,  // only if non-form and prop != prop_size
-        force_scaling = 2
+        allowed = 1,
+        conditional_scaling,
+        force_scaling
     };
 
     enum
@@ -446,6 +447,11 @@ public:
     void ResetBraces() { m_within_braces = false; }
 
     bool is_WithinBraces() const { return m_within_braces; }
+
+    // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property contains a
+    // 'n', or language is C++ and wxWidgets 3.1 is being used, or enable_dpi_scaling is set
+    // to conditional_scaling and the node is a form.
+    bool is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling = code::allowed) const;
 
 protected:
     void InsertLineBreak(size_t cur_pos);

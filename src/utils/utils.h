@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Miscellaneous utility functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +41,7 @@ wxPoint DlgPoint(Node* node, GenEnum::PropName prop);
 // This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
 wxSize DlgSize(Node* node, GenEnum::PropName prop);
 
-// Given a width (wxPoint::x) this will convert it using FromDIP()
+// Given a width this will convert it using wxGetMainFrame()->getWindow()->FromDIP()
 int DlgPoint(int width);
 
 // Convert a filename to a valid variable name. This will handle filnames with leading
@@ -74,3 +74,7 @@ tt_string ConvertToSnakeCase(tt_string_view str);
 
 // Converts string to snake_case, then converts to upper case
 tt_string ConvertToUpperSnakeCase(tt_string_view str);
+
+// Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
+// used.
+bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language = GEN_LANG_NONE);

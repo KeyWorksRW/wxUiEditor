@@ -2323,3 +2323,16 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
 
     return *this;
 }
+
+bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling) const
+{
+    if (enable_dpi_scaling == code::no_dpi_scaling ||
+        tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either) == true)
+        return false;
+    else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
+        return false;
+    if (enable_dpi_scaling == code::conditional_scaling && m_node->isForm())
+        return false;
+
+    return true;
+}

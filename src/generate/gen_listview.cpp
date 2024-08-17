@@ -57,7 +57,7 @@ bool ListViewGenerator::ConstructionCode(Code& code)
     // Note that the default style is not specified, so that it will always be generated. That makes the generated code
     // easier to understand since you know exactly which type of list view is being created instead of having to know what
     // the default is.
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

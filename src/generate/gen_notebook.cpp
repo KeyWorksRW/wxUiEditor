@@ -41,7 +41,7 @@ void NotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 bool NotebookGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags();
     BookCtorAddImagelist(code);
 
     return true;

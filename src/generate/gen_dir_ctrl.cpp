@@ -40,7 +40,7 @@ bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
 
     if (!code.hasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 && !code.hasValue(prop_window_name))
     {
-        code.PosSizeFlags(false, "wxDIRCTRL_DEFAULT_STYLE");
+        code.PosSizeFlags(code::allow_scaling, false, "wxDIRCTRL_DEFAULT_STYLE");
     }
     else
     {

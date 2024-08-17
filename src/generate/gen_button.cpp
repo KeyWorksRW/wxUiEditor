@@ -157,7 +157,7 @@ bool ButtonGenerator::ConstructionCode(Code& code)
         code.Add("wxEmptyString");
     }
 
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

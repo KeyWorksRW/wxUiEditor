@@ -399,7 +399,7 @@ bool AuiToolBarGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(false, "wxAUI_TB_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, false, "wxAUI_TB_DEFAULT_STYLE");
 
     return true;
 }

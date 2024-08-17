@@ -79,7 +79,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
         code.AddType("wxFileSelectorDefaultWildcardStr");
     }
 
-    code.PosSizeFlags(true, "wxFLP_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, true, "wxFLP_DEFAULT_STYLE");
 
     return true;
 }

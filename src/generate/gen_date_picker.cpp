@@ -41,7 +41,7 @@ bool DatePickerCtrlGenerator::ConstructionCode(Code& code)
         code.Add("wxDefaultDateTime");
     }
 
-    code.PosSizeFlags(true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
+    code.PosSizeFlags(code::allow_scaling, true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
 
     return true;
 }

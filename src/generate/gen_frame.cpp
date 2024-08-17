@@ -149,8 +149,14 @@ bool FrameFormGenerator::SettingsCode(Code& code)
             else
                 code += ' ';
         }
+        code += "parent, id, title, ";
 
-        code += "parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))";
+        if (code.is_ScalingEnabled(prop_pos, code::allow_scaling) || code.is_ScalingEnabled(prop_size, code::allow_scaling))
+            code += "wxDefaultPosition, wxDefaultSize";
+        else
+            code += "pos, size";
+
+        code += ", style, name))";
         code.Eol().Tab().Str("return false;");
     }
     else if (code.is_python())
@@ -167,6 +173,13 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     else
     {
         return false;
+    }
+
+    if (code.is_cpp() && (code.is_ScalingEnabled(prop_pos, code::allow_scaling) || code.is_ScalingEnabled(prop_size, code::allow_scaling)))
+    {
+        code.Eol().Str("// Don't call FromDIP() until the window has been created");
+        code.Eol().Str("if (pos != wxDefaultPosition || size != wxDefaultSize)");
+        code.Eol().Tab().Str("SetSize(FromDIP(pos).x, FromDIP(pos).y, FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);");
     }
 
     Node* frame = code.node();

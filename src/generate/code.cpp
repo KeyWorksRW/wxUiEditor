@@ -1508,7 +1508,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     return *this;
 }
 
-Code& Code::PosSizeFlags(int enable_dpi_scaling, bool uses_def_validator, tt_string_view def_style)
+Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator, tt_string_view def_style)
 {
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
     auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);

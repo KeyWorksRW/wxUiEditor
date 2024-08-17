@@ -36,7 +36,7 @@ void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 bool ChoicebookGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxCHB_DEFAULT");
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(code::allow_scaling, false, "wxCHB_DEFAULT");
 
     return true;
 }

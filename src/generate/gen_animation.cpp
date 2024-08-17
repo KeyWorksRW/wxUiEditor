@@ -80,7 +80,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             {
                 code.Str("Wx::Animation.new");
             }
-            code.PosSizeFlags(false);
+            code.PosSizeFlags();
         }
     }
     else
@@ -89,7 +89,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.AddAuto().NodeName().CreateClass(code.node()->hasValue(prop_animation) &&
                                               code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either));
         code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
-        code.PosSizeFlags(false);
+        code.PosSizeFlags();
     }
 
     if (code.hasValue(prop_inactive_bitmap))

@@ -89,7 +89,7 @@ bool BitmapComboBoxGenerator::ConstructionCode(Code& code)
         if (code.WhatParamsNeeded() != nothing_needed)
         {
             code.Comma().Add("wxEmptyString");
-            code.PosSizeFlags(true);
+            code.PosSizeFlags(code::allow_scaling, true);
         }
         else
         {

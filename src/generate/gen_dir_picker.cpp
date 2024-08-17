@@ -62,7 +62,7 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
             code.Add("wxDirSelectorPromptStr");
     }
 
-    code.PosSizeFlags(false, "wxDIRP_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, false, "wxDIRP_DEFAULT_STYLE");
 
     return true;
 }

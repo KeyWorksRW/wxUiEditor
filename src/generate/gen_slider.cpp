@@ -60,7 +60,7 @@ bool SliderGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     code.as_string(prop_position).Comma().as_string(prop_minValue).Comma().as_string(prop_maxValue);
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

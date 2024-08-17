@@ -38,7 +38,7 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
         else
             code.Add("wxBLACK");
     }
-    code.PosSizeFlags(true, "wxCLRP_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, true, "wxCLRP_DEFAULT_STYLE");
 
     return true;
 }

@@ -37,7 +37,7 @@ bool TimePickerCtrlGenerator::ConstructionCode(Code& code)
     {
         code.Add("wxDefaultDateTime");
     }
-    code.PosSizeFlags(true, "wxTP_DEFAULT");
+    code.PosSizeFlags(code::allow_scaling, true, "wxTP_DEFAULT");
 
     return true;
 }

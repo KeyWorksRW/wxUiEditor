@@ -29,13 +29,14 @@ namespace code
         window_name_needed = 1 << 3
     };
 
-    enum
+    enum ScalingType
     {
         no_scaling = 0,
-        allowed = 1,
+        allow_scaling = 1,
         conditional_scaling,
         force_scaling
     };
+
 
     enum
     {
@@ -395,7 +396,7 @@ public:
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
     //
     // If the only style specified is def_style, then it will not be added.
-    Code& PosSizeFlags(int enable_dpi_scaling = conditional_scaling, bool uses_def_validator = false,
+    Code& PosSizeFlags(ScalingType enable_dpi_scaling = conditional_scaling, bool uses_def_validator = false,
                        tt_string_view def_style = tt_empty_cstr);
 
     // Call this when you need to force a specific style such as "wxCHK_3STATE"
@@ -451,7 +452,7 @@ public:
     // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property contains a
     // 'n', or language is C++ and wxWidgets 3.1 is being used, or enable_dpi_scaling is set
     // to conditional_scaling and the node is a form.
-    bool is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling = code::allowed) const;
+    bool is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling = code::allow_scaling) const;
 
 protected:
     void InsertLineBreak(size_t cur_pos);

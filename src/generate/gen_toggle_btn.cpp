@@ -105,7 +105,7 @@ bool ToggleButtonGenerator::ConstructionCode(Code& code)
         code.Add("wxEmptyString");
     }
 
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }
@@ -234,7 +234,7 @@ bool BitmapToggleButtonGenerator::ConstructionCode(Code& code)
 
     code.Add("wxNullBitmap");
 
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

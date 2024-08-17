@@ -249,7 +249,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
             code.ValidParentName();
         }
         code.Comma().as_string(prop_id);
-        code.PosSizeFlags(false);
+        code.PosSizeFlags();
         if (node->getParent()->isGen(gen_wxPropertySheetDialog))
         {
             // Break out the close parenthesis so that the Ruby code can remove the () entirely.

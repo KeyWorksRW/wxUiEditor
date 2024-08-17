@@ -83,7 +83,7 @@ bool ChoiceGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.PosSizeFlags(true);
+        code.PosSizeFlags(code::allow_scaling, true);
     }
 
     return true;

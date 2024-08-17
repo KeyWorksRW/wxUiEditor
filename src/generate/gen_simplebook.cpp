@@ -45,7 +45,7 @@ void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 bool SimplebookGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags();
 
     return true;
 }

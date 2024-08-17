@@ -1228,6 +1228,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
     auto cur_pos = size();
     auto size = m_node->as_wxSize(prop_name);
+    auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
 
     if (is_ruby())
     {
@@ -1238,7 +1239,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
             return *this;
         }
 
-        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
+        if (size_scaling)
         {
             CheckLineLength(sizeof(", from_DIP(Wx::Size.new(999, 999))"));
         }
@@ -1247,11 +1248,16 @@ Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
             CheckLineLength(sizeof("Wx::Size.new(999, 999)"));
         }
 
-        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
+        if (size_scaling)
+        {
             FormFunction("FromDIP(");
-        Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
-        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
+            Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
             *this += ')';
+        }
+        else
+        {
+            Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+        }
 
         if (m_auto_break && this->size() > m_break_at)
         {
@@ -1270,7 +1276,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
         return *this;
     }
 
-    if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
+    if (size_scaling)
     {
         if (is_cpp())
         {
@@ -1313,6 +1319,8 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
     auto cur_pos = size();
     auto point = m_node->as_wxPoint(prop_name);
+    auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
+
     if (m_node->as_string(prop_name).contains("d", tt::CASE::either))
     {
         FAIL_MSG("Pos() should not be used with a string that contains 'd'");
@@ -1328,7 +1336,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
             return *this;
         }
 
-        if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
+        if (pos_scaling)
         {
             CheckLineLength(sizeof(", from_DIP(Wx::Point.new(999, 999))"));
             FormFunction("FromDIP(");
@@ -1358,7 +1366,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
         return *this;
     }
 
-    if (enable_dpi_scaling == force_scaling || (enable_dpi_scaling == conditional_scaling && !m_node->isForm()))
+    if (pos_scaling)
     {
         if (is_cpp())
         {
@@ -1502,11 +1510,14 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
 
 Code& Code::PosSizeFlags(int enable_dpi_scaling, bool uses_def_validator, tt_string_view def_style)
 {
+    auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
+    auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
+
     if (m_node->hasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
         Comma();
-        Pos(prop_pos, enable_dpi_scaling).Comma().WxSize(prop_size, enable_dpi_scaling).Comma();
+        Pos(prop_pos, pos_scaling).Comma().WxSize(prop_size, size_scaling).Comma();
         Style();
         if (uses_def_validator)
             Comma().Add("wxDefaultValidator");
@@ -1537,7 +1548,7 @@ Code& Code::PosSizeFlags(int enable_dpi_scaling, bool uses_def_validator, tt_str
     if (style_needed)
     {
         Comma();
-        Pos(prop_pos, enable_dpi_scaling).Comma().WxSize(prop_size, enable_dpi_scaling).Comma().Style();
+        Pos(prop_pos, pos_scaling).Comma().WxSize(prop_size, size_scaling).Comma().Style();
         if (def_style.size() && ends_with(def_style))
         {
             erase(size() - def_style.size());
@@ -1548,12 +1559,12 @@ Code& Code::PosSizeFlags(int enable_dpi_scaling, bool uses_def_validator, tt_str
     else if (m_node->as_wxSize(prop_size) != wxDefaultSize)
     {
         Comma();
-        Pos(prop_pos, enable_dpi_scaling).Comma().WxSize(prop_size, enable_dpi_scaling);
+        Pos(prop_pos, pos_scaling).Comma().WxSize(prop_size, size_scaling);
     }
     else if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
     {
         Comma();
-        Pos(prop_pos, enable_dpi_scaling);
+        Pos(prop_pos, pos_scaling);
     }
     EndFunction();
     return *this;

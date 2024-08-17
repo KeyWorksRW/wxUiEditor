@@ -28,7 +28,7 @@ wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 bool TreeCtrlGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(true, "wxTR_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, true, "wxTR_DEFAULT_STYLE");
 
     return true;
 }

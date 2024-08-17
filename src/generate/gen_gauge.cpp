@@ -42,7 +42,7 @@ bool GaugeGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().as_string(prop_range);
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

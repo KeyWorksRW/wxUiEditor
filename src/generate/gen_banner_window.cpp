@@ -65,7 +65,7 @@ bool BannerWindowGenerator::ConstructionCode(Code& code)
         code.Str("# unknown language") << "wxBannerWindow";
     }
 
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

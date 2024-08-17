@@ -71,7 +71,7 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
             code.Add("wxNullFont");
     }
 
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

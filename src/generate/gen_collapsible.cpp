@@ -58,7 +58,7 @@ bool CollapsiblePaneGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
-    code.PosSizeFlags(true, "wxCP_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, true, "wxCP_DEFAULT_STYLE");
 
     return true;
 }

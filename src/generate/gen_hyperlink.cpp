@@ -67,7 +67,7 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
 
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma().QuotedString(prop_url);
-    code.PosSizeFlags(false, "wxHL_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, false, "wxHL_DEFAULT_STYLE");
 
     return true;
 }

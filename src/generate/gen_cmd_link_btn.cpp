@@ -64,7 +64,7 @@ bool CommandLinkBtnGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_main_label);
-    code.Comma().QuotedString(prop_note).PosSizeFlags(true);
+    code.Comma().QuotedString(prop_note).PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

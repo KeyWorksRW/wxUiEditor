@@ -89,7 +89,7 @@ void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 bool AuiNotebookGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false);
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags();
     BookCtorAddImagelist(code);
 
     if (code.IsEqualTo(prop_art_provider, "wxAuiGenericTabArt"))

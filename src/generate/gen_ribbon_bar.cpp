@@ -238,7 +238,7 @@ bool RibbonBarGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
     code.CreateClass().ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(false, "wxRIBBON_BAR_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, false, "wxRIBBON_BAR_DEFAULT_STYLE");
 
     return true;
 }

@@ -15,11 +15,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-// No scaling is always supported if there is a 'n' at the end of the size/point string. However, no
-// UI is shown to the user unless NO_SCALING_OPTION is defined.
-
-// #define NO_SCALING_OPTION
-
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
 CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type) :
@@ -27,13 +22,30 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 {
     m_prop_type = type;
 
-    if (type == CustomPointProperty::type_SVG && prop->hasValue() && prop->as_string().contains("["))
+    if ((type == CustomPointProperty::type_SVG || type == CustomPointProperty::type_ART) && prop->hasValue() &&
+        prop->as_string().contains("["))
     {
         tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
             value.pop_back();
         m_value = value;
         InitValues(value);
+    }
+    else if (type == CustomPointProperty::type_BITMAP && prop->hasValue())
+    {
+        tt_view_vector parts;
+        parts.SetString(prop->as_string(), ';');
+        if (parts.size() > IndexImage)
+        {
+            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            if (embed)
+            {
+                m_org_size.x = embed->size.x;
+                m_org_size.y = embed->size.y;
+            }
+        }
+        m_value = prop->as_wxString();
+        InitValues(prop->as_string());
     }
     else
     {
@@ -54,15 +66,15 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         AddPrivateChild(new wxIntProperty("height", wxPG_LABEL, m_point.y));
     }
 
-#if NO_SCALING_OPTION
     // Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
     // itself as all scaling is done automatically.
-    if (type != CustomPointProperty::type_SVG)
+    if (type != CustomPointProperty::type_SVG && type != CustomPointProperty::type_ART &&
+        type != CustomPointProperty::type_BITMAP)
     {
-        AddPrivateChild(new wxBoolProperty("support high dpi", wxPG_LABEL, m_dpi_scaling));
-        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");
+        AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
+        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays. Requires wxWidgets 3.2 or later, "
+                               "ignored on wxWidgets 3.1.");
     }
-#endif
 }
 
 void CustomPointProperty::RefreshChildren()
@@ -73,10 +85,8 @@ void CustomPointProperty::RefreshChildren()
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
-#if NO_SCALING_OPTION
-        if (m_prop_type != type_SVG)
+        if (m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
             Item(2)->SetValue(m_dpi_scaling);
-#endif
     }
 }
 
@@ -99,16 +109,14 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
             point.y = childValue.GetLong();
             break;
 
-#if NO_SCALING_OPTION
         case 2:
             dpi_scaling = childValue.GetBool();
             break;
-#endif
     }
 
     value.clear();
     value << point.x << ',' << point.y;
-    if (!dpi_scaling)
+    if (!dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
         value << 'n';
 
     return value;
@@ -129,7 +137,14 @@ void CustomPointProperty::InitValues(tt_string_view value)
         else
             parts.SetString(value, ',');
 
-        if (parts.size() < 2 || m_prop_type == type_BITMAP)
+        if (m_prop_type == type_BITMAP)
+        {
+            m_point.x = m_org_size.x;
+            m_point.y = m_org_size.y;
+            return;
+        }
+
+        if (parts.size() < 2)
         {
             m_point.x = -1;
             m_point.y = -1;
@@ -155,8 +170,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
             m_point = wxGetApp().getMainFrame()->ConvertDialogToPixels(m_point);
         }
 
-        if (tt::contains(value, 'n', tt::CASE::either))
-            m_dpi_scaling = false;
+        m_dpi_scaling = (tt::contains(value, 'n', tt::CASE::either) == false);
     }
 }
 
@@ -164,7 +178,35 @@ tt_string CustomPointProperty::CombineValues()
 {
     tt_string value;
     value << m_point.x << ',' << m_point.y;
-    if (!m_dpi_scaling)
+    if (!m_dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
         value << 'n';
     return value;
+}
+
+// The wxWidgets version uses "Not" when the value is false. This version uses "No" instead.
+wxString CustomBoolProperty::ValueToString(wxVariant& value, wxPGPropValFormatFlags flags) const
+{
+    bool boolValue = value.GetBool();
+
+    if (!!(flags & wxPGPropValFormatFlags::CompositeFragment))
+    {
+        if (boolValue)
+        {
+            return m_label;
+        }
+        else
+        {
+            if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
+                return wxString();
+
+            return (wxString("No ") + m_label);
+        }
+    }
+
+    if (!(flags & wxPGPropValFormatFlags::FullValue))
+    {
+        return wxPGGlobalVars->m_boolChoices[boolValue ? 1 : 0].GetText();
+    }
+
+    return boolValue ? "true" : "false";
 }

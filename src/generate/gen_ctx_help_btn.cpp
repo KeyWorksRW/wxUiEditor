@@ -31,7 +31,7 @@ bool CtxHelpButtonGenerator::ConstructionCode(Code& code)
     // TODO: [Randalphwa - 12-18-2023] Usually you only need the parent.
     code.ValidParentName().Comma().as_string(prop_id);
 
-    code.PosSizeFlags(true);
+    code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
 }

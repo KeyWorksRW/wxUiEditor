@@ -42,7 +42,7 @@ void ListbookGenerator::OnPageChanged(wxListbookEvent& event)
 bool ListbookGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(false, "wxBK_DEFAULT");
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(code::allow_scaling, false, "wxBK_DEFAULT");
     BookCtorAddImagelist(code);
 
     return true;

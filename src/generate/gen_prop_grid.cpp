@@ -39,7 +39,7 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 bool PropertyGridGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
-    code.PosSizeFlags(false, "wxPG_DEFAULT_STYLE");
+    code.PosSizeFlags(code::allow_scaling, false, "wxPG_DEFAULT_STYLE");
 
     if (code.hasValue(prop_extra_style))
         code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();

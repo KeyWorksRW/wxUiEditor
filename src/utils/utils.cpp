@@ -13,10 +13,11 @@
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "utils.h"         // Utility functions that work with properties
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 tt_string DoubleToStr(double val)
 {
@@ -253,11 +254,15 @@ tt_string ConvertEscapeSlashes(tt_string_view str)
 
 wxPoint DlgPoint(Node* node, GenEnum::PropName prop)
 {
+    if (!isScalingEnabled(node, prop))
+        return node->as_wxPoint(prop);
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxPoint(prop));
 }
 
 wxSize DlgSize(Node* node, GenEnum::PropName prop)
 {
+    if (!isScalingEnabled(node, prop))
+        return node->as_wxSize(prop);
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxSize(prop));
 }
 
@@ -528,4 +533,14 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
     }
 
     return var_name;
+}
+
+bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language)
+{
+    if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either) == true)
+        return false;
+    else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
+        return false;
+    else
+        return true;
 }

@@ -57,11 +57,11 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         wxImage::AddHandler(new wxPNGHandler);
 
     if (!wxFrame::Create(parent, id, title, wxDefaultPosition, wxDefaultSize, style, name))
-    // if (!wxFrame::Create(parent, id, title, pos, size, style, name))
         return false;
+    // Don't call FromDIP() until the window has been created
     if (pos != wxDefaultPosition || size != wxDefaultSize)
         SetSize(FromDIP(pos).x, FromDIP(pos).y, FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
-    SetMinSize(wxSize(800, 800));
+    SetMinSize(FromDIP(wxSize(800, 800)));
 
     m_mainframe_sizer = new wxBoxSizer(wxVERTICAL);
 

@@ -38,6 +38,7 @@ public:
 
 private:
     wxPoint m_point { wxDefaultPosition };
+    wxSize m_org_size { wxDefaultSize };  // original size of an embedded image
     bool m_dpi_scaling { true };
     DataType m_prop_type;
 };

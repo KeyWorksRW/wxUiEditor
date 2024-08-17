@@ -31,6 +31,22 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         m_value = value;
         InitValues(value);
     }
+    else if (type == CustomPointProperty::type_BITMAP && prop->hasValue())
+    {
+        tt_view_vector parts;
+        parts.SetString(prop->as_string(), ';');
+        if (parts.size() > IndexImage)
+        {
+            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            if (embed)
+            {
+                m_org_size.x = embed->size.x;
+                m_org_size.y = embed->size.y;
+            }
+        }
+        m_value = prop->as_wxString();
+        InitValues(prop->as_string());
+    }
     else
     {
         m_value = prop->as_wxString();
@@ -121,7 +137,14 @@ void CustomPointProperty::InitValues(tt_string_view value)
         else
             parts.SetString(value, ',');
 
-        if (parts.size() < 2 || m_prop_type == type_BITMAP)
+        if (m_prop_type == type_BITMAP)
+        {
+            m_point.x = m_org_size.x;
+            m_point.y = m_org_size.y;
+            return;
+        }
+
+        if (parts.size() < 2)
         {
             m_point.x = -1;
             m_point.y = -1;

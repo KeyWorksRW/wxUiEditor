@@ -60,6 +60,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     if (type != CustomPointProperty::type_SVG)
     {
         AddPrivateChild(new wxBoolProperty("support high dpi", wxPG_LABEL, m_dpi_scaling));
+        AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
         Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");
     }
 #endif

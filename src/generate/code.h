@@ -37,7 +37,6 @@ namespace code
         force_scaling
     };
 
-
     enum
     {
         // Will add eol if empty.

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="19">
+  data_version="21">
   <node
     class="Project"
     art_directory="../art_src"
@@ -796,8 +796,8 @@
               class="wxPanel"
               class_access="protected:"
               var_name="m_nav_panel"
-              derived_class="NavigationPanel"
-              derived_header="../panels/nav_panel.h"
+              subclass="NavigationPanel"
+              subclass_header="../panels/nav_panel.h"
               window_style="0"
               flags="wxEXPAND" />
             <node
@@ -2437,8 +2437,8 @@
                 focus="1"
                 type="wxLB_MULTIPLE"
                 var_name="m_lb_folders"
-                maximum_size="-1,-1d"
-                minimum_size="-1,80d"
+                maximum_size="-1,-1"
+                minimum_size="-1,200"
                 flags="wxEXPAND"
                 wxEVT_LISTBOX="OnSelectFolders" />
               <node
@@ -2476,7 +2476,7 @@
                 style="wxLB_SORT"
                 type="wxLB_MULTIPLE"
                 var_name="m_lb_forms"
-                minimum_size="-1,80d"
+                minimum_size="-1,200"
                 flags="wxEXPAND"
                 wxEVT_LISTBOX="OnSelectForms" />
               <node
@@ -2542,7 +2542,7 @@
                     class="wxComboBox"
                     style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
                     var_name="m_combo_prefixes"
-                    minimum_size="-1,-1d"
+                    minimum_size="-1,-1"
                     flags="wxEXPAND"
                     wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
                     wxEVT_TEXT_ENTER="OnUpdate" />
@@ -2574,7 +2574,7 @@
                     class="wxComboBox"
                     style="wxCB_DROPDOWN|wxCB_SORT|wxTE_PROCESS_ENTER"
                     var_name="m_combo_suffixes"
-                    minimum_size="-1,-1d"
+                    minimum_size="-1,-1"
                     flags="wxEXPAND"
                     wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
                     wxEVT_TEXT_ENTER="OnUpdate" />
@@ -2740,7 +2740,7 @@
                 header="../custom_ctrls/colour_rect_ctrl.h"
                 namespace="wxue_ctrl"
                 var_name="m_colour_rect"
-                maximum_size="32,32d" />
+                maximum_size="64,80" />
               <node
                 class="wxStaticText"
                 label="Sample Text"
@@ -2782,9 +2782,9 @@
             <node
               class="wxColourPickerCtrl"
               style="wxCLRP_USE_TEXTCTRL|wxCLRP_SHOW_LABEL"
-              derived_class="kwColourPickerCtrl"
-              derived_header="../custom_ctrls/kw_color_picker.h"
               disabled="1"
+              subclass="kwColourPickerCtrl"
+              subclass_header="../custom_ctrls/kw_color_picker.h"
               window_style="wxWANTS_CHARS"
               wxEVT_COLOURPICKER_CHANGED="OnColourChanged" />
           </node>
@@ -2936,7 +2936,7 @@
                       wrap_indent_mode="indent"
                       wrap_mode="word"
                       wrap_visual_flag="end"
-                      minimum_size="200,-1d"
+                      minimum_size="400,-1"
                       border_size="10"
                       flags="wxEXPAND"
                       proportion="1" />
@@ -3049,7 +3049,7 @@
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
-                        minimum_size="200,-1d"
+                        minimum_size="400,-1"
                         border_size="10"
                         flags="wxEXPAND"
                         proportion="1" />
@@ -3074,7 +3074,7 @@
         class_name="EditHtmlDialogBase"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-        size="500,400d"
+        size="1000,1000"
         base_file="edit_html_dialog_base"
         derived_class_name="EditHtmlDialog"
         wxEVT_INIT_DIALOG="OnInit">
@@ -3336,7 +3336,7 @@
                   selection_string="default"
                   style="wxCB_READONLY|wxCB_SORT"
                   var_name="m_comboFacenames"
-                  minimum_size="-1,-1d"
+                  minimum_size="-1,-1"
                   tooltip="Leave Facename set to default to create a font that isn't dependent on a user's installed fonts."
                   flags="wxEXPAND"
                   wxEVT_COMBOBOX="OnFacename" />
@@ -3541,7 +3541,7 @@
                 style="wxCB_READONLY|wxCB_SORT"
                 var_name="m_comboPrefixes"
                 disabled="1"
-                minimum_size="75,-1d"
+                minimum_size="150,-1"
                 tooltip="The prefix list is edited in the Project's id_prefixes property."
                 column="1"
                 proportion="1"
@@ -3562,7 +3562,7 @@
                 style="wxCB_READONLY|wxCB_SORT"
                 var_name="m_comboSuffix"
                 disabled="1"
-                minimum_size="75,-1d"
+                minimum_size="150,-1"
                 tooltip="The suffix list is edited in the Project's id_suffixes property."
                 column="3"
                 proportion="1"
@@ -3713,7 +3713,7 @@
             <node
               class="wxListBox"
               focus="1"
-              minimum_size="100,80d"
+              minimum_size="200,200"
               wxEVT_LISTBOX="OnItemSelected" />
             <node
               class="wxBoxSizer"
@@ -3769,7 +3769,7 @@
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Add System Header(s)"
-        minimum_size="400,-1d"
+        minimum_size="800,-1"
         base_file="..\customprops\sys_header_dlg.cpp"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h"
@@ -3797,14 +3797,14 @@
               flags="wxEXPAND">
               <node
                 class="wxBoxSizer"
-                minimum_size="-1,-1d">
+                minimum_size="-1,-1">
                 <node
                   class="wxTextCtrl"
                   style="wxTE_MULTILINE|wxTE_READONLY|wxTE_NO_VSCROLL"
                   value="Start by selecting or adding a root directory. This should either be a directory in your $INCLUDE environment, or one that is passed to the compiler using -I. Header files will then be displayed automatically relative to this directory. Check the ones you want to add."
                   var_name="m_text_ctrl"
                   background_colour="#F0F0F0"
-                  minimum_size="200,-1d"
+                  minimum_size="400,-1"
                   window_style="wxBORDER_NONE"
                   flags="wxEXPAND"
                   proportion="1" />
@@ -3854,7 +3854,7 @@
               type="wxLB_MULTIPLE"
               var_name="m_check_list_files"
               validator_variable="m_file_indexes"
-              minimum_size="-1,90d"
+              minimum_size="-1,225"
               flags="wxEXPAND"
               proportion="1" />
           </node>
@@ -4138,7 +4138,7 @@
                   var_name="app_classname"
                   get_function="get_app_class"
                   validator_variable="m_app_class"
-                  minimum_size="100,-1d"
+                  minimum_size="200,-1"
                   tooltip="Change this to something unique to your project."
                   proportion="1"
                   wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
@@ -4239,7 +4239,7 @@
                   var_name="doc_classname"
                   get_function="get_doc_class"
                   validator_variable="m_doc_class"
-                  minimum_size="100,-1d"
+                  minimum_size="200,-1"
                   tooltip="Change this to something unique to your project."
                   proportion="1"
                   wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
@@ -5110,7 +5110,7 @@
           class="wxListBox"
           class_access="public:"
           var_name="m_lb_files"
-          minimum_size="150,100d"
+          minimum_size="300,250"
           flags="wxEXPAND"
           proportion="1" />
         <node
@@ -5122,7 +5122,7 @@
           class="wxListBox"
           class_access="public:"
           var_name="m_lb_info"
-          minimum_size="100,40d"
+          minimum_size="200,100"
           flags="wxEXPAND" />
         <node
           class="wxStdDialogButtonSizer"
@@ -5163,7 +5163,7 @@
             message="Combined XRC File"
             style="wxFLP_USE_TEXTCTRL|wxFLP_SAVE"
             wildcard="*.xrc"
-            minimum_size="120,-1d"
+            minimum_size="240,-1"
             flags="wxEXPAND"
             proportion="1"
             wxEVT_FILEPICKER_CHANGED="OnCombinedFilenameChanged" />
@@ -5184,7 +5184,7 @@
             var_name="staticText" />
           <node
             class="wxListBox"
-            minimum_size="-1,50d"
+            minimum_size="-1,125"
             flags="wxEXPAND"
             proportion="1" />
         </node>
@@ -5872,7 +5872,7 @@
           class_access="protected:"
           style="wxLI_VERTICAL"
           var_name="m_static_line"
-          size="-1,100d"
+          size="-1,250"
           column="1"
           proportion="1"
           rowspan="3" />
@@ -6414,7 +6414,7 @@
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Test XRC"
-        minimum_size="600,500d"
+        minimum_size="1200,1250"
         base_file="..\internal\xrcpreview"
         derived_class_name="XrcPreview"
         derived_file="xrcpreview"
@@ -6517,7 +6517,7 @@
                 var_name="box_sizer3">
                 <node
                   class="wxSearchCtrl"
-                  minimum_size="100,-1d"
+                  minimum_size="200,-1"
                   borders="wxBOTTOM|wxRIGHT|wxLEFT"
                   wxEVT_SEARCHCTRL_SEARCH_BTN="OnSearch" />
               </node>
@@ -6551,7 +6551,7 @@
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Node Search"
-        minimum_size="-1,-1d"
+        minimum_size="-1,-1"
         base_file="..\internal\node_search_dlg"
         local_src_includes="../panels/nav_panel.h;mainframe.h;node.h;project_handler.h;unused_gen_dlg.h"
         header_preamble="class Node;"
@@ -6568,12 +6568,12 @@
           class="wxBoxSizer"
           orientation="wxVERTICAL"
           var_name="dlg_sizer"
-          minimum_size="-1,-1d"
+          minimum_size="-1,-1"
           flags="wxEXPAND">
           <node
             class="wxBoxSizer"
             var_name="box_sizer_3"
-            minimum_size="250,-1d"
+            minimum_size="500,-1"
             flags="wxEXPAND">
             <node
               class="wxRadioButton"
@@ -6630,7 +6630,7 @@
           <node
             class="wxBoxSizer"
             var_name="box_sizer_4"
-            minimum_size="250,-1d"
+            minimum_size="500,-1"
             borders="wxBOTTOM|wxRIGHT|wxLEFT"
             flags="wxEXPAND"
             proportion="1">
@@ -6648,7 +6648,7 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxListBox"
-                minimum_size="120,100d"
+                minimum_size="240,250"
                 flags="wxEXPAND"
                 proportion="1"
                 wxEVT_LISTBOX="OnSelectLocated" />
@@ -6669,7 +6669,7 @@
                 class="wxListBox"
                 style="wxLB_SORT"
                 var_name="m_listbox_forms"
-                minimum_size="-1,100d"
+                minimum_size="-1,250"
                 flags="wxEXPAND"
                 proportion="1" />
             </node>
@@ -6925,7 +6925,7 @@
             wrap="200" />
           <node
             class="wxListBox"
-            minimum_size="120,100d"
+            minimum_size="240,250"
             flags="wxEXPAND" />
           <node
             class="wxButton"
@@ -7027,7 +7027,7 @@
           var_name="dlg_sizer">
           <node
             class="wxListBox"
-            minimum_size="100,70d"
+            minimum_size="200,175"
             flags="wxEXPAND" />
           <node
             class="wxStdDialogButtonSizer"

@@ -54,7 +54,8 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     if (type != CustomPointProperty::type_SVG)
     {
         AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
-        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");
+        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays. Requires wxWidgets 3.2 or later, "
+                               "ignored on wxWidgets 3.1.");
     }
 }
 
@@ -90,11 +91,9 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
             point.y = childValue.GetLong();
             break;
 
-#if NO_SCALING_OPTION
         case 2:
             dpi_scaling = childValue.GetBool();
             break;
-#endif
     }
 
     value.clear();

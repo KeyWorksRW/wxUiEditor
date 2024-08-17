@@ -15,11 +15,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-// No scaling is always supported if there is a 'n' at the end of the size/point string. However, no
-// UI is shown to the user unless NO_SCALING_OPTION is defined.
-
-// #define NO_SCALING_OPTION
-
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
 CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type) :
@@ -54,16 +49,13 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         AddPrivateChild(new wxIntProperty("height", wxPG_LABEL, m_point.y));
     }
 
-#if NO_SCALING_OPTION
     // Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
     // itself as all scaling is done automatically.
     if (type != CustomPointProperty::type_SVG)
     {
-        AddPrivateChild(new wxBoolProperty("support high dpi", wxPG_LABEL, m_dpi_scaling));
         AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
         Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");
     }
-#endif
 }
 
 void CustomPointProperty::RefreshChildren()
@@ -74,10 +66,8 @@ void CustomPointProperty::RefreshChildren()
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
-#if NO_SCALING_OPTION
         if (m_prop_type != type_SVG)
             Item(2)->SetValue(m_dpi_scaling);
-#endif
     }
 }
 
@@ -156,8 +146,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
             m_point = wxGetApp().getMainFrame()->ConvertDialogToPixels(m_point);
         }
 
-        if (tt::contains(value, 'n', tt::CASE::either))
-            m_dpi_scaling = false;
+        m_dpi_scaling = (tt::contains(value, 'n', tt::CASE::either) == false);
     }
 }
 
@@ -168,4 +157,32 @@ tt_string CustomPointProperty::CombineValues()
     if (!m_dpi_scaling)
         value << 'n';
     return value;
+}
+
+// The wxWidgets version uses "Not" when the value is false. This version uses "No" instead.
+wxString CustomBoolProperty::ValueToString(wxVariant& value, wxPGPropValFormatFlags flags) const
+{
+    bool boolValue = value.GetBool();
+
+    if (!!(flags & wxPGPropValFormatFlags::CompositeFragment))
+    {
+        if (boolValue)
+        {
+            return m_label;
+        }
+        else
+        {
+            if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
+                return wxString();
+
+            return (wxString("No ") + m_label);
+        }
+    }
+
+    if (!(flags & wxPGPropValFormatFlags::FullValue))
+    {
+        return wxPGGlobalVars->m_boolChoices[boolValue ? 1 : 0].GetText();
+    }
+
+    return boolValue ? "true" : "false";
 }

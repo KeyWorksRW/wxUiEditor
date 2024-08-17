@@ -22,7 +22,7 @@
 bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -32,7 +32,7 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
     dlg_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_listbox = new wxListBox(this, wxID_ANY);
-    m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(120, 100)));
+    m_listbox->SetMinSize(FromDIP(wxSize(240, 250)));
     dlg_sizer->Add(m_listbox, wxSizerFlags().Expand().Border(wxALL));
 
     auto* btn = new wxButton(this, wxID_ANY, "&Save...");

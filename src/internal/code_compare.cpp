@@ -17,7 +17,7 @@
 bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -49,7 +49,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_list_changes = new wxListBox(this, wxID_ANY);
     m_list_changes->Enable(false);
-    m_list_changes->SetMinSize(wxSize(250, 200));
+    m_list_changes->SetMinSize(FromDIP(wxSize(250, 200)));
     box_sizer->Add(m_list_changes, wxSizerFlags().Expand().Border(wxALL));
 
     m_btn = new wxButton(this, wxID_ANY, "&WinMerge...");

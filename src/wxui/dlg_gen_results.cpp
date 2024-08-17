@@ -18,7 +18,7 @@
 bool GeneratedResultsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -27,14 +27,14 @@ bool GeneratedResultsDlg::Create(wxWindow* parent, wxWindowID id, const wxString
     dlg_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_lb_files = new wxListBox(this, wxID_ANY);
-    m_lb_files->SetMinSize(ConvertDialogToPixels(wxSize(150, 100)));
+    m_lb_files->SetMinSize(FromDIP(wxSize(300, 250)));
     dlg_sizer->Add(m_lb_files, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* staticText_2 = new wxStaticText(this, wxID_ANY, "Additional information:");
     dlg_sizer->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
     m_lb_info = new wxListBox(this, wxID_ANY);
-    m_lb_info->SetMinSize(ConvertDialogToPixels(wxSize(100, 40)));
+    m_lb_info->SetMinSize(FromDIP(wxSize(200, 100)));
     dlg_sizer->Add(m_lb_info, wxSizerFlags().Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxNO_DEFAULT);

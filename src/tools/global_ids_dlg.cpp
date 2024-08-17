@@ -16,7 +16,7 @@
 bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -29,7 +29,7 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer_13->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_lb_folders = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE);
-    m_lb_folders->SetMinSize(ConvertDialogToPixels(wxSize(-1, 80)));
+    m_lb_folders->SetMinSize(FromDIP(wxSize(-1, 200)));
     box_sizer_13->Add(m_lb_folders, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_9 = new wxBoxSizer(wxHORIZONTAL);
@@ -50,7 +50,7 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer_14->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
     m_lb_forms = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_MULTIPLE|wxLB_SORT);
-    m_lb_forms->SetMinSize(ConvertDialogToPixels(wxSize(-1, 80)));
+    m_lb_forms->SetMinSize(FromDIP(wxSize(-1, 200)));
     box_sizer_14->Add(m_lb_forms, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_10 = new wxBoxSizer(wxHORIZONTAL);

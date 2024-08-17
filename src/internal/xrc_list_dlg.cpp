@@ -15,13 +15,13 @@
 bool XrcListDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_listbox = new wxListBox(this, wxID_ANY);
-    m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(100, 70)));
+    m_listbox->SetMinSize(FromDIP(wxSize(200, 175)));
     dlg_sizer->Add(m_listbox, wxSizerFlags().Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

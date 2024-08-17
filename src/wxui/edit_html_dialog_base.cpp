@@ -17,7 +17,7 @@
 bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, ConvertDialogToPixels(size), style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -64,6 +64,8 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizer(parent_sizer);
+    SetSize(FromDIP(wxSize(1000, 1000)));
+    Layout();
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "EditHtmlDialogBase");

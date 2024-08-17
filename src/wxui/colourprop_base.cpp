@@ -17,7 +17,7 @@
 bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -27,7 +27,7 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
     m_colour_rect = new wxue_ctrl::ColourRectCtrl(this);
-    m_colour_rect->SetMaxSize(ConvertDialogToPixels(wxSize(32, 32)));
+    m_colour_rect->SetMaxSize(FromDIP(wxSize(64, 80)));
     box_sizer->Add(m_colour_rect, wxSizerFlags().Border(wxALL));
 
     m_static_sample_text = new wxStaticText(this, wxID_ANY, "Sample Text");

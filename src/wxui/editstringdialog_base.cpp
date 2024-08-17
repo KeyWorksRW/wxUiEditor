@@ -16,7 +16,7 @@
 bool EditStringDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -27,7 +27,7 @@ bool EditStringDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
     m_textCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_value));
-    m_textCtrl->SetMinSize(wxSize(500, -1));
+    m_textCtrl->SetMinSize(FromDIP(wxSize(500, -1)));
     parent_sizer->Add(m_textCtrl, wxSizerFlags().Expand().TripleBorder(wxALL));
 
     parent_sizer->AddStretchSpacer(1);

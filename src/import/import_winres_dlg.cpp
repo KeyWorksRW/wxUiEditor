@@ -14,7 +14,7 @@
 bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -26,7 +26,7 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     m_fileResource = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr,
         "Resource Files|*.rc;*.dlg||", wxDefaultPosition, wxDefaultSize, wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL);
-    m_fileResource->SetMinSize(wxSize(240, -1));
+    m_fileResource->SetMinSize(FromDIP(wxSize(240, -1)));
     box_sizer4->Add(m_fileResource, wxSizerFlags().Expand().Border(wxALL));
 
     parent_sizer->Add(box_sizer4, wxSizerFlags(1).Expand().Border(wxALL));
@@ -37,7 +37,7 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
     box_sizer5->Add(m_staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_checkListResUI = new wxCheckListBox(this, wxID_ANY);
-    m_checkListResUI->SetMinSize(wxSize(-1, 160));
+    m_checkListResUI->SetMinSize(FromDIP(wxSize(-1, 160)));
     m_checkListResUI->SetToolTip("Uncheck any resources you don\'t want converted.");
     box_sizer5->Add(m_checkListResUI, wxSizerFlags().Expand().Border(wxALL));
 

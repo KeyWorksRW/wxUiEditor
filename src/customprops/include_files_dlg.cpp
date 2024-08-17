@@ -22,7 +22,7 @@
 bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -35,7 +35,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
     m_listbox = new wxListBox(this, wxID_ANY);
-    m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(100, 80)));
+    m_listbox->SetMinSize(FromDIP(wxSize(200, 200)));
     box_sizer->Add(m_listbox, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);

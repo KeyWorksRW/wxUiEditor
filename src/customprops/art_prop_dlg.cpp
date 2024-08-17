@@ -17,7 +17,7 @@
 bool ArtBrowserDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -26,8 +26,8 @@ bool ArtBrowserDialog::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     auto* box_sizer4 = new wxBoxSizer(wxVERTICAL);
 
-    m_list = new wxListView(this, wxID_ANY, wxDefaultPosition, wxSize(250, 400), wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|
-        wxBORDER_SUNKEN|wxLC_REPORT);
+    m_list = new wxListView(this, wxID_ANY, wxDefaultPosition, FromDIP(wxSize(250, 400)),
+        wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|wxBORDER_SUNKEN|wxLC_REPORT);
     box_sizer4->Add(m_list, wxSizerFlags().Border(wxRIGHT, 10));
 
     box_sizer->Add(box_sizer4, wxSizerFlags().Border(wxALL));

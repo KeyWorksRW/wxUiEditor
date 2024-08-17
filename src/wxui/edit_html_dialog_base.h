@@ -22,14 +22,14 @@ class EditHtmlDialogBase : public wxDialog
 public:
     EditHtmlDialogBase() {}
     EditHtmlDialogBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 400),
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 1000),
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxSize(500, 400),
+        wxDefaultPosition, const wxSize& size = wxSize(1000, 1000),
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
 protected:

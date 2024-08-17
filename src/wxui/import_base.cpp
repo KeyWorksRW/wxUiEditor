@@ -16,7 +16,7 @@
 bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     SetIcon(wxue_img::bundle_import_svg(16, 16).GetIconFor(this));
@@ -81,7 +81,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer7->Add(m_staticImportList, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_checkListProjects = new wxCheckListBox(m_import_staticbox->GetStaticBox(), wxID_ANY);
-    m_checkListProjects->SetMinSize(wxSize(-1, 240));
+    m_checkListProjects->SetMinSize(FromDIP(wxSize(-1, 240)));
     box_sizer7->Add(m_checkListProjects, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);

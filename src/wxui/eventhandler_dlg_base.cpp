@@ -21,7 +21,7 @@
 bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -99,7 +99,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_cpp_stc_lambda->SetUseTabs(false);
         m_cpp_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_cpp_stc_lambda->SetMinSize(ConvertDialogToPixels(wxSize(200, -1)));
+    m_cpp_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
     m_cpp_lambda_box->Add(m_cpp_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     page_sizer->Add(m_cpp_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
@@ -183,7 +183,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_ruby_stc_lambda->SetUseTabs(false);
         m_ruby_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_ruby_stc_lambda->SetMinSize(ConvertDialogToPixels(wxSize(200, -1)));
+    m_ruby_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
     m_ruby_lambda_box->Add(m_ruby_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     m_ruby_function_box->Add(m_ruby_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));

@@ -21,7 +21,7 @@
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -86,7 +86,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxEmptyString);
     m_searchCtrl->ShowSearchButton(true);
-    m_searchCtrl->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    m_searchCtrl->SetMinSize(FromDIP(wxSize(200, -1)));
     box_sizer3->Add(m_searchCtrl, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     box_sizer2->Add(box_sizer3, wxSizerFlags().Border(wxALL));
@@ -127,9 +127,9 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
-    SetSizer(dlg_sizer);
-    SetMinSize(ConvertDialogToPixels(wxSize(600, 500)));
-    Fit();
+
+    SetMinSize(FromDIP(wxSize(1200, 1250)));
+    SetSizerAndFit(dlg_sizer);
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "XrcPreview");

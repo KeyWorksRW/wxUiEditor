@@ -22,7 +22,7 @@
 bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
         return false;
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
@@ -62,7 +62,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* app_classname = new wxTextCtrl(this, wxID_ANY, "DocViewAppBase");
     app_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_app_class));
-    app_classname->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    app_classname->SetMinSize(FromDIP(wxSize(200, -1)));
     app_classname->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(app_classname, wxSizerFlags(1).Border(wxALL));
 
@@ -125,7 +125,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* doc_classname = new wxTextCtrl(static_box_3->GetStaticBox(), wxID_ANY, "DocumentTextCtrlBase");
     doc_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_doc_class));
-    doc_classname->SetMinSize(ConvertDialogToPixels(wxSize(100, -1)));
+    doc_classname->SetMinSize(FromDIP(wxSize(200, -1)));
     doc_classname->SetToolTip("Change this to something unique to your project.");
     flex_grid_sizer->Add(doc_classname, wxSizerFlags(1).Border(wxALL));
 

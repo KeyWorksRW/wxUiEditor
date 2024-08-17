@@ -600,12 +600,12 @@ static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool ge
     // Note that current documentation states that the client is required, but the header file says otherwise
     if (art_client.size())
         code.Comma().Add(art_client);
-    auto bmp = wxArtProvider::GetBitmap(art_id.make_wxString(), wxART_MAKE_CLIENT_ID_FROM_STR(art_client.make_wxString()));
-    if (bmp.IsOk())
+    if (parts.size() > IndexSize)
     {
         code.Comma();
         code.CheckLineLength(sizeof("wxSize(999, 999)))"));
-        code << "wxSize(" << bmp.GetSize().GetWidth() << ", " << bmp.GetSize().GetHeight() << ")";
+        auto size = GetSizeInfo(parts[IndexSize]);
+        code << "wxSize(" << size.x << ", " << size.y << ")";
     }
     code << ')';
 }

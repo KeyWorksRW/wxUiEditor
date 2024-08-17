@@ -22,8 +22,11 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
 
-    if (!wxFrame::Create(parent, id, title, pos, size, style, name))
+    if (!wxFrame::Create(parent, id, title, wxDefaultPosition, wxDefaultSize, style, name))
         return false;
+    // Don't call FromDIP() until the window has been created
+    if (pos != wxDefaultPosition || size != wxDefaultSize)
+        SetSize(FromDIP(pos).x, FromDIP(pos).y, FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
 
     auto* menubar = new wxMenuBar();
 
@@ -84,7 +87,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     m_textCtrl = new wxTextCtrl(m_page_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
         wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
-    m_textCtrl->SetMinSize(wxSize(350, 300));
+    m_textCtrl->SetMinSize(FromDIP(wxSize(350, 300)));
     log_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
     m_page_log->SetSizerAndFit(log_sizer);
 

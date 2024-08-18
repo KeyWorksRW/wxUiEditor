@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom Event handling
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +72,7 @@ void MainFrame::FireCreatedEvent(Node* node)
     {
         handler->ProcessEvent(node_event);
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::FireDeletedEvent(Node* node)
@@ -81,6 +82,7 @@ void MainFrame::FireDeletedEvent(Node* node)
     {
         handler->ProcessEvent(node_event);
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::FirePropChangeEvent(NodeProperty* prop)
@@ -90,6 +92,7 @@ void MainFrame::FirePropChangeEvent(NodeProperty* prop)
     {
         handler->ProcessEvent(node_event);
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
@@ -99,6 +102,7 @@ void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
     {
         handler->ProcessEvent(node_event);
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::FireProjectUpdatedEvent()
@@ -126,6 +130,7 @@ void MainFrame::FireParentChangedEvent(ChangeParentAction* undo_cmd)
     {
         handler->ProcessEvent(event);
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::FirePositionChangedEvent(ChangePositionAction* undo_cmd)
@@ -135,6 +140,7 @@ void MainFrame::FirePositionChangedEvent(ChangePositionAction* undo_cmd)
     {
         handler->ProcessEvent(event);
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::FireGridBagActionEvent(GridBagAction* undo_cmd)
@@ -144,6 +150,7 @@ void MainFrame::FireGridBagActionEvent(GridBagAction* undo_cmd)
     {
         handler->ProcessEvent(event);
     }
+    UpdateWakaTime();
 }
 
 Node* CustomEvent::getNode()

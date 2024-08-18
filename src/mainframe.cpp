@@ -1285,10 +1285,18 @@ bool MainFrame::SaveWarning()
 
     if (m_isProject_modified)
     {
-        result = ::wxMessageBox("Current project file has been modified...\n"
-                                "Do you want to save the changes?",
-                                "Save project", wxYES | wxNO | wxCANCEL, this);
-
+        // Testing often requires importing multiple projects to verify they work, so there is no
+        // reason to save them.
+        if (wxGetApp().isTestingMenuEnabled() && m_isImported)
+        {
+            result = wxNO;
+        }
+        else
+        {
+            result = ::wxMessageBox("Current project file has been modified...\n"
+                                    "Do you want to save the changes?",
+                                    "Save project", wxYES | wxNO | wxCANCEL, this);
+        }
         if (result == wxYES)
         {
             wxCommandEvent dummy;

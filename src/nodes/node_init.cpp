@@ -95,6 +95,7 @@ static const ParentChild lstParentChild[] = {
     { type_bookpage, type_gbsizer, one },
     { type_bookpage, type_sizer, one },
     { type_bookpage, type_bookpage, infinite },  // only valid when grandparent is a wxTreebook
+    { type_bookpage, type_widget, infinite },
 
     { type_page, type_auinotebook, one },
     { type_page, type_choicebook, one },
@@ -104,6 +105,7 @@ static const ParentChild lstParentChild[] = {
     { type_page, type_dataviewtreectrl, one },
     { type_page, type_listbook, one },
     { type_page, type_notebook, one },
+    { type_page, type_panel, one },
     { type_page, type_propgrid, one },
     { type_page, type_propgridman, one },
     { type_page, type_ribbonbar, one },
@@ -143,6 +145,7 @@ static const ParentChild lstParentChild[] = {
     { type_frame_form, type_sizer, one },
 
     { type_frame_form, type_container, infinite },
+    { type_frame_form, type_panel, infinite },
     { type_frame_form, type_splitter, infinite },
 
     { type_frame_form, type_statusbar, one },
@@ -225,6 +228,35 @@ static const ParentChild lstParentChild[] = {
     { type_container, type_gbsizer, one },
     { type_container, type_sizer, one },
 
+    { type_panel, type_gbsizer, one },
+    { type_panel, type_sizer, one },
+
+    { type_panel, type_ctx_menu, one },
+    { type_panel, type_timer, one },
+
+    { type_panel, type_aui_toolbar, infinite },
+    { type_panel, type_menubar, infinite },
+    { type_panel, type_panel, infinite },
+    { type_panel, type_splitter, infinite },
+    { type_panel, type_toolbar, infinite },
+
+    { type_panel, type_auinotebook, infinite },
+    { type_panel, type_choicebook, infinite },
+    { type_panel, type_container, infinite },
+    { type_panel, type_dataviewctrl, infinite },
+    { type_panel, type_dataviewlistctrl, infinite },
+    { type_panel, type_dataviewtreectrl, infinite },
+    { type_panel, type_listbook, infinite },
+    { type_panel, type_notebook, infinite },
+    { type_panel, type_propgrid, infinite },
+    { type_panel, type_propgridman, infinite },
+    { type_panel, type_ribbonbar, infinite },
+    { type_panel, type_simplebook, infinite },
+    { type_panel, type_splitter, infinite },
+    { type_panel, type_treelistctrl, infinite },
+
+    { type_panel, type_widget, infinite },
+
     // DataView
 
     { type_dataviewctrl, type_dataviewcolumn, infinite },
@@ -254,8 +286,8 @@ static const ParentChild lstParentChild[] = {
 
     // Sizers
 
-    { type_sizer, type_auinotebook, infinite },
     { type_sizer, type_aui_toolbar, infinite },
+    { type_sizer, type_auinotebook, infinite },
     { type_sizer, type_choicebook, infinite },
     { type_sizer, type_container, infinite },
     { type_sizer, type_dataviewctrl, infinite },
@@ -264,16 +296,17 @@ static const ParentChild lstParentChild[] = {
     { type_sizer, type_gbsizer, infinite },
     { type_sizer, type_listbook, infinite },
     { type_sizer, type_notebook, infinite },
+    { type_sizer, type_panel, infinite },
     { type_sizer, type_propgrid, infinite },
     { type_sizer, type_propgridman, infinite },
     { type_sizer, type_ribbonbar, infinite },
     { type_sizer, type_simplebook, infinite },
     { type_sizer, type_sizer, infinite },
     { type_sizer, type_splitter, infinite },
+    { type_sizer, type_staticbox, infinite },
     { type_sizer, type_toolbar, infinite },
     { type_sizer, type_treelistctrl, infinite },
     { type_sizer, type_widget, infinite },
-    { type_sizer, type_staticbox, infinite },
 
     // Toolbars
 
@@ -296,17 +329,18 @@ static const ParentChild lstParentChild[] = {
 
     // Misc
 
-    { type_splitter, type_container, two },
     { type_splitter, type_auinotebook, two },
     { type_splitter, type_choicebook, two },
-    { type_splitter, type_listbook, two },
-    { type_splitter, type_notebook, two },
-    { type_splitter, type_simplebook, two },
+    { type_splitter, type_container, two },
     { type_splitter, type_dataviewctrl, two },
     { type_splitter, type_dataviewlistctrl, two },
     { type_splitter, type_dataviewtreectrl, two },
+    { type_splitter, type_listbook, two },
+    { type_splitter, type_notebook, two },
+    { type_splitter, type_panel, two },
     { type_splitter, type_propgrid, two },
     { type_splitter, type_propgridman, two },
+    { type_splitter, type_simplebook, two },
     { type_splitter, type_splitter, two },
     { type_splitter, type_treelistctrl, two },
     { type_splitter, type_widget, two },

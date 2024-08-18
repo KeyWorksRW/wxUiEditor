@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
-    <gen class="wxPanel" image="wxPanel" type="container">
+    <gen class="wxPanel" image="wxPanel" type="panel">
         <inherits class="Window Events"/>
         <inherits class="wxWindow">
             <property name="window_style" type="bitlist">wxTAB_TRAVERSAL</property>

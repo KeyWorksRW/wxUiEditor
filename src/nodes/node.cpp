@@ -590,6 +590,7 @@ Node* Node::createChildNode(GenName name)
 
     if (!new_node)
     {
+        new_node = NodeCreation.createNode(name, this);
         if ((isForm() || isContainer()) && getChildCount())
         {
             if (getChild(0)->getGenType() == type_sizer || getChild(0)->getGenType() == type_gbsizer)

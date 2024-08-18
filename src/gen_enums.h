@@ -585,6 +585,7 @@ namespace GenEnum
         type_notebook,
         type_oldbookpage,
         type_page,
+        type_panel,
         type_popup_menu,
         type_project,
         type_propgrid,

@@ -162,7 +162,8 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
         ASSERT_MSG(form->getChildCount(), "Trying to generate code for a wxform with no children.")
         if (!form->getChildCount())
             return true;  // empty dialog, so nothing to do
-        ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of a wxform to be a sizer.");
+        ASSERT_MSG(form->getChild(0)->isSizer() || form->isGen(gen_PanelForm),
+                   "Expected first child of a wxform to be a sizer.");
         if (form->getChild(0)->isSizer())
             form_sizer = form->getChild(0);
     }

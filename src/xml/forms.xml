@@ -239,7 +239,7 @@
             help="Generated when the dialog is being initialized."/>
     </gen>
 
-    <gen class="PanelForm" image="wxPanel" type="form">
+    <gen class="PanelForm" image="wxPanel" type="panel_form">
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>
         <property name="class_name" type="string"

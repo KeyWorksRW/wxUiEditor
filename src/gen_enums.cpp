@@ -542,6 +542,8 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_notebook, "notebook" },
     { type_oldbookpage, "oldbookpage" },
     { type_page, "page" },
+    { type_panel, "panel" },
+    { type_panel_form, "panel_form" },
     { type_popup_menu, "popup_menu" },
     { type_project, "project" },
     { type_propgrid, "propgrid" },

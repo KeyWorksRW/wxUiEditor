@@ -5,15 +5,16 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- By default, all Position and Size properties are scaled when your generated code is run under Windows with a high DPI setting.
+- You can now change the initial size of Art images instead of using their default size.
 - File menu now has a Reload Project command to reload the current project file from disk.
-- You can now change the size of Art images instead of using their default size.
 - Dialogs now support the variant property
-- Position and Size properties are now _always_ scaled when your generated code is run under Windows with a high DPI setting.
 
 ### Changed
 
-- All coordinates using dialog units will automatically be converted to physical pixels. For C++ using wxWidgets 3.2 or higher along with wxPython and wxRuby, and FromDIP() will be called to scale the UI as needed on high DPI displays. For C++ using wxWidgets 3.1, the physical coordinates will be converted to dialog units and the generated code will call ConvertDialogToPixels().
+- All coordinates using dialog units will automatically be converted to physical pixels. For C++ using wxWidgets 3.2 or higher along with wxPython and wxRuby, FromDIP() will be called to scale the UI as needed on high DPI displays.
 - Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPthon code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
+- derived_class property in the wxWindows category has been changed to subclass to better reflect that the generated class derives from your specified class. The derived_class_name in the various language categories remain unchanged to indicate you derive your class from the generated class.
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.

@@ -38,6 +38,7 @@ inline const GenType lst_form_types[] =
     type_frame_form,
     type_images,
     type_menubar_form,
+    type_panel_form,
     type_popup_menu,
     type_propsheetform,
     type_ribbonbar_form,
@@ -931,8 +932,8 @@ static const PropName s_var_names[] = {
 bool Node::fixDuplicateName()
 {
     if (isType(type_form) || isType(type_frame_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) ||
-        isType(type_toolbar_form) || isType(type_aui_toolbar_form) || isType(type_wizard) || isType(type_popup_menu) ||
-        isType(type_project))
+        isType(type_toolbar_form) || isType(type_aui_toolbar_form) || isType(type_panel_form) || isType(type_wizard) ||
+        isType(type_popup_menu) || isType(type_project))
     {
         return false;
     }

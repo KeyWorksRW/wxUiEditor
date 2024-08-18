@@ -56,7 +56,7 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
             return true;
         }
 
-        if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
+        if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_panel_form || parent_type == type_wizard)
         {
             code << "Bind(wxEVT_RIGHT_DOWN, &" << node->getParentName() << "::" << node->getParentName()
                  << "OnContextMenu, this);";

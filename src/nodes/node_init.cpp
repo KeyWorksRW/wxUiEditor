@@ -166,6 +166,34 @@ static const ParentChild lstParentChild[] = {
     { type_form, type_sizer, one },
     { type_form, type_timer, one },
 
+    { type_panel_form, type_gbsizer, one },
+    { type_panel_form, type_sizer, one },
+
+    { type_panel_form, type_ctx_menu, one },
+    { type_panel_form, type_timer, one },
+
+    { type_panel_form, type_aui_toolbar, infinite },
+    { type_panel_form, type_panel_form, infinite },
+    { type_panel_form, type_splitter, infinite },
+    { type_panel_form, type_toolbar, infinite },
+
+    { type_panel_form, type_auinotebook, infinite },
+    { type_panel_form, type_choicebook, infinite },
+    { type_panel_form, type_container, infinite },
+    { type_panel_form, type_dataviewctrl, infinite },
+    { type_panel_form, type_dataviewlistctrl, infinite },
+    { type_panel_form, type_dataviewtreectrl, infinite },
+    { type_panel_form, type_listbook, infinite },
+    { type_panel_form, type_notebook, infinite },
+    { type_panel_form, type_propgrid, infinite },
+    { type_panel_form, type_propgridman, infinite },
+    { type_panel_form, type_ribbonbar, infinite },
+    { type_panel_form, type_simplebook, infinite },
+    { type_panel_form, type_splitter, infinite },
+    { type_panel_form, type_treelistctrl, infinite },
+
+    { type_panel_form, type_widget, infinite },
+
     { type_propsheetform, type_bookpage, infinite },
 
     { type_menubar_form, type_menu, infinite },
@@ -189,6 +217,7 @@ static const ParentChild lstParentChild[] = {
     { type_project, type_frame_form, infinite },
     { type_project, type_images, one },
     { type_project, type_menubar_form, infinite },
+    { type_project, type_panel_form, infinite },
     { type_project, type_popup_menu, infinite },
     { type_project, type_ribbonbar_form, infinite },
     { type_project, type_toolbar_form, infinite },
@@ -202,6 +231,7 @@ static const ParentChild lstParentChild[] = {
     { type_folder, type_form, infinite },
     { type_folder, type_frame_form, infinite },
     { type_folder, type_menubar_form, infinite },
+    { type_folder, type_panel_form, infinite },
     { type_folder, type_popup_menu, infinite },
     { type_folder, type_ribbonbar_form, infinite },
     { type_folder, type_toolbar_form, infinite },
@@ -216,6 +246,7 @@ static const ParentChild lstParentChild[] = {
     { type_sub_folder, type_sub_folder, infinite },
     { type_sub_folder, type_frame_form, infinite },
     { type_sub_folder, type_menubar_form, infinite },
+    { type_sub_folder, type_panel_form, infinite },
     { type_sub_folder, type_popup_menu, infinite },
     { type_sub_folder, type_ribbonbar_form, infinite },
     { type_sub_folder, type_toolbar_form, infinite },
@@ -235,10 +266,8 @@ static const ParentChild lstParentChild[] = {
     { type_panel, type_timer, one },
 
     { type_panel, type_aui_toolbar, infinite },
-    { type_panel, type_menubar, infinite },
     { type_panel, type_panel, infinite },
     { type_panel, type_splitter, infinite },
-    { type_panel, type_toolbar, infinite },
 
     { type_panel, type_auinotebook, infinite },
     { type_panel, type_choicebook, infinite },

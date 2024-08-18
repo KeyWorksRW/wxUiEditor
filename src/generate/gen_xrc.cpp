@@ -327,11 +327,19 @@ static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_stri
             }
             else
             {
-                if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
+                file_original.Close();
+                if (!file_original.Create(path.make_wxString(), true))
                 {
-                    results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                    results.msgs.emplace_back() << "Cannot create the file " << path << '\n';
                     return false;
                 }
+
+                if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
+                {
+                    results.msgs.emplace_back() << "Cannot write to the file " << path << '\n';
+                    return false;
+                }
+
                 return true;
             }
         }

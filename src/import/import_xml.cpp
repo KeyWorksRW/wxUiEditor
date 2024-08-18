@@ -1313,6 +1313,16 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                 }
             }
         }
+        // wxSmith uses wxMenu as a child of a wxMenu. In wxUiEditor, we use gen_submenu in order to
+        // visually distinguish it as a parent.
+        else if (parent && getGenName == gen_wxMenu && (parent->isGen(gen_wxMenu) || parent->isGen(gen_submenu)))
+        {
+            new_node = NodeCreation.createNode(gen_submenu, parent);
+            if (new_node)
+            {
+                continue;
+            }
+        }
 
         tt_string msg("Unable to create ");
         msg << object_name;

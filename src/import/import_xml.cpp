@@ -956,8 +956,13 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 #if defined(INTERNAL_TESTING)
                     if (parent && parent->getForm())
                     {
-                        MSG_INFO(tt_string() << "\"option\" specified for node that doesn't have prop_proportion: "
-                                             << node->declName() << " in " << parent->getForm()->as_string(prop_class_name));
+                        // wxSmith does this, so ignore it
+                        if (!node->isGen(gen_gbsizeritem))
+                        {
+                            MSG_INFO(tt_string()
+                                     << "\"option\" specified for node that doesn't have prop_proportion: "
+                                     << node->declName() << " in " << parent->getForm()->as_string(prop_class_name));
+                        }
                     }
                     else
                     {

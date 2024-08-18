@@ -75,3 +75,62 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
     return true;
 }
+
+bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
+{
+    auto node_name = xml_obj.name();
+
+    if (node_name == "id_arg")
+    {
+        // Until a project sets this to something other than 0, it's unknown what it does. Ignore it
+        // in the meantime.
+        return true;
+    }
+    else if (node_name == "labelrowheight")
+    {
+        if (node->isGen(gen_wxGrid))
+        {
+            node->set_value(prop_default_row_size, xml_obj.text().as_int());
+            return true;
+        }
+    }
+    else if (node_name == "labelcolwidth")
+    {
+        if (node->isGen(gen_wxGrid))
+        {
+            // wxGrid doesn't have a default column width, so we'll ignore this property
+            return true;
+        }
+    }
+    else if (node_name == "defaultcolsize")
+    {
+        if (node->isGen(gen_wxGrid))
+        {
+            node->set_value(prop_default_col_size, xml_obj.text().as_int());
+            return true;
+        }
+    }
+    else if (node_name == "collabels")
+    {
+        if (node->isGen(gen_wxGrid))
+        {
+            tt_string choices;
+            for (auto& iter: xml_obj.children())
+            {
+                if (iter.name() == "item")
+                {
+                    auto child = iter.child_as_cstr();
+                    child.Replace("\"", "\\\"", true);
+                    if (choices.size())
+                        choices << " ";
+                    choices << '\"' << child << '\"';
+                }
+            }
+
+            if (choices.size())
+                node->set_value(prop_col_label_values, choices);
+            return true;
+        }
+    }
+    return false;
+}

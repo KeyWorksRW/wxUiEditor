@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxSmith file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -20,4 +20,6 @@ public:
 
     // wxSmith only supports C++ code generation
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
+
+    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */) override;
 };

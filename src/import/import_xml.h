@@ -56,6 +56,7 @@ public:
     void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent = nullptr);
 
 protected:
+    void ProcessFont(const pugi::xml_node& xml_obj, Node* node);
     void ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent);
     std::optional<pugi::xml_document> LoadDocFile(const tt_string& file);
     GenEnum::GenName ConvertToGenName(const tt_string& object_name, Node* parent);

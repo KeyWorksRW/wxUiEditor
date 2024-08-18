@@ -153,7 +153,7 @@ static const ParentChild lstParentChild[] = {
     { type_frame_form, type_aui_toolbar, one },
     { type_frame_form, type_menubar, one },
     { type_frame_form, type_ctx_menu, one },
-    { type_frame_form, type_timer, one },
+    { type_frame_form, type_timer, infinite },
 
     { type_frame_form, type_choicebook, infinite },
     { type_frame_form, type_listbook, infinite },
@@ -164,13 +164,13 @@ static const ParentChild lstParentChild[] = {
     { type_form, type_ctx_menu, one },
     { type_form, type_gbsizer, one },
     { type_form, type_sizer, one },
-    { type_form, type_timer, one },
+    { type_form, type_timer, infinite },
 
     { type_panel_form, type_gbsizer, one },
     { type_panel_form, type_sizer, one },
 
     { type_panel_form, type_ctx_menu, one },
-    { type_panel_form, type_timer, one },
+    { type_panel_form, type_timer, infinite },
 
     { type_panel_form, type_aui_toolbar, infinite },
     { type_panel_form, type_panel_form, infinite },
@@ -263,7 +263,7 @@ static const ParentChild lstParentChild[] = {
     { type_panel, type_sizer, one },
 
     { type_panel, type_ctx_menu, one },
-    { type_panel, type_timer, one },
+    { type_panel, type_timer, infinite },
 
     { type_panel, type_aui_toolbar, infinite },
     { type_panel, type_panel, infinite },

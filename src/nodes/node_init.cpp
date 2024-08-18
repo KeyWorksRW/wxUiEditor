@@ -268,6 +268,7 @@ static const ParentChild lstParentChild[] = {
     { type_panel, type_aui_toolbar, infinite },
     { type_panel, type_panel, infinite },
     { type_panel, type_splitter, infinite },
+    { type_panel, type_toolbar, infinite },
 
     { type_panel, type_auinotebook, infinite },
     { type_panel, type_choicebook, infinite },

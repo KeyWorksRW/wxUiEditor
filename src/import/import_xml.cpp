@@ -728,12 +728,19 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         NodeProperty* prop = node->getPropPtr(wxue_prop);
         if (prop)
         {
-            prop->set_value(iter.text().as_view());
-            if (prop->getPropDeclaration()->declName().contains("colour") ||
-                prop->getPropDeclaration()->declName().contains("color"))
+            if (wxue_prop == prop_style)
             {
-                // Convert old style into #RRGGBB
-                prop->set_value(prop->as_color().GetAsString(wxC2S_HTML_SYNTAX));
+                ProcessStyle(iter, node, prop);
+            }
+            else
+            {
+                prop->set_value(iter.text().as_view());
+                if (prop->getPropDeclaration()->declName().contains("colour") ||
+                    prop->getPropDeclaration()->declName().contains("color"))
+                {
+                    // Convert old style into #RRGGBB
+                    prop->set_value(prop->as_color().GetAsString(wxC2S_HTML_SYNTAX));
+                }
             }
             continue;
         }

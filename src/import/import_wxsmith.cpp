@@ -132,5 +132,10 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
             return true;
         }
     }
+    else if (node_name == "col" && node->isGen(gen_gbsizeritem))
+    {
+        node->set_value(prop_column, xml_obj.text().as_int());
+        return true;
+    }
     return false;
 }

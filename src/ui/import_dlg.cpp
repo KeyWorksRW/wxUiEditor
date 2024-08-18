@@ -121,6 +121,10 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
             break;
     }
 
+    wxCommandEvent dummy_event;
+
+    OnRecentDir(dummy_event);
+
     if (wxGetApp().isTestingMenuEnabled())
     {
         // Because m_combo_recent_dirs was created hidden and is shown in Debug builds.

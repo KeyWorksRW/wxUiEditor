@@ -1,20 +1,20 @@
 name: Verify clang-format
 
-on:
-  pull_request:
-    paths-ignore:
-      - src/art_src
-      - src/tests
-      - src/xml
-      - src/import/rapidjson
-      - tests
-      - docs
-      - import_tests
-      - .github
-  workflow_dispatch:
+# on:
+  # pull_request:
+    # paths-ignore:
+      # - src/art_src
+      # - src/tests
+      # - src/xml
+      # - src/import/rapidjson
+      # - tests
+      # - docs
+      # - import_tests
+      # - .github
+  # workflow_dispatch:
 
 jobs:
-  build:
+  clangFormat:
     runs-on: ubuntu-latest
 
     steps:

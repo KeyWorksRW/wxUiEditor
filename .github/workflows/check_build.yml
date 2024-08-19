@@ -1,23 +1,33 @@
 name: "Check Build"
 
 on:
+  pull_request:
+    paths-ignore:
+      - src/art_src
+      - src/tests
+      - src/xml
+      - src/import/rapidjson
+      - tests
+      - docs
+      - import_tests
+      - .github
   workflow_dispatch:
 
-#  pull_request:
-#    paths-ignore:
-#      - src/art_src
-#      - src/tests
-#      - src/xml
-#      - tests
-#      - import_tests
-#      - docs
-#      - .github
-
-env:
-  BUILD_TYPE: Release
-
 jobs:
-  build:
+  clangFormat:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: DoozyX/clang-format-lint-action@v0.18
+      with:
+        source: './src'
+        exclude: file
+        extensions: 'h,cpp'
+        clangFormatVersion: 18
+        style: file
+
+  check_build:
     runs-on: windows-latest
     steps:
     - name: Checkout repository

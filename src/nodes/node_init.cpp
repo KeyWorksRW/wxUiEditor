@@ -14,6 +14,7 @@
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "bitmaps.h"         // Contains various images handling functions
 #include "gen_enums.h"       // Enumerations for generators
+#include "mainapp.h"         // App -- Main application class
 #include "node.h"            // Node class
 #include "node_types.h"      // NodeType -- Class for storing node types and allowable child count
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
@@ -501,33 +502,34 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
         {
             class_name.erase(0, sizeof("gen_") - 1);
         }
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        if (is_interface)
+        if (wxGetApp().isTestingMenuEnabled())
         {
-            if (!rmap_GenNames.contains(class_name))
+            if (is_interface)
             {
-                MSG_WARNING(tt_string("Unrecognized interface name -- ") << class_name);
+                if (!rmap_GenNames.contains(class_name))
+                {
+                    MSG_WARNING(tt_string("Unrecognized interface name -- ") << class_name);
+                }
+            }
+            else
+            {
+                if (!rmap_GenNames.contains(class_name))
+                {
+                    MSG_WARNING(tt_string("Unrecognized class name -- ") << class_name);
+                }
             }
         }
-        else
-        {
-            if (!rmap_GenNames.contains(class_name))
-            {
-                MSG_WARNING(tt_string("Unrecognized class name -- ") << class_name);
-            }
-        }
-#endif  // _DEBUG
 
         // This code makes it possible to add `enable="internal"` to an XML class/interface to
-        // prevent it from being used in non-internal release builds.
+        // prevent it from being used when not testing.
         if (auto enable = generator.attribute("enable"); enable.as_sview() == "internal")
         {
-#if !defined(INTERNAL_TESTING)
-            // Skip this class if we're not doing an internal build (debug is always an
-            // internal build)
-            generator = generator.next_sibling("gen");
-            continue;
-#endif
+            if (!wxGetApp().isTestingMenuEnabled())
+            {
+                // Skip this class if we're not testing
+                generator = generator.next_sibling("gen");
+                continue;
+            }
         }
 
         GenType type { gen_type_unknown };

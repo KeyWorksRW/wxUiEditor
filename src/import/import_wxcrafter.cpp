@@ -183,7 +183,7 @@ void WxCrafter::ProcessForm(const Value& form)
     getGenName = GetGenName(value);
     if (getGenName == gen_unknown)
     {
-        MSG_ERROR(tt_string("Unrecognized window type: ") << value.GetInt())
+        MSG_ERROR(tt_string("Unrecognized window type: ") << value.GetInt());
         m_errors.emplace("Unrecognized window type!");
         return;
     }
@@ -1208,16 +1208,14 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                     prop_name = prop_maxValue;
                 else if (prop_name == prop_tooltip && node->isGen(gen_propGridItem))
                     prop_name = prop_help;
-                else
+                else if (wxGetApp().isTestingMenuEnabled())
                 {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
                     if ((prop_value.IsString() && prop_value.GetStringLength()) ||
                         (prop_value.IsBool() && prop_value.GetBool()))
                     {
                         MSG_INFO(tt_string() << node->declName() << " doesn't have a property called "
                                              << GenEnum::map_PropNames[prop_name]);
                     }
-#endif
                 }
             }
             if (prop_value.IsBool())

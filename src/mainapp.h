@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,17 +38,11 @@ public:
 
     bool isPjtMemberPrefix() const;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
     void ShowMsgWindow();
     bool AutoMsgWindow() const;
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void DbgCurrentTest(wxCommandEvent& event);
-#endif
-
-#if defined(_DEBUG)
-    void DbgPythonTest(wxCommandEvent& event);
-    void DbgRubyTest(wxCommandEvent& event);
 #endif
 
     void setMainFrameClosing() { m_isMainFrameClosing = true; }
@@ -106,3 +100,14 @@ private:
 };
 
 DECLARE_APP(App)
+
+// Do *NOT* use this before wxGetApp() has been initialized.
+// This test is available in release builds with the testing menu enabled.
+#define TEST_CONDITION(cond, msg)                                              \
+    if (wxGetApp().isTestingMenuEnabled())                                     \
+    {                                                                          \
+        if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, msg)) \
+        {                                                                      \
+            wxTrap();                                                          \
+        }                                                                      \
+    }

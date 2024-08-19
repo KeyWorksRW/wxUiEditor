@@ -508,7 +508,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
     if (!embed)
     {
-        MSG_WARNING(tt_string() << parts[IndexImage] << " not embedded!")
+        MSG_WARNING(tt_string() << parts[IndexImage] << " not embedded!");
         code.Add("wxNullBitmap");
         return;
     }

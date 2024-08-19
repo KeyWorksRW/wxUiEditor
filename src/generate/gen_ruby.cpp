@@ -102,8 +102,6 @@ static const std::vector<tt_string> disable_list = {
 };
 #endif  // _DEBUG
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 void MainFrame::OnGenSingleRuby(wxCommandEvent& WXUNUSED(event))
 {
     auto form = wxGetMainFrame()->getSelectedNode();
@@ -176,8 +174,6 @@ void MainFrame::OnGenerateRuby(wxCommandEvent& WXUNUSED(event))
 
     wxMessageBox(msg, "Ruby Code Generation", wxOK | wxICON_INFORMATION);
 }
-
-#endif
 
 static bool GenerateRubyForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
 {
@@ -263,9 +259,8 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.StartClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
 
     for (const auto& form: forms)
     {
@@ -277,9 +272,8 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
         results.msgs.emplace_back() << '\n';
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.EndClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
 
     return generate_result;
 }

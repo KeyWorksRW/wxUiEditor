@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code generation file writing functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,9 +12,7 @@ namespace pugi
     class xml_node;
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    #include <chrono>
-#endif
+#include <chrono>
 
 struct GenResults
 {
@@ -22,7 +20,6 @@ struct GenResults
     std::vector<tt_string> msgs;
     std::vector<tt_string> updated_files;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     std::chrono::steady_clock::time_point start_time;
     size_t elapsed;
 
@@ -36,10 +33,6 @@ struct GenResults
         msg << "Elapsed time: " << elapsed << " milliseconds";
         msgs.emplace_back(msg);
     }
-#else
-    void StartClock() {}
-    void EndClock() {}
-#endif
 };
 
 // If pClassList is non-null, it must contain the base class name of every form that needs

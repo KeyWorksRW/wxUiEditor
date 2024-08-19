@@ -56,8 +56,6 @@ extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of ge
 // defined in gen_xrc.cpp
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 void MainFrame::OnGenSinglePython(wxCommandEvent& WXUNUSED(event))
 {
     auto form = wxGetMainFrame()->getSelectedNode();
@@ -130,8 +128,6 @@ void MainFrame::OnGeneratePython(wxCommandEvent& WXUNUSED(event))
 
     wxMessageBox(msg, "Python Code Generation", wxOK | wxICON_INFORMATION);
 }
-
-#endif
 
 static void GatherImportModules(std::set<std::string>& imports, Node* node)
 {
@@ -225,9 +221,8 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.StartClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
 
     for (const auto& form: forms)
     {
@@ -239,9 +234,8 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
         results.msgs.emplace_back() << '\n';
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.EndClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
 
     return generate_result;
 }

@@ -9,26 +9,14 @@
 
 #include <vector>  // std::vector
 
-// In a Debug build, we use our custom logging class to retrieve wxWidgets messages. In a Release build with INTERNAL_TESTING
-// set, we still have the custom class and window, but there is no log window to derive from, or messages from wxWidgets to
-// intercept.
+// wx/log.h *MUST* be included before wx/generic/logg.h
+#include <wx/log.h>  // Assorted wxLogXXX functions, and wxLog (sink for logs)
 
-// clang-format off
-#if defined(_DEBUG)
-    // wx/log.h *MUST* be included before wx/generic/logg.h
-    #include <wx/log.h>           // Assorted wxLogXXX functions, and wxLog (sink for logs)
-
-    #include <wx/generic/logg.h>  // wxLogGui class
-#endif
-// clang-format on
+#include <wx/generic/logg.h>  // wxLogGui class
 
 class MsgFrame;
 
-#if defined(_DEBUG)
 class MsgLogging : public wxLogGui
-#else
-class MsgLogging
-#endif
 {
 public:
     void ShowLogger();
@@ -43,9 +31,7 @@ public:
 
     void Clear();
 
-#if defined(_DEBUG)
     void DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info) override;
-#endif
 
 private:
     MsgFrame* m_msgFrame { nullptr };

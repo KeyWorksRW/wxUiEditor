@@ -56,16 +56,15 @@
 #include "wxui/ui_images.h"  // This is generated from the Images List
 
 #include "internal/code_compare.h"  // CodeCompare
+#include "internal/msg_logging.h"   // MsgLogging -- Message logging class
 #include "internal/node_info.h"     // NodeInfo
 #include "internal/undo_info.h"     // UndoInfo
 
-#if defined(INTERNAL_TESTING)
-    #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
-#endif
+#include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
+#include "internal/xrcpreview.h"    // XrcPreview
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     #include "internal/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
-    #include "internal/xrcpreview.h"     // XrcPreview
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -106,12 +105,7 @@ enum
 
 const char* txtEmptyProject = "Empty Project";
 
-MainFrame::MainFrame() :
-    MainFrameBase(nullptr), m_findData(wxFR_DOWN)
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    ,
-    m_ImportHistory(9, wxID_FILE1 + 1000)
-#endif  // _DEBUG
+MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_ImportHistory(9, wxID_FILE1 + 1000)
 {
     m_dpi_menu_size = FromDIP(wxSize(16, 16));
     m_dpi_toolbar_size = FromDIP(wxSize(16, 16));
@@ -194,99 +188,76 @@ MainFrame::MainFrame() :
         menuTesting->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
         menuTesting->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
         menuTesting->Append(id_UndoInfo, "Undo &Stack Information...", "Show undo/redo stack memory usage");
+        menuTesting->AppendSeparator();
+        menuTesting->Append(id_GeneratePython, "&Generate Python", "Generate all python files from current project.");
+        menuTesting->Append(id_GenerateRuby, "&Generate Ruby", "Generate all ruby files from current project.");
+
+        auto* submenu_xrc = new wxMenu();
+        wxMenuItem* item;
+        item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...", "Dialog with multiple XRC tests");
+        item->SetBitmap(bundle_xrc_tests_svg(16, 16));
+        item =
+            submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import", "Export the current form, then verify importing it");
+        item->SetBitmap(bundle_import_svg(16, 16));
+        submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
+                            "Duplicate the current form via Export and Import XRC");
+        menuTesting->AppendSubMenu(submenu_xrc, "&XRC");
+
+        menuTesting->AppendSeparator();
+        menuTesting->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
         m_menubar->Append(menuTesting, "Testing");
+
+        m_submenu_import_recent = new wxMenu();
+        m_menuFile->AppendSeparator();
+        m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
+
+        config = wxConfig::Get();
+        config->SetPath("/debug_history");
+        m_ImportHistory.Load(*config);
+        m_ImportHistory.UseMenu(m_submenu_import_recent);
+        m_ImportHistory.AddFilesToMenu();
+        config->SetPath("/");
+
+        Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+#if defined(_DEBUG)
     auto menuInternal = new wxMenu;
 
     // We want these available in internal Release builds
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
     menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
-    menuInternal->AppendSeparator();
-    menuInternal->Append(id_GenSingleCpp, "&Generate Single C++", "Generate C++ src/hdr files for seletected form.");
-    menuInternal->Append(id_GenSinglePython, "&Generate Single Python", "Generate Python file for seletected form.");
-    menuInternal->Append(id_GenSingleRuby, "&Generate Single Ruby", "Generate Ruby file for seletected form.");
-
-    // menuInternal->Append(id_GeneratePython, "&Generate Python", "Generate all python files from current project.");
-    // menuInternal->Append(id_GenerateRuby, "&Generate Ruby", "Generate all ruby files from current project.");
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
-    ////////////////////// Debug-only menu items //////////////////////
-    #if defined(_DEBUG)
-
     menuInternal->AppendSeparator();
-
-    auto* submenu_xrc = new wxMenu();
-    wxMenuItem* item;
-    item = submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import", "Export the current form, then verify importing it");
-    item->SetBitmap(bundle_import_svg(16, 16));
-    submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
-                        "Duplicate the current form via Export and Import XRC");
-    item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...", "Dialog with multiple XRC tests");
-    item->SetBitmap(bundle_xrc_tests_svg(16, 16));
-    menuInternal->AppendSubMenu(submenu_xrc, "&XRC");
-
-    if (tt::file_exists("python\\py_main.py"))
-    {
-        menuInternal->Append(id_DebugPythonTest, "&Python Test", "Python debugging test");
-        Bind(wxEVT_MENU, &App::DbgPythonTest, &wxGetApp(), id_DebugPythonTest);
-    }
-
-    if (tt::file_exists("ruby\\rb_main.rb"))
-    {
-        menuInternal->Append(id_DebugRubyTest, "&Ruby Test", "Ruby debugging test");
-        Bind(wxEVT_MENU, &App::DbgRubyTest, &wxGetApp(), id_DebugRubyTest);
-    }
-
-    #endif
-    ////////////////////// End Debug-only menu items //////////////////////
-
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
-
-    m_submenu_import_recent = new wxMenu();
-    m_menuFile->AppendSeparator();
-    m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
-
-    config = wxConfig::Get();
-    config->SetPath("/debug_history");
-    m_ImportHistory.Load(*config);
-    m_ImportHistory.UseMenu(m_submenu_import_recent);
-    m_ImportHistory.AddFilesToMenu();
-    config->SetPath("/");
-
-    Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
 
     m_menubar->Append(menuInternal, "&Internal");
 
-    #if defined(_DEBUG)
-    m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_xrc_tests_svg(24, 24), "Dialog with multiple XRC tests");
-    #endif
-
-    m_toolbar->Realize();
-
-#else
-    // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
-    m_menuTools->Delete(m_mi_preview);
-    m_toolbar->DeleteTool(id_PreviewForm);
 #endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_xrc_tests_svg(24, 24), "Dialog with multiple XRC tests");
+    }
+
+    // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
+    else
+    {
+        m_menuTools->Delete(m_mi_preview);
+        m_toolbar->DeleteTool(id_PreviewForm);
+    }
+    m_toolbar->Realize();
 
     CreateStatusBar(StatusPanels);
     SetStatusBarPane(1);  // specifies where menu and toolbar help content is displayed
-#if defined(NEW_LAYOUT)
+
     // auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     m_ribbon_panel = new RibbonPanel(this);
     m_mainframe_sizer->Insert(0, m_ribbon_panel, wxSizerFlags(0).Expand());
 
     CreateSplitters();
-
-    // box_sizer->Add(m_MainSplitter, wxSizerFlags(1).Expand());
-    // SetSizer(box_sizer);
-#else
-    CreateSplitters();
-#endif
 
     m_nav_panel->SetMainFrame(this);
 
@@ -405,16 +376,28 @@ MainFrame::MainFrame() :
             id_UndoInfo);
         Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     }
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+        Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                g_pMsgLogging->ShowLogger();
+            },
+            id_ShowLogger);
+        Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, this, id_XrcPreviewDlg);
+        Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, this, id_DebugXrcImport);
+        Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, this, id_DebugXrcDuplicate);
+    }
+
+#if defined(_DEBUG)
     Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            g_pMsgLogging->ShowLogger();
-        },
-        id_ShowLogger);
     Bind(
         wxEVT_MENU,
         [this](wxCommandEvent&)
@@ -424,19 +407,7 @@ MainFrame::MainFrame() :
         },
         id_DebugPreferences);
 
-    Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
-    Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
-    Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
-
-    // Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
-    // Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
-#endif
-
-#if defined(_DEBUG)
-    Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, this, id_DebugXrcImport);
-    Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, this, id_DebugXrcDuplicate);
-    Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, this, id_XrcPreviewDlg);
 #endif
 
     AddCustomEventHandler(GetEventHandler());
@@ -684,30 +655,9 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     }
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
     tt_string file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000)).utf8_string();
-
-    #if 0
-
-    auto extension = file.extension();
-    wxArrayString files;
-    files.Add(file.make_wxString());
-    if (extension == ".wxcp")
-        Project.appendCrafter(files);
-    else if (extension == ".fbp")
-        Project.appendFormBuilder(files);
-    else if (extension == ".wxg")
-        Project.appendGlade(files);
-    else if (extension == ".wxs")
-        Project.appendSmith(files);
-    else if (extension == ".xrc")
-        Project.appendXRC(files);
-    else if (extension == ".pjd")
-        Project.appendDialogBlocks(files);
-
-    #else  // not 0
 
     if (!SaveWarning())
         return;
@@ -725,10 +675,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     {
         m_ImportHistory.RemoveFileFromHistory(event.GetId() - wxID_FILE1);
     }
-
-    #endif  // 0
 }
-#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 void MainFrame::OnNewProject(wxCommandEvent&)
 {
@@ -744,9 +691,8 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     if (!SaveWarning())
         return;
 
-#if (defined(_DEBUG) || defined(INTERNAL_TESTING))
-    g_pMsgLogging->Clear();
-#endif  // _DEBUG
+    if (g_pMsgLogging)
+        g_pMsgLogging->Clear();
 
     Project.NewProject();
 }
@@ -830,14 +776,15 @@ void MainFrame::OnClose(wxCloseEvent& event)
     if (m_has_clipboard_data)
         wxTheClipboard->Flush();
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    config->SetPath("/debug_history");
-    m_ImportHistory.Save(*config);
-    config->SetPath("/");
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        config->SetPath("/debug_history");
+        m_ImportHistory.Save(*config);
+        config->SetPath("/");
 
-    g_pMsgLogging->CloseLogger();
-#endif
-
+        if (g_pMsgLogging)
+            g_pMsgLogging->CloseLogger();
+    }
     event.Skip();
 }
 
@@ -906,10 +853,11 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
         }
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    g_pMsgLogging->OnNodeSelected();
-    m_imnportPanel->OnNodeSelected(evt_flags);
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        g_pMsgLogging->OnNodeSelected();
+        m_imnportPanel->OnNodeSelected(evt_flags);
+    }
 
     UpdateFrame();
 }
@@ -1322,17 +1270,10 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
             m_docviewPanel->ActivatePage();
         }
 #endif
-#if defined(INTERNAL_TESTING)
         else if (page != m_imnportPanel)
         {
             static_cast<BasePanel*>(page)->GenerateBaseClass();
         }
-#else
-        else
-        {
-            static_cast<BasePanel*>(page)->GenerateBaseClass();
-        }
-#endif
     }
 }
 
@@ -1342,12 +1283,9 @@ void MainFrame::OnFindDialog(wxCommandEvent&)
     {
         if (auto page = m_notebook->GetCurrentPage(); page)
         {
-#if defined(INTERNAL_TESTING)
-            if (page == m_imnportPanel)
+            if (wxGetApp().isTestingMenuEnabled() && page == m_imnportPanel)
                 m_findData.SetFindString(m_imnportPanel->GetTextCtrl()->GetSelectedText());
-            else
-#endif
-                if (page != m_mockupPanel && page != m_docviewPanel)
+            else if (page != m_mockupPanel && page != m_docviewPanel)
             {
                 m_findData.SetFindString(static_cast<BasePanel*>(page)->GetSelectedText());
             }
@@ -1395,10 +1333,11 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 
-#if defined(INTERNAL_TESTING)
-    m_imnportPanel = new ImportPanel(m_notebook);
-    m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_imnportPanel = new ImportPanel(m_notebook);
+        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+    }
 
 #if wxUSE_WEBVIEW
     m_docviewPanel = new DocViewPanel(m_notebook, this);

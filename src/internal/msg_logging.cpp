@@ -15,6 +15,24 @@
 MsgLogging* g_pMsgLogging { nullptr };
 std::vector<tt_string> g_log_msgs;
 
+void MSG_INFO(const std::string& msg)
+{
+    if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+        g_pMsgLogging->AddInfoMsg(msg);
+}
+
+void MSG_WARNING(const std::string& msg)
+{
+    if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+        g_pMsgLogging->AddWarningMsg(msg);
+}
+
+void MSG_ERROR(const std::string& msg)
+{
+    if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+        g_pMsgLogging->AddErrorMsg(msg);
+}
+
 void MsgLogging::ShowLogger()
 {
     if (m_bDestroyed)
@@ -191,7 +209,6 @@ void MsgLogging::OnNodeSelected()
     }
 }
 
-#if defined(_DEBUG)
 void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info)
 {
     if (wxGetApp().isMainFrameClosing())
@@ -306,4 +323,3 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             break;
     }
 }
-#endif

@@ -86,9 +86,7 @@ public:
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
 
-#if defined(INTERNAL_TESTING)
     ImportPanel* getImportPanel() { return m_imnportPanel; }
-#endif
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 
@@ -232,9 +230,7 @@ public:
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
-#endif  // _DEBUG
 
     void ProjectLoaded();
     void ProjectSaved();
@@ -261,12 +257,10 @@ public:
     void OnSaveProject(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnGenSingleCpp(wxCommandEvent& event);
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
-#endif
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
@@ -313,17 +307,15 @@ protected:
 
     void OnFindWidget(wxCommandEvent& event);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    void OnConvertImageDlg(wxCommandEvent& event);
     void OnGeneratePython(wxCommandEvent& event);
     void OnGenerateRuby(wxCommandEvent& event);
-#endif
+    void OnXrcPreview(wxCommandEvent& e);
+    void OnTestXrcImport(wxCommandEvent& e);
+    void OnTestXrcDuplicate(wxCommandEvent& e);
 
 #if defined(_DEBUG)  // Starts debug section.
 
-    void OnTestXrcImport(wxCommandEvent& e);
-    void OnTestXrcDuplicate(wxCommandEvent& e);
-    void OnXrcPreview(wxCommandEvent& e);
+    void OnConvertImageDlg(wxCommandEvent& event);
 
 #endif
 
@@ -369,9 +361,7 @@ private:
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
-#if defined(INTERNAL_TESTING)
     ImportPanel* m_imnportPanel { nullptr };
-#endif
 
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };
@@ -386,11 +376,8 @@ private:
     wxFindReplaceDialog* m_findDialog { nullptr };
 
     wxFileHistory m_FileHistory;
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory m_ImportHistory;
     wxMenu* m_submenu_import_recent;
-
-#endif  // _DEBUG
 
     wxSize m_dpi_menu_size;
     wxSize m_dpi_ribbon_size;

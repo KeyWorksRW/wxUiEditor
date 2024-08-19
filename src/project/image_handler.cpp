@@ -442,7 +442,7 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form)
                     }
                     else
                     {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+#if defined(_DEBUG)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
     #ifdef __cpp_lib_format
@@ -966,7 +966,7 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, 
                     }
                     else
                     {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+#if defined(_DEBUG)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
     #ifdef __cpp_lib_format
@@ -1423,7 +1423,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     }
     embed->size = size;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+#if defined(_DEBUG)
     wxFile file_original(path.make_wxString(), wxFile::read);
     if (file_original.IsOpened())
     {

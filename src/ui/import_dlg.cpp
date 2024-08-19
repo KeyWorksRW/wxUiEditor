@@ -32,10 +32,11 @@ enum
 
 void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_combo_recent_dirs->Show();
-    m_btnRemove->Show();
-#endif  // _DEBUG
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_combo_recent_dirs->Show();
+        m_btnRemove->Show();
+    }
 
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_radio_wxFormBuilder->SetFocus();

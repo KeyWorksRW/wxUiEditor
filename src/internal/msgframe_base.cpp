@@ -7,8 +7,6 @@
 
 // clang-format off
 
-#if defined(INTERNAL_TESTING)
-
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -187,8 +185,6 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     return true;
 }
-
-#endif  // defined(INTERNAL_TESTING)
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

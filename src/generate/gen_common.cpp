@@ -569,7 +569,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
-            MSG_WARNING(tt_string() << description << " not embedded!")
+            MSG_WARNING(tt_string() << description << " not embedded!");
             code << "wxNullBitmap";
             return false;
         }

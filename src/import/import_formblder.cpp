@@ -577,17 +577,18 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     continue;
                 }
 
-#if defined(INTERNAL_TESTING)
-                if (parent && parent->getForm())
+                if (wxGetApp().isTestingMenuEnabled())
                 {
-                    MSG_INFO(tt_string() << "Event " << event_name
-                                         << " not supported. Form: " << parent->getForm()->as_string(prop_class_name));
+                    if (parent && parent->getForm())
+                    {
+                        MSG_INFO(tt_string() << "Event " << event_name
+                                             << " not supported. Form: " << parent->getForm()->as_string(prop_class_name));
+                    }
+                    else
+                    {
+                        MSG_INFO(tt_string() << "Event " << event_name << " not supported");
+                    }
                 }
-                else
-                {
-                    MSG_INFO(tt_string() << "Event " << event_name << " not supported");
-                }
-#endif  // _DEBUG
 
                 xml_event = xml_event.next_sibling("event");
                 continue;
@@ -686,14 +687,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 }
 
 void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name,
-                                   Node* newobject,
-                                   Node*
-#if defined(INTERNAL_TESTING)
-                                       parent
-#else
-/* parent is only used in internal builds */
-#endif
-)
+                                   Node* newobject, Node* parent)
 {
     if (set_ignore_flags.contains(prop_name))
     {
@@ -953,19 +947,20 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             else if (xml_prop.text().as_view() == "wxWS_EX_VALIDATE_RECURSIVELY")
                 return;
 
-#if defined(INTERNAL_TESTING)
-            if (parent && parent->getForm())
+            if (wxGetApp().isTestingMenuEnabled())
             {
-                MSG_INFO(tt_string("Unsupported ")
-                         << prop_name << "(" << xml_prop.text().as_view() << ") property in " << class_name
-                         << ". Form: " << parent->getForm()->as_string(prop_class_name));
+                if (parent && parent->getForm())
+                {
+                    MSG_INFO(tt_string("Unsupported ")
+                             << prop_name << "(" << xml_prop.text().as_view() << ") property in " << class_name
+                             << ". Form: " << parent->getForm()->as_string(prop_class_name));
+                }
+                else
+                {
+                    MSG_INFO(tt_string("Unsupported ")
+                             << prop_name << "(" << xml_prop.text().as_view() << ") property in " << class_name);
+                }
             }
-            else
-            {
-                MSG_INFO(tt_string("Unsupported ")
-                         << prop_name << "(" << xml_prop.text().as_view() << ") property in " << class_name);
-            }
-#endif
         }
     }
 }

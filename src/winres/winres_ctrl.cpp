@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Process Windows Resource control data
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "winres_ctrl.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "mainapp.h"        // App -- App class
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 #include "utils.h"          // Utility functions that work with properties
 
@@ -96,28 +97,29 @@ static const ClassGenPair lst_name_gen[] = {
 
 void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are
-    // problems processing it.
-
-    m_original_line.clear();
-    auto temp_view = line.subview();
-
-    // First copy the diretive name without the leading whitespace
-    temp_view.moveto_nonspace();
-    auto pos_space = temp_view.find_space();
-    if (!tt::is_found(pos_space))
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        MSG_ERROR(tt_string() << "Invalid directive: " << line);
-        return;
+        // Create a copy of the original line without the extra spaces that can be used to send to our log window if there
+        // are problems processing it.
+
+        m_original_line.clear();
+        auto temp_view = line.subview();
+
+        // First copy the diretive name without the leading whitespace
+        temp_view.moveto_nonspace();
+        auto pos_space = temp_view.find_space();
+        if (!tt::is_found(pos_space))
+        {
+            MSG_ERROR(tt_string() << "Invalid directive: " << line);
+            return;
+        }
+
+        m_original_line.assign(temp_view, temp_view.find_space());
+
+        // Now copy the rest of the line after skipping over all the alignment whitespace used after the directive
+        temp_view.moveto_nextword();
+        m_original_line << ' ' << temp_view;
     }
-
-    m_original_line.assign(temp_view, temp_view.find_space());
-
-    // Now copy the rest of the line after skipping over all the alignment whitespace used after the directive
-    temp_view.moveto_nextword();
-    m_original_line << ' ' << temp_view;
-#endif  // _DEBUG
 
     m_pWinResource = pWinResource;
     bool is_control = line.starts_with("CONTROL");
@@ -221,15 +223,15 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         else
         {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            tt_string msg("Unrecognized CONTROL: ");
-            auto pos = line.find_space();
-            msg << line.subview(0, pos);
-            line.moveto_nextword();
-            msg << ' ' << line;
-            MSG_WARNING(msg);
-#endif  // _DEBUG
-
+            if (wxGetApp().isTestingMenuEnabled())
+            {
+                tt_string msg("Unrecognized CONTROL: ");
+                auto pos = line.find_space();
+                msg << line.subview(0, pos);
+                line.moveto_nextword();
+                msg << ' ' << line;
+                MSG_WARNING(msg);
+            }
             return;
         }
     }
@@ -306,14 +308,15 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             // TODO: [KeyWorks - 06-01-2021] We handle all controls that MS documented on 05/31/2018, which as of 6/01/2021
             // is still the current documentation. So, if we get here the control is unrecognizable.
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            tt_string msg("Unrecognized resource directive: ");
-            auto pos = line.find_space();
-            msg << line.subview(0, pos);
-            line.moveto_nextword();
-            msg << ' ' << line;
-            MSG_WARNING(msg);
-#endif  // _DEBUG
+            if (wxGetApp().isTestingMenuEnabled())
+            {
+                tt_string msg("Unrecognized resource directive: ");
+                auto pos = line.find_space();
+                msg << line.subview(0, pos);
+                line.moveto_nextword();
+                msg << ' ' << line;
+                MSG_WARNING(msg);
+            }
             return;
         }
         line.moveto_nextword();

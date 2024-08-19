@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStaticBoxSizer with wxRadioButton generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +10,7 @@
 #include <wx/statbox.h>
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "mainapp.h"          // App -- Main application class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
@@ -23,11 +24,8 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 
     // When testing, always display the checkbox, otherwise if Python is preferred, then don't
     // display the checkbox since Python doesn't support it.
-#if defined(INTERNAL_TESTING)
-    if (Project.hasValue(prop_code_preference))
-#else
-    if (Project.as_string(prop_code_preference) != "Python")
-#endif
+    if (Project.as_string(prop_code_preference) != "Python" ||
+        (Project.hasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
     {
         m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label));
         if (node->as_bool(prop_checked))

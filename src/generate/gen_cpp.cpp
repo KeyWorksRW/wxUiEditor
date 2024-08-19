@@ -125,8 +125,6 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 void MainFrame::OnGenSingleCpp(wxCommandEvent& WXUNUSED(event))
 {
     auto form = wxGetMainFrame()->getSelectedNode();
@@ -192,8 +190,6 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& WXUNUSED(event))
 
     wxMessageBox(msg, "C++ Code Generation", wxOK | wxICON_INFORMATION);
 }
-
-#endif
 
 static void GenCppForm(GenData& gen_data, Node* form)
 {
@@ -318,9 +314,8 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
     tt_cwd cwd(true);
     Project.ChangeDir();
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.StartClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
 
     if (Project.as_bool(prop_generate_cmake))
     {
@@ -382,9 +377,8 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
         GenCppForm(gen_data, form);
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.EndClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
 
     if (pClassList)
         return pClassList->size() > 0;

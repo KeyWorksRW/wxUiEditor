@@ -890,9 +890,8 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                             CreateXrcNode(menu_item, node);
                         }
                     }
-                    else
+                    else if (wxGetApp().isTestingMenuEnabled())
                     {
-#if defined(INTERNAL_TESTING)
                         if (parent && parent->getForm())
                         {
                             MSG_INFO(tt_string(m_importProjectFile.filename())
@@ -904,7 +903,6 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                             MSG_INFO(tt_string(m_importProjectFile.filename())
                                      << ": Unrecognized property: " << xml_obj.name() << " for " << node->declName());
                         }
-#endif
                     }
                     return;
                 }
@@ -928,10 +926,9 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 {
                     HandleSizerItemProperty(xml_obj, node, parent);
                 }
-                else if (!node->isGen(gen_spacer))
+                else if (!node->isGen(gen_spacer) && wxGetApp().isTestingMenuEnabled())
                 {
                     // spacer's don't use alignment or border styles
-#if defined(INTERNAL_TESTING)
                     if (parent && parent->getForm())
                     {
                         MSG_INFO(tt_string(m_importProjectFile.filename())
@@ -943,7 +940,6 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         MSG_INFO(tt_string(m_importProjectFile.filename())
                                  << ": " << xml_obj.name() << " not supported for " << node->declName());
                     }
-#endif
                 }
                 return;
 
@@ -963,9 +959,8 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 {
                     node->set_value(prop_proportion, xml_obj.text().as_view());
                 }
-                else
+                else if (wxGetApp().isTestingMenuEnabled())
                 {
-#if defined(INTERNAL_TESTING)
                     if (parent && parent->getForm())
                     {
                         // wxSmith does this, so ignore it
@@ -982,7 +977,6 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                                  << ": "
                                  << "\"option\" specified for node that doesn't have prop_proportion: " << node->declName());
                     }
-#endif
                 }
                 return;
 
@@ -1079,19 +1073,20 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         }
     }
 
-#if defined(INTERNAL_TESTING)
-    if (parent && parent->getForm())
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        MSG_INFO(tt_string(m_importProjectFile.filename())
-                 << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
-                 << parent->getForm()->as_string(prop_class_name));
+        if (parent && parent->getForm())
+        {
+            MSG_INFO(tt_string(m_importProjectFile.filename())
+                     << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
+                     << parent->getForm()->as_string(prop_class_name));
+        }
+        else
+        {
+            MSG_INFO(tt_string(m_importProjectFile.filename())
+                     << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+        }
     }
-    else
-    {
-        MSG_INFO(tt_string(m_importProjectFile.filename())
-                 << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
-    }
-#endif
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
@@ -1240,31 +1235,32 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
         else
         {
-#if defined(INTERNAL_TESTING)
-            if (parent)
+            if (wxGetApp().isTestingMenuEnabled())
             {
-                auto form = parent->getForm();
-                if (form && form->hasValue(prop_class_name))
+                if (parent)
                 {
-                    MSG_INFO(tt_string(m_importProjectFile.filename())
-                             << ": "
-                                "Unrecognized object: "
-                             << object_name << " in " << map_GenNames.at(parent->getGenName()) << " ("
-                             << form->as_string(prop_class_name) << ')');
+                    auto form = parent->getForm();
+                    if (form && form->hasValue(prop_class_name))
+                    {
+                        MSG_INFO(tt_string(m_importProjectFile.filename())
+                                 << ": "
+                                    "Unrecognized object: "
+                                 << object_name << " in " << map_GenNames.at(parent->getGenName()) << " ("
+                                 << form->as_string(prop_class_name) << ')');
+                    }
+                    else
+                    {
+                        MSG_INFO(tt_string(m_importProjectFile.filename())
+                                 << ": "
+                                    "Unrecognized object: "
+                                 << object_name << " in " << map_GenNames.at(parent->getGenName()));
+                    }
                 }
                 else
                 {
-                    MSG_INFO(tt_string(m_importProjectFile.filename())
-                             << ": "
-                                "Unrecognized object: "
-                             << object_name << " in " << map_GenNames.at(parent->getGenName()));
+                    MSG_INFO(tt_string(m_importProjectFile.filename()) << ": " << "Unrecognized object: " << object_name);
                 }
             }
-            else
-            {
-                MSG_INFO(tt_string(m_importProjectFile.filename()) << ": " << "Unrecognized object: " << object_name);
-            }
-#endif
             return NodeSharedPtr();
         }
     }

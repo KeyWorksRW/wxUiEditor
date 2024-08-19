@@ -692,16 +692,17 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 new_pg_property = new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_string());
                 new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING, wxVariant(true, "true"));
 
-#if defined(INTERNAL_TESTING)
-                for (auto& iter: umap_PropTypes)
+                if (wxGetApp().isTestingMenuEnabled())
                 {
-                    if (iter.second == type)
+                    for (auto& iter: umap_PropTypes)
                     {
-                        MSG_ERROR(tt_string("NodeProperty type is unsupported: ") << iter.first);
-                        break;
+                        if (iter.second == type)
+                        {
+                            MSG_ERROR(tt_string("NodeProperty type is unsupported: ") << iter.first);
+                            break;
+                        }
                     }
                 }
-#endif
             }
             return new_pg_property;
     }  // end switch (type)

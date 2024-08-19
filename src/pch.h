@@ -195,40 +195,11 @@ extern tt_string tt_empty_cstr;
 // Character used to separate the fields in a bitmap property
 constexpr const char BMP_PROP_SEPARATOR = ';';
 
+void MSG_INFO(const std::string& msg);
+void MSG_WARNING(const std::string& msg);
+void MSG_ERROR(const std::string& msg);
+
 //////////////////////////////////////// macros ////////////////////////////////////////
-
-#if defined(NDEBUG) && !defined(INTERNAL_TESTING)
-
-    #define MSG_INFO(msg)
-    #define MSG_EVENT(msg)
-    #define MSG_WARNING(msg)
-    #define MSG_ERROR(msg)
-
-#else
-
-// These messages can be individually enabled/disabled in the Preferences dialog (Debug tab).
-// Note that none of these are displayed in a Release build.
-
-    #include "internal/msg_logging.h"  // MsgLogging -- Message logging class
-
-    #define MSG_INFO(msg)                   \
-        {                                   \
-            g_pMsgLogging->AddInfoMsg(msg); \
-        }
-    #define MSG_EVENT(msg)                   \
-        {                                    \
-            g_pMsgLogging->AddEventMsg(msg); \
-        }
-    #define MSG_WARNING(msg)                   \
-        {                                      \
-            g_pMsgLogging->AddWarningMsg(msg); \
-        }
-    #define MSG_ERROR(msg)                   \
-        {                                    \
-            g_pMsgLogging->AddErrorMsg(msg); \
-        }
-
-#endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)
 
 #include "assertion_dlg.h"  // Assertion Dialog
 #include "to_casts.h"       // to_int -- Smart Numeric Casts

@@ -402,9 +402,8 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.EndClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
 
     for (auto& form: forms)
     {
@@ -416,14 +415,11 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
         results.msgs.emplace_back() << '\n';
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    results.EndClock();
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
 
     return true;
 }
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
 {
@@ -466,5 +462,3 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
 
     wxMessageBox(msg, "XRC Code Generation", wxOK | wxICON_INFORMATION);
 }
-
-#endif

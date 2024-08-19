@@ -63,14 +63,8 @@ if (INTERNAL_BLD_TESTING)
     set (wxui_internal_files ${wxui_internal}
         # These are always included in Debug builds, with INTERNAL_BLD_TESTING we also need them
         # in Release builds.
-        $<$<CONFIG:Release>:src/internal/code_compare.cpp>
         $<$<CONFIG:Release>:src/internal/convert_img.cpp>
-        $<$<CONFIG:Release>:src/internal/import_panel.cpp>
-        $<$<CONFIG:Release>:src/internal/node_info.cpp>
-        $<$<CONFIG:Release>:src/internal/xrcpreview.cpp>
 
-        $<$<CONFIG:Release>:src/internal/msg_logging.cpp>
-        $<$<CONFIG:Release>:src/internal/msgframe.cpp>
         $<$<CONFIG:Release>:src/internal/debugsettings.cpp>
     )
 

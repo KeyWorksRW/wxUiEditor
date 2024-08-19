@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   resForm layout code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "winres_form.h"
 
+#include "mainapp.h"       // App -- Main application class
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
 void resForm::CreateDialogLayout()
@@ -734,14 +735,14 @@ void resForm::adoptChild(Node* node, resCtrl* child)
 
 void resForm::adoptChild(const NodeSharedPtr& node, resCtrl& child)
 {
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
-    if (child.isAdded())
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        MSG_ERROR(tt_string() << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
+        ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
+        if (child.isAdded())
+        {
+            MSG_ERROR(tt_string() << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
+        }
     }
-#endif  // _DEBUG
-
     node->adoptChild(child.GetNodePtr());
     child.setAdded();
 }

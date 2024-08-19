@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Process a Windows Resource MENU
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "winres_form.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "mainapp.h"        // App -- App class
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 
 void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
@@ -63,19 +64,19 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
     m_form_type = form_menu;
     m_form_node = NodeCreation.newNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << txtfile.filename());
-#endif  // _DEBUG
-
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << txtfile.filename());
+    }
     tt_string value;  // General purpose string we can use throughout this function
 
     value = line.substr(0, end);
     m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_id = m_form_node->as_string(prop_class_name);
-#endif  // _DEBUG
-
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_form_id = m_form_node->as_string(prop_class_name);
+    }
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());

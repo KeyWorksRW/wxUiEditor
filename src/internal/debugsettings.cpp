@@ -111,7 +111,8 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     #include "mainapp.h"  // App -- App class
 
-    #include "preferences.h"  // Preferences -- Preferences class
+    #include "internal/msg_logging.h"  // MsgLogging -- Message logging class
+    #include "preferences.h"           // Preferences -- Preferences class
 
 void DebugSettings::OnInit(wxInitDialogEvent& event)
 {

@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Process a Windows Resource DIALOG or DIALOGEX
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "winres_form.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "mainapp.h"        // App -- App class
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 
 resForm::resForm() {}
@@ -37,24 +38,26 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     m_form_type = isDialog ? form_dialog : form_panel;
     m_form_node = NodeCreation.newNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    tt_string fullpath;
-    fullpath.assignCwd();
-    fullpath.append_filename(txtfile.filename().filename());
-    #if defined(_WIN32)
-    // VSCode File Open dialog can't handle forward slashes on Windows
-    fullpath.forwardslashestoback();
-    #endif  // _WIN32
-    m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << fullpath);
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        tt_string fullpath;
+        fullpath.assignCwd();
+        fullpath.append_filename(txtfile.filename().filename());
+#if defined(_WIN32)
+        // VSCode File Open dialog can't handle forward slashes on Windows
+        fullpath.forwardslashestoback();
+#endif  // _WIN32
+        m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << fullpath);
+    }
 
     tt_string value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
     m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_form_id = m_form_node->as_string(prop_class_name);
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_form_id = m_form_node->as_string(prop_class_name);
+    }
 
     line.remove_prefix(end);
     line.moveto_digit();

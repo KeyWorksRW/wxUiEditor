@@ -291,7 +291,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             ChangeSizer(gen_wxWrapSizer);
             break;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
         case MenuSingleGenCpp:
             {
                 wxCommandEvent dummy;
@@ -319,7 +318,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
                 wxGetMainFrame()->OnGenSingleXRC(dummy);
             }
             break;
-#endif
 
         case MenuADD_PAGE:
             if (m_node->isGen(gen_BookPage))
@@ -486,16 +484,15 @@ void NavPopupMenu::MenuAddCommands(Node* node)
     wxMenuItem* menu_item;
     auto& dpi_size = wxGetFrame().GetMenuDpiSize();
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    if (node->isForm())
-    {
-        Append(MenuSingleGenCpp, "Generate C++ for this form");
-        Append(MenuSingleGenPython, "Generate Python for this form");
-        Append(MenuSingleGenRuby, "Generate Ruby for this form");
-        Append(MenuSingleGenXRC, "Generate XRC for this form");
-        AppendSeparator();
-    }
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+        if (node->isForm())
+        {
+            Append(MenuSingleGenCpp, "Generate C++ for this form");
+            Append(MenuSingleGenPython, "Generate Python for this form");
+            Append(MenuSingleGenRuby, "Generate Ruby for this form");
+            Append(MenuSingleGenXRC, "Generate XRC for this form");
+            AppendSeparator();
+        }
 
     if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))
     {

@@ -6410,7 +6410,6 @@
       <node
         class="wxDialog"
         class_name="XrcPreview"
-        cpp_conditional="defined(INTERNAL_TESTING)"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Test XRC"
@@ -6683,7 +6682,6 @@
       <node
         class="wxFrame"
         class_name="MsgFrameBase"
-        cpp_conditional="defined(INTERNAL_TESTING)"
         title="wxUiEditor Messages"
         base_file="..\internal\msgframe_base"
         derived_class_name="MsgFrame"

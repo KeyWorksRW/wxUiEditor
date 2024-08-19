@@ -64,9 +64,7 @@ public:
     }
 
     bool ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect);
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto& GetOrginalLine() { return m_original_line; }
-#endif
 
     NodeSharedPtr SetNodePtr(NodeSharedPtr node)
     {
@@ -116,9 +114,7 @@ private:
     // Some styles like UDS_AUTOBUDDY have to be post-processed during actual layout.
     tt_string m_non_processed_style;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     tt_string m_original_line;
-#endif
 
     // Caution -- wxRect is *NOT* the same as a Windows RECT structure. wxRect stores width and height, RECT stores right and
     // bottom positions.

@@ -308,6 +308,16 @@ set (file_list
     utils/font_prop.cpp         # FontProperty class
     utils/utils.cpp             # Utility functions that work with properties
 
+    # Testing
+
+    internal/node_info.cpp     # Node memory usage dialog
+    internal/msgframe.cpp      # Stores messages
+    internal/msg_logging.cpp   # Message logging class
+    internal/import_panel.cpp  # Panel to display original imported file
+    internal/xrcpreview.cpp    # Test XRC
+    internal/import_panel.cpp  # Panel to display original imported file
+    tests/test_xrc_import.cpp  # XRC Import tests
+
     # Tools
 
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
@@ -341,8 +351,7 @@ set (file_list
 
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
 
-    $<$<CONFIG:Debug>:internal/convert_img.cpp>     # Convert image
-
+    $<$<CONFIG:Debug>:internal/convert_img.cpp>   # Convert image
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp>  # XRC Import tests
 )
 
@@ -351,18 +360,14 @@ set (debug_files
 
     internal/code_compare.cpp
     internal/convert_img.cpp
-    internal/import_panel.cpp
-
 
     internal/code_compare.cpp
     internal/convert_img_base.cpp
     internal/debugsettings.cpp
     internal/msgframe_base.cpp
-    internal/node_info.cpp
     internal/node_search_dlg.cpp
     internal/undo_info.cpp
     internal/unused_gen_dlg.cpp
-    internal/xrcpreview.cpp
 
     tools/generate_dlg.cpp
     tools/preview_settings.cpp
@@ -371,7 +376,6 @@ set (debug_files
     wxui/code_preference_dlg.cpp
     wxui/dlg_gen_results.cpp
 
-    tests/test_xrc_import.cpp
 
 )
 

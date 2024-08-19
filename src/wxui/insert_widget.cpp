@@ -105,29 +105,6 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
     }
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
-Node* FindChildNode(Node* node, GenEnum::GenName name)
-{
-    for (const auto& child: node->getChildNodePtrs())
-    {
-        if (child->isGen(name))
-        {
-            return child.get();
-        }
-        else if (child->getChildCount() > 0)
-        {
-            if (auto child_node = FindChildNode(child.get(), name); child_node)
-            {
-                return child_node;
-            }
-        }
-    }
-    return nullptr;
-}
-
-#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_stdBtn->GetAffirmativeButton()->Disable();
@@ -160,12 +137,10 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
             continue;
         }
 
-#ifndef INTERNAL_TESTING
-        if (iter->declName().starts_with("Data"))
+        if (!wxGetApp().isTestingMenuEnabled() && iter->declName().starts_with("Data"))
         {
             continue;
         }
-#endif
 
         if (name.empty() || iter->declName().contains(name, tt::CASE::either))
         {

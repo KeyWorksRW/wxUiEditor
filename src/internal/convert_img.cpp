@@ -31,6 +31,8 @@
 
 using namespace wxue_img;
 
+#if defined(_DEBUG)
+
 void MainFrame::OnConvertImageDlg(wxCommandEvent& WXUNUSED(event))
 {
     ConvertImageDlg dlg(this);
@@ -51,7 +53,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
     m_fileOriginal->SetInitialDirectory(dir.make_wxString());
     m_fileOutput->SetInitialDirectory(dir.make_wxString());
 
-#if defined(_WIN32)
+    #if defined(_WIN32)
 
     // Windows auto-complete only works with backslashes even though forward slashes work fine for opening directories and
     // files, and the directory name *must* end with a backslash.
@@ -60,7 +62,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 
     // By setting the path, the user can start typing and immediately get a drop-down list of matchning filenames.
     m_fileOriginal->SetPath(dir.make_wxString());
-#endif  // _WIN32
+    #endif  // _WIN32
 
     m_btnClose->SetLabel("Close");
 
@@ -109,14 +111,14 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     if (!file.file_exists())
         return;
 
-#if !defined(_WIN32)
+    #if !defined(_WIN32)
     // Don't do this on Windows! If the full path is specified, the user can press CTRL+BACKSPACE to remove extension or
     // filename and then continue to use auto-complete. If a relative path is specified, then auto-complete stops working.
 
     file.make_relative(m_cwd);
     file.backslashestoforward();
     m_fileOriginal->SetPath(file);
-#endif  // _WIN32
+    #endif  // _WIN32
 
     m_staticSave->SetLabelText(wxEmptyString);
     m_staticSize->SetLabelText(wxEmptyString);
@@ -539,11 +541,11 @@ void ConvertImageDlg::ImageInXpmOut()
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-#ifdef __cpp_lib_format
+    #ifdef __cpp_lib_format
                 std::format(std::locale(""), "Original size: {:L} -- XPM size: {:L}", m_orginal_size, output_size)
-#else
+    #else
                 tt_string() << "Original size:" << m_orginal_size << " -- XPM size: " << output_size
-#endif
+    #endif
             );
             m_staticSize->Show();
             m_lastOutputFile = out_name;
@@ -902,14 +904,14 @@ void ConvertImageDlg::SetOutputBitmap()
     {
         image.LoadFile(out_file.make_wxString());
 
-#if defined(_DEBUG)
+    #if defined(_DEBUG)
         auto has_mask = m_xpmImage.HasMask();
         wxColor rgb;
         if (has_mask)
         {
             rgb = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
         }
-#endif  // _DEBUG
+    #endif  // _DEBUG
     }
 
     if (image.IsOk())
@@ -1008,3 +1010,5 @@ void ConvertImageDlg::EnableConvertButton()
         Layout();
     }
 }
+
+#endif  // defined(_DEBUG)

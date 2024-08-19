@@ -224,36 +224,37 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
         }
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    auto append_history_ptr = wxGetFrame().GetAppendImportHistory();
-    for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        tt_string project_file = append_history_ptr->GetHistoryFile(idx).utf8_string();
-        if (project_file.file_exists())
+        auto append_history_ptr = wxGetFrame().GetAppendImportHistory();
+        for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
         {
-            tt_string shortname = project_file.filename();
-            project_file.remove_filename();
+            tt_string project_file = append_history_ptr->GetHistoryFile(idx).utf8_string();
+            if (project_file.file_exists())
+            {
+                tt_string shortname = project_file.filename();
+                project_file.remove_filename();
 
-            auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname.make_wxString(), wxEmptyString,
-                                                        wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE);
+                auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname.make_wxString(), wxEmptyString,
+                                                            wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE);
 
-            wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-            font.SetSymbolicSize(wxFONTSIZE_LARGE);
-            hyperlink->SetFont(font);
-            // Reverse the colours so that it's obvious which ones are the Debug build import files.
-            hyperlink->SetNormalColour(*wxRED);
-            hyperlink->SetHoverColour(*wxBLUE);
-            hyperlink->SetURL(append_history_ptr->GetHistoryFile(idx));
-            hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlg::OnHyperlink, this);
+                wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+                font.SetSymbolicSize(wxFONTSIZE_LARGE);
+                hyperlink->SetFont(font);
+                // Reverse the colours so that it's obvious which ones are the Debug build import files.
+                hyperlink->SetNormalColour(*wxRED);
+                hyperlink->SetHoverColour(*wxBLUE);
+                hyperlink->SetURL(append_history_ptr->GetHistoryFile(idx));
+                hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlg::OnHyperlink, this);
 
-            m_recent_flex_grid->Add(hyperlink, wxSizerFlags().Border(wxRIGHT));
+                m_recent_flex_grid->Add(hyperlink, wxSizerFlags().Border(wxRIGHT));
 
-            auto path = new wxStaticText(this, wxID_ANY, project_file);
-            m_recent_flex_grid->Add(path, wxSizerFlags().Border(wxALL));
-            file_added = true;
+                auto path = new wxStaticText(this, wxID_ANY, project_file);
+                m_recent_flex_grid->Add(path, wxSizerFlags().Border(wxALL));
+                file_added = true;
+            }
         }
     }
-#endif
 
     if (file_added)
     {

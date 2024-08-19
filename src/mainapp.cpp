@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,14 +18,15 @@
 
 #include "mainapp.h"
 
-#include "bitmaps.h"          // Contains various images handling functions
-#include "gen_results.h"      // Code generation file writing functions
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node -- Node class
-#include "node_creator.h"     // NodeCreator class
-#include "preferences.h"      // Set/Get wxUiEditor preferences
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "bitmaps.h"               // Contains various images handling functions
+#include "gen_results.h"           // Code generation file writing functions
+#include "internal/msg_logging.h"  // MsgLogging -- Message logging class
+#include "mainframe.h"             // MainFrame -- Main window frame
+#include "node.h"                  // Node -- Node class
+#include "node_creator.h"          // NodeCreator class
+#include "preferences.h"           // Set/Get wxUiEditor preferences
+#include "project_handler.h"       // ProjectHandler class
+#include "utils.h"                 // Utility functions that work with properties
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
@@ -246,13 +247,14 @@ int App::OnRun()
             // LoadProject() and ImportProject() can fire events.
             m_frame = new MainFrame();
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            g_pMsgLogging = new MsgLogging();
-            if (g_log_msgs.size())
+            if (wxGetApp().isTestingMenuEnabled())
             {
-                g_pMsgLogging->ShowLogger();
+                g_pMsgLogging = new MsgLogging();
+                if (g_log_msgs.size())
+                {
+                    g_pMsgLogging->ShowLogger();
+                }
             }
-#endif
 
 #if defined(_DEBUG)
             // wxLog only exists in _DEBUG builds
@@ -271,9 +273,8 @@ int App::OnRun()
             if (generate_type != GEN_LANG_NONE)
             {
                 m_is_generating = true;
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-                results.StartClock();
-#endif
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
             }
             if (!tt_filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                 !tt_filename.extension().is_sameas(".wxue", tt::CASE::either))
@@ -307,9 +308,8 @@ int App::OnRun()
             }
 
             std::vector<tt_string> class_list;
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-            results.StartClock();
-#endif
+            if (wxGetApp().isTestingMenuEnabled())
+                results.StartClock();
 
             // Passing a class_list reference will cause the code generator to process all the
             // top-level forms, but only populate class_list with the names of the forms that
@@ -381,14 +381,14 @@ int App::OnRun()
     {
         m_frame = new MainFrame();
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        g_pMsgLogging = new MsgLogging();
-        if (g_log_msgs.size())
+        if (wxGetApp().isTestingMenuEnabled())
         {
-            g_pMsgLogging->ShowLogger();
+            g_pMsgLogging = new MsgLogging();
+            if (g_log_msgs.size())
+            {
+                g_pMsgLogging->ShowLogger();
+            }
         }
-
-#endif
 
 #if defined(_DEBUG)
         // wxLog only exists in _DEBUG builds
@@ -500,12 +500,10 @@ bool App::isPjtMemberPrefix() const
     return (UserPrefs.GetProjectFlags() & Prefs::PREFS_PJT_MEMBER_PREFIX);
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 bool App::AutoMsgWindow() const
 {
     return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
 }
-#endif
 
 #if defined(_WIN32) && defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
@@ -586,15 +584,15 @@ void App::OnFatalException()
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 void App::ShowMsgWindow()
 {
     g_pMsgLogging->ShowLogger();
 }
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void App::DbgCurrentTest(wxCommandEvent&)
 {
+    MSG_INFO("Test of MSG_INFO");
     if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))
     {
         wxExecuteEnv env;
@@ -607,34 +605,4 @@ void App::DbgCurrentTest(wxCommandEvent&)
     wxMessageBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", txtVersion);
 }
 
-#endif
-
-#if defined(_DEBUG)
-void App::DbgPythonTest(wxCommandEvent&)
-{
-    if (tt::file_exists("python\\py_main.py"))
-    {
-        wxExecuteEnv env;
-        env.cwd = wxGetCwd() + "\\python";
-
-        wxExecute("python py_main.py", wxEXEC_SYNC, nullptr, &env);
-        return;
-    }
-
-    wxMessageBox("Debug Python test not currently available", txtVersion);
-}
-
-void App::DbgRubyTest(wxCommandEvent&)
-{
-    if (tt::file_exists("ruby\\rb_main.rb"))
-    {
-        wxExecuteEnv env;
-        env.cwd = wxGetCwd() + "\\ruby";
-
-        wxExecute("ruby rb_main.rb", wxEXEC_SYNC, nullptr, &env);
-        return;
-    }
-
-    wxMessageBox("Debug Ruby test not currently available", txtVersion);
-}
 #endif

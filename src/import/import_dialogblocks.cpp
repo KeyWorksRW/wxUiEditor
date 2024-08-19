@@ -32,6 +32,7 @@
 #include "import_dialogblocks.h"
 
 #include "dlg_msgs.h"      // wxMessageDialog dialogs
+#include "mainapp.h"       // App -- Main application class
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 
@@ -1747,36 +1748,33 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
     }
 }
 
-#if defined(INTERNAL_TESTING)
 tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
-#else
-tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& /* xml_node */, GenEnum::GenName /* getGenName */)
-#endif
 {
-#if defined(INTERNAL_TESTING)
-    tt_string msg = "Name: ";
-    if (getGenName != gen_unknown)
-        msg << map_GenNames[getGenName];
-    else
-        msg << "Unknown gen_name";
-    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        if (auto str = ExtractQuotedString(value); str.size())
-            msg << ", Label: " << str;
-    }
+        tt_string msg = "Name: ";
+        if (getGenName != gen_unknown)
+            msg << map_GenNames[getGenName];
+        else
+            msg << "Unknown gen_name";
+        if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)
+        {
+            if (auto str = ExtractQuotedString(value); str.size())
+                msg << ", Label: " << str;
+        }
 
-    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Member variable name"); value)
-    {
-        if (auto str = ExtractQuotedString(value); str.size())
-            msg << ", VarName: " << str;
+        if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Member variable name"); value)
+        {
+            if (auto str = ExtractQuotedString(value); str.size())
+                msg << ", VarName: " << str;
+        }
+        if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Id name"); value)
+        {
+            if (auto str = ExtractQuotedString(value); str.size())
+                msg << ", Id: " << str;
+        }
+        return msg;
     }
-    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Id name"); value)
-    {
-        if (auto str = ExtractQuotedString(value); str.size())
-            msg << ", Id: " << str;
-    }
-    return msg;
-#else
-    return {};
-#endif
+    else
+        return {};
 }

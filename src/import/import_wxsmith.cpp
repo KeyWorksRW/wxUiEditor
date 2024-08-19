@@ -135,5 +135,10 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         node->set_value(prop_column, xml_obj.text().as_int());
         return true;
     }
+    else if (node_name == "val")
+    {
+        node->set_value(prop_validator_variable, xml_obj.text().as_sview());
+        return true;
+    }
     return false;
 }

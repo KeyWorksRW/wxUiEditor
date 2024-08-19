@@ -45,6 +45,7 @@ namespace xrc_import
         { "fg", prop_foreground_colour },
         { "foreground", prop_foreground_colour },
         { "flexibledirection", prop_flexible_direction },
+        { "focused", prop_focus },
         { "gradient-end", prop_end_colour },
         { "gradient-start", prop_start_colour },
         { "growable_rows", prop_growablerows },
@@ -57,6 +58,8 @@ namespace xrc_import
         { "include_file", prop_subclass_header },
         { "linesize", prop_line_size },
         { "longhelp", prop_statusbar },  // Used by toolbar tools
+        { "maxsize", prop_maximum_size },
+        { "minpanesize", prop_min_pane_size },
         { "minsize", prop_min_size },
         { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
         { "oneshot", prop_one_shot },
@@ -728,12 +731,19 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         NodeProperty* prop = node->getPropPtr(wxue_prop);
         if (prop)
         {
-            prop->set_value(iter.text().as_view());
-            if (prop->getPropDeclaration()->declName().contains("colour") ||
-                prop->getPropDeclaration()->declName().contains("color"))
+            if (wxue_prop == prop_style)
             {
-                // Convert old style into #RRGGBB
-                prop->set_value(prop->as_color().GetAsString(wxC2S_HTML_SYNTAX));
+                ProcessStyle(iter, node, prop);
+            }
+            else
+            {
+                prop->set_value(iter.text().as_view());
+                if (prop->getPropDeclaration()->declName().contains("colour") ||
+                    prop->getPropDeclaration()->declName().contains("color"))
+                {
+                    // Convert old style into #RRGGBB
+                    prop->set_value(prop->as_color().GetAsString(wxC2S_HTML_SYNTAX));
+                }
             }
             continue;
         }
@@ -885,14 +895,14 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 #if defined(INTERNAL_TESTING)
                         if (parent && parent->getForm())
                         {
-                            MSG_INFO(tt_string()
-                                     << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
-                                     << parent->getForm()->as_string(prop_class_name));
+                            MSG_INFO(tt_string(m_importProjectFile.filename())
+                                     << ": Unrecognized property: " << xml_obj.name() << " for " << node->declName()
+                                     << " in " << parent->getForm()->as_string(prop_class_name));
                         }
                         else
                         {
-                            MSG_INFO(tt_string()
-                                     << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+                            MSG_INFO(tt_string(m_importProjectFile.filename())
+                                     << ": Unrecognized property: " << xml_obj.name() << " for " << node->declName());
                         }
 #endif
                     }
@@ -924,12 +934,14 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 #if defined(INTERNAL_TESTING)
                     if (parent && parent->getForm())
                     {
-                        MSG_INFO(tt_string() << xml_obj.name() << " not supported for " << node->declName() << " in "
-                                             << parent->getForm()->as_string(prop_class_name));
+                        MSG_INFO(tt_string(m_importProjectFile.filename())
+                                 << ": " << xml_obj.name() << " not supported for " << node->declName() << " in "
+                                 << parent->getForm()->as_string(prop_class_name));
                     }
                     else
                     {
-                        MSG_INFO(tt_string() << xml_obj.name() << " not supported for " << node->declName());
+                        MSG_INFO(tt_string(m_importProjectFile.filename())
+                                 << ": " << xml_obj.name() << " not supported for " << node->declName());
                     }
 #endif
                 }
@@ -956,12 +968,18 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 #if defined(INTERNAL_TESTING)
                     if (parent && parent->getForm())
                     {
-                        MSG_INFO(tt_string() << "\"option\" specified for node that doesn't have prop_proportion: "
-                                             << node->declName() << " in " << parent->getForm()->as_string(prop_class_name));
+                        // wxSmith does this, so ignore it
+                        if (!node->isGen(gen_gbsizeritem))
+                        {
+                            MSG_INFO(tt_string(m_importProjectFile.filename())
+                                     << ": " << "\"option\" specified for node that doesn't have prop_proportion: "
+                                     << node->declName() << " in " << parent->getForm()->as_string(prop_class_name));
+                        }
                     }
                     else
                     {
-                        MSG_INFO(tt_string()
+                        MSG_INFO(tt_string(m_importProjectFile.filename())
+                                 << ": "
                                  << "\"option\" specified for node that doesn't have prop_proportion: " << node->declName());
                     }
 #endif
@@ -1064,12 +1082,14 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 #if defined(INTERNAL_TESTING)
     if (parent && parent->getForm())
     {
-        MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
-                             << parent->getForm()->as_string(prop_class_name));
+        MSG_INFO(tt_string(m_importProjectFile.filename())
+                 << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
+                 << parent->getForm()->as_string(prop_class_name));
     }
     else
     {
-        MSG_INFO(tt_string() << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+        MSG_INFO(tt_string(m_importProjectFile.filename())
+                 << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
     }
 #endif
 }
@@ -1226,19 +1246,23 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                 auto form = parent->getForm();
                 if (form && form->hasValue(prop_class_name))
                 {
-                    MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
-                                         << map_GenNames.at(parent->getGenName()) << " (" << form->as_string(prop_class_name)
-                                         << ')');
+                    MSG_INFO(tt_string(m_importProjectFile.filename())
+                             << ": "
+                                "Unrecognized object: "
+                             << object_name << " in " << map_GenNames.at(parent->getGenName()) << " ("
+                             << form->as_string(prop_class_name) << ')');
                 }
                 else
                 {
-                    MSG_INFO(tt_string() << "Unrecognized object: " << object_name << " in "
-                                         << map_GenNames.at(parent->getGenName()));
+                    MSG_INFO(tt_string(m_importProjectFile.filename())
+                             << ": "
+                                "Unrecognized object: "
+                             << object_name << " in " << map_GenNames.at(parent->getGenName()));
                 }
             }
             else
             {
-                MSG_INFO(tt_string() << "Unrecognized object: " << object_name);
+                MSG_INFO(tt_string(m_importProjectFile.filename()) << ": " << "Unrecognized object: " << object_name);
             }
 #endif
             return NodeSharedPtr();
@@ -1311,6 +1335,16 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                     parent = sizer.get();
                     continue;
                 }
+            }
+        }
+        // wxSmith uses wxMenu as a child of a wxMenu. In wxUiEditor, we use gen_submenu in order to
+        // visually distinguish it as a parent.
+        else if (parent && getGenName == gen_wxMenu && (parent->isGen(gen_wxMenu) || parent->isGen(gen_submenu)))
+        {
+            new_node = NodeCreation.createNode(gen_submenu, parent);
+            if (new_node)
+            {
+                continue;
             }
         }
 

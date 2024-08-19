@@ -45,10 +45,8 @@ protected:
 
     void OnOK(wxCommandEvent& event) override;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnRecentDir(wxCommandEvent& event) override;
     void OnRemove(wxCommandEvent& event) override;
-#endif
 
 private:
     std::vector<tt_string> m_lstProjects;

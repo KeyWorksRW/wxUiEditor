@@ -80,10 +80,8 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
 {
     auto node_name = xml_obj.name();
 
-    if (node_name == "id_arg")
+    if (node_name == "id_arg" || node_name == "pos_arg" || node_name == "size_arg")
     {
-        // Until a project sets this to something other than 0, it's unknown what it does. Ignore it
-        // in the meantime.
         return true;
     }
     else if (node_name == "labelrowheight")
@@ -131,6 +129,16 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
                 node->set_value(prop_col_label_values, choices);
             return true;
         }
+    }
+    else if (node_name == "col" && node->isGen(gen_gbsizeritem))
+    {
+        node->set_value(prop_column, xml_obj.text().as_int());
+        return true;
+    }
+    else if (node_name == "val")
+    {
+        node->set_value(prop_validator_variable, xml_obj.text().as_sview());
+        return true;
     }
     return false;
 }

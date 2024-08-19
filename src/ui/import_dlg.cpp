@@ -15,6 +15,8 @@
 
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
+#include "mainapp.h"  // App -- App class
+
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
 enum
@@ -42,46 +44,47 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     config->SetPath("/preferences");
     auto import_type = config->Read("import_type", IMPORT_FB);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_FileHistory.Load(*config);
-    for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        m_combo_recent_dirs->AppendString(m_FileHistory.GetHistoryFile(idx));
-    }
-    if (m_FileHistory.GetCount())
-    {
-        m_combo_recent_dirs->Select(0);
-        wxFileName::SetCwd(m_combo_recent_dirs->GetValue());
-        m_static_cwd->SetLabel(m_combo_recent_dirs->GetValue());
-
-        wxDir dir;
-        wxArrayString files;
-
-        m_checkListProjects->Clear();
-
-        if (m_radio_wxCrafter->GetValue())
-            dir.GetAllFiles(".", &files, "*.wxcp");
-        else if (m_radio_wxFormBuilder->GetValue())
-            dir.GetAllFiles(".", &files, "*.fbp");
-        else if (m_radio_wxSmith->GetValue())
-            dir.GetAllFiles(".", &files, "*.wxs");
-        else if (m_radio_wxGlade->GetValue())
-            dir.GetAllFiles(".", &files, "*.wxg");
-        else if (m_radio_XRC->GetValue())
-            dir.GetAllFiles(".", &files, "*.xrc");
-        else if (m_radio_DialogBlocks->GetValue())
-            dir.GetAllFiles(".", &files, "*.pjd");
-        else if (m_radio_WindowsResource->GetValue())
+        m_FileHistory.Load(*config);
+        for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
         {
-            dir.GetAllFiles(".", &files, "*.rc");
-            dir.GetAllFiles(".", &files, "*.dlg");
-            CheckResourceFiles(files);
+            m_combo_recent_dirs->AppendString(m_FileHistory.GetHistoryFile(idx));
         }
+        if (m_FileHistory.GetCount())
+        {
+            m_combo_recent_dirs->Select(0);
+            wxFileName::SetCwd(m_combo_recent_dirs->GetValue());
+            m_static_cwd->SetLabel(m_combo_recent_dirs->GetValue());
 
-        if (files.size())
-            m_checkListProjects->InsertItems(files, 0);
+            wxDir dir;
+            wxArrayString files;
+
+            m_checkListProjects->Clear();
+
+            if (m_radio_wxCrafter->GetValue())
+                dir.GetAllFiles(".", &files, "*.wxcp");
+            else if (m_radio_wxFormBuilder->GetValue())
+                dir.GetAllFiles(".", &files, "*.fbp");
+            else if (m_radio_wxSmith->GetValue())
+                dir.GetAllFiles(".", &files, "*.wxs");
+            else if (m_radio_wxGlade->GetValue())
+                dir.GetAllFiles(".", &files, "*.wxg");
+            else if (m_radio_XRC->GetValue())
+                dir.GetAllFiles(".", &files, "*.xrc");
+            else if (m_radio_DialogBlocks->GetValue())
+                dir.GetAllFiles(".", &files, "*.pjd");
+            else if (m_radio_WindowsResource->GetValue())
+            {
+                dir.GetAllFiles(".", &files, "*.rc");
+                dir.GetAllFiles(".", &files, "*.dlg");
+                CheckResourceFiles(files);
+            }
+
+            if (files.size())
+                m_checkListProjects->InsertItems(files, 0);
+        }
     }
-#endif  // _DEBUG
 
     config->SetPath("/");
     switch (import_type)
@@ -118,10 +121,15 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
             break;
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    // Because m_combo_recent_dirs was created hidden and is shown in Debug builds.
-    Fit();
-#endif
+    wxCommandEvent dummy_event;
+
+    OnRecentDir(dummy_event);
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        // Because m_combo_recent_dirs was created hidden and is shown in Debug builds.
+        Fit();
+    }
 }
 
 void ImportDlg::OnCheckFiles(wxCommandEvent& WXUNUSED(event))
@@ -167,9 +175,10 @@ void ImportDlg::OnOK(wxCommandEvent& event)
     else
         config->Write("import_type", static_cast<long>(IMPORT_FB));
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_FileHistory.Save(*config);
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_FileHistory.Save(*config);
+    }
     config->SetPath("/");
 
     event.Skip();
@@ -182,10 +191,11 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
     if (dlg.ShowModal() != wxID_OK)
         return;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    m_FileHistory.AddFileToHistory(dlg.GetPath());
-    m_combo_recent_dirs->AppendString(dlg.GetPath());
-#endif
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        m_FileHistory.AddFileToHistory(dlg.GetPath());
+        m_combo_recent_dirs->AppendString(dlg.GetPath());
+    }
 
     tt::ChangeDir(dlg.GetPath().utf8_string());
 
@@ -223,76 +233,79 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
 {
-    auto result = m_combo_recent_dirs->GetValue();
-    m_FileHistory.AddFileToHistory(result);
-    tt::ChangeDir(result.utf8_string());
-
-    tt_string cwd;
-    cwd.assignCwd();
-    m_static_cwd->SetLabel(cwd.make_wxString());
-
-    wxDir dir;
-    wxArrayString files;
-
-    m_checkListProjects->Clear();
-
-    wxBusyCursor wait;
-
-    if (m_radio_wxCrafter->GetValue())
-        dir.GetAllFiles(".", &files, "*.wxcp");
-    else if (m_radio_wxFormBuilder->GetValue())
-        dir.GetAllFiles(".", &files, "*.fbp");
-    else if (m_radio_wxSmith->GetValue())
-        dir.GetAllFiles(".", &files, "*.wxs");
-    else if (m_radio_wxGlade->GetValue())
-        dir.GetAllFiles(".", &files, "*.wxg");
-    else if (m_radio_XRC->GetValue())
-        dir.GetAllFiles(".", &files, "*.xrc");
-    else if (m_radio_DialogBlocks->GetValue())
-        dir.GetAllFiles(".", &files, "*.pjd");
-    else if (m_radio_WindowsResource->GetValue())
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        dir.GetAllFiles(".", &files, "*.rc");
-        dir.GetAllFiles(".", &files, "*.dlg");
-        CheckResourceFiles(files);
-    }
+        auto result = m_combo_recent_dirs->GetValue();
+        m_FileHistory.AddFileToHistory(result);
+        tt::ChangeDir(result.utf8_string());
 
-    if (files.size())
-        m_checkListProjects->InsertItems(files, 0);
+        tt_string cwd;
+        cwd.assignCwd();
+        m_static_cwd->SetLabel(cwd.make_wxString());
+
+        wxDir dir;
+        wxArrayString files;
+
+        m_checkListProjects->Clear();
+
+        wxBusyCursor wait;
+
+        if (m_radio_wxCrafter->GetValue())
+            dir.GetAllFiles(".", &files, "*.wxcp");
+        else if (m_radio_wxFormBuilder->GetValue())
+            dir.GetAllFiles(".", &files, "*.fbp");
+        else if (m_radio_wxSmith->GetValue())
+            dir.GetAllFiles(".", &files, "*.wxs");
+        else if (m_radio_wxGlade->GetValue())
+            dir.GetAllFiles(".", &files, "*.wxg");
+        else if (m_radio_XRC->GetValue())
+            dir.GetAllFiles(".", &files, "*.xrc");
+        else if (m_radio_DialogBlocks->GetValue())
+            dir.GetAllFiles(".", &files, "*.pjd");
+        else if (m_radio_WindowsResource->GetValue())
+        {
+            dir.GetAllFiles(".", &files, "*.rc");
+            dir.GetAllFiles(".", &files, "*.dlg");
+            CheckResourceFiles(files);
+        }
+
+        if (files.size())
+            m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnRemove(wxCommandEvent& event)
 {
-    auto directory = m_combo_recent_dirs->GetValue();
-    for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        if (m_FileHistory.GetHistoryFile(idx) == directory)
+        auto directory = m_combo_recent_dirs->GetValue();
+        for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
         {
-            m_FileHistory.RemoveFileFromHistory(idx);
-            auto config = wxConfig::Get();
-            config->SetPath("/preferences");
-            m_FileHistory.Save(*config);
-            config->SetPath("/");
+            if (m_FileHistory.GetHistoryFile(idx) == directory)
+            {
+                m_FileHistory.RemoveFileFromHistory(idx);
+                auto config = wxConfig::Get();
+                config->SetPath("/preferences");
+                m_FileHistory.Save(*config);
+                config->SetPath("/");
 
-            m_combo_recent_dirs->Clear();
-            for (idx = 0; idx < m_FileHistory.GetCount(); ++idx)
-            {
-                m_combo_recent_dirs->AppendString(m_FileHistory.GetHistoryFile(idx));
+                m_combo_recent_dirs->Clear();
+                for (idx = 0; idx < m_FileHistory.GetCount(); ++idx)
+                {
+                    m_combo_recent_dirs->AppendString(m_FileHistory.GetHistoryFile(idx));
+                }
+                if (m_FileHistory.GetCount())
+                {
+                    m_combo_recent_dirs->Select(0);
+                    OnRecentDir(event);
+                }
+                break;
             }
-            if (m_FileHistory.GetCount())
-            {
-                m_combo_recent_dirs->Select(0);
-                OnRecentDir(event);
-            }
-            break;
         }
     }
 }
-
-#endif  // _DEBUG
 
 void ImportDlg::OnCrafter(wxCommandEvent& WXUNUSED(event))
 {

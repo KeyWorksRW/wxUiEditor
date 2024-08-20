@@ -425,7 +425,6 @@ inline MainFrame& wxGetFrame()
 // Returns a pointer to the mainframe window
 inline MainFrame* wxGetMainFrame()
 {
-    ASSERT_MSG(wxGetApp().getMainFrame(), "MainFrame hasn't been created yet.");
     return wxGetApp().getMainFrame();
 }
 

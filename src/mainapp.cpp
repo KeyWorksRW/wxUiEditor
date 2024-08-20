@@ -68,6 +68,9 @@ wxIMPLEMENT_APP(App);
 
 #endif  // _WIN32 && defined(_DEBUG)
 
+void ttAssertionHandler(const wxString& filename, int line, const wxString& function, const wxString& cond,
+                        const wxString& msg);
+
 tt_string tt_empty_cstr;
 
 #if defined(_WIN32)
@@ -85,10 +88,6 @@ App::App() {}
 
 bool App::OnInit()
 {
-#if defined(INTERNAL_TESTING) || defined(_DEBUG)
-    m_TestingMenuEnabled = true;
-#endif
-
 #if defined(_WIN32) && defined(_DEBUG)
     #if !defined(USE_CRT_MEMORY_DUMP)
 
@@ -175,9 +174,22 @@ int App::OnRun()
                          wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
 
     parser.Parse();
+#if defined(INTERNAL_TESTING) || defined(_DEBUG)
+    m_TestingMenuEnabled = true;
+#else
     if (auto result = parser.FoundSwitch("test_menu"); result != wxCMD_SWITCH_NOT_FOUND)
     {
         m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON ? true : false);
+    }
+#endif
+
+    if (wxGetApp().isTestingMenuEnabled() && !g_pMsgLogging)
+    {
+        g_pMsgLogging = new MsgLogging();
+        wxLog::SetActiveTarget(g_pMsgLogging);
+
+        // Use our own assertion handler
+        wxSetAssertHandler(ttAssertionHandler);
     }
 
     if (parser.GetParamCount() || parser.GetArguments().size())
@@ -246,20 +258,6 @@ int App::OnRun()
             // If we're not generating code, then we need to create the main frame so that
             // LoadProject() and ImportProject() can fire events.
             m_frame = new MainFrame();
-
-            if (wxGetApp().isTestingMenuEnabled())
-            {
-                g_pMsgLogging = new MsgLogging();
-                if (g_log_msgs.size())
-                {
-                    g_pMsgLogging->ShowLogger();
-                }
-            }
-
-#if defined(_DEBUG)
-            // wxLog only exists in _DEBUG builds
-            wxLog::SetActiveTarget(g_pMsgLogging);
-#endif  // _DEBUG
         }
 
         tt_string tt_filename = filename;
@@ -380,20 +378,6 @@ int App::OnRun()
     if (!m_frame)  // nothing passed on the command line, so frame not created yet
     {
         m_frame = new MainFrame();
-
-        if (wxGetApp().isTestingMenuEnabled())
-        {
-            g_pMsgLogging = new MsgLogging();
-            if (g_log_msgs.size())
-            {
-                g_pMsgLogging->ShowLogger();
-            }
-        }
-
-#if defined(_DEBUG)
-        // wxLog only exists in _DEBUG builds
-        wxLog::SetActiveTarget(g_pMsgLogging);
-#endif  // _DEBUG
     }
 
     if (UserPrefs.is_LoadLastProject() && !is_project_loaded)
@@ -592,17 +576,7 @@ void App::ShowMsgWindow()
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    MSG_INFO("Test of MSG_INFO");
-    if (tt::file_exists("c:\\rwCode\\wxTest\\src\\ruby\\rb_main.rb"))
-    {
-        wxExecuteEnv env;
-        env.cwd = "c:\\rwCode\\wxTest\\src\\ruby";
-
-        wxExecute("ruby rb_main.rb", wxEXEC_SYNC, nullptr, &env);
-        return;
-    }
-
-    wxMessageBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", txtVersion);
+    wxASSERT_MSG(false, "assert in MsgLogging");
 }
 
 #endif

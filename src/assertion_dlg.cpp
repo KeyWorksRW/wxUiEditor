@@ -10,6 +10,9 @@
 
 #include <wx/msgdlg.h>
 
+#include "mainapp.h"    // App -- Main application class
+#include "mainframe.h"  // MainFrame -- Main window frame
+
 static std::mutex g_mutexAssert;
 
 bool AssertionDlg(const char* filename, const char* function, int line, const char* cond, const std::string& msg)
@@ -41,6 +44,23 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
     else if (answer == wxID_CANCEL)
     {
         std::quick_exit(2);
+    }
+    else
+    {
+        if (auto frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
+        {
+            if (wxGetApp().isTestingMenuEnabled())
+            {
+                tt_string log_msg = str.ToStdString();
+                if (auto pos = log_msg.find("\n\nPress Yes"); tt::is_found(pos))
+                {
+                    log_msg.erase(pos, std::string::npos);
+                }
+                log_msg.Replace("\n\n", "\n", true);
+                log_msg += "\n";
+                MSG_WARNING(log_msg);
+            }
+        }
     }
 
     return false;

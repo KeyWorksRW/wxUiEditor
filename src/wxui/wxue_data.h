@@ -56,7 +56,7 @@ namespace wxue_data
     // ../xml/sizers.xml
     extern const unsigned char sizers[2296]; // 12909
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[7126]; // 30447
+    extern const unsigned char text_ctrls[7124]; // 30446
     // ../xml/widgets.xml
     extern const unsigned char widgets[6716]; // 28607
 }

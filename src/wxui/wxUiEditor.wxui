@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="21">
+  data_version="19">
   <node
     class="Project"
     art_directory="../art_src"
@@ -2652,7 +2652,8 @@
         no_closing_brace="1"
         derived_class_name="ArtPropertyDlg"
         private_members="1"
-        use_derived_class="0">
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"

@@ -39,6 +39,7 @@ protected:
     // Event handlers
 
     void OnChooseClient(wxCommandEvent& event);
+    void OnInit(wxInitDialogEvent& event);
     void OnSelectItem(wxListEvent& event);
 
 private:
@@ -56,8 +57,7 @@ private:
 // Code below this comment block will be preserved
 // if the code for this class is re-generated.
 //
-    // clang-format on
-    // ***********************************************
+// ***********************************************
 
 public:
     ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_props);
@@ -69,5 +69,6 @@ protected:
 
 private:
     wxString m_client;
+    tt_string m_org_id;
     const char* m_id;
 };

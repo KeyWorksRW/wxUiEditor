@@ -238,7 +238,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.Add("self.");
         if (!event->getNode()->hasValue(prop_id))
         {
-            code.AddComment("**WARNING** -- tool id not specified, event handler may never be called\n");
+            code.AddComment("**WARNING** -- tool id not specified, event handler may never be called.", true);
             if (code.is_cpp() || code.is_python())
             {
                 code << "Bind(" << handler.GetCode() << comma;

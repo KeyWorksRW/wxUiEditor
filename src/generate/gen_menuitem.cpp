@@ -235,8 +235,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_unchecked_bitmap))
     {
-        code.Eol();
-        code.AddComment("Set the unchecked bitmap").Eol();
+        code.AddComment("Set the unchecked bitmap");
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_unchecked_bitmap);

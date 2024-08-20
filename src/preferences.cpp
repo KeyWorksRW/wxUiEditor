@@ -26,6 +26,7 @@ void Prefs::ReadConfig()
     m_sizers_always_expand = config->ReadBool("always_expand", true);
     m_var_prefix = config->ReadBool("var_prefix", true);
     m_fullpath_title = config->ReadBool("fullpath_title", false);
+    m_add_comments = config->ReadBool("add_comments", false);
     m_svg_images = config->ReadBool("svg_images", false);
 
     m_enable_wakatime = config->ReadBool("enable_wakatime", true);
@@ -80,6 +81,7 @@ void Prefs::WriteConfig()
     config->Write("always_expand", m_sizers_always_expand);
     config->Write("var_prefix", m_var_prefix);
     config->Write("fullpath_title", m_fullpath_title);
+    config->Write("add_comments", m_add_comments);
     config->Write("svg_images", m_svg_images);
 
     config->Write("enable_wakatime", m_enable_wakatime);

@@ -205,7 +205,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddComment("Unknown language");
+        code.AddComment("Unknown language", true);
     }
     code.ResetIndent();
     code.ResetBraces();  // In C++, caller must close the final brace after all construction

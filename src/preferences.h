@@ -51,6 +51,9 @@ public:
     bool is_FullPathTitle() const { return m_fullpath_title; }
     void set_FullPathTitle(bool value) { m_fullpath_title = value; }
 
+    bool is_AddComments() const { return m_add_comments; }
+    void set_AddComments(bool value) { m_add_comments = value; }
+
     bool is_SvgImages() const { return m_svg_images; }
     void set_SvgImages(bool value) { m_svg_images = value; }
 
@@ -234,6 +237,7 @@ private:
     bool m_is_load_last_project { false };
     bool m_is_right_propgrid { false };
     bool m_is_cpp_snake_case { true };
+    bool m_add_comments { false };
 };
 
 extern Prefs& UserPrefs;

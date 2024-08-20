@@ -50,7 +50,7 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddComment("Unknown language");
+        code.AddComment("Unknown language", true);
     }
     return true;
 }

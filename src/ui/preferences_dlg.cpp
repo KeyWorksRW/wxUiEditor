@@ -58,6 +58,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer3->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
 
     m_check_fullpath = new wxCheckBox(page_general, wxID_ANY, "Full project path in title bar");
+    m_check_fullpath->SetValue(true);
     box_sizer3->Add(m_check_fullpath, wxSizerFlags(1).Border(wxALL));
 
     auto* checkBox_wakatime = new wxCheckBox(page_general, wxID_ANY, "Enable WakaTime");
@@ -74,6 +75,11 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_check_svg_bitmaps = new wxCheckBox(page_general, wxID_ANY, "Default SVG bitmaps");
     m_check_svg_bitmaps->SetToolTip("If checked, new bitmaps will default to SVG files");
     box_sizer4->Add(m_check_svg_bitmaps, wxSizerFlags().Border(wxALL));
+
+    m_check_prefer_comments = new wxCheckBox(page_general, wxID_ANY, "Generate explanatory comments");
+    m_check_prefer_comments->SetValue(true);
+    m_check_prefer_comments->SetToolTip("When checked, explanatory comments will sometimes be added to the generated code.");
+    box_sizer4->Add(m_check_prefer_comments, wxSizerFlags().Border(wxALL));
 
     box_sizer2->Add(box_sizer4, wxSizerFlags().Border(wxALL));
 
@@ -386,6 +392,7 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
     m_check_high_contrast->SetValue(UserPrefs.is_HighContrast());
     m_check_fullpath->SetValue(UserPrefs.is_FullPathTitle());
+    m_check_prefer_comments->SetValue(UserPrefs.is_AddComments());
     m_check_svg_bitmaps->SetValue(UserPrefs.is_SvgImages());
 
     m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
@@ -494,6 +501,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON : Prefs::PENDING_DARK_MODE_OFF));
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
     UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
+    UserPrefs.set_AddComments(m_check_prefer_comments->GetValue());
     UserPrefs.set_SvgImages(m_check_svg_bitmaps->GetValue());
 
     UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());

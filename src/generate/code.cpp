@@ -16,6 +16,7 @@
 #include "mainapp.h"          // App class
 #include "mainframe.h"        // MainFrame class
 #include "node.h"             // Node class
+#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 
@@ -2267,29 +2268,6 @@ void Code::GenFontColourSettings()
     }
 }
 
-Code& Code::AddComment(tt_string_view text)
-{
-    if (empty() || !tt::is_whitespace(back()))
-    {
-        *this << ' ';
-    }
-
-    if (is_cpp())
-    {
-        *this << "// " << text;
-    }
-    else if (is_python() || is_ruby())
-    {
-        *this << "# " << text;
-    }
-    else
-    {
-        // Default for any new languages
-        *this << "# " << text;
-    }
-    return *this;
-}
-
 Code& Code::ColourCode(GenEnum::PropName prop_name)
 {
     if (!hasValue(prop_name))
@@ -2347,4 +2325,29 @@ bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
         return false;
 
     return true;
+}
+
+Code& Code::AddComment(std::string_view comment, bool force)
+{
+    if (!UserPrefs.is_AddComments() && !force)
+        return *this;
+    Eol(eol_if_needed);
+    switch (m_language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            *this << "// " << comment;
+            break;
+        case GEN_LANG_PYTHON:
+        case GEN_LANG_RUBY:
+            *this << "# " << comment;
+            break;
+        default:
+            *this << "# " << comment;
+            break;
+    }
+
+    if (back() != '\n')
+        *this << '\n';  // Ensure that the comment is on its own line
+
+    return *this;
 }

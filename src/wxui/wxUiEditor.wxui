@@ -7103,6 +7103,7 @@
                     proportion="1" />
                   <node
                     class="wxCheckBox"
+                    checked="1"
                     label="Full project path in title bar"
                     var_name="m_check_fullpath"
                     proportion="1" />
@@ -7124,6 +7125,12 @@
                     label="Default SVG bitmaps"
                     var_name="m_check_svg_bitmaps"
                     tooltip="If checked, new bitmaps will default to SVG files" />
+                  <node
+                    class="wxCheckBox"
+                    checked="1"
+                    label="Generate explanatory comments"
+                    var_name="m_check_prefer_comments"
+                    tooltip="When checked, explanatory comments will sometimes be added to the generated code." />
                 </node>
               </node>
               <node

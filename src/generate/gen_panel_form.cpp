@@ -98,7 +98,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddComment("Unknown language");
+        code.AddComment("Unknown language", true);
     }
 
     code.ResetIndent();

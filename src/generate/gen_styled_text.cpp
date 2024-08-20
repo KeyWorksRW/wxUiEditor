@@ -606,8 +606,8 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         if (code.isPropValue(prop_stc_left_margin_width, 5))
         {
-            code.Eol(eol_if_needed).AddComment("Sets text margin scaled appropriately for the current DPI on Windows,");
-            code.Eol().AddComment("5 on wxGTK or wxOSX");
+            code.AddComment("Sets text margin scaled appropriately for the current DPI on Windows,");
+            code.AddComment("5 on wxGTK or wxOSX");
             code.Eol()
                 .NodeName()
                 .Function("SetMarginLeft(")
@@ -629,9 +629,8 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         if (!code.isPropValue(prop_stc_left_margin_width, 5) && code.isPropValue(prop_stc_right_margin_width, 5))
         {
-            code.Eol(eol_if_needed);
             code.AddComment("Sets text margin scaled appropriately for the current DPI on Windows");
-            code.Eol().AddComment("5 on wxGTK or wxOSX");
+            code.AddComment("5 on wxGTK or wxOSX");
         }
         code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(");
         if (code.isPropValue(prop_stc_right_margin_width, 5))
@@ -770,8 +769,8 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         else  // circle tree or box tree
         {
             code.OpenBrace();
-            code.Eol().AddComment("The outline colour of the circle and box tree symbols is reversed by default.");
-            code.Eol().AddComment("The code below ensures that the symbol is visible.");
+            code.AddComment("The outline colour of the circle and box tree symbols is reversed by default.");
+            code.AddComment("The code below ensures that the symbol is visible.");
             code.Eol().Str(code.is_cpp() ? "auto clr_foreground" : "_clr_foreground_") += " = ";
             code.NodeName().Function("StyleGetForeground(").Add("wxSTC_STYLE_DEFAULT").EndFunction();
             code.Eol().Str(code.is_cpp() ? "clr_background" : "_clr_background_");

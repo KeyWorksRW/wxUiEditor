@@ -227,6 +227,12 @@ public:
     // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
+    // If UserPrefs.is_AddComments() is true, then add the comment on it's own line.
+    // Set force to true to always add the comment.
+    // The comment will be prefixed with "// " for C++ and "# " for Python and Ruby.
+    // The comment will be followed by a newline.
+    Code& AddComment(std::string_view comment, bool force = false);
+
     // Adds "true" for all languages except Python, which adds "True"
     Code& True() { return Str(is_python() ? "True" : "true"); }
 
@@ -381,9 +387,6 @@ public:
         *this += is_cpp() ? "wxEmptyString" : "\"\"";
         return *this;
     }
-
-    // Will prefix text with "// " for C++ or "# " for Python
-    Code& AddComment(tt_string_view text);
 
     // Will either generate wxSize(...) or FromDIP(wxSize(...))
     Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, int enable_dpi_scaling = conditional_scaling);

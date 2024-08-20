@@ -15,6 +15,10 @@
 
 static std::mutex g_mutexAssert;
 
+// Note that this returns bool allowing the ASSERT macro to call wxTrap in the caller's code rather
+// than trapping in this function and then having to step out of this function to get to the
+// function that threw the assert.
+
 bool AssertionDlg(const char* filename, const char* function, int line, const char* cond, const std::string& msg)
 {
     // This is in case additional message processing results in an assert while this one is already being displayed.

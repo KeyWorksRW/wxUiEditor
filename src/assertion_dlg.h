@@ -12,6 +12,15 @@
 
 bool AssertionDlg(const char* filename, const char* function, int line, const char* cond, const std::string& msg);
 
+// The advantage of using ASSERT over wxASSERT is that ASSERT allows the macro to execute wxTrap in
+// the caller's code, so that you don't have to step out of the assertion function to get back to
+// the code that threw the assert.
+
+// Also note that wxASSERT will still be compiled in release builds unless setup.h specifically
+// disables it. By default, wxASSERT is enabled in release builds for wxWidgets, which would mean it
+// would compile in wxUiEditor code as well. Using ASSERT means it is only compiled into Release
+// builds if INTERNAL_TESTING is set.
+
 #if defined(NDEBUG) && !defined(INTERNAL_TESTING)
     #define ASSERT(cond)
     #define ASSERT_MSG(cond, msg)

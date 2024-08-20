@@ -13,6 +13,9 @@ on:
       - .github
   workflow_dispatch:
 
+env:
+  BUILD_TYPE: Release
+
 jobs:
   clangFormat:
     runs-on: ubuntu-latest

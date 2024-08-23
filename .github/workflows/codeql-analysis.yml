@@ -39,4 +39,4 @@ jobs:
     - run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check_build
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3

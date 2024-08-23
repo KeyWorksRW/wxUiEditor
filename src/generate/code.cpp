@@ -546,6 +546,11 @@ Code& Code::Add(tt_string_view text)
                 *this += "('')";
                 return *this;
             }
+            else if (text == "wxDefaultCoord")
+            {
+                *this += "Wx::DEFAULT_COORD";
+                return *this;
+            }
             else if (text == "wxDefaultSize")
             {
                 *this += "Wx::DEFAULT_SIZE";

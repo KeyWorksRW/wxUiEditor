@@ -247,7 +247,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         code.Eol().BeginConditional().Str("size == ").Add("wxDefaultSize").EndConditional().OpenBrace(true);
         code.AddComment("If default size let the sizer set the dialog's size");
         code.AddComment("so that it is large enough to fit it's child controls.");
-        code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true);
+        code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true, false);
 
         // If size != wxDefaultSize, it's more complicated because either the width or the height might still
         // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
@@ -255,8 +255,8 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         code.Eol().Str("else").AddIfPython(":").OpenBrace(true);
         code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
 
-        code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord ");
-        code.AddIfCpp("||").AddIfPython("or").AddIfRuby("||");
+        code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
+        code.AddIfCpp(" ||").AddIfPython("or").AddIfRuby("||");
         code.Str(" size.y == ").Add("wxDefaultCoord").EndConditional().OpenBrace(true);
         code.AddComment("Use the sizer to calculate the missing dimension");
         code.FormFunction("Fit(").EndFunction();

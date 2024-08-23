@@ -2348,6 +2348,31 @@ Code& Code::AddComment(std::string_view comment, bool force)
 
     if (back() != '\n')
         *this << '\n';  // Ensure that the comment is on its own line
+Code& Code::BeginConditional()
+{
+    if (is_cpp())
+    {
+        *this << "if (";
+    }
+    else
+    {
+        *this << "if ";
+    }
+    return *this;
+}
+
+Code& Code::EndConditional()
+{
+    if (is_cpp())
+    {
+        *this << ')';
+    }
+    else if (is_python())
+    {
+        *this << ':';
+    }
+
+    // Ruby doesn't need anything to complete the conditional statement
 
     return *this;
 }

@@ -450,6 +450,14 @@ public:
     void ResetBraces() { m_within_braces = false; }
 
     bool is_WithinBraces() const { return m_within_braces; }
+    // In C++ adds "if (".
+    // In Python and Ruby, adds "if ".
+    Code& BeginConditional();
+
+    // In C++ conditional statements are terminated with ')'.
+    // In Python conditional statements are terminated with ':'
+    // Ruby doesn't need anything to end a conditional statement.
+    Code& EndConditional();
 
     // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property contains a
     // 'n', or language is C++ and wxWidgets 3.1 is being used, or enable_dpi_scaling is set

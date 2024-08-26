@@ -98,6 +98,7 @@ static const std::vector<tt_string> disable_list = {
     "Metrics/MethodLength",
     "Metrics/ParameterLists",
     "Style/Documentation",
+    "Style/BlockComments",
     "Metrics/AbcSize",
 };
 #endif  // _DEBUG
@@ -803,7 +804,6 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
 
             if (svg_size != wxDefaultSize)
             {
-                code.Comma();
                 code.Comma();
                 code.CheckLineLength(sizeof("Wx::Size.new(999, 999)))"));
                 code << "Wx::Size.new(" << svg_size.x << ", " << svg_size.y << ')';

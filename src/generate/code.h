@@ -439,17 +439,18 @@ public:
     }
     void ResetIndent() { m_indent = 0; }
 
-    // In C++, this adds "{\n" and indents all lines until CloseBrace() is called.
-    //
-    // Ignored by Python and Ruby.
-    Code& OpenBrace();
+    // Call Indent() and Eol(eol_if_needed).
+    // In C++ "{" will be added before calling Indent().
+    Code& OpenBrace(bool all_languages = false);
 
     // In C++, this adds "\\n}" and removes indentation set by OpenBrace().
-    Code& CloseBrace();
+    //
+    // if (all_languages == true) other languages add '\n\ and call Unindent()
+    // Set close_ruby to false if there will be an else statement next.
+    Code& CloseBrace(bool all_languages = false, bool close_ruby = true);
 
     void ResetBraces() { m_within_braces = false; }
 
-    bool is_WithinBraces() const { return m_within_braces; }
     // In C++ adds "if (".
     // In Python and Ruby, adds "if ".
     Code& BeginConditional();

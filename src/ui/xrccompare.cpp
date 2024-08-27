@@ -18,7 +18,7 @@
 bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
     m_grid_bag_sizer = new wxGridBagSizer();
@@ -52,7 +52,24 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_grid_bag_sizer->Add(box_sizer_2, wxGBPosition(0, 2), wxGBSpan(1, 1), wxTOP|wxRIGHT|wxLEFT, 5);
 
-    SetSizerAndFit(m_grid_bag_sizer);
+    if (pos != wxDefaultPosition)
+    {
+        SetPosition(FromDIP(pos));
+    }
+    if (size == wxDefaultSize)
+    {
+        SetSizerAndFit(m_grid_bag_sizer);
+    }
+    else
+    {
+        SetSizer(m_grid_bag_sizer);
+        if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
+        {
+            Fit();
+        }
+        SetSize(FromDIP(size));
+        Layout();
+    }
     Centre(wxBOTH);
 
     return true;

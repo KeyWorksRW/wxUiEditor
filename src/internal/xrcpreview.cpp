@@ -19,7 +19,7 @@
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
@@ -97,8 +97,6 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
         m_scintilla->SetEOLMode(wxSTC_EOL_LF);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetProperty("fold", "1");
@@ -126,8 +124,24 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
 
-    SetMinSize(FromDIP(wxSize(1200, 1250)));
-    SetSizerAndFit(dlg_sizer);
+    SetMinSize(FromDIP(wxSize(1200, 1250)));if (pos != wxDefaultPosition)
+    {
+        SetPosition(FromDIP(pos));
+    }
+    if (size == wxDefaultSize)
+    {
+        SetSizerAndFit(dlg_sizer);
+    }
+    else
+    {
+        SetSizer(dlg_sizer);
+        if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
+        {
+            Fit();
+        }
+        SetSize(FromDIP(size));
+        Layout();
+    }
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "XrcPreview");

@@ -21,7 +21,7 @@
 bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -86,11 +86,9 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_cpp_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_cpp_stc_lambda->SetAdditionalSelectionTyping(true);
         m_cpp_stc_lambda->SetAdditionalCaretsBlink(true);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
         m_cpp_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_cpp_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_cpp_stc_lambda->SetMarginWidth(1, 0); // Remove default margin
+        m_cpp_stc_lambda->SetMarginWidth(1, 0);
         m_cpp_stc_lambda->SetMarginWidth(0, 16);
         m_cpp_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_cpp_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
@@ -170,11 +168,9 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_ruby_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_ruby_stc_lambda->SetAdditionalSelectionTyping(true);
         m_ruby_stc_lambda->SetAdditionalCaretsBlink(true);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
         m_ruby_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_ruby_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_ruby_stc_lambda->SetMarginWidth(1, 0); // Remove default margin
+        m_ruby_stc_lambda->SetMarginWidth(1, 0);
         m_ruby_stc_lambda->SetMarginWidth(0, 16);
         m_ruby_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_ruby_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
@@ -198,7 +194,24 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
-    SetSizerAndFit(parent_sizer);
+    if (pos != wxDefaultPosition)
+    {
+        SetPosition(FromDIP(pos));
+    }
+    if (size == wxDefaultSize)
+    {
+        SetSizerAndFit(parent_sizer);
+    }
+    else
+    {
+        SetSizer(parent_sizer);
+        if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
+        {
+            Fit();
+        }
+        SetSize(FromDIP(size));
+        Layout();
+    }
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "EventHandlerDlgBase");

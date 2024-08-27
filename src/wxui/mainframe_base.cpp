@@ -56,11 +56,13 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    if (!wxFrame::Create(parent, id, title, wxDefaultPosition, wxDefaultSize, style, name))
+    if (!wxFrame::Create(parent, id, title, pos, size, style, name))
         return false;
-    // Don't call FromDIP() until the window has been created
     if (pos != wxDefaultPosition || size != wxDefaultSize)
-        SetSize(FromDIP(pos).x, FromDIP(pos).y, FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
+    {
+        SetSize(FromDIP(pos).x, FromDIP(pos).y,
+        FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
+    }
     SetMinSize(FromDIP(wxSize(800, 800)));
 
     m_mainframe_sizer = new wxBoxSizer(wxVERTICAL);
@@ -790,7 +792,7 @@ namespace wxue_img
         95,254,5,102,180,147,237
     };
 
-}
+    }
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

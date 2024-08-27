@@ -20,11 +20,13 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
 
-    if (!wxFrame::Create(parent, id, title, wxDefaultPosition, wxDefaultSize, style, name))
+    if (!wxFrame::Create(parent, id, title, pos, size, style, name))
         return false;
-    // Don't call FromDIP() until the window has been created
     if (pos != wxDefaultPosition || size != wxDefaultSize)
-        SetSize(FromDIP(pos).x, FromDIP(pos).y, FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
+    {
+        SetSize(FromDIP(pos).x, FromDIP(pos).y,
+        FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
+    }
 
     auto* menubar = new wxMenuBar();
 
@@ -143,8 +145,6 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
         m_scintilla->SetLexer(wxSTC_LEX_XML);
         m_scintilla->SetReadOnly(true);
         m_scintilla->SetEOLMode(wxSTC_EOL_LF);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetProperty("fold", "1");

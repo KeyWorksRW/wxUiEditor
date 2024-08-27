@@ -17,7 +17,7 @@
 bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    if (!wxDialog::Create(parent, id, title, wxWindow::FromDIP(pos), wxWindow::FromDIP(size), style, name))
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
@@ -38,11 +38,9 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_scintilla->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_scintilla->SetAdditionalSelectionTyping(true);
         m_scintilla->SetAdditionalCaretsBlink(true);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_scintilla->SetMarginWidth(1, 0); // Remove default margin
+        m_scintilla->SetMarginWidth(1, 0);
         m_scintilla->SetMarginWidth(0, 16);
         m_scintilla->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_scintilla->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
@@ -63,9 +61,24 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
-    SetSizer(parent_sizer);
-    SetSize(FromDIP(wxSize(1000, 1000)));
-    Layout();
+    if (pos != wxDefaultPosition)
+    {
+        SetPosition(FromDIP(pos));
+    }
+    if (size == wxDefaultSize)
+    {
+        SetSizerAndFit(parent_sizer);
+    }
+    else
+    {
+        SetSizer(parent_sizer);
+        if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
+        {
+            Fit();
+        }
+        SetSize(FromDIP(size));
+        Layout();
+    }
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "EditHtmlDialogBase");

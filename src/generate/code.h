@@ -427,7 +427,6 @@ public:
     Code& ColourCode(GenEnum::PropName prop_name);
 
     Code& GenSizerFlags();
-
     void Indent(int amount = 1) { m_indent += amount; }
     void Unindent(int amount = 1)
     {
@@ -454,6 +453,14 @@ public:
     // In C++ adds "if (".
     // In Python and Ruby, adds "if ".
     Code& BeginConditional();
+
+    // For C++ and Ruby, adds " && ".
+    // For Python, adds " and ".
+    Code& AddConditionalAnd();
+
+    // For C++ and Ruby, adds " || ".
+    // For Python, adds " or ".
+    Code& AddConditionalOr();
 
     // In C++ conditional statements are terminated with ')'.
     // In Python conditional statements are terminated with ':'

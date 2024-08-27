@@ -2398,6 +2398,41 @@ Code& Code::BeginConditional()
     return *this;
 }
 
+Code& Code::AddConditionalAnd()
+{
+    if (is_cpp() || is_ruby())
+    {
+        *this << " && ";
+    }
+    else if (is_python())
+    {
+        *this << " and ";
+    }
+    else
+    {
+        MSG_WARNING("unknown language");
+    }
+
+    return *this;
+}
+Code& Code::AddConditionalOr()
+{
+    if (is_cpp() || is_ruby())
+    {
+        *this << " || ";
+    }
+    else if (is_python())
+    {
+        *this << " or ";
+    }
+    else
+    {
+        MSG_WARNING("unknown language");
+    }
+
+    return *this;
+}
+
 Code& Code::EndConditional()
 {
     if (is_cpp())

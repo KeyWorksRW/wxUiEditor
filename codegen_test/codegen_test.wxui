@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="16">
+  <node
+    class="Project"
+    art_directory="art"
+    base_directory="generated"
+    cmake_file="generated/codegen.cmake"
+    cpp_line_length="125"
+    generate_cmake="1"
+    wxWidgets_version="3.1">
+    <node
+      class="wxFrame"
+      class_name="MainFrameBase"
+      base_file="generated/mainframe_base"
+      derived_class_name="MainFrame"
+      derived_file="mainframe">
+      <node
+        class="wxToolBar" />
+      <node
+        class="wxMenuBar" />
+      <node
+        class="wxStatusBar" />
+    </node>
+  </node>
+</wxUiEditorData>

@@ -266,8 +266,8 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
 
         code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
-        code.AddIfCpp(" ||").AddIfPython("or").AddIfRuby("||");
-        code.Str(" size.y == ").Add("wxDefaultCoord").EndConditional().OpenBrace(true);
+        code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
+        code.EndConditional().OpenBrace(true);
         code.AddComment("Use the sizer to calculate the missing dimension");
         code.FormFunction("Fit(").EndFunction();
         code.CloseBrace(true);

@@ -94,6 +94,7 @@ const char* ruby_begin_cmt_block = "=begin";
 const char* ruby_end_cmt_block = "=end";
 
 #if defined(_DEBUG)
+// clang-format off
 static const std::vector<tt_string> disable_list = {
     "Metrics/MethodLength",
     "Metrics/ParameterLists",
@@ -101,6 +102,7 @@ static const std::vector<tt_string> disable_list = {
     "Style/BlockComments",
     "Metrics/AbcSize",
 };
+// clang-format on
 #endif  // _DEBUG
 
 void MainFrame::OnGenSingleRuby(wxCommandEvent& WXUNUSED(event))

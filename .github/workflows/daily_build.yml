@@ -30,6 +30,21 @@ jobs:
         path: |
           build/bin/Release/wxUiEditor.exe
 
+    - name: Generate Test Code
+      run: |
+        cd ${{github.workspace}}/codegen_test
+        ${{github.workspace}}/build/bin/Release/wxUiEditor.exe --gen_cpp codegen_test.wxui
+
+    - name: Configure Codegen CMake
+      run: |
+        cd ${{github.workspace}}/codegen_test
+        cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/codegen_test/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build codegen_test
+      run: |
+        cd ${{github.workspace}}/codegen_test
+        cmake --build ${{github.workspace}}/codegen_test/build --config ${{env.BUILD_TYPE}} --target check_build
+
 
   buildUnix:
     runs-on: ubuntu-20.04

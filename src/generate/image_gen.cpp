@@ -775,7 +775,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
     {
         if (code.is_cpp())
         {
-            code.Str("[&]()");
+            code.Indent();
+            code.Eol().Str("[&]()");
             code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
 
             for (auto& iter: bundle->lst_filenames)
@@ -794,9 +795,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
                 code.Eol().Str("bitmaps.push_back(wxueImage(") << name_img << ", sizeof(" << name_img << ")));";
             }
             code.Eol();
-            code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);").CloseBrace();
-            code.pop_back();  // remove the linefeed
-            code.Str("()");
+            code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);");
+            code.CloseBrace().Str("()").Eol();
         }
         else if (code.is_python())
         {

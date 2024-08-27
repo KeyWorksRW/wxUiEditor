@@ -427,7 +427,6 @@ public:
     Code& ColourCode(GenEnum::PropName prop_name);
 
     Code& GenSizerFlags();
-
     void Indent(int amount = 1) { m_indent += amount; }
     void Unindent(int amount = 1)
     {
@@ -439,17 +438,34 @@ public:
     }
     void ResetIndent() { m_indent = 0; }
 
-    // In C++, this adds "{\n" and indents all lines until CloseBrace() is called.
-    //
-    // Ignored by Python and Ruby.
-    Code& OpenBrace();
+    // Call Indent() and Eol(eol_if_needed).
+    // In C++ "{" will be added before calling Indent().
+    Code& OpenBrace(bool all_languages = false);
 
     // In C++, this adds "\\n}" and removes indentation set by OpenBrace().
-    Code& CloseBrace();
+    //
+    // if (all_languages == true) other languages add '\n\ and call Unindent()
+    // Set close_ruby to false if there will be an else statement next.
+    Code& CloseBrace(bool all_languages = false, bool close_ruby = true);
 
     void ResetBraces() { m_within_braces = false; }
 
-    bool is_WithinBraces() const { return m_within_braces; }
+    // In C++ adds "if (".
+    // In Python and Ruby, adds "if ".
+    Code& BeginConditional();
+
+    // For C++ and Ruby, adds " && ".
+    // For Python, adds " and ".
+    Code& AddConditionalAnd();
+
+    // For C++ and Ruby, adds " || ".
+    // For Python, adds " or ".
+    Code& AddConditionalOr();
+
+    // In C++ conditional statements are terminated with ')'.
+    // In Python conditional statements are terminated with ':'
+    // Ruby doesn't need anything to end a conditional statement.
+    Code& EndConditional();
 
     // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property contains a
     // 'n', or language is C++ and wxWidgets 3.1 is being used, or enable_dpi_scaling is set

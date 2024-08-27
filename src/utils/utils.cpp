@@ -438,6 +438,13 @@ tt_string ConvertToSnakeCase(tt_string_view str)
     tt_string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
     {
+        if (str[original_pos] == '(')
+        {
+            // Assume that '(' means a function name is being passed, so stop when we reach the
+            // first '('.
+            break;
+        }
+
         if (result[pos] >= 'A' && result[pos] <= 'Z')
         {
             result[pos] = result[pos] - 'A' + 'a';

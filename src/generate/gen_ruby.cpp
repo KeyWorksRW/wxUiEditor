@@ -94,12 +94,15 @@ const char* ruby_begin_cmt_block = "=begin";
 const char* ruby_end_cmt_block = "=end";
 
 #if defined(_DEBUG)
+// clang-format off
 static const std::vector<tt_string> disable_list = {
     "Metrics/MethodLength",
     "Metrics/ParameterLists",
     "Style/Documentation",
+    "Style/BlockComments",
     "Metrics/AbcSize",
 };
+// clang-format on
 #endif  // _DEBUG
 
 void MainFrame::OnGenSingleRuby(wxCommandEvent& WXUNUSED(event))
@@ -803,7 +806,6 @@ bool RubyBundleCode(Code& code, GenEnum::PropName prop)
 
             if (svg_size != wxDefaultSize)
             {
-                code.Comma();
                 code.Comma();
                 code.CheckLineLength(sizeof("Wx::Size.new(999, 999)))"));
                 code << "Wx::Size.new(" << svg_size.x << ", " << svg_size.y << ')';

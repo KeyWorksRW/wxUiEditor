@@ -5,6 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+/*
+
+    Notes:
+
+    The Eol() function will automatically append tabs if m_indent is greater than 0. That means you should *not* append tabs
+   using += '/t', and you should be very cautious about using += '\n' instead of Eol() since the Eol() call will
+   automatically append tabs if needed.
+
+*/
+
 #include <array>
 #include <charconv>  // for std::to_chars()
 #include <map>
@@ -347,10 +357,10 @@ Code& Code::Eol(int flag)
     {
         if (size() && back() != '\n')
         {
-            // If we're in a brace section, the last line will end with \n\t
-            if (size() < 3 || back() != '\t' || at(size() - 2) != '\n')
+            // Check for single and nested indents
+            if (!ends_with("\n\t") && !ends_with("\n\t\t"))
             {
-                *this += '\n';
+                return Eol();
             }
         }
     }
@@ -361,16 +371,24 @@ Code& Code::Eol(int flag)
         *this += '\n';
     }
 
+#if 0
+    // REVIEW: [Randalphwa - 08-26-2024] m_within_braces is no longer set to true in OpenBrace()
     if (m_within_braces && is_cpp() && size() && back() != '\t')
     {
         *this += '\t';
         if (m_within_font_braces)
             *this += '\t';
     }
-    else if (m_indent > 0)
+    else if (m_indent > 0 && (empty() || back() != '\t'))
     {
         Tab(m_indent);
     }
+#else
+    if (m_indent > 0 && (empty() || back() != '\t'))
+    {
+        Tab(m_indent);
+    }
+#endif
 
     if (m_auto_break)
     {
@@ -380,30 +398,54 @@ Code& Code::Eol(int flag)
     return *this;
 }
 
-Code& Code::OpenBrace()
+Code& Code::OpenBrace(bool all_languages)
 {
+    if (!all_languages && !is_cpp())
+    {
+        return *this;
+    }
+
     if (is_cpp())
     {
-        m_within_braces = true;
-        if (size() && back() != '\n')
-        {
-            *this += '\n';
-        }
-        *this += '{';
+        Eol(eol_if_needed);
+        *this += "{";
+        Indent();
         Eol();
+        // m_within_braces = true;
     }
+    else
+    {
+        Indent();
+        Eol(eol_if_needed);
+    }
+
     return *this;
 }
 
-Code& Code::CloseBrace()
+Code& Code::CloseBrace(bool all_languages, bool close_ruby)
 {
+    if (!all_languages && !is_cpp())
+    {
+        return *this;
+    }
+
+    // Ensure there are no trailing tabs
+    while (size() && tt::is_whitespace(back()))
+        pop_back();
+    Unindent();
+
     if (is_cpp())
     {
         m_within_braces = false;
-        while (size() && tt::is_whitespace(back()))
-            pop_back();
-        Eol().Str("}").Eol();
+        Eol();
+        *this += "}";
     }
+    if (all_languages && is_ruby() && close_ruby)
+    {
+        Eol();
+        *this += "end";
+    }
+
     return *this;
 }
 
@@ -411,15 +453,10 @@ void Code::OpenFontBrace()
 {
     if (is_cpp())
     {
-        if (size() && back() != '\n')
-        {
-            *this += '\n';
-        }
         m_within_font_braces = true;
-        if (m_within_braces)
-            *this += '\t';
+        Eol(eol_if_needed);
         *this += '{';
-        ++m_indent;
+        Indent();
         Eol();
     }
 }
@@ -428,9 +465,9 @@ void Code::CloseFontBrace()
 {
     if (is_cpp())
     {
-        while (tt::is_whitespace(back()))
+        while (size() && tt::is_whitespace(back()))
             pop_back();
-        --m_indent;
+        Unindent();
         m_within_font_braces = false;
         Eol().Str("}").Eol();
     }
@@ -544,6 +581,11 @@ Code& Code::Add(tt_string_view text)
             {
                 // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
                 *this += "('')";
+                return *this;
+            }
+            else if (text == "wxDefaultCoord")
+            {
+                *this += "Wx::DEFAULT_COORD";
                 return *this;
             }
             else if (text == "wxDefaultSize")
@@ -2346,8 +2388,71 @@ Code& Code::AddComment(std::string_view comment, bool force)
             break;
     }
 
-    if (back() != '\n')
-        *this << '\n';  // Ensure that the comment is on its own line
+    Eol(eol_if_needed);
+
+    return *this;
+}
+
+Code& Code::BeginConditional()
+{
+    if (is_cpp())
+    {
+        *this << "if (";
+    }
+    else
+    {
+        *this << "if ";
+    }
+    return *this;
+}
+
+Code& Code::AddConditionalAnd()
+{
+    if (is_cpp() || is_ruby())
+    {
+        *this << " && ";
+    }
+    else if (is_python())
+    {
+        *this << " and ";
+    }
+    else
+    {
+        MSG_WARNING("unknown language");
+    }
+
+    return *this;
+}
+Code& Code::AddConditionalOr()
+{
+    if (is_cpp() || is_ruby())
+    {
+        *this << " || ";
+    }
+    else if (is_python())
+    {
+        *this << " or ";
+    }
+    else
+    {
+        MSG_WARNING("unknown language");
+    }
+
+    return *this;
+}
+
+Code& Code::EndConditional()
+{
+    if (is_cpp())
+    {
+        *this << ')';
+    }
+    else if (is_python())
+    {
+        *this << ':';
+    }
+
+    // Ruby doesn't need anything to complete the conditional statement
 
     return *this;
 }

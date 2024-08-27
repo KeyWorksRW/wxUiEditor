@@ -12,6 +12,7 @@
 #include "gen_common.h"     // Common component functions
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
+#include "preferences.h"    // Prefs -- Set/Get wxUiEditor preferences
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file
@@ -67,13 +68,25 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.EndFunction();
         }
 
+        if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+            code.AddComment("Scaling of pos and size are handled after the dialog")
+                .AddComment("has been created and controls added.");
         code.Eol(eol_if_needed) += "if (!";
         if (code.node()->hasValue(prop_subclass))
             code.as_string(prop_subclass);
         else
             code += "wxDialog";
-        code += "::Create(parent, id, title, wxWindow::FromDIP(pos), ";
-        code += "wxWindow::FromDIP(size), style, name))";
+        code += "::Create(";
+        if (code.node()->hasValue(prop_subclass_params))
+        {
+            code += code.node()->as_string(prop_subclass_params);
+            code.RightTrim();
+            if (code.back() != ',')
+                code.Comma();
+            else
+                code += ' ';
+        }
+        code += "parent, id, title, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())
@@ -168,11 +181,17 @@ bool DialogFormGenerator::SettingsCode(Code& code)
             code.EndFunction();
         }
 
+        if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+            code.AddComment("Scaling of pos and size are handled after the dialog")
+                .AddComment("has been created and controls added.");
         code.Eol(eol_if_needed) += "if not self.Create(parent, id, title, pos, size, style, name):";
         code.Eol().Tab().Str("return");
     }
     else if (code.is_ruby())
     {
+        if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+            code.AddComment("Scaling of pos and size are handled after the dialog")
+                .AddComment("has been created and controls added.");
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
 
         if (code.hasValue(prop_extra_style))
@@ -206,8 +225,13 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     const auto min_size = form->as_wxSize(prop_minimum_size);
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
-    if (min_size == wxDefaultSize && max_size == wxDefaultSize && form->as_wxSize(prop_size) == wxDefaultSize)
+    bool is_scaling_enabled =
+        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size) ? true : false;
+
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize && form->as_wxSize(prop_size) == wxDefaultSize &&
+        !is_scaling_enabled)
     {
+        // If is_scaling_enabled == false, then neither pos or size have high dpi scaling enabled
         code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
     }
     else
@@ -221,53 +245,35 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
             code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
         }
 
-        if (form->as_wxSize(prop_size) != wxDefaultSize)
-        {
-            // If both size.x and size.y are set to non-default values, then set the window size and
-            // call Layout() to layout the child controls to match the new size. However, if one
-            // dimension has a default value, then we need to call Fit() first to calculate what
-            // that size should be, then call SetSize() and Layout().
+        // While the dev may have specified default values for either pos or size, the code that creates the dialog
+        // may have overridden either pos or size. It they did, then we need to scale those values here.
 
-            code.Eol(eol_if_needed).FormFunction("SetSizer(").NodeName(child_node).EndFunction();
-            auto size = code.node()->as_wxSize(prop_size);
-            if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
-            {
-                Code code_temp = code;
-                code_temp.clear();
-                code_temp.FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
-                auto comment_column = code_temp.size() + 2;
+        code.BeginConditional().Str("pos != ").Add("wxDefaultPosition").EndConditional().OpenBrace(true);
+        code.AddComment("Now that the dialog is created, set the scaled position");
+        code.FormFunction("SetPosition(").FormFunction("FromDIP(pos)").EndFunction().CloseBrace(true);
 
-                code_temp = code;
-                code_temp.clear();
-                code_temp.FormFunction("Fit(").EndFunction();
-                while (code_temp.size() < comment_column)
-                    code_temp += ' ';
-                code.Eol().Str(code_temp);
-                if (size.x == wxDefaultCoord)
-                    code += "// calculate width";
-                else
-                    code += "// calculate height";
+        // The default will be size == wxDefaultSize, in which case all we need to do is call
+        // SetSizerAndFit(child_node)
+        code.Eol().BeginConditional().Str("size == ").Add("wxDefaultSize").EndConditional().OpenBrace(true);
+        code.AddComment("If default size let the sizer set the dialog's size");
+        code.AddComment("so that it is large enough to fit it's child controls.");
+        code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true, false);
 
-                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
-                code.Str("  // set specified and calculated size dimensions");
+        // If size != wxDefaultSize, it's more complicated because either the width or the height might still
+        // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
 
-                code_temp = code;
-                code_temp.clear();
-                code_temp.FormFunction("Layout(").EndFunction();
-                while (code_temp.size() < comment_column)
-                    code_temp += ' ';
-                code.Eol().Str(code_temp).Str("// change layout to match SetSize() value");
-            }
-            else
-            {
-                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
-                code.Eol().FormFunction("Layout(").EndFunction();
-            }
-        }
-        else
-        {
-            code.Eol(eol_if_needed).FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
-        }
+        code.Eol().Str("else").AddIfPython(":").OpenBrace(true);
+        code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
+
+        code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
+        code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
+        code.EndConditional().OpenBrace(true);
+        code.AddComment("Use the sizer to calculate the missing dimension");
+        code.FormFunction("Fit(").EndFunction();
+        code.CloseBrace(true);
+        code.Eol().FormFunction("SetSize(").FormFunction("FromDIP(size)").EndFunction();
+        code.Eol().FormFunction("Layout(").EndFunction();
+        code.CloseBrace(true);
     }
 
     bool is_focus_set = false;

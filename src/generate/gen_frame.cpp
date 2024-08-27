@@ -39,7 +39,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Add("class ").NodeName().Add("(wx.Frame):\n");
         code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
-        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos, code::force_scaling);
+        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size, code::force_scaling);
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
@@ -72,11 +72,8 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         }
         code.Comma().Str("title = ").QuotedString(prop_title);
         // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos, code::force_scaling);
-        code.Comma()
-            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
-            .Str("size = ")
-            .WxSize(prop_size, code::force_scaling);
+        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
+        code.Comma().CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE")).Str("size = ").WxSize(prop_size);
         code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
         if (code.hasValue(prop_window_name))
         {
@@ -132,6 +129,11 @@ bool FrameFormGenerator::SettingsCode(Code& code)
         // TODO: [Randalphwa - 12-31-2022] Add Python and Ruby code for setting icon
     }
 
+    if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+    {
+        code.AddComment("Don't scale pos and size until after the window has been created.");
+    }
+
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
@@ -149,39 +151,33 @@ bool FrameFormGenerator::SettingsCode(Code& code)
             else
                 code += ' ';
         }
-        code += "parent, id, title, ";
-
-        if (code.is_ScalingEnabled(prop_pos, code::allow_scaling) || code.is_ScalingEnabled(prop_size, code::allow_scaling))
-            code += "wxDefaultPosition, wxDefaultSize";
-        else
-            code += "pos, size";
-
-        code += ", style, name))";
-        code.Eol().Tab().Str("return false;");
+        code += "parent, id, title, pos, size, style, name))";
+        code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())
     {
         code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, size, style, name):");
-        code.Eol().Tab().Str("return");
+        code.Eol().Tab().Str("return\n");
     }
     else if (code.is_ruby())
     {
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
-        // REVIEW: [Randalphwa - 07-17-2023] The following doesn't work with an error that Wx::Panel.create doesn't exist.
-        // code.Eol(eol_if_needed).Str("return false unless Wx::Panel.create(parent, id, pos, size, style, name)");
     }
     else
     {
         return false;
     }
 
-    if (code.is_cpp() &&
-        (code.is_ScalingEnabled(prop_pos, code::allow_scaling) || code.is_ScalingEnabled(prop_size, code::allow_scaling)))
+    if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
     {
-        code.Eol().Str("// Don't call FromDIP() until the window has been created");
-        code.Eol().Str("if (pos != wxDefaultPosition || size != wxDefaultSize)");
-        code.Eol().Tab().Str(
-            "SetSize(FromDIP(pos).x, FromDIP(pos).y, FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);");
+        code.Eol(eol_if_needed).BeginConditional().Str("pos != ").Add("wxDefaultPosition");
+        code.AddConditionalOr().Str("size != ").Add("wxDefaultSize");
+        code.EndConditional().OpenBrace(true);
+        code.FormFunction("SetSize(");
+        code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
+        code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
+        code.Add("wxSIZE_USE_EXISTING").EndFunction();
+        code.CloseBrace(true);
     }
 
     Node* frame = code.node();
@@ -200,7 +196,10 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle");
         if (!code.is_ruby())
+        {
+            // In Ruby, don't add () to the end of a function call if there are no parameters.
             code.Str("()");
+        }
         code.Str(" | ").Add(prop_window_extra_style).EndFunction();
     }
 

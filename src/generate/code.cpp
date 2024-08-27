@@ -377,7 +377,7 @@ Code& Code::Eol(int flag)
         if (m_within_font_braces)
             *this += '\t';
     }
-    else if (m_indent > 0 && back() != '\t')
+    else if (m_indent > 0 && (empty() || back() != '\t'))
     {
         Tab(m_indent);
     }

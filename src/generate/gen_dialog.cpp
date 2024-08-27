@@ -76,7 +76,17 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.as_string(prop_subclass);
         else
             code += "wxDialog";
-        code += "::Create(parent, id, title, pos, size, style, name))";
+        code += "::Create(";
+        if (code.node()->hasValue(prop_subclass_params))
+        {
+            code += code.node()->as_string(prop_subclass_params);
+            code.RightTrim();
+            if (code.back() != ',')
+                code.Comma();
+            else
+                code += ' ';
+        }
+        code += "parent, id, title, pos, size, style, name))";
         code.Eol().Tab() += "return false;\n";
     }
     else if (code.is_python())

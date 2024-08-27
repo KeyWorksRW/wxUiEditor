@@ -371,6 +371,8 @@ Code& Code::Eol(int flag)
         *this += '\n';
     }
 
+#if 0
+    // REVIEW: [Randalphwa - 08-26-2024] m_within_braces is no longer set to true in OpenBrace()
     if (m_within_braces && is_cpp() && size() && back() != '\t')
     {
         *this += '\t';
@@ -381,6 +383,12 @@ Code& Code::Eol(int flag)
     {
         Tab(m_indent);
     }
+#else
+    if (m_indent > 0 && (empty() || back() != '\t'))
+    {
+        Tab(m_indent);
+    }
+#endif
 
     if (m_auto_break)
     {

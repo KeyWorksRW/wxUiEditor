@@ -4,6 +4,16 @@
 
 set (wxue_generated_code
 
+    # Non-base classes
+    ${CMAKE_CURRENT_LIST_DIR}/booktest_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/commonctrls.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/popupwin.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/propsheet_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/wizard.cpp
+
+    # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/maintestdialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tools_dlg.cpp
 
 )

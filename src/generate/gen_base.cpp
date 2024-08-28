@@ -625,7 +625,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                             output_dir.append_filename(path);
                             if (!output_dir.file_exists())
                             {
-                                art_dir.append_filename(path);
+                                art_dir.append_filename(path.filename());
                                 if (art_dir.file_exists())
                                 {
                                     path = art_dir;

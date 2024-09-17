@@ -43,6 +43,7 @@ public:
 protected:
     // The opposite of wxWindowBase::DoSetWindowVariant, this restores a windows variant to wxWINDOW_VARIANT_NORMAL
     void ResetWindowVariant();
+    void MockupSetWindowVariant(wxWindowVariant variant);
     void CreateChildren(Node*, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer = nullptr);
 
 private:

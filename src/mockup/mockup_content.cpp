@@ -107,18 +107,15 @@ void MockupContent::CreateAllGenerators()
 
             if (form->isPropValue(prop_variant, "small"))
             {
-                SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-                m_variant = wxWINDOW_VARIANT_SMALL;
+                MockupSetWindowVariant(wxWINDOW_VARIANT_SMALL);
             }
             else if (form->isPropValue(prop_variant, "mini"))
             {
-                SetWindowVariant(wxWINDOW_VARIANT_MINI);
-                m_variant = wxWINDOW_VARIANT_MINI;
+                MockupSetWindowVariant(wxWINDOW_VARIANT_MINI);
             }
             else if (form->isPropValue(prop_variant, "large"))
             {
-                SetWindowVariant(wxWINDOW_VARIANT_LARGE);
-                m_variant = wxWINDOW_VARIANT_LARGE;
+                MockupSetWindowVariant(wxWINDOW_VARIANT_LARGE);
             }
         }
 
@@ -738,4 +735,37 @@ void MockupContent::ResetWindowVariant()
     font.SetFractionalPointSize(size);
     SetFont(font);
     m_variant = wxWINDOW_VARIANT_NORMAL;
+}
+
+void MockupContent::MockupSetWindowVariant(wxWindowVariant variant)
+{
+    // adjust the font height to correspond to our new variant (notice that
+    // we're only called if something really changed)
+    wxFont font = GetFont();
+    double size = font.GetFractionalPointSize();
+    switch (variant)
+    {
+        case wxWINDOW_VARIANT_NORMAL:
+            break;
+
+        case wxWINDOW_VARIANT_SMALL:
+            size /= 1.2;
+            break;
+
+        case wxWINDOW_VARIANT_MINI:
+            size /= 1.2 * 1.2;
+            break;
+
+        case wxWINDOW_VARIANT_LARGE:
+            size *= 1.2;
+            break;
+
+        default:
+            wxFAIL_MSG(wxT("unexpected window variant"));
+            break;
+    }
+
+    font.SetFractionalPointSize(size);
+    SetFont(font);
+    m_variant = variant;
 }

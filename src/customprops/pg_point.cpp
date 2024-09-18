@@ -69,7 +69,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     // Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
     // itself as all scaling is done automatically.
     if (type != CustomPointProperty::type_SVG && type != CustomPointProperty::type_ART &&
-        type != CustomPointProperty::type_BITMAP)
+        type != CustomPointProperty::type_BITMAP && !prop->getNode()->isGen(gen_wxWizard))
     {
         AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
         Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays. Requires wxWidgets 3.2 or later, "

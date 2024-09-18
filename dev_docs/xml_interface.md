@@ -1,6 +1,6 @@
 # XML Files
 
-The XML files in this directory declare every node type that can be created. Properties and events are either specified in the XML file, or they are created by the generator class calling `AddPropsAndEvents()`. Before changes to these files show up in wxUiEditor, you _must_ regenerate the `wxUiEditor.wxui` project file in order to update the generated `wxue_data` files. Generating `wxue_data.cpp` and `wxue_data.h` strips out all comments and whitespace before compressing it using `zlib`.
+The XML files in the `src/xml` directory declare every node type that can be created. Properties and events are either specified in the XML file, or they are created by the generator class calling `AddPropsAndEvents()`. Before changes to these files show up in wxUiEditor, you _must_ regenerate the `wxUiEditor.wxui` project file in order to update the generated `wxue_data` files. Generating `wxue_data.cpp` and `wxue_data.h` strips out all comments and whitespace before compressing it using `zlib`.
 
 ## Inheriting interface classes
 

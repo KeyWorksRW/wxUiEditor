@@ -2064,7 +2064,14 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
         if (m_node->isForm())
         {
-            FormFunction("SetFont(font").EndFunction();
+            if (m_node->isGen(gen_wxPropertySheetDialog))
+            {
+                FormFunction("GetBookCtrl()").Function("SetFont(").Add("font").EndFunction();
+            }
+            else
+            {
+                FormFunction("SetFont(font").EndFunction();
+            }
             CloseFontBrace();
         }
         else if (m_node->isGen(gen_wxStyledTextCtrl))
@@ -2227,7 +2234,19 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
         if (m_node->isForm())
         {
-            FormFunction(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
+            if (m_node->isGen(gen_wxPropertySheetDialog))
+            {
+                FormFunction("GetBookCtrl()")
+                    .Function(font_function)
+                    .Object("wxFont")
+                    .Str("font_info")
+                    .Str(")")
+                    .EndFunction();
+            }
+            else
+            {
+                FormFunction(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
+            }
         }
         else
         {
@@ -2252,7 +2271,14 @@ void Code::GenFontColourSettings()
         Eol(eol_if_needed);
         if (node->isForm())
         {
-            FormFunction("SetForegroundColour(");
+            if (m_node->isGen(gen_wxPropertySheetDialog))
+            {
+                FormFunction("GetBookCtrl()").Function("SetForegroundColour(");
+            }
+            else
+            {
+                FormFunction("SetForegroundColour(");
+            }
         }
         else
         {
@@ -2306,7 +2332,33 @@ void Code::GenFontColourSettings()
                 Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
             }
         }
+
         EndFunction();
+
+        // For background color, set both the background of the dialog and the background of the book control
+        if (m_node->isGen(gen_wxPropertySheetDialog))
+        {
+            FormFunction("GetBookCtrl()").Function("SetBackgroundColour(");
+            if (bg_clr.contains("wx"))
+            {
+                Add("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
+            }
+            else
+            {
+                if (bg_clr.starts_with('#'))
+                {
+                    Object("wxColour").QuotedString(bg_clr) += ')';
+                }
+                else
+                {
+                    // This handles older project versions, and hand-edited project files
+                    const auto colour = m_node->as_wxColour(prop_background_colour);
+                    Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                }
+            }
+
+            EndFunction();
+        }
     }
 }
 

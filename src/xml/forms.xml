@@ -348,7 +348,13 @@
     </gen>
 
     <gen class="wxPropertySheetDialog" image="prop_sheet_dlg" type="propsheetform">
-        <inherits class="Dialog Window Settings"/>
+        <inherits class="Dialog Window Settings">
+            <hide name="pos" />
+            <hide name="size" />
+            <hide name="foreground_colour" />
+            <hide name="maximum_size" />
+            <hide name="minimum_size" />
+        </inherits>
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>
         <inherits class="wxTopLevelWindow"/>

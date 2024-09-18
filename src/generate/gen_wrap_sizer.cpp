@@ -61,7 +61,8 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
     }
 
     auto parent = code.node()->getParent();
-    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
+        !parent->isGen(gen_wxPopupTransientWindow))
     {
         code.NewLine(true);
         if (parent->isGen(gen_wxRibbonPanel))

@@ -14,6 +14,7 @@ class PopupWinGenerator : public BaseGenerator
 public:
     bool ConstructionCode(Code&) override;
     bool SettingsCode(Code&) override;
+    bool AfterChildrenCode(Code&) override;
     bool HeaderCode(Code&) override;
     bool BaseClassNameCode(Code&) override;
 

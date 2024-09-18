@@ -224,7 +224,8 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
     }
 
     auto parent = code.node()->getParent();
-    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
+        !parent->isGen(gen_wxPopupTransientWindow))
     {
         code.Eol(eol_if_needed);
         if (parent->isGen(gen_wxRibbonPanel))

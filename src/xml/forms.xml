@@ -476,7 +476,11 @@
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>
         <inherits class="wxTopLevelWindow"/>
-        <inherits class="wxWindow"/>
+        <inherits class="wxWindow">
+            <hide name="minimum_size"/>
+            <hide name="maximum_size"/>
+            <hide name="size"/>
+        </inherits>
         <inherits class="Window Events"/>
         <property name="class_name" type="string"
             help="The name of the base class.">MyWizardBase</property>
@@ -511,7 +515,7 @@
             help="Sets the width of the border around the page area."/>
         <property name="center" type="option"
             help="Centers the dialog box on the display in the chosen direction.">
-            <option name=""/>
+            <option name="no"/>
 			<option name="wxHORIZONTAL"/>
 			<option name="wxVERTICAL"/>
 			<option name="wxBOTH"/> wxBOTH </property>

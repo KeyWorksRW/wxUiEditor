@@ -102,15 +102,18 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     {
         code.Str("super(parent, id, title, bitmap, pos, style)\n");
     }
-    const auto min_size = code.node()->as_wxSize(prop_minimum_size);
-    const auto max_size = code.node()->as_wxSize(prop_maximum_size);
-    if (min_size != wxDefaultSize)
+
+    if (!code.node()->isPropValue(prop_variant, "normal"))
     {
-        code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
-    }
-    if (max_size != wxDefaultSize)
-    {
-        code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
+        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
     }
 
     if (code.hasValue(prop_extra_style))

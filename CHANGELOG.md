@@ -123,6 +123,7 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - Allow custom ids to have an assignment to a value as part of the id. In C++, the id will then be generated as a `static const int` instead of an enumerated value. In Python, this will be added verbatim after any auto-generated ids.
 - If you previously used either base_hdr_includes or base_src_includes properties, then when the project is loaded they will be automatically converted to header_preamble and source_preamble properties to better reflect what it's for, and to avoid confusion with the new local and system includes properties.
 - Removed position, size, and foreground_colour properties from **wxPropertySheetDialog** since the dialog doesn't support them.
+- Removed size properties from wxWizard since they cannot be used
 
 ### Fixed
 
@@ -135,6 +136,8 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - Code generation for event handler of a wxStdDialogButtonSizer Close button corrected
 - Header file code generation could create uninitialized wxStdDialogButtonSizer buttons under special circumstances -- this has been fixed.
 - Fixed code generation for variant, font, and background color in **wxPropertySheetDialog**
+- Add `no` as a Center option to prevent any wxWizard centering so that it will honor the `pos` property.
+- Fixed `variant` property code generation in wxWizard.
 
 ## [Released (1.1.0)]
 

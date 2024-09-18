@@ -113,6 +113,7 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - The C++ Settings in forms now have properties for local and system header files to include in either the generated source or header files.
 - wxMenu and wxMenu items now have a stock_id property allowing you to choose from wxWidgets stock items.
 - Added support for wxAUI_BUTTON_STATE flags when creating a wxAuiToolBar tool.
+- **wxPopupTransientWindow** now supports variant, minimum, maximum, and size properties
 
 ### Changed
 

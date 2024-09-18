@@ -986,6 +986,7 @@
       background_colour="wxSYS_COLOUR_INFOBK"
       border="wxBORDER_RAISED"
       class_name="PopupWin"
+      size="300,-1"
       base_file="popupwin"
       derived_class_name="PopupWin"
       derived_file="../ui/popupwin"

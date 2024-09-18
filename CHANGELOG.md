@@ -122,6 +122,7 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - Embedded image filenames can now contain characters that are invalid as part of a variable name.
 - Allow custom ids to have an assignment to a value as part of the id. In C++, the id will then be generated as a `static const int` instead of an enumerated value. In Python, this will be added verbatim after any auto-generated ids.
 - If you previously used either base_hdr_includes or base_src_includes properties, then when the project is loaded they will be automatically converted to header_preamble and source_preamble properties to better reflect what it's for, and to avoid confusion with the new local and system includes properties.
+- Removed position, size, and foreground_colour properties from **wxPropertySheetDialog** since the dialog doesn't support them.
 
 ### Fixed
 
@@ -133,6 +134,7 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - Code is now generated for a sub-menu that has a bitmap property set
 - Code generation for event handler of a wxStdDialogButtonSizer Close button corrected
 - Header file code generation could create uninitialized wxStdDialogButtonSizer buttons under special circumstances -- this has been fixed.
+- Fixed code generation for variant, font, and background color in **wxPropertySheetDialog**
 
 ## [Released (1.1.0)]
 

@@ -215,19 +215,6 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
 
 bool PropSheetDlgGenerator::SettingsCode(Code& code)
 {
-    if (!code.node()->isPropValue(prop_variant, "normal"))
-    {
-        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        if (code.node()->isPropValue(prop_variant, "small"))
-            code.Add("wxWINDOW_VARIANT_SMALL");
-        else if (code.node()->isPropValue(prop_variant, "mini"))
-            code.Add("wxWINDOW_VARIANT_MINI");
-        else
-            code.Add("wxWINDOW_VARIANT_LARGE");
-
-        code.EndFunction();
-    }
-
     if (code.is_python())
     {
         if (code.hasValue(prop_extra_style))
@@ -247,34 +234,27 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
     }
     code.Eol(eol_if_needed).GenFontColourSettings();
 
+    // Note: variant must be set *after* any font is set, or it will be ignored because a new font
+    // was set after the variant modified the original font.
+    if (!code.node()->isPropValue(prop_variant, "normal"))
+    {
+        // code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+        code.Eol(eol_if_empty).FormFunction("GetBookCtrl()").Function("SetWindowVariant(");
+        if (code.node()->isPropValue(prop_variant, "small"))
+            code.Add("wxWINDOW_VARIANT_SMALL");
+        else if (code.node()->isPropValue(prop_variant, "mini"))
+            code.Add("wxWINDOW_VARIANT_MINI");
+        else
+            code.Add("wxWINDOW_VARIANT_LARGE");
+
+        code.EndFunction();
+    }
+
     return true;
 }
 
 bool PropSheetDlgGenerator::AfterChildrenCode(Code& code)
 {
-    Node* dlg = code.node();
-    Node* child_node = dlg;
-    ASSERT_MSG(dlg->getChildCount(), "Trying to generate code for a dialog with no children.")
-    if (!dlg->getChildCount())
-        return {};  // empty dialog, so nothing to do
-
-    const auto min_size = dlg->as_wxSize(prop_minimum_size);
-    const auto max_size = dlg->as_wxSize(prop_maximum_size);
-
-    if (min_size != wxDefaultSize || max_size != wxDefaultSize)
-    {
-        code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
-        if (min_size != wxDefaultSize)
-        {
-            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
-        }
-        if (max_size != wxDefaultSize)
-        {
-            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size).EndFunction();
-        }
-        // EndFunction() will remove the opening paren if Ruby code
-        code.Eol().FormFunction("Fit(").EndFunction();
-    }
     code.FormFunction("LayoutDialog(").Add(prop_center).EndFunction();
 
     return true;

@@ -477,7 +477,10 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
     ASSERT(m_node);
     if (m_node)
     {
+        // If the node type has changed, then we use the new type's default name.
+        auto new_name = m_old_node->getUniqueName(m_node->as_string(prop_var_name), prop_var_name);
         CopyCommonProperties(m_old_node.get(), m_node.get());
+        m_node->set_value(prop_var_name, new_name);
         if (m_new_gen_node == gen_wxCheckBox || m_new_gen_node == gen_wxRadioBox)
         {
             m_node->set_value(prop_checked, m_old_node->as_bool(prop_checked));
@@ -496,10 +499,6 @@ void ChangeNodeType::Change()
     m_parent->removeChild(m_old_node);
     m_old_node->setParent(NodeSharedPtr());
     m_parent->adoptChild(m_node);
-    if (auto parent_form = m_parent->getForm(); parent_form)
-    {
-        parent_form->fixDuplicateNodeNames();
-    }
     m_parent->changeChildPosition(m_node, pos);
 
     wxGetFrame().FireDeletedEvent(m_old_node.get());

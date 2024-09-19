@@ -138,6 +138,7 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - Fixed code generation for variant, font, and background color in **wxPropertySheetDialog**
 - Add `no` as a Center option to prevent any wxWizard centering so that it will honor the `pos` property.
 - Fixed `variant` property code generation in wxWizard.
+- Changing a sizer or widget type no longer changes validator names
 
 ## [Released (1.1.0)]
 

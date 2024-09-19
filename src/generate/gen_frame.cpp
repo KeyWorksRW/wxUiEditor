@@ -40,7 +40,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
         code.Indent(3);
         code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
-        code.Comma().Add("size=").WxSize(prop_size, code::force_scaling);
+        code.Comma().Add("size=").WxSize(prop_size, code::no_scaling);
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =

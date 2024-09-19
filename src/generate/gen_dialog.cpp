@@ -238,17 +238,17 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     {
         if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+            code.Eol(eol_if_needed).FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+            code.Eol(eol_if_needed).FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
         }
 
         // While the dev may have specified default values for either pos or size, the code that creates the dialog
         // may have overridden either pos or size. It they did, then we need to scale those values here.
 
-        code.BeginConditional().Str("pos != ").Add("wxDefaultPosition").EndConditional().OpenBrace(true);
+        code.Eol(eol_if_needed).BeginConditional().Str("pos != ").Add("wxDefaultPosition").EndConditional().OpenBrace(true);
         code.AddComment("Now that the dialog is created, set the scaled position");
         code.FormFunction("SetPosition(").FormFunction("FromDIP(pos)").EndFunction().CloseBrace(true);
 

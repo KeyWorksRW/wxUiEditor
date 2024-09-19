@@ -90,7 +90,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     {
         code.AddAuto().NodeName();
         code.CreateClass(false, "", true);
-        code.Add("this").Comma().as_string(prop_id).Comma().Style();
+        code.ValidParentName().Comma().as_string(prop_id).Comma().Style();
         if (node->hasValue(prop_window_name))
         {
             code.Comma().QuotedString(prop_window_name);

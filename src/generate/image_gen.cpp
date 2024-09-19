@@ -605,7 +605,7 @@ static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool ge
         code.Comma();
         code.CheckLineLength(sizeof("wxSize(999, 999)))"));
         auto size = GetSizeInfo(parts[IndexSize]);
-        code << "wxSize(" << size.x << ", " << size.y << ")";
+        code.Add("wxSize(").itoa(size.x).Comma().itoa(size.y) << ")";
     }
     code << ')';
 }

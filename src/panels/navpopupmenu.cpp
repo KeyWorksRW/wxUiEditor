@@ -1165,7 +1165,26 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
             undo_string << "folder";
         else
             undo_string << "sizer";
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_parent.get(), parent, undo_string, childPos));
+        if (!parent->isGen(gen_wxGridBagSizer))
+        {
+            wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_parent.get(), parent, undo_string, childPos));
+        }
+        else
+        {
+            auto new_child = NodeCreation.makeCopy(node);
+            undo_string = "Remove widget";
+            wxGetFrame().PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_string));
+            new_parent->adoptChild(new_child->getSharedPtr());
+            new_parent->set_value(prop_column, new_child->as_string(prop_column));
+            new_parent->set_value(prop_row, new_child->as_string(prop_row));
+            new_parent->set_value(prop_colspan, new_child->as_string(prop_colspan));
+            new_parent->set_value(prop_rowspan, new_child->as_string(prop_rowspan));
+            // wxGetFrame().FireDeletedEvent(new_child);
+            wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_parent.get(), parent, (to_int) childPos));
+            wxGetFrame().SelectNode(new_child, evt_flags::fire_event | evt_flags::force_selection);
+            wxGetFrame().Thaw();
+            return;
+        }
 
         // InsertNodeAction does not fire the creation event since that's usually handled by the caller as needed. We
         // don't want to fire an event because we don't want the Mockup or Code panels to update until we have changed

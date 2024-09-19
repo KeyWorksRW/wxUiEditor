@@ -581,8 +581,8 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         }
 
         tt_string name = "wxue_img::" + embed->imgs[0].array_name;
-        code << "wxueBundleSVG(" << name << ", " << (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
-        code << (embed->imgs[0].array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
+        code << "wxueBundleSVG(" << name << ", " << (to_size_t) (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
+        code << (to_size_t) (embed->imgs[0].array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
     }
     else
     {
@@ -1191,8 +1191,8 @@ tt_string GenerateIconCode(const tt_string& description)
         else
         {
             tt_string name = "wxue_img::" + embed->imgs[0].array_name;
-            code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
-            code << (embed->imgs[0].array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
+            code << "SetIcon(wxueBundleSVG(" << name << ", " << (to_size_t) (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
+            code << (to_size_t) (embed->imgs[0].array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
         }
 
         code << ".GetIconFor(this));\n";

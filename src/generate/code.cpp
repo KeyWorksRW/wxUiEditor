@@ -1171,7 +1171,7 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
 
 Code& Code::QuotedString(tt_string_view text)
 {
-    auto cur_pos = size();
+    auto cur_pos = this->size();
 
     if (Project.as_bool(prop_internationalize))
     {
@@ -1267,16 +1267,19 @@ Code& Code::QuotedString(tt_string_view text)
 
     return *this;
 }
-
 Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
-    auto cur_pos = size();
-    auto size = m_node->as_wxSize(prop_name);
+    return WxSize(m_node->as_wxSize(prop_name), enable_dpi_scaling);
+}
+
+Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
+{
+    auto cur_pos = this->size();
     auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
 
     if (is_ruby())
     {
-        if (m_node->as_wxSize(prop_name) == wxDefaultSize)
+        if (size == wxDefaultSize)
         {
             CheckLineLength((sizeof("Wx::DEFAULT_SIZE") - 1));
             *this += "Wx::DEFAULT_SIZE";
@@ -1313,7 +1316,7 @@ Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
 
     // The following code is for non-Ruby languages
 
-    if (m_node->as_wxSize(prop_name) == wxDefaultSize)
+    if (size == wxDefaultSize)
     {
         CheckLineLength((sizeof("DefaultSize") - 1) + m_language_wxPrefix.size());
         *this << m_language_wxPrefix << "DefaultSize";

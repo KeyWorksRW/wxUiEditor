@@ -391,6 +391,9 @@ public:
     // Will either generate wxSize(...) or FromDIP(wxSize(...))
     Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, int enable_dpi_scaling = conditional_scaling);
 
+    // Will either generate wxSize(...) or FromDIP(wxSize(...))
+    Code& WxSize(wxSize size, int enable_dpi_scaling = conditional_scaling);
+
     // Will either generate wxPoint(...) or FromDIP(wxPoint(...))
     Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, int enable_dpi_scaling = conditional_scaling);
 

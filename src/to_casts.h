@@ -40,6 +40,7 @@ public:
     explicit inline to_size_t(int _v) : v(_v) {}
     explicit inline to_size_t(long _v) : v(_v) {}
     explicit inline to_size_t(long long _v) : v(_v) {}
+    explicit inline to_size_t(uint64_t _v) : v(_v) {}
 
     inline operator size_t() const noexcept { return static_cast<const size_t>(v); }
 };

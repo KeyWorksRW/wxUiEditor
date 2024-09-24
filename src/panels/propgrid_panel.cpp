@@ -2202,6 +2202,41 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
             wxGetFrame().GetPropInfoBar()->Dismiss();
         }
     }
+    else if (event.GetNodeProperty()->isProp(prop_size) || event.GetNodeProperty()->isProp(prop_minimum_size) ||
+             event.GetNodeProperty()->isProp(prop_maximum_size))
+    {
+        auto node = event.getNode();
+        auto new_size = node->as_wxSize(prop_size);
+        auto min_size = node->as_wxSize(prop_minimum_size);
+        auto max_size = node->as_wxSize(prop_maximum_size);
+        if (new_size != wxDefaultSize || min_size != wxDefaultSize || max_size != wxDefaultSize)
+        {
+            // If any value is -1 then it's not actually set and no comparison is needed
+            if (min_size != wxDefaultSize && ((new_size.x != -1 && min_size.x != -1 && new_size.x < min_size.x) ||
+                                              (new_size.y != -1 && min_size.y != -1 && new_size.y < min_size.y)))
+            {
+                wxGetFrame().GetPropInfoBar()->ShowMessage("The size property is smaller than the minimum size property.",
+                                                           wxICON_WARNING);
+            }
+            else if (max_size != wxDefaultSize && ((new_size.x != -1 && max_size.x != -1 && new_size.x > max_size.x) ||
+                                                   (new_size.y != -1 && max_size.y != -1 && new_size.y > max_size.y)))
+            {
+                wxGetFrame().GetPropInfoBar()->ShowMessage("The size property is larger than the maximum size property.",
+                                                           wxICON_WARNING);
+            }
+            else if (min_size != wxDefaultSize && max_size != wxDefaultSize &&
+                     ((min_size.x != -1 && max_size.x != -1 && min_size.x > max_size.x) ||
+                      (min_size.y != -1 && max_size.y != -1 && min_size.y > max_size.y)))
+            {
+                wxGetFrame().GetPropInfoBar()->ShowMessage(
+                    "The minimum size property is larger than the maximum size property.", wxICON_WARNING);
+            }
+            else
+            {
+                wxGetFrame().GetPropInfoBar()->Dismiss();
+            }
+        }
+    }
 }
 
 bool PropGridPanel::IsEventPageShowing()

@@ -1365,13 +1365,11 @@ void MainFrame::CreateSplitters()
     // m_right_panel_sizer->Add(main_toolbar, wxSizerFlags(0).Expand());
 #endif
 
-    m_SecondarySplitter = new wxSplitterWindow(m_panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
-    m_right_panel_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());
-
     m_info_bar = new wxInfoBar(m_panel_right);
     m_right_panel_sizer->Add(m_info_bar, wxSizerFlags().Expand());
 
-    // m_panel_right->SetSizer(parent_sizer);
+    m_SecondarySplitter = new wxSplitterWindow(m_panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_right_panel_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());
 
     m_property_panel = new PropGridPanel(m_SecondarySplitter, this);
     auto notebook = CreateNoteBook(m_SecondarySplitter);

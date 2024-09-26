@@ -123,8 +123,8 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
-
-    SetMinSize(FromDIP(wxSize(1200, 1250)));if (pos != wxDefaultPosition)
+    SetMinSize(FromDIP(wxSize(1200, 1250)));
+    if (pos != wxDefaultPosition)
     {
         SetPosition(FromDIP(pos));
     }

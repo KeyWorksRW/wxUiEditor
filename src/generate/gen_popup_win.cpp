@@ -172,7 +172,8 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
 {
     Node* form = code.node();
     Node* child_node = form;
-    ASSERT_MSG(form->isGen(gen_wxPopupWindow) || form->getChildCount(), "Trying to generate code for wxPopup with no children.")
+    ASSERT_MSG(form->isGen(gen_wxPopupWindow) || form->getChildCount(),
+               "Trying to generate code for wxPopup with no children.")
     if (!form->getChildCount())
         return {};  // empty popup window, so nothing to do
     ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of wxPopup to be a sizer.");
@@ -293,7 +294,7 @@ bool PopupWinBaseGenerator::HeaderCode(Code& code)
 }
 
 bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    int /* language */)
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/popupwin.h>", set_src, set_hdr);
     return true;

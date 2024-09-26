@@ -1,69 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
-    <g id="page">
-        <g id="g2679">
-            <g id="rect15391">
-                <rect x="0.38" y="0.381" width="25.712" height="29.263" style="fill:url(#_Radial1);stroke:url(#_Radial2);stroke-width:0.73px;"/>
-            </g>
-            <g id="rect15660">
-                <rect x="1.163" y="1.052" width="24.165" height="27.851" style="fill:none;stroke:url(#_Radial3);stroke-width:0.73px;"/>
-            </g>
-            <g id="g2270">
-                <g id="g1440">
-                    <path id="path1448" d="M3.682,19.424C3.682,19.747 3.412,20.009 3.079,20.009C2.746,20.009 2.476,19.747 2.476,19.424C2.476,19.1 2.746,18.838 3.079,18.838C3.412,18.838 3.682,19.1 3.682,19.424Z" style="fill:white;fill-rule:nonzero;"/>
-                    <path id="path1456" d="M3.682,11.226C3.682,11.55 3.412,11.812 3.079,11.812C2.746,11.812 2.476,11.55 2.476,11.226C2.476,10.903 2.746,10.641 3.079,10.641C3.412,10.641 3.682,10.903 3.682,11.226Z" style="fill:white;fill-rule:nonzero;"/>
-                </g>
-                <path id="path15570" d="M3.423,19.234C3.423,19.558 3.152,19.82 2.819,19.82C2.487,19.82 2.217,19.558 2.217,19.234C2.217,18.911 2.487,18.649 2.819,18.649C3.152,18.649 3.423,18.911 3.423,19.234Z" style="fill:url(#_Radial4);fill-rule:nonzero;"/>
-                <path id="path15577" d="M3.423,11.037C3.423,11.36 3.152,11.623 2.819,11.623C2.487,11.623 2.217,11.36 2.217,11.037C2.217,10.714 2.487,10.451 2.819,10.451C3.152,10.451 3.423,10.714 3.423,11.037Z" style="fill:url(#_Radial5);fill-rule:nonzero;"/>
-            </g>
-            <path id="path15674" d="M4.788,1.467L4.788,28.602" style="fill:none;stroke:white;stroke-opacity:0.2;stroke-width:0.72px;stroke-linecap:butt;stroke-linejoin:miter;"/>
-            <g id="g2253">
-                <rect id="rect15686" x="7.359" y="4.307" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15688" x="7.359" y="5.735" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15690" x="7.359" y="7.162" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15692" x="7.359" y="8.59" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15694" x="7.359" y="10.017" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15696" x="7.359" y="11.445" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15698" x="7.359" y="12.872" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15700" x="7.359" y="14.3" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15732" x="7.359" y="15.727" width="6.612" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15736" x="7.359" y="18.582" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15738" x="7.359" y="20.009" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15740" x="7.359" y="21.437" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15742" x="7.359" y="22.864" width="14.693" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-                <rect id="rect15744" x="7.359" y="24.292" width="10.285" height="0.714" style="fill:rgb(155,155,155);fill-opacity:0.55;"/>
-            </g>
-        </g>
+<svg width="30px" height="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g id="window">
+        <path d="M29.77,29.196C29.77,29.364 29.649,29.5 29.499,29.5L2.036,29.5C1.887,29.5 1.765,29.364 1.765,29.196L1.765,10.304C1.765,10.136 1.887,10 2.036,10L29.499,10C29.649,10 29.77,10.136 29.77,10.304L29.77,29.196Z" style="fill:url(#_Linear1);fill-rule:nonzero;stroke:rgb(7,0,1);stroke-width:0.05px;"/>
+        <rect x="2.127" y="14.077" width="27.283" height="15.119" style="fill:rgb(244,242,241);stroke:rgb(35,24,21);stroke-width:0.1px;"/>
     </g>
-    <g id="popup">
-        <g id="rect15391-8">
-            <rect x="6.877" y="3.26" width="23.123" height="15.322" style="fill:url(#_Radial6);stroke:black;stroke-width:0.32px;"/>
-        </g>
-        <g id="lines">
-            <g id="rect15736-7">
-                <rect x="9.152" y="6.132" width="18.894" height="1.126" style="fill:rgb(128,128,128);fill-opacity:0.55;"/>
-            </g>
-            <g id="rect15738-3">
-                <rect x="9.152" y="8.384" width="18.894" height="1.126" style="fill:rgb(128,128,128);fill-opacity:0.55;"/>
-            </g>
-            <g id="rect15740-0">
-                <rect x="9.152" y="10.635" width="18.894" height="1.126" style="fill:rgb(128,128,128);fill-opacity:0.55;"/>
-            </g>
-            <g id="rect15742-3">
-                <rect x="9.152" y="12.886" width="18.894" height="1.126" style="fill:rgb(128,128,128);fill-opacity:0.55;"/>
-            </g>
-            <g id="rect15744-6">
-                <rect x="9.152" y="15.138" width="13.226" height="1.126" style="fill:rgb(128,128,128);fill-opacity:0.55;"/>
-            </g>
-        </g>
+    <rect x="0.5" y="4.5" width="29" height="9" style="fill:rgb(247,247,247);stroke:black;stroke-width:0.48px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+    <g id="arrow_box">
+        <rect x="20" y="4.5" width="9.5" height="9" style="fill:rgb(134,230,249);stroke:black;stroke-width:0.48px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
     </g>
+    <rect id="outer" x="0" y="0" width="30" height="30" style="fill:none;"/>
     <defs>
-        <radialGradient id="_Radial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(61.4022,0,0,64.5581,19.5649,24.3815)"><stop offset="0" style="stop-color:rgb(250,250,250);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(187,187,187);stop-opacity:1"/></radialGradient>
-        <radialGradient id="_Radial2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(26.9502,0,0,27.8819,4.28356,1.01028)"><stop offset="0" style="stop-color:rgb(163,163,163);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(76,76,76);stop-opacity:1"/></radialGradient>
-        <radialGradient id="_Radial3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(27.2407,0,0,28.1825,3.79748,3.60394)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="1" style="stop-color:rgb(248,248,248);stop-opacity:1"/></radialGradient>
-        <radialGradient id="_Radial4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.886948,0,0,0.861716,2.99469,19.4803)"><stop offset="0" style="stop-color:rgb(240,240,240);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(154,154,154);stop-opacity:1"/></radialGradient>
-        <radialGradient id="_Radial5" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.887117,0,0,0.86188,2.99469,11.2827)"><stop offset="0" style="stop-color:rgb(240,240,240);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(154,154,154);stop-opacity:1"/></radialGradient>
-        <radialGradient id="_Radial6" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(55.2183,0,0,33.8016,24.1298,15.8263)"><stop offset="0" style="stop-color:rgb(250,250,122);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(247,245,54);stop-opacity:1"/></radialGradient>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.71312e-15,-19.5001,27.9773,1.19403e-15,15.7676,29.5)"><stop offset="0" style="stop-color:rgb(62,77,151);stop-opacity:1"/><stop offset="0.11" style="stop-color:rgb(39,68,146);stop-opacity:1"/><stop offset="0.2" style="stop-color:rgb(21,64,143);stop-opacity:1"/><stop offset="0.25" style="stop-color:rgb(26,67,145);stop-opacity:1"/><stop offset="0.4" style="stop-color:rgb(35,74,149);stop-opacity:1"/><stop offset="0.71" style="stop-color:rgb(33,81,154);stop-opacity:1"/><stop offset="0.77" style="stop-color:rgb(33,82,155);stop-opacity:1"/><stop offset="0.81" style="stop-color:rgb(35,83,156);stop-opacity:1"/><stop offset="0.85" style="stop-color:rgb(59,96,165);stop-opacity:1"/><stop offset="0.89" style="stop-color:rgb(44,88,159);stop-opacity:1"/><stop offset="0.94" style="stop-color:rgb(77,108,172);stop-opacity:1"/><stop offset="0.98" style="stop-color:rgb(97,125,183);stop-opacity:1"/><stop offset="0.99" style="stop-color:rgb(123,150,199);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(154,178,217);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,179,217);stop-opacity:1"/></linearGradient>
     </defs>
 </svg>

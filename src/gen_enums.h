@@ -803,6 +803,7 @@ namespace GenEnum
         gen_wxNotebook,
         gen_wxPanel,
         gen_wxPopupTransientWindow,
+        gen_wxPopupWindow,
         gen_wxPropertyGrid,
         gen_wxPropertyGridManager,
         gen_wxPropertySheetDialog,

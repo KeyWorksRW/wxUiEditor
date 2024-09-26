@@ -48,7 +48,10 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             wxue_img::bundle_prop_sheet_dlg_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertySheetDialog",
             wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow,
-            wxue_img::bundle_popup_window_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPopupTransientWindow",
+            wxue_img::bundle_popup_transient_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPopupTransientWindow",
+            wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(gen_wxPopupWindow,
+            wxue_img::bundle_popup_window_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPopupWindow",
             wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();

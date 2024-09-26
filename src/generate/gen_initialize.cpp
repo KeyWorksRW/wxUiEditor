@@ -63,7 +63,7 @@
 #include "gen_page_ctrl.h"           // PageCtrlGenerator -- Page control generator
 #include "gen_panel.h"               // PanelGenerator -- wxPanel generator
 #include "gen_panel_form.h"          // PanelFormGenerator -- wxPanel Form generator
-#include "gen_popup_trans_win.h"     // PopupWinGenerator -- wxPopupTransientWindow generator
+#include "gen_popup_win.h"           // wxPopupWindow/wxPopupTransientWindow generator
 #include "gen_prop_category.h"       // PropertyGridCategoryGenerator -- PropertyGrid/Manager Category generator
 #include "gen_prop_grid.h"           // PropertyGridGenerator -- wxPropertyGrid generator
 #include "gen_prop_grid_mgr.h"       // wxPropertyGridManager and wxPropertyGridPage generators
@@ -263,7 +263,8 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_PanelForm, PanelFormGenerator)
     SET_GENERATOR(gen_wxDialog, DialogFormGenerator)
     SET_GENERATOR(gen_wxFrame, FrameFormGenerator)
-    SET_GENERATOR(gen_wxPopupTransientWindow, PopupWinGenerator)
+    SET_GENERATOR(gen_wxPopupWindow, PopupWinGenerator)
+    SET_GENERATOR(gen_wxPopupTransientWindow, PopupTransientWinGenerator)
     SET_GENERATOR(gen_wxPropertySheetDialog, PropSheetDlgGenerator)
     SET_GENERATOR(gen_wxWizard, WizardFormGenerator)
 

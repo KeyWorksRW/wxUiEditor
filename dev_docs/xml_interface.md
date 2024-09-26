@@ -34,24 +34,6 @@ The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a
 
 You can hide a specific property by including the attribute `hide="1"`.
 
-## Adding a new generator
-
-- Add the declaration to one of the XML files.
-- Add the generator class to gen_enums.cpp and gen_enums.h.
-- Add any unique property types to gen_enums.cpp and gen_enums.h.
-- Add the generator class to one of the files in generate/ or create a new file
-- Add any required wxWidgets header file to gen_initialize.cpp
-- Add the generator class name to the InitGenerators() in gen_initialize.cpp
-- If the generator has a var_name property, and you want the default class access to be "none", then add the generator name to the lst_no_class_access list in node_init.cpp
-- If the generator uses a new type, you will need to specify parents and children in the lstParentChild array in node_init.cpp.
-
-While testing, you can use any existing image, and insert the control using the Edit menu's `Insert Widget` command. Once ready for release, then take the following steps:
-
-- Create a new graphic for the class and add it to the `(images)` node in the **wxUiEditor.wxue** project.
-- Add the name to xpm.cpp
-- Change the name of the bitmap in the XML declaration to match the shortname you specified in xpm.cpp.
-- If the control isn't part of a drop-down, add it to `RibbonPanelBase` in `wxUiEditor.wxue`. If it's part of a dropdown list of controls, add it to the matching drop-down menu in `wxUiEditor.wxue`.
-
 ## Adding a new form
 
 - Add the type (if new) to lst_form_types in Node.cpp

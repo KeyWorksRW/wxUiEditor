@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - You can now change the initial size of Art images instead of using their default size.
 - File menu now has a Reload Project command to reload the current project file from disk.
 - Dialogs now support the variant property
+- Added support for wxPopupWindow as a form
 
 ### Changed
 

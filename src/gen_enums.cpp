@@ -755,6 +755,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxNotebook, "wxNotebook" },
     { gen_wxPanel, "wxPanel" },
     { gen_wxPopupTransientWindow, "wxPopupTransientWindow" },
+    { gen_wxPopupWindow, "wxPopupWindow" },
     { gen_wxPropertyGrid, "wxPropertyGrid" },
     { gen_wxPropertyGridManager, "wxPropertyGridManager" },
     { gen_wxPropertySheetDialog, "wxPropertySheetDialog" },

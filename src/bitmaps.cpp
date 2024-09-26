@@ -70,6 +70,7 @@ const std::map<std::string_view, std::function<wxBitmapBundle(int width, int hei
     { "notebook_choice", bundle_notebook_choice_svg },
     { "notebook_list", bundle_notebook_list_svg },
     { "pagectrl", bundle_pagectrl_svg },
+    { "popup_transient", bundle_popup_transient_svg },
     { "popup_window", bundle_popup_window_svg },
     { "project", bundle_project_svg },
     { "prop_sheet_dlg", bundle_prop_sheet_dlg_svg },

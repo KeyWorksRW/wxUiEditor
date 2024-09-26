@@ -82,8 +82,8 @@ bool SysHeaderDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
-
-    SetMinSize(FromDIP(wxSize(800, -1)));if (pos != wxDefaultPosition)
+    SetMinSize(FromDIP(wxSize(800, -1)));
+    if (pos != wxDefaultPosition)
     {
         SetPosition(FromDIP(pos));
     }

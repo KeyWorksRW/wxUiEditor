@@ -1038,10 +1038,10 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
 
 void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName prop_name)
 {
-    if (node->isGen(gen_wxPopupTransientWindow))
+    if (node->isGen(gen_wxPopupWindow))
     {
         if (prop_name == prop_size || prop_name == prop_minimum_size || prop_name == prop_title)
-            return;  // wxCrafter writes these, but doesn't use them (nor do we)
+            return;  // wxCrafter writes these, but doesn't use them (wxUiEditor does support size and minimum_size)
     }
 
     if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonSeparator) || node->isGen(gen_ribbonButton))

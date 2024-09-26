@@ -191,6 +191,9 @@
         bitmap="SVG;pagectrl.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;popup_transient.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;popup_window.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -1401,9 +1404,14 @@
                     id="CreateNewPropertySheet" />
                   <node
                     class="ribbonTool"
-                    bitmap="SVG;popup_window.svg;[24,24]"
+                    bitmap="SVG;popup_transient.svg;[24,24]"
                     help="wxPopupTransientWindow"
                     id="gen_wxPopupTransientWindow" />
+                  <node
+                    class="ribbonTool"
+                    bitmap="SVG;popup_window.svg;[24,24]"
+                    help="wxPopupWindow"
+                    id="gen_wxPopupWindow" />
                 </node>
               </node>
               <node

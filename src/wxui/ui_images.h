@@ -76,6 +76,7 @@ namespace wxue_img
     wxBitmapBundle bundle_notebook_choice_svg(int width, int height);
     wxBitmapBundle bundle_notebook_list_svg(int width, int height);
     wxBitmapBundle bundle_pagectrl_svg(int width, int height);
+    wxBitmapBundle bundle_popup_transient_svg(int width, int height);
     wxBitmapBundle bundle_popup_window_svg(int width, int height);
     wxBitmapBundle bundle_preferences_svg(int width, int height);
     wxBitmapBundle bundle_project_svg(int width, int height);
@@ -260,7 +261,8 @@ namespace wxue_img
     extern const unsigned char notebook_list_svg[1313];  // ../art_src/notebook_list.svg
     extern const unsigned char notebook_svg[1232];  // ../art_src/notebook.svg
     extern const unsigned char pagectrl_svg[2307];  // ../art_src/pagectrl.svg
-    extern const unsigned char popup_window_svg[1282];  // ../art_src/popup_window.svg
+    extern const unsigned char popup_transient_svg[1282];  // ../art_src/popup_transient.svg
+    extern const unsigned char popup_window_svg[755];  // ../art_src/popup_window.svg
     extern const unsigned char preferences_svg[2113];  // ../art_src/preferences.svg
     extern const unsigned char project_svg[3759];  // ../art_src/project.svg
     extern const unsigned char prop_sheet_dlg_svg[12384];  // ../art_src/prop_sheet_dlg.svg

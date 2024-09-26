@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   wxPopupTransientWindow generator
+// Purpose:   wxPopupWindow/wxPopupTransientWindow generator
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -13,9 +13,49 @@
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 
-#include "gen_popup_trans_win.h"
+#include "gen_popup_win.h"
 
 bool PopupWinGenerator::ConstructionCode(Code& code)
+{
+    if (code.is_cpp())
+    {
+        code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
+        code += "(wxWindow* parent, int style) : wxPopupWindow(parent, style)\n{";
+    }
+    else if (code.is_python())
+    {
+        code.Add("class ").NodeName().Add("(wx.PopupWindow):\n");
+        code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+        code << "wx.PopupWindow.__init__(self, parent, flags=";
+        code.Add(prop_border);
+        if (code.hasValue(prop_style))
+        {
+            code.Str(" | ").Add(prop_style);
+        }
+        code.EndFunction();
+    }
+    else if (code.is_ruby())
+    {
+        code.Add("class ").NodeName().Add(" < Wx::PopupWindow");
+        code.Eol().Tab().Add("def initialize(parent, flags = ");
+        // Indent any wrapped lines
+        code.Indent(3);
+        code.Add(prop_border);
+        if (code.hasValue(prop_style))
+        {
+            code.Str(" | ").Add(prop_style);
+        }
+        code.EndFunction();
+        code.ResetIndent();
+    }
+    else
+    {
+        code.AddComment("Unknown language", true);
+    }
+    return true;
+}
+
+bool PopupTransientWinGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
@@ -55,7 +95,55 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool PopupWinGenerator::SettingsCode(Code& code)
+bool PopupWinGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.hasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += code.node()->declName();
+    }
+
+    return true;
+}
+
+bool PopupTransientWinGenerator::BaseClassNameCode(Code& code)
+{
+    if (code.hasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += code.node()->declName();
+    }
+
+    return true;
+}
+
+int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_flags)
+{
+    if (xrc_flags & xrc::add_comments)
+    {
+        object.append_child(pugi::node_comment).set_value(" wxPopupWindow is not supported by XRC. ");
+    }
+    return BaseGenerator::xrc_form_not_supported;
+}
+
+int PopupTransientWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_flags)
+{
+    if (xrc_flags & xrc::add_comments)
+    {
+        object.append_child(pugi::node_comment).set_value(" wxPopupTransientWindow is not supported by XRC. ");
+    }
+    return BaseGenerator::xrc_form_not_supported;
+}
+
+/////////////////////////////// PopupWinBaseGenerator //////////////////////////////////////////////
+
+bool PopupWinBaseGenerator::SettingsCode(Code& code)
 {
     if (!code.node()->isPropValue(prop_variant, "normal"))
     {
@@ -80,14 +168,15 @@ bool PopupWinGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool PopupWinGenerator::AfterChildrenCode(Code& code)
+bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
 {
     Node* form = code.node();
     Node* child_node = form;
-    ASSERT_MSG(form->getChildCount(), "Trying to generate code for wxPopupTransientWindow with no children.")
+    ASSERT_MSG(form->isGen(gen_wxPopupWindow) || form->getChildCount(),
+               "Trying to generate code for wxPopup with no children.")
     if (!form->getChildCount())
-        return {};  // empty dialog, so nothing to do
-    ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of wxPopupTransientWindow to be a sizer.");
+        return {};  // empty popup window, so nothing to do
+    ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of wxPopup to be a sizer.");
     if (form->getChild(0)->isSizer())
     {
         // If the first child is not a sizer, then child_node will still point to the dialog
@@ -192,7 +281,7 @@ bool PopupWinGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool PopupWinGenerator::HeaderCode(Code& code)
+bool PopupWinBaseGenerator::HeaderCode(Code& code)
 {
     code.NodeName().Str("(wxWindow* parent, int style = ").as_string(prop_border);
     if (code.hasValue(prop_style))
@@ -204,32 +293,9 @@ bool PopupWinGenerator::HeaderCode(Code& code)
     return true;
 }
 
-bool PopupWinGenerator::BaseClassNameCode(Code& code)
-{
-    if (code.hasValue(prop_subclass))
-    {
-        code.as_string(prop_subclass);
-    }
-    else
-    {
-        code += code.node()->declName();
-    }
-
-    return true;
-}
-
-bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    int /* language */)
+bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                        int /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/popupwin.h>", set_src, set_hdr);
     return true;
-}
-
-int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_flags)
-{
-    if (xrc_flags & xrc::add_comments)
-    {
-        object.append_child(pugi::node_comment).set_value(" wxPopupTransientWindow is not supported by XRC. ");
-    }
-    return BaseGenerator::xrc_form_not_supported;
 }

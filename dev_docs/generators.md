@@ -1,5 +1,25 @@
 # Generators
 
+## Adding a new generator
+
+- Add the declaration to one of the XML files.
+- Add the generator class to gen_enums.cpp and gen_enums.h.
+- Add any unique property types to gen_enums.cpp and gen_enums.h.
+- Add the generator class to one of the files in generate/ or create a new file
+- Add any required wxWidgets header file to gen_initialize.cpp
+- Add the generator class name to the InitGenerators() in gen_initialize.cpp
+- If the generator has a var_name property, and you want the default class access to be "none", then add the generator name to the lst_no_class_access list in node_init.cpp
+- If the generator uses a new type, you will need to specify parents and children in the lstParentChild array in node_init.cpp.
+
+While testing, you can use any existing image, and insert the control using the Edit menu's `Insert Widget` command. Once ready for release, then take the following steps:
+
+- Create a new graphic for the class and add it to the `(images)` node in the **wxUiEditor.wxue** project.
+- Add the name to bitmaps.cpp
+- Change the name of the image in the XML declaration to match the shortname you created.
+- If the control isn't part of a drop-down, add it to `RibbonPanelBase` in `wxUiEditor.wxue`. If it's part of a dropdown list of controls, add it to the matching drop-down menu in `wxUiEditor.wxue`.
+
+## Generator code
+
 The outer function that generates code does so by getting a pointer to the generator that can create that code, and then calling various functions in that generator. In most cases the `BaseGenerator` will return a value indicating no code was generated. The generator must override any functions where it needs to provide specific code generation.
 
 A typical generator header file will look something like the following:

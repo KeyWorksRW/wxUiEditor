@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code code generation panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +45,10 @@ const char* g_python_keywords = "False None True and as assert async break class
 const char* g_ruby_keywords = "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else"
                               " elsif end ensure false for if in module next nil not or redo require rescue retry"
                               " return self super then true undef unless until when while yield";
+
+const char* g_perl_keywords = "do if else elsif unless while until for foreach last next redo continue "
+                              "sub return goto and or not xor "
+                              "use no package require my our local state";
 
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPanel(parent)
 {
@@ -101,6 +105,18 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
+    else if (m_panel_type == GEN_LANG_PERL)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "inherit", false, wxWithImages::NO_IMAGE);
+    }
+
     else
     {
         FAIL_MSG("Unknown Panel type!")
@@ -301,6 +317,10 @@ void BasePanel::GenerateBaseClass()
             codegen.SetHdrWriteCode(m_derived_hdr_panel);
 
             codegen.GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_PERL:
+            codegen.GeneratePerlClass(panel_page);
             break;
 
         case GEN_LANG_PYTHON:

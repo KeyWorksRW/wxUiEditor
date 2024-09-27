@@ -54,6 +54,10 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetRubyValue(event->get_value());
     }
+    else if (code.m_language == GEN_LANG_PERL)
+    {
+        event_code = EventHandlerDlg::GetPerlValue(event->get_value());
+    }
 
     else
     {

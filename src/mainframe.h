@@ -83,6 +83,10 @@ public:
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
+#if defined(GENERATE_PERL_CODE)
+    BasePanel* GetPerlPanel() { return m_perlPanel; }
+#endif
+
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
 
@@ -360,6 +364,10 @@ private:
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
+
+#if defined(GENERATE_PERL_CODE)
+    BasePanel* m_perlPanel { nullptr };
+#endif
 
     ImportPanel* m_imnportPanel { nullptr };
 

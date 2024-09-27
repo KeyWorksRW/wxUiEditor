@@ -233,6 +233,14 @@ const view_map g_map_ruby_prefix
 
 };
 
+const view_map g_map_perl_prefix
+{
+};
+
+static const view_map s_short_perl_map
+{
+};
+
 // clang-format on
 
 std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
@@ -242,6 +250,11 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
 
     switch (language)
     {
+        case GEN_LANG_PERL:
+            prefix_list = &s_short_perl_map;
+            global_list = &g_map_perl_prefix;
+            break;
+
         case GEN_LANG_PYTHON:
             prefix_list = &s_short_python_map;
             global_list = &g_map_python_prefix;
@@ -308,6 +321,15 @@ void Code::Init(Node* node, int language)
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_indent_size = 4;
+        m_language_wxPrefix = "Wx::";
+        m_lang_assignment = " = ";
+        m_break_length = Project.as_size_t(prop_perl_line_length);
+        // Always assume Perl code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
     }
 
     else
@@ -405,7 +427,7 @@ Code& Code::OpenBrace(bool all_languages)
         return *this;
     }
 
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         Eol(eol_if_needed);
         *this += "{";
@@ -434,7 +456,7 @@ Code& Code::CloseBrace(bool all_languages, bool close_ruby)
         pop_back();
     Unindent();
 
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         m_within_braces = false;
         Eol();
@@ -451,6 +473,7 @@ Code& Code::CloseBrace(bool all_languages, bool close_ruby)
 
 void Code::OpenFontBrace()
 {
+    // REVIEW: [Randalphwa - 09-26-2024] Will this be needed for wxPerl as well?
     if (is_cpp())
     {
         m_within_font_braces = true;
@@ -798,6 +821,10 @@ Code& Code::FormFunction(tt_string_view text)
         *this += ConvertToSnakeCase(text);
         return *this;
     }
+    else if (is_perl())
+    {
+        *this += "$this->";
+    }
 
     *this += text;
     return *this;
@@ -820,7 +847,7 @@ Code& Code::Class(tt_string_view text)
             *this += text;
         }
     }
-    else if (is_ruby())
+    else if (is_ruby() || is_perl())
     {
         if (text.is_sameprefix("wx"))
         {
@@ -980,7 +1007,7 @@ Code& Code::EndFunction()
         *this += ')';
     }
 
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         *this += ';';
     }
@@ -1034,8 +1061,12 @@ Code& Code::VarName(tt_string_view var_name, bool class_access)
             *this += "@";
     }
 
-    if (var_name.is_sameprefix("m_"))
+    else if (is_perl())
+    {
+        *this += "my $";
+    }
 
+    if (var_name.is_sameprefix("m_"))
         *this += var_name.subview(2);
     else
         *this += var_name;
@@ -1208,8 +1239,17 @@ Code& Code::QuotedString(tt_string_view text)
 
     // bool text_has_single_quote = (text.find('\'') != tt::npos);
 
+    auto begin_quote = this->size();
+    bool has_escape = false;
+
     if (is_ruby())
         *this += '\'';
+    else if (is_perl())
+    {
+        // Perl should use single-quotes if there are no escape characters, otherwise it should use
+        // double-quotes.
+        *this += '\'';
+    }
     else
         *this += '"';
     for (auto c: text)
@@ -1218,27 +1258,33 @@ Code& Code::QuotedString(tt_string_view text)
         {
             case '"':
                 *this += "\\\"";
+                has_escape = true;
                 break;
 
             // This generally isn't needed for C++, but is needed for other languages
             case '\'':
                 *this += "\\'";
+                has_escape = true;
                 break;
 
             case '\\':
                 *this += "\\\\";
+                has_escape = true;
                 break;
 
             case '\t':
                 *this += "\\t";
+                has_escape = true;
                 break;
 
             case '\n':
                 *this += "\\n";
+                has_escape = true;
                 break;
 
             case '\r':
                 *this += "\\r";
+                has_escape = true;
                 break;
 
             default:
@@ -1248,6 +1294,18 @@ Code& Code::QuotedString(tt_string_view text)
     }
     if (is_ruby())
         *this += '\'';
+    else if (is_perl())
+    {
+        if (has_escape)
+        {
+            *this += '"';
+            at(begin_quote) = '"';
+        }
+        else
+        {
+            *this += '\'';
+        }
+    }
     else
         *this += '"';
 
@@ -2436,6 +2494,7 @@ Code& Code::AddComment(std::string_view comment, bool force)
             break;
         case GEN_LANG_PYTHON:
         case GEN_LANG_RUBY:
+        case GEN_LANG_PERL:
             *this << "# " << comment;
             break;
         default:
@@ -2480,7 +2539,7 @@ Code& Code::AddConditionalAnd()
 }
 Code& Code::AddConditionalOr()
 {
-    if (is_cpp() || is_ruby())
+    if (is_cpp() || is_ruby() || is_perl())
     {
         *this << " || ";
     }
@@ -2498,7 +2557,8 @@ Code& Code::AddConditionalOr()
 
 Code& Code::EndConditional()
 {
-    if (is_cpp())
+    if (is_cpp() || is_perl())
+
     {
         *this << ')';
     }

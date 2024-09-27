@@ -355,7 +355,6 @@ namespace GenEnum
         prop_paste_multiple,
         prop_persist,
         prop_persist_name,
-        prop_php_file,
         prop_pin_button,
         prop_platforms,
         prop_play,
@@ -511,6 +510,17 @@ namespace GenEnum
         prop_python_xrc_file,
         prop_wxPython_version,
 
+        prop_folder_perl_combined_file,
+        prop_folder_perl_output_folder,
+        prop_perl_conditional,
+        prop_perl_file,
+        prop_perl_inherit_name,
+        prop_perl_insert,
+        prop_perl_line_length,
+        prop_perl_output_folder,
+        prop_perl_project_preamble,
+        prop_wxPerl_version,
+
         prop_folder_ruby_combined_file,
         prop_folder_ruby_output_folder,
         prop_relative_require_list,
@@ -663,7 +673,7 @@ namespace GenEnum
         gen_flexgridsizerbase,
         gen_folder_Code,
         gen_folder_XRC,
-        gen_folder_wxPHP,
+        gen_folder_wxPerl,
         gen_folder_wxPython,
         gen_folder_wxRuby,
         gen_sizer_child,
@@ -676,6 +686,7 @@ namespace GenEnum
         // Language categories
 
         gen_Code,
+        gen_wxPerl,
         gen_wxPython,
         gen_wxRuby,
         gen_XRC,
@@ -685,6 +696,7 @@ namespace GenEnum
         gen_CPlusSettings,
         gen_DerivedCPlusSettings,
         gen_CPlusHeaderSettings,
+        gen_PerlSettings,
         gen_PythonSettings,
         gen_RubySettings,
 

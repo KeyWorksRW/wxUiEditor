@@ -153,10 +153,8 @@ void PropGridPanel::SaveDescBoxHeight()
 
 static std::map<int, std::string> s_lang_category_prefix = {
 
-    { GEN_LANG_CPLUSPLUS, "C++" },
-    { GEN_LANG_PYTHON, "wxPython" },
-    { GEN_LANG_RUBY, "wxRuby" },
-    { GEN_LANG_XRC, "XRC" },
+    { GEN_LANG_CPLUSPLUS, "C++" }, { GEN_LANG_PERL, "wxPerl" }, { GEN_LANG_PYTHON, "wxPython" },
+    { GEN_LANG_RUBY, "wxRuby" },   { GEN_LANG_XRC, "XRC" },
 };
 
 void PropGridPanel::Create()
@@ -568,6 +566,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_xrc_file:
                     case prop_combined_xrc_file:
                     case prop_folder_combined_xrc_file:
+                    case prop_perl_file:
                     case prop_python_file:
                     case prop_python_combined_file:
                     case prop_ruby_file:
@@ -1892,6 +1891,11 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     if (!category.getCategoryCount() && !category.getPropNameCount())
         return;
 
+#if !defined(GENERATE_PERL_CODE)
+    if (category.getName().contains("wxPerl"))
+        return;
+#endif
+
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);
 
@@ -1940,6 +1944,17 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#009900"));
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
+        if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxPerl"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
         if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
         {
             m_prop_grid->Collapse(id);

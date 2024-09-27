@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,14 +23,16 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
 extern const char* g_ruby_keywords;
+extern const char* g_perl_keywords;
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
 #endif
 
 constexpr size_t EVENT_PAGE_CPP = 0;
-constexpr size_t EVENT_PAGE_PYTHON = 1;
-constexpr size_t EVENT_PAGE_RUBY = 2;
+constexpr size_t EVENT_PAGE_PERL = 1;
+constexpr size_t EVENT_PAGE_PYTHON = 2;
+constexpr size_t EVENT_PAGE_RUBY = 3;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
@@ -44,10 +46,18 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_cpp_enabled = (m_code_preference == GEN_LANG_CPLUSPLUS || m_output_type & OUTPUT_CPLUS);
     m_is_python_enabled = (m_code_preference == GEN_LANG_PYTHON || m_output_type & OUTPUT_PYTHON);
     m_is_ruby_enabled = (m_code_preference == GEN_LANG_RUBY || m_output_type & OUTPUT_RUBY);
+    m_is_perl_enabled = (m_code_preference == GEN_LANG_PERL || m_output_type & OUTPUT_PERL);
 
     if (!m_is_cpp_enabled)
     {
         m_notebook->RemovePage(EVENT_PAGE_CPP);
+        m_perl_page--;
+        m_python_page--;
+        m_ruby_page--;
+    }
+    if (!m_is_perl_enabled)
+    {
+        m_notebook->RemovePage(m_perl_page);
         m_python_page--;
         m_ruby_page--;
     }
@@ -762,6 +772,48 @@ tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
     }
 
     tt_string result(value);
+    return result;
+}
+
+// This is a static function
+
+tt_string EventHandlerDlg::GetPerlValue(tt_string_view value)
+{
+    tt_string result;
+    auto pos_python = value.find("[perl:");
+    if (pos_python == tt::npos)
+    {
+        if (value.front() == '[')
+        {
+            // Unfortunately, this is a static function, so we have no access to m_event.
+            result = "OnEvent";
+        }
+        else
+        {
+            result = value;
+            if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+        }
+        return result;
+    }
+    else
+    {
+        value.remove_prefix(pos_python);
+    }
+
+    if (!value.starts_with("[perl:lambda]"))
+    {
+        // This is just a function name, so remove the "[python:" and the trailing ']'
+        value.remove_prefix(sizeof("[perl:") - 1);
+        if (auto end = value.find(']'); end != tt::npos)
+        {
+            value.remove_suffix(value.size() - end);
+        }
+    }
+
+    result << value;
     return result;
 }
 

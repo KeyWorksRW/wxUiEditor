@@ -269,7 +269,6 @@ const char* BaseCodeGenerator::LangPtr() const
         case GEN_LANG_PYTHON:
             return ".";
 
-
         default:
             FAIL_MSG("Unsupported language!")
             return "";

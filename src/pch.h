@@ -113,6 +113,10 @@
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
 #endif
 
+#if defined(_DEBUG)
+    #define GENERATE_PERL_CODE 1
+#endif  // _DEBUG
+
 enum class MoveDirection
 {
     Up = 1,
@@ -132,6 +136,7 @@ enum
     GEN_LANG_PYTHON = 1 << 1,
     GEN_LANG_RUBY = 1 << 2,
     GEN_LANG_XRC = 1 << 3,
+    GEN_LANG_PERL = 1 << 4,
 };
 
 // Used to index fields in a bitmap property

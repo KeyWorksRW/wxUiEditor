@@ -232,6 +232,13 @@
 			help="Check this to make all class member variables private: instead of protected:. This can only be done if you are *not* creating a derived class (use_derived_class is unchecked)."/>
 	</gen>
 
+	<gen class="wxPerl Settings" type="interface">
+		<property name="perl_file" type="file"
+			help="The filename to use if generating code for wxPerl."/>
+		<property name="insert_perl_code" type="code_edit"
+			help="Specify the code to insert into the perl file after the generated import statements. This can be any valid perl code for use before the class definition."/>
+	</gen>
+
 	<gen class="wxPython Settings" type="interface">
 		<property name="python_file" type="file"
 			help="The filename to use if generating code for wxPython."/>
@@ -342,8 +349,7 @@
 	<gen class="wxRuby" type="interface">
 		<property name="wxRuby_version" type="option"
 			help="Specifies the minimum version of wxRuby needed to run the generated code.">
-			<option name="0.9.1"/>
-			<option name="1.0.0"/> 0.9.1 </property>
+			<option name="1.0.0"/> 1.0.0 </property>
 		<property name="ruby_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all ruby code."/>
 		<property name="ruby_line_length" type="uint"
@@ -353,6 +359,19 @@
 			help="If checked, all RuboCop warnings will be disabled within the generated code."> 0</property>
 		<property name="ruby_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block and any disabled RuboCop warnings."/>
+	</gen>
+
+	<gen class="wxPerl" type="interface">
+		<property name="wxPerl_version" type="option"
+			help="Specifies the minimum version of wxPerl needed to run the generated code.">
+			<option name="3.0"/> 3.0.0 </property>
+		<property name="perl_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all perl code."/>
+		<property name="perl_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			80</property>
+		<property name="perl_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
 
 	<gen class="Folder C++ Overrides" type="interface">
@@ -368,9 +387,14 @@
 			help="Overrides any project setting of the variable name to set in the .cmake file. Only affects the forms within this folder."/>
 	</gen>
 
+	<gen class="Folder wxPerl Overrides" type="interface">
+		<property name="folder_perl_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated wxPerl code. Only affects the forms within this folder."/>
+	</gen>
+
 	<gen class="Folder wxPython Overrides" type="interface">
 		<property name="folder_python_output_folder" type="path"
-			help="Overrides any project setting of the output folder used for all generated python code. Only affects the forms within this folder."/>
+			help="Overrides any project setting of the output folder used for all generated wxPython code. Only affects the forms within this folder."/>
 		<!-- 		<property name="folder_python_combine_forms" type="bool"
 			help="If checked, the code for all forms in this folder will be generated to a single file.\n\nThe code preview will
 		only display code for the currently selected form, even if this is checked.">0</property>
@@ -382,7 +406,7 @@
 
 	<gen class="Folder wxRuby Overrides" type="interface">
 		<property name="folder_ruby_output_folder" type="path"
-			help="Overrides any project setting of the output folder used for all generated ruby code. Only affects the forms within this folder."/>
+			help="Overrides any project setting of the output folder used for all generated wxRuby code. Only affects the forms within this folder."/>
 	</gen>
 
 	<gen class="Folder XRC Overrides" type="interface">

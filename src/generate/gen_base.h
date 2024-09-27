@@ -57,6 +57,7 @@ public:
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
     void GenerateCppClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GeneratePerlClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateRubyClass(PANEL_PAGE panel_type = NOT_PANEL);
 

@@ -189,6 +189,11 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
             header_ext = ".h";
         }
     }
+    else if (language == GEN_LANG_PERL)
+    {
+        source_ext = ".pl";
+        header_ext = ".pl";
+    }
     else if (language == GEN_LANG_PYTHON)
     {
         source_ext = ".py";
@@ -296,6 +301,10 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     cpp_cw->SetTabToSpaces(2);
                     codegen.GenerateRubyClass();
                 }
+                else if (language == GEN_LANG_PERL)
+                {
+                    codegen.GeneratePerlClass();
+                }
 
                 bool new_hdr = false;
                 if (language == GEN_LANG_CPLUSPLUS)
@@ -341,6 +350,10 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     {
                         cpp_cw->SetTabToSpaces(2);
                         new_codegen.GenerateRubyClass();
+                    }
+                    else if (language == GEN_LANG_PERL)
+                    {
+                        new_codegen.GeneratePerlClass();
                     }
 
                     // WinMerge accepts an XML file the provides the left and right filenames

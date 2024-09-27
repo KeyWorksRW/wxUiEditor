@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +55,11 @@ public:
     // C++ is not enabled and another language specified a value.
     static tt_string GetCppValue(tt_string_view value);
 
+    // This will return a string as if Perl was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // Perl is not enabled and another language specified a value.
+    static tt_string GetPerlValue(tt_string_view value);
+
     // This will return a string as if Python was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Python is not enabled and another language specified a value.
@@ -93,16 +98,19 @@ private:
     NodeEvent* m_event;
 
     size_t m_python_page;
+    size_t m_perl_page;
     size_t m_ruby_page;
 
     size_t m_output_type;   // see ../project/project_handler.h for OUTPUT_TYPE_ defines
     int m_code_preference;  // This will be one of the GEN_LANG values
 
     bool m_is_cpp_enabled { false };
+    bool m_is_perl_enabled { false };
     bool m_is_python_enabled { false };
     bool m_is_ruby_enabled { false };
 
     bool m_is_cpp_lambda { false };
+    bool m_is_perl_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
 };

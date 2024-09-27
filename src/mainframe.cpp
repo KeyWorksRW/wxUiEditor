@@ -1323,6 +1323,11 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
     m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
 
+#if defined(GENERATE_PERL_CODE)
+    m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
+    m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+#endif
+
     // Placing the Python panel first as it's the most commonly used language after C++
     m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
     m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);

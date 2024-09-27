@@ -18,6 +18,7 @@ For Windows, you can either run the wxUiEditor-_ver_-win64.exe installer from [r
 ## Status
 
 [![CodeQL](https://github.com/KeyWorksRW/wxUiEditor/workflows/CodeQL/badge.svg)](https://github.com/KeyWorksRW/wxUiEditor/actions?query=workflow:"CodeQL") [![GitHub tag](https://img.shields.io/github/tag/KeyWorksRW/wxUiEditor?include_prereleases=&sort=semver&color=blue)](https://github.com/KeyWorksRW/wxUiEditor/releases/)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/KeyWorksRW/wxUiEditor/total)
 
 ## Building
 

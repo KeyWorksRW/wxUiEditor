@@ -196,6 +196,8 @@ public:
 
     // Call this to retrieve any warning text when generating code for the specific language.
     virtual std::optional<tt_string> GetWarning(Node*, int /* language */) { return {}; }
+
+    virtual int SupportedLanguages() { return 0xFFF; }  // All languages supported
 };
 
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},

@@ -1119,6 +1119,55 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Haskell"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Haskell")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("Lua"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Lua")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("Perl"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Perl")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("PHP"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "PHP")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
+                }
+            }
+
             grid_iterator.Next();
         }
 
@@ -1949,17 +1998,6 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("wxPerl"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
-        if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
     else if (name.contains("wxRuby"))
     {
         if (UserPrefs.is_DarkMode())
@@ -1978,6 +2016,50 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
         if (Project.getCodePreference(node) != GEN_LANG_XRC)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxHaskell"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_HASKELL)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxLua"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_LUA)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxPerl"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_PERL)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxPHP"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_PHP)
         {
             m_prop_grid->Collapse(id);
         }

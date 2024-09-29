@@ -88,6 +88,9 @@ public:
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
     bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
     bool is_perl() const { return m_language == GEN_LANG_PERL; }
+    bool is_lua() const { return m_language == GEN_LANG_LUA; }
+    bool is_php() const { return m_language == GEN_LANG_PHP; }
+    bool is_haskell() const { return m_language == GEN_LANG_HASKELL; }
 
     bool is_local_var() const;
 

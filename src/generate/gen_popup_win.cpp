@@ -299,3 +299,8 @@ bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     InsertGeneratorInclude(node, "#include <wx/popupwin.h>", set_src, set_hdr);
     return true;
 }
+
+int PopupWinBaseGenerator::SupportedLanguages()
+{
+    return GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY;
+}

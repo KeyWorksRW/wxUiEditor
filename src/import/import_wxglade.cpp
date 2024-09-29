@@ -56,7 +56,7 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
 
     try
     {
-        m_project = NodeCreation.createNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
         if (auto src_ext = root.attribute("source_extension").as_view(); src_ext.size())
         {
             if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
@@ -223,7 +223,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         }
     }
 
-    auto new_node = NodeCreation.createNode(getGenName, parent);
+    auto new_node = NodeCreation.createNode(getGenName, parent).first;
     if (new_node && object_not_generator)
     {
         new_node->set_value(prop_class_name, object_name);
@@ -262,7 +262,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             if (getGenName == gen_wxPanel)
             {
-                new_node = NodeCreation.createNode(gen_BookPage, parent);
+                new_node = NodeCreation.createNode(gen_BookPage, parent).first;
                 if (new_node)
                 {
                     if (!xml_obj.attribute("name").empty())
@@ -278,7 +278,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             }
             else
             {
-                if (auto page = NodeCreation.createNode(gen_PageCtrl, parent); page)
+                if (auto page = NodeCreation.createNode(gen_PageCtrl, parent).first; page)
                 {
                     parent->adoptChild(page);
                     if (!xml_obj.attribute("name").empty())
@@ -290,7 +290,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                         }
                     }
 
-                    new_node = NodeCreation.createNode(getGenName, page.get());
+                    new_node = NodeCreation.createNode(getGenName, page.get()).first;
                     if (new_node)
                         continue;
                 }
@@ -635,7 +635,7 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
 
     for (auto& menu: menus.children("menu"))
     {
-        auto menu_node = NodeCreation.createNode(gen_wxMenu, parent);
+        auto menu_node = NodeCreation.createNode(gen_wxMenu, parent).first;
         parent->adoptChild(menu_node);
         for (auto& iter: menu.attributes())
         {
@@ -654,7 +654,8 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
             auto id = item.child("id");
 
             auto new_item =
-                NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get());
+                NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get())
+                    .first;
             menu_node->adoptChild(new_item);
 
             for (auto& iter: item.children())
@@ -713,7 +714,7 @@ void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
     {
         auto id = tool.child("id");
 
-        auto new_tool = NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, parent);
+        auto new_tool = NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, parent).first;
         parent->adoptChild(new_tool);
         for (auto& iter: tool.children())
         {

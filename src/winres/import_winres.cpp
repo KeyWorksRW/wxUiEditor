@@ -104,7 +104,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
 
     if (!isNested)
     {
-        m_project = NodeCreation.createNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
         m_codepage = 1252;
     }
 

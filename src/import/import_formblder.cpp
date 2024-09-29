@@ -62,7 +62,7 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
             throw std::runtime_error("Invalid project file");
         }
 
-        m_project = NodeCreation.createNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
 
         createProjectNode(object, m_project.get());
 
@@ -243,12 +243,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         getGenName = gen_auitool;
     }
 
-    auto newobject = NodeCreation.createNode(getGenName, parent);
+    auto newobject = NodeCreation.createNode(getGenName, parent).first;
     if (!newobject && parent && tt::contains(map_GenTypes[parent->getGenType()], "book"))
     {
-        if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent); page_ctrl)
+        if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent).first; page_ctrl)
         {
-            if (newobject = NodeCreation.createNode(getGenName, page_ctrl.get()); newobject)
+            if (newobject = NodeCreation.createNode(getGenName, page_ctrl.get()).first; newobject)
             {
                 page_ctrl->adoptChild(newobject);
                 parent->adoptChild(page_ctrl);

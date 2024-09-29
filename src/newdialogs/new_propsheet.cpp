@@ -144,7 +144,7 @@ void NewPropSheet::OnInit(wxInitDialogEvent& event)
 
 void NewPropSheet::createNode()
 {
-    auto form_node = NodeCreation.createNode(gen_wxPropertySheetDialog, nullptr);
+    auto form_node = NodeCreation.createNode(gen_wxPropertySheetDialog, nullptr).first;
     ASSERT(form_node);
 
     if (m_title.size())
@@ -154,16 +154,16 @@ void NewPropSheet::createNode()
 
     for (int count = 0; count < m_num_tabs; ++count)
     {
-        auto book_page = NodeCreation.createNode(gen_BookPage, form_node.get());
+        auto book_page = NodeCreation.createNode(gen_BookPage, form_node.get()).first;
         form_node->adoptChild(book_page);
 
         tt_string label("Page ");
         label << count + 1;
         book_page->set_value(prop_label, label);
-        auto page_sizer = NodeCreation.createNode(gen_VerticalBoxSizer, book_page.get());
+        auto page_sizer = NodeCreation.createNode(gen_VerticalBoxSizer, book_page.get()).first;
         page_sizer->set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
         book_page->adoptChild(page_sizer);
-        auto static_text = NodeCreation.createNode(gen_wxStaticText, page_sizer.get());
+        auto static_text = NodeCreation.createNode(gen_wxStaticText, page_sizer.get()).first;
         page_sizer->adoptChild(static_text);
         static_text->set_value(prop_label, "TODO: replace this control with something more useful...");
         static_text->set_value(prop_wrap, "200");

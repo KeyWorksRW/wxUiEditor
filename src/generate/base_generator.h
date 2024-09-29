@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -196,6 +196,8 @@ public:
 
     // Call this to retrieve any warning text when generating code for the specific language.
     virtual std::optional<tt_string> GetWarning(Node*, int /* language */) { return {}; }
+
+    virtual int SupportedLanguages() { return 0xFFF; }  // All languages supported
 };
 
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},

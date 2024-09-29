@@ -1682,7 +1682,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
             auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
-            auto new_embedded = NodeCreation.createNode(gen_embedded_image, image_list_node);
+            auto new_embedded = NodeCreation.createNode(gen_embedded_image, image_list_node).first;
             new_embedded->set_value(prop_bitmap, value);
             auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), image_list_node, tt_empty_cstr, pos);
             insert_action->AllowSelectEvent(false);

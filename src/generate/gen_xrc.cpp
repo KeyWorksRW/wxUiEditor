@@ -168,13 +168,11 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
     root.append_attribute("version") = "2.5.3.0";
 
-    NodeSharedPtr temp_form = nullptr;
     if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
     {
-        temp_form = NodeCreation.createNode(gen_PanelForm, nullptr);
-        if (temp_form)
+        if (auto temp_form = NodeCreation.createNode(gen_PanelForm, nullptr).first; temp_form)
         {
-            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get());
+            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get()).first;
             temp_form->adoptChild(sizer);
             auto node_copy = NodeCreation.makeCopy(node_start, sizer.get());
             sizer->adoptChild(node_copy);

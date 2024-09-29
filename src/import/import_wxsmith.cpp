@@ -36,7 +36,7 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
     try
     {
-        m_project = NodeCreation.createNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
         for (auto& iter: root.children())
         {
             CreateXrcNode(iter, m_project.get());

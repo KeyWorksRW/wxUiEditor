@@ -23,11 +23,11 @@ using namespace GenEnum;
 
 static void PostProcessBook(Node* book_node)
 {
-    auto page_node = book_node->createChildNode(gen_BookPage);
+    auto page_node = book_node->createChildNode(gen_BookPage).first;
     if (page_node->fixDuplicateName())
         wxGetFrame().FirePropChangeEvent(page_node->getPropPtr(prop_var_name));
 
-    if (auto sizer = page_node->createChildNode(gen_VerticalBoxSizer); sizer)
+    if (auto sizer = page_node->createChildNode(gen_VerticalBoxSizer).first; sizer)
     {
         sizer->set_value(prop_var_name, "page_sizer");
         sizer->fixDuplicateName();
@@ -40,7 +40,7 @@ static void PostProcessPage(Node* page_node)
     if (page_node->fixDuplicateName())
         wxGetFrame().FirePropChangeEvent(page_node->getPropPtr(prop_var_name));
 
-    if (auto sizer = page_node->createChildNode(gen_VerticalBoxSizer); sizer)
+    if (auto sizer = page_node->createChildNode(gen_VerticalBoxSizer).first; sizer)
     {
         sizer->set_value(prop_var_name, "page_sizer");
         sizer->fixDuplicateName();
@@ -53,7 +53,7 @@ static void PostProcessPanel(Node* panel_node)
     if (panel_node->fixDuplicateName())
         wxGetFrame().FirePropChangeEvent(panel_node->getPropPtr(prop_var_name));
 
-    if (auto sizer = panel_node->createChildNode(gen_VerticalBoxSizer); sizer)
+    if (auto sizer = panel_node->createChildNode(gen_VerticalBoxSizer).first; sizer)
     {
         sizer->set_value(prop_var_name, "panel_sizer");
         sizer->fixDuplicateName();
@@ -137,7 +137,7 @@ bool Node::createToolNode(GenName name)
         if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
             name = gen_sub_folder;
 
-        if (auto new_node = NodeCreation.createNode(name, parent); new_node)
+        if (auto new_node = NodeCreation.createNode(name, parent).first; new_node)
         {
             if (new_node->isGen(gen_folder))
             {
@@ -178,7 +178,7 @@ bool Node::createToolNode(GenName name)
             }
         }
 
-        auto new_node = NodeCreation.createNode(name, Project.getProjectNode());
+        auto new_node = NodeCreation.createNode(name, Project.getProjectNode()).first;
         if (!new_node)
             return false;
         // Note that this will insert itself in front of any Data List
@@ -206,7 +206,7 @@ bool Node::createToolNode(GenName name)
             }
         }
 
-        auto new_node = NodeCreation.createNode(name, Project.getProjectNode());
+        auto new_node = NodeCreation.createNode(name, Project.getProjectNode()).first;
         if (!new_node)
             return false;
         auto insert_node =
@@ -243,7 +243,12 @@ bool Node::createToolNode(GenName name)
         name = gen_ribbonTool;
     }
 
-    auto new_node = createChildNode(name);
+    auto result = createChildNode(name, true);
+    if (result.second == Node::unsupported_language)
+    {
+        return true;
+    }
+    auto new_node = result.first;
     if (!new_node)
     {
         switch (name)
@@ -253,10 +258,10 @@ bool Node::createToolNode(GenName name)
                 {
                     // Note that neither the wxRibbonBar or wxRibbonPage are added to the undo
                     // stack
-                    if (auto parent = createChildNode(gen_wxRibbonBar); parent)
+                    if (auto parent = createChildNode(gen_wxRibbonBar).first; parent)
                     {
-                        auto page = parent->createChildNode(gen_wxRibbonPage);
-                        new_node = page->createChildNode(name);
+                        auto page = parent->createChildNode(gen_wxRibbonPage).first;
+                        new_node = page->createChildNode(name).first;
                         return (new_node != nullptr);
                     }
                 }
@@ -266,9 +271,9 @@ bool Node::createToolNode(GenName name)
                 if (isSizer())
                 {
                     // Note that neither the wxRibbonBar is not added to the undo stack
-                    if (auto parent = createChildNode(gen_wxRibbonBar); parent)
+                    if (auto parent = createChildNode(gen_wxRibbonBar).first; parent)
                     {
-                        new_node = parent->createChildNode(name);
+                        new_node = parent->createChildNode(name).first;
                         return (new_node != nullptr);
                     }
                 }
@@ -277,7 +282,7 @@ bool Node::createToolNode(GenName name)
             case gen_ribbonTool:
                 if (getParent()->isGen(gen_wxRibbonToolBar))
                 {
-                    new_node = getParent()->createChildNode(name);
+                    new_node = getParent()->createChildNode(name).first;
                     return (new_node != nullptr);
                 }
                 return false;
@@ -285,7 +290,7 @@ bool Node::createToolNode(GenName name)
             case gen_ribbonButton:
                 if (getParent()->isGen(gen_wxRibbonButtonBar))
                 {
-                    new_node = getParent()->createChildNode(name);
+                    new_node = getParent()->createChildNode(name).first;
                     return (new_node != nullptr);
                 }
                 return false;
@@ -302,7 +307,7 @@ bool Node::createToolNode(GenName name)
         case gen_wxDialog:
         case gen_PanelForm:
         case gen_wxPopupTransientWindow:
-            if (auto sizer = new_node->createChildNode(gen_VerticalBoxSizer); sizer)
+            if (auto sizer = new_node->createChildNode(gen_VerticalBoxSizer).first; sizer)
             {
                 sizer->set_value(prop_var_name, "parent_sizer");
                 sizer->fixDuplicateName();
@@ -315,27 +320,27 @@ bool Node::createToolNode(GenName name)
         case gen_wxChoicebook:
         case gen_wxListbook:
         case gen_wxAuiNotebook:
-            PostProcessBook(new_node);
+            PostProcessBook(new_node.get());
             break;
 
         case gen_BookPage:
         case gen_wxWizardPageSimple:
-            PostProcessPage(new_node);
+            PostProcessPage(new_node.get());
             break;
 
         case gen_wxPanel:
         case gen_wxScrolledWindow:
-            PostProcessPanel(new_node);
+            PostProcessPanel(new_node.get());
             break;
 
         case gen_wxWizard:
-            new_node = new_node->createChildNode(gen_wxWizardPageSimple);
-            PostProcessPage(new_node);
+            new_node = new_node->createChildNode(gen_wxWizardPageSimple).first;
+            PostProcessPage(new_node.get());
             break;
 
         case gen_wxMenuBar:
         case gen_MenuBar:
-            if (auto node_menu = new_node->createChildNode(gen_wxMenu); node_menu)
+            if (auto node_menu = new_node->createChildNode(gen_wxMenu).first; node_menu)
             {
                 node_menu->createChildNode(gen_wxMenuItem);
             }
@@ -421,7 +426,7 @@ bool Node::createToolNode(GenName name)
             break;
 
         case gen_ribbonTool:
-            SetUniqueRibbonToolID(new_node);
+            SetUniqueRibbonToolID(new_node.get());
             wxGetFrame().FirePropChangeEvent(new_node->getPropPtr(prop_id));
             break;
 

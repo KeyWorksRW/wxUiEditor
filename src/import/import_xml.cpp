@@ -1300,7 +1300,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         getGenName = gen_ToolBar;
     }
 
-    auto new_node = NodeCreation.createNode(getGenName, parent);
+    auto new_node = NodeCreation.createNode(getGenName, parent).first;
     if (new_node && is_generic_version)
     {
         new_node->set_value(prop_use_generic, true);
@@ -1309,7 +1309,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         if (sizeritem && sizeritem->isGen(gen_oldbookpage))
         {
-            if (auto page = NodeCreation.createNode(gen_PageCtrl, parent); page)
+            if (auto page = NodeCreation.createNode(gen_PageCtrl, parent).first; page)
             {
                 if (sizeritem->hasValue(prop_label))
                 {
@@ -1321,10 +1321,10 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
         else if (parent && (parent->isGen(gen_wxPanel) || parent->isGen(gen_PanelForm) || parent->isGen(gen_wxDialog)))
         {
-            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, parent);
+            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, parent).first;
             if (sizer)
             {
-                new_node = NodeCreation.createNode(getGenName, sizer.get());
+                new_node = NodeCreation.createNode(getGenName, sizer.get()).first;
                 if (new_node)
                 {
                     parent->adoptChild(sizer);
@@ -1337,7 +1337,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         // visually distinguish it as a parent.
         else if (parent && getGenName == gen_wxMenu && (parent->isGen(gen_wxMenu) || parent->isGen(gen_submenu)))
         {
-            new_node = NodeCreation.createNode(gen_submenu, parent);
+            new_node = NodeCreation.createNode(gen_submenu, parent).first;
             if (new_node)
             {
                 continue;

@@ -256,7 +256,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
     if (class_name == "wxListCtrl")
         class_name = "wxListView";
 
-    auto new_node = createNode(class_name, parent);
+    auto new_node = createNode(class_name, parent).first;
     if (!new_node)
     {
         FAIL_MSG(tt_string() << "Invalid project file: could not create " << class_name);

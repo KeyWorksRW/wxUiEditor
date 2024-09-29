@@ -67,7 +67,7 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
             throw std::runtime_error("Invalid project file");
         }
 
-        m_project = NodeCreation.createNode(gen_Project, nullptr);
+        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
         m_project->set_value(prop_code_preference, "C++");
 
         auto option = header.find_child_by_attribute("string", "name", "target_wx_version");
@@ -166,7 +166,7 @@ bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
         if (auto folder_name = form_xml.find_child_by_attribute("string", "name", "title"); folder_name)
         {
             auto gen_folder_type = parent->isGen(gen_folder) ? gen_sub_folder : gen_folder;
-            if (auto new_parent = NodeCreation.createNode(gen_folder_type, parent.get()); new_parent)
+            if (auto new_parent = NodeCreation.createNode(gen_folder_type, parent.get()).first; new_parent)
             {
                 new_parent->set_value(prop_label, ExtractQuotedString(folder_name));
                 parent->adoptChild(new_parent);
@@ -237,7 +237,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             }
         }
 
-        auto form = NodeCreation.createNode(getGenName, parent.get());
+        auto form = NodeCreation.createNode(getGenName, parent.get()).first;
         if (!form)
         {
             if (parent->isGen(gen_Project) || parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
@@ -272,7 +272,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                         getGenName = gen_PopupMenu;
                         break;
                 }
-                if (form = NodeCreation.createNode(getGenName, parent.get()); !form)
+                if (form = NodeCreation.createNode(getGenName, parent.get()).first; !form)
                 {
                     auto msg = GatherErrorDetails(form_xml, getGenName);
                     FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
@@ -414,7 +414,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     }
 
     bool allow_adoption = true;  // set to false if node has already been adopted, e.g. a genPageCtrl was inserted
-    auto node = NodeCreation.createNode(getGenName, parent);
+    auto node = NodeCreation.createNode(getGenName, parent).first;
     if (!node)
     {
         if (parent->isGen(gen_wxStdDialogButtonSizer) && getGenName == gen_wxButton)
@@ -442,7 +442,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
 
         if (parent->isSizer() && parent->getParent()->isForm())
         {
-            node = NodeCreation.createNode(getGenName, parent->getParent());
+            node = NodeCreation.createNode(getGenName, parent->getParent()).first;
             if (node)
             {
                 parent = parent->getParent();
@@ -454,7 +454,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         {
             if (auto form = parent->getForm(); form)
             {
-                node = NodeCreation.createNode(getGenName, form);
+                node = NodeCreation.createNode(getGenName, form).first;
                 if (node)
                 {
                     parent = form;
@@ -463,9 +463,9 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         }
         else if (tt::contains(map_GenTypes[parent->getGenType()], "book"))
         {
-            if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent); page_ctrl)
+            if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent).first; page_ctrl)
             {
-                if (node = NodeCreation.createNode(getGenName, page_ctrl.get()); node)
+                if (node = NodeCreation.createNode(getGenName, page_ctrl.get()).first; node)
                 {
                     page_ctrl->adoptChild(node);
                     parent->adoptChild(page_ctrl);
@@ -542,7 +542,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
 
 void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
 {
-    auto node = NodeCreation.createNode(gen_CustomControl, parent);
+    auto node = NodeCreation.createNode(gen_CustomControl, parent).first;
     if (!node)
     {
         auto msg = GatherErrorDetails(child_xml, gen_CustomControl);

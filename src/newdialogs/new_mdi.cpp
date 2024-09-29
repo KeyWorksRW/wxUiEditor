@@ -271,9 +271,9 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
 
 void NewMdiForm::createNode()
 {
-    auto folder = NodeCreation.createNode(gen_folder, nullptr);
+    auto folder = NodeCreation.createNode(gen_folder, nullptr).first;
     folder->set_value(prop_label, get_folder_name());
-    auto form_node = NodeCreation.createNode(gen_DocViewApp, folder.get());
+    auto form_node = NodeCreation.createNode(gen_DocViewApp, folder.get()).first;
     ASSERT(form_node);
     folder->adoptChild(form_node);
 
@@ -284,7 +284,7 @@ void NewMdiForm::createNode()
     }
     if (m_view_type == "Text Control")
     {
-        auto doc_node = NodeCreation.createNode(gen_DocumentTextCtrl, folder.get());
+        auto doc_node = NodeCreation.createNode(gen_DocumentTextCtrl, folder.get()).first;
         ASSERT(doc_node);
         folder->adoptChild(doc_node);
         doc_node->set_value(prop_mdi_class_name, form_node->as_string(prop_class_name));
@@ -309,15 +309,15 @@ void NewMdiForm::createNode()
             doc_node->set_value(prop_template_doc_name, get_doc_class());
         }
 
-        auto frame_menu = NodeCreation.createNode(gen_MdiFrameMenuBar, doc_node.get());
+        auto frame_menu = NodeCreation.createNode(gen_MdiFrameMenuBar, doc_node.get()).first;
         ASSERT(frame_menu);
 
-        auto file_menu = NodeCreation.createNode(gen_wxMenu, frame_menu.get());
+        auto file_menu = NodeCreation.createNode(gen_wxMenu, frame_menu.get()).first;
         ASSERT(file_menu);
         file_menu->set_value(prop_stock_id, "wxID_FILE");
         file_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_FILE")));
 
-        auto menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        auto menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_NEW");
         menu_item->set_value(prop_id, "wxID_NEW");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_NEW")));
@@ -325,7 +325,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_NEW|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_OPEN");
         menu_item->set_value(prop_id, "wxID_OPEN");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_OPEN")));
@@ -333,10 +333,10 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_OPEN|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get()).first;
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_EXIT");
         menu_item->set_value(prop_id, "wxID_EXIT");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_EXIT")));
@@ -344,12 +344,12 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_QUIT|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        auto help_menu = NodeCreation.createNode(gen_wxMenu, frame_menu.get());
+        auto help_menu = NodeCreation.createNode(gen_wxMenu, frame_menu.get()).first;
         ASSERT(help_menu);
         help_menu->set_value(prop_stock_id, "wxID_HELP");
         help_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_HELP")));
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_ABOUT");
         menu_item->set_value(prop_id, "wxID_ABOUT");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_ABOUT")));
@@ -360,14 +360,14 @@ void NewMdiForm::createNode()
         frame_menu->adoptChild(help_menu);
 
         doc_node->adoptChild(frame_menu);
-        auto doc_menu = NodeCreation.createNode(gen_MdiDocMenuBar, doc_node.get());
+        auto doc_menu = NodeCreation.createNode(gen_MdiDocMenuBar, doc_node.get()).first;
         ASSERT(doc_menu);
-        file_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get());
+        file_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get()).first;
         ASSERT(file_menu);
         file_menu->set_value(prop_stock_id, "wxID_FILE");
         file_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_FILE")));
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_NEW");
         menu_item->set_value(prop_id, "wxID_NEW");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_NEW")));
@@ -375,7 +375,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_NEW|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_OPEN");
         menu_item->set_value(prop_id, "wxID_OPEN");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_OPEN")));
@@ -383,7 +383,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_OPEN|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_SAVE");
         menu_item->set_value(prop_id, "wxID_SAVE");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_SAVE")));
@@ -391,7 +391,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_SAVE|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_SAVEAS");
         menu_item->set_value(prop_id, "wxID_SAVEAS");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_SAVEAS")));
@@ -399,10 +399,10 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_FILE_SAVE_AS|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get()).first;
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_PRINT");
         menu_item->set_value(prop_id, "wxID_PRINT");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_PRINT")));
@@ -410,10 +410,10 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_PRINT|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get()).first;
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_CLOSE");
         menu_item->set_value(prop_id, "wxID_CLOSE");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_CLOSE")));
@@ -421,7 +421,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_CLOSE|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_EXIT");
         menu_item->set_value(prop_id, "wxID_EXIT");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_EXIT")));
@@ -429,12 +429,12 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_QUIT|wxART_MENU");
         file_menu->adoptChild(menu_item);
 
-        auto edit_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get());
+        auto edit_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get()).first;
         ASSERT(edit_menu);
         edit_menu->set_value(prop_stock_id, "wxID_EDIT");
         edit_menu->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_EDIT")));
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_CUT");
         menu_item->set_value(prop_id, "wxID_CUT");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_CUT")));
@@ -442,7 +442,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_CUT|wxART_MENU");
         edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_COPY");
         menu_item->set_value(prop_id, "wxID_COPY");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_COPY")));
@@ -450,7 +450,7 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_COPY|wxART_MENU");
         edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_PASTE");
         menu_item->set_value(prop_id, "wxID_PASTE");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_PASTE")));
@@ -458,10 +458,10 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxID_PASTE|wxART_MENU");
         edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_separator, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_separator, file_menu.get()).first;
         edit_menu->adoptChild(menu_item);
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_SELECTALL");
         menu_item->set_value(prop_id, "wxID_SELECTALL");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_SELECTALL")));
@@ -469,12 +469,12 @@ void NewMdiForm::createNode()
         menu_item->set_value(prop_bitmap, "Art;wxART_PASTE|wxART_MENU");
         edit_menu->adoptChild(menu_item);
 
-        help_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get());
+        help_menu = NodeCreation.createNode(gen_wxMenu, doc_menu.get()).first;
         ASSERT(help_menu);
         help_menu->set_value(prop_label, "wxID_HELP");
         help_menu->set_value(prop_stock_id, "wxID_HELP");
 
-        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get());
+        menu_item = NodeCreation.createNode(gen_wxMenuItem, file_menu.get()).first;
         menu_item->set_value(prop_stock_id, "wxID_ABOUT");
         menu_item->set_value(prop_id, "wxID_ABOUT");
         menu_item->set_value(prop_label, wxGetStockLabel(NodeCreation.getConstantAsInt("wxID_ABOUT")));
@@ -486,7 +486,7 @@ void NewMdiForm::createNode()
         doc_menu->adoptChild(help_menu);
 
         doc_node->adoptChild(doc_menu);
-        auto view = NodeCreation.createNode(gen_ViewTextCtrl, folder.get());
+        auto view = NodeCreation.createNode(gen_ViewTextCtrl, folder.get()).first;
         ASSERT(view);
         view->set_value(prop_mdi_doc_name, doc_node->as_string(prop_class_name));
         folder->adoptChild(view);

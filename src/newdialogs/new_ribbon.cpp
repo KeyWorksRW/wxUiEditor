@@ -151,12 +151,12 @@ void NewRibbon::createNode()
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.getProjectNode());
+        bar_node = NodeCreation.createNode(gen_RibbonBar, Project.getProjectNode()).first;
         ASSERT(bar_node);
     }
     else
     {
-        bar_node = NodeCreation.createNode(gen_wxRibbonBar, wxGetFrame().getSelectedNode());
+        bar_node = NodeCreation.createNode(gen_wxRibbonBar, wxGetFrame().getSelectedNode()).first;
         if (!bar_node)
         {
             wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
@@ -166,36 +166,36 @@ void NewRibbon::createNode()
 
     for (int count = 0; count < m_num_pages; ++count)
     {
-        auto ribbon_page = NodeCreation.createNode(gen_wxRibbonPage, bar_node.get());
+        auto ribbon_page = NodeCreation.createNode(gen_wxRibbonPage, bar_node.get()).first;
         bar_node->adoptChild(ribbon_page);
         tt_string label("Page ");
         label << count + 1;
         ribbon_page->set_value(prop_label, label);
 
-        auto ribbon_panel = NodeCreation.createNode(gen_wxRibbonPanel, ribbon_page.get());
+        auto ribbon_panel = NodeCreation.createNode(gen_wxRibbonPanel, ribbon_page.get()).first;
         ribbon_page->adoptChild(ribbon_panel);
         label << ", panel 1";
         ribbon_panel->set_value(prop_label, label);
 
         if (m_panel_type == "Tool")
         {
-            auto tool_bar = NodeCreation.createNode(gen_wxRibbonToolBar, ribbon_panel.get());
+            auto tool_bar = NodeCreation.createNode(gen_wxRibbonToolBar, ribbon_panel.get()).first;
             ribbon_panel->adoptChild(tool_bar);
-            auto tool = NodeCreation.createNode(gen_ribbonTool, tool_bar.get());
+            auto tool = NodeCreation.createNode(gen_ribbonTool, tool_bar.get()).first;
             tool_bar->adoptChild(tool);
         }
         else if (m_panel_type == "Button")
         {
-            auto button_bar = NodeCreation.createNode(gen_wxRibbonButtonBar, ribbon_panel.get());
+            auto button_bar = NodeCreation.createNode(gen_wxRibbonButtonBar, ribbon_panel.get()).first;
             ribbon_panel->adoptChild(button_bar);
-            auto button = NodeCreation.createNode(gen_ribbonButton, button_bar.get());
+            auto button = NodeCreation.createNode(gen_ribbonButton, button_bar.get()).first;
             button_bar->adoptChild(button);
         }
         else if (m_panel_type == "Gallery")
         {
-            auto gallery_bar = NodeCreation.createNode(gen_wxRibbonGallery, ribbon_panel.get());
+            auto gallery_bar = NodeCreation.createNode(gen_wxRibbonGallery, ribbon_panel.get()).first;
             ribbon_panel->adoptChild(gallery_bar);
-            auto item = NodeCreation.createNode(gen_ribbonGalleryItem, gallery_bar.get());
+            auto item = NodeCreation.createNode(gen_ribbonGalleryItem, gallery_bar.get()).first;
             gallery_bar->adoptChild(item);
         }
     }

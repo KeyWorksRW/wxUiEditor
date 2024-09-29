@@ -11,10 +11,14 @@
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
             <option name="C++"/>
-			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="XRC"/>C++</property>
+			<option name="XRC"/>
+			<option name="Perl"/>
+			<option name="Lua"/>
+			<option name="PHP"/>
+			<option name="Haskell"/>
+            C++</property>
         <property name="art_directory" type="path"
             help="The directory containing your images (png, ico, xpm, etc.).">./</property>
         <property name="dialog_units" type="bool"

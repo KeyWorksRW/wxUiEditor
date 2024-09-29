@@ -30,9 +30,12 @@ extern const char* g_perl_keywords;
 #endif
 
 constexpr size_t EVENT_PAGE_CPP = 0;
-constexpr size_t EVENT_PAGE_PERL = 1;
-constexpr size_t EVENT_PAGE_PYTHON = 2;
-constexpr size_t EVENT_PAGE_RUBY = 3;
+constexpr size_t EVENT_PAGE_PYTHON = 1;
+constexpr size_t EVENT_PAGE_RUBY = 2;
+constexpr size_t EVENT_PAGE_PERL = 3;
+constexpr size_t EVENT_PAGE_LUA = 4;
+constexpr size_t EVENT_PAGE_PHP = 5;
+constexpr size_t EVENT_PAGE_HASKELL = 6;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
@@ -47,6 +50,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_python_enabled = (m_code_preference == GEN_LANG_PYTHON || m_output_type & OUTPUT_PYTHON);
     m_is_ruby_enabled = (m_code_preference == GEN_LANG_RUBY || m_output_type & OUTPUT_RUBY);
     m_is_perl_enabled = (m_code_preference == GEN_LANG_PERL || m_output_type & OUTPUT_PERL);
+    m_is_lua_enabled = (m_code_preference == GEN_LANG_LUA || m_output_type & OUTPUT_LUA);
+    m_is_php_enabled = (m_code_preference == GEN_LANG_PHP || m_output_type & OUTPUT_PHP);
+    m_is_haskell_enabled = (m_code_preference == GEN_LANG_HASKELL || m_output_type & OUTPUT_HASKELL);
 
     if (!m_is_cpp_enabled)
     {
@@ -780,8 +786,8 @@ tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
 tt_string EventHandlerDlg::GetPerlValue(tt_string_view value)
 {
     tt_string result;
-    auto pos_python = value.find("[perl:");
-    if (pos_python == tt::npos)
+    auto pos = value.find("[perl:");
+    if (pos == tt::npos)
     {
         if (value.front() == '[')
         {
@@ -800,13 +806,139 @@ tt_string EventHandlerDlg::GetPerlValue(tt_string_view value)
     }
     else
     {
-        value.remove_prefix(pos_python);
+        value.remove_prefix(pos);
     }
 
     if (!value.starts_with("[perl:lambda]"))
     {
         // This is just a function name, so remove the "[python:" and the trailing ']'
         value.remove_prefix(sizeof("[perl:") - 1);
+        if (auto end = value.find(']'); end != tt::npos)
+        {
+            value.remove_suffix(value.size() - end);
+        }
+    }
+
+    result << value;
+    return result;
+}
+
+// This is a static function
+
+tt_string EventHandlerDlg::GetLuaValue(tt_string_view value)
+{
+    tt_string result;
+    auto pos = value.find("[lua:");
+    if (pos == tt::npos)
+    {
+        if (value.front() == '[')
+        {
+            // Unfortunately, this is a static function, so we have no access to m_event.
+            result = "OnEvent";
+        }
+        else
+        {
+            result = value;
+            if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+        }
+        return result;
+    }
+    else
+    {
+        value.remove_prefix(pos);
+    }
+
+    if (!value.starts_with("[lua:lambda]"))
+    {
+        // This is just a function name, so remove the "[python:" and the trailing ']'
+        value.remove_prefix(sizeof("[lua:") - 1);
+        if (auto end = value.find(']'); end != tt::npos)
+        {
+            value.remove_suffix(value.size() - end);
+        }
+    }
+
+    result << value;
+    return result;
+}
+
+// This is a static function
+
+tt_string EventHandlerDlg::GetPhpValue(tt_string_view value)
+{
+    tt_string result;
+    auto pos = value.find("[php:");
+    if (pos == tt::npos)
+    {
+        if (value.front() == '[')
+        {
+            // Unfortunately, this is a static function, so we have no access to m_event.
+            result = "OnEvent";
+        }
+        else
+        {
+            result = value;
+            if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+        }
+        return result;
+    }
+    else
+    {
+        value.remove_prefix(pos);
+    }
+
+    if (!value.starts_with("[php:lambda]"))
+    {
+        // This is just a function name, so remove the "[python:" and the trailing ']'
+        value.remove_prefix(sizeof("[php:") - 1);
+        if (auto end = value.find(']'); end != tt::npos)
+        {
+            value.remove_suffix(value.size() - end);
+        }
+    }
+
+    result << value;
+    return result;
+}
+
+// This is a static function
+
+tt_string EventHandlerDlg::GetHaskelValue(tt_string_view value)
+{
+    tt_string result;
+    auto pos = value.find("[haskel:");
+    if (pos == tt::npos)
+    {
+        if (value.front() == '[')
+        {
+            // Unfortunately, this is a static function, so we have no access to m_event.
+            result = "OnEvent";
+        }
+        else
+        {
+            result = value;
+            if (auto pos_other = result.find("[haskel:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+        }
+        return result;
+    }
+    else
+    {
+        value.remove_prefix(pos);
+    }
+
+    if (!value.starts_with("[haskel:lambda]"))
+    {
+        // This is just a function name, so remove the "[python:" and the trailing ']'
+        value.remove_prefix(sizeof("[haskel:") - 1);
         if (auto end = value.find(']'); end != tt::npos)
         {
             value.remove_suffix(value.size() - end);

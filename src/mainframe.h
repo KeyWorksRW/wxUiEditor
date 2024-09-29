@@ -79,13 +79,15 @@ public:
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
     BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetHaskellPanel() { return m_haskellPanel; }
+    BasePanel* GetLuaPanel() { return m_luaPanel; }
+    BasePanel* GetPerlPanel() { return m_perlPanel; }
+    BasePanel* GetPhpPanel() { return m_phpPanel; }
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-#if defined(GENERATE_PERL_CODE)
-    BasePanel* GetPerlPanel() { return m_perlPanel; }
-#endif
+    void EnableCodePanels(int language);
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
@@ -360,14 +362,16 @@ private:
 
     BasePanel* m_cppPanel { nullptr };
 
-    // Language panels
+    // Language panels -- whether they are actually created is dependent on defitions in pch.h as
+    // well as user preferences.
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
-#if defined(GENERATE_PERL_CODE)
     BasePanel* m_perlPanel { nullptr };
-#endif
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_phpPanel { nullptr };
+    BasePanel* m_haskellPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };
 

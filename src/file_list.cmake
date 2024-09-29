@@ -183,12 +183,12 @@ set (file_list
 
     # Forms
 
-    generate/gen_dialog.cpp             # wxDialog generator
-    generate/gen_frame.cpp              # wxFrame generator
-    generate/gen_panel_form.cpp         # wxPanel Form generator
-    generate/gen_popup_win.cpp    # wxPopupTransientWindow generator
-    generate/gen_propsheet_dlg.cpp      # wxPropertySheetDialog generator
-    generate/gen_wizard.cpp             # wxWizard generator
+    generate/gen_dialog.cpp         # wxDialog generator
+    generate/gen_frame.cpp          # wxFrame generator
+    generate/gen_panel_form.cpp     # wxPanel Form generator
+    generate/gen_popup_win.cpp      # wxPopupTransientWindow generator
+    generate/gen_propsheet_dlg.cpp  # wxPropertySheetDialog generator
+    generate/gen_wizard.cpp         # wxWizard generator
 
     # Menus
 
@@ -239,7 +239,7 @@ set (file_list
     generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
     generate/gen_toolbar.cpp         # wxToolBar generator
 
-    ############################# end generators ##############################
+    ############################# Importers ##############################
 
     # Importers (also see Windows Resource importer below)
 
@@ -252,13 +252,14 @@ set (file_list
 
     # (generated) import/import_winres_dlg.cpp
 
-    # Mockup panel
+    ############################# Mockup Panel ##############################
 
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     mockup/mockup_preview.cpp   # Preview Mockup
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
+    ############################# New Form Dialogs ##############################
     # Dialogs for creating new forms
 
     newdialogs/new_common.cpp   # Contains code common between all new_ dialogs
@@ -272,7 +273,7 @@ set (file_list
     # (generated) newdialogs/new_wizard.cpp     # Dialog for creating a new wxWizard
     # (generated) newdialogs/new_dialog.cpp     # Dialog for creating a new project dialog
 
-    # Nodes
+    ############################# Nodes ##############################
 
     nodes/node.cpp              # Contains user-modifiable node
     nodes/node_constants.cpp    # Maps wxWidgets constants to their numerical value
@@ -283,7 +284,7 @@ set (file_list
     nodes/node_prop.cpp         # NodeProperty class
     nodes/tool_creator.cpp      # Functions for creating new nodes from Ribbon Panel
 
-    # Panels
+    ############################# Panels ##############################
 
     panels/base_panel.cpp       # Code generation panel
     panels/code_display.cpp     # Display code in scintilla control

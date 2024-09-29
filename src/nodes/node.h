@@ -37,6 +37,22 @@ using namespace GenEnum;
 class Node : public std::enable_shared_from_this<Node>
 {
 public:
+    // node creation error codes
+    enum
+    {
+        valid_node = 0,
+        unsupported_language = -1,
+        unknown_gen_name = -2,
+        parent_not_wxFrame = -3,
+        invalid_tool_grandparent = -4,
+        invalid_page_grandparent = -5,
+        invalid_child_count = -6,
+        gridbag_insert_error = -7,
+        invalid_child = -8,  // Requiested child is not allowed for the parent
+
+        unknown_error = -99,
+    };
+
     Node(NodeDeclaration* declaration);
 
     // Use get_name() if you want the enum value.
@@ -381,8 +397,11 @@ public:
     void createDoc(pugi::xml_document& doc);
 
     // This creates an orphaned node -- it is the caller's responsibility to hook it up with
-    // a parent.
-    Node* createChildNode(GenName name);
+    // a parent. Returns the node and an error code.
+    //
+    // If verify_language_support is true, then the node will only be created if the
+    // preferred language supports it (unless the user agrees to create it anyway)
+    std::pair<NodeSharedPtr, int> createChildNode(GenName name, bool verify_language_support = false);
 
     // Gets the current selected node and uses that to call createChildNode().
     Node* createNode(GenName name);

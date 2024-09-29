@@ -11,6 +11,7 @@
 #include <map>
 #include <set>
 #include <unordered_set>
+#include <utility>  // for std::pair
 
 #include "hash_map.h"  // Find std::string_view key in std::unordered_map
 
@@ -48,11 +49,19 @@ public:
 public:
     void Initialize();
 
-    // Only creates the node if the parent allows it as a child
-    NodeSharedPtr createNode(GenName name, Node* parent);
+    // Only creates the node if the parent allows it as a child. Returns the node and an
+    // error code.
+    //
+    // If verify_language_support is true, then the node will only be created if the
+    // preferred language supports it (unless the user agrees to create it anyway)
+    std::pair<NodeSharedPtr, int> createNode(GenName name, Node* parent, bool verify_language_support = false);
 
-    // Only creates the node if the parent allows it as a child
-    NodeSharedPtr createNode(tt_string_view name, Node* parent);
+    // Only creates the node if the parent allows it as a child. Returns the node and an
+    // error code.
+    //
+    // If verify_language_support is true, then the node will only be created if the
+    // preferred language supports it (unless the user agrees to create it anyway)
+    std::pair<NodeSharedPtr, int> createNode(tt_string_view name, Node* parent, bool verify_language_support = false);
 
     NodeSharedPtr createNodeFromXml(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
                                     bool allow_ui = true);

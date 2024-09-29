@@ -581,24 +581,32 @@ wxSizerFlags Node::getSizerFlags() const
     return flags;
 }
 
-Node* Node::createChildNode(GenName name)
+std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_language_support)
 {
     auto& frame = wxGetFrame();
 
-    auto new_node = NodeCreation.createNode(name, this);
+    auto result = NodeCreation.createNode(name, this, verify_language_support);
+    if (!result.first || result.second < 0)
+    {
+        return { nullptr, result.second };
+    }
+    auto new_node = result.first;
 
     Node* parent = this;
 
     if (!new_node)
     {
-        new_node = NodeCreation.createNode(name, this);
+        new_node = NodeCreation.createNode(name, this).first;
         if ((isForm() || isContainer()) && getChildCount())
         {
             if (getChild(0)->getGenType() == type_sizer || getChild(0)->getGenType() == type_gbsizer)
             {
-                new_node = NodeCreation.createNode(name, getChild(0));
-                if (!new_node)
-                    return nullptr;
+                result = NodeCreation.createNode(name, getChild(0), verify_language_support);
+                if (!result.first || result.second < 0)
+                {
+                    return { nullptr, result.second };
+                }
+                new_node = result.first;
                 parent = getChild(0);
             }
 
@@ -606,10 +614,10 @@ Node* Node::createChildNode(GenName name)
             {
                 GridBag grid_bag(parent);
                 if (grid_bag.InsertNode(parent, new_node.get()))
-                    return new_node.get();
+                    return { new_node, Node::valid_node };
                 else
                 {
-                    return nullptr;
+                    return { nullptr, Node::gridbag_insert_error };
                 }
             }
         }
@@ -621,10 +629,10 @@ Node* Node::createChildNode(GenName name)
         {
             GridBag grid_bag(this);
             if (grid_bag.InsertNode(this, new_node.get()))
-                return new_node.get();
+                return { new_node, Node::valid_node };
             else
             {
-                return nullptr;
+                return { nullptr, Node::gridbag_insert_error };
             }
         }
 
@@ -661,16 +669,14 @@ Node* Node::createChildNode(GenName name)
     // then assume the parent is wxRibbonToolBar and retry with "ribbonTool"
     else if (name == gen_ribbonButton)
     {
-        new_node = NodeCreation.createNode(gen_ribbonTool, this);
-        if (new_node)
+        result = NodeCreation.createNode(gen_ribbonTool, this);
+        if (!result.first || result.second < 0)
         {
-            tt_string undo_str = "insert ribbon tool";
-            frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
+            return { nullptr, result.second };
         }
-        else
-        {
-            return nullptr;
-        }
+        new_node = result.first;
+        tt_string undo_str = "insert ribbon tool";
+        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
     }
     else
     {
@@ -698,20 +704,20 @@ Node* Node::createChildNode(GenName name)
                                              << " as a child of " << declName());
                 }
 
-                return nullptr;
+                return { nullptr, Node::invalid_child_count };
             }
 
-            new_node = NodeCreation.createNode(name, parent);
+            new_node = NodeCreation.createNode(name, parent).first;
             if (new_node)
             {
                 if (parent->isGen(gen_wxGridBagSizer))
                 {
                     GridBag grid_bag(parent);
                     if (grid_bag.InsertNode(parent, new_node.get()))
-                        return new_node.get();
+                        return { new_node, Node::valid_node };
                     else
                     {
-                        return nullptr;
+                        return { nullptr, Node::gridbag_insert_error };
                     }
                 }
 
@@ -724,7 +730,7 @@ Node* Node::createChildNode(GenName name)
         else
         {
             wxMessageBox(tt_string() << "You cannot add " << map_GenNames[name] << " as a child of " << declName());
-            return nullptr;
+            return { nullptr, Node::invalid_child };
         }
     }
 
@@ -792,7 +798,7 @@ Node* Node::createChildNode(GenName name)
         frame.FireCreatedEvent(new_node.get());
         frame.SelectNode(new_node.get(), evt_flags::fire_event | evt_flags::force_selection);
     }
-    return new_node.get();
+    return { new_node, Node::valid_node };
 }
 
 Node* Node::createNode(GenName name)
@@ -804,7 +810,7 @@ Node* Node::createNode(GenName name)
         wxMessageBox("You need to select something first in order to properly place this widget.");
         return nullptr;
     }
-    return cur_selection->createChildNode(name);
+    return cur_selection->createChildNode(name).first.get();
 }
 
 void Node::modifyProperty(PropName name, tt_string_view value)

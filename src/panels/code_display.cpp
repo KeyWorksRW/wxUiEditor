@@ -34,6 +34,10 @@
 extern const char* g_u8_cpp_keywords;
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
+extern const char* g_haskell_keywords;
+extern const char* g_lua_keywords;
+extern const char* g_perl_keywords;
+extern const char* g_php_keywords;
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.
@@ -229,6 +233,146 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_RB_STRING_QW, UserPrefs.get_RubyStringColour());
         m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, UserPrefs.get_RubyCommentColour());
         m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, UserPrefs.get_RubyNumberColour());
+    }
+    else if (panel_type == GEN_LANG_PERL)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_PERL);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+
+        tt_string wxPerl_keywords;
+        for (auto iter: lst_widgets_keywords)
+        {
+            if (wxPerl_keywords.size())
+                wxPerl_keywords << ' ' << (iter + 2);
+            else
+                wxPerl_keywords = (iter + 2);
+        }
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx"))
+                continue;
+            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                continue;
+            wxPerl_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPerl_keywords.c_str());
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PythonStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PythonCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PythonKeywordColour());
+    }
+    else if (panel_type == GEN_LANG_LUA)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_LUA);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
+
+        tt_string wxLua_keywords;
+        for (auto iter: lst_widgets_keywords)
+        {
+            if (wxLua_keywords.size())
+                wxLua_keywords << ' ' << (iter + 2);
+            else
+                wxLua_keywords = (iter + 2);
+        }
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx"))
+                continue;
+            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                continue;
+            wxLua_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxLua_keywords.c_str());
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_PythonStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_PythonCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_PythonKeywordColour());
+    }
+    else if (panel_type == GEN_LANG_PHP)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_PHPSCRIPT);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_HSTRING, UserPrefs.get_PythonStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_COMMENT, UserPrefs.get_PythonCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_WORD, UserPrefs.get_PythonKeywordColour());
+    }
+    else if (panel_type == GEN_LANG_HASKELL)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_HASKELL);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_PythonStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_PythonCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_PythonKeywordColour());
     }
 
     else  // C++

@@ -7,8 +7,11 @@
 
 // clang-format off
 
+#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/colour.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -17,6 +20,32 @@
 #include "ui_images.h"
 
 #include "eventhandler_dlg_base.h"
+
+#include <wx/mstream.h>  // memory stream classes
+#include <wx/zstream.h>  // zlib stream classes
+
+#include <memory>  // for std::make_unique
+
+// Convert compressed SVG string into a wxBitmapBundle
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#else
+static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#endif
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
+};
+
+namespace wxue_img
+{
+    extern const unsigned char php_logo_svg[2945];  // ../art_src/php-logo.svg
+}
 
 bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -38,6 +67,10 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         bundle_list.push_back(wxue_img::bundle_cpp_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_python_logo_only_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_ruby_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_haskell_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_lua_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_perl_logo_svg(24, 24));
+        bundle_list.push_back(wxueBundleSVG(wxue_img::php_logo_svg, 2945, 7599, wxSize(24, 24)));
         m_notebook->SetImages(bundle_list);
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
@@ -118,12 +151,10 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     page_sizer_2->Add(m_py_function_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_py_radio_use_lambda = new wxRadioButton(python_page, wxID_ANY, "Use lambda", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
+    m_py_radio_use_lambda = new wxRadioButton(python_page, wxID_ANY, "Lambda", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
     m_py_lambda_box = new wxStaticBoxSizer(new wxStaticBox(python_page, wxID_ANY, m_py_radio_use_lambda), wxVERTICAL);
 
-    auto* staticText_2 = new wxStaticText(m_py_lambda_box->GetStaticBox(), wxID_ANY,
-        "Lambda expression (event is the parameter):");
+    auto* staticText_2 = new wxStaticText(m_py_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
     m_py_lambda_box->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
     m_py_text_lambda = new wxTextCtrl(m_py_lambda_box->GetStaticBox(), wxID_ANY, wxEmptyString);
@@ -187,6 +218,227 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer_3->Add(m_ruby_function_box, wxSizerFlags().Expand().Border(wxALL));
     ruby_page->SetSizerAndFit(page_sizer_3);
 
+    auto* haskell_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(haskell_page, "Haskell", false, 3);
+    haskell_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer2 = new wxBoxSizer(wxVERTICAL);
+
+    m_haskell_radio_use_function = new wxRadioButton(haskell_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_haskell_function_box = new wxStaticBoxSizer(new wxStaticBox(haskell_page, wxID_ANY, m_haskell_radio_use_function),
+        wxVERTICAL);
+
+    m_haskell_text_function = new wxTextCtrl(m_haskell_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_haskell_function_box->Add(m_haskell_text_function, wxSizerFlags().Expand().Border(wxALL));
+
+    m_haskell_radio_use_lambda = new wxRadioButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_ruby_lambda_box2 = new wxStaticBoxSizer(new wxStaticBox(m_haskell_function_box->GetStaticBox(), wxID_ANY,
+        m_haskell_radio_use_lambda), wxVERTICAL);
+
+    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_ruby_lambda_box2->Add(box_sizer2, wxSizerFlags().Border(wxALL));
+
+    auto* staticText2 = new wxStaticText(m_ruby_lambda_box2->GetStaticBox(), wxID_ANY, "Lambda body:");
+    m_ruby_lambda_box2->Add(staticText2, wxSizerFlags().Border(wxALL));
+
+    m_haskell_stc_lambda = new wxStyledTextCtrl(m_ruby_lambda_box2->GetStaticBox());
+    {
+        m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
+        m_haskell_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_haskell_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_haskell_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_haskell_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_haskell_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_haskell_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_haskell_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_haskell_stc_lambda->SetAdditionalCaretsBlink(true);
+        m_haskell_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_haskell_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_haskell_stc_lambda->SetMarginWidth(1, 0);
+        m_haskell_stc_lambda->SetMarginWidth(0, 16);
+        m_haskell_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_haskell_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_haskell_stc_lambda->SetMarginSensitive(0, false);
+        m_haskell_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_haskell_stc_lambda->SetUseTabs(false);
+        m_haskell_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_haskell_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_ruby_lambda_box2->Add(m_haskell_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_haskell_function_box->Add(m_ruby_lambda_box2, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer2->Add(m_haskell_function_box, wxSizerFlags().Expand().Border(wxALL));
+    haskell_page->SetSizerAndFit(page_sizer2);
+
+    auto* lua_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(lua_page, "Lua", false, 4);
+    lua_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer3 = new wxBoxSizer(wxVERTICAL);
+
+    m_lua_radio_use_function = new wxRadioButton(lua_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_lua_function_box = new wxStaticBoxSizer(new wxStaticBox(lua_page, wxID_ANY, m_lua_radio_use_function), wxVERTICAL);
+
+    m_lua_text_function = new wxTextCtrl(m_lua_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_lua_function_box->Add(m_lua_text_function, wxSizerFlags().Expand().Border(wxALL));
+
+    m_lua_radio_use_anon_func = new wxRadioButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_lua_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_lua_function_box->GetStaticBox(), wxID_ANY,
+        m_lua_radio_use_anon_func), wxVERTICAL);
+
+    auto* box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_lua_lambda_box->Add(box_sizer3, wxSizerFlags().Border(wxALL));
+
+    auto* staticText3 = new wxStaticText(m_lua_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
+    m_lua_lambda_box->Add(staticText3, wxSizerFlags().Border(wxALL));
+
+    m_lua_stc_lambda = new wxStyledTextCtrl(m_lua_lambda_box->GetStaticBox());
+    {
+        m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
+        m_lua_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_lua_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_lua_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_lua_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_lua_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_lua_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_lua_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_lua_stc_lambda->SetAdditionalCaretsBlink(true);
+        m_lua_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_lua_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_lua_stc_lambda->SetMarginWidth(1, 0);
+        m_lua_stc_lambda->SetMarginWidth(0, 16);
+        m_lua_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_lua_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_lua_stc_lambda->SetMarginSensitive(0, false);
+        m_lua_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_lua_stc_lambda->SetUseTabs(false);
+        m_lua_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_lua_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_lua_lambda_box->Add(m_lua_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_lua_function_box->Add(m_lua_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer3->Add(m_lua_function_box, wxSizerFlags().Expand().Border(wxALL));
+    lua_page->SetSizerAndFit(page_sizer3);
+
+    auto* perl_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(perl_page, "Perl", false, 5);
+    perl_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer4 = new wxBoxSizer(wxVERTICAL);
+
+    m_perl_radio_use_function = new wxRadioButton(perl_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_perl_function_box = new wxStaticBoxSizer(new wxStaticBox(perl_page, wxID_ANY, m_perl_radio_use_function), wxVERTICAL);
+
+    m_perl_text_function = new wxTextCtrl(m_perl_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_perl_function_box->Add(m_perl_text_function, wxSizerFlags().Expand().Border(wxALL));
+
+    m_perl_radio_use_anon_func = new wxRadioButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_perl_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_function_box->GetStaticBox(), wxID_ANY,
+        m_perl_radio_use_anon_func), wxVERTICAL);
+
+    auto* box_sizer4 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_perl_lambda_box->Add(box_sizer4, wxSizerFlags().Border(wxALL));
+
+    auto* staticText4 = new wxStaticText(m_perl_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
+    m_perl_lambda_box->Add(staticText4, wxSizerFlags().Border(wxALL));
+
+    m_perl_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box->GetStaticBox());
+    {
+        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
+        m_perl_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_perl_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_perl_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_perl_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_perl_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_perl_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_perl_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_perl_stc_lambda->SetAdditionalCaretsBlink(true);
+        m_perl_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_perl_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_perl_stc_lambda->SetMarginWidth(1, 0);
+        m_perl_stc_lambda->SetMarginWidth(0, 16);
+        m_perl_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_perl_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_perl_stc_lambda->SetMarginSensitive(0, false);
+        m_perl_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_perl_stc_lambda->SetUseTabs(false);
+        m_perl_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_perl_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_perl_lambda_box->Add(m_perl_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_perl_function_box->Add(m_perl_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer4->Add(m_perl_function_box, wxSizerFlags().Expand().Border(wxALL));
+    perl_page->SetSizerAndFit(page_sizer4);
+
+    auto* php_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(php_page, "PHP", false, 6);
+    php_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer5 = new wxBoxSizer(wxVERTICAL);
+
+    m_php_radio_use_function = new wxRadioButton(php_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_php_function_box = new wxStaticBoxSizer(new wxStaticBox(php_page, wxID_ANY, m_php_radio_use_function), wxVERTICAL);
+
+    m_php_text_function = new wxTextCtrl(m_php_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_php_function_box->Add(m_php_text_function, wxSizerFlags().Expand().Border(wxALL));
+
+    m_php_radio_use_anon_func = new wxRadioButton(m_php_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_php_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_php_function_box->GetStaticBox(), wxID_ANY,
+        m_php_radio_use_anon_func), wxVERTICAL);
+
+    auto* box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_php_lambda_box->Add(box_sizer5, wxSizerFlags().Border(wxALL));
+
+    auto* staticText5 = new wxStaticText(m_php_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
+    m_php_lambda_box->Add(staticText5, wxSizerFlags().Border(wxALL));
+
+    m_php_stc_lambda = new wxStyledTextCtrl(m_php_lambda_box->GetStaticBox());
+    {
+        m_php_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+        m_php_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_php_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_php_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_php_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_php_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_php_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_php_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_php_stc_lambda->SetAdditionalCaretsBlink(true);
+        m_php_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_php_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_php_stc_lambda->SetMarginWidth(1, 0);
+        m_php_stc_lambda->SetMarginWidth(0, 16);
+        m_php_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_php_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_php_stc_lambda->SetMarginSensitive(0, false);
+        m_php_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_php_stc_lambda->SetUseTabs(false);
+        m_php_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_php_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_php_lambda_box->Add(m_php_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_php_function_box->Add(m_php_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer5->Add(m_php_function_box, wxSizerFlags().Expand().Border(wxALL));
+    php_page->SetSizerAndFit(page_sizer5);
+
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
@@ -226,15 +478,129 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_cpp_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseCppLambda, this);
     m_py_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonFunction, this);
     m_py_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonLambda, this);
+    m_haskell_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
+    m_lua_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
+    m_perl_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
+    m_php_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
+    m_lua_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
+    m_perl_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
+    m_php_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_ruby_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
+    m_haskell_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_cpp_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_haskell_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_lua_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_perl_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_php_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_lambda->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_ruby_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
 
     return true;
 }
+
+namespace wxue_img
+{
+    // ../art_src/php-logo.svg
+    const unsigned char php_logo_svg[2945] {
+        120,218,205,89,203,114,27,201,17,244,167,76,192,23,109,4,57,236,174,126,147,162,46,56,248,2,134,29,107,239,69,23,
+        7,77,130,36,108,138,96,0,208,203,95,239,202,170,174,25,192,146,195,171,13,31,124,144,56,57,143,158,174,170,204,
+        234,206,193,219,253,167,199,225,243,230,254,240,116,189,8,238,245,203,98,120,90,111,30,159,14,134,62,173,119,251,
+        205,246,229,122,225,71,191,24,190,124,120,126,217,95,238,215,187,205,195,245,226,233,112,120,189,188,184,248,252,
+        249,243,40,103,198,187,237,135,139,197,176,63,124,125,94,95,47,30,54,207,207,231,187,143,207,235,203,245,167,245,
+        203,246,254,254,234,238,121,243,122,122,102,127,216,109,255,177,62,127,222,188,172,255,190,221,188,92,238,182,31,
+        95,166,179,31,54,135,245,238,121,195,127,46,233,106,241,238,237,227,176,185,191,94,60,134,24,234,49,138,238,4,17,
+        35,188,232,79,183,135,39,57,249,87,32,207,103,95,113,134,79,220,156,187,209,213,124,230,211,178,31,145,27,41,150,
+        33,143,57,215,51,138,99,26,124,146,191,75,10,99,8,164,231,194,201,205,97,26,164,31,181,177,164,48,244,7,146,142,
+        193,127,150,58,42,78,156,31,223,56,77,98,113,241,238,237,133,205,24,145,72,154,48,217,235,197,199,221,243,155,223,
+        107,0,63,157,68,121,146,129,228,44,58,156,192,65,136,153,22,255,143,177,30,147,227,82,163,251,249,246,126,115,251,
+        76,63,93,205,132,121,217,190,252,115,189,219,94,73,106,30,191,253,55,69,158,227,113,30,114,62,70,133,190,205,74,
+        137,154,21,132,28,198,210,36,104,231,114,71,3,181,49,182,114,230,219,88,83,153,16,223,213,143,220,232,163,196,141,
+        103,242,72,78,34,151,3,142,189,181,216,79,186,49,185,96,183,119,144,150,253,64,7,215,219,251,123,167,249,156,38,
+        104,247,248,183,55,222,183,51,79,252,88,105,191,38,69,115,248,167,201,56,33,76,141,223,166,166,102,77,77,29,189,
+        63,243,121,116,109,89,199,146,155,30,15,109,36,20,112,108,49,241,113,42,30,32,167,182,228,104,74,3,8,133,227,224,
+        66,55,190,20,199,90,35,16,33,224,56,250,86,151,140,2,103,205,135,49,165,42,215,114,1,242,222,203,115,53,113,156,
+        99,205,50,100,67,208,99,166,48,244,204,19,255,169,67,229,43,253,120,85,198,26,234,12,40,37,157,234,106,142,224,
+        253,77,100,66,54,208,56,249,188,100,64,190,131,129,89,94,34,64,108,56,142,65,142,99,228,187,146,39,128,208,112,
+        37,54,121,62,68,220,229,228,152,42,173,120,248,20,81,225,146,137,75,239,144,40,55,102,212,213,7,97,74,118,145,1,
+        113,105,21,172,56,109,49,119,128,108,164,22,236,62,239,57,125,130,90,20,84,51,35,63,102,102,13,71,24,146,228,134,
+        218,192,255,39,39,105,163,16,128,2,198,231,89,250,134,27,41,100,160,230,8,215,188,147,42,133,132,17,155,143,0,37,
+        209,146,81,65,53,121,170,73,222,198,244,0,74,148,129,124,41,64,53,73,205,170,231,59,57,189,153,80,165,136,151,23,
+        174,32,88,208,48,201,194,99,85,46,89,34,185,82,165,74,45,203,67,173,38,6,212,74,7,156,181,22,235,12,82,214,68,167,
+        194,41,76,124,69,74,208,56,109,122,140,58,241,177,163,14,86,199,229,124,255,157,149,230,223,85,49,51,190,126,203,
+        248,230,148,241,60,27,228,158,233,214,226,202,24,198,199,28,84,38,187,48,128,231,194,195,90,179,196,30,81,5,231,
+        60,146,228,181,38,190,9,149,125,144,107,169,73,202,92,36,145,64,246,60,96,3,101,35,43,189,242,24,37,138,164,8,185,
+        140,170,40,110,16,124,151,23,65,149,28,56,123,133,59,44,131,202,83,80,98,203,49,19,62,166,56,131,57,130,247,55,
+        224,153,48,48,186,186,154,24,200,0,60,77,181,131,129,181,76,194,224,20,253,32,227,8,157,41,113,150,131,230,159,
+        98,98,57,4,82,5,64,51,96,34,138,84,68,26,190,72,45,88,178,17,167,0,184,37,136,180,164,100,197,211,48,149,140,193,
+        106,42,38,3,148,60,217,21,172,71,77,36,152,10,234,95,40,168,4,19,7,231,42,7,199,193,87,191,234,108,18,192,253,169,
+        77,87,208,148,178,7,112,90,4,7,190,23,208,30,5,82,214,21,104,134,53,198,50,102,20,149,238,84,5,73,37,89,113,60,
+        63,38,127,78,73,101,40,157,132,59,21,244,228,82,145,140,199,42,90,75,104,234,60,74,21,29,34,125,172,188,12,16,139,
+        138,50,101,220,152,161,46,22,172,147,27,147,151,74,17,247,84,168,18,203,34,11,176,102,188,60,102,173,65,193,44,
+        115,12,86,170,227,138,50,93,101,30,60,171,154,167,94,199,199,156,142,234,90,7,252,8,202,6,137,19,154,119,86,122,
+        85,205,134,243,58,117,110,112,232,195,81,122,52,83,8,40,100,65,220,73,36,111,58,247,68,210,177,35,73,255,118,164,
+        207,57,209,67,9,144,127,171,218,164,121,183,128,217,138,134,2,183,33,211,19,31,115,37,139,11,51,152,195,152,41,
+        91,90,147,214,24,91,71,90,33,228,200,123,233,85,37,52,160,194,157,26,45,78,23,138,80,162,20,33,104,107,76,210,26,
+        125,146,146,4,102,10,138,87,68,121,53,74,209,91,146,124,80,241,50,166,45,103,82,133,212,116,249,136,36,125,57,73,
+        167,228,250,2,185,44,168,248,176,20,177,128,57,220,102,37,113,65,122,94,40,200,64,243,210,26,83,164,37,22,48,33,
+        159,43,232,140,120,49,131,218,230,206,200,128,149,81,245,17,5,93,38,129,230,150,23,104,22,51,39,102,117,156,179,
+        211,109,195,231,39,222,57,95,253,138,174,216,190,179,69,106,182,69,66,101,172,113,47,129,130,117,238,1,180,106,
+        18,123,99,185,3,101,175,98,11,75,165,156,44,5,185,202,53,175,11,131,211,59,73,178,84,146,95,97,141,241,194,174,
+        208,240,88,133,106,184,137,6,121,172,38,169,108,77,30,168,100,89,1,11,201,157,69,153,39,34,229,46,130,118,203,194,
+        10,0,142,72,193,10,109,182,70,3,65,187,29,207,131,184,200,193,122,64,243,252,178,192,172,160,41,182,128,198,107,
+        107,20,136,19,227,148,5,38,78,75,211,157,140,180,180,146,5,44,177,117,202,2,247,14,205,158,100,129,81,137,83,22,
+        112,45,78,89,8,44,171,118,198,100,8,30,19,227,45,8,3,31,26,102,130,157,8,119,180,66,2,154,30,175,176,166,187,14,
+        150,178,192,87,187,139,69,237,240,188,131,114,24,132,132,193,160,21,6,204,93,244,74,189,82,228,157,177,42,224,99,
+        222,156,97,100,215,108,247,130,2,97,106,182,99,41,50,55,219,177,96,142,210,160,42,82,88,181,10,172,85,222,18,50,
+        106,72,40,11,11,61,175,141,90,174,72,5,55,138,52,216,57,52,126,29,15,210,230,170,48,42,115,85,208,218,252,148,107,
+        14,41,204,85,57,230,230,15,237,3,90,254,14,227,171,153,2,73,43,79,166,228,149,230,91,142,165,42,252,114,1,40,4,
+        53,73,190,147,18,81,6,224,48,86,178,173,82,13,163,205,34,250,30,91,211,198,37,19,142,66,135,2,249,32,166,42,84,
+        65,167,226,65,168,42,169,108,133,27,140,126,186,248,25,53,117,245,19,74,79,55,70,110,167,73,134,196,11,162,110,
+        167,193,62,17,130,48,19,242,201,171,89,35,5,57,135,124,66,71,208,79,142,170,186,162,160,239,201,69,214,185,100,
+        160,230,68,104,197,235,90,80,251,157,77,148,236,132,157,45,167,41,13,73,227,233,105,96,164,77,83,242,192,83,9,113,
+        202,3,118,236,121,202,67,6,83,167,240,122,193,123,30,58,25,122,30,170,236,151,250,141,204,99,138,83,30,24,165,56,
+        229,1,68,20,238,113,53,151,140,40,74,30,66,11,66,210,86,117,203,29,240,92,142,177,47,58,120,1,177,14,65,124,168,
+        146,101,80,109,49,30,102,137,96,179,133,21,165,165,35,196,213,226,41,196,128,52,32,69,60,18,137,226,50,137,202,
+        157,164,4,219,96,158,48,182,240,178,40,51,211,154,38,11,219,237,78,187,35,114,222,76,13,128,114,69,121,107,171,
+        182,42,204,19,146,165,180,32,186,105,41,173,186,230,122,108,118,128,34,137,203,136,188,233,100,84,170,172,172,213,
+        137,220,100,76,22,109,18,209,178,109,16,209,166,186,154,165,136,165,106,150,98,71,173,104,79,135,110,10,170,32,
+        44,105,5,137,115,202,59,97,76,85,191,151,154,144,176,232,142,33,18,73,74,179,22,38,164,163,150,206,8,177,230,190,
+        183,0,154,90,181,188,123,106,213,130,122,191,148,12,29,165,235,183,173,148,201,125,251,137,133,185,174,125,131,
+        152,52,129,186,103,38,216,180,110,63,7,6,165,146,217,102,124,54,104,193,124,51,163,216,253,89,145,107,217,7,51,
+        206,248,22,64,201,140,51,163,74,213,140,51,174,213,102,198,25,207,105,119,133,113,198,152,236,112,187,115,198,251,
+        188,217,101,204,37,122,50,191,204,115,14,121,2,216,114,150,238,158,143,163,121,127,35,226,50,207,44,82,139,102,
+        198,132,78,45,119,11,13,144,147,121,104,225,72,52,19,13,164,198,59,68,237,228,222,108,180,199,183,132,108,62,26,
+        8,201,19,35,205,32,167,54,173,55,108,151,38,95,189,66,104,185,218,202,68,156,167,201,102,15,4,61,36,243,210,196,
+        249,5,211,212,75,51,234,46,142,245,69,160,86,51,47,141,75,120,129,122,105,130,83,174,230,165,41,169,19,20,47,77,
+        88,86,179,121,105,70,20,171,121,105,74,230,163,121,22,185,53,243,209,140,130,110,159,224,163,9,157,187,153,143,
+        70,209,180,89,195,72,35,50,221,84,212,94,180,58,109,187,184,52,213,55,91,4,197,134,29,1,87,163,153,105,32,221,52,
+        194,77,3,185,185,106,77,118,66,221,80,159,212,247,71,86,210,228,226,119,20,145,39,69,196,150,204,82,207,204,131,
+        169,230,0,125,180,107,242,9,81,183,240,176,213,146,138,108,190,26,220,214,250,192,87,3,165,108,190,154,81,202,209,
+        124,53,158,203,230,171,9,107,114,237,198,154,223,221,84,115,112,214,208,163,39,243,214,144,234,228,161,7,227,189,
+        58,106,78,72,43,121,66,199,241,188,191,153,217,39,109,126,98,38,44,54,40,60,89,108,6,81,63,249,192,99,3,249,108,
+        38,27,21,46,102,178,1,146,239,46,91,174,20,179,217,40,112,104,230,179,161,30,231,205,104,139,2,163,89,232,185,150,
+        176,218,115,157,225,181,133,31,118,35,94,234,147,153,109,157,130,185,109,140,236,146,173,180,198,56,93,105,9,31,
+        159,236,154,180,23,181,223,78,203,147,212,0,193,113,51,223,65,185,110,185,25,197,224,205,114,67,159,186,177,147,
+        34,39,94,238,163,89,110,81,107,48,203,205,40,233,183,69,88,110,72,18,14,65,45,55,163,166,159,190,216,114,3,180,
+        98,150,155,117,77,102,184,161,241,144,204,112,99,64,87,205,112,243,68,90,77,221,112,163,135,100,91,186,135,147,
+        10,223,104,162,204,114,207,13,18,166,155,176,20,153,5,7,165,80,199,110,187,65,117,37,31,124,183,100,40,153,239,
+        70,27,207,201,124,55,90,124,77,230,187,41,154,231,70,167,232,43,168,142,87,168,153,231,198,120,174,153,233,198,
+        140,139,55,215,61,75,14,86,155,103,76,148,38,116,28,205,17,151,177,95,64,221,138,183,253,2,42,229,200,188,55,58,
+        29,108,158,122,111,84,67,151,26,120,111,52,207,212,204,123,163,93,150,108,222,27,200,156,55,122,103,9,230,188,49,
+        162,45,136,89,152,224,131,57,111,188,91,191,74,194,121,227,55,137,90,205,121,51,162,56,89,111,228,46,85,179,222,
+        104,5,33,153,247,150,37,144,204,125,35,43,197,246,11,71,221,20,251,5,208,95,159,147,221,195,36,30,118,221,179,174,
+        2,29,169,29,187,173,147,236,253,216,214,226,248,223,110,125,119,144,54,186,253,120,88,239,22,195,151,235,133,91,
+        12,95,175,23,231,92,171,197,252,235,220,241,111,115,167,111,227,209,215,50,244,253,250,97,207,3,202,111,42,127,
+        192,159,245,139,14,109,191,179,44,134,59,29,254,238,171,252,217,93,47,252,98,120,236,183,254,242,178,57,236,175,
+        23,31,247,235,221,159,95,111,239,214,127,124,249,101,191,158,47,255,101,119,251,178,127,216,238,62,92,47,62,220,
+        30,118,155,47,111,240,107,6,190,51,159,195,109,251,154,215,231,220,226,78,0,88,235,35,28,42,111,13,197,44,85,110,
+        249,242,123,214,254,176,125,29,182,15,15,251,245,65,230,210,35,194,233,243,187,237,243,118,167,191,128,136,117,
+        230,238,229,195,79,87,114,109,203,83,219,28,190,94,122,68,124,58,200,24,254,55,195,148,244,159,198,97,255,2,114,
+        135,242,95,71,241,191,105,136,139,211,226,241,9,173,233,197,254,211,227,187,223,253,11,98,22,142,248
+    };
+
+    }
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

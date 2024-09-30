@@ -566,11 +566,14 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_xrc_file:
                     case prop_combined_xrc_file:
                     case prop_folder_combined_xrc_file:
-                    case prop_perl_file:
                     case prop_python_file:
                     case prop_python_combined_file:
                     case prop_ruby_file:
                     case prop_ruby_combined_file:
+                    case prop_haskell_file:
+                    case prop_lua_file:
+                    case prop_perl_file:
+                    case prop_php_file:
                     case prop_cmake_file:
                     case prop_folder_cmake_file:
                     case prop_subclass_header:
@@ -1610,7 +1613,8 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
     // it's a different grid_prop
     if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
-        !node_prop->isProp(prop_xrc_file))
+        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) &&
+        !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_php_file))
     {
         if (newValue.size())
         {
@@ -1621,6 +1625,16 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         }
     }
     modifyProperty(node_prop, newValue);
+
+    // Create/enable the appropriate code panel if needed
+    if (node_prop->isProp(prop_haskell_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
+    else if (node_prop->isProp(prop_lua_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
+    else if (node_prop->isProp(prop_perl_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
+    else if (node_prop->isProp(prop_php_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -2245,6 +2259,22 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
         case GEN_LANG_XRC:
             ChangeOutputFile(prop_xrc_file);
             break;
+
+        case GEN_LANG_HASKELL:
+            ChangeOutputFile(prop_haskell_file);
+            break;
+
+        case GEN_LANG_LUA:
+            ChangeOutputFile(prop_lua_file);
+            break;
+
+        case GEN_LANG_PERL:
+            ChangeOutputFile(prop_perl_file);
+            break;
+
+        case GEN_LANG_PHP:
+            ChangeOutputFile(prop_php_file);
+            break;
     }
 }
 
@@ -2258,9 +2288,8 @@ void PropGridPanel::ReplaceDerivedFile(const tt_string& newValue, NodeProperty* 
 
 bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
 {
-    // TODO: [KeyWorks - 04-10-2021] The original properties that were ignored were replaced, so this is now just a
-    // placeholder. It is called, so if needed, this would be where properties could be disabled, presumably based on the
-    // parent.
+    // If this function returns false, the property will not be created in the property grid. Note
+    // that properties marked as hidden in the XML interface will not be passed to this function.
 
     return true;
 }

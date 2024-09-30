@@ -50,6 +50,19 @@ const char* g_perl_keywords = "do if else elsif unless while until for foreach l
                               "sub return goto and or not xor "
                               "use no package require my our local state";
 
+const char* g_lua_keywords =
+    "and break do else elseif end false for function goto if in local nil not or repeat return then true until while";
+
+const char* g_php_keywords =
+    "abstract and array as break callable case catch class clone const continue declare default die do echo else elseif "
+    "empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final finally fn for foreach function "
+    "global goto if implements include include_once instanceof insteadof interface isset list namespace new or print "
+    "private protected public require require_once return static switch throw trait try unset use var while xor yield yield "
+    "from";
+
+const char* g_haskell_keywords =
+    "case class data deriving do else if import in infix infixl infixr instance let module newtype of then type where";
+
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPanel(parent)
 {
     m_panel_type = panel_type;

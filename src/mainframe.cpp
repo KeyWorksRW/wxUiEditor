@@ -1338,6 +1338,11 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
+        EnableCodePanels(GEN_LANG_HASKELL);
+        EnableCodePanels(GEN_LANG_LUA);
+        EnableCodePanels(GEN_LANG_PERL);
+        EnableCodePanels(GEN_LANG_PHP);
+
         m_imnportPanel = new ImportPanel(m_notebook);
         m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
     }

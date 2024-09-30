@@ -14,6 +14,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_event.h"       // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 
@@ -24,6 +25,10 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 extern const char* g_u8_cpp_keywords;
 extern const char* g_ruby_keywords;
 extern const char* g_perl_keywords;
+extern const char* g_haskell_keywords;
+extern const char* g_lua_keywords;
+extern const char* g_perl_keywords;
+extern const char* g_php_keywords;
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
@@ -42,6 +47,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     // Page numbers can be reduced if the language before it was removed
     m_python_page = EVENT_PAGE_PYTHON;
     m_ruby_page = EVENT_PAGE_RUBY;
+    m_haskell_page = EVENT_PAGE_HASKELL;
+    m_lua_page = EVENT_PAGE_LUA;
+    m_perl_page = EVENT_PAGE_PERL;
+    m_php_page = EVENT_PAGE_PHP;
 
     m_output_type = Project.getOutputType(OUT_FLAG_IGNORE_DERIVED | OUT_FLAG_IGNORE_XRC);
     m_code_preference = Project.getCodePreference(event->getNode());
@@ -49,32 +58,60 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_cpp_enabled = (m_code_preference == GEN_LANG_CPLUSPLUS || m_output_type & OUTPUT_CPLUS);
     m_is_python_enabled = (m_code_preference == GEN_LANG_PYTHON || m_output_type & OUTPUT_PYTHON);
     m_is_ruby_enabled = (m_code_preference == GEN_LANG_RUBY || m_output_type & OUTPUT_RUBY);
-    m_is_perl_enabled = (m_code_preference == GEN_LANG_PERL || m_output_type & OUTPUT_PERL);
-    m_is_lua_enabled = (m_code_preference == GEN_LANG_LUA || m_output_type & OUTPUT_LUA);
-    m_is_php_enabled = (m_code_preference == GEN_LANG_PHP || m_output_type & OUTPUT_PHP);
     m_is_haskell_enabled = (m_code_preference == GEN_LANG_HASKELL || m_output_type & OUTPUT_HASKELL);
+    m_is_lua_enabled = (m_code_preference == GEN_LANG_LUA || m_output_type & OUTPUT_LUA);
+    m_is_perl_enabled = (m_code_preference == GEN_LANG_PERL || m_output_type & OUTPUT_PERL);
+    m_is_php_enabled = (m_code_preference == GEN_LANG_PHP || m_output_type & OUTPUT_PHP);
 
     if (!m_is_cpp_enabled)
     {
         m_notebook->RemovePage(EVENT_PAGE_CPP);
+        m_python_page--;
+        m_ruby_page--;
+        m_haskell_page--;
+        m_lua_page--;
         m_perl_page--;
-        m_python_page--;
-        m_ruby_page--;
-    }
-    if (!m_is_perl_enabled)
-    {
-        m_notebook->RemovePage(m_perl_page);
-        m_python_page--;
-        m_ruby_page--;
+        m_php_page--;
     }
     if (!m_is_python_enabled)
     {
         m_notebook->RemovePage(m_python_page);
         m_ruby_page--;
+        m_haskell_page--;
+        m_lua_page--;
+        m_perl_page--;
+        m_php_page--;
     }
     if (!m_is_ruby_enabled)
     {
         m_notebook->RemovePage(m_ruby_page);
+        m_haskell_page--;
+        m_lua_page--;
+        m_perl_page--;
+        m_php_page--;
+    }
+    if (!m_is_haskell_enabled)
+    {
+        m_notebook->RemovePage(m_perl_page);
+        m_haskell_page--;
+        m_lua_page--;
+        m_perl_page--;
+        m_php_page--;
+    }
+    if (!m_is_lua_enabled)
+    {
+        m_notebook->RemovePage(m_lua_page);
+        m_perl_page--;
+        m_php_page--;
+    }
+    if (!m_is_perl_enabled)
+    {
+        m_notebook->RemovePage(m_php_page);
+        m_perl_page--;
+    }
+    if (!m_is_php_enabled)
+    {
+        m_notebook->RemovePage(m_php_page);
     }
 
     m_value = event->get_value().make_wxString();
@@ -85,6 +122,52 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
         // On Windows, this saves converting the UTF16 characters to ANSI.
         m_cpp_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
+    }
+    if (m_is_ruby_enabled)
+    {
+        m_ruby_stc_lambda->SetLexer(wxSTC_LEX_RUBY);
+        m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_ruby_keywords);
+
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, "#FF00FF");
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+    }
+    if (m_is_haskell_enabled)
+    {
+        m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
+        m_haskell_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
+
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_PythonStringColour());
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_PythonCommentColour());
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_PythonKeywordColour());
+    }
+    if (m_is_lua_enabled)
+    {
+        m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
+        m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
+
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_PythonStringColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_PythonCommentColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_PythonKeywordColour());
+    }
+    if (m_is_perl_enabled)
+    {
+        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
+        m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PythonStringColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PythonCommentColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PythonKeywordColour());
+    }
+    if (m_is_php_enabled)
+    {
+        m_php_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+        m_php_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+
+        m_php_stc_lambda->StyleSetForeground(wxSTC_HPHP_HSTRING, UserPrefs.get_PythonStringColour());
+        m_php_stc_lambda->StyleSetForeground(wxSTC_HPHP_COMMENT, UserPrefs.get_PythonCommentColour());
+        m_php_stc_lambda->StyleSetForeground(wxSTC_HPHP_WORD, UserPrefs.get_PythonKeywordColour());
     }
 
     auto form = event->getNode()->getForm();
@@ -105,6 +188,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             m_cpp_stc_lambda->SetKeyWords(1, keywords);
             m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
         }
+
+        // Python lambdas are an anonymous function expressed as a single statement.
+        // m_py_text_lambda is a single line text control, so there is no scintilla properties to
+        // set.
 
         if (m_is_ruby_enabled)
         {
@@ -132,6 +219,26 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             }
             m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
         }
+        if (m_is_haskell_enabled)
+        {
+            m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
+            m_haskell_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
+        }
+        if (m_is_lua_enabled)
+        {
+            m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
+            m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
+        }
+        if (m_is_perl_enabled)
+        {
+            m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
+            m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+        }
+        if (m_is_php_enabled)
+        {
+            m_php_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+            m_php_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+        }
     }
     if (m_is_cpp_enabled)
     {
@@ -149,10 +256,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     if (m_is_ruby_enabled)
     {
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, "#FF00FF");
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
     }
 
     if (m_code_preference == GEN_LANG_PYTHON)

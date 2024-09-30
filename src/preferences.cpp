@@ -38,7 +38,11 @@ void Prefs::ReadConfig()
 
     m_cpp_widgets_version = config->Read("cpp_widgets_version", "3.2");
     m_python_version = config->Read("python_version", "4.2");
-    m_ruby_version = config->Read("ruby_version", "0.9");
+    m_ruby_version = config->Read("ruby_version", "1.2");
+    if (m_ruby_version == "0.9")  // we no longer support the wxRuby3 beta
+    {
+        m_ruby_version = "1.2";
+    }
 
     m_colour_cpp = config->Read("cpp_colour", "#FF00FF");
     m_colour_cpp_comment = config->Read("cpp_comment_colour", "#008000");
@@ -57,6 +61,30 @@ void Prefs::ReadConfig()
     m_colour_ruby_number = config->Read("ruby_number_colour", "#FF0000");
     m_colour_ruby_string = config->Read("ruby_string_colour", "#008000");
 
+    m_colour_haskell = config->Read("haskell_colour", "#FF00FF");
+    m_colour_haskell_comment = config->Read("haskell_comment_colour", "#008000");
+    m_colour_haskell_keyword = config->Read("haskell_keyword_colour", "#0000FF");
+    m_colour_haskell_number = config->Read("haskell_number_colour", "#FF0000");
+    m_colour_haskell_string = config->Read("haskell_string_colour", "#008000");
+
+    m_colour_lua = config->Read("lua_colour", "#FF00FF");
+    m_colour_lua_comment = config->Read("lua_comment_colour", "#008000");
+    m_colour_lua_keyword = config->Read("lua_keyword_colour", "#0000FF");
+    m_colour_lua_number = config->Read("lua_number_colour", "#FF0000");
+    m_colour_lua_string = config->Read("lua_string_colour", "#008000");
+
+    m_colour_perl = config->Read("perl_colour", "#FF00FF");
+    m_colour_perl_comment = config->Read("perl_comment_colour", "#008000");
+    m_colour_perl_keyword = config->Read("perl_keyword_colour", "#0000FF");
+    m_colour_perl_number = config->Read("perl_number_colour", "#FF0000");
+    m_colour_perl_string = config->Read("perl_string_colour", "#008000");
+
+    m_colour_php = config->Read("php_colour", "#FF00FF");
+    m_colour_php_comment = config->Read("php_comment_colour", "#008000");
+    m_colour_php_keyword = config->Read("php_keyword_colour", "#0000FF");
+    m_colour_php_number = config->Read("php_number_colour", "#FF0000");
+    m_colour_php_string = config->Read("php_string_colour", "#008000");
+
     m_colour_xrc_attribute = config->Read("xrc_colour", "#FF00FF");
     m_colour_xrc_dblstring = config->Read("xrc_dblstring_colour", "#008000");
     m_colour_xrc_tag = config->Read("xrc_tag_colour", "#0000FF");
@@ -64,6 +92,10 @@ void Prefs::ReadConfig()
     m_cpp_line_length = config->Read("cpp_line_length", 110);
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
+    m_haskell_line_length = config->Read("haskell_line_length", 80);
+    m_lua_line_length = config->Read("lua_line_length", 100);
+    m_perl_line_length = config->Read("perl_line_length", 80);
+    m_php_line_length = config->Read("php_line_length", 80);
 
     m_icon_size = config->Read("icon_size", 20);
 

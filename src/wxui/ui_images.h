@@ -79,6 +79,7 @@ namespace wxue_img
     wxBitmapBundle bundle_notebook_list_svg(int width, int height);
     wxBitmapBundle bundle_pagectrl_svg(int width, int height);
     wxBitmapBundle bundle_perl_logo_svg(int width, int height);
+    wxBitmapBundle bundle_php_logo_svg(int width, int height);
     wxBitmapBundle bundle_popup_transient_svg(int width, int height);
     wxBitmapBundle bundle_popup_window_svg(int width, int height);
     wxBitmapBundle bundle_preferences_svg(int width, int height);
@@ -267,6 +268,7 @@ namespace wxue_img
     extern const unsigned char notebook_svg[1232];  // ../art_src/notebook.svg
     extern const unsigned char pagectrl_svg[2307];  // ../art_src/pagectrl.svg
     extern const unsigned char perl_logo_svg[2052];  // ../art_src/perl-logo.svg
+    extern const unsigned char php_logo_svg[2945];  // ../art_src/php-logo.svg
     extern const unsigned char popup_transient_svg[1282];  // ../art_src/popup_transient.svg
     extern const unsigned char popup_window_svg[755];  // ../art_src/popup_window.svg
     extern const unsigned char preferences_svg[2113];  // ../art_src/preferences.svg

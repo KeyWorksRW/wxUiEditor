@@ -21,12 +21,6 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 
-namespace wxue_img
-{
-    // ../art_src/php-logo.svg
-    extern const unsigned char php_logo_svg[2945];
-}
-
 class EventHandlerDlgBase : public wxDialog
 {
 public:

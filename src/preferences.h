@@ -75,8 +75,17 @@ public:
     int get_RubyLineLength() const { return m_ruby_line_length; }
     void set_RubyLineLength(int length) { m_ruby_line_length = length; }
 
+    int get_HaskellLineLength() const { return m_haskell_line_length; }
+    void set_HaskellLineLength(int length) { m_haskell_line_length = length; }
+
+    int get_LuaLineLength() const { return m_lua_line_length; }
+    void set_LuaLineLength(int length) { m_lua_line_length = length; }
+
     int get_PerlLineLength() const { return m_perl_line_length; }
     void set_PerlLineLength(int length) { m_perl_line_length = length; }
+
+    int get_PhpLineLength() const { return m_php_line_length; }
+    void set_PhpLineLength(int length) { m_php_line_length = length; }
 
     int get_IconSize() const { return m_icon_size; }
     void set_IconSize(int size) { m_icon_size = size; }
@@ -124,6 +133,50 @@ public:
     void set_RubyNumberColour(const wxColour& colour) { m_colour_ruby_number = colour; }
     const wxColour& get_RubyStringColour() const { return m_colour_ruby_string; }
     void set_RubyStringColour(const wxColour& colour) { m_colour_ruby_string = colour; }
+
+    const wxColour& get_HaskellColour() const { return m_colour_haskell; }
+    void set_HaskellColour(const wxColour& colour) { m_colour_haskell = colour; }
+    const wxColour& get_HaskellCommentColour() const { return m_colour_haskell_comment; }
+    void set_HaskellCommentColour(const wxColour& colour) { m_colour_haskell_comment = colour; }
+    const wxColour& get_HaskellKeywordColour() const { return m_colour_haskell_keyword; }
+    void set_HaskellKeywordColour(const wxColour& colour) { m_colour_haskell_keyword = colour; }
+    const wxColour& get_HaskellNumberColour() const { return m_colour_haskell_number; }
+    void set_HaskellNumberColour(const wxColour& colour) { m_colour_haskell_number = colour; }
+    const wxColour& get_HaskellStringColour() const { return m_colour_haskell_string; }
+    void set_HaskellStringColour(const wxColour& colour) { m_colour_haskell_string = colour; }
+
+    const wxColour& get_LuaColour() const { return m_colour_lua; }
+    void set_LuaColour(const wxColour& colour) { m_colour_lua = colour; }
+    const wxColour& get_LuaCommentColour() const { return m_colour_lua_comment; }
+    void set_LuaCommentColour(const wxColour& colour) { m_colour_lua_comment = colour; }
+    const wxColour& get_LuaKeywordColour() const { return m_colour_lua_keyword; }
+    void set_LuaKeywordColour(const wxColour& colour) { m_colour_lua_keyword = colour; }
+    const wxColour& get_LuaNumberColour() const { return m_colour_lua_number; }
+    void set_LuaNumberColour(const wxColour& colour) { m_colour_lua_number = colour; }
+    const wxColour& get_LuaStringColour() const { return m_colour_lua_string; }
+    void set_LuaStringColour(const wxColour& colour) { m_colour_lua_string = colour; }
+
+    const wxColour& get_PerlColour() const { return m_colour_perl; }
+    void set_PerlColour(const wxColour& colour) { m_colour_perl = colour; }
+    const wxColour& get_PerlCommentColour() const { return m_colour_perl_comment; }
+    void set_PerlCommentColour(const wxColour& colour) { m_colour_perl_comment = colour; }
+    const wxColour& get_PerlKeywordColour() const { return m_colour_perl_keyword; }
+    void set_PerlKeywordColour(const wxColour& colour) { m_colour_perl_keyword = colour; }
+    const wxColour& get_PerlNumberColour() const { return m_colour_perl_number; }
+    void set_PerlNumberColour(const wxColour& colour) { m_colour_perl_number = colour; }
+    const wxColour& get_PerlStringColour() const { return m_colour_perl_string; }
+    void set_PerlStringColour(const wxColour& colour) { m_colour_perl_string = colour; }
+
+    const wxColour& get_PhpColour() const { return m_colour_php; }
+    void set_PhpColour(const wxColour& colour) { m_colour_php = colour; }
+    const wxColour& get_PhpCommentColour() const { return m_colour_php_comment; }
+    void set_PhpCommentColour(const wxColour& colour) { m_colour_php_comment = colour; }
+    const wxColour& get_PhpKeywordColour() const { return m_colour_php_keyword; }
+    void set_PhpKeywordColour(const wxColour& colour) { m_colour_php_keyword = colour; }
+    const wxColour& get_PhpNumberColour() const { return m_colour_php_number; }
+    void set_PhpNumberColour(const wxColour& colour) { m_colour_php_number = colour; }
+    const wxColour& get_PhpStringColour() const { return m_colour_php_string; }
+    void set_PhpStringColour(const wxColour& colour) { m_colour_php_string = colour; }
 
     const wxColour& get_XrcAttributeColour() const { return m_colour_xrc_attribute; }
     void set_XrcAttributeColour(const wxColour& colour) { m_colour_xrc_attribute = colour; }
@@ -192,7 +245,11 @@ private:
 
     tt_string m_cpp_widgets_version { "3.2" };
     tt_string m_python_version { "4.2" };
-    tt_string m_ruby_version { "0.9" };
+    tt_string m_ruby_version { "1.2" };
+    tt_string m_haskell_version { "1.0" };
+    tt_string m_lua_version { "3.2.0" };
+    tt_string m_perl_version { "3.2" };
+    tt_string m_php_version { "3.0" };
 
     tt_string m_code_display_font;
 
@@ -213,6 +270,30 @@ private:
     wxColour m_colour_ruby_number { wxColour("#FF000000") };
     wxColour m_colour_ruby_string { wxColour("#008000") };
 
+    wxColour m_colour_haskell { wxColour("#FF00FF") };
+    wxColour m_colour_haskell_comment { wxColour("#008000") };
+    wxColour m_colour_haskell_keyword { wxColour("#0000FF") };
+    wxColour m_colour_haskell_number { wxColour("#FF0000") };
+    wxColour m_colour_haskell_string { wxColour("#008000") };
+
+    wxColour m_colour_lua { wxColour("#FF00FF") };
+    wxColour m_colour_lua_comment { wxColour("#008000") };
+    wxColour m_colour_lua_keyword { wxColour("#0000FF") };
+    wxColour m_colour_lua_number { wxColour("#FF0000") };
+    wxColour m_colour_lua_string { wxColour("#008000") };
+
+    wxColour m_colour_perl { wxColour("#FF00FF") };
+    wxColour m_colour_perl_comment { wxColour("#008000") };
+    wxColour m_colour_perl_keyword { wxColour("#0000FF") };
+    wxColour m_colour_perl_number { wxColour("#FF0000") };
+    wxColour m_colour_perl_string { wxColour("#008000") };
+
+    wxColour m_colour_php { wxColour("#FF00FF") };
+    wxColour m_colour_php_comment { wxColour("#008000") };
+    wxColour m_colour_php_keyword { wxColour("#0000FF") };
+    wxColour m_colour_php_number { wxColour("#FF0000") };
+    wxColour m_colour_php_string { wxColour("#008000") };
+
     wxColour m_colour_xrc_attribute { wxColour("#FF00FF") };
     wxColour m_colour_xrc_dblstring { wxColour("#008000") };
     wxColour m_colour_xrc_tag { wxColour("#0000FF") };
@@ -222,7 +303,10 @@ private:
     int m_cpp_line_length { 110 };
     int m_python_line_length { 90 };
     int m_ruby_line_length { 80 };
+    int m_haskell_line_length { 80 };
+    int m_lua_line_length { 100 };
     int m_perl_line_length { 80 };
+    int m_php_line_length { 80 };
 
     int m_icon_size { 20 };
 

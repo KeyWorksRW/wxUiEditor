@@ -58,6 +58,18 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetPerlValue(event->get_value());
     }
+    else if (code.m_language == GEN_LANG_LUA)
+    {
+        event_code = EventHandlerDlg::GetLuaValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_PHP)
+    {
+        event_code = EventHandlerDlg::GetPhpValue(event->get_value());
+    }
+    else if (code.m_language == GEN_LANG_HASKELL)
+    {
+        event_code = EventHandlerDlg::GetHaskelValue(event->get_value());
+    }
 
     else
     {

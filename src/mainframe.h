@@ -79,13 +79,15 @@ public:
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
     BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetHaskellPanel() { return m_haskellPanel; }
+    BasePanel* GetLuaPanel() { return m_luaPanel; }
+    BasePanel* GetPerlPanel() { return m_perlPanel; }
+    BasePanel* GetPhpPanel() { return m_phpPanel; }
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-#if defined(GENERATE_PERL_CODE)
-    BasePanel* GetPerlPanel() { return m_perlPanel; }
-#endif
+    void EnableCodePanels(int language);
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
@@ -265,6 +267,10 @@ public:
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
+    void OnGenSingleHaskell(wxCommandEvent& event);
+    void OnGenSingleLua(wxCommandEvent& event);
+    void OnGenSinglePerl(wxCommandEvent& event);
+    void OnGenSinglePhp(wxCommandEvent& event);
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
@@ -313,6 +319,11 @@ protected:
 
     void OnGeneratePython(wxCommandEvent& event);
     void OnGenerateRuby(wxCommandEvent& event);
+    void OnGenerateHaskell(wxCommandEvent& event);
+    void OnGenerateLua(wxCommandEvent& event);
+    void OnGeneratePerl(wxCommandEvent& event);
+    void OnGeneratePhp(wxCommandEvent& event);
+
     void OnXrcPreview(wxCommandEvent& e);
     void OnTestXrcImport(wxCommandEvent& e);
     void OnTestXrcDuplicate(wxCommandEvent& e);
@@ -360,14 +371,16 @@ private:
 
     BasePanel* m_cppPanel { nullptr };
 
-    // Language panels
+    // Language panels -- whether they are actually created is dependent on defitions in pch.h as
+    // well as user preferences.
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
-#if defined(GENERATE_PERL_CODE)
     BasePanel* m_perlPanel { nullptr };
-#endif
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_phpPanel { nullptr };
+    BasePanel* m_haskellPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };
 

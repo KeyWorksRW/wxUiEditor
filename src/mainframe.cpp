@@ -91,9 +91,17 @@ enum
     id_GenerateCpp,
     id_GeneratePython,
     id_GenerateRuby,
+    id_GenerateHaskell,
+    id_GenerateLua,
+    id_GeneratePerl,
+    id_GeneratePhp,
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
+    id_GenSingleHaskell,
+    id_GenSingleLua,
+    id_GenSinglePerl,
+    id_GenSinglePhp,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -381,9 +389,18 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
         Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleHaskell, this, id_GenSingleHaskell);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleLua, this, id_GenSingleLua);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePerl, this, id_GenSinglePerl);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePhp, this, id_GenSinglePhp);
 
         Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateHaskell, this, id_GenerateHaskell);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateLua, this, id_GenerateLua);
+        Bind(wxEVT_MENU, &MainFrame::OnGeneratePerl, this, id_GeneratePerl);
+        Bind(wxEVT_MENU, &MainFrame::OnGeneratePhp, this, id_GeneratePhp);
+
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
@@ -1320,13 +1337,11 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_mockupPanel = new MockupParent(m_notebook, this);
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
+    // The following panels are the core languages which are always displayed. Additional languages
+    // are be added dynamically as needed via EnableCodePanels().
+
     m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
     m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-
-#if defined(GENERATE_PERL_CODE)
-    m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-    m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-#endif
 
     // Placing the Python panel first as it's the most commonly used language after C++
     m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
@@ -1340,6 +1355,11 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
+        EnableCodePanels(GEN_LANG_HASKELL);
+        EnableCodePanels(GEN_LANG_LUA);
+        EnableCodePanels(GEN_LANG_PERL);
+        EnableCodePanels(GEN_LANG_PHP);
+
         m_imnportPanel = new ImportPanel(m_notebook);
         m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
@@ -1350,6 +1370,44 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 #endif
 
     return m_notebook;
+}
+
+void MainFrame::EnableCodePanels(int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_LUA:
+            if (!m_luaPanel)
+            {
+                m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
+                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PERL:
+            if (!m_perlPanel)
+            {
+                m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
+                m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PHP:
+            if (!m_phpPanel)
+            {
+                m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
+                m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_HASKELL:
+            if (!m_haskellPanel)
+            {
+                m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
+                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+    }
 }
 
 void MainFrame::CreateSplitters()

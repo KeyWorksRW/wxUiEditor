@@ -493,16 +493,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_python_xrc_file, "python_xrc_file" },
     { prop_wxPython_version, "wxPython_version" },
 
-    { prop_folder_perl_combined_file, "folder_perl_combined_file" },
-    { prop_folder_perl_output_folder, "folder_perl_output_folder" },
-    { prop_perl_file, "perl_file" },
-    { prop_perl_inherit_name, "perl_inherit_name" },
-    { prop_perl_insert, "insert_perl_code" },
-    { prop_perl_line_length, "perl_line_length" },
-    { prop_perl_output_folder, "perl_output_folder" },
-    { prop_perl_project_preamble, "perl_project_preamble" },
-    { prop_wxPerl_version, "wxPerl_version" },
-
     { prop_folder_ruby_combined_file, "folder_ruby_combined_file" },
     { prop_folder_ruby_output_folder, "folder_ruby_output_folder" },
     { prop_ruby_combine_forms, "ruby_combine_forms" },
@@ -514,6 +504,44 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_ruby_output_folder, "ruby_output_folder" },
     { prop_ruby_project_preamble, "ruby_project_preamble" },
     { prop_wxRuby_version, "wxRuby_version" },
+
+    { prop_folder_haskell_output_folder, "folder_haskell_output_folder" },
+    { prop_haskell_file, "haskell_file" },
+    { prop_haskell_inherit_name, "haskell_inherit_name" },
+    { prop_haskell_insert, "insert_haskell_code" },
+    { prop_haskell_line_length, "haskell_line_length" },
+    { prop_haskell_output_folder, "haskell_output_folder" },
+    { prop_haskell_project_preamble, "haskell_project_preamble" },
+    { prop_wxHaskell_version, "wxHaskell_version" },
+
+    { prop_folder_lua_output_folder, "folder_lua_output_folder" },
+    { prop_lua_file, "lua_file" },
+    { prop_lua_inherit_name, "lua_inherit_name" },
+    { prop_lua_insert, "insert_lua_code" },
+    { prop_lua_line_length, "lua_line_length" },
+    { prop_lua_output_folder, "lua_output_folder" },
+    { prop_lua_project_preamble, "lua_project_preamble" },
+    { prop_wxLua_version, "wxLua_version" },
+
+    { prop_folder_perl_combined_file, "folder_perl_combined_file" },
+    { prop_folder_perl_output_folder, "folder_perl_output_folder" },
+    { prop_perl_file, "perl_file" },
+    { prop_perl_inherit_name, "perl_inherit_name" },
+    { prop_perl_insert, "insert_perl_code" },
+    { prop_perl_line_length, "perl_line_length" },
+    { prop_perl_output_folder, "perl_output_folder" },
+    { prop_perl_project_preamble, "perl_project_preamble" },
+    { prop_wxPerl_version, "wxPerl_version" },
+
+    { prop_folder_php_output_folder, "folder_php_output_folder" },
+    { prop_php_file, "php_file" },
+    { prop_php_inherit_name, "php_inherit_name" },
+    { prop_php_insert, "insert_php_code" },
+    { prop_php_line_length, "php_line_length" },
+    { prop_php_output_folder, "php_output_folder" },
+    { prop_php_project_preamble, "php_project_preamble" },
+    { prop_wxPHP_version, "wxPHP_version" },
+
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -638,17 +666,23 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     // Language categories
 
     { gen_Code, "C++" },
-    { gen_XRC, "XRC" },
-    { gen_wxPerl, "wxPerl" },
     { gen_wxPython, "wxPython" },
     { gen_wxRuby, "wxRuby" },
+    { gen_XRC, "XRC" },
+    { gen_wxHaskell, "wxHaskell" },
+    { gen_wxLua, "wxLua" },
+    { gen_wxPerl, "wxPerl" },
+    { gen_wxPHP, "wxPHP" },
 
     { gen_LanguageSettings, "Language Settings" },
 
     { gen_CPlusSettings, "C++ Settings" },
     { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
     { gen_CPlusHeaderSettings, "C++ Header Settings" },
+    { gen_HaskellSettings, "wxHaskell Settings" },
+    { gen_LuaSettings, "wxLua Settings" },
     { gen_PerlSettings, "wxPerl Settings" },
+    { gen_PhpSettings, "wxPHP Settings" },
     { gen_PythonSettings, "wxPython Settings" },
     { gen_RubySettings, "wxRuby Settings" },
 

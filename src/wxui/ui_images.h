@@ -61,6 +61,7 @@ namespace wxue_img
     wxBitmapBundle bundle_grid_svg(int width, int height);
     wxBitmapBundle bundle_grid_bag_sizer_svg(int width, int height);
     wxBitmapBundle bundle_grid_sizer_svg(int width, int height);
+    wxBitmapBundle bundle_haskell_logo_svg(int width, int height);
     wxBitmapBundle bundle_hide_svg(int width, int height);
     wxBitmapBundle bundle_htmlwin_svg(int width, int height);
     wxBitmapBundle bundle_hyperlink_ctrl_svg(int width, int height);
@@ -68,6 +69,7 @@ namespace wxue_img
     wxBitmapBundle bundle_import_svg(int width, int height);
     wxBitmapBundle bundle_infobar_svg(int width, int height);
     wxBitmapBundle bundle_left_svg(int width, int height);
+    wxBitmapBundle bundle_lua_logo_svg(int width, int height);
     wxBitmapBundle bundle_menu_svg(int width, int height);
     wxBitmapBundle bundle_menuitem_svg(int width, int height);
     wxBitmapBundle bundle_new_project_svg(int width, int height);
@@ -76,6 +78,8 @@ namespace wxue_img
     wxBitmapBundle bundle_notebook_choice_svg(int width, int height);
     wxBitmapBundle bundle_notebook_list_svg(int width, int height);
     wxBitmapBundle bundle_pagectrl_svg(int width, int height);
+    wxBitmapBundle bundle_perl_logo_svg(int width, int height);
+    wxBitmapBundle bundle_php_logo_svg(int width, int height);
     wxBitmapBundle bundle_popup_transient_svg(int width, int height);
     wxBitmapBundle bundle_popup_window_svg(int width, int height);
     wxBitmapBundle bundle_preferences_svg(int width, int height);
@@ -246,6 +250,7 @@ namespace wxue_img
     extern const unsigned char grid_bag_sizer_svg[272];  // ../art_src/grid_bag_sizer.svg
     extern const unsigned char grid_sizer_svg[483];  // ../art_src/grid_sizer.svg
     extern const unsigned char grid_svg[1863];  // ../art_src/grid.svg
+    extern const unsigned char haskell_logo_svg[355];  // ../art_src/haskell-logo.svg
     extern const unsigned char hide_svg[994];  // ../art_src/hide.svg
     extern const unsigned char htmlwin_svg[3983];  // ../art_src/htmlwin.svg
     extern const unsigned char hyperlink_ctrl_svg[2905];  // ../art_src/hyperlink_ctrl.svg
@@ -253,6 +258,7 @@ namespace wxue_img
     extern const unsigned char import_svg[2454];  // ../art_src/import.svg
     extern const unsigned char infobar_svg[1411];  // ../art_src/infobar.svg
     extern const unsigned char left_svg[437];  // ../art_src/left.svg
+    extern const unsigned char lua_logo_svg[1031];  // ../art_src/lua-logo.svg
     extern const unsigned char menu_svg[2449];  // ../art_src/menu.svg
     extern const unsigned char menuitem_svg[2783];  // ../art_src/menuitem.svg
     extern const unsigned char new_project_svg[1062];  // ../art_src/new-project.svg
@@ -261,6 +267,8 @@ namespace wxue_img
     extern const unsigned char notebook_list_svg[1313];  // ../art_src/notebook_list.svg
     extern const unsigned char notebook_svg[1232];  // ../art_src/notebook.svg
     extern const unsigned char pagectrl_svg[2307];  // ../art_src/pagectrl.svg
+    extern const unsigned char perl_logo_svg[2052];  // ../art_src/perl-logo.svg
+    extern const unsigned char php_logo_svg[2945];  // ../art_src/php-logo.svg
     extern const unsigned char popup_transient_svg[1282];  // ../art_src/popup_transient.svg
     extern const unsigned char popup_window_svg[755];  // ../art_src/popup_window.svg
     extern const unsigned char preferences_svg[2113];  // ../art_src/preferences.svg

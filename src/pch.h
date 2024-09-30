@@ -114,7 +114,10 @@
 #endif
 
 #if defined(_DEBUG)
-    #define GENERATE_PERL_CODE 1
+    #define GENERATE_HASKELL_CODE 1
+    #define GENERATE_LUA_CODE     1
+    #define GENERATE_PERL_CODE    1
+    #define GENERATE_PHP_CODE     1
 #endif  // _DEBUG
 
 enum class MoveDirection
@@ -125,18 +128,22 @@ enum class MoveDirection
     Right
 };
 
-// This is used to determine the type of file that is being generated. It is created as bit
-// flags so that code like that in ImportFormbuilder can track multiple languages. However the
-// Code class only supports a single language, and passing in multiple languages will cause it
-// to fail to generate any language.
+// This is used to determine the type of file that is being generated. Note that the Code class only
+// supports a single language at a time, and passing in multiple languages will cause it to fail to
+// generate any language. As bit flags, this can be used by generators to indicate which languages
+// the generator supports.
 enum
 {
     GEN_LANG_NONE = 0,
     GEN_LANG_CPLUSPLUS = 1,
     GEN_LANG_PYTHON = 1 << 1,
     GEN_LANG_RUBY = 1 << 2,
-    GEN_LANG_XRC = 1 << 3,
-    GEN_LANG_PERL = 1 << 4,
+    GEN_LANG_PERL = 1 << 3,
+    GEN_LANG_LUA = 1 << 4,  // minimal wxWidgets 3.2 compatible
+    GEN_LANG_PHP = 1 << 5,
+    GEN_LANG_HASKELL = 1 << 6,
+
+    GEN_LANG_XRC = 1 << 7,
 };
 
 // Used to index fields in a bitmap property

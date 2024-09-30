@@ -237,7 +237,31 @@ const view_map g_map_perl_prefix
 {
 };
 
+const view_map g_map_lua_prefix
+{
+};
+
+const view_map g_map_php_prefix
+{
+};
+
+const view_map g_map_haskell_prefix
+{
+};
+
 static const view_map s_short_perl_map
+{
+};
+
+static const view_map s_short_lua_map
+{
+};
+
+static const view_map s_short_php_map
+{
+};
+
+static const view_map s_short_haskell_map
 {
 };
 
@@ -263,6 +287,21 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
         case GEN_LANG_RUBY:
             prefix_list = &s_short_ruby_map;
             global_list = &g_map_ruby_prefix;
+            break;
+
+        case GEN_LANG_LUA:
+            prefix_list = &s_short_lua_map;
+            global_list = &g_map_lua_prefix;
+            break;
+
+        case GEN_LANG_PHP:
+            prefix_list = &s_short_php_map;
+            global_list = &g_map_php_prefix;
+            break;
+
+        case GEN_LANG_HASKELL:
+            prefix_list = &s_short_haskell_map;
+            global_list = &g_map_haskell_prefix;
             break;
 
         case GEN_LANG_CPLUSPLUS:
@@ -329,6 +368,30 @@ void Code::Init(Node* node, int language)
         m_lang_assignment = " = ";
         m_break_length = Project.as_size_t(prop_perl_line_length);
         // Always assume Perl code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        m_language_wxPrefix = "wx.";
+        m_lang_assignment = " = ";
+        m_break_length = 90;
+        // Always assume Lua code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_PHP)
+    {
+        m_language_wxPrefix = "wx.";
+        m_lang_assignment = " = ";
+        m_break_length = 90;
+        // Always assume PHP code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_HASKELL)
+    {
+        m_language_wxPrefix = "Wx.";
+        m_lang_assignment = " = ";
+        m_break_length = 90;
+        // Always assume Haskell code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
 
@@ -2522,14 +2585,15 @@ Code& Code::BeginConditional()
 
 Code& Code::AddConditionalAnd()
 {
-    if (is_cpp() || is_ruby())
+    if (is_cpp() || is_ruby() || is_perl() || is_php() || is_haskell())
     {
         *this << " && ";
     }
-    else if (is_python())
+    else if (is_python() || is_lua())
     {
         *this << " and ";
     }
+
     else
     {
         MSG_WARNING("unknown language");
@@ -2539,11 +2603,11 @@ Code& Code::AddConditionalAnd()
 }
 Code& Code::AddConditionalOr()
 {
-    if (is_cpp() || is_ruby() || is_perl())
+    if (is_cpp() || is_ruby() || is_perl() || is_php() || is_haskell())
     {
         *this << " || ";
     }
-    else if (is_python())
+    else if (is_python() || is_lua())
     {
         *this << " or ";
     }
@@ -2562,7 +2626,7 @@ Code& Code::EndConditional()
     {
         *this << ')';
     }
-    else if (is_python())
+    else if (is_python() || is_lua())
     {
         *this << ':';
     }

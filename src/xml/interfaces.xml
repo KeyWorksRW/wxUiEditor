@@ -172,7 +172,7 @@
 			help="If you have derived a class from wxDialog and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property. Note that your base class must specify a constructor with no parameters to match a wxDialog() constructor."/>
 	</gen>
 
-	<!-- Using Language Settings will pull in all language settings -->
+	<!-- Using Language Settings will pull in all language settings in node_init.cpp -->
 	<gen class="Language Settings" type="interface"/>
 
 	<gen class="C++ Settings" type="interface">
@@ -231,14 +231,6 @@
 		<property name="private_members" type="bool"
 			help="Check this to make all class member variables private: instead of protected:. This can only be done if you are *not* creating a derived class (use_derived_class is unchecked)."/>
 	</gen>
-
-	<gen class="wxPerl Settings" type="interface">
-		<property name="perl_file" type="file"
-			help="The filename to use if generating code for wxPerl."/>
-		<property name="insert_perl_code" type="code_edit"
-			help="Specify the code to insert into the perl file after the generated import statements. This can be any valid perl code for use before the class definition."/>
-	</gen>
-
 	<gen class="wxPython Settings" type="interface">
 		<property name="python_file" type="file"
 			help="The filename to use if generating code for wxPython."/>
@@ -256,7 +248,7 @@
 
 	<gen class="wxRuby Settings" type="interface">
 		<property name="ruby_file" type="file"
-			help="The filename to use if generating code for wxRuby."/>
+			help="The filename to use if generating code for wxRuby3."/>
 		<property name="insert_ruby_code" type="code_edit"
 			help="Specify the code to insert into the ruby file after the generated import statements. This can be any valid ruby code for use before the class definition."/>
 		<property name="relative_require_list" type="include_files"
@@ -270,6 +262,34 @@
 			help="The filename to use if generating XRC (wxPython can override this with its own file name)."/>
 		<property name="xrc_no_whitespace" type="bool"
 			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
+	</gen>
+
+	<gen class="wxHaskell Settings" type="interface">
+		<property name="haskell_file" type="file"
+			help="The filename to use if generating code for wxHaskell."/>
+		<property name="insert_haskell_code" type="code_edit"
+			help="Specify the code to insert into the haskell file after the generated import statements. This can be any valid haskell code for use before the class definition."/>
+	</gen>
+
+	<gen class="wxLua Settings" type="interface">
+		<property name="lua_file" type="file"
+			help="The filename to use if generating code for wxLua or wxLuaJIT."/>
+		<property name="insert_lua_code" type="code_edit"
+			help="Specify the code to insert into the lua file after the generated import statements. This can be any valid lua code for use before the class definition."/>
+	</gen>
+
+	<gen class="wxPerl Settings" type="interface">
+		<property name="perl_file" type="file"
+			help="The filename to use if generating code for wxPerl."/>
+		<property name="insert_perl_code" type="code_edit"
+			help="Specify the code to insert into the perl file after the generated import statements. This can be any valid perl code for use before the class definition."/>
+	</gen>
+
+	<gen class="wxPHP Settings" type="interface">
+		<property name="php_file" type="file"
+			help="The filename to use if generating code for wxPHP."/>
+		<property name="insert_php_code" type="code_edit"
+			help="Specify the code to insert into the php file after the generated import statements. This can be any valid php code for use before the class definition."/>
 	</gen>
 
 	<gen class="C++" type="interface">
@@ -349,7 +369,9 @@
 	<gen class="wxRuby" type="interface">
 		<property name="wxRuby_version" type="option"
 			help="Specifies the minimum version of wxRuby needed to run the generated code.">
-			<option name="1.0.0"/> 1.0.0 </property>
+			<option name="1.0.0"/>
+			<option name="1.2.1"/>
+			1.0.0 </property>
 		<property name="ruby_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all ruby code."/>
 		<property name="ruby_line_length" type="uint"
@@ -361,16 +383,57 @@
 			help="Code to generate at the top of every source file after the comment block and any disabled RuboCop warnings."/>
 	</gen>
 
+	<gen class="wxHaskell" type="interface">
+		<property name="wxhaskell_version" type="option"
+			help="Specifies the minimum version of wxHaskell needed to run the generated code.">
+			<option name="92-0-0"/> 92-0-0 </property>
+		<property name="haskell_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all haskell code."/>
+		<property name="haskell_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			80</property>
+		<property name="haskell_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block."/>
+	</gen>
+
+	<gen class="wxLua" type="interface">
+		<property name="wxlua_version" type="option"
+			help="Specifies the minimum version of wxLua needed to run the generated code.">
+			<option name="wxLua 3.2"/>
+			<option name="wxLuaJIT 1.0"/>
+			wxLua 3.2.0.2 </property>
+		<property name="lua_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all lua code."/>
+		<property name="lua_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			100</property>
+		<property name="lua_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block."/>
+	</gen>
+
 	<gen class="wxPerl" type="interface">
 		<property name="wxPerl_version" type="option"
 			help="Specifies the minimum version of wxPerl needed to run the generated code.">
-			<option name="3.0"/> 3.0.0 </property>
+			<option name="0.92"/> 0.92 </property>
 		<property name="perl_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all perl code."/>
 		<property name="perl_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			80</property>
 		<property name="perl_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block."/>
+	</gen>
+
+	<gen class="wxPHP" type="interface">
+		<property name="wxphp_version" type="option"
+			help="Specifies the minimum version of wxPHP needed to run the generated code.">
+			<option name="3.0.51"/> 3.0.51 </property>
+		<property name="php_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all php code."/>
+		<property name="php_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			80</property>
+		<property name="php_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
 

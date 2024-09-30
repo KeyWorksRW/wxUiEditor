@@ -566,11 +566,14 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_xrc_file:
                     case prop_combined_xrc_file:
                     case prop_folder_combined_xrc_file:
-                    case prop_perl_file:
                     case prop_python_file:
                     case prop_python_combined_file:
                     case prop_ruby_file:
                     case prop_ruby_combined_file:
+                    case prop_haskell_file:
+                    case prop_lua_file:
+                    case prop_perl_file:
+                    case prop_php_file:
                     case prop_cmake_file:
                     case prop_folder_cmake_file:
                     case prop_subclass_header:
@@ -1119,6 +1122,55 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Haskell"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Haskell")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("Lua"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Lua")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("Perl"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Perl")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("PHP"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "PHP")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                    wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
+                }
+            }
+
             grid_iterator.Next();
         }
 
@@ -1561,7 +1613,8 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
     // it's a different grid_prop
     if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
-        !node_prop->isProp(prop_xrc_file))
+        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) &&
+        !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_php_file))
     {
         if (newValue.size())
         {
@@ -1572,6 +1625,16 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         }
     }
     modifyProperty(node_prop, newValue);
+
+    // Create/enable the appropriate code panel if needed
+    if (node_prop->isProp(prop_haskell_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
+    else if (node_prop->isProp(prop_lua_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
+    else if (node_prop->isProp(prop_perl_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
+    else if (node_prop->isProp(prop_php_file))
+        wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -1949,17 +2012,6 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("wxPerl"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
-        if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
     else if (name.contains("wxRuby"))
     {
         if (UserPrefs.is_DarkMode())
@@ -1978,6 +2030,50 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
         if (Project.getCodePreference(node) != GEN_LANG_XRC)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxHaskell"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_HASKELL)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxLua"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_LUA)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxPerl"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_PERL)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
+    else if (name.contains("wxPHP"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+        if (Project.getCodePreference(node) != GEN_LANG_PHP)
         {
             m_prop_grid->Collapse(id);
         }
@@ -2163,6 +2259,22 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
         case GEN_LANG_XRC:
             ChangeOutputFile(prop_xrc_file);
             break;
+
+        case GEN_LANG_HASKELL:
+            ChangeOutputFile(prop_haskell_file);
+            break;
+
+        case GEN_LANG_LUA:
+            ChangeOutputFile(prop_lua_file);
+            break;
+
+        case GEN_LANG_PERL:
+            ChangeOutputFile(prop_perl_file);
+            break;
+
+        case GEN_LANG_PHP:
+            ChangeOutputFile(prop_php_file);
+            break;
     }
 }
 
@@ -2176,9 +2288,8 @@ void PropGridPanel::ReplaceDerivedFile(const tt_string& newValue, NodeProperty* 
 
 bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
 {
-    // TODO: [KeyWorks - 04-10-2021] The original properties that were ignored were replaced, so this is now just a
-    // placeholder. It is called, so if needed, this would be where properties could be disabled, presumably based on the
-    // parent.
+    // If this function returns false, the property will not be created in the property grid. Note
+    // that properties marked as hidden in the XML interface will not be passed to this function.
 
     return true;
 }

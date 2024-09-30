@@ -146,6 +146,9 @@
         bitmap="SVG;grid_sizer.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;haskell-logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;hide.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -165,6 +168,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;left.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;lua-logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;menu.svg;[24,24]" />
@@ -189,6 +195,12 @@
       <node
         class="embedded_image"
         bitmap="SVG;pagectrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;perl-logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/php-logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;popup_transient.svg;[24,24]" />
@@ -2982,7 +2994,7 @@
                     class="StaticRadioBtnBoxSizer"
                     checked="0"
                     class_access="protected:"
-                    label="Use lambda"
+                    label="Lambda"
                     radiobtn_var_name="m_py_radio_use_lambda"
                     var_name="m_py_lambda_box"
                     flags="wxEXPAND"
@@ -2991,7 +3003,7 @@
                     <node
                       class="wxStaticText"
                       class_access="none"
-                      label="Lambda expression (event is the parameter):"
+                      label="Function:"
                       var_name="staticText_2" />
                     <node
                       class="wxTextCtrl"
@@ -3055,6 +3067,266 @@
                         symbol_margin="0"
                         use_tabs="0"
                         var_name="m_ruby_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;haskell-logo.svg;[24,24]"
+                label="Haskell"
+                var_name="haskell_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer2">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_haskell_radio_use_function"
+                    var_name="m_haskell_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_haskell_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Use lambda"
+                      radiobtn_var_name="m_haskell_radio_use_lambda"
+                      var_name="m_ruby_lambda_box2"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer2" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Lambda body:"
+                        var_name="staticText2" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="HASKELL"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_haskell_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;lua-logo.svg;[24,24]"
+                label="Lua"
+                var_name="lua_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer3">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_lua_radio_use_function"
+                    var_name="m_lua_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_lua_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Anonymous function"
+                      radiobtn_var_name="m_lua_radio_use_anon_func"
+                      var_name="m_lua_lambda_box"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer3" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText3" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="LUA"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_lua_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;perl-logo.svg;[24,24]"
+                label="Perl"
+                var_name="perl_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer4">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function"
+                    var_name="m_perl_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_perl_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Anonymous function"
+                      radiobtn_var_name="m_perl_radio_use_anon_func"
+                      var_name="m_perl_lambda_box"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer4" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText4" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="PERL"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_perl_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;php-logo.svg;[24,24]"
+                label="PHP"
+                var_name="php_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer5">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_php_radio_use_function"
+                    var_name="m_php_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_php_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Anonymous function"
+                      radiobtn_var_name="m_php_radio_use_anon_func"
+                      var_name="m_php_lambda_box"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer5" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText5" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="PHPSCRIPT"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_php_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -7047,13 +7319,15 @@
       class="wxDialog"
       class_name="PreferencesDlg"
       title="Preferences"
+      minimum_size="-1,-1"
       base_file="..\ui\preferences_dlg"
       use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
-        var_name="dlg_sizer">
+        var_name="dlg_sizer"
+        minimum_size="750,-1">
         <node
           class="wxNotebook"
           class_access="none"
@@ -7154,6 +7428,7 @@
                 <node
                   class="wxChoice"
                   contents="&quot;16&quot; &quot;18&quot; &quot;20&quot; &quot;22&quot; &quot;24&quot; &quot;26&quot; &quot;28&quot; &quot;30&quot; &quot;32&quot;"
+                  selection_string="18"
                   var_name="m_choice_icon_size" />
               </node>
               <node
@@ -7174,6 +7449,7 @@
           </node>
           <node
             class="BookPage"
+            bitmap="SVG;../art_src/cpp_logo.svg;[24,24]"
             label="C++"
             var_name="page_cpp"
             window_style="wxTAB_TRAVERSAL">
@@ -7212,7 +7488,8 @@
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets version"
-                  var_name="static_text" />
+                  var_name="static_text"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
                   contents="&quot;3.1&quot; &quot;3.2&quot; &quot;3.3&quot;"
@@ -7278,6 +7555,7 @@
           </node>
           <node
             class="BookPage"
+            bitmap="SVG;../art_src/python-logo-only.svg;[24,24]"
             label="Python"
             var_name="page_python"
             window_style="wxTAB_TRAVERSAL">
@@ -7311,7 +7589,8 @@
                   class="wxStaticText"
                   class_access="none"
                   label="wxPython version"
-                  var_name="static_text3" />
+                  var_name="static_text3"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
                   contents="&quot;4.2&quot;"
@@ -7377,6 +7656,7 @@
           </node>
           <node
             class="BookPage"
+            bitmap="SVG;../art_src/ruby_logo.svg;[24,24]"
             label="Ruby"
             var_name="page_ruby"
             window_style="wxTAB_TRAVERSAL">
@@ -7410,11 +7690,12 @@
                   class="wxStaticText"
                   class_access="none"
                   label="wxRuby version"
-                  var_name="static_text2" />
+                  var_name="static_text2"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;0.9&quot;"
-                  selection_string="0.9"
+                  contents="&quot;1.2&quot;"
+                  selection_string="1.2"
                   var_name="m_choice_ruby_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
@@ -7466,6 +7747,371 @@
           </node>
           <node
             class="BookPage"
+            bitmap="SVG;../art_src/haskell-logo.svg;[24,24]"
+            label="Haskell"
+            var_name="page_haskell"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer3">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer9">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText14"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_haskell_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_haskell_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer10">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxHaskell version"
+                  var_name="static_text5"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;1.0&quot;"
+                  selection_string="1.0"
+                  var_name="m_choice_haskell_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer5">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText18"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_haskell" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText19"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_haskell_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText20"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_haskell_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText21"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_haskell_string" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;../art_src/lua-logo.svg;[24,24]"
+            label="Lua"
+            var_name="page_lua"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer4">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer11">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText22"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="100"
+                  var_name="text_lua_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_lua_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer12">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxLua version"
+                  var_name="static_text6"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;3.2.0&quot;"
+                  selection_string="3.2.0"
+                  var_name="m_choice_ruby_version3"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer6">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText23"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_lua" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText24"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_lua_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText25"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_lua_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText26"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_lua_string" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;../art_src/perl-logo.svg;[24,24]"
+            label="Perl"
+            var_name="page_perl"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer5">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer13">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText27"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_perl_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_perl_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer14">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxPerl version"
+                  var_name="static_text7"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.91&quot; &quot;3.2.0&quot;"
+                  selection_string="3.2.0"
+                  var_name="m_choice_perl_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer7">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText28"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_perl" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText29"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_perl_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText30"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_perl_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText31"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_perl_string" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;../art_src/php-logo.svg;[24,24]"
+            label="PHP"
+            var_name="page_php"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer6">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer15">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText32"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_php_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_perl_line_length2"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer16">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxPHP version"
+                  var_name="static_text8"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;3.0.5&quot;"
+                  selection_string="3.0.5"
+                  var_name="m_choice_php_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer8">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText33"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_php" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText34"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_php_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText35"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_php_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText36"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_php_string" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;../art_src/wxlogo.svg;[24,24]"
             label="XRC"
             var_name="page_xrc"
             window_style="wxTAB_TRAVERSAL">

@@ -70,6 +70,21 @@ public:
     // Ruby is not enabled and another language specified a value.
     static tt_string GetRubyValue(tt_string_view value);
 
+    // This will return a string as if Lua was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // Ruby is not enabled and another language specified a value.
+    static tt_string GetLuaValue(tt_string_view value);
+
+    // This will return a string as if PHP was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // Ruby is not enabled and another language specified a value.
+    static tt_string GetPhpValue(tt_string_view value);
+
+    // This will return a string as if Haskell was the only value specified even if the original
+    // value had values for multiple languages. Note that this *will* return a value even if
+    // Ruby is not enabled and another language specified a value.
+    static tt_string GetHaskelValue(tt_string_view value);
+
 protected:
     // This is used to colorize member variables in the C++ lambda
     void CollectMemberVariables(Node* node, std::set<std::string>& variables);
@@ -98,8 +113,11 @@ private:
     NodeEvent* m_event;
 
     size_t m_python_page;
-    size_t m_perl_page;
     size_t m_ruby_page;
+    size_t m_perl_page;
+    size_t m_lua_page;
+    size_t m_php_page;
+    size_t m_haskell_page;
 
     size_t m_output_type;   // see ../project/project_handler.h for OUTPUT_TYPE_ defines
     int m_code_preference;  // This will be one of the GEN_LANG values
@@ -108,9 +126,16 @@ private:
     bool m_is_perl_enabled { false };
     bool m_is_python_enabled { false };
     bool m_is_ruby_enabled { false };
+    bool m_is_lua_enabled { false };
+    bool m_is_php_enabled { false };
+    bool m_is_haskell_enabled { false };
 
     bool m_is_cpp_lambda { false };
-    bool m_is_perl_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
+
+    // bool m_is_perl_lambda { false };
+    // bool m_is_lua_lambda { false };
+    // bool m_is_php_lambda { false };
+    // bool m_is_haskell_lambda { false };
 };

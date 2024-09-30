@@ -75,7 +75,6 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 
         case prop_python_file:
         case prop_python_combined_file:
-
             if (folder && folder->hasValue(prop_folder_python_output_folder))
                 root_path = folder->as_string(prop_folder_python_output_folder);
             else if (Project.getProjectNode()->hasValue(prop_python_output_folder))
@@ -88,7 +87,6 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 
         case prop_ruby_file:
         case prop_ruby_combined_file:
-
             if (folder && folder->hasValue(prop_folder_ruby_output_folder))
                 root_path = folder->as_string(prop_folder_ruby_output_folder);
             else if (Project.getProjectNode()->hasValue(prop_ruby_output_folder))
@@ -97,6 +95,50 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
                 root_path = Project.getProjectPath();
             title = "Ruby filename";
             wildcard = "Ruby Files|*.rb;*.rbw";
+            break;
+
+        case prop_haskell_file:
+            if (folder && folder->hasValue(prop_folder_haskell_output_folder))
+                root_path = folder->as_string(prop_folder_haskell_output_folder);
+            else if (Project.getProjectNode()->hasValue(prop_haskell_output_folder))
+                root_path = Project.getProjectNode()->as_string(prop_haskell_output_folder);
+            else
+                root_path = Project.getProjectPath();
+            title = "Haskell filename";
+            wildcard = "Haskell Files|*.hs;*.lhs";
+            break;
+
+        case prop_lua_file:
+            if (folder && folder->hasValue(prop_folder_lua_output_folder))
+                root_path = folder->as_string(prop_folder_lua_output_folder);
+            else if (Project.getProjectNode()->hasValue(prop_lua_output_folder))
+                root_path = Project.getProjectNode()->as_string(prop_lua_output_folder);
+            else
+                root_path = Project.getProjectPath();
+            title = "Lua filename";
+            wildcard = "Lua Files|*.lua";
+            break;
+
+        case prop_perl_file:
+            if (folder && folder->hasValue(prop_folder_perl_output_folder))
+                root_path = folder->as_string(prop_folder_perl_output_folder);
+            else if (Project.getProjectNode()->hasValue(prop_perl_output_folder))
+                root_path = Project.getProjectNode()->as_string(prop_perl_output_folder);
+            else
+                root_path = Project.getProjectPath();
+            title = "Perl filename";
+            wildcard = "Perl Files|*.pl;*.pm";
+            break;
+
+        case prop_php_file:
+            if (folder && folder->hasValue(prop_folder_php_output_folder))
+                root_path = folder->as_string(prop_folder_php_output_folder);
+            else if (Project.getProjectNode()->hasValue(prop_php_output_folder))
+                root_path = Project.getProjectNode()->as_string(prop_php_output_folder);
+            else
+                root_path = Project.getProjectPath();
+            title = "PHP filename";
+            wildcard = "PHP Files|*.php";
             break;
 
         case prop_cmake_file:

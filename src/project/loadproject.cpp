@@ -182,6 +182,17 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
             wxGetFrame().setModified();
+
+        // Create/enable the appropriate code panel if needed
+        if (m_project_node->as_string(prop_code_preference) == "Perl" || m_project_node->hasValue(prop_perl_output_folder))
+            wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
+        if (m_project_node->as_string(prop_code_preference) == "Lua" || m_project_node->hasValue(prop_lua_output_folder))
+            wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
+        if (m_project_node->as_string(prop_code_preference) == "Haskell" ||
+            m_project_node->hasValue(prop_haskell_output_folder))
+            wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
+        if (m_project_node->as_string(prop_code_preference) == "PHP" || m_project_node->hasValue(prop_php_output_folder))
+            wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
     }
     return true;
 }

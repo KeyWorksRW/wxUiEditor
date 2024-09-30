@@ -91,9 +91,17 @@ enum
     id_GenerateCpp,
     id_GeneratePython,
     id_GenerateRuby,
+    id_GenerateHaskell,
+    id_GenerateLua,
+    id_GeneratePerl,
+    id_GeneratePhp,
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
+    id_GenSingleHaskell,
+    id_GenSingleLua,
+    id_GenSinglePerl,
+    id_GenSinglePhp,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -381,9 +389,18 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
         Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleHaskell, this, id_GenSingleHaskell);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleLua, this, id_GenSingleLua);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePerl, this, id_GenSinglePerl);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePhp, this, id_GenSinglePhp);
 
         Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateHaskell, this, id_GenerateHaskell);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateLua, this, id_GenerateLua);
+        Bind(wxEVT_MENU, &MainFrame::OnGeneratePerl, this, id_GeneratePerl);
+        Bind(wxEVT_MENU, &MainFrame::OnGeneratePhp, this, id_GeneratePhp);
+
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)

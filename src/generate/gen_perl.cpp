@@ -93,6 +93,37 @@ void MainFrame::OnGenSinglePerl(wxCommandEvent& WXUNUSED(event))
     wxMessageBox(msg, "Perl Code Generation", wxOK | wxICON_INFORMATION);
 }
 
+void MainFrame::OnGeneratePerl(wxCommandEvent& WXUNUSED(event))
+{
+    GenResults results;
+    GeneratePerlFiles(results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "All " << results.file_count << " generated files are current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Perl Code Generation", wxOK | wxICON_INFORMATION);
+}
+
 void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_PERL);
@@ -364,4 +395,38 @@ static bool GeneratePerlForm(Node* form, GenResults& results, std::vector<tt_str
         ++results.file_count;
     }
     return true;
+}
+
+bool GeneratePerlFiles(GenResults& results, std::vector<tt_string>* pClassList)
+{
+    if (Project.getChildCount() == 0)
+    {
+        results.msgs.emplace_back("You cannot generate any code until you have added a top level form.") << '\n';
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        return false;
+    }
+    tt_cwd cwd(true);
+    Project.ChangeDir();
+
+    bool generate_result = true;
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
+
+    for (const auto& form: forms)
+    {
+        GeneratePerlForm(form, results, pClassList);
+    }
+
+    if (results.msgs.size())
+    {
+        results.msgs.emplace_back() << '\n';
+    }
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
+
+    return generate_result;
 }

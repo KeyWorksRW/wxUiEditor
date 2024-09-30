@@ -319,6 +319,11 @@ protected:
 
     void OnGeneratePython(wxCommandEvent& event);
     void OnGenerateRuby(wxCommandEvent& event);
+    void OnGenerateHaskell(wxCommandEvent& event);
+    void OnGenerateLua(wxCommandEvent& event);
+    void OnGeneratePerl(wxCommandEvent& event);
+    void OnGeneratePhp(wxCommandEvent& event);
+
     void OnXrcPreview(wxCommandEvent& e);
     void OnTestXrcImport(wxCommandEvent& e);
     void OnTestXrcDuplicate(wxCommandEvent& e);

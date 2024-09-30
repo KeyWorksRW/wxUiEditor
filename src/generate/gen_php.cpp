@@ -95,6 +95,37 @@ void MainFrame::OnGenSinglePhp(wxCommandEvent& WXUNUSED(event))
     wxMessageBox(msg, "PHP Code Generation", wxOK | wxICON_INFORMATION);
 }
 
+void MainFrame::OnGeneratePhp(wxCommandEvent& WXUNUSED(event))
+{
+    GenResults results;
+    GeneratePhpFiles(results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "All " << results.file_count << " generated files are current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "PHP Code Generation", wxOK | wxICON_INFORMATION);
+}
+
 void BaseCodeGenerator::GeneratePhpClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_PHP);
@@ -366,4 +397,38 @@ static bool GeneratePhpForm(Node* form, GenResults& results, std::vector<tt_stri
         ++results.file_count;
     }
     return true;
+}
+
+bool GeneratePhpFiles(GenResults& results, std::vector<tt_string>* pClassList)
+{
+    if (Project.getChildCount() == 0)
+    {
+        results.msgs.emplace_back("You cannot generate any code until you have added a top level form.") << '\n';
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        return false;
+    }
+    tt_cwd cwd(true);
+    Project.ChangeDir();
+
+    bool generate_result = true;
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
+
+    for (const auto& form: forms)
+    {
+        GeneratePhpForm(form, results, pClassList);
+    }
+
+    if (results.msgs.size())
+    {
+        results.msgs.emplace_back() << '\n';
+    }
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
+
+    return generate_result;
 }

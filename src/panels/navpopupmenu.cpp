@@ -319,6 +319,34 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case MenuSingleGenHaskell:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleHaskell(dummy);
+            }
+            break;
+
+        case MenuSingleGenLua:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleLua(dummy);
+            }
+            break;
+
+        case MenuSingleGenPerl:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSinglePerl(dummy);
+            }
+            break;
+
+        case MenuSingleGenPHP:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSinglePhp(dummy);
+            }
+            break;
+
         case MenuADD_PAGE:
             if (m_node->isGen(gen_BookPage))
             {
@@ -487,11 +515,53 @@ void NavPopupMenu::MenuAddCommands(Node* node)
     if (wxGetApp().isTestingMenuEnabled())
         if (node->isForm())
         {
-            Append(MenuSingleGenCpp, "Generate C++ for this form");
-            Append(MenuSingleGenPython, "Generate Python for this form");
-            Append(MenuSingleGenRuby, "Generate Ruby for this form");
-            Append(MenuSingleGenXRC, "Generate XRC for this form");
-            AppendSeparator();
+            int count = 0;
+            if (node->hasValue(prop_base_file))
+            {
+                Append(MenuSingleGenCpp, "Generate C++ for this form");
+                ++count;
+            }
+            if (node->hasValue(prop_python_file))
+            {
+                Append(MenuSingleGenPython, "Generate Python for this form");
+                ++count;
+            }
+            if (node->hasValue(prop_ruby_file))
+            {
+                Append(MenuSingleGenRuby, "Generate Ruby for this form");
+                ++count;
+            }
+            if (node->hasValue(prop_xrc_file))
+            {
+                Append(MenuSingleGenXRC, "Generate XRC for this form");
+                ++count;
+            }
+
+            if (node->hasValue(prop_haskell_file))
+            {
+                Append(MenuSingleGenHaskell, "Generate Haskell for this form");
+                ++count;
+            }
+            if (node->hasValue(prop_lua_file))
+            {
+                Append(MenuSingleGenLua, "Generate Lua for this form");
+                ++count;
+            }
+            if (node->hasValue(prop_perl_file))
+            {
+                Append(MenuSingleGenPerl, "Generate Perl for this form");
+                ++count;
+            }
+            if (node->hasValue(prop_php_file))
+            {
+                Append(MenuSingleGenPHP, "Generate PHP for this form");
+                ++count;
+            }
+
+            if (count)
+            {
+                AppendSeparator();
+            }
         }
 
     if (node->isForm() || node->isGen(gen_Images) || node->isGen(gen_embedded_image))

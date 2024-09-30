@@ -29,6 +29,8 @@
 using namespace code;
 using namespace GenEnum;
 
+static bool GenerateLuaForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+
 // clang-format off
 
 inline constexpr const auto txt_DoubleDashCmtBlock =
@@ -42,6 +44,48 @@ R"===(-- -----------------------------------------------------------------------
 )===";
 
 // clang-format on
+
+void MainFrame::OnGenSingleLua(wxCommandEvent& WXUNUSED(event))
+{
+    auto form = wxGetMainFrame()->getSelectedNode();
+    if (form && !form->isForm())
+    {
+        form = form->getForm();
+    }
+    if (!form)
+    {
+        wxMessageBox("You must select a form before you can generate code.", "Code Generation");
+        return;
+    }
+
+    GenResults results;
+    GenerateLuaForm(form, results);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << results.updated_files.size() << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "Generated file is current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, "Lua Code Generation", wxOK | wxICON_INFORMATION);
+}
 
 void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
 {
@@ -240,4 +284,69 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
                   return (a->array_name.compare(b->array_name) < 0);
               });
 #endif
+}
+
+static bool GenerateLuaForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_LUA);
+    if (!has_base_file)
+    {
+#if !defined(_DEBUG)
+        // For a lot of wxLua testing of projects with multiple dialogs, there may only be a
+        // few forms where wxLua generation is being tested, so don't nag in Debug builds.
+        // :-)
+        results.msgs.emplace_back() << "No Lua filename specified for " << form->as_string(prop_class_name) << '\n';
+#endif  // _DEBUG
+        return false;
+    }
+    BaseCodeGenerator codegen(GEN_LANG_LUA, form);
+
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    path.replace_extension(".lua");
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GenerateLuaClass();
+    int flags = flag_no_ui;
+    if (pClassList)
+        flags |= flag_test_only;
+    auto retval = cpp_cw->WriteFile(GEN_LANG_LUA, flags);
+
+    if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+    {
+        for (auto& iter: warning_msgs)
+        {
+            results.msgs.emplace_back() << iter << '\n';
+        }
+    }
+
+    if (retval > 0)
+    {
+        if (!pClassList)
+        {
+            results.updated_files.emplace_back(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+            if (form->isGen(gen_Data))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
+            else
+                pClassList->emplace_back(form->as_string(prop_class_name));
+            return true;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+    }
+    else  // retval == result::exists
+    {
+        ++results.file_count;
+    }
+    return true;
 }

@@ -51,11 +51,6 @@ R"===(##########################################################################
 
 const char* python_triple_quote = "\"\"\"";
 
-extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-
-// defined in gen_xrc.cpp
-int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
-
 void MainFrame::OnGenSinglePython(wxCommandEvent& WXUNUSED(event))
 {
     auto form = wxGetMainFrame()->getSelectedNode();

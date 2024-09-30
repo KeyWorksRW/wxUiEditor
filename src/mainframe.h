@@ -267,6 +267,10 @@ public:
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
+    void OnGenSingleHaskell(wxCommandEvent& event);
+    void OnGenSingleLua(wxCommandEvent& event);
+    void OnGenSinglePerl(wxCommandEvent& event);
+    void OnGenSinglePhp(wxCommandEvent& event);
 
 protected:
     void OnAbout(wxCommandEvent& event) override;

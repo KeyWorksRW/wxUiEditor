@@ -422,11 +422,6 @@ bool GeneratePhpFiles(GenResults& results, std::vector<tt_string>* pClassList)
         GeneratePhpForm(form, results, pClassList);
     }
 
-    if (results.msgs.size())
-    {
-        results.msgs.emplace_back() << '\n';
-    }
-
     if (wxGetApp().isTestingMenuEnabled())
         results.EndClock();
 

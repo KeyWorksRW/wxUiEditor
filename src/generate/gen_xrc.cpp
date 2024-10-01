@@ -408,11 +408,6 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
         GenerateXrcForm(form, results, pClassList);
     }
 
-    if (results.msgs.size())
-    {
-        results.msgs.emplace_back() << '\n';
-    }
-
     if (wxGetApp().isTestingMenuEnabled())
         results.EndClock();
 

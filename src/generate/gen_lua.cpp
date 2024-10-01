@@ -405,11 +405,6 @@ bool GenerateLuaFiles(GenResults& results, std::vector<tt_string>* pClassList)
         GenerateLuaForm(form, results, pClassList);
     }
 
-    if (results.msgs.size())
-    {
-        results.msgs.emplace_back() << '\n';
-    }
-
     if (wxGetApp().isTestingMenuEnabled())
         results.EndClock();
 

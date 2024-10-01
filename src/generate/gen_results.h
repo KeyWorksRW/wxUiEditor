@@ -33,6 +33,14 @@ struct GenResults
         msg << "Elapsed time: " << elapsed << " milliseconds";
         msgs.emplace_back(msg);
     }
+
+    void clear()
+    {
+        elapsed = 0;
+        file_count = 0;
+        msgs.clear();
+        updated_files.clear();
+    }
 };
 
 // If pClassList is non-null, it must contain the base class name of every form that needs

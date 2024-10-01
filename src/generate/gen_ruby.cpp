@@ -270,11 +270,6 @@ bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList)
         GenerateRubyForm(form, results, pClassList);
     }
 
-    if (results.msgs.size())
-    {
-        results.msgs.emplace_back() << '\n';
-    }
-
     if (wxGetApp().isTestingMenuEnabled())
         results.EndClock();
 

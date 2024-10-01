@@ -119,7 +119,7 @@ private:
     size_t m_php_page;
     size_t m_haskell_page;
 
-    size_t m_output_type;   // see ../project/project_handler.h for OUTPUT_TYPE_ defines
+    size_t m_output_type;       // see ../project/project_handler.h for OUTPUT_TYPE_ defines
     GenLang m_code_preference;  // This will be one of the GEN_LANG values
 
     bool m_is_cpp_enabled { false };

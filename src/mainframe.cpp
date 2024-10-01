@@ -1396,7 +1396,7 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     return m_notebook;
 }
 
-void MainFrame::EnableCodePanels(int language)
+void MainFrame::EnableCodePanels(GenLang language)
 {
     switch (language)
     {
@@ -1431,6 +1431,9 @@ void MainFrame::EnableCodePanels(int language)
                 m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
             }
             break;
+
+        default:
+            break;  // All the others are already created by default
     }
 }
 

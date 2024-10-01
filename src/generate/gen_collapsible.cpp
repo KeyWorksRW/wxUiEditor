@@ -77,7 +77,7 @@ bool CollapsiblePaneGenerator::SettingsCode(Code& code)
 }
 
 bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                           int /* language */)
+                                           GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/collpane.h>", set_src, set_hdr);
     return true;

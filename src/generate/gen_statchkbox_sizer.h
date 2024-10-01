@@ -22,14 +22,14 @@ public:
     bool AfterChildrenCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    std::optional<tt_string> GetWarning(Node* node, int language) override;
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 
 private:
     wxCheckBox* m_checkbox;

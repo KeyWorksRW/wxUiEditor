@@ -67,7 +67,7 @@ bool SimplebookGenerator::SettingsCode(Code& code)
 }
 
 bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      int /* language */)
+                                      GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/simplebook.h>", set_src, set_hdr);
 

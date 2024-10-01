@@ -192,7 +192,7 @@ bool SplitterWindowGenerator::SettingsCode(Code& code)
 }
 
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          int /* language */)
+                                          GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/splitter.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))

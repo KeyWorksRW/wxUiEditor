@@ -240,7 +240,7 @@ std::map<int, GenEnum::PropName> map_lang_to_prop = {
 
 // clang-format on
 
-std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size, int language)
+std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size, GenLang language)
 {
     size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
     if (language == GEN_LANG_RUBY)

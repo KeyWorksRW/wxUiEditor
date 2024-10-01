@@ -183,7 +183,7 @@ void DocViewAppGenerator::AddProtectedHdrMembers(std::set<std::string>& code_lin
 }
 
 bool DocViewAppGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
-                                      int /* language */)
+                                      GenLang /* language */)
 {
     set_src.insert("#include <wx/aui/tabmdi.h");
     set_src.insert("#include <wx/config.h");

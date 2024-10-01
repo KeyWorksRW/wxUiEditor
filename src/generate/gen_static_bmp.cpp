@@ -249,7 +249,7 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
 }
 
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        int /* language */)
+                                        GenLang /* language */)
 {
     if (node->as_string(prop_scale_mode) != "None")
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);

@@ -75,7 +75,7 @@ bool TextViewGenerator::ConstructionCode(Code& code)
 }
 
 bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
-                                    int /* language */)
+                                    GenLang /* language */)
 {
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");

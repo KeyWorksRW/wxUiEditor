@@ -267,7 +267,7 @@ static const view_map s_short_haskell_map
 
 // clang-format on
 
-std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
+std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
 {
     const view_map* prefix_list;
     const view_map* global_list;
@@ -329,12 +329,12 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, int language)
     return {};
 }
 
-Code::Code(Node* node, int language)
+Code::Code(Node* node, GenLang language)
 {
     Init(node, language);
 }
 
-void Code::Init(Node* node, int language)
+void Code::Init(Node* node, GenLang language)
 {
     m_node = node;
     m_language = language;
@@ -2525,6 +2525,25 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
 
             case GEN_LANG_RUBY:
                 RubyBundleCode(*this, prop_name);
+                break;
+
+            case GEN_LANG_HASKELL:
+                // HaskellBundleCode(*this, prop_name);
+                break;
+
+            case GEN_LANG_LUA:
+                // LuaBundleCode(*this, prop_name);
+                break;
+
+            case GEN_LANG_PERL:
+                // PerlBundleCode(*this, prop_name);
+                break;
+
+            case GEN_LANG_PHP:
+                // PhpBundleCode(*this, prop_name);
+                break;
+
+            default:
                 break;
         }
     }

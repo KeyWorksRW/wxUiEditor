@@ -251,7 +251,7 @@ void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
 }
 
 bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     int /* language */)
+                                     GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
     if (node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either))

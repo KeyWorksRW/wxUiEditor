@@ -65,7 +65,7 @@ private:
 
     wxString m_value;
     NodeProperty* m_prop { nullptr };
-    int m_language = GEN_LANG_CPLUSPLUS;
+    GenLang m_language = GEN_LANG_CPLUSPLUS;
 };
 
 // ************* End of generated code ***********

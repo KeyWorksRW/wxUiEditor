@@ -19,7 +19,7 @@ public:
     bool SettingsCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;

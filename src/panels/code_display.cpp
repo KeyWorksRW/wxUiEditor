@@ -80,7 +80,7 @@ static const char* lst_widgets_keywords[] = {
 };
 // clang-format on
 
-CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
+CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
 {
     if (panel_type == GEN_LANG_XRC)
     {
@@ -570,7 +570,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     tt_string name(" ");
 
-    int language = GEN_LANG_CPLUSPLUS;
+    GenLang language = GEN_LANG_CPLUSPLUS;
     if (m_panel_type == GEN_LANG_PYTHON)
         language = GEN_LANG_PYTHON;
     else if (m_panel_type == GEN_LANG_RUBY)

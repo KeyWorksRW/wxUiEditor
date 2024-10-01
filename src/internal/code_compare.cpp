@@ -171,7 +171,7 @@ CodeCompare::~CodeCompare()
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    int language = Project.getCodePreference(wxGetFrame().getSelectedNode());
+    GenLang language = Project.getCodePreference(wxGetFrame().getSelectedNode());
     wxCommandEvent dummy;
     switch (language)
     {
@@ -274,7 +274,7 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     pugi::xml_document doc;
     auto root = doc.append_child("project");
 
-    int language = GEN_LANG_CPLUSPLUS;
+    GenLang language = GEN_LANG_CPLUSPLUS;
     if (m_radio_python->GetValue())
         language = GEN_LANG_PYTHON;
     else if (m_radio_ruby->GetValue())

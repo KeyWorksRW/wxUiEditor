@@ -405,7 +405,7 @@ bool DialogFormGenerator::BaseClassNameCode(Code& code)
 }
 
 bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      int /* language */)
+                                      GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
     return true;

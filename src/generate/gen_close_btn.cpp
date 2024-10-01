@@ -38,7 +38,7 @@ bool CloseButtonGenerator::ConstructionCode(Code& code)
 }
 
 bool CloseButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       int /* language */)
+                                       GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/bmpbuttn.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);

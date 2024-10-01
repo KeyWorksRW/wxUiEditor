@@ -205,7 +205,7 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
     return result;
 }
 
-bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr, int language)
+bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr, GenLang language)
 {
     if (node->hasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
     {

@@ -120,7 +120,7 @@ private:
     size_t m_haskell_page;
 
     size_t m_output_type;   // see ../project/project_handler.h for OUTPUT_TYPE_ defines
-    int m_code_preference;  // This will be one of the GEN_LANG values
+    GenLang m_code_preference;  // This will be one of the GEN_LANG values
 
     bool m_is_cpp_enabled { false };
     bool m_is_perl_enabled { false };

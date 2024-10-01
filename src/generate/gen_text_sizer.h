@@ -17,5 +17,5 @@ public:
     bool ConstructionCode(Code&) override;
     // std::optional<tt_string> GenEvents(NodeEvent* event, const std::string& class_name) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 };

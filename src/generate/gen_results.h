@@ -73,4 +73,4 @@ bool GeneratePhpFiles(GenResults& results, std::vector<tt_string>* pClassList = 
 // ../generate/gen_xrc.cpp
 bool GenerateXrcFiles(GenResults& results, tt_string out_file = {}, std::vector<tt_string>* pClassList = nullptr);
 
-void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, int language = GEN_LANG_CPLUSPLUS);
+void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, GenLang language = GEN_LANG_CPLUSPLUS);

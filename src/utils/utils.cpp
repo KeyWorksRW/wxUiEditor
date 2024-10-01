@@ -331,12 +331,20 @@ bool isConvertibleMime(const tt_string& suffix)
 extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
+extern const char* g_haskell_keywords;
+extern const char* g_lua_keywords;
+extern const char* g_perl_keywords;
+extern const char* g_php_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
 std::set<std::string> g_set_ruby_keywords;
+std::set<std::string> g_set_haskell_keywords;
+std::set<std::string> g_set_lua_keywords;
+std::set<std::string> g_set_perl_keywords;
+std::set<std::string> g_set_php_keywords;
 
-bool isValidVarName(const std::string& str, int language)
+bool isValidVarName(const std::string& str, GenLang language)
 {
     // variable names must start with an alphabetic character or underscore character
     if (!((str[0] >= 'a' && str[0] <= 'z') || (str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_'))
@@ -379,6 +387,22 @@ bool isValidVarName(const std::string& str, int language)
     else if (language == GEN_LANG_RUBY)
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
+    }
+    else if (language == GEN_LANG_HASKELL)
+    {
+        return lambda(g_set_haskell_keywords, g_haskell_keywords);
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        return lambda(g_set_lua_keywords, g_lua_keywords);
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        return lambda(g_set_perl_keywords, g_perl_keywords);
+    }
+    else if (language == GEN_LANG_PHP)
+    {
+        return lambda(g_set_php_keywords, g_php_keywords);
     }
 
     return true;

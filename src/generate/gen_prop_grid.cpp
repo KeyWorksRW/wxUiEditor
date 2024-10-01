@@ -48,7 +48,7 @@ bool PropertyGridGenerator::ConstructionCode(Code& code)
 }
 
 bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        int /* language */)
+                                        GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
 

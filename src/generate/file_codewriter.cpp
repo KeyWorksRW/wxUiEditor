@@ -42,7 +42,7 @@ const char* python_perl_ruby_end_cmt_line = "# ************* End of generated co
 
 // clang-format on
 
-int FileCodeWriter::WriteFile(int language, int flags)
+int FileCodeWriter::WriteFile(GenLang language, int flags)
 {
     ASSERT_MSG(m_filename.size(), "Filename must be set before calling WriteFile()");
     bool file_exists = m_filename.file_exists();

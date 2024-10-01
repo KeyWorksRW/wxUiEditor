@@ -63,7 +63,7 @@ const char* g_php_keywords =
 const char* g_haskell_keywords =
     "case class data deriving do else if import in infix infixl infixr instance let module newtype of then type where";
 
-BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPanel(parent)
+BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : wxPanel(parent)
 {
     m_panel_type = panel_type;
     auto top_sizer = new wxBoxSizer(wxVERTICAL);

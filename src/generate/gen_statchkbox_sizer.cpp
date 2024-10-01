@@ -238,7 +238,7 @@ bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
 }
 
 bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                                  int /* language */)
+                                                  GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
@@ -294,7 +294,7 @@ void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */, std::se
     handlers.emplace("wxSizerXmlHandler");
 }
 
-std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, int language)
+std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {

@@ -162,7 +162,7 @@ tt_string ProjectHandler::ArtDirectory() const
     return result;
 }
 
-tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
+tt_string ProjectHandler::getBaseDirectory(Node* node, GenLang language) const
 {
     if (!node || node == m_project_node.get())
     {
@@ -187,7 +187,7 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
     return path;
 }
 
-std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int language) const
+std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang language) const
 {
     ASSERT(form->isForm() || form->isFolder());
 
@@ -250,8 +250,25 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
         case GEN_LANG_RUBY:
             base_file = form->as_string(prop_ruby_file);
             break;
+        case GEN_LANG_HASKELL:
+            base_file = form->as_string(prop_haskell_file);
+            break;
+        case GEN_LANG_LUA:
+            base_file = form->as_string(prop_lua_file);
+            break;
+        case GEN_LANG_PERL:
+            base_file = form->as_string(prop_perl_file);
+            break;
+        case GEN_LANG_PHP:
+            base_file = form->as_string(prop_php_file);
+            break;
+
         case GEN_LANG_XRC:
             base_file = form->as_string(prop_xrc_file);
+            break;
+
+        default:
+            FAIL_MSG(tt_string() << "Unknown language: " << language);
             break;
     }
 
@@ -291,7 +308,7 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
 
 // Note that this will return a directory for GEN_LANG_PYTHON and GEN_LANG_XRC even though we currently
 // don't generate derived files for those languages.
-tt_string ProjectHandler::getDerivedDirectory(Node* node, int language) const
+tt_string ProjectHandler::getDerivedDirectory(Node* node, GenLang language) const
 {
     tt_string result;
 
@@ -349,7 +366,7 @@ Node* ProjectHandler::getFirstFormChild(Node* node) const
     return nullptr;
 }
 
-int ProjectHandler::getCodePreference(Node* node) const
+GenLang ProjectHandler::getCodePreference(Node* node) const
 {
     tt_string value = Project.as_string(prop_code_preference);
     if (node)

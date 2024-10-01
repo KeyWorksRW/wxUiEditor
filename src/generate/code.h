@@ -62,10 +62,10 @@ class Code : public tt_string
 {
 public:
     Node* m_node;
-    int m_language;
+    GenLang m_language;
 
-    Code(Node* node, int language = GEN_LANG_CPLUSPLUS);
-    void Init(Node* node, int language = GEN_LANG_CPLUSPLUS);
+    Code(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
+    void Init(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
 
     tt_string& GetCode() { return *this; }
     tt_string_view GetView() const { return *this; }
@@ -98,7 +98,7 @@ public:
     int IntValue(GenEnum::PropName prop_name) const;
 
     Node* node() const { return m_node; }
-    int get_language() const { return m_language; }
+    GenLang get_language() const { return m_language; }
 
     bool hasValue(GenEnum::PropName prop_name) const;
 

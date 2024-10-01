@@ -80,5 +80,5 @@ private:
     MainFrame* m_mainframe { nullptr };
     wxWebView* m_webview { nullptr };
 
-    int m_language { GEN_LANG_CPLUSPLUS };
+    GenLang m_language { GEN_LANG_CPLUSPLUS };
 };

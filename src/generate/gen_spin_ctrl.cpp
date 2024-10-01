@@ -134,7 +134,7 @@ void SpinCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
 }
 
 bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    int /* language */)
+                                    GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -243,7 +243,7 @@ void SpinCtrlDoubleGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
 }
 
 bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          int /* language */)
+                                          GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))

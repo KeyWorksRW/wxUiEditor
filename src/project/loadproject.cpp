@@ -910,7 +910,6 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 {
                     project_node->set_value(prop_code_preference, "PHP");
                 }
-
                 else if (dlg.is_gen_xrc())
                 {
                     project_node->set_value(prop_code_preference, "XRC");
@@ -1001,6 +1000,22 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 else if (dlg.is_gen_ruby())
                 {
                     project->set_value(prop_code_preference, "Ruby");
+                }
+                else if (dlg.is_gen_haskell())
+                {
+                    project->set_value(prop_code_preference, "Haskell");
+                }
+                else if (dlg.is_gen_lua())
+                {
+                    project->set_value(prop_code_preference, "Lua");
+                }
+                else if (dlg.is_gen_perl())
+                {
+                    project->set_value(prop_code_preference, "Perl");
+                }
+                else if (dlg.is_gen_php())
+                {
+                    project->set_value(prop_code_preference, "PHP");
                 }
                 else if (dlg.is_gen_xrc())
                 {

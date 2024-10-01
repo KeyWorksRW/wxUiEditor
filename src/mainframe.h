@@ -222,6 +222,7 @@ public:
 
     bool SaveWarning();
     void UpdateFrame();
+    void OnProjectLoaded();
 
     bool isModified() { return m_isProject_modified; }
 

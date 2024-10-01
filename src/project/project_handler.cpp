@@ -213,6 +213,14 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
+        else if (language == GEN_LANG_HASKELL && folder->hasValue(prop_folder_haskell_output_folder))
+            result = folder->as_string(prop_folder_haskell_output_folder);
+        else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
+            result = folder->as_string(prop_folder_lua_output_folder);
+        else if (language == GEN_LANG_PERL && folder->hasValue(prop_folder_perl_output_folder))
+            result = folder->as_string(prop_folder_perl_output_folder);
+        else if (language == GEN_LANG_PHP && folder->hasValue(prop_folder_php_output_folder))
+            result = folder->as_string(prop_folder_php_output_folder);
     }
 
     // Even if the node has a folder parent, there may not be a directory set for it, so check
@@ -230,6 +238,14 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
+        else if (language == GEN_LANG_HASKELL && m_project_node->hasValue(prop_haskell_output_folder))
+            result = m_project_node->as_string(prop_haskell_output_folder);
+        else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
+            result = m_project_node->as_string(prop_lua_output_folder);
+        else if (language == GEN_LANG_PERL && m_project_node->hasValue(prop_perl_output_folder))
+            result = m_project_node->as_string(prop_perl_output_folder);
+        else if (language == GEN_LANG_PHP && m_project_node->hasValue(prop_php_output_folder))
+            result = m_project_node->as_string(prop_php_output_folder);
     }
 
     if (result.empty())

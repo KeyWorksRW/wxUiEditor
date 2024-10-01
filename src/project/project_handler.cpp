@@ -370,8 +370,14 @@ int ProjectHandler::getCodePreference(Node* node) const
         return GEN_LANG_PYTHON;
     else if (value == "Ruby")
         return GEN_LANG_RUBY;
+    else if (value == "Haskell")
+        return GEN_LANG_HASKELL;
+    else if (value == "Lua")
+        return GEN_LANG_LUA;
     else if (value == "Perl")
         return GEN_LANG_PERL;
+    else if (value == "PHP")
+        return GEN_LANG_PHP;
     else if (value == "XRC")
         return GEN_LANG_XRC;
     else

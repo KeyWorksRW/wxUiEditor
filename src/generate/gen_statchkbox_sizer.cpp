@@ -24,7 +24,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 
     // When testing, always display the checkbox, otherwise if Python is preferred, then don't
     // display the checkbox since Python doesn't support it.
-    if (Project.as_string(prop_code_preference) != "Python" ||
+    if (Project.getCodePreference() != GEN_LANG_PYTHON ||
         (Project.hasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
     {
         long style_value = 0;

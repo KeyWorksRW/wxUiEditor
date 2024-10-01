@@ -1374,24 +1374,35 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
     m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
 
-    m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
-    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
-
     if (wxGetApp().isTestingMenuEnabled())
     {
-        EnableCodePanels(GEN_LANG_HASKELL);
-        EnableCodePanels(GEN_LANG_LUA);
-        EnableCodePanels(GEN_LANG_PERL);
-        EnableCodePanels(GEN_LANG_PHP);
+        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
+        m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
 
-        m_imnportPanel = new ImportPanel(m_notebook);
-        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
+        m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+
+        m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
+        m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+
+        m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
+        m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
     }
+
+    m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
+    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 
 #if wxUSE_WEBVIEW
     m_docviewPanel = new DocViewPanel(m_notebook, this);
     m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
 #endif
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        // Shows original import file if project is imported, otherwise it shows the project file
+        m_imnportPanel = new ImportPanel(m_notebook);
+        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+    }
 
     return m_notebook;
 }
@@ -1400,6 +1411,14 @@ void MainFrame::EnableCodePanels(GenLang language)
 {
     switch (language)
     {
+        case GEN_LANG_HASKELL:
+            if (!m_haskellPanel)
+            {
+                m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
+                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
         case GEN_LANG_LUA:
             if (!m_luaPanel)
             {
@@ -1421,14 +1440,6 @@ void MainFrame::EnableCodePanels(GenLang language)
             {
                 m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
                 m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_HASKELL:
-            if (!m_haskellPanel)
-            {
-                m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
-                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
             }
             break;
 

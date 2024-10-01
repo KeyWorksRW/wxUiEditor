@@ -867,8 +867,16 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 project_node->set_value(prop_code_preference, "C++");
             else if (language & GEN_LANG_PYTHON)
                 project_node->set_value(prop_code_preference, "Python");
+            else if (language & GEN_LANG_PERL)  // wxGlade can generate Perl
+                project_node->set_value(prop_code_preference, "Perl");
+            else if (language & GEN_LANG_LUA)  // wxFormBuilder can generate Lua
+                project_node->set_value(prop_code_preference, "Lua");
+            else if (language & GEN_LANG_PHP)  // wxFormBuilder can generate PHP
+                project_node->set_value(prop_code_preference, "PHP");
             else if (language & GEN_LANG_XRC)
                 project_node->set_value(prop_code_preference, "XRC");
+
+            // None of the other designers generate code for wxRuby3 or wxHaskell
 
             SetLangFilenames();
         }
@@ -886,6 +894,23 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 {
                     project_node->set_value(prop_code_preference, "Ruby");
                 }
+                else if (dlg.is_gen_haskell())
+                {
+                    project_node->set_value(prop_code_preference, "Haskell");
+                }
+                else if (dlg.is_gen_lua())
+                {
+                    project_node->set_value(prop_code_preference, "Lua");
+                }
+                else if (dlg.is_gen_perl())
+                {
+                    project_node->set_value(prop_code_preference, "Perl");
+                }
+                else if (dlg.is_gen_php())
+                {
+                    project_node->set_value(prop_code_preference, "PHP");
+                }
+
                 else if (dlg.is_gen_xrc())
                 {
                     project_node->set_value(prop_code_preference, "XRC");

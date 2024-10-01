@@ -200,7 +200,7 @@
         bitmap="SVG;perl-logo.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;../art_src/php-logo.svg;[24,24]" />
+        bitmap="SVG;php-logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;popup_transient.svg;[24,24]" />
@@ -5333,8 +5333,8 @@
           var_name="staticText"
           wrap="350" />
         <node
-          class="wxBoxSizer"
-          alignment="wxALIGN_CENTER_HORIZONTAL">
+          class="wxGridSizer"
+          cols="4">
           <node
             class="wxRadioButton"
             checked="1"
@@ -5364,6 +5364,34 @@
             label="&amp;XRC"
             get_function="is_gen_xrc"
             validator_variable="m_gen_xrc_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Haskell"
+            var_name="m_radioBtn2"
+            get_function="is_gen_haskell"
+            validator_variable="m_gen_haskell_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Lua"
+            var_name="m_radioBtn3"
+            get_function="is_gen_lua"
+            validator_variable="m_gen_lua_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="P&amp;erl"
+            var_name="m_radioBtn4"
+            get_function="is_gen_perl"
+            validator_variable="m_gen_perl_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;PHP"
+            var_name="m_radioBtn5"
+            get_function="is_gen_php"
+            validator_variable="m_gen_php_code" />
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -7449,7 +7477,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/cpp_logo.svg;[24,24]"
+            bitmap="SVG;cpp_logo.svg;[24,24]"
             label="C++"
             var_name="page_cpp"
             window_style="wxTAB_TRAVERSAL">
@@ -7555,7 +7583,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/python-logo-only.svg;[24,24]"
+            bitmap="SVG;python-logo-only.svg;[24,24]"
             label="Python"
             var_name="page_python"
             window_style="wxTAB_TRAVERSAL">
@@ -7656,7 +7684,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/ruby_logo.svg;[24,24]"
+            bitmap="SVG;ruby_logo.svg;[24,24]"
             label="Ruby"
             var_name="page_ruby"
             window_style="wxTAB_TRAVERSAL">
@@ -7747,7 +7775,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/haskell-logo.svg;[24,24]"
+            bitmap="SVG;haskell-logo.svg;[24,24]"
             label="Haskell"
             var_name="page_haskell"
             window_style="wxTAB_TRAVERSAL">
@@ -7838,7 +7866,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/lua-logo.svg;[24,24]"
+            bitmap="SVG;lua-logo.svg;[24,24]"
             label="Lua"
             var_name="page_lua"
             window_style="wxTAB_TRAVERSAL">
@@ -7929,7 +7957,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/perl-logo.svg;[24,24]"
+            bitmap="SVG;perl-logo.svg;[24,24]"
             label="Perl"
             var_name="page_perl"
             window_style="wxTAB_TRAVERSAL">
@@ -8020,7 +8048,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/php-logo.svg;[24,24]"
+            bitmap="SVG;php-logo.svg;[24,24]"
             label="PHP"
             var_name="page_php"
             window_style="wxTAB_TRAVERSAL">
@@ -8111,7 +8139,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/wxlogo.svg;[24,24]"
+            bitmap="SVG;wxlogo.svg;[24,24]"
             label="XRC"
             var_name="page_xrc"
             window_style="wxTAB_TRAVERSAL">

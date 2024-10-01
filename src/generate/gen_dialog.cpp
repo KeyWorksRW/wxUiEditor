@@ -148,6 +148,35 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.GetCode().Replace("\t\t\t\t", spaces, true);
         }
     }
+    else if (code.is_haskell())
+    {
+        code.Str("instance ").NodeName().Str("Class where");
+        code.Eol().Str("create parent id title pos size style name = do");
+        code.Indent();
+        code.Eol().Str("dialog <- wxDialogCreate parent id title pos size style name");
+    }
+    else if (code.is_lua())
+    {
+        code.Eol().NodeName().Str(" = wx.wxDialog(parent, id, title, pos, size, style, name)");
+    }
+    else if (code.is_perl())
+    {
+        code.Str("sub new {");
+        code.Indent();
+        code.Eol().Str("my( $class, $parent, $id, $title, $pos, $size, $style, $name ) = @_;");
+        code.Eol().Str("my $this = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
+    }
+    else if (code.is_php())
+    {
+        code.Str("class ").NodeName().Str(" extends wxDialog");
+        code.Eol().Str("{");
+        code.Indent();
+        code.Eol().Str("public function __construct()");
+        code.Eol().Str("{");
+        code.Indent();
+        code.Eol().Str("parent::__construct($parent, $id, $title, $pos, $size, $style, $name);");
+    }
+
     else
     {
         code.AddComment("Unknown language", true);
@@ -405,7 +434,7 @@ bool DialogFormGenerator::BaseClassNameCode(Code& code)
 }
 
 bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      int /* language */)
+                                      GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
     return true;

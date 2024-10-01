@@ -25,7 +25,7 @@ class Node;
 class CodeDisplay : public CodeDisplayBase, public WriteCode
 {
 public:
-    CodeDisplay(wxWindow* parent, int panel_type);
+    CodeDisplay(wxWindow* parent, GenLang panel_type);
 
     void SetColor(int style, const wxColour& color);
     void SetCodeFont(const wxFont& font);
@@ -52,5 +52,5 @@ protected:
 
 private:
     tt_view_vector m_view;
-    int m_panel_type;
+    GenLang m_panel_type;
 };

@@ -44,7 +44,7 @@ bool StaticLineGenerator::ConstructionCode(Code& code)
 }
 
 bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      int /* language */)
+                                      GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/statline.h>", set_src, set_hdr);
     return true;

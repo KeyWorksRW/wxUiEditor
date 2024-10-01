@@ -587,7 +587,7 @@ void EventHandlerDlg::OnChange(wxCommandEvent& WXUNUSED(event))
 void EventHandlerDlg::FormatBindText()
 {
     auto page = m_notebook->GetSelection();
-    int language;
+    GenLang language;
     if (m_is_cpp_enabled && page == (to_int) EVENT_PAGE_CPP)
         language = GEN_LANG_CPLUSPLUS;
     else if (m_is_python_enabled && page == (to_int) m_python_page)

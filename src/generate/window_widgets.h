@@ -18,7 +18,7 @@ public:
     bool SettingsCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     tt_string GetHelpURL(Node*) override { return tt_string("group__group__class__miscwnd.html"); };
 };
@@ -32,7 +32,7 @@ public:
     bool SettingsCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;

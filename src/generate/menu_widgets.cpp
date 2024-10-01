@@ -205,7 +205,7 @@ bool MenuBarGenerator::AfterChildrenCode(Code& code)
 }
 
 bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   int /* language */)
+                                   GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
@@ -282,7 +282,7 @@ bool MenuBarFormGenerator::BaseClassNameCode(Code& code)
 }
 
 bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       int /* language */)
+                                       GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
@@ -359,7 +359,7 @@ bool PopupMenuGenerator::BaseClassNameCode(Code& code)
 }
 
 bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     int /* language */)
+                                     GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
@@ -383,7 +383,7 @@ bool SeparatorGenerator::ConstructionCode(Code& code)
 }
 
 bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     int /* language */)
+                                     GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 

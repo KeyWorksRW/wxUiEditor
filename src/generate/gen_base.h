@@ -51,7 +51,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std
 class BaseCodeGenerator
 {
 public:
-    BaseCodeGenerator(int language, Node* form_node);
+    BaseCodeGenerator(GenLang language, Node* form_node);
 
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
@@ -234,7 +234,7 @@ private:
 
     PANEL_PAGE m_panel_type { NOT_PANEL };
 
-    int m_language { GEN_LANG_CPLUSPLUS };
+    GenLang m_language { GEN_LANG_CPLUSPLUS };
 
     bool m_is_derived_class { true };
 

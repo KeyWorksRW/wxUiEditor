@@ -31,7 +31,7 @@ enum PANEL_PAGE : size_t
 class BasePanel : public wxPanel
 {
 public:
-    BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);
+    BasePanel(wxWindow* parent, MainFrame* frame, GenLang GenerateDerivedCode);
     ~BasePanel() override;
 
     void GenerateBaseClass();
@@ -55,5 +55,5 @@ private:
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
 
-    int m_panel_type;
+    GenLang m_panel_type;
 };

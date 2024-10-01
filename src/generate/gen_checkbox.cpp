@@ -66,7 +66,7 @@ bool CheckBoxGenerator::SettingsCode(Code& code)
 }
 
 bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    int /* language */)
+                                    GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -182,7 +182,7 @@ bool Check3StateGenerator::SettingsCode(Code& code)
 }
 
 bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       int /* language */)
+                                       GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
     // 3-state checkboxes don't support validators

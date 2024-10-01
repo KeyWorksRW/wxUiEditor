@@ -24,7 +24,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 
     // When testing, always display the checkbox, otherwise if Python is preferred, then don't
     // display the checkbox since Python doesn't support it.
-    if (Project.as_string(prop_code_preference) != "Python" ||
+    if (Project.getCodePreference() != GEN_LANG_PYTHON ||
         (Project.hasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
     {
         long style_value = 0;
@@ -238,7 +238,7 @@ bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
 }
 
 bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                                  int /* language */)
+                                                  GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
@@ -294,7 +294,7 @@ void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */, std::se
     handlers.emplace("wxSizerXmlHandler");
 }
 
-std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, int language)
+std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {

@@ -132,6 +132,9 @@ void DocViewPanel::ActivatePage()
         case GEN_LANG_RUBY:
             OnRuby(dummy);
             break;
+
+        default:
+            break;  // Currently, none of the other panels have documentation
     }
 }
 

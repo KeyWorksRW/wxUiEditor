@@ -72,7 +72,7 @@ void ScrollBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
 }
 
 bool ScrollBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     int /* language */)
+                                     GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolbar.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))

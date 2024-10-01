@@ -132,7 +132,7 @@ enum class MoveDirection
 // supports a single language at a time, and passing in multiple languages will cause it to fail to
 // generate any language. As bit flags, this can be used by generators to indicate which languages
 // the generator supports.
-enum
+enum GenLang : size_t
 {
     GEN_LANG_NONE = 0,
     GEN_LANG_CPLUSPLUS = 1,

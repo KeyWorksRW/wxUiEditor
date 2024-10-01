@@ -187,7 +187,7 @@ bool HyperlinkGenerator::IsGeneric(Node* node)
 }
 
 bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr,
-                                     int /* language */)
+                                     GenLang /* language */)
 {
     // Unfortunately wx/generic/hyperlink.h doesn't include the required wx/hyperlink.h file.
     // That means the order of inclusion is critical, hence the hack below to change the

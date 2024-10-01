@@ -146,7 +146,7 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
 }
 
 bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        int /* language */)
+                                        GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -270,7 +270,7 @@ bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
 }
 
 bool BitmapToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                              int /* language */)
+                                              GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())

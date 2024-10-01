@@ -87,7 +87,7 @@ public:
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-    void EnableCodePanels(int language);
+    void EnableCodePanels(GenLang language);
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
@@ -222,6 +222,7 @@ public:
 
     bool SaveWarning();
     void UpdateFrame();
+    void OnProjectLoaded();
 
     bool isModified() { return m_isProject_modified; }
 

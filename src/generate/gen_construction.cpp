@@ -288,16 +288,32 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "#if defined(__WINDOWS__)";
                 break;
 
-            case GEN_LANG_PERL:
-                code.Eol() << "if ($^O eq 'MSWin32')";
-                break;
-
             case GEN_LANG_PYTHON:
                 code.Eol() << "if wx.Platform == \"msw\"";
                 break;
 
             case GEN_LANG_RUBY:
                 code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
+                break;
+
+            case GEN_LANG_HASKELL:
+                code.Eol() << "if os == \"mingw32\"";
+                break;
+
+            case GEN_LANG_LUA:
+                code.Eol() << "if wxPlatform == \"msw\"";
+                break;
+
+            case GEN_LANG_PERL:
+                code.Eol() << "if $^O eq 'MSWin32'";
+                break;
+
+            case GEN_LANG_PHP:
+                code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
+                break;
+
+            default:
+                FAIL_MSG(tt_string() << "Unsupported language: " << m_language);
                 break;
         }
     }
@@ -311,14 +327,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 else
                     code.Eol() << "#if ";
                 code << "defined(__UNIX__)";
-                break;
-
-            case GEN_LANG_PERL:
-                if (code.size())
-                    code << " or ";
-                else
-                    code.Eol() << "if ";
-                code << "$^O eq 'linux' or $^O eq 'darwin'";
                 break;
 
             case GEN_LANG_PYTHON:
@@ -336,6 +344,41 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code.Eol() << "if ";
                 code << "Wx::PLATFORM == 'WXUNIX'";
                 break;
+
+            case GEN_LANG_HASKELL:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "os == \"linux\"";
+                break;
+
+            case GEN_LANG_LUA:
+                if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "wxPlatform == \"gtk\"";
+                break;
+
+            case GEN_LANG_PERL:
+                if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "$^O eq 'linux' or $^O eq 'darwin'";
+                break;
+
+            case GEN_LANG_PHP:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "PHP_OS == 'Linux'";
+                break;
+
+            default:
+                break;
         }
     }
     if (platforms.contains("Mac"))
@@ -348,14 +391,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 else
                     code.Eol() << "#if ";
                 code << "defined(__WXOSX__)";
-                break;
-
-            case GEN_LANG_PERL:
-                if (code.size())
-                    code << " or ";
-                else
-                    code.Eol() << "if ";
-                code << "$^O eq 'darwin'";
                 break;
 
             case GEN_LANG_PYTHON:
@@ -373,6 +408,41 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code.Eol() << "if ";
                 code << "Wx::PLATFORM == 'WXOSX'";
                 break;
+
+            case GEN_LANG_HASKELL:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "os == \"darwin\"";
+                break;
+
+            case GEN_LANG_LUA:
+                if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "wxPlatform == \"mac\"";
+                break;
+
+            case GEN_LANG_PERL:
+                if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "$^O eq 'darwin'";
+                break;
+
+            case GEN_LANG_PHP:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "PHP_OS == 'Darwin'";
+                break;
+
+            default:
+                break;
         }
     }
     if (m_language == GEN_LANG_PYTHON)
@@ -389,9 +459,6 @@ void BaseCodeGenerator::EndPlatformCode()
             m_source->writeLine("#endif  // limited to specific platforms");
             break;
 
-        case GEN_LANG_PERL:
-            break;
-
         case GEN_LANG_PYTHON:
             m_source->Unindent();
             break;
@@ -399,6 +466,24 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_RUBY:
             m_source->Unindent();
             m_source->writeLine("end");
+            break;
+
+        case GEN_LANG_HASKELL:
+            m_source->Unindent();
+            break;
+
+        case GEN_LANG_LUA:
+            m_source->Unindent();
+            break;
+
+        case GEN_LANG_PERL:
+            break;
+
+        case GEN_LANG_PHP:
+            m_source->Unindent();
+            break;
+
+        default:
             break;
     }
 }

@@ -18,12 +18,12 @@ public:
     bool ConstructionCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    std::optional<tt_string> GetWarning(Node* node, int language) override;
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
 class DataViewListCtrl : public BaseGenerator
@@ -35,12 +35,12 @@ public:
     bool ConstructionCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    std::optional<tt_string> GetWarning(Node* node, int language) override;
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
 class DataViewTreeCtrl : public BaseGenerator
@@ -51,12 +51,12 @@ public:
     bool ConstructionCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    std::optional<tt_string> GetWarning(Node* node, int language) override;
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
 class DataViewColumn : public BaseGenerator

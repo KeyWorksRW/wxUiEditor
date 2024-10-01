@@ -151,7 +151,7 @@ void PropGridPanel::SaveDescBoxHeight()
     config->SetPath("/");
 }
 
-static std::map<int, std::string> s_lang_category_prefix = {
+static std::map<GenLang, std::string> s_lang_category_prefix = {
 
     { GEN_LANG_CPLUSPLUS, "C++" }, { GEN_LANG_PERL, "wxPerl" }, { GEN_LANG_PYTHON, "wxPython" },
     { GEN_LANG_RUBY, "wxRuby" },   { GEN_LANG_XRC, "XRC" },
@@ -2274,6 +2274,9 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
 
         case GEN_LANG_PHP:
             ChangeOutputFile(prop_php_file);
+            break;
+
+        default:
             break;
     }
 }

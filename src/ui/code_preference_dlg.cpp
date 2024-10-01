@@ -28,26 +28,42 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     staticText->Wrap(350);
     dlg_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
-    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* grid_sizer = new wxGridSizer(4, 0, 0);
 
     auto* m_radioBtn_2 = new wxRadioButton(this, wxID_ANY, "&C++", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     m_radioBtn_2->SetValue(true);
     m_radioBtn_2->SetValidator(wxGenericValidator(&m_gen_cpp_code));
-    box_sizer->Add(m_radioBtn_2, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(m_radioBtn_2, wxSizerFlags().Border(wxALL));
 
     auto* m_radioBtn_3 = new wxRadioButton(this, wxID_ANY, "&Python");
     m_radioBtn_3->SetValidator(wxGenericValidator(&m_gen_python_code));
-    box_sizer->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
 
     auto* m_radioBtn_4 = new wxRadioButton(this, wxID_ANY, "&Ruby");
     m_radioBtn_4->SetValidator(wxGenericValidator(&m_gen_ruby_code));
-    box_sizer->Add(m_radioBtn_4, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(m_radioBtn_4, wxSizerFlags().Border(wxALL));
 
     auto* m_radioBtn = new wxRadioButton(this, wxID_ANY, "&XRC");
     m_radioBtn->SetValidator(wxGenericValidator(&m_gen_xrc_code));
-    box_sizer->Add(m_radioBtn, wxSizerFlags().Border(wxALL));
+    grid_sizer->Add(m_radioBtn, wxSizerFlags().Border(wxALL));
 
-    dlg_sizer->Add(box_sizer, wxSizerFlags().Center().Border(wxALL));
+    auto* m_radioBtn2 = new wxRadioButton(this, wxID_ANY, "&Haskell");
+    m_radioBtn2->SetValidator(wxGenericValidator(&m_gen_haskell_code));
+    grid_sizer->Add(m_radioBtn2, wxSizerFlags().Border(wxALL));
+
+    auto* m_radioBtn3 = new wxRadioButton(this, wxID_ANY, "&Lua");
+    m_radioBtn3->SetValidator(wxGenericValidator(&m_gen_lua_code));
+    grid_sizer->Add(m_radioBtn3, wxSizerFlags().Border(wxALL));
+
+    auto* m_radioBtn4 = new wxRadioButton(this, wxID_ANY, "P&erl");
+    m_radioBtn4->SetValidator(wxGenericValidator(&m_gen_perl_code));
+    grid_sizer->Add(m_radioBtn4, wxSizerFlags().Border(wxALL));
+
+    auto* m_radioBtn5 = new wxRadioButton(this, wxID_ANY, "&PHP");
+    m_radioBtn5->SetValidator(wxGenericValidator(&m_gen_php_code));
+    grid_sizer->Add(m_radioBtn5, wxSizerFlags().Border(wxALL));
+
+    dlg_sizer->Add(grid_sizer, wxSizerFlags().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

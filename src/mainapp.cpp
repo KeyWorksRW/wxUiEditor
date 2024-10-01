@@ -155,6 +155,12 @@ int App::OnRun()
     parser.AddLongOption("gen_cpp", "generate C++ files and exit");
     parser.AddLongOption("gen_python", "generate python files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
+    parser.AddLongOption("gen_haskell", "generate Haskell files and exit");
+    parser.AddLongOption("gen_lua", "generate Lua files and exit");
+    parser.AddLongOption("gen_perl", "generate Perl files and exit");
+    parser.AddLongOption("gen_php", "generate Php files and exit");
+
+    parser.AddLongOption("gen_all", "generate all language files and exit");
 
     // [Randalphwa - 02-08-2023] This probably works, but will remain hidden until it is
     // tested. That said, I'm doubtful that it has any actual value other than for testing -- I
@@ -165,10 +171,15 @@ int App::OnRun()
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 
-    parser.AddLongSwitch("test_cpp", "generate C++ files and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_python", "generate python files and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_ruby", "generate python files and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_xrc", "generate XRC files and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_python", "generate Python code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_ruby", "generate Ruby code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_haskell", "generate Haskell code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_lua", "generate Lua code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_php", "generate Php code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);
 
     parser.AddLongSwitch("test_menu", "create test menu to the right of the Help menu",
                          wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
@@ -219,25 +230,66 @@ int App::OnRun()
         {
             generate_type = GEN_LANG_XRC;
         }
+        else if (parser.Found("gen_haskell", &filename))
+        {
+            generate_type = GEN_LANG_HASKELL;
+        }
+        else if (parser.Found("gen_lua", &filename))
+        {
+            generate_type = GEN_LANG_LUA;
+        }
+        else if (parser.Found("gen_perl", &filename))
+        {
+            generate_type = GEN_LANG_PERL;
+        }
+        else if (parser.Found("gen_php", &filename))
+        {
+            generate_type = GEN_LANG_PHP;
+        }
+        else if (parser.Found("gen_all", &filename))
+        {
+            generate_type = static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_XRC |
+                                                 GEN_LANG_HASKELL | GEN_LANG_LUA | GEN_LANG_PERL | GEN_LANG_PHP);
+        }
 
-        else if (parser.Found("test_cpp", &filename))
+        if (parser.Found("test_cpp", &filename))
         {
-            generate_type = GEN_LANG_CPLUSPLUS;
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_CPLUSPLUS));
             test_only = true;
         }
-        else if (parser.Found("test_python", &filename))
+        if (parser.Found("test_python", &filename))
         {
-            generate_type = GEN_LANG_PYTHON;
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_PYTHON));
             test_only = true;
         }
-        else if (parser.Found("test_ruby", &filename))
+        if (parser.Found("test_ruby", &filename))
         {
-            generate_type = GEN_LANG_PYTHON;
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_RUBY));
             test_only = true;
         }
-        else if (parser.Found("test_xrc", &filename))
+        if (parser.Found("test_xrc", &filename))
         {
-            generate_type = GEN_LANG_XRC;
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_XRC));
+            test_only = true;
+        }
+        if (parser.Found("test_haskell", &filename))
+        {
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_HASKELL));
+            test_only = true;
+        }
+        if (parser.Found("test_lua", &filename))
+        {
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_LUA));
+            test_only = true;
+        }
+        if (parser.Found("test_perl", &filename))
+        {
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_PERL));
+            test_only = true;
+        }
+        if (parser.Found("test_php", &filename))
+        {
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_PHP));
             test_only = true;
         }
 
@@ -305,9 +357,43 @@ int App::OnRun()
                 return 1;
             }
 
+            tt_string_vector log;
             std::vector<tt_string> class_list;
-            if (wxGetApp().isTestingMenuEnabled())
-                results.StartClock();
+
+            auto log_results = [&](std::string_view language_type = {})
+            {
+                results.msgs.emplace_back(language_type);
+                if (results.updated_files.size() || class_list.size())
+                {
+                    if (test_only)
+                    {
+                        for (auto& iter: class_list)
+                        {
+                            auto& log_msg = log.emplace_back();
+                            log_msg << "Needs updating: " << iter;
+                        }
+                    }
+                    else
+                    {
+                        for (auto& iter: results.updated_files)
+                        {
+                            auto& log_msg = log.emplace_back();
+                            log_msg << "Updated: " << iter;
+                        }
+                    }
+                }
+                else
+                {
+                    auto& log_msg = log.emplace_back();
+                    log_msg << "All " << results.file_count << " generated files are current";
+                }
+
+                for (auto& iter: results.msgs)
+                {
+                    auto& log_msg = log.emplace_back();
+                    log_msg << iter;
+                }
+            };
 
             // Passing a class_list reference will cause the code generator to process all the
             // top-level forms, but only populate class_list with the names of the forms that
@@ -315,61 +401,75 @@ int App::OnRun()
             // mechanism and write any special messages that code generation caused (warnings,
             // errors, timing, etc.) to a log file.
 
-            switch (generate_type)
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_CPLUSPLUS))
             {
-                case GEN_LANG_CPLUSPLUS:
-                    GenerateCppFiles(results, test_only ? &class_list : nullptr);
-                    break;
-
-                case GEN_LANG_PYTHON:
-                    GeneratePythonFiles(results, test_only ? &class_list : nullptr);
-                    break;
-
-                case GEN_LANG_RUBY:
-                    GenerateRubyFiles(results, test_only ? &class_list : nullptr);
-                    break;
-
-                case GEN_LANG_XRC:
-                    GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
-                    break;
-
-                default:
-                    break;
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateCppFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating C++ files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_PYTHON))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GeneratePythonFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating Python files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_RUBY))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateRubyFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating Ruby files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_XRC))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
+                log_results("Generating XRC files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_HASKELL))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateHaskellFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating Haskell files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_LUA))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateLuaFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating Lua files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_PERL))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GeneratePerlFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating Perl files");
+            }
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_PHP))
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GeneratePhpFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating PHP files");
             }
 
-            tt_string_vector log;
-
-            if (results.updated_files.size() || class_list.size())
+            if (log.size())
             {
-                if (test_only)
-                {
-                    for (auto& iter: class_list)
-                    {
-                        auto& log_msg = log.emplace_back();
-                        log_msg << "Needs updating: " << iter;
-                    }
-                }
-                else
-                {
-                    for (auto& iter: results.updated_files)
-                    {
-                        auto& log_msg = log.emplace_back();
-                        log_msg << "Updated: " << iter;
-                    }
-                }
+                log.WriteFile(log_file);
             }
-            else
-            {
-                auto& log_msg = log.emplace_back();
-                log_msg << "All " << results.file_count << " generated files are current";
-            }
-
-            for (auto& iter: results.msgs)
-            {
-                auto& log_msg = log.emplace_back();
-                log_msg << iter;
-            }
-            log.WriteFile(log_file);
 
             return 0;
         }

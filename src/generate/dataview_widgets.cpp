@@ -131,7 +131,7 @@ bool DataViewCtrl::ConstructionCode(Code& code)
 }
 
 bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                               int /* language */)
+                               GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -164,7 +164,7 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
     handlers.emplace("wxDataViewXmlHandler");
 }
 
-std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, int language)
+std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
@@ -262,7 +262,7 @@ bool DataViewListCtrl::ConstructionCode(Code& code)
 }
 
 bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   int /* language */)
+                                   GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -295,7 +295,7 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxDataViewXmlHandler");
 }
 
-std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, int language)
+std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
@@ -335,13 +335,13 @@ bool DataViewTreeCtrl::ConstructionCode(Code& code)
 }
 
 bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   int /* language */)
+                                   GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
 }
 
-std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, int language)
+std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {

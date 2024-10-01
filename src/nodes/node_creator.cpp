@@ -239,11 +239,23 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
                 case GEN_LANG_RUBY:
                     msg << "Ruby";
                     break;
+                case GEN_LANG_HASKELL:
+                    msg << "Haskell";
+                    break;
+                case GEN_LANG_LUA:
+                    msg << "Lua";
+                    break;
                 case GEN_LANG_PERL:
                     msg << "Perl";
                     break;
+                case GEN_LANG_PHP:
+                    msg << "PHP";
+                    break;
                 case GEN_LANG_XRC:
                     msg << "XRC";
+                    break;
+                default:
+                    msg << "an unknown language";
                     break;
             }
 

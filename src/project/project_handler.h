@@ -81,15 +81,15 @@ public:
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
-    tt_string getBaseDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
+    tt_string getBaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
 
     // Returns the absolute path to the output file for this node. If no output filename is
     // specified, first will still contain a path with no filename, and second will be false.
-    std::pair<tt_string, bool> GetOutputPath(Node* form, int language = GEN_LANG_CPLUSPLUS) const;
+    std::pair<tt_string, bool> GetOutputPath(Node* form, GenLang language = GEN_LANG_CPLUSPLUS) const;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
-    tt_string getDerivedDirectory(Node* node, int language = GEN_LANG_CPLUSPLUS) const;
+    tt_string getDerivedDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
@@ -130,7 +130,7 @@ public:
 
     // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
     // override of the language.
-    int getCodePreference(Node* node = nullptr) const;
+    GenLang getCodePreference(Node* node = nullptr) const;
 
     // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }

@@ -54,7 +54,7 @@ bool RibbonButtonBarGenerator::ConstructionCode(Code& code)
 }
 
 bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                           int /* language */)
+                                           GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/buttonbar.h>", set_src, set_hdr);
 

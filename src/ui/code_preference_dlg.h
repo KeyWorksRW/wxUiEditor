@@ -30,12 +30,20 @@ public:
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
     bool is_gen_xrc() const { return m_gen_xrc_code; }
+    bool is_gen_haskell() const { return m_gen_haskell_code; }
+    bool is_gen_lua() const { return m_gen_lua_code; }
+    bool is_gen_perl() const { return m_gen_perl_code; }
+    bool is_gen_php() const { return m_gen_php_code; }
 
 protected:
 
     // Validator variables
 
     bool m_gen_cpp_code { true };
+    bool m_gen_haskell_code { false };
+    bool m_gen_lua_code { false };
+    bool m_gen_perl_code { false };
+    bool m_gen_php_code { false };
     bool m_gen_python_code { false };
     bool m_gen_ruby_code { false };
     bool m_gen_xrc_code { false };

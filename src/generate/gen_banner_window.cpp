@@ -109,7 +109,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
 }
 
 bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        int /* language */)
+                                        GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/bannerwindow.h>", set_src, set_hdr);
     return true;

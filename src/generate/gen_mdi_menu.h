@@ -13,7 +13,7 @@ class MdiFrameMenuBar : public BaseGenerator
 {
 public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
 private:
     // Node* m_node_menubar;
@@ -23,7 +23,7 @@ class MdiDocumentMenuBar : public BaseGenerator
 {
 public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     int /* language */) override;
+                     GenLang /* language */) override;
 
 private:
     // Node* m_node_menubar;

@@ -44,6 +44,10 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
         {
             m_language = GEN_LANG_CPLUSPLUS;
         }
+        else if (language == "Perl")
+        {
+            m_language = GEN_LANG_PERL;
+        }
     }
     else
     {

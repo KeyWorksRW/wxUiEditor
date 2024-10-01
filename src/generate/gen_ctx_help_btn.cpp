@@ -62,7 +62,7 @@ bool CtxHelpButtonGenerator::SettingsCode(Code& code)
 }
 
 bool CtxHelpButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                         int /* language */)
+                                         GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/cshelp.h>", set_src, set_hdr);
     return true;

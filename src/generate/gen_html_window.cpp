@@ -116,7 +116,7 @@ void HtmlWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 }
 
 bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      int /* language */)
+                                      GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/html/htmlwin.h>", set_src, set_hdr);
     if (node->hasValue(prop_html_url))

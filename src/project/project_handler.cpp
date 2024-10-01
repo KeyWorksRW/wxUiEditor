@@ -162,7 +162,7 @@ tt_string ProjectHandler::ArtDirectory() const
     return result;
 }
 
-tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
+tt_string ProjectHandler::getBaseDirectory(Node* node, GenLang language) const
 {
     if (!node || node == m_project_node.get())
     {
@@ -187,7 +187,7 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, int language) const
     return path;
 }
 
-std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int language) const
+std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang language) const
 {
     ASSERT(form->isForm() || form->isFolder());
 
@@ -213,6 +213,14 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
             result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
+        else if (language == GEN_LANG_HASKELL && folder->hasValue(prop_folder_haskell_output_folder))
+            result = folder->as_string(prop_folder_haskell_output_folder);
+        else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
+            result = folder->as_string(prop_folder_lua_output_folder);
+        else if (language == GEN_LANG_PERL && folder->hasValue(prop_folder_perl_output_folder))
+            result = folder->as_string(prop_folder_perl_output_folder);
+        else if (language == GEN_LANG_PHP && folder->hasValue(prop_folder_php_output_folder))
+            result = folder->as_string(prop_folder_php_output_folder);
     }
 
     // Even if the node has a folder parent, there may not be a directory set for it, so check
@@ -230,6 +238,14 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
             result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
+        else if (language == GEN_LANG_HASKELL && m_project_node->hasValue(prop_haskell_output_folder))
+            result = m_project_node->as_string(prop_haskell_output_folder);
+        else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
+            result = m_project_node->as_string(prop_lua_output_folder);
+        else if (language == GEN_LANG_PERL && m_project_node->hasValue(prop_perl_output_folder))
+            result = m_project_node->as_string(prop_perl_output_folder);
+        else if (language == GEN_LANG_PHP && m_project_node->hasValue(prop_php_output_folder))
+            result = m_project_node->as_string(prop_php_output_folder);
     }
 
     if (result.empty())
@@ -250,8 +266,25 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
         case GEN_LANG_RUBY:
             base_file = form->as_string(prop_ruby_file);
             break;
+        case GEN_LANG_HASKELL:
+            base_file = form->as_string(prop_haskell_file);
+            break;
+        case GEN_LANG_LUA:
+            base_file = form->as_string(prop_lua_file);
+            break;
+        case GEN_LANG_PERL:
+            base_file = form->as_string(prop_perl_file);
+            break;
+        case GEN_LANG_PHP:
+            base_file = form->as_string(prop_php_file);
+            break;
+
         case GEN_LANG_XRC:
             base_file = form->as_string(prop_xrc_file);
+            break;
+
+        default:
+            FAIL_MSG(tt_string() << "Unknown language: " << language);
             break;
     }
 
@@ -291,7 +324,7 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, int languag
 
 // Note that this will return a directory for GEN_LANG_PYTHON and GEN_LANG_XRC even though we currently
 // don't generate derived files for those languages.
-tt_string ProjectHandler::getDerivedDirectory(Node* node, int language) const
+tt_string ProjectHandler::getDerivedDirectory(Node* node, GenLang language) const
 {
     tt_string result;
 
@@ -349,7 +382,7 @@ Node* ProjectHandler::getFirstFormChild(Node* node) const
     return nullptr;
 }
 
-int ProjectHandler::getCodePreference(Node* node) const
+GenLang ProjectHandler::getCodePreference(Node* node) const
 {
     tt_string value = Project.as_string(prop_code_preference);
     if (node)
@@ -370,8 +403,14 @@ int ProjectHandler::getCodePreference(Node* node) const
         return GEN_LANG_PYTHON;
     else if (value == "Ruby")
         return GEN_LANG_RUBY;
+    else if (value == "Haskell")
+        return GEN_LANG_HASKELL;
+    else if (value == "Lua")
+        return GEN_LANG_LUA;
     else if (value == "Perl")
         return GEN_LANG_PERL;
+    else if (value == "PHP")
+        return GEN_LANG_PHP;
     else if (value == "XRC")
         return GEN_LANG_XRC;
     else

@@ -262,7 +262,11 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         else
             m_pMainFrame->getPropPanel()->Create();
 
-        if (Project.as_string(prop_code_preference) == "Python")
+        // TODO: [Randalphwa - 09-30-2024] Once all generators support SupportedLanguages(), this
+        // could should be changed to call the generator to determine if the control is supported by
+        // the current language.
+
+        if (Project.getCodePreference() == GEN_LANG_PYTHON)
         {
             if (std::find(unsupported_gen_python.begin(), unsupported_gen_python.end(), iter->second->getGenName()) !=
                 unsupported_gen_python.end())
@@ -272,7 +276,7 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
                 info->ShowMessage("This control is not supported by wxPython.", wxICON_INFORMATION);
             }
         }
-        if (Project.as_string(prop_code_preference) == "Ruby")
+        else if (Project.getCodePreference() == GEN_LANG_RUBY)
         {
             if (std::find(unsupported_gen_ruby.begin(), unsupported_gen_ruby.end(), iter->second->getGenName()) !=
                 unsupported_gen_ruby.end())

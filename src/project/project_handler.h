@@ -123,14 +123,18 @@ public:
 
     bool isUiAllowed() const { return m_allow_ui; }
 
-    bool is_wxWidgets31() const { return m_project_node->as_string(prop_wxWidgets_version) == "3.1"; }
-    int get_WidgetsMinorVersion();  // Currently returns 1, 2 or 3 for 3.1, 3.2, 3.3
+    bool is_wxWidgets31() const { return (getLangVersion(GEN_LANG_CPLUSPLUS) > 30106); }
 
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 
     // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
     // override of the language.
     GenLang getCodePreference(Node* node = nullptr) const;
+
+    // Assume major, minor, and patch have 99 possible values.
+    // Returns major * 10000 + minor * 100 + patch
+    // E.g., wxWidgets 3.1.6 returns 30106, 3.2.0 returns 30200
+    int getLangVersion(GenLang language) const;
 
     // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }

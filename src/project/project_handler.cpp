@@ -639,12 +639,110 @@ Node* ProjectHandler::getDataForm()
     return m_DataForm;
 }
 
-int ProjectHandler::get_WidgetsMinorVersion()
+int ProjectHandler::getLangVersion(GenLang language) const
 {
-    tt_string_view version = m_project_node->as_string(prop_wxWidgets_version);
-    if (version.empty())
-        return 1;
-    ASSERT(version.find('.') != tt::npos);
-    version = version.substr(version.find('.') + 1);
-    return tt::atoi(version);
+    tt_string_view version = tt::emptystring;
+
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            version = m_project_node->as_string(prop_wxWidgets_version);
+            break;
+
+        case GEN_LANG_PYTHON:
+            version = m_project_node->as_string(prop_wxPython_version);
+            break;
+
+        case GEN_LANG_RUBY:
+            version = m_project_node->as_string(prop_wxRuby_version);
+            break;
+
+        case GEN_LANG_HASKELL:
+            version = m_project_node->as_string(prop_wxHaskell_version);
+            break;
+
+        case GEN_LANG_LUA:
+            version = m_project_node->as_string(prop_wxLua_version);
+            break;
+
+        case GEN_LANG_PERL:
+            version = m_project_node->as_string(prop_wxPerl_version);
+            break;
+
+        case GEN_LANG_PHP:
+            version = m_project_node->as_string(prop_wxPHP_version);
+            break;
+
+        case GEN_LANG_XRC:
+            version = m_project_node->as_string(prop_wxWidgets_version);
+            break;
+
+        default:
+            FAIL_MSG(tt_string() << "Unknown language: " << language);
+            break;
+    }
+
+    int major = 1;
+    int minor = 0;
+    int patch = 0;
+
+    if (version.size())
+    {
+        if (version.contains("."))
+        {
+            tt_string_vector parts(version, '.');
+            if (parts.size() > 0)
+                major = tt::atoi(parts[0]);
+            if (parts.size() > 1)
+                minor = tt::atoi(parts[1]);
+            if (parts.size() > 2)
+                patch = tt::atoi(parts[2]);
+        }
+        else if (version.contains("-"))
+        {
+            tt_string_vector parts(version, '-');
+            if (parts.size() > 0)
+                major = tt::atoi(parts[0]);
+            if (parts.size() > 1)
+                minor = tt::atoi(parts[1]);
+            if (parts.size() > 2)
+                patch = tt::atoi(parts[2]);
+        }
+        else
+        {
+            major = tt::atoi(version);
+            for (int pos = 0; pos < version.size(); ++pos)
+            {
+                if (!tt::is_digit(version[pos]))
+                {
+                    while (pos < version.size() && !tt::is_digit(version[pos]))
+                    {
+                        ++pos;
+                    }
+                    version.remove_prefix(pos);
+                }
+            }
+            if (version.size())
+            {
+                minor = tt::atoi(version);
+            }
+            for (int pos = 0; pos < version.size(); ++pos)
+            {
+                if (!tt::is_digit(version[pos]))
+                {
+                    while (pos < version.size() && !tt::is_digit(version[pos]))
+                    {
+                        ++pos;
+                    }
+                    version.remove_prefix(pos);
+                }
+            }
+            if (version.size())
+            {
+                patch = tt::atoi(version);
+            }
+        }
+    }
+
+    return major * 10000 + minor * 100 + patch;
 }

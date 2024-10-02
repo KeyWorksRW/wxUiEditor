@@ -197,7 +197,9 @@ public:
     // Call this to retrieve any warning text when generating code for the specific language.
     virtual std::optional<tt_string> GetWarning(Node*, GenLang /* language */) { return {}; }
 
-    virtual int SupportedLanguages() { return 0xFFF; }  // All languages supported
+    // result.has_value() == true indicates that the generator cannot construct the object
+    // using the current language and version. Use result.value() to get the error message.
+    virtual std::optional<tt_string> isLanguageVersionSupported(GenLang /* language */) { return {}; }
 };
 
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},

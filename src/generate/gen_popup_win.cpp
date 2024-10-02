@@ -300,7 +300,14 @@ bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-int PopupWinBaseGenerator::SupportedLanguages()
+std::optional<tt_string> PopupWinBaseGenerator::isLanguageVersionSupported(GenLang language)
 {
-    return GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY;
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY)))
+        return {};
+    // TODO: [Randalphwa - 10-01-2024] At some point, other languages may have versions that support these,
+    // in which case call Project.getLangVersion()
+
+    tt_string msg = "wxPopupWindow and wxPopupTransientWindow are not supported by " + AddLanguageName(language);
+
+    return msg;
 }

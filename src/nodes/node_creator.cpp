@@ -223,46 +223,18 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
 
     if (verify_language_support && node)
     {
-        if (auto gen = node->getGenerator(); gen && !(Project.getCodePreference() & gen->SupportedLanguages()))
+        if (auto gen = node->getGenerator(); gen)
         {
-            tt_string msg = node->declName();
-            msg << " is not supported by ";
-            auto lang = Project.getCodePreference();
-            switch (lang)
+            auto result = gen->isLanguageVersionSupported(Project.getCodePreference());
+            if (result.has_value())
             {
-                case GEN_LANG_CPLUSPLUS:
-                    msg << "C++";
-                    break;
-                case GEN_LANG_PYTHON:
-                    msg << "Python";
-                    break;
-                case GEN_LANG_RUBY:
-                    msg << "Ruby";
-                    break;
-                case GEN_LANG_HASKELL:
-                    msg << "Haskell";
-                    break;
-                case GEN_LANG_LUA:
-                    msg << "Lua";
-                    break;
-                case GEN_LANG_PERL:
-                    msg << "Perl";
-                    break;
-                case GEN_LANG_PHP:
-                    msg << "PHP";
-                    break;
-                case GEN_LANG_XRC:
-                    msg << "XRC";
-                    break;
-                default:
-                    msg << "an unknown language";
-                    break;
-            }
-
-            msg << ". Create anyway?";
-            if (wxMessageBox(msg, "Unsupported widget", wxYES_NO | wxICON_QUESTION) == wxNO)
-            {
-                return { NodeSharedPtr(), Node::unsupported_language };
+                if (wxMessageBox(result.value() + ". Create anyway?", "Unsupported widget", wxYES_NO | wxICON_QUESTION) ==
+                    wxNO)
+                {
+                    // Because node only has a sigle reference, it will be deleted when it goes out
+                    // of scope via this return.
+                    return { NodeSharedPtr(), Node::unsupported_language };
+                }
             }
         }
     }

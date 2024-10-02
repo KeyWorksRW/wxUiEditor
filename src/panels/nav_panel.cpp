@@ -262,9 +262,9 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         else
             m_pMainFrame->getPropPanel()->Create();
 
-        // TODO: [Randalphwa - 09-30-2024] Once all generators support SupportedLanguages(), this
-        // could should be changed to call the generator to determine if the control is supported by
-        // the current language.
+        // TODO: [Randalphwa - 09-30-2024] Once all generators support isLanguageVersionSupported(),
+        // this could should be changed to call the generator to determine if the control is
+        // supported by the current language.
 
         if (Project.getCodePreference() == GEN_LANG_PYTHON)
         {

@@ -230,11 +230,15 @@ void BaseCodeGenerator::WriteImagePostHeader()
 
 // clang-format off
 
-std::map<int, GenEnum::PropName> map_lang_to_prop = {
+std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
     { GEN_LANG_CPLUSPLUS, prop_cpp_line_length },
     { GEN_LANG_PYTHON, prop_python_line_length },
     { GEN_LANG_RUBY, prop_ruby_line_length  },
+    { GEN_LANG_HASKELL, prop_haskell_line_length },
+    { GEN_LANG_LUA, prop_lua_line_length },
+    { GEN_LANG_PERL, prop_perl_line_length },
+    { GEN_LANG_PHP, prop_php_line_length },
 
 };
 

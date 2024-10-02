@@ -575,3 +575,37 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language)
     else
         return true;
 }
+
+std::string AddLanguageName(GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            return "C++";
+            break;
+        case GEN_LANG_PYTHON:
+            return "Python";
+            break;
+        case GEN_LANG_RUBY:
+            return "Ruby";
+            break;
+        case GEN_LANG_HASKELL:
+            return "Haskell";
+            break;
+        case GEN_LANG_LUA:
+            return "Lua";
+            break;
+        case GEN_LANG_PERL:
+            return "Perl";
+            break;
+        case GEN_LANG_PHP:
+            return "PHP";
+            break;
+        case GEN_LANG_XRC:
+            return "XRC";
+            break;
+        default:
+            return "an unknown language";
+            break;
+    }
+}

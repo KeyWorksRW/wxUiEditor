@@ -839,23 +839,7 @@ void MainFrame::ProjectLoaded()
 
     m_selected_node = Project.getProjectNode()->getSharedPtr();
 
-    auto& code_preference = Project.as_string(prop_code_preference);
-    if (code_preference == "Haskell")
-    {
-        EnableCodePanels(GEN_LANG_HASKELL);
-    }
-    else if (code_preference == "Lua")
-    {
-        EnableCodePanels(GEN_LANG_LUA);
-    }
-    else if (code_preference == "Perl")
-    {
-        EnableCodePanels(GEN_LANG_PERL);
-    }
-    else if (code_preference == "Php")
-    {
-        EnableCodePanels(GEN_LANG_PHP);
-    }
+    EnableCodePanels(Project.getCodePreference());
 }
 
 void MainFrame::ProjectSaved()

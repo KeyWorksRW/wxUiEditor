@@ -3975,7 +3975,7 @@
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h;wx/tokenzr.h"
         header_preamble="class NodeProperty;"
-        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;int m_language = GEN_LANG_CPLUSPLUS;&quot;"
+        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GEN_LANG_CPLUSPLUS;&quot;"
         class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
         private_members="1"
         use_derived_class="0"
@@ -7520,7 +7520,7 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;3.1&quot; &quot;3.2&quot; &quot;3.3&quot;"
+                  contents="&quot;3.1.0&quot; &quot;3.2.0&quot; &quot;3.3.0&quot;"
                   selection_string="3.2"
                   var_name="m_choice_cpp_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
@@ -7621,8 +7621,8 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;4.2&quot;"
-                  selection_string="4.2"
+                  contents="&quot;4.2.0&quot;"
+                  selection_string="4.2.0"
                   var_name="m_choice_python_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
@@ -7722,8 +7722,8 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;1.2&quot;"
-                  selection_string="1.2"
+                  contents="&quot;1.0.0&quot; &quot;1.2.0&quot; &quot;1.2.1&quot;"
+                  selection_string="1.2.1"
                   var_name="m_choice_ruby_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
@@ -7813,8 +7813,8 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;1.0&quot;"
-                  selection_string="1.0"
+                  contents="&quot;1-0-0&quot;"
+                  selection_string="1-0-0"
                   var_name="m_choice_haskell_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
@@ -7904,7 +7904,7 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;3.2.0&quot;"
+                  contents="&quot;3.0.0&quot; &quot;3.2.0&quot;"
                   selection_string="3.2.0"
                   var_name="m_choice_ruby_version3"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
@@ -8086,8 +8086,8 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;3.0.5&quot;"
-                  selection_string="3.0.5"
+                  contents="&quot;3.0.51&quot;"
+                  selection_string="3.0.51"
                   var_name="m_choice_php_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>

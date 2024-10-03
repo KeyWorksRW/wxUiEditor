@@ -160,9 +160,9 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_5->Add(static_text, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_cpp_version = new wxChoice(page_cpp, wxID_ANY);
-    m_choice_cpp_version->Append("3.1");
-    m_choice_cpp_version->Append("3.2");
-    m_choice_cpp_version->Append("3.3");
+    m_choice_cpp_version->Append("3.1.0");
+    m_choice_cpp_version->Append("3.2.0");
+    m_choice_cpp_version->Append("3.3.0");
     m_choice_cpp_version->SetStringSelection("3.2");
     m_choice_cpp_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer_5->Add(m_choice_cpp_version, wxSizerFlags().Border(wxALL));
@@ -229,8 +229,8 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer7->Add(static_text3, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_python_version = new wxChoice(page_python, wxID_ANY);
-    m_choice_python_version->Append("4.2");
-    m_choice_python_version->SetStringSelection("4.2");
+    m_choice_python_version->Append("4.2.0");
+    m_choice_python_version->SetStringSelection("4.2.0");
     m_choice_python_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer7->Add(m_choice_python_version, wxSizerFlags().Border(wxALL));
 
@@ -296,8 +296,10 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer6->Add(static_text2, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_ruby_version = new wxChoice(page_ruby, wxID_ANY);
-    m_choice_ruby_version->Append("1.2");
-    m_choice_ruby_version->SetStringSelection("1.2");
+    m_choice_ruby_version->Append("1.0.0");
+    m_choice_ruby_version->Append("1.2.0");
+    m_choice_ruby_version->Append("1.2.1");
+    m_choice_ruby_version->SetStringSelection("1.2.1");
     m_choice_ruby_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer6->Add(m_choice_ruby_version, wxSizerFlags().Border(wxALL));
 
@@ -357,8 +359,8 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer10->Add(static_text5, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_haskell_version = new wxChoice(page_haskell, wxID_ANY);
-    m_choice_haskell_version->Append("1.0");
-    m_choice_haskell_version->SetStringSelection("1.0");
+    m_choice_haskell_version->Append("1-0-0");
+    m_choice_haskell_version->SetStringSelection("1-0-0");
     m_choice_haskell_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer10->Add(m_choice_haskell_version, wxSizerFlags().Border(wxALL));
 
@@ -418,6 +420,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer12->Add(static_text6, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_ruby_version3 = new wxChoice(page_lua, wxID_ANY);
+    m_choice_ruby_version3->Append("3.0.0");
     m_choice_ruby_version3->Append("3.2.0");
     m_choice_ruby_version3->SetStringSelection("3.2.0");
     m_choice_ruby_version3->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
@@ -541,8 +544,8 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer16->Add(static_text8, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_php_version = new wxChoice(page_php, wxID_ANY);
-    m_choice_php_version->Append("3.0.5");
-    m_choice_php_version->SetStringSelection("3.0.5");
+    m_choice_php_version->Append("3.0.51");
+    m_choice_php_version->SetStringSelection("3.0.51");
     m_choice_php_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer16->Add(m_choice_php_version, wxSizerFlags().Border(wxALL));
 

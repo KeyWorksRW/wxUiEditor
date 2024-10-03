@@ -123,7 +123,7 @@ public:
 
     bool isUiAllowed() const { return m_allow_ui; }
 
-    bool is_wxWidgets31() const { return (getLangVersion(GEN_LANG_CPLUSPLUS) > 30106); }
+    bool is_wxWidgets31() const { return (getLangVersion(GEN_LANG_CPLUSPLUS) < 30200); }
 
     size_t getChildCount() const { return m_project_node->getChildCount(); }
 

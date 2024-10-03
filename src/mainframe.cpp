@@ -836,6 +836,10 @@ void MainFrame::ProjectLoaded()
     {
         Project.set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
     }
+    else if (Project.as_string(prop_wxWidgets_version) == "3.2")
+    {
+        Project.set_value(prop_wxWidgets_version, "3.2.0");
+    }
 
     m_selected_node = Project.getProjectNode()->getSharedPtr();
 

@@ -46,7 +46,7 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6368]; // 34953
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10645]; // 51161
+    extern const unsigned char interfaces[10644]; // 51170
     // ../xml/mdi.xml
     extern const unsigned char mdi[1791]; // 5631
     // ../xml/pickers.xml

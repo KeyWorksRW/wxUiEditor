@@ -711,7 +711,7 @@ int ProjectHandler::getLangVersion(GenLang language) const
         else
         {
             major = tt::atoi(version);
-            for (int pos = 0; pos < version.size(); ++pos)
+            for (size_t pos = 0; pos < version.size(); ++pos)
             {
                 if (!tt::is_digit(version[pos]))
                 {
@@ -726,7 +726,7 @@ int ProjectHandler::getLangVersion(GenLang language) const
             {
                 minor = tt::atoi(version);
             }
-            for (int pos = 0; pos < version.size(); ++pos)
+            for (size_t pos = 0; pos < version.size(); ++pos)
             {
                 if (!tt::is_digit(version[pos]))
                 {

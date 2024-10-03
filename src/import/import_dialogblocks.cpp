@@ -75,9 +75,9 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
         {
             auto version = ExtractQuotedString(option);
             if (version == "3.1.0")
-                m_project->set_value(prop_wxWidgets_version, "3.1");
+                m_project->set_value(prop_wxWidgets_version, "3.1.0");
             else if (version == "3.2.0")
-                m_project->set_value(prop_wxWidgets_version, "3.2");
+                m_project->set_value(prop_wxWidgets_version, "3.2.0");
         }
 
         option = header.find_child_by_attribute("bool", "name", "translate_strings");

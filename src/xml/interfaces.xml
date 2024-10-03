@@ -298,6 +298,7 @@
 			<option name="3.1.0"/>
 			<option name="3.2.0"/>
 			<option name="3.3.0"/>
+			3.2.0
 		</property>
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file."/>

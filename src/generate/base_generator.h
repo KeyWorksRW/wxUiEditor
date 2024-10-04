@@ -200,6 +200,12 @@ public:
     // result.has_value() == true indicates that the generator cannot construct the object
     // using the current language and version. Use result.value() to get the error message.
     virtual std::optional<tt_string> isLanguageVersionSupported(GenLang /* language */) { return {}; }
+
+    // result.has_value() == true indicates that the property is not supported using the
+    // current language and version. Use result.value() to get the warning message. This will
+    // be called *after* the property is set, so the generator can query the property's
+    // current value.
+    virtual std::optional<tt_string> isLanguagePropSupported(Node*, GenLang, GenEnum::PropName);
 };
 
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},

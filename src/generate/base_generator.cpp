@@ -923,6 +923,32 @@ int BaseGenerator::GetRequiredVersion(Node* node)
     return minRequiredVer;
 }
 
+std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenLang language, GenEnum::PropName prop)
+{
+    if (prop == prop_persist && node->as_bool(prop))
+    {
+        switch (language)
+        {
+            case GEN_LANG_LUA:
+                return "persist is not supported in Lua";
+            case GEN_LANG_PERL:
+                return "persist is not supported in Perl";
+            case GEN_LANG_PHP:
+                return "persist is not supported in PHP";
+            case GEN_LANG_PYTHON:
+                return "persist is not supported in Python";
+            case GEN_LANG_HASKELL:
+                return "persist is not supported in Haskell";
+            case GEN_LANG_XRC:
+                return "persist is not supported in XRC";
+            default:
+                return {};
+        }
+    }
+
+    return {};
+}
+
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help,
                              std::string_view def_value)
 {

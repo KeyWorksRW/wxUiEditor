@@ -237,6 +237,11 @@ public:
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
+    // Shows info bar message above code display panels
+    // icon is one of wxICON_INFORMATION, wxICON_WARNING, wxICON_ERROR, or wxICON_QUESTION
+    void ShowInfoBarMsg(const tt_string& msg, int icon = wxICON_WARNING);
+    void DismissInfoBar();
+
     wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
 
     void ProjectLoaded();
@@ -406,6 +411,7 @@ private:
     wxSize m_dpi_toolbar_size;
 
     wxInfoBar* m_info_bar { nullptr };
+    bool m_info_bar_dismissed { true };
 
     ueStatusBar* m_statBar { nullptr };
 

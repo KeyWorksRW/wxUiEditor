@@ -650,7 +650,30 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
-    // TODO: [Randalphwa - 07-13-2023] Need to figure out if wxRuby supports persistence
+    if (m_form_node->as_bool(prop_persist))
+    {
+        m_source->writeLine();
+        tt_string tmp("Wx.persistent_register_and_restore(self, \"");
+        tmp << m_form_node->getNodeName() << "\");";
+        m_source->writeLine(tmp);
+    }
+
+    auto rlambda = [&](Node* node, auto&& rlambda) -> void
+    {
+        if (node->hasValue(prop_persist_name))
+        {
+            tt_string code("Wx.persistent_register_and_restore(");
+            code << node->getNodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
+            m_source->writeLine(code);
+        }
+
+        for (const auto& child: node->getChildNodePtrs())
+        {
+            rlambda(child.get(), rlambda);
+        }
+    };
+
+    rlambda(m_form_node, rlambda);
 
     // Timer code must be created before the events, otherwise the timer variable won't exist
     // when the event is created.

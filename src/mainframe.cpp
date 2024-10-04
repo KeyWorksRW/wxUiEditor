@@ -2270,3 +2270,18 @@ void MainFrame::OnReloadProject(wxCommandEvent& WXUNUSED(event))
         Project.LoadProject(Project.getProjectFile());
     }
 }
+
+void MainFrame::ShowInfoBarMsg(const tt_string& msg, int icon)
+{
+    m_info_bar->ShowMessage(msg, icon);
+    m_info_bar_dismissed = false;
+}
+
+void MainFrame::DismissInfoBar()
+{
+    if (!m_info_bar_dismissed)
+    {
+        m_info_bar->Dismiss();
+        m_info_bar_dismissed = true;
+    }
+}

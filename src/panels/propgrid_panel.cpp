@@ -1358,6 +1358,23 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     }
 
     ChangeEnableState(prop);
+
+    if (auto gen = prop->getNode()->getGenerator(); gen)
+    {
+        auto result = gen->isLanguagePropSupported(prop->getNode(), Project.getCodePreference(), prop->get_name());
+        if (result.has_value())
+        {
+            wxGetFrame().ShowInfoBarMsg(result.value());
+        }
+        else
+        {
+            wxGetFrame().DismissInfoBar();
+        }
+    }
+    else
+    {
+        wxGetFrame().DismissInfoBar();
+    }
 }
 
 void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)

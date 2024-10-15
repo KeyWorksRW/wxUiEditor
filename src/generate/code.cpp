@@ -50,6 +50,9 @@ static const view_map s_short_python_map
     { "wxGRID_", "wx.grid."},
 
     { "wxEVT_DATAVIEW_", "wx.dataview."},
+    { "wxEVT_TREELIST_", "wx.dataview." },
+    { "wxTL_", "wx.dataview." },
+
     { "wxEVT_DATE_", "wx.adv."},
     { "wxEVT_GRID_", "wx.grid." },
     { "wxEVT_RIBBON", "wx.ribbon." },
@@ -91,6 +94,7 @@ const view_map g_map_python_prefix
     { "wxDataViewCtrl",         "wx.dataview."},
     { "wxDataViewListCtrl",     "wx.dataview."},
     { "wxDataViewTreeCtrl",     "wx.dataview."},
+    { "wxTreeListCtrl",         "wx.dataview."},
     { "wxGrid",                 "wx.grid."},
     { "wxPropertyGridManager",  "wx.propgrid."},
     { "wxPropertyGrid",         "wx.propgrid."},

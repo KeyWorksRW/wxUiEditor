@@ -265,9 +265,13 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     // CreateSeparatedSizer, the dialog will not display correctly and will shortly exit. To
     // work around this, we create the line ourselves (except on MAC).
 
-    code += "if \"wxMac\" not in wx.PlatformInfo:";
-    code.Eol().Tab().NodeName().Add("_line = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))");
-    code.Eol().Tab().ParentName().Function("Add(").NodeName() += "_line, wx.SizerFlags().Expand().Border(wx.ALL))";
+    code.Str("if \"wxMac\" not in wx.PlatformInfo:");
+    // Because we are combining the node name with "_line", we need to do it *before* we add the
+    // wx.StaticLine portion, or Str() will break the line after NodeName().
+    code.Eol().Tab().NodeName().Str("_line = \\");
+    code.Eol().Tab().Tab().Str("wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(20, -1))");
+    code.Eol().Tab().ParentName().Function("Add(").NodeName().Str("_line, ");
+    code.Str("wx.SizerFlags().Expand().Border(wx.ALL))");
 
     code.Eol().Eol().NodeName().Add(" = wx.StdDialogButtonSizer()");
 

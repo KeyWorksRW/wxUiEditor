@@ -412,21 +412,17 @@ size_t tt_string::get_hash() const noexcept
 
 tt_string& tt_string::MakeLower()
 {
-    auto utf8locale = std::locale("en_US.utf8");
-    for (auto iter = begin(); iter != end(); ++iter)
-    {
-        *iter = std::tolower(*iter, utf8locale);
-    }
+    wxString str = wxString::FromUTF8(data());
+    str.MakeLower();
+    *this = str.utf8_string();
     return *this;
 }
 
 tt_string& tt_string::MakeUpper()
 {
-    auto utf8locale = std::locale("en_US.utf8");
-    for (auto iter = begin(); iter != end(); ++iter)
-    {
-        *iter = std::toupper(*iter, utf8locale);
-    }
+    wxString str = wxString::FromUTF8(data());
+    str.MakeUpper();
+    *this = str.utf8_string();
     return *this;
 }
 

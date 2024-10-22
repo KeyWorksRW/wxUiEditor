@@ -59,13 +59,13 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_panel_form ||
             parent_type == type_wizard)
         {
-            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->getParentName() << "::" << node->getParentName()
-                 << "OnContextMenu, this);";
+            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->getParentName(code.get_language())
+                 << "::" << node->getParentName(code.get_language()) << "OnContextMenu, this);";
         }
         else
         {
             code.ValidParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
-                << node->getFormName() << "::" << node->getParentName() << "OnContextMenu, this);";
+                << node->getFormName() << "::" << node->getParentName(code.get_language()) << "OnContextMenu, this);";
         }
     }
     code.Eol(eol_if_needed);

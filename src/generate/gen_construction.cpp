@@ -194,7 +194,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
             else
             {
-                if (GetParentName(node) != "this")
+                if (GetParentName(node, m_language) != "this")
                     gen_code.ParentName();
                 else if (gen_code.is_python())
                     gen_code.Str("self");

@@ -121,7 +121,7 @@ static constexpr GenType s_GenParentTypes[] = {
 
 // clang-format on
 
-tt_string GetParentName(Node* node)
+tt_string GetParentName(Node* node, GenLang language)
 {
     auto parent = node->getParent();
     while (parent)
@@ -130,7 +130,7 @@ tt_string GetParentName(Node* node)
         {
             if (parent->isStaticBoxSizer())
             {
-                return (tt_string() << parent->getNodeName() << "->GetStaticBox()");
+                return (tt_string() << parent->getNodeName(language) << "->GetStaticBox()");
             }
         }
         if (parent->isForm())
@@ -142,7 +142,7 @@ tt_string GetParentName(Node* node)
         {
             if (parent->isType(iter))
             {
-                tt_string name = parent->getNodeName();
+                tt_string name = parent->getNodeName(language);
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     name << "->GetPane()";

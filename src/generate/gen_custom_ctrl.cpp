@@ -98,7 +98,7 @@ bool CustomControl::ConstructionCode(Code& code)
     tt_string parameters(code.view(prop_parameters));
     if (parameters.starts_with('('))
         parameters.erase(0, 1);
-    parameters.Replace("${parent}", code.node()->getParentName(), tt::REPLACE::all);
+    parameters.Replace("${parent}", code.node()->getParentName(code.get_language()), tt::REPLACE::all);
     if (code.is_cpp())
     {
         parameters.Replace("self", "this", tt::REPLACE::all);

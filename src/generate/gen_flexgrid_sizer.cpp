@@ -171,7 +171,7 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
         }
         else
         {
-            if (GetParentName(code.node()) != "this")
+            if (GetParentName(code.node(), code.get_language()) != "this")
             {
                 code.ValidParentName().Function("SetSizerAndFit(");
             }

@@ -499,10 +499,46 @@ const tt_string& Node::getNodeName() const
         return tt_empty_cstr;
 }
 
+tt_string_view Node::getNodeName(GenLang lang) const
+{
+    tt_string_view name = getNodeName();
+    if (lang == GEN_LANG_CPLUSPLUS)
+    {
+        // Valid for Ruby, but not for C++
+        if (name[0] == '@')
+            name.remove_prefix(1);
+        // Used for local Python variables, but non-standard for C++ where '_' is typically used for
+        // member variables
+        else if (name[0] == '_' && isLocal())
+            name.remove_prefix(1);
+        return name;
+    }
+
+    if (name[0] == '@' && lang != GEN_LANG_RUBY)
+    {
+        name.remove_prefix(1);
+        return name;
+    }
+
+    // GEN_LANG_CPLUSPLUS is handled above
+    ASSERT(lang != GEN_LANG_CPLUSPLUS);
+    if (name.starts_with("m_"))
+        name.remove_prefix(2);
+    return name;
+}
+
 const tt_string& Node::getParentName() const
 {
     if (m_parent)
         return m_parent->getNodeName();
+
+    return tt_empty_cstr;
+}
+
+tt_string_view Node::getParentName(GenLang lang) const
+{
+    if (m_parent)
+        return m_parent->getNodeName(lang);
 
     return tt_empty_cstr;
 }

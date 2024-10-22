@@ -49,13 +49,13 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
         {
             if (parent->isContainer())
             {
-                parent_name = parent->getNodeName();
+                parent_name = parent->getNodeName(code.get_language());
                 break;
             }
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name = parent->getNodeName();
+                parent_name = parent->getNodeName(code.get_language());
                 if (code.is_cpp())
                     parent_name << "->GetStaticBox()";
                 else if (code.is_python())

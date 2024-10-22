@@ -165,8 +165,16 @@ public:
     // Returns the value of the property "var_name" or "class_name"
     const tt_string& getNodeName() const;
 
+    // May remove prefix based on the language -- e.g., @foo become foo unless the language
+    // is GEN_LANG_RUBY
+    tt_string_view getNodeName(GenLang lang) const;
+
     // Returns the value of the parent property "var_name" or "class_name"
     const tt_string& getParentName() const;
+
+    // May remove prefix based on the language -- e.g., @foo become foo unless the language
+    // is GEN_LANG_RUBY
+    tt_string_view getParentName(GenLang lang) const;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.
     Node* getForm() noexcept;

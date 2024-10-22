@@ -66,6 +66,13 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
             }
             parent = parent->getParent();
         }
+        if (parent)
+        {
+            if (code.is_python() && !parent->isLocal())
+                parent_name = "self." + parent_name;
+            else if (code.is_ruby() && !parent->isLocal())
+                parent_name = "@" + parent_name;
+        }
     }
     code.AddAuto().NodeName().CreateClass().Add(prop_orientation).Comma().Str(parent_name);
 

@@ -243,7 +243,9 @@ void PropGridPanel::Create()
                         if (!lang_found)
                         {
                             if (!info_base->declName().is_sameas("Window Events"))
+                            {
                                 CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                            }
                             else
                                 CreateEventCategory(info_base->declName(), node, info_base, event_set);
                             continue;
@@ -1073,6 +1075,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     auto prop = it->second;
     if (prop->get_name() == prop_code_preference)
     {
+        // TODO: [Randalphwa - 10-23-2024] Either code preferences should only show
+        // prop_generate_languages, or prop_generate_languages should always update the code
+        // preferences. Even better would be to disable the matching generate language bit so that
+        // the user can't shut it off.
+
         modifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
         auto grid_iterator = m_prop_grid->GetCurrentPage()->GetIterator(wxPG_ITERATE_CATEGORIES);
         while (!grid_iterator.AtEnd())
@@ -1131,7 +1138,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
                 }
             }
             else if (grid_property->GetLabel().Contains("Lua"))
@@ -1143,7 +1149,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
                 }
             }
             else if (grid_property->GetLabel().Contains("Perl"))
@@ -1155,7 +1160,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
                 }
             }
             else if (grid_property->GetLabel().Contains("PHP"))
@@ -1167,7 +1171,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
                 }
             }
 
@@ -1180,6 +1183,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         // written.
         auto config = wxConfig::Get();
         config->Write("GenCode", 0);
+
+        // wxGetFrame().UpdateLanguagePanels();
+        wxGetFrame().FireProjectLoadedEvent();
 
         return;
     }
@@ -1374,6 +1380,12 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     else
     {
         wxGetFrame().DismissInfoBar();
+    }
+
+    if (prop->get_name() == prop_generate_languages)
+    {
+        // wxGetFrame().UpdateLanguagePanels();
+        wxGetFrame().FireProjectLoadedEvent();
     }
 }
 
@@ -1643,15 +1655,8 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     }
     modifyProperty(node_prop, newValue);
 
-    // Create/enable the appropriate code panel if needed
-    if (node_prop->isProp(prop_haskell_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
-    else if (node_prop->isProp(prop_lua_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
-    else if (node_prop->isProp(prop_perl_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
-    else if (node_prop->isProp(prop_php_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
+    // Review: [Randalphwa - 06-26-2023] The panel should already have been created
+    // wxGetFrame().UpdateLanguagePanels();
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -1971,10 +1976,11 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     if (!category.getCategoryCount() && !category.getPropNameCount())
         return;
 
-#if !defined(GENERATE_PERL_CODE)
-    if (category.getName().contains("wxPerl"))
+    auto generate_languages = Project.getGenerateLanguages();
+
+    // Ignore if the user doesn't want to generate this language
+    if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
         return;
-#endif
 
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);

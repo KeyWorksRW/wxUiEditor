@@ -209,7 +209,10 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
     frame->AddCustomEventHandler(GetEventHandler());
 }
 
-BasePanel::~BasePanel() {}
+BasePanel::~BasePanel()
+{
+    wxGetMainFrame()->RemoveCustomEventHandler(GetEventHandler());
+}
 
 wxString BasePanel::GetSelectedText()
 {

@@ -87,7 +87,7 @@ public:
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-    void EnableCodePanels(GenLang language);
+    void UpdateLanguagePanels();
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
@@ -95,6 +95,7 @@ public:
     ImportPanel* getImportPanel() { return m_imnportPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
+    void RemoveCustomEventHandler(wxEvtHandler* handler);
 
     void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);

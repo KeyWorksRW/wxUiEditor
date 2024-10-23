@@ -843,7 +843,7 @@ void MainFrame::ProjectLoaded()
 
     m_selected_node = Project.getProjectNode()->getSharedPtr();
 
-    EnableCodePanels(Project.getCodePreference());
+    UpdateLanguagePanels();
 }
 
 void MainFrame::ProjectSaved()
@@ -1010,7 +1010,6 @@ void MainFrame::UpdateFrame()
 
 void MainFrame::OnProjectLoaded()
 {
-    ProjectLoaded();
     UpdateFrame();
 }
 
@@ -1349,34 +1348,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_mockupPanel = new MockupParent(m_notebook, this);
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
-    // The following panels are the core languages which are always displayed. Additional languages
-    // are be added dynamically as needed via EnableCodePanels().
-
-    m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
-    m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-
-    // Placing the Python panel first as it's the most commonly used language after C++
-    m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
-    m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
-
-    m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
-    m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
-        m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-
-        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
-        m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-
-        m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-        m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-
-        m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
-        m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
-    }
-
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 
@@ -1393,47 +1364,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     }
 
     return m_notebook;
-}
-
-void MainFrame::EnableCodePanels(GenLang language)
-{
-    switch (language)
-    {
-        case GEN_LANG_HASKELL:
-            if (!m_haskellPanel)
-            {
-                m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
-                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_LUA:
-            if (!m_luaPanel)
-            {
-                m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
-                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_PERL:
-            if (!m_perlPanel)
-            {
-                m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-                m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_PHP:
-            if (!m_phpPanel)
-            {
-                m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
-                m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        default:
-            break;  // All the others are already created by default
-    }
 }
 
 void MainFrame::CreateSplitters()
@@ -2283,5 +2213,247 @@ void MainFrame::DismissInfoBar()
     {
         m_info_bar->Dismiss();
         m_info_bar_dismissed = true;
+    }
+}
+
+void MainFrame::UpdateLanguagePanels()
+{
+    wxWindowUpdateLocker freeze(this);
+
+    // Temporarily remove XRC and DocView panels which are at the end. This allows us to simply add
+    // Language panels in order, then restore the XRC and DocView panels after all language panels
+    // have been added.
+
+    if (m_imnportPanel)
+    {
+        m_notebook->RemovePage(m_notebook->GetPageIndex(m_imnportPanel));
+    }
+
+    m_notebook->RemovePage(m_notebook->GetPageIndex(m_xrcPanel));
+    m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
+
+    auto languages = Project.getGenerateLanguages();
+    if (languages & GEN_LANG_CPLUSPLUS && !m_cppPanel)
+    {
+        m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
+        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+        {
+            m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_CPLUSPLUS) && m_cppPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_cppPanel));
+        m_cppPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_HASKELL && !m_haskellPanel)
+    {
+        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
+        if (Project.getCodePreference() == GEN_LANG_HASKELL)
+        {
+            m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_HASKELL) && m_haskellPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_haskellPanel));
+        m_haskellPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_LUA && !m_luaPanel)
+    {
+        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
+        if (Project.getCodePreference() == GEN_LANG_LUA)
+        {
+            m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_LUA) && m_luaPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_luaPanel));
+        m_luaPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_PERL && !m_perlPanel)
+    {
+        m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
+        if (Project.getCodePreference() == GEN_LANG_PERL)
+        {
+            m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_PERL) && m_perlPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_perlPanel));
+        m_perlPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_PYTHON && !m_pythonPanel)
+    {
+        m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
+        if (Project.getCodePreference() == GEN_LANG_PYTHON)
+        {
+            m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_PYTHON) && m_pythonPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_pythonPanel));
+        m_pythonPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_RUBY && !m_rubyPanel)
+    {
+        m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
+        if (Project.getCodePreference() == GEN_LANG_RUBY)
+        {
+            m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_RUBY) && m_rubyPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_rubyPanel));
+        m_rubyPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_PHP && !m_phpPanel)
+    {
+        m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
+        if (Project.getCodePreference() == GEN_LANG_PHP)
+        {
+            m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_PHP) && m_phpPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_phpPanel));
+        m_phpPanel = nullptr;
+    }
+
+    int position;
+    switch (Project.getCodePreference())
+    {
+        case GEN_LANG_CPLUSPLUS:
+            ASSERT(m_cppPanel);
+            position = m_notebook->GetPageIndex(m_cppPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_HASKELL:
+            ASSERT(m_haskellPanel);
+            position = m_notebook->GetPageIndex(m_haskellPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_LUA:
+            ASSERT(m_luaPanel);
+            position = m_notebook->GetPageIndex(m_luaPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PERL:
+            ASSERT(m_perlPanel);
+            position = m_notebook->GetPageIndex(m_perlPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PYTHON:
+            ASSERT(m_pythonPanel);
+            position = m_notebook->GetPageIndex(m_pythonPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_RUBY:
+            ASSERT(m_rubyPanel);
+            position = m_notebook->GetPageIndex(m_rubyPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PHP:
+            ASSERT(m_phpPanel);
+            position = m_notebook->GetPageIndex(m_phpPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    // Now add back the XRC and DocView panels at the end.
+    if (m_imnportPanel)
+    {
+        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+    }
+
+    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+    m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+}
+
+void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)
+{
+    for (auto iter = m_custom_event_handlers.begin(); iter != m_custom_event_handlers.end(); ++iter)
+    {
+        if (*iter == handler)
+        {
+            m_custom_event_handlers.erase(iter);
+            return;
+        }
     }
 }

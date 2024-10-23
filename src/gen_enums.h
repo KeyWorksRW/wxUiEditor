@@ -242,6 +242,7 @@ namespace GenEnum
         prop_foreground_colour,
         prop_generate_cmake,
         prop_generate_ids,
+        prop_generate_languages,
         prop_generate_translation_unit,
         prop_get_function,
         prop_grid_line_color,

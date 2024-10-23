@@ -397,6 +397,8 @@ GenLang ProjectHandler::getCodePreference(Node* node) const
         }
     }
 
+    // Note: Be sure this list matches the languages in ../xml/project.xml
+
     if (value == "C++")
         return GEN_LANG_CPLUSPLUS;
     else if (value == "Python")
@@ -415,6 +417,35 @@ GenLang ProjectHandler::getCodePreference(Node* node) const
         return GEN_LANG_XRC;
     else
         return GEN_LANG_CPLUSPLUS;
+}
+
+size_t ProjectHandler::getGenerateLanguages() const
+{
+    // Always set the project's code preference to the list
+    size_t languages = static_cast<size_t>(getCodePreference(m_project_node.get()));
+
+    tt_string value = Project.as_string(prop_generate_languages);
+
+    // Note: Be sure this list matches the languages in ../xml/project.xml
+
+    if (value.contains("C++", tt::CASE::either))
+        languages |= GEN_LANG_CPLUSPLUS;
+    if (value.contains("Python", tt::CASE::either))
+        languages |= GEN_LANG_PYTHON;
+    if (value.contains("Ruby", tt::CASE::either))
+        languages |= GEN_LANG_RUBY;
+    if (value.contains("Haskell", tt::CASE::either))
+        languages |= GEN_LANG_HASKELL;
+    if (value.contains("Lua", tt::CASE::either))
+        languages |= GEN_LANG_LUA;
+    if (value.contains("Perl", tt::CASE::either))
+        languages |= GEN_LANG_PERL;
+    if (value.contains("PHP", tt::CASE::either))
+        languages |= GEN_LANG_PHP;
+    if (value.contains("XRC", tt::CASE::either))
+        languages |= GEN_LANG_XRC;
+
+    return languages;
 }
 
 size_t ProjectHandler::getOutputType(int flags) const

@@ -144,6 +144,7 @@ enum GenLang : size_t
     GEN_LANG_HASKELL = 1 << 6,
 
     GEN_LANG_XRC = 1 << 7,
+    GEN_LANG_LAST = GEN_LANG_XRC,
 };
 
 // Used to index fields in a bitmap property

@@ -576,7 +576,7 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language)
         return true;
 }
 
-std::string AddLanguageName(GenLang language)
+std::string ConvertFromGenLang(GenLang language)
 {
     switch (language)
     {
@@ -608,4 +608,26 @@ std::string AddLanguageName(GenLang language)
             return "an unknown language";
             break;
     }
+}
+
+GenLang ConvertToGenLang(tt_string_view language)
+{
+    if (language.starts_with("C++") || language.starts_with("Folder C++"))
+        return GEN_LANG_CPLUSPLUS;
+    else if (language == "Python" || language.starts_with("wxPython") || language.starts_with("Folder wxPython"))
+        return GEN_LANG_PYTHON;
+    else if (language == "Ruby" || language.starts_with("wxRuby") || language.starts_with("Folder wxRuby"))
+        return GEN_LANG_RUBY;
+    else if (language == "Haskell" || language.starts_with("wxHaskell") || language.starts_with("Folder wxHaskell"))
+        return GEN_LANG_HASKELL;
+    else if (language == "Lua" || language.starts_with("wxLua") || language.starts_with("Folder wxLua"))
+        return GEN_LANG_LUA;
+    else if (language == "Perl" || language.starts_with("wxPerl") || language.starts_with("Folder wxPerl"))
+        return GEN_LANG_PERL;
+    else if (language == "PHP" || language.starts_with("wxPHP") || language.starts_with("Folder wxPHP"))
+        return GEN_LANG_PHP;
+    else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
+        return GEN_LANG_XRC;
+    else
+        return GEN_LANG_CPLUSPLUS;
 }

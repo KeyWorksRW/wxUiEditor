@@ -37,10 +37,10 @@ extern const char* g_php_keywords;
 constexpr size_t EVENT_PAGE_CPP = 0;
 constexpr size_t EVENT_PAGE_PYTHON = 1;
 constexpr size_t EVENT_PAGE_RUBY = 2;
-constexpr size_t EVENT_PAGE_PERL = 3;
+constexpr size_t EVENT_PAGE_HASKELL = 3;
 constexpr size_t EVENT_PAGE_LUA = 4;
-constexpr size_t EVENT_PAGE_PHP = 5;
-constexpr size_t EVENT_PAGE_HASKELL = 6;
+constexpr size_t EVENT_PAGE_PERL = 5;
+constexpr size_t EVENT_PAGE_PHP = 6;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
@@ -52,16 +52,16 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_perl_page = EVENT_PAGE_PERL;
     m_php_page = EVENT_PAGE_PHP;
 
-    m_output_type = Project.getOutputType(OUT_FLAG_IGNORE_DERIVED | OUT_FLAG_IGNORE_XRC);
-    m_code_preference = Project.getCodePreference(event->getNode());
+    m_gen_languages = Project.getGenerateLanguages();
+    m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
+    m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
+    m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
+    m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
+    m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
+    m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
+    m_is_php_enabled = (m_gen_languages & GEN_LANG_PHP);
 
-    m_is_cpp_enabled = (m_code_preference == GEN_LANG_CPLUSPLUS || m_output_type & OUTPUT_CPLUS);
-    m_is_python_enabled = (m_code_preference == GEN_LANG_PYTHON || m_output_type & OUTPUT_PYTHON);
-    m_is_ruby_enabled = (m_code_preference == GEN_LANG_RUBY || m_output_type & OUTPUT_RUBY);
-    m_is_haskell_enabled = (m_code_preference == GEN_LANG_HASKELL || m_output_type & OUTPUT_HASKELL);
-    m_is_lua_enabled = (m_code_preference == GEN_LANG_LUA || m_output_type & OUTPUT_LUA);
-    m_is_perl_enabled = (m_code_preference == GEN_LANG_PERL || m_output_type & OUTPUT_PERL);
-    m_is_php_enabled = (m_code_preference == GEN_LANG_PHP || m_output_type & OUTPUT_PHP);
+    m_code_preference = Project.getCodePreference(event->getNode());
 
     if (!m_is_cpp_enabled)
     {
@@ -92,8 +92,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     }
     if (!m_is_haskell_enabled)
     {
-        m_notebook->RemovePage(m_perl_page);
-        m_haskell_page--;
+        m_notebook->RemovePage(m_haskell_page);
         m_lua_page--;
         m_perl_page--;
         m_php_page--;
@@ -106,8 +105,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     }
     if (!m_is_perl_enabled)
     {
-        m_notebook->RemovePage(m_php_page);
-        m_perl_page--;
+        m_notebook->RemovePage(m_perl_page);
+        m_php_page--;
     }
     if (!m_is_php_enabled)
     {
@@ -254,14 +253,20 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
     }
 
-    if (m_is_ruby_enabled)
-    {
-    }
-
-    if (m_code_preference == GEN_LANG_PYTHON)
+    if (m_code_preference == GEN_LANG_CPLUSPLUS)
+        m_notebook->SetSelection(EVENT_PAGE_CPP);
+    else if (m_code_preference == GEN_LANG_PYTHON)
         m_notebook->SetSelection(m_python_page);
     else if (m_code_preference == GEN_LANG_RUBY)
         m_notebook->SetSelection(m_ruby_page);
+    else if (m_code_preference == GEN_LANG_HASKELL)
+        m_notebook->SetSelection(m_haskell_page);
+    else if (m_code_preference == GEN_LANG_LUA)
+        m_notebook->SetSelection(m_lua_page);
+    else if (m_code_preference == GEN_LANG_PERL)
+        m_notebook->SetSelection(m_perl_page);
+    else if (m_code_preference == GEN_LANG_PHP)
+        m_notebook->SetSelection(m_php_page);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))

@@ -22,6 +22,18 @@
 			<option name="Perl"/>
 			<option name="PHP"/>
             C++</property>
+        <property name="generate_languages" type="bitlist"
+            help="Specify the programming languages you might want to view or generate from this project. The code preference language above will always be available when this project is loaded.">
+            <option name="C++"/>
+			<option name="Python"/>
+			<option name="Ruby"/>
+			<option name="XRC"/>
+			<option name="Haskell"/>
+			<option name="Lua"/>
+			<option name="Perl"/>
+			<option name="PHP"/>
+            C++ | Python | Ruby
+        </property>
         <property name="art_directory" type="path"
             help="The directory containing your images (png, ico, xpm, etc.).">./</property>
         <property name="dialog_units" type="bool"

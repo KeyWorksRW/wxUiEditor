@@ -81,6 +81,7 @@ enum
 {
     IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
 
+    id_TestSwitch,
     id_CodeDiffDlg,
     id_ConvertImage,
     id_DebugCurrentTest,
@@ -191,6 +192,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
     if (wxGetApp().isTestingMenuEnabled())
     {
         auto menuTesting = new wxMenu;
+
         menuTesting->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                             "Dialog showing what class have changed, and optional viewing in WinMerge");
         menuTesting->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
@@ -213,6 +215,25 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
 
         menuTesting->AppendSeparator();
         menuTesting->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
+        auto menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch", "Toggle test switch", wxITEM_CHECK);
+        menuItem->Check(wxGetApp().isTestingSwitch());
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent& event)
+            {
+                if (wxGetApp().isTestingSwitch())
+                {
+                    wxGetApp().setTestingSwitch(false);
+                    wxStaticCast(event.GetEventObject(), wxMenu)->FindItem(id_TestSwitch)->Check(false);
+                }
+                else
+                {
+                    wxGetApp().setTestingSwitch(true);
+                    wxStaticCast(event.GetEventObject(), wxMenu)->FindItem(id_TestSwitch)->Check(true);
+                }
+            },
+            id_TestSwitch);
+
         m_menubar->Append(menuTesting, "Testing");
 
         m_submenu_import_recent = new wxMenu();
@@ -445,10 +466,10 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     {
         if (Project.getOriginalProjectVersion() != Project.getProjectVersion())
         {
-            if (wxMessageBox(
-                    "A project saved with this version of wxUiEditor is not compatible with older versions of wxUiEditor.\n"
-                    "Continue with save?",
-                    "Save Project", wxYES_NO) == wxNO)
+            if (wxMessageBox("A project saved with this version of wxUiEditor is not compatible with older versions of "
+                             "wxUiEditor.\n"
+                             "Continue with save?",
+                             "Save Project", wxYES_NO) == wxNO)
             {
                 return;
             }
@@ -488,8 +509,8 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
             filename.replace_extension(".wxui");
         }
 
-        // Don't allow the user to walk over existing project file types that are probably associated with another designer
-        // tool
+        // Don't allow the user to walk over existing project file types that are probably associated with another
+        // designer tool
 
         else if (filename.extension().is_sameas(".fbp", tt::CASE::either))
         {
@@ -854,8 +875,8 @@ void MainFrame::ProjectSaved()
 
 void MainFrame::OnNodeSelected(CustomEvent& event)
 {
-    // This event is normally only fired if the current selection has changed. We dismiss any previous infobar message, and
-    // check to see if the current selection has any kind of issue that we should warn the user about.
+    // This event is normally only fired if the current selection has changed. We dismiss any previous infobar message,
+    // and check to see if the current selection has any kind of issue that we should warn the user about.
     m_info_bar->Dismiss();
 
     auto evt_flags = event.getNode();

@@ -66,8 +66,15 @@ using namespace GenEnum;
 constexpr auto PROPERTY_ID = wxID_HIGHEST + 1;
 constexpr auto EVENT_ID = PROPERTY_ID + 1;
 
+static std::map<GenLang, std::string> s_lang_category_prefix;
+
 PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
+    for (size_t lang = 1; lang <= GEN_LANG_LAST; lang <<= 1)
+    {
+        s_lang_category_prefix[static_cast<GenLang>(lang)] = ConvertFromGenLang(static_cast<GenLang>(lang));
+    }
+
     for (auto& iter: list_wx_ids)
     {
         m_astr_wx_ids.Add(iter);
@@ -151,12 +158,6 @@ void PropGridPanel::SaveDescBoxHeight()
     config->SetPath("/");
 }
 
-static std::map<GenLang, std::string> s_lang_category_prefix = {
-
-    { GEN_LANG_CPLUSPLUS, "C++" }, { GEN_LANG_PERL, "wxPerl" }, { GEN_LANG_PYTHON, "wxPython" },
-    { GEN_LANG_RUBY, "wxRuby" },   { GEN_LANG_XRC, "XRC" },
-};
-
 void PropGridPanel::Create()
 {
     if (m_locked)
@@ -212,7 +213,7 @@ void PropGridPanel::Create()
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
 
-            auto& lang_prefix = s_lang_category_prefix[m_preferred_lang];
+            auto lang_prefix = ConvertFromGenLang(Project.getCodePreference());
 
             if (node->isForm() || node->isGen(gen_Project))
             {
@@ -470,9 +471,22 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 wxPGChoices bit_flags;
                 int index = 0;
-                for (auto& iter: propInfo->getOptions())
+                if (prop->get_name() == prop_generate_languages && !wxGetApp().isTestingSwitch())
                 {
-                    bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                    for (auto& iter: propInfo->getOptions())
+                    {
+                        // If not testing, do not show Code preference options for code we don't currently generate
+                        if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" && iter.name != "XRC")
+                            continue;
+                        bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                    }
+                }
+                else
+                {
+                    for (auto& iter: propInfo->getOptions())
+                    {
+                        bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                    }
                 }
 
                 int val = GetBitlistValue(prop->as_string(), bit_flags);
@@ -513,12 +527,29 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 wxPGChoices constants;
                 int i = 0;
-                for (auto& iter: propInfo->getOptions())
+                if (prop->get_name() == prop_code_preference && !wxGetApp().isTestingSwitch())
                 {
-                    constants.Add(iter.name, i++);
-                    if (iter.name == value)
+                    for (auto& iter: propInfo->getOptions())
                     {
-                        pHelp = &iter.help;
+                        // If not testing, do not show Code preference options for code we don't currently generate
+                        if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" && iter.name != "XRC")
+                            continue;
+                        constants.Add(iter.name, i++);
+                        if (iter.name == value)
+                        {
+                            pHelp = &iter.help;
+                        }
+                    }
+                }
+                else
+                {
+                    for (auto& iter: propInfo->getOptions())
+                    {
+                        constants.Add(iter.name, i++);
+                        if (iter.name == value)
+                        {
+                            pHelp = &iter.help;
+                        }
                     }
                 }
 

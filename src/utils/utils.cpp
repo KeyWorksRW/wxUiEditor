@@ -576,7 +576,7 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language)
         return true;
 }
 
-std::string ConvertFromGenLang(GenLang language)
+std::string_view ConvertFromGenLang(GenLang language)
 {
     switch (language)
     {

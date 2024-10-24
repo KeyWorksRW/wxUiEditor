@@ -37,7 +37,7 @@ extern const char* g_ruby_keywords;
 extern const char* g_haskell_keywords;
 extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_php_keywords;
+extern const char* g_rust_keywords;
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.
@@ -332,11 +332,11 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_PythonCommentColour());
         m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_PythonKeywordColour());
     }
-    else if (panel_type == GEN_LANG_PHP)
+    else if (panel_type == GEN_LANG_RUST)
     {
         m_scintilla->SetLexer(wxSTC_LEX_PHPSCRIPT);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
 
         if (UserPrefs.is_DarkMode())
         {

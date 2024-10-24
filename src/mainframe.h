@@ -82,7 +82,7 @@ public:
     BasePanel* GetHaskellPanel() { return m_haskellPanel; }
     BasePanel* GetLuaPanel() { return m_luaPanel; }
     BasePanel* GetPerlPanel() { return m_perlPanel; }
-    BasePanel* GetPhpPanel() { return m_phpPanel; }
+    BasePanel* GetRustPanel() { return m_rustPanel; }
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
@@ -277,7 +277,7 @@ public:
     void OnGenSingleHaskell(wxCommandEvent& event);
     void OnGenSingleLua(wxCommandEvent& event);
     void OnGenSinglePerl(wxCommandEvent& event);
-    void OnGenSinglePhp(wxCommandEvent& event);
+    void OnGenSingleRust(wxCommandEvent& event);
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
@@ -329,7 +329,7 @@ protected:
     void OnGenerateHaskell(wxCommandEvent& event);
     void OnGenerateLua(wxCommandEvent& event);
     void OnGeneratePerl(wxCommandEvent& event);
-    void OnGeneratePhp(wxCommandEvent& event);
+    void OnGenerateRust(wxCommandEvent& event);
 
     void OnXrcPreview(wxCommandEvent& e);
     void OnTestXrcImport(wxCommandEvent& e);
@@ -386,7 +386,7 @@ private:
 
     BasePanel* m_perlPanel { nullptr };
     BasePanel* m_luaPanel { nullptr };
-    BasePanel* m_phpPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
     BasePanel* m_haskellPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };

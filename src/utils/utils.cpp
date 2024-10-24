@@ -334,7 +334,7 @@ extern const char* g_ruby_keywords;
 extern const char* g_haskell_keywords;
 extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_php_keywords;
+extern const char* g_rust_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
@@ -342,7 +342,7 @@ std::set<std::string> g_set_ruby_keywords;
 std::set<std::string> g_set_haskell_keywords;
 std::set<std::string> g_set_lua_keywords;
 std::set<std::string> g_set_perl_keywords;
-std::set<std::string> g_set_php_keywords;
+std::set<std::string> g_set_rust_keywords;
 
 bool isValidVarName(const std::string& str, GenLang language)
 {
@@ -400,9 +400,9 @@ bool isValidVarName(const std::string& str, GenLang language)
     {
         return lambda(g_set_perl_keywords, g_perl_keywords);
     }
-    else if (language == GEN_LANG_PHP)
+    else if (language == GEN_LANG_RUST)
     {
-        return lambda(g_set_php_keywords, g_php_keywords);
+        return lambda(g_set_rust_keywords, g_rust_keywords);
     }
 
     return true;
@@ -598,8 +598,8 @@ std::string ConvertFromGenLang(GenLang language)
         case GEN_LANG_PERL:
             return "Perl";
             break;
-        case GEN_LANG_PHP:
-            return "PHP";
+        case GEN_LANG_RUST:
+            return "Rust";
             break;
         case GEN_LANG_XRC:
             return "XRC";
@@ -624,8 +624,8 @@ GenLang ConvertToGenLang(tt_string_view language)
         return GEN_LANG_LUA;
     else if (language == "Perl" || language.starts_with("wxPerl") || language.starts_with("Folder wxPerl"))
         return GEN_LANG_PERL;
-    else if (language == "PHP" || language.starts_with("wxPHP") || language.starts_with("Folder wxPHP"))
-        return GEN_LANG_PHP;
+    else if (language == "Rust" || language.starts_with("wxRust") || language.starts_with("Folder wxRust"))
+        return GEN_LANG_RUST;
     else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
         return GEN_LANG_XRC;
     else

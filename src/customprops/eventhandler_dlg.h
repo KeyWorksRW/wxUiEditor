@@ -75,10 +75,10 @@ public:
     // Ruby is not enabled and another language specified a value.
     static tt_string GetLuaValue(tt_string_view value);
 
-    // This will return a string as if PHP was the only value specified even if the original
+    // This will return a string as if Rust was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Ruby is not enabled and another language specified a value.
-    static tt_string GetPhpValue(tt_string_view value);
+    static tt_string GetRustValue(tt_string_view value);
 
     // This will return a string as if Haskell was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
@@ -116,7 +116,7 @@ private:
     size_t m_ruby_page;
     size_t m_perl_page;
     size_t m_lua_page;
-    size_t m_php_page;
+    size_t m_rust_page;
     size_t m_haskell_page;
 
     size_t m_gen_languages;     // set by Project.getGenerateLanguages()
@@ -127,7 +127,7 @@ private:
     bool m_is_python_enabled { false };
     bool m_is_ruby_enabled { false };
     bool m_is_lua_enabled { false };
-    bool m_is_php_enabled { false };
+    bool m_is_rust_enabled { false };
     bool m_is_haskell_enabled { false };
 
     bool m_is_cpp_lambda { false };
@@ -136,6 +136,6 @@ private:
 
     // bool m_is_perl_lambda { false };
     // bool m_is_lua_lambda { false };
-    // bool m_is_php_lambda { false };
+    // bool m_is_rust_lambda { false };
     // bool m_is_haskell_lambda { false };
 };

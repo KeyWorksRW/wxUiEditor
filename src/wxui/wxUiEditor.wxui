@@ -5,8 +5,7 @@
     class="Project"
     art_directory="../art_src"
     cpp_line_length="125"
-    generate_cmake="1"
-    wxWidgets_version="3.2">
+    generate_cmake="1">
     <node
       class="Images"
       add_externs="1"
@@ -273,6 +272,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;ruby_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/rust_logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;saveas.svg;[24,24]" />
@@ -3275,9 +3277,9 @@
               </node>
               <node
                 class="BookPage"
-                bitmap="SVG;php-logo.svg;[24,24]"
-                label="PHP"
-                var_name="php_page"
+                bitmap="SVG;../art_src/rust_logo.svg;[24,24]"
+                label="Rust"
+                var_name="rust_page"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -3295,7 +3297,7 @@
                     wxEVT_RADIOBUTTON="OnUseRubyFunction">
                     <node
                       class="wxTextCtrl"
-                      var_name="m_php_text_function"
+                      var_name="m_rust_text_function"
                       flags="wxEXPAND"
                       wxEVT_TEXT="OnChange" />
                     <node
@@ -3320,13 +3322,13 @@
                         class="wxStyledTextCtrl"
                         additional_carets_blink="1"
                         indentation_guides="forward"
-                        lexer="PHPSCRIPT"
+                        lexer="RUST"
                         multiple_selection_typing="1"
                         multiple_selections="1"
                         paste_multiple="1"
                         symbol_margin="0"
                         use_tabs="0"
-                        var_name="m_php_stc_lambda"
+                        var_name="m_rust_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -5388,10 +5390,10 @@
           <node
             class="wxRadioButton"
             class_access="none"
-            label="&amp;PHP"
+            label="R&amp;ust"
             var_name="m_radioBtn5"
-            get_function="is_gen_php"
-            validator_variable="m_gen_php_code" />
+            get_function="is_gen_rust"
+            validator_variable="m_gen_rust_code" />
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -6325,7 +6327,7 @@
               borders="wxTOP|wxRIGHT|wxLEFT" />
             <node
               class="wxGridSizer"
-              cols="3"
+              cols="4"
               alignment="wxALIGN_CENTER_HORIZONTAL">
               <node
                 class="wxRadioButton"
@@ -6343,6 +6345,31 @@
                 label="&amp;Ruby"
                 var_name="m_radio_ruby"
                 wxEVT_RADIOBUTTON="OnRuby" />
+              <node
+                class="wxRadioButton"
+                label="&amp;Haskell"
+                var_name="m_radio_haskell"
+                wxEVT_RADIOBUTTON="OnHaskell" />
+              <node
+                class="wxRadioButton"
+                label="&amp;Lua"
+                var_name="m_radio_lua"
+                wxEVT_RADIOBUTTON="OnLua" />
+              <node
+                class="wxRadioButton"
+                label="&amp;Perl"
+                var_name="m_radio_perl"
+                wxEVT_RADIOBUTTON="OnPerl" />
+              <node
+                class="wxRadioButton"
+                label="R&amp;ust"
+                var_name="m_radio_rust"
+                wxEVT_RADIOBUTTON="OnRust" />
+              <node
+                class="wxRadioButton"
+                label="&amp;XRC"
+                var_name="m_radio_rxrc"
+                wxEVT_RADIOBUTTON="OnXRC" />
             </node>
             <node
               class="spacer"
@@ -8048,8 +8075,8 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;php-logo.svg;[24,24]"
-            label="PHP"
+            bitmap="SVG;../art_src/rust_logo.svg;[24,24]"
+            label="Rust"
             var_name="page_php"
             window_style="wxTAB_TRAVERSAL">
             <node

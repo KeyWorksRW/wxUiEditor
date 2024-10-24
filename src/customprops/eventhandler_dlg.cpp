@@ -28,7 +28,7 @@ extern const char* g_perl_keywords;
 extern const char* g_haskell_keywords;
 extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_php_keywords;
+extern const char* g_rust_keywords;
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
@@ -40,7 +40,7 @@ constexpr size_t EVENT_PAGE_RUBY = 2;
 constexpr size_t EVENT_PAGE_HASKELL = 3;
 constexpr size_t EVENT_PAGE_LUA = 4;
 constexpr size_t EVENT_PAGE_PERL = 5;
-constexpr size_t EVENT_PAGE_PHP = 6;
+constexpr size_t EVENT_PAGE_RUST = 6;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
@@ -50,7 +50,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_haskell_page = EVENT_PAGE_HASKELL;
     m_lua_page = EVENT_PAGE_LUA;
     m_perl_page = EVENT_PAGE_PERL;
-    m_php_page = EVENT_PAGE_PHP;
+    m_rust_page = EVENT_PAGE_RUST;
 
     m_gen_languages = Project.getGenerateLanguages();
     m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
@@ -59,7 +59,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
     m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
     m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
-    m_is_php_enabled = (m_gen_languages & GEN_LANG_PHP);
+    m_is_rust_enabled = (m_gen_languages & GEN_LANG_RUST);
 
     m_code_preference = Project.getCodePreference(event->getNode());
 
@@ -71,7 +71,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_haskell_page--;
         m_lua_page--;
         m_perl_page--;
-        m_php_page--;
+        m_rust_page--;
     }
     if (!m_is_python_enabled)
     {
@@ -80,7 +80,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_haskell_page--;
         m_lua_page--;
         m_perl_page--;
-        m_php_page--;
+        m_rust_page--;
     }
     if (!m_is_ruby_enabled)
     {
@@ -88,29 +88,29 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_haskell_page--;
         m_lua_page--;
         m_perl_page--;
-        m_php_page--;
+        m_rust_page--;
     }
     if (!m_is_haskell_enabled)
     {
         m_notebook->RemovePage(m_haskell_page);
         m_lua_page--;
         m_perl_page--;
-        m_php_page--;
+        m_rust_page--;
     }
     if (!m_is_lua_enabled)
     {
         m_notebook->RemovePage(m_lua_page);
         m_perl_page--;
-        m_php_page--;
+        m_rust_page--;
     }
     if (!m_is_perl_enabled)
     {
         m_notebook->RemovePage(m_perl_page);
-        m_php_page--;
+        m_rust_page--;
     }
-    if (!m_is_php_enabled)
+    if (!m_is_rust_enabled)
     {
-        m_notebook->RemovePage(m_php_page);
+        m_notebook->RemovePage(m_rust_page);
     }
 
     m_value = event->get_value().make_wxString();
@@ -159,14 +159,14 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PythonCommentColour());
         m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PythonKeywordColour());
     }
-    if (m_is_php_enabled)
+    if (m_is_rust_enabled)
     {
-        m_php_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
-        m_php_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+        m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+        m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
 
-        m_php_stc_lambda->StyleSetForeground(wxSTC_HPHP_HSTRING, UserPrefs.get_PythonStringColour());
-        m_php_stc_lambda->StyleSetForeground(wxSTC_HPHP_COMMENT, UserPrefs.get_PythonCommentColour());
-        m_php_stc_lambda->StyleSetForeground(wxSTC_HPHP_WORD, UserPrefs.get_PythonKeywordColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_HPHP_HSTRING, UserPrefs.get_PythonStringColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_HPHP_COMMENT, UserPrefs.get_PythonCommentColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_HPHP_WORD, UserPrefs.get_PythonKeywordColour());
     }
 
     auto form = event->getNode()->getForm();
@@ -233,10 +233,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
             m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
         }
-        if (m_is_php_enabled)
+        if (m_is_rust_enabled)
         {
-            m_php_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
-            m_php_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+            m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+            m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
         }
     }
     if (m_is_cpp_enabled)
@@ -265,8 +265,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_notebook->SetSelection(m_lua_page);
     else if (m_code_preference == GEN_LANG_PERL)
         m_notebook->SetSelection(m_perl_page);
-    else if (m_code_preference == GEN_LANG_PHP)
-        m_notebook->SetSelection(m_php_page);
+    else if (m_code_preference == GEN_LANG_RUST)
+        m_notebook->SetSelection(m_rust_page);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
@@ -975,10 +975,10 @@ tt_string EventHandlerDlg::GetLuaValue(tt_string_view value)
 
 // This is a static function
 
-tt_string EventHandlerDlg::GetPhpValue(tt_string_view value)
+tt_string EventHandlerDlg::GetRustValue(tt_string_view value)
 {
     tt_string result;
-    auto pos = value.find("[php:");
+    auto pos = value.find("[rust:");
     if (pos == tt::npos)
     {
         if (value.front() == '[')
@@ -1001,10 +1001,10 @@ tt_string EventHandlerDlg::GetPhpValue(tt_string_view value)
         value.remove_prefix(pos);
     }
 
-    if (!value.starts_with("[php:lambda]"))
+    if (!value.starts_with("[rust:lambda]"))
     {
         // This is just a function name, so remove the "[python:" and the trailing ']'
-        value.remove_prefix(sizeof("[php:") - 1);
+        value.remove_prefix(sizeof("[rust:") - 1);
         if (auto end = value.find(']'); end != tt::npos)
         {
             value.remove_suffix(value.size() - end);

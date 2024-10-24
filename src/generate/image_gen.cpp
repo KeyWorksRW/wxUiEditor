@@ -238,7 +238,7 @@ std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
     { GEN_LANG_HASKELL, prop_haskell_line_length },
     { GEN_LANG_LUA, prop_lua_line_length },
     { GEN_LANG_PERL, prop_perl_line_length },
-    { GEN_LANG_PHP, prop_php_line_length },
+    { GEN_LANG_RUST, prop_rust_line_length },
 
 };
 

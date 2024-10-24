@@ -37,9 +37,9 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_perl_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_PHP)
+    else if (Project.getCodePreference() == GEN_LANG_RUST)
     {
-        form_node->set_value(prop_php_file, filename);
+        form_node->set_value(prop_rust_file, filename);
     }
     else if (Project.getCodePreference() == GEN_LANG_XRC)
     {

@@ -10,7 +10,7 @@
         <inherits class="wxHaskell"/>
         <inherits class="wxLua"/>
         <inherits class="wxPerl"/>
-        <inherits class="wxPHP"/>
+        <inherits class="wxRust"/>
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
             <option name="C++"/>
@@ -20,7 +20,7 @@
 			<option name="Haskell"/>
 			<option name="Lua"/>
 			<option name="Perl"/>
-			<option name="PHP"/>
+			<option name="Rust"/>
             C++</property>
         <property name="generate_languages" type="bitlist"
             help="Specify the programming languages you might want to view or generate from this project. The code preference language above will always be available when this project is loaded.">
@@ -31,7 +31,7 @@
 			<option name="Haskell"/>
 			<option name="Lua"/>
 			<option name="Perl"/>
-			<option name="PHP"/>
+			<option name="Rust"/>
             C++ | Python | Ruby
         </property>
         <property name="art_directory" type="path"

@@ -245,7 +245,7 @@ const view_map g_map_lua_prefix
 {
 };
 
-const view_map g_map_php_prefix
+const view_map g_map_rust_prefix
 {
 };
 
@@ -261,7 +261,7 @@ static const view_map s_short_lua_map
 {
 };
 
-static const view_map s_short_php_map
+static const view_map s_short_rust_map
 {
 };
 
@@ -298,9 +298,9 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
             global_list = &g_map_lua_prefix;
             break;
 
-        case GEN_LANG_PHP:
-            prefix_list = &s_short_php_map;
-            global_list = &g_map_php_prefix;
+        case GEN_LANG_RUST:
+            prefix_list = &s_short_rust_map;
+            global_list = &g_map_rust_prefix;
             break;
 
         case GEN_LANG_HASKELL:
@@ -382,12 +382,12 @@ void Code::Init(Node* node, GenLang language)
         // Always assume Lua code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
-    else if (language == GEN_LANG_PHP)
+    else if (language == GEN_LANG_RUST)
     {
         m_language_wxPrefix = "wx.";
         m_lang_assignment = " = ";
-        m_break_length = 90;
-        // Always assume PHP code has one tab at the beginning of the line
+        m_break_length = 100;
+        // Always assume Rust code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_HASKELL)
@@ -2533,8 +2533,8 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
                 // PerlBundleCode(*this, prop_name);
                 break;
 
-            case GEN_LANG_PHP:
-                // PhpBundleCode(*this, prop_name);
+            case GEN_LANG_RUST:
+                // RustBundleCode(*this, prop_name);
                 break;
 
             default:
@@ -2598,7 +2598,7 @@ Code& Code::BeginConditional()
 
 Code& Code::AddConditionalAnd()
 {
-    if (is_cpp() || is_ruby() || is_perl() || is_php() || is_haskell())
+    if (is_cpp() || is_ruby() || is_perl() || is_rust() || is_haskell())
     {
         *this << " && ";
     }
@@ -2616,7 +2616,7 @@ Code& Code::AddConditionalAnd()
 }
 Code& Code::AddConditionalOr()
 {
-    if (is_cpp() || is_ruby() || is_perl() || is_php() || is_haskell())
+    if (is_cpp() || is_ruby() || is_perl() || is_rust() || is_haskell())
     {
         *this << " || ";
     }

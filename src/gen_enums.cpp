@@ -534,14 +534,14 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_perl_project_preamble, "perl_project_preamble" },
     { prop_wxPerl_version, "wxPerl_version" },
 
-    { prop_folder_php_output_folder, "folder_php_output_folder" },
-    { prop_php_file, "php_file" },
-    { prop_php_inherit_name, "php_inherit_name" },
-    { prop_php_insert, "insert_php_code" },
-    { prop_php_line_length, "php_line_length" },
-    { prop_php_output_folder, "php_output_folder" },
-    { prop_php_project_preamble, "php_project_preamble" },
-    { prop_wxPHP_version, "wxPHP_version" },
+    { prop_folder_rust_output_folder, "folder_rust_output_folder" },
+    { prop_rust_file, "rust_file" },
+    { prop_rust_inherit_name, "rust_inherit_name" },
+    { prop_rust_insert, "insert_rust_code" },
+    { prop_rust_line_length, "rust_line_length" },
+    { prop_rust_output_folder, "rust_output_folder" },
+    { prop_rust_project_preamble, "rust_project_preamble" },
+    { prop_wxRust_version, "wxRust_version" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
@@ -673,7 +673,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxHaskell, "wxHaskell" },
     { gen_wxLua, "wxLua" },
     { gen_wxPerl, "wxPerl" },
-    { gen_wxPHP, "wxPHP" },
+    { gen_wxRust, "wxRust" },
 
     { gen_LanguageSettings, "Language Settings" },
 
@@ -683,7 +683,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_HaskellSettings, "wxHaskell Settings" },
     { gen_LuaSettings, "wxLua Settings" },
     { gen_PerlSettings, "wxPerl Settings" },
-    { gen_PhpSettings, "wxPHP Settings" },
+    { gen_RustSettings, "wxRust Settings" },
     { gen_PythonSettings, "wxPython Settings" },
     { gen_RubySettings, "wxRuby Settings" },
 

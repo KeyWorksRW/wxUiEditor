@@ -67,8 +67,8 @@ bool GenerateLuaFiles(GenResults& results, std::vector<tt_string>* pClassList = 
 // ../generate/gen_perl.cpp
 bool GeneratePerlFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
-// ../generate/gen_php.cpp
-bool GeneratePhpFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+// ../generate/gen_rust.cpp
+bool GenerateRustFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
 // If out_file contains a file, it will override project xrc_file and combine_xrc settings.
 //

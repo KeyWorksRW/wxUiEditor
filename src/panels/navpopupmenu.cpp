@@ -343,7 +343,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
         case MenuSingleGenPHP:
             {
                 wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSinglePhp(dummy);
+                wxGetMainFrame()->OnGenSingleRust(dummy);
             }
             break;
 
@@ -552,9 +552,9 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 Append(MenuSingleGenPerl, "Generate Perl for this form");
                 ++count;
             }
-            if (node->hasValue(prop_php_file))
+            if (node->hasValue(prop_rust_file))
             {
-                Append(MenuSingleGenPHP, "Generate PHP for this form");
+                Append(MenuSingleGenPHP, "Generate Rust for this form");
                 ++count;
             }
 

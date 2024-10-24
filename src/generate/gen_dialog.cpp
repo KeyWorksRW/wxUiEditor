@@ -166,7 +166,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Eol().Str("my( $class, $parent, $id, $title, $pos, $size, $style, $name ) = @_;");
         code.Eol().Str("my $this = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
     }
-    else if (code.is_php())
+    else if (code.is_rust())
     {
         code.Str("class ").NodeName().Str(" extends wxDialog");
         code.Eol().Str("{");

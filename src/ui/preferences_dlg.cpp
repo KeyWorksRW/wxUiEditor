@@ -37,7 +37,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         bundle_list.push_back(wxue_img::bundle_haskell_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_lua_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_perl_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_php_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_rust_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_wxlogo_svg(24, 24));
         notebook->SetImages(bundle_list);
     }
@@ -520,7 +520,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     page_perl->SetSizerAndFit(page_sizer5);
 
     auto* page_php = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    notebook->AddPage(page_php, "PHP", false, 6);
+    notebook->AddPage(page_php, "Rust", false, 6);
 
     auto* page_sizer6 = new wxBoxSizer(wxVERTICAL);
 

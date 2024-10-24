@@ -308,7 +308,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if $^O eq 'MSWin32'";
                 break;
 
-            case GEN_LANG_PHP:
+            case GEN_LANG_RUST:
                 code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
                 break;
 
@@ -369,7 +369,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "$^O eq 'linux' or $^O eq 'darwin'";
                 break;
 
-            case GEN_LANG_PHP:
+            case GEN_LANG_RUST:
                 if (code.size())
                     code << " || ";
                 else
@@ -433,7 +433,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "$^O eq 'darwin'";
                 break;
 
-            case GEN_LANG_PHP:
+            case GEN_LANG_RUST:
                 if (code.size())
                     code << " || ";
                 else
@@ -479,7 +479,7 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_PERL:
             break;
 
-        case GEN_LANG_PHP:
+        case GEN_LANG_RUST:
             m_source->Unindent();
             break;
 

@@ -575,7 +575,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_haskell_file:
                     case prop_lua_file:
                     case prop_perl_file:
-                    case prop_php_file:
+                    case prop_rust_file:
                     case prop_cmake_file:
                     case prop_folder_cmake_file:
                     case prop_subclass_header:
@@ -1162,9 +1162,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("PHP"))
+            else if (grid_property->GetLabel().Contains("Rust"))
             {
-                if (prop->as_string() != "any" && prop->as_string() != "PHP")
+                if (prop->as_string() != "any" && prop->as_string() != "Rust")
                 {
                     m_prop_grid->Collapse(grid_property);
                 }
@@ -1643,7 +1643,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // it's a different grid_prop
     if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
         !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) &&
-        !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_php_file))
+        !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_rust_file))
     {
         if (newValue.size())
         {
@@ -2090,13 +2090,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("wxPHP"))
+    else if (name.contains("wxRust"))
     {
         if (UserPrefs.is_DarkMode())
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
-        if (Project.getCodePreference(node) != GEN_LANG_PHP)
+        if (Project.getCodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
         }
@@ -2295,8 +2295,8 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_perl_file);
             break;
 
-        case GEN_LANG_PHP:
-            ChangeOutputFile(prop_php_file);
+        case GEN_LANG_RUST:
+            ChangeOutputFile(prop_rust_file);
             break;
 
         default:

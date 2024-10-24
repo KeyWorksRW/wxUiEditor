@@ -94,14 +94,14 @@ enum
     id_GenerateHaskell,
     id_GenerateLua,
     id_GeneratePerl,
-    id_GeneratePhp,
+    id_GenerateRust,
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
     id_GenSingleHaskell,
     id_GenSingleLua,
     id_GenSinglePerl,
-    id_GenSinglePhp,
+    id_GenSingleRust,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -392,14 +392,14 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleHaskell, this, id_GenSingleHaskell);
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleLua, this, id_GenSingleLua);
         Bind(wxEVT_MENU, &MainFrame::OnGenSinglePerl, this, id_GenSinglePerl);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePhp, this, id_GenSinglePhp);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleRust, this, id_GenSingleRust);
 
         Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateHaskell, this, id_GenerateHaskell);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateLua, this, id_GenerateLua);
         Bind(wxEVT_MENU, &MainFrame::OnGeneratePerl, this, id_GeneratePerl);
-        Bind(wxEVT_MENU, &MainFrame::OnGeneratePhp, this, id_GeneratePhp);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateRust, this, id_GenerateRust);
 
         Bind(
             wxEVT_MENU,
@@ -2341,22 +2341,22 @@ void MainFrame::UpdateLanguagePanels()
         m_rubyPanel = nullptr;
     }
 
-    if (languages & GEN_LANG_PHP && !m_phpPanel)
+    if (languages & GEN_LANG_RUST && !m_rustPanel)
     {
-        m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
-        if (Project.getCodePreference() == GEN_LANG_PHP)
+        m_rustPanel = new BasePanel(m_notebook, this, GEN_LANG_RUST);
+        if (Project.getCodePreference() == GEN_LANG_RUST)
         {
-            m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+            m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
         }
         else
         {
-            m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+            m_notebook->AddPage(m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
         }
     }
-    else if (!(languages & GEN_LANG_PHP) && m_phpPanel)
+    else if (!(languages & GEN_LANG_RUST) && m_rustPanel)
     {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_phpPanel));
-        m_phpPanel = nullptr;
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_rustPanel));
+        m_rustPanel = nullptr;
     }
 
     int position;
@@ -2422,13 +2422,13 @@ void MainFrame::UpdateLanguagePanels()
             }
             break;
 
-        case GEN_LANG_PHP:
-            ASSERT(m_phpPanel);
-            position = m_notebook->GetPageIndex(m_phpPanel);
+        case GEN_LANG_RUST:
+            ASSERT(m_rustPanel);
+            position = m_notebook->GetPageIndex(m_rustPanel);
             if (position != 1)
             {
                 m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
+                m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
             }
             break;
 

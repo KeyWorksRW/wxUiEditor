@@ -88,16 +88,16 @@ protected:
     wxStyledTextCtrl* m_haskell_stc_lambda;
     wxStyledTextCtrl* m_lua_stc_lambda;
     wxStyledTextCtrl* m_perl_stc_lambda;
-    wxStyledTextCtrl* m_php_stc_lambda;
     wxStyledTextCtrl* m_ruby_stc_lambda;
+    wxStyledTextCtrl* m_rust_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
     wxTextCtrl* m_haskell_text_function;
     wxTextCtrl* m_lua_text_function;
     wxTextCtrl* m_perl_text_function;
-    wxTextCtrl* m_php_text_function;
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_py_text_lambda;
     wxTextCtrl* m_ruby_text_function;
+    wxTextCtrl* m_rust_text_function;
 };
 
 // ************* End of generated code ***********

@@ -33,7 +33,7 @@ public:
     bool is_gen_haskell() const { return m_gen_haskell_code; }
     bool is_gen_lua() const { return m_gen_lua_code; }
     bool is_gen_perl() const { return m_gen_perl_code; }
-    bool is_gen_php() const { return m_gen_php_code; }
+    bool is_gen_rust() const { return m_gen_rust_code; }
 
 protected:
 
@@ -43,9 +43,9 @@ protected:
     bool m_gen_haskell_code { false };
     bool m_gen_lua_code { false };
     bool m_gen_perl_code { false };
-    bool m_gen_php_code { false };
     bool m_gen_python_code { false };
     bool m_gen_ruby_code { false };
+    bool m_gen_rust_code { false };
     bool m_gen_xrc_code { false };
 };
 

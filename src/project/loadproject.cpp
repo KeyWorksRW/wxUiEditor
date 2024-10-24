@@ -860,8 +860,8 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 project_node->set_value(prop_code_preference, "Perl");
             else if (language & GEN_LANG_LUA)  // wxFormBuilder can generate Lua
                 project_node->set_value(prop_code_preference, "Lua");
-            else if (language & GEN_LANG_PHP)  // wxFormBuilder can generate PHP
-                project_node->set_value(prop_code_preference, "PHP");
+            else if (language & GEN_LANG_RUST)  // wxFormBuilder can generate Rust
+                project_node->set_value(prop_code_preference, "Rust");
             else if (language & GEN_LANG_XRC)
                 project_node->set_value(prop_code_preference, "XRC");
 
@@ -895,9 +895,9 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 {
                     project_node->set_value(prop_code_preference, "Perl");
                 }
-                else if (dlg.is_gen_php())
+                else if (dlg.is_gen_rust())
                 {
-                    project_node->set_value(prop_code_preference, "PHP");
+                    project_node->set_value(prop_code_preference, "Rust");
                 }
                 else if (dlg.is_gen_xrc())
                 {
@@ -1002,9 +1002,9 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 {
                     project->set_value(prop_code_preference, "Perl");
                 }
-                else if (dlg.is_gen_php())
+                else if (dlg.is_gen_rust())
                 {
-                    project->set_value(prop_code_preference, "PHP");
+                    project->set_value(prop_code_preference, "Rust");
                 }
                 else if (dlg.is_gen_xrc())
                 {

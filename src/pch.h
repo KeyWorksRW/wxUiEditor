@@ -140,7 +140,7 @@ enum GenLang : size_t
     GEN_LANG_RUBY = 1 << 2,
     GEN_LANG_PERL = 1 << 3,
     GEN_LANG_LUA = 1 << 4,
-    GEN_LANG_PHP = 1 << 5,
+    GEN_LANG_RUST = 1 << 5,
     GEN_LANG_HASKELL = 1 << 6,
 
     GEN_LANG_XRC = 1 << 7,

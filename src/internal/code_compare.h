@@ -40,10 +40,15 @@ protected:
     // Event handlers
 
     void OnCPlusPlus(wxCommandEvent& event);
+    void OnHaskell(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
+    void OnLua(wxCommandEvent& event);
+    void OnPerl(wxCommandEvent& event);
     void OnPython(wxCommandEvent& event);
     void OnRuby(wxCommandEvent& event);
+    void OnRust(wxCommandEvent& event);
     void OnWinMerge(wxCommandEvent& event);
+    void OnXRC(wxCommandEvent& event);
 
 private:
 
@@ -52,8 +57,13 @@ private:
     wxButton* m_btn;
     wxListBox* m_list_changes;
     wxRadioButton* m_radio_cplusplus;
+    wxRadioButton* m_radio_haskell;
+    wxRadioButton* m_radio_lua;
+    wxRadioButton* m_radio_perl;
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
+    wxRadioButton* m_radio_rust;
+    wxRadioButton* m_radio_rxrc;
 
     std::vector<tt_string> m_class_list;
 };

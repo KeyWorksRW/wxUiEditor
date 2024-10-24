@@ -60,7 +60,7 @@ public:
     void GenerateHaskellClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateLuaClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePerlClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePhpClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRustClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateRubyClass(PANEL_PAGE panel_type = NOT_PANEL);
 

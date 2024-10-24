@@ -92,9 +92,9 @@ set (file_list
     generate/gen_haskell.cpp       # Generate wxHaskell code
     generate/gen_lua.cpp           # Generate wxLua/wxLuaJIT code
     generate/gen_perl.cpp          # Generate wxPerl code
-    generate/gen_php.cpp           # Generate wxPHP code
     generate/gen_python.cpp        # Generate wxPython code
     generate/gen_ruby.cpp          # Generate wxRuby3 code
+    generate/gen_rust.cpp          # Generate wxRust code
     generate/gen_xrc.cpp           # Generate XRC
 
     # Generators are responsible for displaying the widget in the Mockup window,

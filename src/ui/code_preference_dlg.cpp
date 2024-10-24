@@ -59,8 +59,8 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn4->SetValidator(wxGenericValidator(&m_gen_perl_code));
     grid_sizer->Add(m_radioBtn4, wxSizerFlags().Border(wxALL));
 
-    auto* m_radioBtn5 = new wxRadioButton(this, wxID_ANY, "&PHP");
-    m_radioBtn5->SetValidator(wxGenericValidator(&m_gen_php_code));
+    auto* m_radioBtn5 = new wxRadioButton(this, wxID_ANY, "R&ust");
+    m_radioBtn5->SetValidator(wxGenericValidator(&m_gen_rust_code));
     grid_sizer->Add(m_radioBtn5, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(grid_sizer, wxSizerFlags().Border(wxALL));

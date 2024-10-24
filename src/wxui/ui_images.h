@@ -103,6 +103,7 @@ namespace wxue_img
     wxBitmapBundle bundle_richtextctrl_svg(int width, int height);
     wxBitmapBundle bundle_right_svg(int width, int height);
     wxBitmapBundle bundle_ruby_logo_svg(int width, int height);
+    wxBitmapBundle bundle_rust_logo_svg(int width, int height);
     wxBitmapBundle bundle_saveas_svg(int width, int height);
     wxBitmapBundle bundle_scintilla_svg(int width, int height);
     wxBitmapBundle bundle_scrollbar_svg(int width, int height);
@@ -292,6 +293,7 @@ namespace wxue_img
     extern const unsigned char richtextctrl_svg[2949];  // ../art_src/richtextctrl.svg
     extern const unsigned char right_svg[677];  // ../art_src/right.svg
     extern const unsigned char ruby_logo_svg[967];  // ../art_src/ruby_logo.svg
+    extern const unsigned char rust_logo_svg[605];  // ../art_src/rust_logo.svg
     extern const unsigned char saveas_svg[5968];  // ../art_src/saveas.svg
     extern const unsigned char scintilla_svg[53987];  // ../art_src/scintilla.svg
     extern const unsigned char scrollbar_svg[593];  // ../art_src/scrollbar.svg

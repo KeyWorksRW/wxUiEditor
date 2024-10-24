@@ -62,9 +62,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetLuaValue(event->get_value());
     }
-    else if (code.m_language == GEN_LANG_PHP)
+    else if (code.m_language == GEN_LANG_RUST)
     {
-        event_code = EventHandlerDlg::GetPhpValue(event->get_value());
+        event_code = EventHandlerDlg::GetRustValue(event->get_value());
     }
     else if (code.m_language == GEN_LANG_HASKELL)
     {

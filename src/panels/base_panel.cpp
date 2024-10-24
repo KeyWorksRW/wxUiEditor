@@ -53,12 +53,9 @@ const char* g_perl_keywords = "do if else elsif unless while until for foreach l
 const char* g_lua_keywords =
     "and break do else elseif end false for function goto if in local nil not or repeat return then true until while";
 
-const char* g_php_keywords =
-    "abstract and array as break callable case catch class clone const continue declare default die do echo else elseif "
-    "empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final finally fn for foreach function "
-    "global goto if implements include include_once instanceof insteadof interface isset list namespace new or print "
-    "private protected public require require_once return static switch throw trait try unset use var while xor yield yield "
-    "from";
+const char* g_rust_keywords =
+    "as break const continue crate do else enum extern false fn for if impl in let loop match mod move mut pub "
+    "ref return self self mut static struct trait true type unsafe use where while";
 
 const char* g_haskell_keywords =
     "case class data deriving do else if import in infix infixl infixr instance let module newtype of then type where";
@@ -109,7 +106,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_PERL)
+    else if (m_panel_type == GEN_LANG_HASKELL)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -123,14 +120,14 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_PHP)
+    else if (m_panel_type == GEN_LANG_PERL)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_HASKELL)
+    else if (m_panel_type == GEN_LANG_RUST)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -355,8 +352,8 @@ void BasePanel::GenerateBaseClass()
             codegen.GeneratePerlClass(panel_page);
             break;
 
-        case GEN_LANG_PHP:
-            codegen.GeneratePhpClass(panel_page);
+        case GEN_LANG_RUST:
+            codegen.GenerateRustClass(panel_page);
             break;
 
         case GEN_LANG_PYTHON:

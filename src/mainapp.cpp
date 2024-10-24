@@ -158,7 +158,7 @@ int App::OnRun()
     parser.AddLongOption("gen_haskell", "generate Haskell files and exit");
     parser.AddLongOption("gen_lua", "generate Lua files and exit");
     parser.AddLongOption("gen_perl", "generate Perl files and exit");
-    parser.AddLongOption("gen_php", "generate Php files and exit");
+    parser.AddLongOption("gen_rust", "generate Rust files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
 
@@ -177,7 +177,7 @@ int App::OnRun()
     parser.AddLongSwitch("test_haskell", "generate Haskell code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_lua", "generate Lua code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_php", "generate Php code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_rust", "generate Rust code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);
 
@@ -242,14 +242,14 @@ int App::OnRun()
         {
             generate_type = GEN_LANG_PERL;
         }
-        else if (parser.Found("gen_php", &filename))
+        else if (parser.Found("gen_rust", &filename))
         {
-            generate_type = GEN_LANG_PHP;
+            generate_type = GEN_LANG_RUST;
         }
         else if (parser.Found("gen_all", &filename))
         {
-            generate_type = static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_XRC |
-                                                 GEN_LANG_HASKELL | GEN_LANG_LUA | GEN_LANG_PERL | GEN_LANG_PHP);
+            generate_type = static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_HASKELL |
+                                                 GEN_LANG_LUA | GEN_LANG_PERL | GEN_LANG_RUST);
         }
 
         if (parser.Found("test_cpp", &filename))
@@ -287,9 +287,9 @@ int App::OnRun()
             generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_PERL));
             test_only = true;
         }
-        if (parser.Found("test_php", &filename))
+        if (parser.Found("test_rust", &filename))
         {
-            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_PHP));
+            generate_type = static_cast<GenLang>(static_cast<int>(generate_type) | static_cast<int>(GEN_LANG_RUST));
             test_only = true;
         }
 
@@ -457,13 +457,13 @@ int App::OnRun()
                 GeneratePerlFiles(results, test_only ? &class_list : nullptr);
                 log_results("Generating Perl files");
             }
-            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_PHP))
+            if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_RUST))
             {
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GeneratePhpFiles(results, test_only ? &class_list : nullptr);
-                log_results("Generating PHP files");
+                GenerateRustFiles(results, test_only ? &class_list : nullptr);
+                log_results("Generating Rust files");
             }
 
             if (log.size())

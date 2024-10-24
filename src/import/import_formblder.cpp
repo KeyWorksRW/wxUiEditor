@@ -158,14 +158,14 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                         m_language |= GEN_LANG_PYTHON;
                     else if (tt::contains(xml_prop.text().as_view(), "C++"))
                         m_language |= GEN_LANG_CPLUSPLUS;
-                    else if (tt::contains(xml_prop.text().as_view(), "PHP"))
-                        m_language |= GEN_LANG_PHP;
+                    else if (tt::contains(xml_prop.text().as_view(), "Rust"))
+                        m_language |= GEN_LANG_RUST;
                     else if (tt::contains(xml_prop.text().as_view(), "Lua"))
                         m_language |= GEN_LANG_LUA;
                     else if (tt::contains(xml_prop.text().as_view(), "XRC"))
                         m_language |= GEN_LANG_XRC;
 
-                    // wxFormBuilder also generates PHP code, but wxUiEditor currently doesn't support that since
+                    // wxFormBuilder also generates Rust code, but wxUiEditor currently doesn't support that since
                     // wxPHP is not being actively maintained.
                 }
             }

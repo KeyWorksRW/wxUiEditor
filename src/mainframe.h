@@ -79,15 +79,16 @@ public:
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
     BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetFortranPanel() { return m_fortranPanel; }
     BasePanel* GetHaskellPanel() { return m_haskellPanel; }
     BasePanel* GetLuaPanel() { return m_luaPanel; }
     BasePanel* GetPerlPanel() { return m_perlPanel; }
-    BasePanel* GetPhpPanel() { return m_phpPanel; }
+    BasePanel* GetRustPanel() { return m_rustPanel; }
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-    void EnableCodePanels(GenLang language);
+    void UpdateLanguagePanels();
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
@@ -95,6 +96,7 @@ public:
     ImportPanel* getImportPanel() { return m_imnportPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
+    void RemoveCustomEventHandler(wxEvtHandler* handler);
 
     void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);
@@ -270,13 +272,14 @@ public:
     void OnGenerateCode(wxCommandEvent& event) override;
 
     void OnGenSingleCpp(wxCommandEvent& event);
-    void OnGenSinglePython(wxCommandEvent& event);
-    void OnGenSingleRuby(wxCommandEvent& event);
-    void OnGenSingleXRC(wxCommandEvent& event);
+    void OnGenSingleFortran(wxCommandEvent& event);
     void OnGenSingleHaskell(wxCommandEvent& event);
     void OnGenSingleLua(wxCommandEvent& event);
     void OnGenSinglePerl(wxCommandEvent& event);
-    void OnGenSinglePhp(wxCommandEvent& event);
+    void OnGenSinglePython(wxCommandEvent& event);
+    void OnGenSingleRuby(wxCommandEvent& event);
+    void OnGenSingleRust(wxCommandEvent& event);
+    void OnGenSingleXRC(wxCommandEvent& event);
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
@@ -322,13 +325,6 @@ protected:
     void OnQueueSelect(CustomEvent& event);
 
     void OnFindWidget(wxCommandEvent& event);
-
-    void OnGeneratePython(wxCommandEvent& event);
-    void OnGenerateRuby(wxCommandEvent& event);
-    void OnGenerateHaskell(wxCommandEvent& event);
-    void OnGenerateLua(wxCommandEvent& event);
-    void OnGeneratePerl(wxCommandEvent& event);
-    void OnGeneratePhp(wxCommandEvent& event);
 
     void OnXrcPreview(wxCommandEvent& e);
     void OnTestXrcImport(wxCommandEvent& e);
@@ -383,10 +379,11 @@ private:
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
-    BasePanel* m_perlPanel { nullptr };
-    BasePanel* m_luaPanel { nullptr };
-    BasePanel* m_phpPanel { nullptr };
+    BasePanel* m_fortranPanel { nullptr };
     BasePanel* m_haskellPanel { nullptr };
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_perlPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };
 

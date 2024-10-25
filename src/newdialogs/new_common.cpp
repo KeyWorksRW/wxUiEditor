@@ -25,6 +25,10 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_ruby_file, filename);
     }
+    else if (Project.getCodePreference() == GEN_LANG_FORTRAN)
+    {
+        form_node->set_value(prop_fortran_file, filename);
+    }
     else if (Project.getCodePreference() == GEN_LANG_HASKELL)
     {
         form_node->set_value(prop_haskell_file, filename);
@@ -37,9 +41,9 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_perl_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_PHP)
+    else if (Project.getCodePreference() == GEN_LANG_RUST)
     {
-        form_node->set_value(prop_php_file, filename);
+        form_node->set_value(prop_rust_file, filename);
     }
     else if (Project.getCodePreference() == GEN_LANG_XRC)
     {

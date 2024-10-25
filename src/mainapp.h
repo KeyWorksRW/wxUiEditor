@@ -56,7 +56,12 @@ public:
     bool isDarkMode() const noexcept { return m_isDarkMode; }
     bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
 
+    // Determines whether the testing menu is enabled
     bool isTestingMenuEnabled() const noexcept { return m_TestingMenuEnabled; }
+
+    // Determines whether the testing switch is enabled
+    bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
+    void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
 
     bool isGenerating() const noexcept { return m_is_generating; }
 
@@ -84,6 +89,7 @@ private:
     bool m_isMainFrameClosing { false };
     // bool m_isProject_updated { false };
     bool m_TestingMenuEnabled { false };
+    bool m_is_testing_switch { false };
     bool m_is_generating { false };  // true if generating code from the command line
 
 #if (DARK_MODE)

@@ -296,6 +296,10 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
                 break;
 
+            case GEN_LANG_FORTRAN:
+                code.Eol() << "if defined(__WINDOWS__)";
+                break;
+
             case GEN_LANG_HASKELL:
                 code.Eol() << "if os == \"mingw32\"";
                 break;
@@ -308,7 +312,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if $^O eq 'MSWin32'";
                 break;
 
-            case GEN_LANG_PHP:
+            case GEN_LANG_RUST:
                 code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
                 break;
 
@@ -345,6 +349,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "Wx::PLATFORM == 'WXUNIX'";
                 break;
 
+            case GEN_LANG_FORTRAN:
+                if (code.size())
+                    code << " .OR. ";
+                else
+                    code.Eol() << "if ";
+                code << "defined(__UNIX__)";
+                break;
+
             case GEN_LANG_HASKELL:
                 if (code.size())
                     code << " || ";
@@ -369,7 +381,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "$^O eq 'linux' or $^O eq 'darwin'";
                 break;
 
-            case GEN_LANG_PHP:
+            case GEN_LANG_RUST:
                 if (code.size())
                     code << " || ";
                 else
@@ -409,6 +421,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "Wx::PLATFORM == 'WXOSX'";
                 break;
 
+            case GEN_LANG_FORTRAN:
+                if (code.size())
+                    code << " .OR. ";
+                else
+                    code.Eol() << "if ";
+                code << "defined(__WXOSX__)";
+                break;
+
             case GEN_LANG_HASKELL:
                 if (code.size())
                     code << " || ";
@@ -433,7 +453,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "$^O eq 'darwin'";
                 break;
 
-            case GEN_LANG_PHP:
+            case GEN_LANG_RUST:
                 if (code.size())
                     code << " || ";
                 else
@@ -468,6 +488,10 @@ void BaseCodeGenerator::EndPlatformCode()
             m_source->writeLine("end");
             break;
 
+        case GEN_LANG_FORTRAN:
+            m_source->Unindent();
+            break;
+
         case GEN_LANG_HASKELL:
             m_source->Unindent();
             break;
@@ -479,7 +503,7 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_PERL:
             break;
 
-        case GEN_LANG_PHP:
+        case GEN_LANG_RUST:
             m_source->Unindent();
             break;
 

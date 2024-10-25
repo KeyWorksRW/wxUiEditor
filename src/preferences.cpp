@@ -61,6 +61,12 @@ void Prefs::ReadConfig()
     m_colour_ruby_number = config->Read("ruby_number_colour", "#FF0000");
     m_colour_ruby_string = config->Read("ruby_string_colour", "#008000");
 
+    m_colour_fortran = config->Read("fortran_colour", "#FF00FF");
+    m_colour_fortran_comment = config->Read("fortran_comment_colour", "#008000");
+    m_colour_fortran_keyword = config->Read("fortran_keyword_colour", "#0000FF");
+    m_colour_fortran_number = config->Read("fortran_number_colour", "#FF0000");
+    m_colour_fortran_string = config->Read("fortran_string_colour", "#008000");
+
     m_colour_haskell = config->Read("haskell_colour", "#FF00FF");
     m_colour_haskell_comment = config->Read("haskell_comment_colour", "#008000");
     m_colour_haskell_keyword = config->Read("haskell_keyword_colour", "#0000FF");
@@ -79,11 +85,11 @@ void Prefs::ReadConfig()
     m_colour_perl_number = config->Read("perl_number_colour", "#FF0000");
     m_colour_perl_string = config->Read("perl_string_colour", "#008000");
 
-    m_colour_php = config->Read("php_colour", "#FF00FF");
-    m_colour_php_comment = config->Read("php_comment_colour", "#008000");
-    m_colour_php_keyword = config->Read("php_keyword_colour", "#0000FF");
-    m_colour_php_number = config->Read("php_number_colour", "#FF0000");
-    m_colour_php_string = config->Read("php_string_colour", "#008000");
+    m_colour_rust = config->Read("rust_colour", "#FF00FF");
+    m_colour_rust_comment = config->Read("rust_comment_colour", "#008000");
+    m_colour_rust_keyword = config->Read("rust_keyword_colour", "#0000FF");
+    m_colour_rust_number = config->Read("rust_number_colour", "#FF0000");
+    m_colour_rust_string = config->Read("rust_string_colour", "#008000");
 
     m_colour_xrc_attribute = config->Read("xrc_colour", "#FF00FF");
     m_colour_xrc_dblstring = config->Read("xrc_dblstring_colour", "#008000");
@@ -92,10 +98,11 @@ void Prefs::ReadConfig()
     m_cpp_line_length = config->Read("cpp_line_length", 110);
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
+    m_fortran_line_length = config->Read("fortran_line_length", 100);
     m_haskell_line_length = config->Read("haskell_line_length", 80);
     m_lua_line_length = config->Read("lua_line_length", 100);
     m_perl_line_length = config->Read("perl_line_length", 80);
-    m_php_line_length = config->Read("php_line_length", 80);
+    m_rust_line_length = config->Read("rust_line_length", 80);
 
     m_icon_size = config->Read("icon_size", 20);
 

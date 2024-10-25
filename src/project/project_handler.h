@@ -131,6 +131,10 @@ public:
     // override of the language.
     GenLang getCodePreference(Node* node = nullptr) const;
 
+    // Returns all of the languages that are enabled for this project. The project's Code
+    // Preference is always included.
+    size_t getGenerateLanguages() const;
+
     // Assume major, minor, and patch have 99 possible values.
     // Returns major * 10000 + minor * 100 + patch
     // E.g., wxWidgets 3.1.6 returns 30106, 3.2.0 returns 30200

@@ -97,6 +97,7 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include <wx/config.h>  // wxConfig base header
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_handler.h"    // ImageHandler class
 #include "mainapp.h"          // App -- Main application class
@@ -136,12 +137,12 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     }
     else if (output_type == OUTPUT_PYTHON)
     {
-        GeneratePythonFiles(results);
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
         code_generated = true;
     }
     else if (output_type == OUTPUT_RUBY)
     {
-        GenerateRubyFiles(results);
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
         code_generated = true;
     }
     else if (output_type == OUTPUT_XRC)
@@ -172,14 +173,14 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             gen_python_code = dlg.is_gen_python();
             if (gen_python_code)
             {
-                GeneratePythonFiles(results);
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
                 code_generated = true;
             }
 
             gen_ruby_code = dlg.is_gen_ruby();
             if (gen_ruby_code)
             {
-                GenerateRubyFiles(results);
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
                 code_generated = true;
             }
 

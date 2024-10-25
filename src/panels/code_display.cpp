@@ -34,10 +34,11 @@
 extern const char* g_u8_cpp_keywords;
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
+extern const char* g_fortran_keywords;
 extern const char* g_haskell_keywords;
 extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_php_keywords;
+extern const char* g_rust_keywords;
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.
@@ -234,6 +235,27 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         m_scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, UserPrefs.get_RubyCommentColour());
         m_scintilla->StyleSetForeground(wxSTC_RB_NUMBER, UserPrefs.get_RubyNumberColour());
     }
+    else if (panel_type == GEN_LANG_FORTRAN)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_FORTRAN);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_fortran_keywords);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_PythonStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_PythonCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_PythonKeywordColour());
+    }
     else if (panel_type == GEN_LANG_PERL)
     {
         m_scintilla->SetLexer(wxSTC_LEX_PERL);
@@ -332,11 +354,11 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_PythonCommentColour());
         m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_PythonKeywordColour());
     }
-    else if (panel_type == GEN_LANG_PHP)
+    else if (panel_type == GEN_LANG_RUST)
     {
         m_scintilla->SetLexer(wxSTC_LEX_PHPSCRIPT);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_php_keywords);
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
 
         if (UserPrefs.is_DarkMode())
         {

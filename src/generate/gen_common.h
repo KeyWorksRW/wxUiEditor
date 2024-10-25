@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Common component functions
+// Purpose:   Common code generation functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -127,3 +127,13 @@ tt_string MakeRubyPath(Node* node);
 
 // Generates code to load a bitmap from Art, SVG, or up to three bitmap files.
 bool RubyBundleCode(Code& code, GenEnum::PropName prop);
+
+struct GenResults;
+// Common function to generate all files for a specific language
+bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+
+// Called by GenerateLanguageFiles and in OnGenSingle...() to generate a single form
+bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+
+void OnGenerateSingleLanguage(GenLang language);
+void OnGenerateLanguage(GenLang language);

@@ -33,6 +33,7 @@
 #include "clipboard.h"        // wxUiEditorData -- Handles reading and writing OS clipboard data
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "gen_base.h"         // Generate Base class
+#include "gen_common.h"       // Common component functions
 #include "gen_enums.h"        // Enumerations for generators
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
@@ -81,6 +82,7 @@ enum
 {
     IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
 
+    id_TestSwitch,
     id_CodeDiffDlg,
     id_ConvertImage,
     id_DebugCurrentTest,
@@ -91,17 +93,19 @@ enum
     id_GenerateCpp,
     id_GeneratePython,
     id_GenerateRuby,
+    id_GenerateFortran,
     id_GenerateHaskell,
     id_GenerateLua,
     id_GeneratePerl,
-    id_GeneratePhp,
+    id_GenerateRust,
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
+    id_GenSingleFortran,
     id_GenSingleHaskell,
     id_GenSingleLua,
     id_GenSinglePerl,
-    id_GenSinglePhp,
+    id_GenSingleRust,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -191,6 +195,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
     if (wxGetApp().isTestingMenuEnabled())
     {
         auto menuTesting = new wxMenu;
+
         menuTesting->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                             "Dialog showing what class have changed, and optional viewing in WinMerge");
         menuTesting->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
@@ -213,6 +218,25 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
 
         menuTesting->AppendSeparator();
         menuTesting->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
+        auto menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch", "Toggle test switch", wxITEM_CHECK);
+        menuItem->Check(wxGetApp().isTestingSwitch());
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent& event)
+            {
+                if (wxGetApp().isTestingSwitch())
+                {
+                    wxGetApp().setTestingSwitch(false);
+                    wxStaticCast(event.GetEventObject(), wxMenu)->FindItem(id_TestSwitch)->Check(false);
+                }
+                else
+                {
+                    wxGetApp().setTestingSwitch(true);
+                    wxStaticCast(event.GetEventObject(), wxMenu)->FindItem(id_TestSwitch)->Check(true);
+                }
+            },
+            id_TestSwitch);
+
         m_menubar->Append(menuTesting, "Testing");
 
         m_submenu_import_recent = new wxMenu();
@@ -387,19 +411,116 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
     if (wxGetApp().isTestingMenuEnabled())
     {
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleHaskell, this, id_GenSingleHaskell);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleLua, this, id_GenSingleLua);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePerl, this, id_GenSinglePerl);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePhp, this, id_GenSinglePhp);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_PYTHON);
+            },
+            id_GenSinglePython);
 
-        Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateHaskell, this, id_GenerateHaskell);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateLua, this, id_GenerateLua);
-        Bind(wxEVT_MENU, &MainFrame::OnGeneratePerl, this, id_GeneratePerl);
-        Bind(wxEVT_MENU, &MainFrame::OnGeneratePhp, this, id_GeneratePhp);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_RUBY);
+            },
+            id_GenSingleRuby);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
+            },
+            id_GenSingleFortran);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
+            },
+            id_GenSingleHaskell);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_LUA);
+            },
+            id_GenSingleLua);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_PERL);
+            },
+            id_GenSinglePerl);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_RUST);
+            },
+            id_GenSingleRust);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_XRC);
+            },
+            id_GeneratePython);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_RUBY);
+            },
+            id_GenerateRuby);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_FORTRAN);
+            },
+            id_GenerateFortran);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_HASKELL);
+            },
+            id_GenerateHaskell);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_LUA);
+            },
+            id_GenerateLua);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_PERL);
+            },
+            id_GeneratePerl);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_RUST);
+            },
+            id_GenerateRust);
 
         Bind(
             wxEVT_MENU,
@@ -445,10 +566,10 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     {
         if (Project.getOriginalProjectVersion() != Project.getProjectVersion())
         {
-            if (wxMessageBox(
-                    "A project saved with this version of wxUiEditor is not compatible with older versions of wxUiEditor.\n"
-                    "Continue with save?",
-                    "Save Project", wxYES_NO) == wxNO)
+            if (wxMessageBox("A project saved with this version of wxUiEditor is not compatible with older versions of "
+                             "wxUiEditor.\n"
+                             "Continue with save?",
+                             "Save Project", wxYES_NO) == wxNO)
             {
                 return;
             }
@@ -488,8 +609,8 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
             filename.replace_extension(".wxui");
         }
 
-        // Don't allow the user to walk over existing project file types that are probably associated with another designer
-        // tool
+        // Don't allow the user to walk over existing project file types that are probably associated with another
+        // designer tool
 
         else if (filename.extension().is_sameas(".fbp", tt::CASE::either))
         {
@@ -843,7 +964,7 @@ void MainFrame::ProjectLoaded()
 
     m_selected_node = Project.getProjectNode()->getSharedPtr();
 
-    EnableCodePanels(Project.getCodePreference());
+    UpdateLanguagePanels();
 }
 
 void MainFrame::ProjectSaved()
@@ -854,8 +975,8 @@ void MainFrame::ProjectSaved()
 
 void MainFrame::OnNodeSelected(CustomEvent& event)
 {
-    // This event is normally only fired if the current selection has changed. We dismiss any previous infobar message, and
-    // check to see if the current selection has any kind of issue that we should warn the user about.
+    // This event is normally only fired if the current selection has changed. We dismiss any previous infobar message,
+    // and check to see if the current selection has any kind of issue that we should warn the user about.
     m_info_bar->Dismiss();
 
     auto evt_flags = event.getNode();
@@ -1010,7 +1131,6 @@ void MainFrame::UpdateFrame()
 
 void MainFrame::OnProjectLoaded()
 {
-    ProjectLoaded();
     UpdateFrame();
 }
 
@@ -1349,34 +1469,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_mockupPanel = new MockupParent(m_notebook, this);
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
-    // The following panels are the core languages which are always displayed. Additional languages
-    // are be added dynamically as needed via EnableCodePanels().
-
-    m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
-    m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-
-    // Placing the Python panel first as it's the most commonly used language after C++
-    m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
-    m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
-
-    m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
-    m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
-        m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-
-        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
-        m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-
-        m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-        m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-
-        m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
-        m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
-    }
-
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 
@@ -1393,47 +1485,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     }
 
     return m_notebook;
-}
-
-void MainFrame::EnableCodePanels(GenLang language)
-{
-    switch (language)
-    {
-        case GEN_LANG_HASKELL:
-            if (!m_haskellPanel)
-            {
-                m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
-                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_LUA:
-            if (!m_luaPanel)
-            {
-                m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
-                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_PERL:
-            if (!m_perlPanel)
-            {
-                m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-                m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_PHP:
-            if (!m_phpPanel)
-            {
-                m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
-                m_notebook->InsertPage(1, m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        default:
-            break;  // All the others are already created by default
-    }
 }
 
 void MainFrame::CreateSplitters()
@@ -2283,5 +2334,275 @@ void MainFrame::DismissInfoBar()
     {
         m_info_bar->Dismiss();
         m_info_bar_dismissed = true;
+    }
+}
+
+void MainFrame::UpdateLanguagePanels()
+{
+    wxWindowUpdateLocker freeze(this);
+
+    // Temporarily remove XRC and DocView panels which are at the end. This allows us to simply add
+    // Language panels in order, then restore the XRC and DocView panels after all language panels
+    // have been added.
+
+    if (m_imnportPanel)
+    {
+        m_notebook->RemovePage(m_notebook->GetPageIndex(m_imnportPanel));
+    }
+
+    m_notebook->RemovePage(m_notebook->GetPageIndex(m_xrcPanel));
+    m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
+
+    auto languages = Project.getGenerateLanguages();
+    if (languages & GEN_LANG_CPLUSPLUS && !m_cppPanel)
+    {
+        m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
+        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+        {
+            m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_CPLUSPLUS) && m_cppPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_cppPanel));
+        m_cppPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_FORTRAN && !m_fortranPanel)
+    {
+        m_fortranPanel = new BasePanel(m_notebook, this, GEN_LANG_FORTRAN);
+        if (Project.getCodePreference() == GEN_LANG_FORTRAN)
+        {
+            m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_FORTRAN) && m_fortranPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_fortranPanel));
+        m_fortranPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_HASKELL && !m_haskellPanel)
+    {
+        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
+        if (Project.getCodePreference() == GEN_LANG_HASKELL)
+        {
+            m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_HASKELL) && m_haskellPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_haskellPanel));
+        m_haskellPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_LUA && !m_luaPanel)
+    {
+        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
+        if (Project.getCodePreference() == GEN_LANG_LUA)
+        {
+            m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_LUA) && m_luaPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_luaPanel));
+        m_luaPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_PERL && !m_perlPanel)
+    {
+        m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
+        if (Project.getCodePreference() == GEN_LANG_PERL)
+        {
+            m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_PERL) && m_perlPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_perlPanel));
+        m_perlPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_PYTHON && !m_pythonPanel)
+    {
+        m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
+        if (Project.getCodePreference() == GEN_LANG_PYTHON)
+        {
+            m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_PYTHON) && m_pythonPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_pythonPanel));
+        m_pythonPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_RUBY && !m_rubyPanel)
+    {
+        m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
+        if (Project.getCodePreference() == GEN_LANG_RUBY)
+        {
+            m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_RUBY) && m_rubyPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_rubyPanel));
+        m_rubyPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_RUST && !m_rustPanel)
+    {
+        m_rustPanel = new BasePanel(m_notebook, this, GEN_LANG_RUST);
+        if (Project.getCodePreference() == GEN_LANG_RUST)
+        {
+            m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_RUST) && m_rustPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_rustPanel));
+        m_rustPanel = nullptr;
+    }
+
+    int position;
+    switch (Project.getCodePreference())
+    {
+        case GEN_LANG_CPLUSPLUS:
+            ASSERT(m_cppPanel);
+            position = m_notebook->GetPageIndex(m_cppPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_FORTRAN:
+            ASSERT(m_fortranPanel);
+            position = m_notebook->GetPageIndex(m_fortranPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_HASKELL:
+            ASSERT(m_haskellPanel);
+            position = m_notebook->GetPageIndex(m_haskellPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_LUA:
+            ASSERT(m_luaPanel);
+            position = m_notebook->GetPageIndex(m_luaPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PERL:
+            ASSERT(m_perlPanel);
+            position = m_notebook->GetPageIndex(m_perlPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_PYTHON:
+            ASSERT(m_pythonPanel);
+            position = m_notebook->GetPageIndex(m_pythonPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_RUBY:
+            ASSERT(m_rubyPanel);
+            position = m_notebook->GetPageIndex(m_rubyPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_RUST:
+            ASSERT(m_rustPanel);
+            position = m_notebook->GetPageIndex(m_rustPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    // Now add back the XRC and DocView panels at the end.
+    if (m_imnportPanel)
+    {
+        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+    }
+
+    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+    m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+}
+
+void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)
+{
+    for (auto iter = m_custom_event_handlers.begin(); iter != m_custom_event_handlers.end(); ++iter)
+    {
+        if (*iter == handler)
+        {
+            m_custom_event_handlers.erase(iter);
+            return;
+        }
     }
 }

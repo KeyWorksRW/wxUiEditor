@@ -13,6 +13,7 @@
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "bitmaps.h"         // Contains various images handling functions
 #include "clipboard.h"       // Handles reading and writing OS clipboard data
+#include "gen_common.h"      // Common component functions
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "nav_panel.h"       // NavigationPanel -- Navigation Panel
 #include "node.h"            // Node class
@@ -300,15 +301,13 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
         case MenuSingleGenPython:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSinglePython(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_PYTHON);
             }
             break;
 
         case MenuSingleGenRuby:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleRuby(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_RUBY);
             }
             break;
 
@@ -319,31 +318,33 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case MenuSingleGenFortran:
+            {
+                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
+            }
+            break;
+
         case MenuSingleGenHaskell:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleHaskell(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
             }
             break;
 
         case MenuSingleGenLua:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleLua(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_LUA);
             }
             break;
 
         case MenuSingleGenPerl:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSinglePerl(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_PERL);
             }
             break;
 
-        case MenuSingleGenPHP:
+        case MenuSingleGenRust:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSinglePhp(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_RUST);
             }
             break;
 
@@ -552,9 +553,9 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 Append(MenuSingleGenPerl, "Generate Perl for this form");
                 ++count;
             }
-            if (node->hasValue(prop_php_file))
+            if (node->hasValue(prop_rust_file))
             {
-                Append(MenuSingleGenPHP, "Generate PHP for this form");
+                Append(MenuSingleGenRust, "Generate Rust for this form");
                 ++count;
             }
 

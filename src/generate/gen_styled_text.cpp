@@ -435,7 +435,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     }
-    else if (node->as_string(prop_stc_lexer) == "PHP")
+    else if (node->as_string(prop_stc_lexer) == "Rust")
     {
         scintilla->StyleSetForeground(wxSTC_HPHP_COMMENT, wxColour(0, 128, 0));
     }

@@ -75,6 +75,9 @@ public:
     int get_RubyLineLength() const { return m_ruby_line_length; }
     void set_RubyLineLength(int length) { m_ruby_line_length = length; }
 
+    int get_FortranLineLength() const { return m_haskell_line_length; }
+    void set_FortranLineLength(int length) { m_haskell_line_length = length; }
+
     int get_HaskellLineLength() const { return m_haskell_line_length; }
     void set_HaskellLineLength(int length) { m_haskell_line_length = length; }
 
@@ -84,8 +87,8 @@ public:
     int get_PerlLineLength() const { return m_perl_line_length; }
     void set_PerlLineLength(int length) { m_perl_line_length = length; }
 
-    int get_PhpLineLength() const { return m_php_line_length; }
-    void set_PhpLineLength(int length) { m_php_line_length = length; }
+    int get_RustLineLength() const { return m_rust_line_length; }
+    void set_RustLineLength(int length) { m_rust_line_length = length; }
 
     int get_IconSize() const { return m_icon_size; }
     void set_IconSize(int size) { m_icon_size = size; }
@@ -134,6 +137,17 @@ public:
     const wxColour& get_RubyStringColour() const { return m_colour_ruby_string; }
     void set_RubyStringColour(const wxColour& colour) { m_colour_ruby_string = colour; }
 
+    const wxColour& get_FortranColour() const { return m_colour_fortran; }
+    void set_FortranColour(const wxColour& colour) { m_colour_fortran = colour; }
+    const wxColour& get_FortranCommentColour() const { return m_colour_fortran_comment; }
+    void set_FortranCommentColour(const wxColour& colour) { m_colour_fortran_comment = colour; }
+    const wxColour& get_FortranKeywordColour() const { return m_colour_fortran_keyword; }
+    void set_FortranKeywordColour(const wxColour& colour) { m_colour_fortran_keyword = colour; }
+    const wxColour& get_FortranNumberColour() const { return m_colour_fortran_number; }
+    void set_FortranNumberColour(const wxColour& colour) { m_colour_fortran_number = colour; }
+    const wxColour& get_FortranStringColour() const { return m_colour_fortran_string; }
+    void set_FortranStringColour(const wxColour& colour) { m_colour_fortran_string = colour; }
+
     const wxColour& get_HaskellColour() const { return m_colour_haskell; }
     void set_HaskellColour(const wxColour& colour) { m_colour_haskell = colour; }
     const wxColour& get_HaskellCommentColour() const { return m_colour_haskell_comment; }
@@ -167,16 +181,16 @@ public:
     const wxColour& get_PerlStringColour() const { return m_colour_perl_string; }
     void set_PerlStringColour(const wxColour& colour) { m_colour_perl_string = colour; }
 
-    const wxColour& get_PhpColour() const { return m_colour_php; }
-    void set_PhpColour(const wxColour& colour) { m_colour_php = colour; }
-    const wxColour& get_PhpCommentColour() const { return m_colour_php_comment; }
-    void set_PhpCommentColour(const wxColour& colour) { m_colour_php_comment = colour; }
-    const wxColour& get_PhpKeywordColour() const { return m_colour_php_keyword; }
-    void set_PhpKeywordColour(const wxColour& colour) { m_colour_php_keyword = colour; }
-    const wxColour& get_PhpNumberColour() const { return m_colour_php_number; }
-    void set_PhpNumberColour(const wxColour& colour) { m_colour_php_number = colour; }
-    const wxColour& get_PhpStringColour() const { return m_colour_php_string; }
-    void set_PhpStringColour(const wxColour& colour) { m_colour_php_string = colour; }
+    const wxColour& get_RustColour() const { return m_colour_rust; }
+    void set_RustColour(const wxColour& colour) { m_colour_rust = colour; }
+    const wxColour& get_RustCommentColour() const { return m_colour_rust_comment; }
+    void set_RustCommentColour(const wxColour& colour) { m_colour_rust_comment = colour; }
+    const wxColour& get_RustKeywordColour() const { return m_colour_rust_keyword; }
+    void set_RustKeywordColour(const wxColour& colour) { m_colour_rust_keyword = colour; }
+    const wxColour& get_RustNumberColour() const { return m_colour_rust_number; }
+    void set_RustNumberColour(const wxColour& colour) { m_colour_rust_number = colour; }
+    const wxColour& get_RustStringColour() const { return m_colour_rust_string; }
+    void set_RustStringColour(const wxColour& colour) { m_colour_rust_string = colour; }
 
     const wxColour& get_XrcAttributeColour() const { return m_colour_xrc_attribute; }
     void set_XrcAttributeColour(const wxColour& colour) { m_colour_xrc_attribute = colour; }
@@ -246,10 +260,11 @@ private:
     tt_string m_cpp_widgets_version { "3.2" };
     tt_string m_python_version { "4.2" };
     tt_string m_ruby_version { "1.2" };
+    tt_string m_fortran_version { "1.0" };
     tt_string m_haskell_version { "1.0" };
     tt_string m_lua_version { "3.2.0" };
     tt_string m_perl_version { "3.2" };
-    tt_string m_php_version { "3.0" };
+    tt_string m_rust_version { "3.0" };
 
     tt_string m_code_display_font;
 
@@ -270,6 +285,12 @@ private:
     wxColour m_colour_ruby_number { wxColour("#FF000000") };
     wxColour m_colour_ruby_string { wxColour("#008000") };
 
+    wxColour m_colour_fortran { wxColour("#FF00FF") };
+    wxColour m_colour_fortran_comment { wxColour("#008000") };
+    wxColour m_colour_fortran_keyword { wxColour("#0000FF") };
+    wxColour m_colour_fortran_number { wxColour("#FF0000") };
+    wxColour m_colour_fortran_string { wxColour("#008000") };
+
     wxColour m_colour_haskell { wxColour("#FF00FF") };
     wxColour m_colour_haskell_comment { wxColour("#008000") };
     wxColour m_colour_haskell_keyword { wxColour("#0000FF") };
@@ -288,11 +309,11 @@ private:
     wxColour m_colour_perl_number { wxColour("#FF0000") };
     wxColour m_colour_perl_string { wxColour("#008000") };
 
-    wxColour m_colour_php { wxColour("#FF00FF") };
-    wxColour m_colour_php_comment { wxColour("#008000") };
-    wxColour m_colour_php_keyword { wxColour("#0000FF") };
-    wxColour m_colour_php_number { wxColour("#FF0000") };
-    wxColour m_colour_php_string { wxColour("#008000") };
+    wxColour m_colour_rust { wxColour("#FF00FF") };
+    wxColour m_colour_rust_comment { wxColour("#008000") };
+    wxColour m_colour_rust_keyword { wxColour("#0000FF") };
+    wxColour m_colour_rust_number { wxColour("#FF0000") };
+    wxColour m_colour_rust_string { wxColour("#008000") };
 
     wxColour m_colour_xrc_attribute { wxColour("#FF00FF") };
     wxColour m_colour_xrc_dblstring { wxColour("#008000") };
@@ -303,10 +324,11 @@ private:
     int m_cpp_line_length { 110 };
     int m_python_line_length { 90 };
     int m_ruby_line_length { 80 };
+    int m_fortran_line_length { 100 };
     int m_haskell_line_length { 80 };
     int m_lua_line_length { 100 };
     int m_perl_line_length { 80 };
-    int m_php_line_length { 80 };
+    int m_rust_line_length { 100 };
 
     int m_icon_size { 20 };
 

@@ -57,12 +57,13 @@ public:
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
     void GenerateCppClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateFortranClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateHaskellClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateLuaClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePerlClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePhpClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateRubyClass(PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateRustClass(PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 

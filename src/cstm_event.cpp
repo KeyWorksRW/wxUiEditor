@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
+
 #include "cstm_event.h"
 
 #include "mainframe.h"        // MainFrame -- Main window frame
@@ -30,6 +32,13 @@ wxDEFINE_EVENT(EVT_GridBagAction, CustomEvent);
 
 void MainFrame::FireProjectLoadedEvent()
 {
+    // The Project loaded event can be fired even if just the language is changed which can cause
+    // the property grid to add or remove language categories. The easiest way to deal with the
+    // potential redraw issue is simply to freeze the entire main window frame until all event
+    // handlers have been processed.
+
+    wxWindowUpdateLocker freeze(this);
+
     ProjectLoaded();
 
     CustomEvent event(EVT_ProjectUpdated, Project.getProjectNode());

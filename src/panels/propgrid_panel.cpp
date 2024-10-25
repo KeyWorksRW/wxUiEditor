@@ -66,8 +66,15 @@ using namespace GenEnum;
 constexpr auto PROPERTY_ID = wxID_HIGHEST + 1;
 constexpr auto EVENT_ID = PROPERTY_ID + 1;
 
+static std::map<GenLang, std::string> s_lang_category_prefix;
+
 PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
+    for (size_t lang = 1; lang <= GEN_LANG_LAST; lang <<= 1)
+    {
+        s_lang_category_prefix[static_cast<GenLang>(lang)] = ConvertFromGenLang(static_cast<GenLang>(lang));
+    }
+
     for (auto& iter: list_wx_ids)
     {
         m_astr_wx_ids.Add(iter);
@@ -151,12 +158,6 @@ void PropGridPanel::SaveDescBoxHeight()
     config->SetPath("/");
 }
 
-static std::map<GenLang, std::string> s_lang_category_prefix = {
-
-    { GEN_LANG_CPLUSPLUS, "C++" }, { GEN_LANG_PERL, "wxPerl" }, { GEN_LANG_PYTHON, "wxPython" },
-    { GEN_LANG_RUBY, "wxRuby" },   { GEN_LANG_XRC, "XRC" },
-};
-
 void PropGridPanel::Create()
 {
     if (m_locked)
@@ -212,7 +213,7 @@ void PropGridPanel::Create()
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
 
-            auto& lang_prefix = s_lang_category_prefix[m_preferred_lang];
+            auto lang_prefix = ConvertFromGenLang(Project.getCodePreference());
 
             if (node->isForm() || node->isGen(gen_Project))
             {
@@ -243,7 +244,9 @@ void PropGridPanel::Create()
                         if (!lang_found)
                         {
                             if (!info_base->declName().is_sameas("Window Events"))
+                            {
                                 CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                            }
                             else
                                 CreateEventCategory(info_base->declName(), node, info_base, event_set);
                             continue;
@@ -468,9 +471,22 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 wxPGChoices bit_flags;
                 int index = 0;
-                for (auto& iter: propInfo->getOptions())
+                if (prop->get_name() == prop_generate_languages && !wxGetApp().isTestingSwitch())
                 {
-                    bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                    for (auto& iter: propInfo->getOptions())
+                    {
+                        // If not testing, do not show Code preference options for code we don't currently generate
+                        if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" && iter.name != "XRC")
+                            continue;
+                        bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                    }
+                }
+                else
+                {
+                    for (auto& iter: propInfo->getOptions())
+                    {
+                        bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                    }
                 }
 
                 int val = GetBitlistValue(prop->as_string(), bit_flags);
@@ -511,12 +527,29 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 wxPGChoices constants;
                 int i = 0;
-                for (auto& iter: propInfo->getOptions())
+                if (prop->get_name() == prop_code_preference && !wxGetApp().isTestingSwitch())
                 {
-                    constants.Add(iter.name, i++);
-                    if (iter.name == value)
+                    for (auto& iter: propInfo->getOptions())
                     {
-                        pHelp = &iter.help;
+                        // If not testing, do not show Code preference options for code we don't currently generate
+                        if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" && iter.name != "XRC")
+                            continue;
+                        constants.Add(iter.name, i++);
+                        if (iter.name == value)
+                        {
+                            pHelp = &iter.help;
+                        }
+                    }
+                }
+                else
+                {
+                    for (auto& iter: propInfo->getOptions())
+                    {
+                        constants.Add(iter.name, i++);
+                        if (iter.name == value)
+                        {
+                            pHelp = &iter.help;
+                        }
                     }
                 }
 
@@ -570,10 +603,11 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_python_combined_file:
                     case prop_ruby_file:
                     case prop_ruby_combined_file:
+                    case prop_fortran_file:
                     case prop_haskell_file:
                     case prop_lua_file:
                     case prop_perl_file:
-                    case prop_php_file:
+                    case prop_rust_file:
                     case prop_cmake_file:
                     case prop_folder_cmake_file:
                     case prop_subclass_header:
@@ -1073,6 +1107,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     auto prop = it->second;
     if (prop->get_name() == prop_code_preference)
     {
+        // TODO: [Randalphwa - 10-23-2024] Either code preferences should only show
+        // prop_generate_languages, or prop_generate_languages should always update the code
+        // preferences. Even better would be to disable the matching generate language bit so that
+        // the user can't shut it off.
+
         modifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
         auto grid_iterator = m_prop_grid->GetCurrentPage()->GetIterator(wxPG_ITERATE_CATEGORIES);
         while (!grid_iterator.AtEnd())
@@ -1122,6 +1161,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Fortran"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Fortran")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
             else if (grid_property->GetLabel().Contains("Haskell"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Haskell")
@@ -1131,7 +1181,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
                 }
             }
             else if (grid_property->GetLabel().Contains("Lua"))
@@ -1143,7 +1192,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
                 }
             }
             else if (grid_property->GetLabel().Contains("Perl"))
@@ -1155,19 +1203,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
                 }
             }
-            else if (grid_property->GetLabel().Contains("PHP"))
+            else if (grid_property->GetLabel().Contains("Rust"))
             {
-                if (prop->as_string() != "any" && prop->as_string() != "PHP")
+                if (prop->as_string() != "any" && prop->as_string() != "Rust")
                 {
                     m_prop_grid->Collapse(grid_property);
                 }
                 else
                 {
                     m_prop_grid->Expand(grid_property);
-                    wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
                 }
             }
 
@@ -1180,6 +1226,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         // written.
         auto config = wxConfig::Get();
         config->Write("GenCode", 0);
+
+        // wxGetFrame().UpdateLanguagePanels();
+        wxGetFrame().FireProjectLoadedEvent();
 
         return;
     }
@@ -1374,6 +1423,12 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     else
     {
         wxGetFrame().DismissInfoBar();
+    }
+
+    if (prop->get_name() == prop_generate_languages)
+    {
+        // wxGetFrame().UpdateLanguagePanels();
+        wxGetFrame().FireProjectLoadedEvent();
     }
 }
 
@@ -1630,8 +1685,9 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
     // it's a different grid_prop
     if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
-        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) &&
-        !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_php_file))
+        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_fortran_file) &&
+        !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) && !node_prop->isProp(prop_perl_file) &&
+        !node_prop->isProp(prop_rust_file))
     {
         if (newValue.size())
         {
@@ -1643,15 +1699,8 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     }
     modifyProperty(node_prop, newValue);
 
-    // Create/enable the appropriate code panel if needed
-    if (node_prop->isProp(prop_haskell_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_HASKELL);
-    else if (node_prop->isProp(prop_lua_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_LUA);
-    else if (node_prop->isProp(prop_perl_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_PERL);
-    else if (node_prop->isProp(prop_php_file))
-        wxGetFrame().EnableCodePanels(GEN_LANG_PHP);
+    // Review: [Randalphwa - 06-26-2023] The panel should already have been created
+    // wxGetFrame().UpdateLanguagePanels();
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -1971,10 +2020,11 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     if (!category.getCategoryCount() && !category.getPropNameCount())
         return;
 
-#if !defined(GENERATE_PERL_CODE)
-    if (category.getName().contains("wxPerl"))
+    auto generate_languages = Project.getGenerateLanguages();
+
+    // Ignore if the user doesn't want to generate this language
+    if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
         return;
-#endif
 
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);
@@ -2051,12 +2101,23 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
+    else if (name.contains("wxFortran"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#9900e6"));  // Dark Purple
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ff99ff"));  // Light Purple
+        if (Project.getCodePreference(node) != GEN_LANG_FORTRAN)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
     else if (name.contains("wxHaskell"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#0000e6"));  // Dark Blue
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#99bbff"));  // Light Blue
         if (Project.getCodePreference(node) != GEN_LANG_HASKELL)
         {
             m_prop_grid->Collapse(id);
@@ -2065,9 +2126,9 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("wxLua"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#0073e6"));  // Dark Blue
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#80bfff"));  // Light Blue
         if (Project.getCodePreference(node) != GEN_LANG_LUA)
         {
             m_prop_grid->Collapse(id);
@@ -2084,13 +2145,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("wxPHP"))
+    else if (name.contains("wxRust"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
-        if (Project.getCodePreference(node) != GEN_LANG_PHP)
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
+        if (Project.getCodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
         }
@@ -2277,6 +2338,10 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_xrc_file);
             break;
 
+        case GEN_LANG_FORTRAN:
+            ChangeOutputFile(prop_fortran_file);
+            break;
+
         case GEN_LANG_HASKELL:
             ChangeOutputFile(prop_haskell_file);
             break;
@@ -2289,8 +2354,8 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_perl_file);
             break;
 
-        case GEN_LANG_PHP:
-            ChangeOutputFile(prop_php_file);
+        case GEN_LANG_RUST:
+            ChangeOutputFile(prop_rust_file);
             break;
 
         default:

@@ -334,7 +334,7 @@ extern const char* g_ruby_keywords;
 extern const char* g_haskell_keywords;
 extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_php_keywords;
+extern const char* g_rust_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
@@ -342,7 +342,7 @@ std::set<std::string> g_set_ruby_keywords;
 std::set<std::string> g_set_haskell_keywords;
 std::set<std::string> g_set_lua_keywords;
 std::set<std::string> g_set_perl_keywords;
-std::set<std::string> g_set_php_keywords;
+std::set<std::string> g_set_rust_keywords;
 
 bool isValidVarName(const std::string& str, GenLang language)
 {
@@ -400,9 +400,9 @@ bool isValidVarName(const std::string& str, GenLang language)
     {
         return lambda(g_set_perl_keywords, g_perl_keywords);
     }
-    else if (language == GEN_LANG_PHP)
+    else if (language == GEN_LANG_RUST)
     {
-        return lambda(g_set_php_keywords, g_php_keywords);
+        return lambda(g_set_rust_keywords, g_rust_keywords);
     }
 
     return true;
@@ -576,7 +576,7 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language)
         return true;
 }
 
-std::string AddLanguageName(GenLang language)
+std::string_view ConvertFromGenLang(GenLang language)
 {
     switch (language)
     {
@@ -598,8 +598,8 @@ std::string AddLanguageName(GenLang language)
         case GEN_LANG_PERL:
             return "Perl";
             break;
-        case GEN_LANG_PHP:
-            return "PHP";
+        case GEN_LANG_RUST:
+            return "Rust";
             break;
         case GEN_LANG_XRC:
             return "XRC";
@@ -607,5 +607,54 @@ std::string AddLanguageName(GenLang language)
         default:
             return "an unknown language";
             break;
+    }
+}
+
+GenLang ConvertToGenLang(tt_string_view language)
+{
+    if (language.starts_with("C++") || language.starts_with("Folder C++"))
+        return GEN_LANG_CPLUSPLUS;
+    else if (language == "Python" || language.starts_with("wxPython") || language.starts_with("Folder wxPython"))
+        return GEN_LANG_PYTHON;
+    else if (language == "Ruby" || language.starts_with("wxRuby") || language.starts_with("Folder wxRuby"))
+        return GEN_LANG_RUBY;
+    else if (language == "Haskell" || language.starts_with("wxHaskell") || language.starts_with("Folder wxHaskell"))
+        return GEN_LANG_HASKELL;
+    else if (language == "Lua" || language.starts_with("wxLua") || language.starts_with("Folder wxLua"))
+        return GEN_LANG_LUA;
+    else if (language == "Perl" || language.starts_with("wxPerl") || language.starts_with("Folder wxPerl"))
+        return GEN_LANG_PERL;
+    else if (language == "Rust" || language.starts_with("wxRust") || language.starts_with("Folder wxRust"))
+        return GEN_LANG_RUST;
+    else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
+        return GEN_LANG_XRC;
+    else
+        return GEN_LANG_CPLUSPLUS;
+}
+
+std::string GetLanguageExtension(GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            return ".cpp";
+        case GEN_LANG_FORTRAN:
+            return ".f90";
+        case GEN_LANG_HASKELL:
+            return ".hs";
+        case GEN_LANG_LUA:
+            return ".lua";
+        case GEN_LANG_PERL:
+            return ".pl";
+        case GEN_LANG_PYTHON:
+            return ".py";
+        case GEN_LANG_RUBY:
+            return ".rb";
+        case GEN_LANG_RUST:
+            return ".rs";
+        case GEN_LANG_XRC:
+            return ".xrc";
+        default:
+            return ".cpp";
     }
 }

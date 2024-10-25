@@ -89,6 +89,7 @@ set (file_list
 
     generate/gen_cpp.cpp           # Generate C++ code
     generate/gen_derived.cpp       # Generate C++ Derived code
+    generate/gen_fortran.cpp       # Generate wxFortran code
     generate/gen_haskell.cpp       # Generate wxHaskell code
     generate/gen_lua.cpp           # Generate wxLua/wxLuaJIT code
     generate/gen_perl.cpp          # Generate wxPerl code

@@ -55,6 +55,7 @@ namespace wxue_img
     wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_folder_svg(int width, int height);
     wxBitmapBundle bundle_fontPicker_svg(int width, int height);
+    wxBitmapBundle bundle_fortran_logo_svg(int width, int height);
     wxBitmapBundle bundle_gauge_svg(int width, int height);
     wxBitmapBundle bundle_generate_svg(int width, int height);
     wxBitmapBundle bundle_genericdir_ctrl_svg(int width, int height);
@@ -245,6 +246,7 @@ namespace wxue_img
     extern const unsigned char flex_grid_sizer_svg[330];  // ../art_src/flex_grid_sizer.svg
     extern const unsigned char folder_svg[605];  // ../art_src/folder.svg
     extern const unsigned char fontPicker_svg[4008];  // ../art_src/fontPicker.svg
+    extern const unsigned char fortran_logo_svg[589];  // ../art_src/fortran_logo.svg
     extern const unsigned char gauge_svg[285];  // ../art_src/gauge.svg
     extern const unsigned char generate_svg[2435];  // ../art_src/generate.svg
     extern const unsigned char genericdir_ctrl_svg[7243];  // ../art_src/genericdir_ctrl.svg

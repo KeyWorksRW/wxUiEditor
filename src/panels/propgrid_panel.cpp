@@ -603,6 +603,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_python_combined_file:
                     case prop_ruby_file:
                     case prop_ruby_combined_file:
+                    case prop_fortran_file:
                     case prop_haskell_file:
                     case prop_lua_file:
                     case prop_perl_file:
@@ -1160,6 +1161,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Fortran"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Fortran")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
             else if (grid_property->GetLabel().Contains("Haskell"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Haskell")
@@ -1673,8 +1685,9 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
     // it's a different grid_prop
     if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
-        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) &&
-        !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_rust_file))
+        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_fortran_file) &&
+        !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) && !node_prop->isProp(prop_perl_file) &&
+        !node_prop->isProp(prop_rust_file))
     {
         if (newValue.size())
         {
@@ -2088,12 +2101,23 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
+    else if (name.contains("wxFortran"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#9900e6"));  // Dark Purple
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ff99ff"));  // Light Purple
+        if (Project.getCodePreference(node) != GEN_LANG_FORTRAN)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
     else if (name.contains("wxHaskell"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#0000e6"));  // Dark Blue
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#99bbff"));  // Light Blue
         if (Project.getCodePreference(node) != GEN_LANG_HASKELL)
         {
             m_prop_grid->Collapse(id);
@@ -2102,9 +2126,9 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("wxLua"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#0073e6"));  // Dark Blue
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#80bfff"));  // Light Blue
         if (Project.getCodePreference(node) != GEN_LANG_LUA)
         {
             m_prop_grid->Collapse(id);
@@ -2124,9 +2148,9 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
     else if (name.contains("wxRust"))
     {
         if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#DCDCDC"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
         else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#F5FFFA"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
         if (Project.getCodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
@@ -2312,6 +2336,10 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
 
         case GEN_LANG_XRC:
             ChangeOutputFile(prop_xrc_file);
+            break;
+
+        case GEN_LANG_FORTRAN:
+            ChangeOutputFile(prop_fortran_file);
             break;
 
         case GEN_LANG_HASKELL:

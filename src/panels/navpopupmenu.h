@@ -162,10 +162,11 @@ public:
         MenuSingleGenPython,
         MenuSingleGenRuby,
         MenuSingleGenXRC,
+        MenuSingleGenFortran,
         MenuSingleGenHaskell,
         MenuSingleGenLua,
         MenuSingleGenPerl,
-        MenuSingleGenPHP,
+        MenuSingleGenRust,
 
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,

@@ -937,6 +937,8 @@ std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenL
                 return "persist is not supported in Rust";
             case GEN_LANG_PYTHON:
                 return "persist is not supported in Python";
+            case GEN_LANG_FORTRAN:
+                return "persist is not supported in Fortran";
             case GEN_LANG_HASKELL:
                 return "persist is not supported in Haskell";
             case GEN_LANG_XRC:

@@ -23,11 +23,12 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
-extern const char* g_ruby_keywords;
-extern const char* g_perl_keywords;
+extern const char* g_fortran_keywords;
 extern const char* g_haskell_keywords;
 extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
+extern const char* g_perl_keywords;
+extern const char* g_ruby_keywords;
 extern const char* g_rust_keywords;
 
 #ifndef SCI_SETKEYWORDS
@@ -37,16 +38,18 @@ extern const char* g_rust_keywords;
 constexpr size_t EVENT_PAGE_CPP = 0;
 constexpr size_t EVENT_PAGE_PYTHON = 1;
 constexpr size_t EVENT_PAGE_RUBY = 2;
-constexpr size_t EVENT_PAGE_HASKELL = 3;
-constexpr size_t EVENT_PAGE_LUA = 4;
-constexpr size_t EVENT_PAGE_PERL = 5;
-constexpr size_t EVENT_PAGE_RUST = 6;
+constexpr size_t EVENT_PAGE_FORTRAN = 3;
+constexpr size_t EVENT_PAGE_HASKELL = 4;
+constexpr size_t EVENT_PAGE_LUA = 5;
+constexpr size_t EVENT_PAGE_PERL = 6;
+constexpr size_t EVENT_PAGE_RUST = 7;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
     // Page numbers can be reduced if the language before it was removed
     m_python_page = EVENT_PAGE_PYTHON;
     m_ruby_page = EVENT_PAGE_RUBY;
+    m_fortran_page = EVENT_PAGE_FORTRAN;
     m_haskell_page = EVENT_PAGE_HASKELL;
     m_lua_page = EVENT_PAGE_LUA;
     m_perl_page = EVENT_PAGE_PERL;
@@ -56,6 +59,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
     m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
     m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
+    m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
     m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
     m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
     m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
@@ -68,6 +72,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_notebook->RemovePage(EVENT_PAGE_CPP);
         m_python_page--;
         m_ruby_page--;
+        m_fortran_page--;
         m_haskell_page--;
         m_lua_page--;
         m_perl_page--;
@@ -77,6 +82,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     {
         m_notebook->RemovePage(m_python_page);
         m_ruby_page--;
+        m_fortran_page--;
         m_haskell_page--;
         m_lua_page--;
         m_perl_page--;
@@ -85,6 +91,14 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     if (!m_is_ruby_enabled)
     {
         m_notebook->RemovePage(m_ruby_page);
+        m_fortran_page--;
+        m_lua_page--;
+        m_perl_page--;
+        m_rust_page--;
+    }
+    if (!m_is_fortran_enabled)
+    {
+        m_notebook->RemovePage(m_fortran_page);
         m_haskell_page--;
         m_lua_page--;
         m_perl_page--;
@@ -131,6 +145,15 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
         m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
         m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+    }
+    if (m_is_fortran_enabled)
+    {
+        m_fortran_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
+        m_fortran_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_fortran_keywords);
+
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_FortranStringColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_FortranCommentColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_FortranKeywordColour());
     }
     if (m_is_haskell_enabled)
     {
@@ -218,6 +241,11 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             }
             m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
         }
+        if (m_is_fortran_enabled)
+        {
+            m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
+            m_fortran_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_fortran_keywords);
+        }
         if (m_is_haskell_enabled)
         {
             m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
@@ -259,6 +287,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_notebook->SetSelection(m_python_page);
     else if (m_code_preference == GEN_LANG_RUBY)
         m_notebook->SetSelection(m_ruby_page);
+    else if (m_code_preference == GEN_LANG_FORTRAN)
+        m_notebook->SetSelection(m_fortran_page);
     else if (m_code_preference == GEN_LANG_HASKELL)
         m_notebook->SetSelection(m_haskell_page);
     else if (m_code_preference == GEN_LANG_LUA)
@@ -1017,10 +1047,10 @@ tt_string EventHandlerDlg::GetRustValue(tt_string_view value)
 
 // This is a static function
 
-tt_string EventHandlerDlg::GetHaskelValue(tt_string_view value)
+tt_string EventHandlerDlg::GetFortranValue(tt_string_view value)
 {
     tt_string result;
-    auto pos = value.find("[haskel:");
+    auto pos = value.find("[fortran:");
     if (pos == tt::npos)
     {
         if (value.front() == '[')
@@ -1031,7 +1061,7 @@ tt_string EventHandlerDlg::GetHaskelValue(tt_string_view value)
         else
         {
             result = value;
-            if (auto pos_other = result.find("[haskel:"); pos_other != tt::npos)
+            if (auto pos_other = result.find("[fortran:"); pos_other != tt::npos)
             {
                 result.erase(pos_other, result.size() - pos_other);
             }
@@ -1043,10 +1073,52 @@ tt_string EventHandlerDlg::GetHaskelValue(tt_string_view value)
         value.remove_prefix(pos);
     }
 
-    if (!value.starts_with("[haskel:lambda]"))
+    if (!value.starts_with("[fortran:lambda]"))
     {
         // This is just a function name, so remove the "[python:" and the trailing ']'
-        value.remove_prefix(sizeof("[haskel:") - 1);
+        value.remove_prefix(sizeof("[fortran:") - 1);
+        if (auto end = value.find(']'); end != tt::npos)
+        {
+            value.remove_suffix(value.size() - end);
+        }
+    }
+
+    result << value;
+    return result;
+}
+
+// This is a static function
+
+tt_string EventHandlerDlg::GetHaskelValue(tt_string_view value)
+{
+    tt_string result;
+    auto pos = value.find("[haskell:");
+    if (pos == tt::npos)
+    {
+        if (value.front() == '[')
+        {
+            // Unfortunately, this is a static function, so we have no access to m_event.
+            result = "OnEvent";
+        }
+        else
+        {
+            result = value;
+            if (auto pos_other = result.find("[haskell:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+        }
+        return result;
+    }
+    else
+    {
+        value.remove_prefix(pos);
+    }
+
+    if (!value.starts_with("[haskell:lambda]"))
+    {
+        // This is just a function name, so remove the "[python:" and the trailing ']'
+        value.remove_prefix(sizeof("[haskell:") - 1);
         if (auto end = value.find(']'); end != tt::npos)
         {
             value.remove_suffix(value.size() - end);

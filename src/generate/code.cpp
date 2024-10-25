@@ -237,15 +237,7 @@ const view_map g_map_ruby_prefix
 
 };
 
-const view_map g_map_perl_prefix
-{
-};
-
-const view_map g_map_lua_prefix
-{
-};
-
-const view_map g_map_rust_prefix
+const view_map g_map_fortran_prefix
 {
 };
 
@@ -253,7 +245,23 @@ const view_map g_map_haskell_prefix
 {
 };
 
-static const view_map s_short_perl_map
+const view_map g_map_lua_prefix
+{
+};
+
+const view_map g_map_perl_prefix
+{
+};
+
+const view_map g_map_rust_prefix
+{
+};
+
+static const view_map s_short_fortran_map
+{
+};
+
+static const view_map s_short_haskell_map
 {
 };
 
@@ -261,11 +269,11 @@ static const view_map s_short_lua_map
 {
 };
 
-static const view_map s_short_rust_map
+static const view_map s_short_perl_map
 {
 };
 
-static const view_map s_short_haskell_map
+static const view_map s_short_rust_map
 {
 };
 
@@ -278,6 +286,21 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
 
     switch (language)
     {
+        case GEN_LANG_FORTRAN:
+            prefix_list = &s_short_fortran_map;
+            global_list = &g_map_fortran_prefix;
+            break;
+
+        case GEN_LANG_HASKELL:
+            prefix_list = &s_short_haskell_map;
+            global_list = &g_map_haskell_prefix;
+            break;
+
+        case GEN_LANG_LUA:
+            prefix_list = &s_short_lua_map;
+            global_list = &g_map_lua_prefix;
+            break;
+
         case GEN_LANG_PERL:
             prefix_list = &s_short_perl_map;
             global_list = &g_map_perl_prefix;
@@ -293,19 +316,9 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
             global_list = &g_map_ruby_prefix;
             break;
 
-        case GEN_LANG_LUA:
-            prefix_list = &s_short_lua_map;
-            global_list = &g_map_lua_prefix;
-            break;
-
         case GEN_LANG_RUST:
             prefix_list = &s_short_rust_map;
             global_list = &g_map_rust_prefix;
-            break;
-
-        case GEN_LANG_HASKELL:
-            prefix_list = &s_short_haskell_map;
-            global_list = &g_map_haskell_prefix;
             break;
 
         case GEN_LANG_CPLUSPLUS:
@@ -2606,6 +2619,10 @@ Code& Code::AddConditionalAnd()
     {
         *this << " and ";
     }
+    else if (is_fortran())
+    {
+        *this << " .AND. ";
+    }
 
     else
     {
@@ -2623,6 +2640,10 @@ Code& Code::AddConditionalOr()
     else if (is_python() || is_lua())
     {
         *this << " or ";
+    }
+    else if (is_fortran())
+    {
+        *this << " .OR. ";
     }
     else
     {

@@ -29,7 +29,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     staticText_2->Wrap(320);
     box_sizer->Add(staticText_2, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    auto* grid_sizer = new wxGridSizer(4, 0, 0);
+    auto* grid_sizer = new wxGridSizer(3, 0, 0);
 
     m_radio_cplusplus = new wxRadioButton(this, wxID_ANY, "&C++", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     grid_sizer->Add(m_radio_cplusplus, wxSizerFlags().Border(wxALL));
@@ -39,6 +39,9 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_radio_ruby = new wxRadioButton(this, wxID_ANY, "&Ruby");
     grid_sizer->Add(m_radio_ruby, wxSizerFlags().Border(wxALL));
+
+    m_radio_fortran = new wxRadioButton(this, wxID_ANY, "&Fortran");
+    grid_sizer->Add(m_radio_fortran, wxSizerFlags().Border(wxALL));
 
     m_radio_haskell = new wxRadioButton(this, wxID_ANY, "&Haskell");
     grid_sizer->Add(m_radio_haskell, wxSizerFlags().Border(wxALL));
@@ -52,8 +55,8 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_rust = new wxRadioButton(this, wxID_ANY, "R&ust");
     grid_sizer->Add(m_radio_rust, wxSizerFlags().Border(wxALL));
 
-    m_radio_rxrc = new wxRadioButton(this, wxID_ANY, "&XRC");
-    grid_sizer->Add(m_radio_rxrc, wxSizerFlags().Border(wxALL));
+    m_radio_xrc = new wxRadioButton(this, wxID_ANY, "&XRC");
+    grid_sizer->Add(m_radio_xrc, wxSizerFlags().Border(wxALL));
 
     box_sizer->Add(grid_sizer, wxSizerFlags().Center().Border(wxALL));
 
@@ -102,13 +105,14 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btn->Bind(wxEVT_BUTTON, &CodeCompare::OnWinMerge, this);
     Bind(wxEVT_INIT_DIALOG, &CodeCompare::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnCPlusPlus, this);
+    m_radio_fortran->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnFortran, this);
     m_radio_haskell->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnHaskell, this);
     m_radio_lua->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnLua, this);
     m_radio_perl->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPerl, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPython, this);
     m_radio_ruby->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnRuby, this);
     m_radio_rust->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnRust, this);
-    m_radio_rxrc->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnXRC, this);
+    m_radio_xrc->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnXRC, this);
 
     return true;
 }
@@ -211,7 +215,7 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     }
 }
 
-void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
+void CodeCompare::OnRadioButton(GenLang language)
 {
     GenResults results;
 
@@ -219,7 +223,43 @@ void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
     m_list_changes->Clear();
     m_btn->Enable(false);
 
-    if (GenerateCppFiles(results, &m_class_list); m_class_list.size())
+    bool result = false;
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            result = GenerateCppFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_PYTHON:
+            result = GeneratePythonFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_RUBY:
+            result = GenerateRubyFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_FORTRAN:
+            result = GenerateFortranFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_HASKELL:
+            result = GenerateHaskellFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_LUA:
+            result = GenerateLuaFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_PERL:
+            result = GeneratePerlFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_RUST:
+            result = GenerateRustFiles(results, &m_class_list);
+            break;
+        case GEN_LANG_XRC:
+            result = GenerateXrcFiles(results, {}, &m_class_list);
+            break;
+
+        default:
+            FAIL_MSG(tt_string() << "Unknown language: " << language);
+            break;
+    }
+
+    if (result)
     {
         for (auto& iter: m_class_list)
         {
@@ -227,132 +267,51 @@ void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
         }
         m_btn->Enable();
     }
+}
+
+void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
+{
+    OnRadioButton(GEN_LANG_CPLUSPLUS);
 }
 
 void CodeCompare::OnPython(wxCommandEvent& /* event */)
 {
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GeneratePythonFiles(results, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+    OnRadioButton(GEN_LANG_PYTHON);
 }
 
 void CodeCompare::OnRuby(wxCommandEvent& WXUNUSED(event))
 {
-    GenResults results;
+    OnRadioButton(GEN_LANG_RUBY);
+}
 
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GenerateRubyFiles(results, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+void CodeCompare::OnFortran(wxCommandEvent& WXUNUSED(event))
+{
+    OnRadioButton(GEN_LANG_FORTRAN);
 }
 
 void CodeCompare::OnHaskell(wxCommandEvent& /* event */)
 {
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GenerateHaskellFiles(results, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+    OnRadioButton(GEN_LANG_HASKELL);
 }
 
 void CodeCompare::OnLua(wxCommandEvent& /* event */)
 {
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GenerateLuaFiles(results, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+    OnRadioButton(GEN_LANG_LUA);
 }
 
 void CodeCompare::OnPerl(wxCommandEvent& /* event */)
 {
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GeneratePerlFiles(results, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+    OnRadioButton(GEN_LANG_PERL);
 }
 
 void CodeCompare::OnRust(wxCommandEvent& /* event */)
 {
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GenerateRustFiles(results, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+    OnRadioButton(GEN_LANG_RUST);
 }
 
 void CodeCompare::OnXRC(wxCommandEvent& /* event */)
 {
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-    m_btn->Enable(false);
-
-    if (GenerateXrcFiles(results, {}, &m_class_list); m_class_list.size())
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.make_wxString());
-        }
-        m_btn->Enable();
-    }
+    OnRadioButton(GEN_LANG_XRC);
 }
 
 // clang-format off

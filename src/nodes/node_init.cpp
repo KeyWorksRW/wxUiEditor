@@ -649,6 +649,7 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
                     class_info->AddBaseClass(getNodeDeclaration("C++ Derived Class Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxPython Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxRuby Settings"));
+                    class_info->AddBaseClass(getNodeDeclaration("wxFortran Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxHaskell Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxLua Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxPerl Settings"));

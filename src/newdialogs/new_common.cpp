@@ -25,6 +25,10 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_ruby_file, filename);
     }
+    else if (Project.getCodePreference() == GEN_LANG_FORTRAN)
+    {
+        form_node->set_value(prop_fortran_file, filename);
+    }
     else if (Project.getCodePreference() == GEN_LANG_HASKELL)
     {
         form_node->set_value(prop_haskell_file, filename);

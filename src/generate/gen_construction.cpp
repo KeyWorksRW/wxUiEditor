@@ -296,6 +296,10 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
                 break;
 
+            case GEN_LANG_FORTRAN:
+                code.Eol() << "if defined(__WINDOWS__)";
+                break;
+
             case GEN_LANG_HASKELL:
                 code.Eol() << "if os == \"mingw32\"";
                 break;
@@ -343,6 +347,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 else
                     code.Eol() << "if ";
                 code << "Wx::PLATFORM == 'WXUNIX'";
+                break;
+
+            case GEN_LANG_FORTRAN:
+                if (code.size())
+                    code << " .OR. ";
+                else
+                    code.Eol() << "if ";
+                code << "defined(__UNIX__)";
                 break;
 
             case GEN_LANG_HASKELL:
@@ -409,6 +421,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "Wx::PLATFORM == 'WXOSX'";
                 break;
 
+            case GEN_LANG_FORTRAN:
+                if (code.size())
+                    code << " .OR. ";
+                else
+                    code.Eol() << "if ";
+                code << "defined(__WXOSX__)";
+                break;
+
             case GEN_LANG_HASKELL:
                 if (code.size())
                     code << " || ";
@@ -466,6 +486,10 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_RUBY:
             m_source->Unindent();
             m_source->writeLine("end");
+            break;
+
+        case GEN_LANG_FORTRAN:
+            m_source->Unindent();
             break;
 
         case GEN_LANG_HASKELL:

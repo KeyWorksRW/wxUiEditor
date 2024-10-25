@@ -60,6 +60,8 @@ const char* g_rust_keywords =
 const char* g_haskell_keywords =
     "case class data deriving do else if import in infix infixl infixr instance let module newtype of then type where";
 
+const char* g_fortran_keywords = "program module subroutine function if else end do select case";
+
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : wxPanel(parent)
 {
     m_panel_type = panel_type;
@@ -100,6 +102,13 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_XRC)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_FORTRAN)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -338,6 +347,10 @@ void BasePanel::GenerateBaseClass()
             codegen.SetHdrWriteCode(m_derived_hdr_panel);
 
             codegen.GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_FORTRAN:
+            codegen.GenerateFortranClass(panel_page);
             break;
 
         case GEN_LANG_HASKELL:

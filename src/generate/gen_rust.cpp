@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate Lua code files
+// Purpose:   Generate Rust code files
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -402,7 +402,7 @@ bool GenerateRustFiles(GenResults& results, std::vector<tt_string>* pClassList)
     tt_cwd cwd(true);
     Project.ChangeDir();
 
-    bool generate_result = true;
+    bool generate_result = false;
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
@@ -412,6 +412,10 @@ bool GenerateRustFiles(GenResults& results, std::vector<tt_string>* pClassList)
     for (const auto& form: forms)
     {
         GenerateRustForm(form, results, pClassList);
+        if (results.updated_files.size())
+        {
+            generate_result = true;
+        }
     }
 
     if (wxGetApp().isTestingMenuEnabled())

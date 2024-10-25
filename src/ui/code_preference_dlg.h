@@ -10,7 +10,9 @@
 #pragma once
 
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/radiobut.h>
 
 class CodePreferenceDlg : public wxDialog
 {
@@ -29,17 +31,23 @@ public:
     bool is_gen_cpp() const { return m_gen_cpp_code; }
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
-    bool is_gen_xrc() const { return m_gen_xrc_code; }
+    bool is_gen_fortran() const { return m_gen_fortran_code; }
     bool is_gen_haskell() const { return m_gen_haskell_code; }
     bool is_gen_lua() const { return m_gen_lua_code; }
     bool is_gen_perl() const { return m_gen_perl_code; }
     bool is_gen_rust() const { return m_gen_rust_code; }
+    bool is_gen_xrc() const { return m_gen_xrc_code; }
 
 protected:
+
+    // Event handlers
+
+    void OnInit(wxInitDialogEvent& event);
 
     // Validator variables
 
     bool m_gen_cpp_code { true };
+    bool m_gen_fortran_code { false };
     bool m_gen_haskell_code { false };
     bool m_gen_lua_code { false };
     bool m_gen_perl_code { false };
@@ -47,6 +55,17 @@ protected:
     bool m_gen_ruby_code { false };
     bool m_gen_rust_code { false };
     bool m_gen_xrc_code { false };
+
+    // Class member variables
+
+    wxRadioButton* m_radioBtn_CPP;
+    wxRadioButton* m_radioBtn_Fortran;
+    wxRadioButton* m_radioBtn_Haskell;
+    wxRadioButton* m_radioBtn_Lua;
+    wxRadioButton* m_radioBtn_Perl;
+    wxRadioButton* m_radioBtn_Python;
+    wxRadioButton* m_radioBtn_Rust;
+    wxRadioButton* m_radioBtn_XRC;
 };
 
 // ************* End of generated code ***********

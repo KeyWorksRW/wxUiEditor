@@ -319,6 +319,13 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case MenuSingleGenFortran:
+            {
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnGenSingleFortran(dummy);
+            }
+            break;
+
         case MenuSingleGenHaskell:
             {
                 wxCommandEvent dummy;
@@ -340,7 +347,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case MenuSingleGenPHP:
+        case MenuSingleGenRust:
             {
                 wxCommandEvent dummy;
                 wxGetMainFrame()->OnGenSingleRust(dummy);
@@ -554,7 +561,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
             }
             if (node->hasValue(prop_rust_file))
             {
-                Append(MenuSingleGenPHP, "Generate Rust for this form");
+                Append(MenuSingleGenRust, "Generate Rust for this form");
                 ++count;
             }
 

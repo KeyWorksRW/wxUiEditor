@@ -127,6 +127,9 @@
         bitmap="SVG;fontPicker.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;fortran_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;gauge.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -274,7 +277,7 @@
         bitmap="SVG;ruby_logo.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;../art_src/rust_logo.svg;[24,24]" />
+        bitmap="SVG;rust_logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;saveas.svg;[24,24]" />
@@ -3082,6 +3085,71 @@
               </node>
               <node
                 class="BookPage"
+                bitmap="SVG;fortran_logo.svg;[24,24]"
+                label="Fortran"
+                var_name="fortran_page"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer6">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_fortran_radio_use_function"
+                    var_name="m_fortran_function_box"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseFortranFunction">
+                    <node
+                      class="wxTextCtrl"
+                      var_name="m_fortran_text_function"
+                      flags="wxEXPAND"
+                      wxEVT_TEXT="OnChange" />
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Use lambda"
+                      radiobtn_var_name="m_fortran_radio_use_lambda"
+                      var_name="m_fortran_lambda_box"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUseFortranLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer6" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Lambda body:"
+                        var_name="staticText6" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="FORTRAN"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_fortran_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
                 bitmap="SVG;haskell-logo.svg;[24,24]"
                 label="Haskell"
                 var_name="haskell_page"
@@ -3099,7 +3167,7 @@
                     radiobtn_var_name="m_haskell_radio_use_function"
                     var_name="m_haskell_function_box"
                     flags="wxEXPAND"
-                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    wxEVT_RADIOBUTTON="OnUseHaskellFunction">
                     <node
                       class="wxTextCtrl"
                       var_name="m_haskell_text_function"
@@ -3244,7 +3312,7 @@
                       var_name="m_perl_lambda_box"
                       flags="wxEXPAND"
                       proportion="1"
-                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
+                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
                       <node
                         class="wxBoxSizer"
                         var_name="box_sizer4" />
@@ -3277,7 +3345,7 @@
               </node>
               <node
                 class="BookPage"
-                bitmap="SVG;../art_src/rust_logo.svg;[24,24]"
+                bitmap="SVG;rust_logo.svg;[24,24]"
                 label="Rust"
                 var_name="rust_page"
                 background_colour="wxSYS_COLOUR_BTNFACE"
@@ -3309,7 +3377,7 @@
                       var_name="m_php_lambda_box"
                       flags="wxEXPAND"
                       proportion="1"
-                      wxEVT_RADIOBUTTON="OnUseRubyLambda">
+                      wxEVT_RADIOBUTTON="OnUseRustLambda">
                       <node
                         class="wxBoxSizer"
                         var_name="box_sizer5" />
@@ -5323,7 +5391,8 @@
       class_name="CodePreferenceDlg"
       title="Choose Code Preference"
       base_file="..\ui\code_preference_dlg"
-      use_derived_class="0">
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -5336,64 +5405,65 @@
           wrap="350" />
         <node
           class="wxGridSizer"
-          cols="4">
+          cols="3"
+          alignment="wxALIGN_CENTER_HORIZONTAL">
           <node
             class="wxRadioButton"
             checked="1"
-            class_access="none"
             label="&amp;C++"
             style="wxRB_GROUP"
-            var_name="m_radioBtn_2"
+            var_name="m_radioBtn_CPP"
             get_function="is_gen_cpp"
             validator_variable="m_gen_cpp_code" />
           <node
             class="wxRadioButton"
-            class_access="none"
             label="&amp;Python"
-            var_name="m_radioBtn_3"
+            var_name="m_radioBtn_Python"
             get_function="is_gen_python"
             validator_variable="m_gen_python_code" />
           <node
             class="wxRadioButton"
             class_access="none"
             label="&amp;Ruby"
-            var_name="m_radioBtn_4"
+            var_name="m_radioBtn_Ruby"
             get_function="is_gen_ruby"
             validator_variable="m_gen_ruby_code" />
           <node
             class="wxRadioButton"
-            class_access="none"
-            label="&amp;XRC"
-            get_function="is_gen_xrc"
-            validator_variable="m_gen_xrc_code" />
+            label="&amp;Fortran"
+            var_name="m_radioBtn_Fortran"
+            get_function="is_gen_fortran"
+            validator_variable="m_gen_fortran_code" />
           <node
             class="wxRadioButton"
-            class_access="none"
             label="&amp;Haskell"
-            var_name="m_radioBtn2"
+            var_name="m_radioBtn_Haskell"
             get_function="is_gen_haskell"
             validator_variable="m_gen_haskell_code" />
           <node
             class="wxRadioButton"
-            class_access="none"
             label="&amp;Lua"
-            var_name="m_radioBtn3"
+            var_name="m_radioBtn_Lua"
             get_function="is_gen_lua"
             validator_variable="m_gen_lua_code" />
           <node
             class="wxRadioButton"
-            class_access="none"
             label="P&amp;erl"
-            var_name="m_radioBtn4"
+            var_name="m_radioBtn_Perl"
             get_function="is_gen_perl"
             validator_variable="m_gen_perl_code" />
           <node
             class="wxRadioButton"
-            class_access="none"
             label="R&amp;ust"
-            var_name="m_radioBtn5"
+            var_name="m_radioBtn_Rust"
             get_function="is_gen_rust"
             validator_variable="m_gen_rust_code" />
+          <node
+            class="wxRadioButton"
+            label="&amp;XRC"
+            var_name="m_radioBtn_XRC"
+            get_function="is_gen_xrc"
+            validator_variable="m_gen_xrc_code" />
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -6308,6 +6378,7 @@
         class_methods="&quot;~CodeCompare();&quot;"
         derived_class_name="CodeCompare"
         private_members="1"
+        protected_class_methods="&quot;void OnRadioButton(GenLang language);&quot;"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -6327,7 +6398,7 @@
               borders="wxTOP|wxRIGHT|wxLEFT" />
             <node
               class="wxGridSizer"
-              cols="4"
+              cols="3"
               alignment="wxALIGN_CENTER_HORIZONTAL">
               <node
                 class="wxRadioButton"
@@ -6345,6 +6416,11 @@
                 label="&amp;Ruby"
                 var_name="m_radio_ruby"
                 wxEVT_RADIOBUTTON="OnRuby" />
+              <node
+                class="wxRadioButton"
+                label="&amp;Fortran"
+                var_name="m_radio_fortran"
+                wxEVT_RADIOBUTTON="OnFortran" />
               <node
                 class="wxRadioButton"
                 label="&amp;Haskell"
@@ -6368,7 +6444,7 @@
               <node
                 class="wxRadioButton"
                 label="&amp;XRC"
-                var_name="m_radio_rxrc"
+                var_name="m_radio_xrc"
                 wxEVT_RADIOBUTTON="OnXRC" />
             </node>
             <node
@@ -8075,7 +8151,7 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;../art_src/rust_logo.svg;[24,24]"
+            bitmap="SVG;rust_logo.svg;[24,24]"
             label="Rust"
             var_name="page_php"
             window_style="wxTAB_TRAVERSAL">

@@ -266,6 +266,9 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
         case GEN_LANG_RUBY:
             base_file = form->as_string(prop_ruby_file);
             break;
+        case GEN_LANG_FORTRAN:
+            base_file = form->as_string(prop_fortran_file);
+            break;
         case GEN_LANG_HASKELL:
             base_file = form->as_string(prop_haskell_file);
             break;

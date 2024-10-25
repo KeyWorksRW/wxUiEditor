@@ -40,6 +40,7 @@ protected:
     // Event handlers
 
     void OnCPlusPlus(wxCommandEvent& event);
+    void OnFortran(wxCommandEvent& event);
     void OnHaskell(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnLua(wxCommandEvent& event);
@@ -50,6 +51,8 @@ protected:
     void OnWinMerge(wxCommandEvent& event);
     void OnXRC(wxCommandEvent& event);
 
+    void OnRadioButton(GenLang language);
+
 private:
 
     // Class member variables
@@ -57,13 +60,14 @@ private:
     wxButton* m_btn;
     wxListBox* m_list_changes;
     wxRadioButton* m_radio_cplusplus;
+    wxRadioButton* m_radio_fortran;
     wxRadioButton* m_radio_haskell;
     wxRadioButton* m_radio_lua;
     wxRadioButton* m_radio_perl;
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
     wxRadioButton* m_radio_rust;
-    wxRadioButton* m_radio_rxrc;
+    wxRadioButton* m_radio_xrc;
 
     std::vector<tt_string> m_class_list;
 };

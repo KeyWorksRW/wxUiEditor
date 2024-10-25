@@ -79,6 +79,7 @@ public:
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
     BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetFortranPanel() { return m_fortranPanel; }
     BasePanel* GetHaskellPanel() { return m_haskellPanel; }
     BasePanel* GetLuaPanel() { return m_luaPanel; }
     BasePanel* GetPerlPanel() { return m_perlPanel; }
@@ -271,13 +272,14 @@ public:
     void OnGenerateCode(wxCommandEvent& event) override;
 
     void OnGenSingleCpp(wxCommandEvent& event);
-    void OnGenSinglePython(wxCommandEvent& event);
-    void OnGenSingleRuby(wxCommandEvent& event);
-    void OnGenSingleXRC(wxCommandEvent& event);
+    void OnGenSingleFortran(wxCommandEvent& event);
     void OnGenSingleHaskell(wxCommandEvent& event);
     void OnGenSingleLua(wxCommandEvent& event);
     void OnGenSinglePerl(wxCommandEvent& event);
+    void OnGenSinglePython(wxCommandEvent& event);
+    void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleRust(wxCommandEvent& event);
+    void OnGenSingleXRC(wxCommandEvent& event);
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
@@ -324,11 +326,12 @@ protected:
 
     void OnFindWidget(wxCommandEvent& event);
 
-    void OnGeneratePython(wxCommandEvent& event);
-    void OnGenerateRuby(wxCommandEvent& event);
+    void OnGenerateFortran(wxCommandEvent& event);
     void OnGenerateHaskell(wxCommandEvent& event);
     void OnGenerateLua(wxCommandEvent& event);
     void OnGeneratePerl(wxCommandEvent& event);
+    void OnGeneratePython(wxCommandEvent& event);
+    void OnGenerateRuby(wxCommandEvent& event);
     void OnGenerateRust(wxCommandEvent& event);
 
     void OnXrcPreview(wxCommandEvent& e);
@@ -384,10 +387,11 @@ private:
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
-    BasePanel* m_perlPanel { nullptr };
-    BasePanel* m_luaPanel { nullptr };
-    BasePanel* m_rustPanel { nullptr };
+    BasePanel* m_fortranPanel { nullptr };
     BasePanel* m_haskellPanel { nullptr };
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_perlPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };
 

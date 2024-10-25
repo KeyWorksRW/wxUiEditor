@@ -85,11 +85,12 @@ public:
     }
 
     bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
-    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
-    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
+    bool is_fortran() const { return m_language == GEN_LANG_FORTRAN; }
     bool is_haskell() const { return m_language == GEN_LANG_HASKELL; }
     bool is_lua() const { return m_language == GEN_LANG_LUA; }
     bool is_perl() const { return m_language == GEN_LANG_PERL; }
+    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
+    bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
     bool is_rust() const { return m_language == GEN_LANG_RUST; }
 
     bool is_local_var() const;

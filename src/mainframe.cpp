@@ -92,6 +92,7 @@ enum
     id_GenerateCpp,
     id_GeneratePython,
     id_GenerateRuby,
+    id_GenerateFortran,
     id_GenerateHaskell,
     id_GenerateLua,
     id_GeneratePerl,
@@ -99,6 +100,7 @@ enum
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
+    id_GenSingleFortran,
     id_GenSingleHaskell,
     id_GenSingleLua,
     id_GenSinglePerl,
@@ -410,6 +412,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
         Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
+        Bind(wxEVT_MENU, &MainFrame::OnGenSingleFortran, this, id_GenSingleFortran);
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleHaskell, this, id_GenSingleHaskell);
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleLua, this, id_GenSingleLua);
         Bind(wxEVT_MENU, &MainFrame::OnGenSinglePerl, this, id_GenSinglePerl);
@@ -417,6 +420,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
 
         Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
+        Bind(wxEVT_MENU, &MainFrame::OnGenerateFortran, this, id_GenerateFortran);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateHaskell, this, id_GenerateHaskell);
         Bind(wxEVT_MENU, &MainFrame::OnGenerateLua, this, id_GenerateLua);
         Bind(wxEVT_MENU, &MainFrame::OnGeneratePerl, this, id_GeneratePerl);
@@ -2272,6 +2276,24 @@ void MainFrame::UpdateLanguagePanels()
         m_cppPanel = nullptr;
     }
 
+    if (languages & GEN_LANG_FORTRAN && !m_fortranPanel)
+    {
+        m_fortranPanel = new BasePanel(m_notebook, this, GEN_LANG_FORTRAN);
+        if (Project.getCodePreference() == GEN_LANG_FORTRAN)
+        {
+            m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_FORTRAN) && m_fortranPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_fortranPanel));
+        m_fortranPanel = nullptr;
+    }
+
     if (languages & GEN_LANG_HASKELL && !m_haskellPanel)
     {
         m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
@@ -2390,6 +2412,16 @@ void MainFrame::UpdateLanguagePanels()
             {
                 m_notebook->RemovePage(position);
                 m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_FORTRAN:
+            ASSERT(m_fortranPanel);
+            position = m_notebook->GetPageIndex(m_fortranPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
             }
             break;
 

@@ -58,6 +58,9 @@ bool GeneratePythonFiles(GenResults& results, std::vector<tt_string>* pClassList
 // ../generate/gen_ruby.cpp
 bool GenerateRubyFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
+// ../generate/gen_fortran.cpp
+bool GenerateFortranFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+
 // ../generate/gen_haskell.cpp
 bool GenerateHaskellFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 

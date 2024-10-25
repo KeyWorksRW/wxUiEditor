@@ -97,6 +97,17 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             wildcard = "Ruby Files|*.rb;*.rbw";
             break;
 
+        case prop_fortran_file:
+            if (folder && folder->hasValue(prop_folder_fortran_output_folder))
+                root_path = folder->as_string(prop_folder_fortran_output_folder);
+            else if (Project.getProjectNode()->hasValue(prop_fortran_output_folder))
+                root_path = Project.getProjectNode()->as_string(prop_fortran_output_folder);
+            else
+                root_path = Project.getProjectPath();
+            title = "Fortran filename";
+            wildcard = "Fortran Files|*.f90;*.f95;*.f03;*.f08";
+            break;
+
         case prop_haskell_file:
             if (folder && folder->hasValue(prop_folder_haskell_output_folder))
                 root_path = folder->as_string(prop_folder_haskell_output_folder);

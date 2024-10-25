@@ -397,6 +397,8 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
         }
         return true;
     }
+
+    bool generate_result = false;
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
@@ -406,12 +408,16 @@ bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_st
     for (auto& form: forms)
     {
         GenerateXrcForm(form, results, pClassList);
+        if (results.updated_files.size())
+        {
+            generate_result = true;
+        }
     }
 
     if (wxGetApp().isTestingMenuEnabled())
         results.EndClock();
 
-    return true;
+    return generate_result;
 }
 
 void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))

@@ -13,6 +13,7 @@
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "bitmaps.h"         // Contains various images handling functions
 #include "clipboard.h"       // Handles reading and writing OS clipboard data
+#include "gen_common.h"      // Common component functions
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "nav_panel.h"       // NavigationPanel -- Navigation Panel
 #include "node.h"            // Node class
@@ -300,15 +301,13 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
         case MenuSingleGenPython:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSinglePython(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_PYTHON);
             }
             break;
 
         case MenuSingleGenRuby:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleRuby(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_RUBY);
             }
             break;
 
@@ -321,36 +320,31 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
         case MenuSingleGenFortran:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleFortran(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
             }
             break;
 
         case MenuSingleGenHaskell:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleHaskell(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
             }
             break;
 
         case MenuSingleGenLua:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleLua(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_LUA);
             }
             break;
 
         case MenuSingleGenPerl:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSinglePerl(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_PERL);
             }
             break;
 
         case MenuSingleGenRust:
             {
-                wxCommandEvent dummy;
-                wxGetMainFrame()->OnGenSingleRust(dummy);
+                OnGenerateSingleLanguage(GEN_LANG_RUST);
             }
             break;
 

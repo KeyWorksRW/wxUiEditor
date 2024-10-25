@@ -326,14 +326,6 @@ protected:
 
     void OnFindWidget(wxCommandEvent& event);
 
-    void OnGenerateFortran(wxCommandEvent& event);
-    void OnGenerateHaskell(wxCommandEvent& event);
-    void OnGenerateLua(wxCommandEvent& event);
-    void OnGeneratePerl(wxCommandEvent& event);
-    void OnGeneratePython(wxCommandEvent& event);
-    void OnGenerateRuby(wxCommandEvent& event);
-    void OnGenerateRust(wxCommandEvent& event);
-
     void OnXrcPreview(wxCommandEvent& e);
     void OnTestXrcImport(wxCommandEvent& e);
     void OnTestXrcDuplicate(wxCommandEvent& e);

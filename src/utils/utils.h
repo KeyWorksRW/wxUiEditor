@@ -83,3 +83,5 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language = 
 std::string_view ConvertFromGenLang(GenLang language);
 
 GenLang ConvertToGenLang(tt_string_view language);
+
+std::string GetLanguageExtension(GenLang language);

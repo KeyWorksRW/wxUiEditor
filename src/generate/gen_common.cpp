@@ -11,10 +11,14 @@
 
 #include "gen_common.h"
 
+#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "lambdas.h"          // Functions for formatting and storage of lamda events
+#include "mainapp.h"          // wxGetApp()
+#include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
@@ -1488,4 +1492,193 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
 
     return true;
+}
+
+bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList, GenLang language)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(form, language);
+    if (!has_base_file)
+    {
+#if !defined(_DEBUG)
+        // For a lot of testing of projects with multiple dialogs, there may only be a
+        // few forms where generation is being tested, so don't nag in Debug builds.
+        // :-)
+        results.msgs.emplace_back() << "No filename specified for " << form->as_string(prop_class_name) << '\n';
+#endif  // _DEBUG
+        return false;
+    }
+    BaseCodeGenerator codegen(language, form);
+
+    auto h_cw = std::make_unique<FileCodeWriter>(path);
+    if (language == GEN_LANG_RUBY)
+    {
+        h_cw->SetTabToSpaces(2);
+    }
+    codegen.SetHdrWriteCode(h_cw.get());
+
+    path.replace_extension(GetLanguageExtension(language));
+    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+    if (language == GEN_LANG_RUBY)
+    {
+        cpp_cw->SetTabToSpaces(2);
+    }
+    codegen.SetSrcWriteCode(cpp_cw.get());
+
+    codegen.GenerateRustClass();
+    int flags = flag_no_ui;
+    if (pClassList)
+        flags |= flag_test_only;
+    auto retval = cpp_cw->WriteFile(GEN_LANG_FORTRAN, flags);
+
+    if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+    {
+        for (auto& iter: warning_msgs)
+        {
+            results.msgs.emplace_back() << iter << '\n';
+        }
+    }
+
+    if (retval > 0)
+    {
+        if (!pClassList)
+        {
+            results.updated_files.emplace_back(path);
+        }
+        else
+        {
+            if (form->isGen(gen_Images))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+            if (form->isGen(gen_Data))
+                pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
+            else
+                pClassList->emplace_back(form->as_string(prop_class_name));
+            return true;
+        }
+    }
+
+    else if (retval < 0)
+    {
+        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+    }
+    else  // retval == result::exists
+    {
+        ++results.file_count;
+    }
+    return true;
+}
+
+bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList, GenLang language)
+{
+    if (Project.getChildCount() == 0)
+    {
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        return false;
+    }
+    tt_cwd cwd(true);
+    Project.ChangeDir();
+
+    bool generate_result = false;
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
+
+    for (const auto& form: forms)
+    {
+        switch (language)
+        {
+            case GEN_LANG_FORTRAN:
+                GenerateLanguageForm(form, results, pClassList, language);
+                break;
+
+            default:
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.EndClock();
+                return false;
+        }
+
+        if (results.updated_files.size())
+        {
+            generate_result = true;
+        }
+    }
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.EndClock();
+
+    return generate_result;
+}
+
+void OnGenerateSingleLanguage(GenLang language)
+{
+    auto form = wxGetMainFrame()->getSelectedNode();
+    if (form && !form->isForm())
+    {
+        form = form->getForm();
+    }
+    if (!form)
+    {
+        wxMessageBox("You must select a form before you can generate code.", "Code Generation");
+        return;
+    }
+
+    GenResults results;
+    GenerateLanguageForm(form, results, nullptr, language);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << results.updated_files.size() << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "Generated file is current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, tt_string() << ConvertFromGenLang(language) << " Code Generation", wxOK | wxICON_INFORMATION);
+}
+
+void OnGenerateLanguage(GenLang language)
+{
+    GenResults results;
+    GenerateLanguageFiles(results, nullptr, language);
+
+    tt_string msg;
+    if (results.updated_files.size())
+    {
+        if (results.updated_files.size() == 1)
+            msg << "1 file was updated";
+        else
+            msg << " files were updated";
+        msg << '\n';
+    }
+    else
+    {
+        msg << "All " << results.file_count << " generated files are current";
+    }
+
+    if (results.msgs.size())
+    {
+        for (auto& iter: results.msgs)
+        {
+            msg << '\n';
+            msg << iter;
+        }
+    }
+
+    wxMessageBox(msg, tt_string() << ConvertFromGenLang(language) << " Code Generation", wxOK | wxICON_INFORMATION);
 }

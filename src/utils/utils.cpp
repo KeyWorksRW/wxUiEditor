@@ -631,3 +631,30 @@ GenLang ConvertToGenLang(tt_string_view language)
     else
         return GEN_LANG_CPLUSPLUS;
 }
+
+std::string GetLanguageExtension(GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            return ".cpp";
+        case GEN_LANG_FORTRAN:
+            return ".f90";
+        case GEN_LANG_HASKELL:
+            return ".hs";
+        case GEN_LANG_LUA:
+            return ".lua";
+        case GEN_LANG_PERL:
+            return ".pl";
+        case GEN_LANG_PYTHON:
+            return ".py";
+        case GEN_LANG_RUBY:
+            return ".rb";
+        case GEN_LANG_RUST:
+            return ".rs";
+        case GEN_LANG_XRC:
+            return ".xrc";
+        default:
+            return ".cpp";
+    }
+}

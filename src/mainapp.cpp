@@ -19,6 +19,7 @@
 #include "mainapp.h"
 
 #include "bitmaps.h"               // Contains various images handling functions
+#include "gen_common.h"            // Common component functions
 #include "gen_results.h"           // Code generation file writing functions
 #include "internal/msg_logging.h"  // MsgLogging -- Message logging class
 #include "mainframe.h"             // MainFrame -- Main window frame
@@ -417,7 +418,7 @@ int App::OnRun()
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GeneratePythonFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PYTHON);
                 log_results("Generating Python files");
             }
             if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_RUBY))
@@ -425,7 +426,7 @@ int App::OnRun()
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GenerateRubyFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUBY);
                 log_results("Generating Ruby files");
             }
             if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_XRC))
@@ -441,7 +442,7 @@ int App::OnRun()
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GenerateHaskellFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_HASKELL);
                 log_results("Generating Haskell files");
             }
             if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_LUA))
@@ -449,7 +450,7 @@ int App::OnRun()
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GenerateLuaFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_LUA);
                 log_results("Generating Lua files");
             }
             if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_PERL))
@@ -457,7 +458,7 @@ int App::OnRun()
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GeneratePerlFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PERL);
                 log_results("Generating Perl files");
             }
             if (static_cast<size_t>(generate_type) & static_cast<size_t>(GEN_LANG_RUST))
@@ -465,7 +466,7 @@ int App::OnRun()
                 results.clear();
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
-                GenerateRustFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUST);
                 log_results("Generating Rust files");
             }
 

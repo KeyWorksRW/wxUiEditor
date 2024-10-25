@@ -33,6 +33,7 @@
 #include "clipboard.h"        // wxUiEditorData -- Handles reading and writing OS clipboard data
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "gen_base.h"         // Generate Base class
+#include "gen_common.h"       // Common component functions
 #include "gen_enums.h"        // Enumerations for generators
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
@@ -410,21 +411,116 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
     if (wxGetApp().isTestingMenuEnabled())
     {
         Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePython, this, id_GenSinglePython);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleRuby, this, id_GenSingleRuby);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleFortran, this, id_GenSingleFortran);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleHaskell, this, id_GenSingleHaskell);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleLua, this, id_GenSingleLua);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSinglePerl, this, id_GenSinglePerl);
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleRust, this, id_GenSingleRust);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_PYTHON);
+            },
+            id_GenSinglePython);
 
-        Bind(wxEVT_MENU, &MainFrame::OnGeneratePython, this, id_GeneratePython);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateRuby, this, id_GenerateRuby);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateFortran, this, id_GenerateFortran);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateHaskell, this, id_GenerateHaskell);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateLua, this, id_GenerateLua);
-        Bind(wxEVT_MENU, &MainFrame::OnGeneratePerl, this, id_GeneratePerl);
-        Bind(wxEVT_MENU, &MainFrame::OnGenerateRust, this, id_GenerateRust);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_RUBY);
+            },
+            id_GenSingleRuby);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
+            },
+            id_GenSingleFortran);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
+            },
+            id_GenSingleHaskell);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_LUA);
+            },
+            id_GenSingleLua);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_PERL);
+            },
+            id_GenSinglePerl);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_RUST);
+            },
+            id_GenSingleRust);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_XRC);
+            },
+            id_GeneratePython);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_RUBY);
+            },
+            id_GenerateRuby);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_FORTRAN);
+            },
+            id_GenerateFortran);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_HASKELL);
+            },
+            id_GenerateHaskell);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_LUA);
+            },
+            id_GenerateLua);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_PERL);
+            },
+            id_GeneratePerl);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_RUST);
+            },
+            id_GenerateRust);
 
         Bind(
             wxEVT_MENU,

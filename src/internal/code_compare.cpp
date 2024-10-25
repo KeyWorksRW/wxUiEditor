@@ -136,6 +136,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common code generation functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -230,25 +231,25 @@ void CodeCompare::OnRadioButton(GenLang language)
             result = GenerateCppFiles(results, &m_class_list);
             break;
         case GEN_LANG_PYTHON:
-            result = GeneratePythonFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PYTHON);
             break;
         case GEN_LANG_RUBY:
-            result = GenerateRubyFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUBY);
             break;
         case GEN_LANG_FORTRAN:
-            result = GenerateFortranFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_FORTRAN);
             break;
         case GEN_LANG_HASKELL:
-            result = GenerateHaskellFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_HASKELL);
             break;
         case GEN_LANG_LUA:
-            result = GenerateLuaFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_LUA);
             break;
         case GEN_LANG_PERL:
-            result = GeneratePerlFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PERL);
             break;
         case GEN_LANG_RUST:
-            result = GenerateRustFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUST);
             break;
         case GEN_LANG_XRC:
             result = GenerateXrcFiles(results, {}, &m_class_list);

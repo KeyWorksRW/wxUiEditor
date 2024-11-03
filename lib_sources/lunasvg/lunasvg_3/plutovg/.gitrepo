@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/sammycage/plutovg
+	branch = main
+	commit = f45de7955abbae530cf314b82596fed65254e1f4
+	parent = 8cc27ff7d93539d88f62cbbf7404432019127ced
+	method = merge
+	cmdver = 0.4.9

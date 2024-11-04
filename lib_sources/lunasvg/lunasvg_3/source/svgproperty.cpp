@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 PropertyID propertyid(const std::string_view& name)
 {
@@ -677,4 +677,4 @@ void SVGPreserveAspectRatio::transformRect(Rect& dstRect, Rect& srcRect) const
     }
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

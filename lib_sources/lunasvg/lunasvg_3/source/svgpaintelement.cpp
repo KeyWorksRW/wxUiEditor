@@ -4,7 +4,7 @@
 
 #include <set>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 SVGPaintElement::SVGPaintElement(Document* document, ElementID id)
     : SVGElement(document, id)
@@ -354,4 +354,4 @@ SVGPatternAttributes SVGPatternElement::collectPatternAttributes() const
     return attributes;
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

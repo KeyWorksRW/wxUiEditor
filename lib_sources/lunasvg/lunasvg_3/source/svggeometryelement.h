@@ -3,7 +3,7 @@
 
 #include "svgelement.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 class SVGMarkerPosition {
 public:
@@ -131,6 +131,6 @@ private:
     SVGPath m_d;
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGGEOMETRYELEMENT_H

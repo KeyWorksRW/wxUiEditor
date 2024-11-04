@@ -1,6 +1,6 @@
 #include "svgrenderstate.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 SVGBlendInfo::SVGBlendInfo(const SVGElement* element)
     : m_clipper(element->clipper())
@@ -58,4 +58,4 @@ void SVGRenderState::endGroup(const SVGBlendInfo& blendInfo)
     m_parent->m_canvas->blendCanvas(*m_canvas, BlendMode::Src_Over, opacity);
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

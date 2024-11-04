@@ -3,7 +3,7 @@
 
 #include "svgelement.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 class SVGPaintElement : public SVGElement {
 public:
@@ -283,6 +283,6 @@ private:
     const SVGPatternElement* m_patternContentElement{nullptr};
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGPAINTELEMENT_H

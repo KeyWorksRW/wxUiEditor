@@ -2,7 +2,7 @@
 #include "svgelement.h"
 #include "svgparserutils.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 struct SimpleSelector;
 
@@ -893,4 +893,4 @@ bool Document::parse(const char* data, size_t length)
     return true;
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

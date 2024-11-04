@@ -12,7 +12,17 @@
 #include <string>
 #include <map>
 
-namespace lunasvg {
+// Disable warnings about possible loss of data when converting int to float
+// Disable warnings about possible loss of data when converting size_t to int
+#ifdef _MSC_VER
+    #pragma warning(disable: 4244)
+    #pragma warning(disable: 4267)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic ignored "-Wconversion"
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
+namespace wxlunasvg {
 
 enum class LineCap : uint8_t {
     Butt = PLUTOVG_LINE_CAP_BUTT,
@@ -552,6 +562,6 @@ private:
     const int m_y;
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_GRAPHICS_H

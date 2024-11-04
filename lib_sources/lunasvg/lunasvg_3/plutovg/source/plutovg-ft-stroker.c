@@ -23,6 +23,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Disable warnings about signed/unsigned mismatch
+#ifdef _MSC_VER
+    #pragma warning(disable: 4018)
+#else
+    #pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+
 /*************************************************************************/
 /*************************************************************************/
 /*****                                                               *****/

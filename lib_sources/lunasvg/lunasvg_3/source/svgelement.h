@@ -9,7 +9,7 @@
 #include "svgproperty.h"
 #include "lunasvg.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 class Document;
 class SVGElement;
@@ -477,6 +477,6 @@ private:
     MaskType m_mask_type = MaskType::Luminance;
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGELEMENT_H

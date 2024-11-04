@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 enum class PropertyID : uint8_t {
     Unknown = 0,
@@ -475,6 +475,6 @@ private:
     MeetOrSlice m_meetOrSlice = MeetOrSlice::Meet;
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGPROPERTY_H

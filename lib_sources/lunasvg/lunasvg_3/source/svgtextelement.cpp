@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 static float calculateBaselineOffset(const SVGTextPositioningElement* element)
 {
@@ -360,4 +360,4 @@ Rect SVGTextElement::boundingBox(bool includeStroke) const
     return boundingBox;
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

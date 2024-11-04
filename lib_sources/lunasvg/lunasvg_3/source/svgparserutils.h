@@ -5,7 +5,7 @@
 #include <string_view>
 #include <limits>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 constexpr bool IS_NUM(int cc) { return cc >= '0' && cc <= '9'; }
 constexpr bool IS_ALPHA(int cc) { return (cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z'); }
@@ -194,6 +194,6 @@ inline bool parseNumber(std::string_view& input, T& number)
     return number >= -maxValue && number <= maxValue;
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGPARSERUTILS_H

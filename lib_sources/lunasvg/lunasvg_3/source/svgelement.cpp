@@ -8,7 +8,7 @@
 
 #include <cassert>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 SVGRootElement* SVGNode::rootElement() const
 {
@@ -1149,4 +1149,4 @@ void SVGMaskElement::layoutElement(const SVGLayoutState& state)
     SVGElement::layoutElement(state);
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

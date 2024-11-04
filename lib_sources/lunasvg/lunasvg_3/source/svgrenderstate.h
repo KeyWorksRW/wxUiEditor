@@ -3,7 +3,7 @@
 
 #include "svgelement.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 enum class SVGRenderMode {
     Painting,
@@ -64,6 +64,6 @@ private:
     std::shared_ptr<Canvas> m_canvas;
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGRENDERSTATE_H

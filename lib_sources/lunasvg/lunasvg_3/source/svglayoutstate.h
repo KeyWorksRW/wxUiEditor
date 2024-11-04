@@ -3,7 +3,7 @@
 
 #include "svgproperty.h"
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 class SVGLayoutState {
 public:
@@ -104,6 +104,6 @@ private:
     std::string m_font_family;
 };
 
-} // namespace lunasvg
+} // namespace wxlunasvg
 
 #endif // LUNASVG_SVGLAYOUTSTATE_H

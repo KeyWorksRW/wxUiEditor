@@ -28,6 +28,14 @@
 #include <string>
 #include <vector>
 
+#ifndef WXMAKINGDLL
+    #define LUNASVG_BUILD_STATIC
+#endif
+
+#ifdef WXBUILDING
+    #define LUNASVG_BUILD
+#endif
+
 #if !defined(LUNASVG_BUILD_STATIC) && (defined(_WIN32) || defined(__CYGWIN__))
 #define LUNASVG_EXPORT __declspec(dllexport)
 #define LUNASVG_IMPORT __declspec(dllimport)
@@ -127,7 +135,7 @@ LUNASVG_API bool lunasvg_add_font_face_from_data(const char* family, bool bold, 
 }
 #endif
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 /**
 * @note Bitmap pixel format is ARGB32_Premultiplied.
@@ -751,6 +759,6 @@ private:
     std::unique_ptr<SVGRootElement> m_rootElement;
 };
 
-} //namespace lunasvg
+} //namespace wxlunasvg
 
 #endif // LUNASVG_H

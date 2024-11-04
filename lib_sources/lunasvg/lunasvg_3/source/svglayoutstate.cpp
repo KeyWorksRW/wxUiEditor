@@ -4,7 +4,7 @@
 
 #include <optional>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 static std::optional<Color> parseColorValue(std::string_view& input, const SVGLayoutState* state)
 {
@@ -465,4 +465,4 @@ Font SVGLayoutState::font() const
     return Font(face, m_font_size);
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

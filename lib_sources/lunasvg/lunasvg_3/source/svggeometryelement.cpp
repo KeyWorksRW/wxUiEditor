@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 Rect SVGMarkerPosition::markerBoundingBox(float strokeWidth) const
 {
@@ -319,4 +319,4 @@ Rect SVGPathElement::updateShape(Path& path)
     return path.boundingRect();
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

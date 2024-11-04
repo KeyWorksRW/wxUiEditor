@@ -4,7 +4,7 @@
 #include <cfloat>
 #include <cmath>
 
-namespace lunasvg {
+namespace wxlunasvg {
 
 const Color Color::Black(0xFF000000);
 const Color Color::White(0xFFFFFFFF);
@@ -725,4 +725,4 @@ Canvas::Canvas(int x, int y, int width, int height)
 {
 }
 
-} // namespace lunasvg
+} // namespace wxlunasvg

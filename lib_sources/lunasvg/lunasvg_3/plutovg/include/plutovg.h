@@ -25,6 +25,16 @@
 
 #include <stdbool.h>
 
+// Disable warnings about possible loss of data when converting int to float
+// Disable warnings about possible loss of data when converting size_t to int
+#ifdef _MSC_VER
+    #pragma warning(disable: 4244)
+    #pragma warning(disable: 4267)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic ignored "-Wconversion"
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,11 +50,7 @@ extern "C" {
 #define PLUTOVG_IMPORT
 #endif
 
-#ifdef PLUTOVG_BUILD
-#define PLUTOVG_API PLUTOVG_EXPORT
-#else
-#define PLUTOVG_API PLUTOVG_IMPORT
-#endif
+#define PLUTOVG_API
 
 #define PLUTOVG_VERSION_MAJOR 0
 #define PLUTOVG_VERSION_MINOR 0
@@ -273,11 +279,11 @@ PLUTOVG_API void plutovg_matrix_map_rect(const plutovg_matrix_t* matrix, const p
 
 /**
  * @brief Parses an SVG transform string into a matrix.
- * 
+ *
  * @param matrix A pointer to a `plutovg_matrix_t` object to store the result.
  * @param data Input SVG transform string.
  * @param length Length of the string, or `-1` if null-terminated.
- * 
+ *
  * @return `true` on success, `false` on failure.
  */
 PLUTOVG_API bool plutovg_matrix_parse(plutovg_matrix_t* matrix, const char* data, int length);
@@ -912,7 +918,7 @@ typedef struct plutovg_color {
 
 /**
  * @brief Initializes a color using RGB components in the 0-1 range.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
  * @param r Red component (0 to 1).
  * @param g Green component (0 to 1).
@@ -922,7 +928,7 @@ PLUTOVG_API void plutovg_color_init_rgb(plutovg_color_t* color, float r, float g
 
 /**
  * @brief Initializes a color using RGBA components in the 0-1 range.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
  * @param r Red component (0 to 1).
  * @param g Green component (0 to 1).
@@ -933,7 +939,7 @@ PLUTOVG_API void plutovg_color_init_rgba(plutovg_color_t* color, float r, float 
 
 /**
  * @brief Initializes a color using RGB components in the 0-255 range.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
  * @param r Red component (0 to 255).
  * @param g Green component (0 to 255).
@@ -943,7 +949,7 @@ PLUTOVG_API void plutovg_color_init_rgb8(plutovg_color_t* color, int r, int g, i
 
 /**
  * @brief Initializes a color using RGBA components in the 0-255 range.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
  * @param r Red component (0 to 255).
  * @param g Green component (0 to 255).
@@ -954,7 +960,7 @@ PLUTOVG_API void plutovg_color_init_rgba8(plutovg_color_t* color, int r, int g, 
 
 /**
  * @brief Initializes a color from a 32-bit unsigned RGBA value.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
  * @param value 32-bit unsigned RGBA value.
  */
@@ -962,7 +968,7 @@ PLUTOVG_API void plutovg_color_init_rgba32(plutovg_color_t* color, unsigned int 
 
 /**
  * @brief Initializes a color from a 32-bit unsigned ARGB value.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
  * @param value 32-bit unsigned ARGB value.
  */
@@ -970,29 +976,29 @@ PLUTOVG_API void plutovg_color_init_argb32(plutovg_color_t* color, unsigned int 
 
 /**
  * @brief Converts a color to a 32-bit unsigned RGBA value.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
- * 
+ *
  * @return 32-bit unsigned RGBA value.
  */
 PLUTOVG_API unsigned int plutovg_color_to_rgba32(const plutovg_color_t* color);
 
 /**
  * @brief Converts a color to a 32-bit unsigned ARGB value.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object.
- * 
+ *
  * @return 32-bit unsigned ARGB value.
  */
 PLUTOVG_API unsigned int plutovg_color_to_argb32(const plutovg_color_t* color);
 
 /**
  * @brief Parses a color from a string using CSS color syntax.
- * 
+ *
  * @param color A pointer to a `plutovg_color_t` object to store the parsed color.
  * @param data A pointer to the input string containing the color data.
  * @param length The length of the input string in bytes, or `-1` if the string is null-terminated.
- * 
+ *
  * @return The number of characters consumed on success (including leading/trailing spaces), or 0 on failure.
  */
 PLUTOVG_API int plutovg_color_parse(plutovg_color_t* color, const char* data, int length);

@@ -58,6 +58,13 @@
 #include "plutovg-ft-raster.h"
 #include "plutovg-ft-math.h"
 
+// Disable warnings about possible loss of data when converting size_t to long
+#ifdef _MSC_VER
+    #pragma warning(disable: 4267)
+#else
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 #define PVG_FT_BEGIN_STMNT  do {
 #define PVG_FT_END_STMNT    } while ( 0 )
 

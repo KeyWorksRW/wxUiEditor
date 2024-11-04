@@ -67,7 +67,8 @@
     #endif
 #endif // __has_include
 
-#include "../../3rdparty/lunasvg/include/lunasvg.h"
+// #include "../../3rdparty/lunasvg/include/lunasvg.h"
+#include <lunasvg.h>
 
 class wxBitmapBundleImplSVG : public wxBitmapBundleImpl
 {
@@ -94,7 +95,7 @@ public:
 private:
     wxBitmap DoRasterize(const wxSize& size);
 
-    std::unique_ptr<lunasvg::Document> m_svgDocument;
+    std::unique_ptr<wxlunasvg::Document> m_svgDocument;
 
     const wxSize m_sizeDef;
 
@@ -120,7 +121,7 @@ wxBitmapBundleImplSVG::wxBitmapBundleImplSVG(const char* data, const wxSize& siz
     wxCHECK_RET(data != nullptr, "null data");
     wxCHECK_RET(sizeDef.GetWidth() > 0 && sizeDef.GetHeight() > 0, "invalid default size");
 
-    m_svgDocument = lunasvg::Document::loadFromData(data);
+    m_svgDocument = wxlunasvg::Document::loadFromData(data);
 }
 
 wxBitmapBundleImplSVG::wxBitmapBundleImplSVG(char* data, const wxSize& sizeDef)
@@ -129,7 +130,7 @@ wxBitmapBundleImplSVG::wxBitmapBundleImplSVG(char* data, const wxSize& sizeDef)
     wxCHECK_RET(data != nullptr, "null data");
     wxCHECK_RET(sizeDef.GetWidth() > 0 && sizeDef.GetHeight() > 0, "invalid default size");
 
-    m_svgDocument = lunasvg::Document::loadFromData(data);
+    m_svgDocument = wxlunasvg::Document::loadFromData(data);
 }
 
 wxBitmapBundleImplSVG::wxBitmapBundleImplSVG(const wxByte* data, size_t len, const wxSize& sizeDef)
@@ -139,7 +140,7 @@ wxBitmapBundleImplSVG::wxBitmapBundleImplSVG(const wxByte* data, size_t len, con
     wxCHECK_RET(len > 0, "zero length");
     wxCHECK_RET(sizeDef.GetWidth() > 0 && sizeDef.GetHeight() > 0, "invalid default size");
 
-    m_svgDocument = lunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), len);
+    m_svgDocument = wxlunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), len);
 }
 
 wxSize wxBitmapBundleImplSVG::GetDefaultSize() const
@@ -170,8 +171,8 @@ wxBitmap wxBitmapBundleImplSVG::DoRasterize(const wxSize& size)
     if ( IsOk() )
     {
         // conversion to wxBitmap is based on the code in
-        // lunasvg::Bitmap::convert()
-        const lunasvg::Bitmap lbmp = m_svgDocument->renderToBitmap(size.x, size.y);
+        // wxlunasvg::Bitmap::convert()
+        const wxlunasvg::Bitmap lbmp = m_svgDocument->renderToBitmap(size.x, size.y);
 
         if ( lbmp.valid() )
         {
@@ -217,7 +218,7 @@ wxBitmap wxBitmapBundleImplSVG::DoRasterize(const wxSize& size)
             return bmp;
         }
         else
-            wxLogDebug("invalid lunasvg::Bitmap");
+            wxLogDebug("invalid wxlunasvg::Bitmap");
     }
 
     return wxBitmap();

@@ -1,0 +1,8 @@
+/build
+*.user
+
+# Ignore files not needed for wxWidgets
+examples/
+cmake/
+.github
+smiley.png

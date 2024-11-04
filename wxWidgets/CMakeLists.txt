@@ -185,8 +185,13 @@ target_include_directories(wxWidgets33 PRIVATE
     src/stc/lexilla/lexlib
     src/stc/scintilla/src
 
-    3rdparty/lunasvg/include
-    3rdparty/lunasvg/3rdparty/plutovg
+    # lunasvg 3.x
+    ../lib_sources/lunasvg/lunasvg_3/include
+    ../lib_sources/lunasvg/lunasvg_3/plutovg/include
+
+    # lunasvg
+    # 3rdparty/lunasvg/include
+    # 3rdparty/lunasvg/3rdparty/plutovg
 )
 
 target_include_directories(wxCLib PRIVATE
@@ -198,7 +203,11 @@ target_include_directories(wxCLib PRIVATE
     3rdparty/pcre/src/wx
     src/expat/expat/lib
 
-    3rdparty/lunasvg/3rdparty/plutovg
+    # lunasvg 3.x
+    ../lib_sources/lunasvg/lunasvg_3/plutovg/include
+
+    # lunasvg
+    # 3rdparty/lunasvg/3rdparty/plutovg
 )
 
 if (BUILD_SHARED_LIBS)

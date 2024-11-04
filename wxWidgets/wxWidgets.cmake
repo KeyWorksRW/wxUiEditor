@@ -619,27 +619,39 @@ set (common_sources
     src/xrc/xh_hyperlink.cpp
     src/xrc/xh_sttxt.cpp
 
+    # lunasvg 3.x sources
+    ../lib_sources/lunasvg/lunasvg_3/source/lunasvg.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/graphics.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svgelement.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svggeometryelement.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svglayoutstate.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svgpaintelement.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svgparser.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svgproperty.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svgrenderstate.cpp
+    ../lib_sources/lunasvg/lunasvg_3/source/svgtextelement.cpp
+
     # lunasvg
-    3rdparty/lunasvg/source/canvas.cpp
-    3rdparty/lunasvg/source/clippathelement.cpp
-    3rdparty/lunasvg/source/defselement.cpp
-    3rdparty/lunasvg/source/element.cpp
-    3rdparty/lunasvg/source/gelement.cpp
-    3rdparty/lunasvg/source/geometryelement.cpp
-    3rdparty/lunasvg/source/graphicselement.cpp
-    3rdparty/lunasvg/source/layoutcontext.cpp
-    3rdparty/lunasvg/source/lunasvg.cpp
-    3rdparty/lunasvg/source/markerelement.cpp
-    3rdparty/lunasvg/source/maskelement.cpp
-    3rdparty/lunasvg/source/paintelement.cpp
-    3rdparty/lunasvg/source/parser.cpp
-    3rdparty/lunasvg/source/property.cpp
-    3rdparty/lunasvg/source/stopelement.cpp
-    3rdparty/lunasvg/source/styledelement.cpp
-    3rdparty/lunasvg/source/styleelement.cpp
-    3rdparty/lunasvg/source/svgelement.cpp
-    3rdparty/lunasvg/source/symbolelement.cpp
-    3rdparty/lunasvg/source/useelement.cpp
+    # 3rdparty/lunasvg/source/canvas.cpp
+    # 3rdparty/lunasvg/source/clippathelement.cpp
+    # 3rdparty/lunasvg/source/defselement.cpp
+    # 3rdparty/lunasvg/source/element.cpp
+    # 3rdparty/lunasvg/source/gelement.cpp
+    # 3rdparty/lunasvg/source/geometryelement.cpp
+    # 3rdparty/lunasvg/source/graphicselement.cpp
+    # 3rdparty/lunasvg/source/layoutcontext.cpp
+    # 3rdparty/lunasvg/source/lunasvg.cpp
+    # 3rdparty/lunasvg/source/markerelement.cpp
+    # 3rdparty/lunasvg/source/maskelement.cpp
+    # 3rdparty/lunasvg/source/paintelement.cpp
+    # 3rdparty/lunasvg/source/parser.cpp
+    # 3rdparty/lunasvg/source/property.cpp
+    # 3rdparty/lunasvg/source/stopelement.cpp
+    # 3rdparty/lunasvg/source/styledelement.cpp
+    # 3rdparty/lunasvg/source/styleelement.cpp
+    # 3rdparty/lunasvg/source/svgelement.cpp
+    # 3rdparty/lunasvg/source/symbolelement.cpp
+    # 3rdparty/lunasvg/source/useelement.cpp
 
     # Using C++ also works but is not how the official build of lunasvg is done
     # If this is enabled, then the plutovg sources in wxCLib.cmake must be

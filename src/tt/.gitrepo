@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/KeyWorksRW/ttClasses
+	branch = main
+	commit = d3e1055162b81202af021c2e5275916f1e59c026
+	parent = 64bbd55910a6dcf612f25cfb1f40c087d717dcd9
+	method = merge
+	cmdver = 0.4.9

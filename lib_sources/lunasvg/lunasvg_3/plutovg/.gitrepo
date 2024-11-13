@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/sammycage/plutovg
 	branch = main
-	commit = f45de7955abbae530cf314b82596fed65254e1f4
+	commit = a6a49024a4a79a7f306753e7fd1c0c2b7688061f
 	parent = 8cc27ff7d93539d88f62cbbf7404432019127ced
 	method = merge
 	cmdver = 0.4.9

@@ -29,6 +29,7 @@ set (file_list
     tt/tt_string_view.cpp   # std::string_view with additional methods
     tt/tt_string_vector.cpp # Class for reading and writing line-oriented strings/files
     tt/tt_view_vector.cpp   # Class for reading and writing line-oriented strings/files
+    tt/tt_wxString.cpp      # wxString with additional methods
 
     # Custom property handling for Property Grid panel
 

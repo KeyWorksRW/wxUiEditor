@@ -20,7 +20,12 @@
 #if !wxUSE_UNICODE_UTF8
     #error "wxUSE_UNICODE_UTF8 must be set to 1 in setup.h."
 #elif !wxUSE_UTF8_LOCALE_ONLY
-    #error "wxUSE_UTF8_LOCALE_ONLY must be set to 1 in setup.h."
+    #if defined(__WXMSW__)
+        // REVIEW: [Randalphwa - 11-14-2024] Setting wxUSE_UTF8_LOCALE_ONLY to 1 on Unix causes wxString::Format() to
+        // fail at least in wxUiEditor's copy of wxWidgets. This may already be fixed, but for now this error is
+        // disabled unless on Windows, which probably means the entire class is unusable on Unix/Mac.
+        #error "wxUSE_UTF8_LOCALE_ONLY must be set to 1 in setup.h."
+    #endif
 #endif
 
 #include <filesystem>

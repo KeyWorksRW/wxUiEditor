@@ -404,7 +404,7 @@
 #define wxUSE_TEXTFILE      1
 
 // i18n support: _() macro, wxLocale class.
-#define wxUSE_INTL          0
+#define wxUSE_INTL          1
 
 // Provide wxFoo_l() functions similar to standard foo() functions but taking
 // an extra locale parameter.
@@ -419,7 +419,7 @@
 //
 // Recommended setting: 1 but may be disabled if you are writing programs
 // running only in C locale anyhow
-#define wxUSE_XLOCALE       0
+#define wxUSE_XLOCALE       1
 
 // Set wxUSE_DATETIME to 1 to compile the wxDateTime and related classes which
 // allow to manipulate dates, times and time intervals.
@@ -1180,14 +1180,6 @@
 // common dialogs
 // ----------------------------------------------------------------------------
 
-// Use common dialogs (e.g. file selector, printer dialog). Switching this off
-// also switches off the printing architecture and interactive wxPrinterDC.
-//
-// Default is 1
-//
-// Recommended setting: 1
-#define wxUSE_COMMON_DIALOGS 1
-
 // wxBusyInfo displays window with message when app is busy. Works in same way
 // as wxBusyCursor
 #define wxUSE_BUSYINFO      1
@@ -1330,7 +1322,7 @@
 
 // Setting wxUSE_GLCANVAS to 1 enables OpenGL support. You need to have OpenGL
 // headers and libraries to be able to compile the library with wxUSE_GLCANVAS
-// set to 1 and, under Windows, also to add opengl32.lib and glu32.lib to the
+// set to 1 and, under Windows, also to add opengl32.lib to the
 // list of libraries used to link your application when linking to wxWidgets
 // statically (although this is done implicitly for Microsoft Visual C++ users).
 //
@@ -1512,7 +1504,7 @@
 #define wxUSE_PCX           1
 
 // Set to 1 for IFF format support (Amiga format)
-#define wxUSE_IFF           1
+#define wxUSE_IFF           0
 
 // Set to 1 for XPM format support
 #define wxUSE_XPM           1

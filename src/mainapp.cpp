@@ -191,7 +191,7 @@ int App::OnRun()
 #endif
     if (auto result = parser.FoundSwitch("test_menu"); result != wxCMD_SWITCH_NOT_FOUND)
     {
-        m_is_testing_switch = (result == wxCMD_SWITCH_ON ? true : false);
+        m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON ? true : false);
     }
 #if defined(_DEBUG)
     m_TestingMenuEnabled = true;

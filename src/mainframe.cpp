@@ -2351,7 +2351,8 @@ void MainFrame::UpdateLanguagePanels()
     }
 
     m_notebook->RemovePage(m_notebook->GetPageIndex(m_xrcPanel));
-    m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
+    if (m_docviewPanel)
+        m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
 
     auto languages = Project.getGenerateLanguages();
     if (languages & GEN_LANG_CPLUSPLUS && !m_cppPanel)
@@ -2592,7 +2593,8 @@ void MainFrame::UpdateLanguagePanels()
     }
 
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
-    m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+    if (m_docviewPanel)
+        m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
 }
 
 void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)

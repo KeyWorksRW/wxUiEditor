@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enhanced version of wxString
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/filename.h>
 
+#include <cstring>
 #include <cwctype>
 #include <filesystem>
 

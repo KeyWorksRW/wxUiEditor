@@ -1524,11 +1524,45 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
     }
     codegen.SetSrcWriteCode(cpp_cw.get());
 
-    codegen.GenerateRustClass();
+    switch (language)
+    {
+        case GEN_LANG_PYTHON:
+            codegen.GeneratePythonClass();
+            break;
+
+        case GEN_LANG_RUBY:
+            codegen.GenerateRubyClass();
+            break;
+
+        case GEN_LANG_FORTRAN:
+            codegen.GenerateFortranClass();
+            break;
+
+        case GEN_LANG_HASKELL:
+            codegen.GenerateHaskellClass();
+            break;
+
+        case GEN_LANG_LUA:
+            codegen.GenerateLuaClass();
+            break;
+
+        case GEN_LANG_PERL:
+            codegen.GeneratePerlClass();
+            break;
+
+        case GEN_LANG_RUST:
+            codegen.GenerateRustClass();
+            break;
+
+        default:
+            ASSERT_MSG(false, "Unknown language specified for code generation!");
+            break;
+    }
+
     int flags = flag_no_ui;
     if (pClassList)
         flags |= flag_test_only;
-    auto retval = cpp_cw->WriteFile(GEN_LANG_FORTRAN, flags);
+    auto retval = cpp_cw->WriteFile(language, flags);
 
     if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
     {
@@ -1574,6 +1608,11 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassLi
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
+
+    ASSERT_MSG(language != GEN_LANG_NONE, "No language specified for code generation!");
+    ASSERT_MSG(language <= GEN_LANG_XRC, "Invalid language specified for code generation!");
+    ASSERT_MSG(language != GEN_LANG_CPLUSPLUS, "Use GenerateCppFiles() for C++ code generation!");
+
     tt_cwd cwd(true);
     Project.ChangeDir();
 
@@ -1586,17 +1625,7 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassLi
 
     for (const auto& form: forms)
     {
-        switch (language)
-        {
-            case GEN_LANG_FORTRAN:
-                GenerateLanguageForm(form, results, pClassList, language);
-                break;
-
-            default:
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.EndClock();
-                return false;
-        }
+        GenerateLanguageForm(form, results, pClassList, language);
 
         if (results.updated_files.size())
         {

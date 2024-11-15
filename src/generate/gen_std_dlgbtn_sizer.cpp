@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStdDialogButtonSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +15,7 @@
 #include "gen_common.h"                       // GeneratorLibrary -- Generator classes
 #include "lambdas.h"                          // Functions for formatting and storage of lamda events
 #include "node.h"                             // Node class
+#include "utils.h"                            // Utility functions that work with properties
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -285,65 +286,71 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
     // You can only have one of: Ok, Yes, Save
     if (node->as_bool(prop_OK))
     {
-        code.Eol().NodeName().Add("_OK = wx.Button(self, wx.ID_OK)");
-        code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_OK").EndFunction();
+        code.Eol().NodeName().Add("_ok = wx.Button(self, wx.ID_OK)");
+        code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_ok").EndFunction();
     }
     else if (node->as_bool(prop_Yes))
     {
-        code.Eol().NodeName().Add("_Yes = wx.Button(self, wx.ID_YES)");
-        code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_Yes").EndFunction();
+        code.Eol().NodeName().Add("_yes = wx.Button(self, wx.ID_YES)");
+        code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_yes").EndFunction();
     }
     else if (node->as_bool(prop_Save))
     {
-        code.Eol().NodeName().Add("_Save = wx.Button(self, wx.ID_SAVE)");
-        code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_Save").EndFunction();
+        code.Eol().NodeName().Add("_save = wx.Button(self, wx.ID_SAVE)");
+        code.Eol().NodeName().Function("SetAffirmativeButton(").NodeName().Add("_save").EndFunction();
     }
 
     if (node->as_bool(prop_No))
     {
-        code.Eol().NodeName().Add("_No = wx.Button(self, wx.ID_NO)");
-        code.Eol().NodeName().Function("SetNegativeButton(").NodeName().Add("_No").EndFunction();
+        code.Eol().NodeName().Add("_no = wx.Button(self, wx.ID_NO)");
+        code.Eol().NodeName().Function("SetNegativeButton(").NodeName().Add("_no").EndFunction();
     }
 
     // You can only have one of: Cancel, Close
     if (node->as_bool(prop_Cancel))
     {
-        code.Eol().NodeName().Add("_Cancel = wx.Button(self, wx.ID_CANCEL)");
-        code.Eol().NodeName().Function("SetCancelButton(").NodeName().Add("_Cancel").EndFunction();
+        code.Eol().NodeName().Add("_cancel = wx.Button(self, wx.ID_CANCEL)");
+        code.Eol().NodeName().Function("SetCancelButton(").NodeName().Add("_cancel").EndFunction();
     }
     else if (node->as_bool(prop_Close))
     {
-        code.Eol().NodeName().Add("_Close = wx.Button(self, wx.ID_CLOSE)");
-        code.Eol().NodeName().Function("SetCancelButton(").NodeName().Add("_Close").EndFunction();
+        code.Eol().NodeName().Add("_close = wx.Button(self, wx.ID_CLOSE)");
+        code.Eol().NodeName().Function("SetCancelButton(").NodeName().Add("_close").EndFunction();
     }
 
     if (node->as_bool(prop_Help))
     {
-        code.Eol().NodeName().Add("_Help = wx.Button(self, wx.ID_HELP)");
-        code.Eol().NodeName().Function("AddButton(").NodeName().Add("_Help").EndFunction();
+        code.Eol().NodeName().Add("_help = wx.Button(self, wx.ID_HELP)");
+        code.Eol().NodeName().Function("AddButton(").NodeName().Add("_help").EndFunction();
     }
     else if (node->as_bool(prop_ContextHelp))
     {
-        code.Eol().NodeName().Add("_ContextHelp = wx.ContextHelpButton(self, wx.ID_CONTEXT_HELP)");
-        code.Eol().NodeName().Function("AddButton(").NodeName().Add("_ContextHelp").EndFunction();
+        code.Eol().NodeName().Add("_ctx_help = wx.ContextHelpButton(self, wx.ID_CONTEXT_HELP)");
+        code.Eol().NodeName().Function("AddButton(").NodeName().Add("_ctx_help").EndFunction();
+    }
+
+    if (node->as_bool(prop_Apply))
+    {
+        code.Eol().NodeName().Add("_apply = wx.Button(self, wx.ID_APPLY)");
+        code.Eol().NodeName().Function("AddButton(").NodeName().Add("_apply").EndFunction();
     }
 
     auto& def_btn_name = node->as_string(prop_default_button);
 
     if (def_btn_name == "OK")
-        code.Eol().NodeName().Add("_OK").Function("SetDefault()");
+        code.Eol().NodeName().Add("_ok").Function("SetDefault()");
     else if (def_btn_name == "Yes")
-        code.Eol().NodeName().Add("_Yes").Function("SetDefault()");
+        code.Eol().NodeName().Add("_yes").Function("SetDefault()");
     else if (def_btn_name == "Save")
-        code.Eol().NodeName().Add("_Save").Function("SetDefault()");
+        code.Eol().NodeName().Add("_save").Function("SetDefault()");
     else if (def_btn_name == "No")
-        code.Eol().NodeName().Add("_No").Function("SetDefault()");
+        code.Eol().NodeName().Add("_no").Function("SetDefault()");
     else if (def_btn_name == "Cancel")
-        code.Eol().NodeName().Add("_Cancel").Function("SetDefault()");
+        code.Eol().NodeName().Add("_cancel").Function("SetDefault()");
     else if (def_btn_name == "Close")
-        code.Eol().NodeName().Add("_Close").Function("SetDefault()");
+        code.Eol().NodeName().Add("_close").Function("SetDefault()");
     else if (def_btn_name == "Help")
-        code.Eol().NodeName().Add("_Help").Function("SetDefault()");
+        code.Eol().NodeName().Add("_help").Function("SetDefault()");
     else if (def_btn_name == "ContextHelp")
         code.Eol().NodeName().Add("_ContextHelp").Function("SetDefault()");
 
@@ -602,13 +609,43 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
 {
     Code handler(event->getNode(), code.m_language);
     tt_string event_code;
-    if (code.m_language == GEN_LANG_CPLUSPLUS)
+    switch (code.m_language)
     {
-        event_code = EventHandlerDlg::GetCppValue(event->get_value());
-    }
-    else
-    {
-        event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+        case GEN_LANG_CPLUSPLUS:
+            event_code = EventHandlerDlg::GetCppValue(event->get_value());
+            break;
+        case GEN_LANG_PYTHON:
+            event_code = EventHandlerDlg::GetPythonValue(event->get_value());
+            break;
+        case GEN_LANG_RUBY:
+            event_code = EventHandlerDlg::GetRubyValue(event->get_value());
+            break;
+
+        case GEN_LANG_FORTRAN:
+            event_code = EventHandlerDlg::GetFortranValue(event->get_value());
+            break;
+
+        case GEN_LANG_HASKELL:
+            event_code = EventHandlerDlg::GetHaskellValue(event->get_value());
+            break;
+
+        case GEN_LANG_LUA:
+            event_code = EventHandlerDlg::GetLuaValue(event->get_value());
+            break;
+
+        case GEN_LANG_PERL:
+            event_code = EventHandlerDlg::GetPerlValue(event->get_value());
+            break;
+
+        case GEN_LANG_RUST:
+            event_code = EventHandlerDlg::GetRustValue(event->get_value());
+            break;
+
+        default:
+            FAIL_MSG(tt_string() << "No event handlers for " << ConvertFromGenLang(code.m_language) << " ("
+                                 << code.m_language << ")");
+            event_code = EventHandlerDlg::GetCppValue(event->get_value());
+            break;
     }
 
     // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
@@ -644,25 +681,48 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
         code.Add("self.");
     code.Add("Bind(").Add(evt_str) << comma << handler.GetCode() << comma;
 
-    if (event->get_name().starts_with("OKButton"))
-        code.Add("wxID_OK");
-    else if (event->get_name().starts_with("YesButton"))
-        code.Add("wxID_YES");
-    else if (event->get_name().starts_with("SaveButton"))
-        code.Add("wxID_SAVE");
-    else if (event->get_name().starts_with("ApplyButton"))
-        code.Add("wxID_APPLY");
-    else if (event->get_name().starts_with("NoButton"))
-        code.Add("wxID_NO");
-    else if (event->get_name().starts_with("CancelButton"))
-        code.Add("wxID_CANCEL");
-    else if (event->get_name().starts_with("CloseButton"))
-        code.Add("wxID_CLOSE");
-    else if (event->get_name().starts_with("HelpButton"))
-        code.Add("wxID_HELP");
-    else if (event->get_name().starts_with("ContextHelpButton"))
-        code.Add("wxID_CONTEXT_HELP");
-
+    if (code.m_language == GEN_LANG_PYTHON)
+    {
+        if (event->get_name().starts_with("OKButton"))
+            code.NodeName(event->getNode()).Add("_ok");
+        else if (event->get_name().starts_with("YesButton"))
+            code.NodeName(event->getNode()).Add("_yes");
+        else if (event->get_name().starts_with("SaveButton"))
+            code.NodeName(event->getNode()).Add("_save");
+        else if (event->get_name().starts_with("NoButton"))
+            code.NodeName(event->getNode()).Add("_no");
+        else if (event->get_name().starts_with("CancelButton"))
+            code.NodeName(event->getNode()).Add("_cancel");
+        else if (event->get_name().starts_with("CloseButton"))
+            code.NodeName(event->getNode()).Add("_close");
+        else if (event->get_name().starts_with("HelpButton"))
+            code.NodeName(event->getNode()).Add("_help");
+        else if (event->get_name().starts_with("ContextHelpButton"))
+            code.NodeName(event->getNode()).Add("_ctx_help");
+        else if (event->get_name().starts_with("ApplyButton"))
+            code.NodeName(event->getNode()).Add("_apply");
+    }
+    else
+    {
+        if (event->get_name().starts_with("OKButton"))
+            code.Add("wxID_OK");
+        else if (event->get_name().starts_with("YesButton"))
+            code.Add("wxID_YES");
+        else if (event->get_name().starts_with("SaveButton"))
+            code.Add("wxID_SAVE");
+        else if (event->get_name().starts_with("ApplyButton"))
+            code.Add("wxID_APPLY");
+        else if (event->get_name().starts_with("NoButton"))
+            code.Add("wxID_NO");
+        else if (event->get_name().starts_with("CancelButton"))
+            code.Add("wxID_CANCEL");
+        else if (event->get_name().starts_with("CloseButton"))
+            code.Add("wxID_CLOSE");
+        else if (event->get_name().starts_with("HelpButton"))
+            code.Add("wxID_HELP");
+        else if (event->get_name().starts_with("ContextHelpButton"))
+            code.Add("wxID_CONTEXT_HELP");
+    }
     code.EndFunction();
 }
 

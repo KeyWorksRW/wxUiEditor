@@ -60,7 +60,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else if (code.m_language == GEN_LANG_HASKELL)
     {
-        event_code = EventHandlerDlg::GetHaskelValue(event->get_value());
+        event_code = EventHandlerDlg::GetHaskellValue(event->get_value());
     }
     else if (code.m_language == GEN_LANG_PERL)
     {
@@ -78,6 +78,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     else
     {
         FAIL_MSG("Unknown language");
+        event_code.clear();
     }
 
     if (event_code.empty())
@@ -791,7 +792,23 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
-            code.Tab().Str("event.Skip()").Eol().Eol();
+            auto foo = event->get_name();
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("event.Skip()").Eol().Eol();
+            }
         }
     }
 

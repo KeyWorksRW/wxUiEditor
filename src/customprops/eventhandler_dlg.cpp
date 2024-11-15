@@ -1089,7 +1089,7 @@ tt_string EventHandlerDlg::GetFortranValue(tt_string_view value)
 
 // This is a static function
 
-tt_string EventHandlerDlg::GetHaskelValue(tt_string_view value)
+tt_string EventHandlerDlg::GetHaskellValue(tt_string_view value)
 {
     tt_string result;
     auto pos = value.find("[haskell:");

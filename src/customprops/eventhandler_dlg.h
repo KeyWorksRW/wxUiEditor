@@ -63,7 +63,7 @@ public:
     // This will return a string as if Haskell was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Ruby is not enabled and another language specified a value.
-    static tt_string GetHaskelValue(tt_string_view value);
+    static tt_string GetHaskellValue(tt_string_view value);
 
     // This will return a string as if Lua was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if

@@ -140,13 +140,11 @@ enum GenLang : size_t
     GEN_LANG_RUBY = 1 << 2,
 
     // Ports exist, code generation is not yet implemented
-    GEN_LANG_HASKELL = 1 << 3,
-    GEN_LANG_LUA = 1 << 4,
-    GEN_LANG_PERL = 1 << 5,
-    GEN_LANG_RUST = 1 << 6,
-
-    // No port exists currently, code generation is not yet implemented
-    GEN_LANG_FORTRAN = 1 << 7,
+    GEN_LANG_FORTRAN = 1 << 3,
+    GEN_LANG_HASKELL = 1 << 4,
+    GEN_LANG_LUA = 1 << 5,
+    GEN_LANG_PERL = 1 << 6,
+    GEN_LANG_RUST = 1 << 7,
 
     GEN_LANG_XRC = 1 << 8,
     GEN_LANG_LAST = GEN_LANG_XRC,

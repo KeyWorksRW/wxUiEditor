@@ -1378,6 +1378,7 @@ void GenToolCode(Code& code)
             code.Comma();
             code.AddIfCpp("nullptr");
             code.AddIfPython("None");
+            code.AddIfRuby("nil");
         }
     }
     code.EndFunction();

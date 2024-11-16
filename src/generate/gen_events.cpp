@@ -929,7 +929,23 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         code_lines.emplace(set_code);
 
         undefined_handlers.Str(set_code).Eol();
-        undefined_handlers.Tab().Str("event.skip").Eol().Unindent();
+        if (event->get_name() == "CloseButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_CLOSE)");
+        }
+        else if (event->get_name() == "YesButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_YES)");
+        }
+        else if (event->get_name() == "NoButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_NO)");
+        }
+        else
+        {
+            undefined_handlers.Tab().Str("event.skip");
+        }
+        undefined_handlers.Eol().Unindent();
         undefined_handlers.Str("end").Eol().Eol();
     }
 

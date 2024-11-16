@@ -777,7 +777,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
         {
             auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
             // Ignore lambda's
-            if (python_handler.starts_with("[python:lambda]"))
+            if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
                 continue;
 
             tt_string set_code;
@@ -919,7 +919,7 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
     {
         auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
         // Ignore lambda's
-        if (ruby_handler.starts_with("[ruby:lambda]"))
+        if (ruby_handler.empty() || ruby_handler.starts_with("[ruby:lambda]"))
             continue;
 
         tt_string set_code;

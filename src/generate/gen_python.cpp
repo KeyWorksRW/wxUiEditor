@@ -244,13 +244,36 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
             }
         }
 
+        // Now write any embedded images that are declared in a different form
+        bool blank_line_seen = false;
+        for (auto& iter: m_embedded_images)
+        {
+            if (iter->form != m_ImagesForm && iter->form != m_form_node)
+            {
+                if (!blank_line_seen)
+                {
+                    m_source->writeLine();
+                    blank_line_seen = true;
+                }
+                code.Str("from ").Str(iter->form->as_string(prop_python_file).filename()).Str(" import ");
+                code.Str(iter->imgs[0].array_name);
+                m_source->writeLine(code);
+                code.clear();
+            }
+        }
+
         // Now write any embedded images that aren't declared in the gen_Images List
         for (auto& iter: m_embedded_images)
         {
             // Only write the images that aren't declared in any gen_Images List. Note that
             // this *WILL* result in duplicate images being written to different forms.
-            if (iter->form != m_ImagesForm)
+            if (iter->form == m_form_node)
             {
+                // This will be true if an image was declared in a different form
+                if (blank_line_seen)
+                {
+                    m_source->writeLine();
+                }
                 m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
                 WriteImageConstruction(code);
                 break;

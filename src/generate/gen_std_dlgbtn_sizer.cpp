@@ -383,11 +383,15 @@ void StdDialogButtonSizerGenerator::GenRubyConstruction(Code& code)
 
     auto gen_btn_code = [&](std::string_view def_btn_name, std::string_view btn_name, std::string_view id)
     {
-        if (def_btn_name == default_btn_name)
+        if (def_btn_name == default_btn_name || code.node()->getMapEvents().size())
         {
-            code.Eol().Str("_").Str(btn_name).Str(" = Wx::Button.new(self, ").Str(id).Str(")");
-            code.Eol().NodeName().Function("add_button(_").Str(btn_name).Str(")");
-            code.Eol().Str("_").Str(btn_name).Str(".set_default");
+            code.Eol().NodeName().Str(btn_name).Str(" = Wx::Button.new(self, ").Str(id).Str(")");
+            code.Eol().NodeName().Function("add_button(").NodeName().Str(btn_name).Str(")");
+
+            if (def_btn_name == default_btn_name)
+            {
+                code.Eol().NodeName().Str(btn_name).Str(".set_default");
+            }
         }
         else
         {
@@ -398,40 +402,39 @@ void StdDialogButtonSizerGenerator::GenRubyConstruction(Code& code)
     // You can only have one of: Ok, Yes, Save
     if (node->as_bool(prop_OK))
     {
-        gen_btn_code("OK", "ok_btn", "Wx::ID_OK");
+        gen_btn_code("OK", "_ok", "Wx::ID_OK");
     }
     else if (node->as_bool(prop_Yes))
     {
-        gen_btn_code("Yes", "yes_btn", "Wx::ID_YES");
+        gen_btn_code("Yes", "_yes", "Wx::ID_YES");
     }
     else if (node->as_bool(prop_Save))
     {
-        gen_btn_code("Save", "save_btn", "Wx::ID_SAVE");
+        gen_btn_code("Save", "_save", "Wx::ID_SAVE");
     }
 
     if (node->as_bool(prop_No))
     {
-        gen_btn_code("No", "no_btn", "Wx::ID_NO");
+        gen_btn_code("No", "_no", "Wx::ID_NO");
     }
 
     // You can only have one of: Cancel, Close
     if (node->as_bool(prop_Cancel))
     {
-        gen_btn_code("Cancel", "cancel_btn", "Wx::ID_CANCEL");
+        gen_btn_code("Cancel", "_cancel", "Wx::ID_CANCEL");
     }
     else if (node->as_bool(prop_Close))
     {
-        gen_btn_code("Close", "close_btn", "Wx::ID_CLOSE");
+        gen_btn_code("Close", "_close", "Wx::ID_CLOSE");
     }
 
     if (node->as_bool(prop_Help))
     {
-        gen_btn_code("Help", "help_btn", "Wx::ID_HELP");
+        gen_btn_code("Help", "_help", "Wx::ID_HELP");
     }
     else if (node->as_bool(prop_ContextHelp))
     {
         code.Eol().NodeName().Function("add_button(").Str("Wx::ContextHelpButton.new(self, Wx::ID_CONTEXT_HELP))");
-        // gen_btn_code("ContextHelp", "context_help_btn", "Wx::ID_CONTEXT_HELP");
     }
 
     code.Eol().NodeName().Function("realize");
@@ -672,16 +675,29 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
     {
         if (code.is_cpp())
             handler << "&" << class_name << "::" << event_code << ", this";
-        else
+        else if (code.is_python())
             handler.Add("self.") << event_code;
+        else if (code.is_ruby())
+            handler << event_code;
     }
 
-    tt_string evt_str = (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
+    tt_string_view event_name =
+        (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
-    code.Add("Bind(").Add(evt_str) << comma << handler.GetCode() << comma;
+    if (code.is_ruby() && (event_name == "wxEVT_BUTTON" || event_name == "wxEVT_UPDATE_UI"))
+    {
+        if (event_name == "wxEVT_BUTTON")
+            code.Str("evt_button(");
+        else
+            code.Str("evt_update_ui(");
+    }
+    else
+    {
+        code.Add("Bind(").Add(event_name) << comma << handler.GetCode() << comma;
+    }
 
-    if (code.m_language == GEN_LANG_PYTHON)
+    if (code.m_language == GEN_LANG_PYTHON || code.m_language == GEN_LANG_RUBY)
     {
         if (event->get_name().starts_with("OKButton"))
             code.NodeName(event->getNode()).Add("_ok");
@@ -722,6 +738,15 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
             code.Add("wxID_HELP");
         else if (event->get_name().starts_with("ContextHelpButton"))
             code.Add("wxID_CONTEXT_HELP");
+    }
+
+    if (code.is_ruby())
+    {
+        code.Str(".get_id").Comma().Str(":") << handler.GetCode();
+    }
+    else if (code.is_python())
+    {
+        code.Comma() << handler.GetCode();
     }
     code.EndFunction();
 }

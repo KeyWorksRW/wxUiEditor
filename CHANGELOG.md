@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - wxPython now correctly loads embedded animation files for wx.adv.AnimationCtrl
 - XRC generation now includes variant property settings for forms
 - wxPython now places wxTreeListCtrol in the dataview library
+- Fixed code generation for Python and Ruby wxStdDialogButtonSizer events
 
 ## [Released (1.2.1)]
 

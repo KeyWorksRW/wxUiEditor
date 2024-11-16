@@ -60,7 +60,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else if (code.m_language == GEN_LANG_HASKELL)
     {
-        event_code = EventHandlerDlg::GetHaskelValue(event->get_value());
+        event_code = EventHandlerDlg::GetHaskellValue(event->get_value());
     }
     else if (code.m_language == GEN_LANG_PERL)
     {
@@ -78,6 +78,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     else
     {
         FAIL_MSG("Unknown language");
+        event_code.clear();
     }
 
     if (event_code.empty())
@@ -776,7 +777,7 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
         {
             auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
             // Ignore lambda's
-            if (python_handler.starts_with("[python:lambda]"))
+            if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
                 continue;
 
             tt_string set_code;
@@ -791,7 +792,23 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
-            code.Tab().Str("event.Skip()").Eol().Eol();
+            auto foo = event->get_name();
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("event.Skip()").Eol().Eol();
+            }
         }
     }
 
@@ -902,7 +919,7 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
     {
         auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
         // Ignore lambda's
-        if (ruby_handler.starts_with("[ruby:lambda]"))
+        if (ruby_handler.empty() || ruby_handler.starts_with("[ruby:lambda]"))
             continue;
 
         tt_string set_code;
@@ -912,7 +929,23 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         code_lines.emplace(set_code);
 
         undefined_handlers.Str(set_code).Eol();
-        undefined_handlers.Tab().Str("event.skip").Eol().Unindent();
+        if (event->get_name() == "CloseButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_CLOSE)");
+        }
+        else if (event->get_name() == "YesButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_YES)");
+        }
+        else if (event->get_name() == "NoButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_NO)");
+        }
+        else
+        {
+            undefined_handlers.Tab().Str("event.skip");
+        }
+        undefined_handlers.Eol().Unindent();
         undefined_handlers.Str("end").Eol().Eol();
     }
 

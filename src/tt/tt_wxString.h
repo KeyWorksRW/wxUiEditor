@@ -279,44 +279,26 @@ public:
     tt_wxString& forwardslashestoback();
 
     // ext param should begin with a period (e.g., ".cpp")
-    bool has_extension(std::string_view ext)
-    {
-        return subview().has_extension(ext);
-    }
+    bool has_extension(std::string_view ext) { return subview().has_extension(ext); }
 
     // ext param should begin with a period (e.g., ".cpp")
-    bool has_extension_wx(const wxString& ext)
-    {
-        return subview().has_extension(static_cast<tt_wxString>(ext));
-    }
+    bool has_extension_wx(const wxString& ext) { return subview().has_extension(static_cast<tt_wxString>(ext)); }
 
     // Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename(std::string_view name) const
-    {
-        return subview().has_filename(name);
-    }
+    bool has_filename(std::string_view name) const { return subview().has_filename(name); }
 
     // Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename_wx(const wxString& name) const
-    {
-        return subview().has_filename(static_cast<tt_wxString>(name));
-    }
+    bool has_filename_wx(const wxString& name) const { return subview().has_filename(static_cast<tt_wxString>(name)); }
 
     // Returns a view to the current extension. View is empty if there is no extension.
     //
     // Caution: view is only valid until tt_string is modified or destroyed.
-    tt_string_view extension() const
-    {
-        return ToTTString().extension();
-    }
+    tt_string_view extension() const { return ToTTString().extension(); }
 
     // Returns a view to the current filename. View is empty if there is no filename.
     //
     // Caution: view is only valid until tt_string is modified or destroyed.
-    tt_string_view filename() const
-    {
-        return ToTTString().filename();
-    }
+    tt_string_view filename() const { return ToTTString().filename(); }
 
     // Returns offset to the current filename or tt::npos if there is no filename.
     size_t find_filename() const noexcept { return ToTTString().find_filename(); }

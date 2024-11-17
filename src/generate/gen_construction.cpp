@@ -43,6 +43,14 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_warnings.emplace(warning_msg.value());
     }
 
+    if (auto supported_msg = generator->isLanguageVersionSupported(m_language); supported_msg)
+    {
+        Code gen_code(node, m_language);
+        gen_code.AddComment(supported_msg.value(), true);
+        m_source->writeLine(gen_code);
+        return;
+    }
+
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
 

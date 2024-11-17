@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTreeListCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +36,7 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 
 bool TreeListCtrlGenerator::ConstructionCode(Code& code)
 {
+    ASSERT_MSG(!isLanguageVersionSupported(code.get_language()), isLanguageVersionSupported(code.get_language()).value());
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(code::allow_scaling, true, "wxTL_DEFAULT_STYLE");
 
@@ -49,21 +50,20 @@ bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
+void TreeListCtrlGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
+{
+    if (code.get_language() == GEN_LANG_NONE || (code.get_language() & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
+        BaseGenerator::GenEvent(code, event, class_name);
+    }
+
+    // Ruby currently does not support wxTreeListCtrl, so don't generate any events
+}
+
 std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
-        case GEN_LANG_PYTHON:
-            {
-                tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
-                {
-                    msg << form->as_string(prop_class_name) << ": ";
-                }
-                msg << "wxPython currently does not support wxTreeListCtrl";
-                return msg;
-            }
-
         case GEN_LANG_RUBY:
             {
                 tt_string msg;
@@ -71,12 +71,20 @@ std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang l
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
-                msg << "wxRuby currently does not support wxTreeListCtrl";
+                msg << ConvertFromGenLang(language) << " currently does not support wxTreeListCtrl";
                 return msg;
             }
         default:
             return {};
     }
+}
+
+std::optional<tt_string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
+{
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+        return {};
+
+    return tt_string() << "wxTreeListCtrl is not supported by " << ConvertFromGenLang(language);
 }
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////

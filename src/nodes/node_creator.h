@@ -56,8 +56,8 @@ public:
     // preferred language supports it (unless the user agrees to create it anyway)
     std::pair<NodeSharedPtr, int> createNode(GenName name, Node* parent, bool verify_language_support = false);
 
-    // Only creates the node if the parent allows it as a child. Returns the node and an
-    // error code.
+    // Only creates the node if the parent allows it as a child. Returns the node and a
+    // Node:: error code (see enum in node.h).
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
@@ -96,7 +96,14 @@ public:
 
     bool isOldHostType(tt_string_view old_type) const { return m_setOldHostTypes.contains(old_type); }
 
-    size_t countChildrenWithSameType(Node* parent, GenType type);
+    // Returns valid parent if there is one, which may be different from the parent passed to
+    // the function.
+    //
+    // Returns nullptr if no parent can be found that allows this child type (which might
+    // mean that parent already has the maximum number of children allowed).
+    Node* isValidCreateParent(GenName name, Node* parent) const;
+
+    size_t countChildrenWithSameType(Node* parent, GenType type) const;
 
 protected:
     // This must

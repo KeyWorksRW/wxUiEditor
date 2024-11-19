@@ -409,7 +409,7 @@ public:
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    std::pair<NodeSharedPtr, int> createChildNode(GenName name, bool verify_language_support = false);
+    std::pair<NodeSharedPtr, int> createChildNode(GenName name, bool verify_language_support = false, int pos = -1);
 
     // Gets the current selected node and uses that to call createChildNode().
     Node* createNode(GenName name);
@@ -417,7 +417,7 @@ public:
     // This is the preferred way to create a new node when requested by the user (tool, menu,
     // or dialog). Besides creating the node, some nodes will get special processing to
     // automatically create additional child nodes.
-    bool createToolNode(GenName name);
+    bool createToolNode(GenName name, int pos = -1);
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed

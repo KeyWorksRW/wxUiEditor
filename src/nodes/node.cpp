@@ -617,7 +617,7 @@ wxSizerFlags Node::getSizerFlags() const
     return flags;
 }
 
-std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_language_support)
+std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_language_support, int pos)
 {
     auto& frame = wxGetFrame();
 
@@ -698,7 +698,7 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
 
         tt_string undo_str;
         undo_str << "insert " << map_GenNames[name];
-        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str));
+        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     }
 
     // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If creating the node failed,
@@ -712,7 +712,7 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
         }
         new_node = result.first;
         tt_string undo_str = "insert ribbon tool";
-        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
+        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
     }
     else
     {
@@ -757,10 +757,10 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
                     }
                 }
 
-                auto pos = parent->findInsertionPos(this);
+                auto insert_pos = parent->findInsertionPos(this);
                 tt_string undo_str;
                 undo_str << "insert " << map_GenNames[name];
-                frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
+                frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, insert_pos));
             }
         }
         else

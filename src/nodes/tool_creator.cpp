@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for creating new nodes from Ribbon Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -112,10 +112,11 @@ static void SetUniqueRibbonToolID(Node* node)
     node->set_value(prop_id, new_name);
 }
 
-bool Node::createToolNode(GenName name)
+bool Node::createToolNode(GenName name, int pos)
 {
     if (isGen(gen_Project))
     {
+        // If needed, change the names to the Form version version the normal child version
         if (name == gen_wxMenuBar)
         {
             name = gen_MenuBar;
@@ -243,7 +244,17 @@ bool Node::createToolNode(GenName name)
         name = gen_ribbonTool;
     }
 
-    auto result = createChildNode(name, true);
+    if (auto valid_parent = NodeCreation.isValidCreateParent(name, this); valid_parent && valid_parent != this)
+    {
+        if (valid_parent && valid_parent == getParent() && !valid_parent->isGen(gen_wxGridBagSizer))
+        {
+            auto new_pos = valid_parent->getChildPosition(this) + 1;
+            return valid_parent->createToolNode(name, static_cast<int>(new_pos));
+        }
+        return valid_parent->createToolNode(name, pos);
+    }
+
+    auto result = createChildNode(name, true, pos);
     if (result.second == Node::unsupported_language)
     {
         return true;

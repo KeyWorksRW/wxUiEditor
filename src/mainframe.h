@@ -273,6 +273,8 @@ public:
     void OnGenSingleRust(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
 
+    void OnInsertWidget(wxCommandEvent&) override;
+
 protected:
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;
@@ -297,7 +299,6 @@ protected:
     void OnImportProject(wxCommandEvent& event);
     void OnImportRecent(wxCommandEvent& event);
     void OnImportWindowsResource(wxCommandEvent& event) override;
-    void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
     void OnOpenRecentProject(wxCommandEvent& event);
     void OnPaste(wxCommandEvent& event) override;

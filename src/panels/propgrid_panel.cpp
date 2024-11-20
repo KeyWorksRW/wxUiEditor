@@ -1227,8 +1227,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         auto config = wxConfig::Get();
         config->Write("GenCode", 0);
 
-        // wxGetFrame().UpdateLanguagePanels();
-        wxGetFrame().FireProjectLoadedEvent();
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().UpdateLanguagePanels();
 
         return;
     }
@@ -1423,12 +1423,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     else
     {
         wxGetFrame().DismissInfoBar();
-    }
-
-    if (prop->get_name() == prop_generate_languages)
-    {
-        // wxGetFrame().UpdateLanguagePanels();
-        wxGetFrame().FireProjectLoadedEvent();
     }
 }
 
@@ -1639,6 +1633,13 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
                 value.Replace(",", "|");
             }
         }
+    }
+    else if (node_prop->isProp(prop_generate_languages))
+    {
+        modifyProperty(node_prop, value);
+        wxGetFrame().FireProjectUpdatedEvent();
+        wxGetFrame().UpdateLanguagePanels();
+        return;
     }
     else if (node_prop->isProp(prop_window_style) && value.empty())
     {

@@ -262,21 +262,22 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_delete->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
 
     m_menuEdit->Append(menu_delete);
+    m_menuEdit->AppendSeparator();
     auto* menu_duplicate = new wxMenuItem(m_menuEdit, wxID_ANY, "Duplicate",
         "Delete selected object without using clipboard.", wxITEM_NORMAL);
     menu_duplicate->SetBitmap(wxue_img::bundle_duplicate_svg(24, 24));
     m_menuEdit->Append(menu_duplicate);
+    auto* menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert Widget...",
+        "Find text in the active code viewer.", wxITEM_NORMAL);
+    menu_insert_widget->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
+
+    m_menuEdit->Append(menu_insert_widget);
     m_menuEdit->AppendSeparator();
     auto* menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString, "Find text in the active code viewer.",
         wxITEM_NORMAL);
     menu_find->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_MENU));
 
     m_menuEdit->Append(menu_find);
-    auto* menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert widget...",
-        "Find text in the active code viewer.", wxITEM_NORMAL);
-    menu_insert_widget->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
-
-    m_menuEdit->Append(menu_insert_widget);
     m_menuEdit->AppendSeparator();
 
     auto* submenu3 = new wxMenu();

@@ -1041,6 +1041,9 @@
               wxEVT_MENU="OnDelete"
               wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
             <node
+              class="separator"
+              var_name="separator9" />
+            <node
               class="wxMenuItem"
               bitmap="SVG;duplicate.svg;[24,24]"
               help="Delete selected object without using clipboard."
@@ -1048,6 +1051,14 @@
               var_name="menu_duplicate"
               wxEVT_MENU="OnDuplicate"
               wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
+            <node
+              class="wxMenuItem"
+              bitmap="Art;wxART_EDIT|wxART_MENU"
+              help="Find text in the active code viewer."
+              id="id_insert_widget"
+              label="&amp;Insert Widget..."
+              var_name="menu_insert_widget"
+              wxEVT_MENU="OnInsertWidget" />
             <node
               class="separator"
               var_name="separator6" />
@@ -1059,14 +1070,6 @@
               label=""
               var_name="menu_find"
               wxEVT_MENU="OnFindDialog" />
-            <node
-              class="wxMenuItem"
-              bitmap="Art;wxART_EDIT|wxART_MENU"
-              help="Find text in the active code viewer."
-              id="id_insert_widget"
-              label="&amp;Insert widget..."
-              var_name="menu_insert_widget"
-              wxEVT_MENU="OnInsertWidget" />
             <node
               class="separator"
               var_name="separator7" />

@@ -213,6 +213,8 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = folder->as_string(prop_folder_ruby_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
+        else if (language == GEN_LANG_FORTRAN && folder->hasValue(prop_folder_fortran_output_folder))
+            result = folder->as_string(prop_folder_fortran_output_folder);
         else if (language == GEN_LANG_HASKELL && folder->hasValue(prop_folder_haskell_output_folder))
             result = folder->as_string(prop_folder_haskell_output_folder);
         else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
@@ -238,6 +240,8 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = m_project_node->as_string(prop_ruby_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
+        else if (language == GEN_LANG_FORTRAN && m_project_node->hasValue(prop_fortran_output_folder))
+            result = m_project_node->as_string(prop_fortran_output_folder);
         else if (language == GEN_LANG_HASKELL && m_project_node->hasValue(prop_haskell_output_folder))
             result = m_project_node->as_string(prop_haskell_output_folder);
         else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
@@ -408,6 +412,8 @@ GenLang ProjectHandler::getCodePreference(Node* node) const
         return GEN_LANG_PYTHON;
     else if (value == "Ruby")
         return GEN_LANG_RUBY;
+    else if (value == "Fortran")
+        return GEN_LANG_FORTRAN;
     else if (value == "Haskell")
         return GEN_LANG_HASKELL;
     else if (value == "Lua")
@@ -437,6 +443,8 @@ size_t ProjectHandler::getGenerateLanguages() const
         languages |= GEN_LANG_PYTHON;
     if (value.contains("Ruby", tt::CASE::either))
         languages |= GEN_LANG_RUBY;
+    if (value.contains("Fortran", tt::CASE::either))
+        languages |= GEN_LANG_FORTRAN;
     if (value.contains("Haskell", tt::CASE::either))
         languages |= GEN_LANG_HASKELL;
     if (value.contains("Lua", tt::CASE::either))
@@ -689,6 +697,10 @@ int ProjectHandler::getLangVersion(GenLang language) const
 
         case GEN_LANG_RUBY:
             version = m_project_node->as_string(prop_wxRuby_version);
+            break;
+
+        case GEN_LANG_FORTRAN:
+            version = m_project_node->as_string(prop_wxFortran_version);
             break;
 
         case GEN_LANG_HASKELL:

@@ -589,6 +589,9 @@ std::string_view ConvertFromGenLang(GenLang language)
         case GEN_LANG_RUBY:
             return "Ruby";
             break;
+        case GEN_LANG_FORTRAN:
+            return "Fortran";
+            break;
         case GEN_LANG_HASKELL:
             return "Haskell";
             break;
@@ -618,6 +621,8 @@ GenLang ConvertToGenLang(tt_string_view language)
         return GEN_LANG_PYTHON;
     else if (language == "Ruby" || language.starts_with("wxRuby") || language.starts_with("Folder wxRuby"))
         return GEN_LANG_RUBY;
+    else if (language == "Fortran" || language.starts_with("wxFortran") || language.starts_with("Folder wxFortran"))
+        return GEN_LANG_FORTRAN;
     else if (language == "Haskell" || language.starts_with("wxHaskell") || language.starts_with("Folder wxHaskell"))
         return GEN_LANG_HASKELL;
     else if (language == "Lua" || language.starts_with("wxLua") || language.starts_with("Folder wxLua"))

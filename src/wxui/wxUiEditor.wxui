@@ -1237,13 +1237,6 @@
             label="&amp;Add"
             var_name="m_menu_add">
             <node
-              class="wxMenuItem"
-              label="Add Anything..."
-              var_name="menu_item20" />
-            <node
-              class="separator"
-              var_name="separator9" />
-            <node
               class="submenu"
               label="Add Forms"
               var_name="submenu5">
@@ -1916,21 +1909,21 @@
                 var_name="menu_item114" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/menuitem.svg;[24,24]"
+                bitmap="SVG;menuitem.svg;[24,24]"
                 help="wxMenuItem"
                 id="gen_wxMenuItem"
                 label="Menu Item"
                 var_name="menu_item115" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/submenu.svg;[24,24]"
+                bitmap="SVG;submenu.svg;[24,24]"
                 help="submenu"
                 id="gen_submenu"
                 label="SubMenu"
                 var_name="menu_item116" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/separator.svg;[24,24]"
+                bitmap="SVG;separator.svg;[24,24]"
                 help="separator"
                 id="gen_separator"
                 label="Separator"
@@ -1940,7 +1933,7 @@
                 var_name="separator23" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/auitoolbar.svg;[24,24]"
+                bitmap="SVG;auitoolbar.svg;[24,24]"
                 help="wxAuiToolBar"
                 id="gen_wxAuiToolBar"
                 label="Aui Toolbar"
@@ -2011,7 +2004,7 @@
               </node>
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/wxToolBar.svg;[24,24]"
+                bitmap="SVG;wxToolBar.svg;[24,24]"
                 help="wxToolBar"
                 id="gen_wxToolBar"
                 label="Standard Toolbar"
@@ -2079,21 +2072,21 @@
                 var_name="submenu23">
                 <node
                   class="wxMenuItem"
-                  bitmap="SVG;../art_src/ribbon_bar.svg;[24,24]"
+                  bitmap="SVG;ribbon_bar.svg;[24,24]"
                   help="wxRibbonBar"
                   id="CreateNewRibbon"
                   label="Ribbon Bar..."
                   var_name="menu_item137" />
                 <node
                   class="wxMenuItem"
-                  bitmap="SVG;../art_src/ribbon_page.svg;[24,24]"
+                  bitmap="SVG;ribbon_page.svg;[24,24]"
                   help="wxRibbonPage"
                   id="gen_wxRibbonPage"
                   label="Ribbon Page"
                   var_name="menu_item138" />
                 <node
                   class="wxMenuItem"
-                  bitmap="SVG;../art_src/ribbon_panel.svg;[24,24]"
+                  bitmap="SVG;ribbon_panel.svg;[24,24]"
                   help="wxRibbonPanel"
                   id="gen_wxRibbonPanel"
                   label="Ribbon Panel"
@@ -2121,21 +2114,21 @@
                   var_name="separator24" />
                 <node
                   class="wxMenuItem"
-                  bitmap="SVG;../art_src/ribbon_button.svg;[24,24]"
+                  bitmap="SVG;ribbon_button.svg;[24,24]"
                   help="Ribbon Button"
                   id="gen_ribbonButton"
                   label="Add Button"
                   var_name="menu_item143" />
                 <node
                   class="wxMenuItem"
-                  bitmap="SVG;../art_src/ribbon_separator.svg;[24,24]"
+                  bitmap="SVG;ribbon_separator.svg;[24,24]"
                   help="Tool Separator"
                   id="gen_ribbonSeparator"
                   label="Add Separator"
                   var_name="menu_item144" />
                 <node
                   class="wxMenuItem"
-                  bitmap="SVG;../art_src/ribbon_gallery_item.svg;[24,24]"
+                  bitmap="SVG;ribbon_gallery_item.svg;[24,24]"
                   help="Ribbon Gallery Item"
                   id="gen_ribbonGalleryItem"
                   label="Add Gallery Item"
@@ -2146,14 +2139,14 @@
                 var_name="separator20" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/statusbar.svg;[24,24]"
+                bitmap="SVG;statusbar.svg;[24,24]"
                 help="wxStatusBar"
                 id="gen_wxStatusBar"
                 label="Status Bar"
                 var_name="menu_item118" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/infobar.svg;[24,24]"
+                bitmap="SVG;infobar.svg;[24,24]"
                 help="wxInfoBar"
                 id="gen_wxInfoBar"
                 label="Info Bar"
@@ -2165,49 +2158,49 @@
               var_name="submenu15">
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/calendar.svg;[24,24]"
+                bitmap="SVG;calendar.svg;[24,24]"
                 help="wxCalendarCtrl"
                 id="gen_wxCalendarCtrl"
                 label="Calendar Control"
                 var_name="menu_item150" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/wxFileCtrl.svg;[24,24]"
+                bitmap="SVG;wxFileCtrl.svg;[24,24]"
                 help="wxFileCtrl"
                 id="gen_wxFileCtrl"
                 label="File Control"
                 var_name="menu_item151" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/genericdir_ctrl.svg;[24,24]"
+                bitmap="SVG;genericdir_ctrl.svg;[24,24]"
                 help="wxGenericDirCtrl"
                 id="gen_wxGenericDirCtrl"
                 label="Generic Directory Control"
                 var_name="menu_item152" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/hyperlink_ctrl.svg;[24,24]"
+                bitmap="SVG;hyperlink_ctrl.svg;[24,24]"
                 help="wxHyperlinkCtrl"
                 id="gen_wxHyperlinkCtrl"
                 label="Hyperlink Control"
                 var_name="menu_item148" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/richtextctrl.svg;[24,24]"
+                bitmap="SVG;richtextctrl.svg;[24,24]"
                 help="wxRichTextCtrl"
                 id="gen_wxRichTextCtrl"
                 label="Rich Text Control"
                 var_name="menu_item146" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/search.svg;[24,24]"
+                bitmap="SVG;search.svg;[24,24]"
                 help="wxSearchCtrl"
                 id="gen_wxSearchCtrl"
                 label="Search Control"
                 var_name="menu_item149" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/scintilla.svg;[24,24]"
+                bitmap="SVG;scintilla.svg;[24,24]"
                 help="wxStyledTextCtrl"
                 id="gen_wxStyledTextCtrl"
                 label="Styled Text Control"
@@ -2217,7 +2210,7 @@
                 var_name="separator30" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/CustomControl.svg;[24,24]"
+                bitmap="SVG;CustomControl.svg;[24,24]"
                 help="Custom Control"
                 id="gen_CustomControl"
                 label="Custom Control"
@@ -2227,49 +2220,49 @@
                 var_name="separator26" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/wxactivityIndicator.svg;[24,24]"
+                bitmap="SVG;wxactivityIndicator.svg;[24,24]"
                 help="wxActivityIndicator"
                 id="gen_wxActivityIndicator"
                 label="Activity Indicator"
                 var_name="menu_item154" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/wxAnimation.svg;[24,24]"
+                bitmap="SVG;wxAnimation.svg;[24,24]"
                 help="wxAnimationCtrl"
                 id="gen_wxAnimationCtrl"
                 label="Animation Control"
                 var_name="menu_item155" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/wxBannerWindow.svg;[24,24]"
+                bitmap="SVG;wxBannerWindow.svg;[24,24]"
                 help="wxBannerWindow"
                 id="gen_wxBannerWindow"
                 label="Banner Window"
                 var_name="menu_item156" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/htmlwin.svg;[24,24]"
+                bitmap="SVG;htmlwin.svg;[24,24]"
                 help="wxHtmlWindow"
                 id="gen_wxHtmlWindow"
                 label="Html Window"
                 var_name="menu_item158" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/scrollbar.svg;[24,24]"
+                bitmap="SVG;scrollbar.svg;[24,24]"
                 help="wxScrollBar"
                 id="gen_wxScrollBar"
                 label="Scrollbar"
                 var_name="menu_item153" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/wxTimer.svg;[24,24]"
+                bitmap="SVG;wxTimer.svg;[24,24]"
                 help="wxTimer"
                 id="gen_wxTimer"
                 label="Timer"
                 var_name="menu_item157" />
               <node
                 class="wxMenuItem"
-                bitmap="SVG;../art_src/webview.svg;[24,24]"
+                bitmap="SVG;webview.svg;[24,24]"
                 help="wxWebView"
                 id="gen_wxWebView"
                 label="Web View"
@@ -7080,7 +7073,7 @@
             alignment="wxALIGN_CENTER_VERTICAL" />
           <node
             class="wxTextCtrl"
-            hint="type a portion of the name to filter the list"
+            hint="type a name portion to filter list"
             var_name="m_text_name"
             tooltip="Use Up/Down arrows to change list selection"
             proportion="1"
@@ -7091,11 +7084,12 @@
           class="wxBoxSizer"
           var_name="box_sizer_4">
           <node
-            class="wxStaticText"
-            class_access="none"
-            label="Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added."
-            var_name="staticText_2"
-            wrap="300" />
+            class="wxCheckBox"
+            checked="1"
+            label="&amp;Limit to allowable children"
+            var_name="m_limit_to_children"
+            flags="wxEXPAND"
+            wxEVT_CHECKBOX="OnChangeLimit" />
         </node>
         <node
           class="wxBoxSizer"

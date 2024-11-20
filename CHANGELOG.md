@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- New Add menu provides an alternative to the main toolbar for adding widgets to your project.
 - By default, all Position and Size properties are scaled when your generated code is run under Windows with a high DPI setting.
 - You can now change the initial size of Art images instead of using their default size.
 - File menu now has a Reload Project command to reload the current project file from disk.

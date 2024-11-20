@@ -354,6 +354,24 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
              UpdateFrame();
          });
 
+    // Create bindings for the range of IDs in the Add menu
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event)
+        {
+            CreateViaNewDlg(static_cast<GenName>(event.GetId()));
+        },
+        CreateNewDialog, MdiMenuBar - 1);
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event)
+        {
+            createToolNode(static_cast<GenName>(event.GetId()));
+        },
+        gen_wxMdiWindow, gen_name_array_size - 1);
+
     Bind(
         wxEVT_MENU,
         [this](wxCommandEvent&)

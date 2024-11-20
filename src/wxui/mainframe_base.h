@@ -35,42 +35,6 @@ namespace wxue_img
 class MainFrameBase : public wxFrame
 {
 public:
-    enum
-    {
-        id_AlignBottom = wxID_HIGHEST + 1,
-        id_AlignCenterHorizontal,
-        id_AlignCenterVertical,
-        id_AlignLeft,
-        id_AlignRight,
-        id_AlignTop,
-        id_AppendCrafter,
-        id_AppendDialogBlocks,
-        id_AppendFormBuilder,
-        id_AppendGlade,
-        id_AppendSmith,
-        id_AppendWinRes,
-        id_AppendXRC,
-        id_BorderBottom,
-        id_BorderLeft,
-        id_BorderRight,
-        id_BorderTop,
-        id_DifferentProject,
-        id_Expand,
-        id_GenerateCode,
-        id_Magnify,
-        id_MoveDown,
-        id_MoveLeft,
-        id_MoveRight,
-        id_MoveUp,
-        id_NewProject,
-        id_OpenProject,
-        id_PreferencesDlg,
-        id_PreviewForm,
-        id_SaveProjectAs,
-        id_ShowHidden,
-        id_insert_widget
-    };
-
     MainFrameBase() {}
     MainFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxSize(1000, 1000), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
@@ -130,6 +94,7 @@ protected:
     wxMenu* m_menuFile;
     wxMenu* m_menuHelp;
     wxMenu* m_menuTools;
+    wxMenu* m_menu_add;
     wxMenu* m_submenu_recent;
     wxMenuBar* m_menubar;
     wxMenuItem* m_mi_preview;
@@ -146,3 +111,41 @@ protected:
 //
 // clang-format on
 // ***********************************************
+
+#include "ribbon_ids.h"
+
+enum
+{
+    id_AlignBottom = wxID_HIGHEST + 50,  // leave room for ribbon ids
+    id_AlignCenterHorizontal,
+    id_AlignCenterVertical,
+    id_AlignLeft,
+    id_AlignRight,
+    id_AlignTop,
+    id_AppendCrafter,
+    id_AppendDialogBlocks,
+    id_AppendFormBuilder,
+    id_AppendGlade,
+    id_AppendSmith,
+    id_AppendWinRes,
+    id_AppendXRC,
+    id_BorderBottom,
+    id_BorderLeft,
+    id_BorderRight,
+    id_BorderTop,
+    id_DifferentProject,
+    id_Expand,
+    id_GenerateCode,
+    id_Magnify,
+    id_MoveDown,
+    id_MoveLeft,
+    id_MoveRight,
+    id_MoveUp,
+    id_NewProject,
+    id_OpenProject,
+    id_PreferencesDlg,
+    id_PreviewForm,
+    id_SaveProjectAs,
+    id_ShowHidden,
+    id_insert_widget
+};

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ribbon panel ids
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +25,10 @@ enum
     NewStaticSizer,
     BarTools,
     AuiBarTools,
+
+    // All the Create enums need to be grouped together, with MdiMenuBar as the last one so that
+    // they can be handed as a range to the Add menu Bind command.
+
     CreateNewDialog,
     CreateNewFrame,
     CreateNewPanel,
@@ -32,9 +36,9 @@ enum
     CreateNewRibbon,
     CreateNewFormRibbon,
     CreateNewWizard,
-
     CreateMdiFrame,
     CreateView,
+
     MdiMenuBar,
 
 };

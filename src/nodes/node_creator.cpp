@@ -241,7 +241,7 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
     return { node, 0 };
 }
 
-Node* NodeCreator::isValidCreateParent(GenName name, Node* parent) const
+Node* NodeCreator::isValidCreateParent(GenName name, Node* parent, bool use_recursion) const
 {
     ASSERT(name != gen_unknown);
     if (name == gen_unknown)
@@ -336,7 +336,7 @@ Node* NodeCreator::isValidCreateParent(GenName name, Node* parent) const
             }
         }
     }
-    else
+    else if (use_recursion)
     {
         if (auto grandfather = parent->getParent(); grandfather)
         {

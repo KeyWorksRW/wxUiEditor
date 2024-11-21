@@ -775,7 +775,7 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
         bool is_name_changed = false;
         if (Project.getCodePreference(this) == GEN_LANG_CPLUSPLUS)
         {
-            if (UserPrefs.is_CppSnakeCase())
+            if (new_node->hasProp(prop_var_name) && UserPrefs.is_CppSnakeCase())
             {
                 auto member_name = ConvertToSnakeCase(new_node->as_string(prop_var_name));
                 new_node->set_value(prop_var_name, member_name);

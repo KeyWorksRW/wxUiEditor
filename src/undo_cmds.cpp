@@ -524,21 +524,22 @@ void ChangeNodeType::Revert()
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
 
-ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
+ChangeParentAction::ChangeParentAction(Node* node, Node* parent, int pos)
 {
-    Init(node->getSharedPtr(), parent->getSharedPtr());
+    Init(node->getSharedPtr(), parent->getSharedPtr(), pos);
 }
 
-ChangeParentAction::ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent)
+ChangeParentAction::ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent, int pos)
 {
-    Init(node, parent);
+    Init(node, parent, pos);
 }
 
-void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent)
+void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent, int pos)
 {
     m_node = node;
     m_change_parent = parent;
     m_revert_parent = node->getParentPtr();
+    m_pos = pos;
 
     m_revert_position = m_revert_parent->getChildPosition(node.get());
     m_revert_row = node->as_int(prop_row);
@@ -570,13 +571,23 @@ void ChangeParentAction::Change()
                 wxGetFrame().SelectNode(m_node);
         }
     }
-    else if (m_change_parent->addChild(m_node))
+    else
     {
-        m_node->setParent(m_change_parent);
+        bool result = false;
+        if (m_pos >= 0)
+            result = m_change_parent->addChild(static_cast<size_t>(m_pos), m_node);
+        else
+            result = m_change_parent->addChild(m_node);
+        ASSERT_MSG(result, tt_string("Unable to change parent of ")
+                               << m_node->getNodeName() << " to " << m_change_parent->getNodeName());
+        if (result)
+        {
+            m_node->setParent(m_change_parent);
 
-        wxGetFrame().FireParentChangedEvent(this);
-        if (isAllowedSelectEvent())
-            wxGetFrame().SelectNode(m_node);
+            wxGetFrame().FireParentChangedEvent(this);
+            if (isAllowedSelectEvent())
+                wxGetFrame().SelectNode(m_node);
+        }
     }
 }
 

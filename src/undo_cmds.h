@@ -159,8 +159,8 @@ private:
 class ChangeParentAction : public UndoAction
 {
 public:
-    ChangeParentAction(Node* node, Node* parent);
-    ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent);
+    ChangeParentAction(Node* node, Node* parent, int pos = -1);
+    ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent, int pos = -1);
 
     void Change() override;
     void Revert() override;
@@ -172,7 +172,7 @@ public:
     size_t GetMemorySize() override { return sizeof(*this); }
 
 protected:
-    void Init(const NodeSharedPtr node, const NodeSharedPtr parent);
+    void Init(const NodeSharedPtr node, const NodeSharedPtr parent, int pos);
 
 private:
     NodeSharedPtr m_change_parent;
@@ -181,6 +181,7 @@ private:
     size_t m_revert_position;
     int m_revert_row;
     int m_revert_col;
+    int m_pos;
 };
 
 // Specify node and new sizer gen_ name.

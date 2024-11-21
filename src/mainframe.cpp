@@ -2067,7 +2067,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             return false;
 
         case MoveDirection::Right:
-            if (node->isGen(gen_folder) || node->isGen(gen_data_folder) || node->isGen(gen_Images) || node->isGen(gen_Data))
+            if (node->isGen(gen_folder) || node->isGen(gen_sub_folder) || node->isGen(gen_data_folder) ||
+                node->isGen(gen_Images) || node->isGen(gen_Data))
             {
                 return false;
             }

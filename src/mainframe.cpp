@@ -2042,23 +2042,27 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                 if (!check_only)
                 {
                     wxWindowUpdateLocker freeze(this);
-                    PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->getParent()));
+                    auto grandparent = parent->getParent();
+                    int pos = (to_int) grandparent->getChildPosition(parent) + 1;
+                    PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->getParent(), pos));
                 }
                 return true;
             }
 
             if (auto grandparent = parent->getParent(); grandparent)
             {
-                auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(), grandparent);
-                if (check_only)
-                    return (valid_parent ? true : false);
-                if (valid_parent)
+                if (auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(), grandparent); valid_parent)
                 {
-                    wxWindowUpdateLocker freeze(this);
-                    PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent));
+                    if (!check_only)
+                    {
+                        wxWindowUpdateLocker freeze(this);
+                        int pos = -1;
+                        if (grandparent == valid_parent)
+                            pos = (to_int) grandparent->getChildPosition(parent) + 1;
+                        PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent, pos));
+                    }
                     return true;
                 }
-                ASSERT_MSG(check_only, tt_string() << "MoveDirection::Left called even though check would have failed.");
             }
             return false;
 

@@ -270,6 +270,7 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     auto checkbox = item.append_child("windowlabel");
     auto child = checkbox.append_child("object");
     child.append_attribute("class").set_value("wxRadioButton");
+    child.append_attribute("name").set_value(node->as_string(prop_radiobtn_var_name));
     child.append_child("label").text().set(node->as_string(prop_label));
     if (node->as_bool(prop_checked))
         child.append_child("checked").text().set("1");

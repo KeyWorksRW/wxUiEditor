@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Displays node creation tools in a wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,4 +27,4 @@ protected:
     void OnMenuEvent(wxCommandEvent& event);
 };
 
-void CreateRibbon(wxBoxSizer* parent_sizer, wxWindow* parent);
+bool CreateViaNewDlg(size_t id);

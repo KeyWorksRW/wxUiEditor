@@ -262,21 +262,22 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_delete->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
 
     m_menuEdit->Append(menu_delete);
+    m_menuEdit->AppendSeparator();
     auto* menu_duplicate = new wxMenuItem(m_menuEdit, wxID_ANY, "Duplicate",
         "Delete selected object without using clipboard.", wxITEM_NORMAL);
     menu_duplicate->SetBitmap(wxue_img::bundle_duplicate_svg(24, 24));
     m_menuEdit->Append(menu_duplicate);
+    auto* menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert Widget...",
+        "Find text in the active code viewer.", wxITEM_NORMAL);
+    menu_insert_widget->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
+
+    m_menuEdit->Append(menu_insert_widget);
     m_menuEdit->AppendSeparator();
     auto* menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString, "Find text in the active code viewer.",
         wxITEM_NORMAL);
     menu_find->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_MENU));
 
     m_menuEdit->Append(menu_find);
-    auto* menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert widget...",
-        "Find text in the active code viewer.", wxITEM_NORMAL);
-    menu_insert_widget->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
-
-    m_menuEdit->Append(menu_insert_widget);
     m_menuEdit->AppendSeparator();
 
     auto* submenu3 = new wxMenu();
@@ -350,6 +351,531 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_menuEdit->Append(menu_item18);
     m_menubar->Append(m_menuEdit, "&Edit");
+
+    m_menu_add = new wxMenu();
+
+    auto* submenu5 = new wxMenu();
+    auto* menu_item21 = new wxMenuItem(submenu5, CreateNewDialog, "Dialog...", "wxDialog", wxITEM_NORMAL);
+    menu_item21->SetBitmap(wxue_img::bundle_wxDialog_svg(24, 24));
+    submenu5->Append(menu_item21);
+    auto* menu_item22 = new wxMenuItem(submenu5, CreateNewFrame, "Frame...", "wxFrame", wxITEM_NORMAL);
+    menu_item22->SetBitmap(wxue_img::bundle_wxFrame_svg(24, 24));
+    submenu5->Append(menu_item22);
+    auto* menu_item23 = new wxMenuItem(submenu5, CreateNewPanel, "Panel...", "wxPanel", wxITEM_NORMAL);
+    menu_item23->SetBitmap(wxue_img::bundle_wxPanel_svg(24, 24));
+    submenu5->Append(menu_item23);
+    auto* menu_item24 = new wxMenuItem(submenu5, CreateNewPropertySheet, "Property Sheet...", "wxPropertySheetDialog",
+        wxITEM_NORMAL);
+    menu_item24->SetBitmap(wxue_img::bundle_prop_sheet_dlg_svg(24, 24));
+    submenu5->Append(menu_item24);
+    auto* menu_item25 = new wxMenuItem(submenu5, gen_wxPopupTransientWindow, "Popup Transient Window",
+        "wxPopupTransientWindow", wxITEM_NORMAL);
+    menu_item25->SetBitmap(wxue_img::bundle_popup_transient_svg(24, 24));
+    submenu5->Append(menu_item25);
+    auto* menu_item26 = new wxMenuItem(submenu5, wxID_ANY, "Popup Window", "wxPopupWindow", wxITEM_NORMAL);
+    menu_item26->SetBitmap(wxue_img::bundle_popup_window_svg(24, 24));
+    submenu5->Append(menu_item26);
+    submenu5->AppendSeparator();
+    auto* menu_item27 = new wxMenuItem(submenu5, CreateNewWizard, "Add Wizard...", "wxWizard", wxITEM_NORMAL);
+    menu_item27->SetBitmap(wxue_img::bundle_wxWizard_svg(24, 24));
+    submenu5->Append(menu_item27);
+    auto* menu_item28 = new wxMenuItem(submenu5, gen_wxWizardPageSimple, "Add Wizard Page", "wxWizardPageSimple",
+        wxITEM_NORMAL);
+    menu_item28->SetBitmap(wxue_img::bundle_wxWizardPageSimple_svg(24, 24));
+    submenu5->Append(menu_item28);
+    submenu5->AppendSeparator();
+    auto* menu_item30 = new wxMenuItem(submenu5, gen_AuiToolBar, "Aui Toolbar", "wxAuiToolBar", wxITEM_NORMAL);
+    menu_item30->SetBitmap(wxue_img::bundle_auitoolbar_svg(24, 24));
+    submenu5->Append(menu_item30);
+    auto* menu_item29 = new wxMenuItem(submenu5, gen_ToolBar, "Standard Toolbar", "wxToolBar", wxITEM_NORMAL);
+    menu_item29->SetBitmap(wxue_img::bundle_wxToolBar_svg(24, 24));
+    submenu5->Append(menu_item29);
+    auto* menu_item31 = new wxMenuItem(submenu5, CreateNewFormRibbon, "Ribbon Bar...", "wxRibbonBar", wxITEM_NORMAL);
+    menu_item31->SetBitmap(wxue_img::bundle_ribbon_bar_svg(24, 24));
+    submenu5->Append(menu_item31);
+    submenu5->AppendSeparator();
+    auto* menu_item32 = new wxMenuItem(submenu5, gen_MenuBar, "Menu Bar", "wxMenuBar", wxITEM_NORMAL);
+    menu_item32->SetBitmap(wxue_img::bundle_wxMenuBar_svg(24, 24));
+    submenu5->Append(menu_item32);
+    auto* menu_item33 = new wxMenuItem(submenu5, gen_PopupMenu, "Popup Menu", "wxMenu", wxITEM_NORMAL);
+    menu_item33->SetBitmap(wxue_img::bundle_menu_svg(24, 24));
+    submenu5->Append(menu_item33);
+    auto* menu_item34 = new wxMenuItem(submenu5, gen_wxContextMenuEvent, "Context Menu", "wxContextMenuEvent", wxITEM_NORMAL);
+    menu_item34->SetBitmap(wxue_img::bundle_menuitem_svg(24, 24));
+    submenu5->Append(menu_item34);
+    m_menu_add->AppendSubMenu(submenu5, "Add Forms");
+
+    auto* submenu10 = new wxMenu();
+    auto* menu_item41 = new wxMenuItem(submenu10, gen_wxBoxSizer, "Horizontal Box Sizer", "Horizontal wxBoxSizer",
+        wxITEM_NORMAL);
+    menu_item41->SetBitmap(wxue_img::bundle_sizer_horizontal_svg(24, 24));
+    submenu10->Append(menu_item41);
+    auto* menu_item42 = new wxMenuItem(submenu10, gen_VerticalBoxSizer, "Vertical Box Sizer", "Vertical wxBoxSizer",
+        wxITEM_NORMAL);
+    menu_item42->SetBitmap(wxue_img::bundle_sizer_svg(24, 24));
+    submenu10->Append(menu_item42);
+    auto* menu_item43 = new wxMenuItem(submenu10, gen_wxStaticBoxSizer, "Static Sizer", "wxStaticBoxSizer", wxITEM_NORMAL);
+    menu_item43->SetBitmap(wxue_img::bundle_wxStaticBoxSizer_svg(24, 24));
+    submenu10->Append(menu_item43);
+    auto* menu_item87 = new wxMenuItem(submenu10, gen_StaticCheckboxBoxSizer, "Static CheckBox Sizer");
+    menu_item87->SetBitmap(wxue_img::bundle_wxStaticCheckBoxSizer_svg(24, 24));
+    submenu10->Append(menu_item87);
+    auto* menu_item88 = new wxMenuItem(submenu10, gen_StaticRadioBtnBoxSizer, "Static RadioButton Sizer");
+    menu_item88->SetBitmap(wxue_img::bundle_wxStaticRadioBtnSizer_svg(24, 24));
+    submenu10->Append(menu_item88);
+    auto* menu_item44 = new wxMenuItem(submenu10, gen_wxWrapSizer, "Wrap Sizer", "wxWrapSizer", wxITEM_NORMAL);
+    menu_item44->SetBitmap(wxue_img::bundle_wrap_sizer_svg(24, 24));
+    submenu10->Append(menu_item44);
+    submenu10->AppendSeparator();
+    auto* menu_item45 = new wxMenuItem(submenu10, gen_wxGridSizer, "Grid Sizer", "wxGridSizer", wxITEM_NORMAL);
+    menu_item45->SetBitmap(wxue_img::bundle_grid_sizer_svg(24, 24));
+    submenu10->Append(menu_item45);
+    auto* menu_item46 = new wxMenuItem(submenu10, gen_wxFlexGridSizer, "Flex Grid Sizer", "wxFlexGridSizer", wxITEM_NORMAL);
+    menu_item46->SetBitmap(wxue_img::bundle_flex_grid_sizer_svg(24, 24));
+    submenu10->Append(menu_item46);
+    auto* menu_item47 = new wxMenuItem(submenu10, gen_wxGridBagSizer, "Grid Bag Sizer", "wxGridBagSizer", wxITEM_NORMAL);
+    menu_item47->SetBitmap(wxue_img::bundle_grid_bag_sizer_svg(24, 24));
+    submenu10->Append(menu_item47);
+    submenu10->AppendSeparator();
+    auto* menu_item48 = new wxMenuItem(submenu10, gen_wxStdDialogButtonSizer, "Standard Dialog Button Sizer",
+        "wxStdDialogButtonSizer", wxITEM_NORMAL);
+    menu_item48->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_svg(24, 24));
+    submenu10->Append(menu_item48);
+    auto* menu_item50 = new wxMenuItem(submenu10, gen_spacer, "Spacer", "spacer", wxITEM_NORMAL);
+    menu_item50->SetBitmap(wxue_img::bundle_spacer_svg(24, 24));
+    submenu10->Append(menu_item50);
+    m_menu_add->AppendSubMenu(submenu10, "Add Sizers");
+
+    auto* submenu11 = new wxMenu();
+
+    auto* submenu16 = new wxMenu();
+    auto* menu_item51 = new wxMenuItem(submenu16, gen_wxStaticText, "Static Text", "wxStaticText", wxITEM_NORMAL);
+    menu_item51->SetBitmap(wxue_img::bundle_wxStaticText_svg(24, 24));
+    submenu16->Append(menu_item51);
+    auto* menu_item52 = new wxMenuItem(submenu16, gen_wxTextCtrl, "Text Control", "wxTextCtrl", wxITEM_NORMAL);
+    menu_item52->SetBitmap(wxue_img::bundle_wxTextCtrl_svg(24, 24));
+    submenu16->Append(menu_item52);
+    auto* menu_item53 = new wxMenuItem(submenu16, gen_wxCheckBox, "2-state CheckBox", "Add a 2-state checkbox", wxITEM_NORMAL);
+    menu_item53->SetBitmap(wxue_img::bundle_wxCheckBox_svg(24, 24));
+    submenu16->Append(menu_item53);
+    auto* menu_item54 = new wxMenuItem(submenu16, gen_Check3State, "3-state CheckBox", "Add a 3-state checkbox",
+        wxITEM_NORMAL);
+    menu_item54->SetBitmap(wxue_img::bundle_check3state_svg(24, 24));
+    submenu16->Append(menu_item54);
+    auto* menu_item55 = new wxMenuItem(submenu16, gen_wxRadioButton, "Radio Button", "wxRadioButton", wxITEM_NORMAL);
+    menu_item55->SetBitmap(wxue_img::bundle_wxRadioButton_svg(24, 24));
+    submenu16->Append(menu_item55);
+    auto* menu_item65 = new wxMenuItem(submenu16, gen_wxSpinButton, "Spin Button");
+    menu_item65->SetBitmap(wxue_img::bundle_spinbtn_svg(24, 24));
+    submenu16->Append(menu_item65);
+    auto* menu_item63 = new wxMenuItem(submenu16, gen_wxSpinCtrl, "Spin Control");
+    menu_item63->SetBitmap(wxue_img::bundle_spin_ctrl_svg(24, 24));
+    submenu16->Append(menu_item63);
+    auto* menu_item64 = new wxMenuItem(submenu16, gen_wxSpinCtrlDouble, "Spin Control Double");
+    menu_item64->SetBitmap(wxue_img::bundle_spin_ctrl_double_svg(24, 24));
+    submenu16->Append(menu_item64);
+    submenu11->AppendSubMenu(submenu16, "Controls");
+
+    auto* submenu20 = new wxMenu();
+    auto* menu_item56 = new wxMenuItem(submenu20, gen_wxButton, "Standard Button", "wxButton", wxITEM_NORMAL);
+    menu_item56->SetBitmap(wxue_img::bundle_wxButton_svg(24, 24));
+    submenu20->Append(menu_item56);
+    auto* menu_item57 = new wxMenuItem(submenu20, gen_wxBitmapToggleButton, "Bitmap Toggle Button", "wxBitmapToggleButton",
+        wxITEM_NORMAL);
+    menu_item57->SetBitmap(wxue_img::bundle_bitmap_toggle_button_svg(24, 24));
+    submenu20->Append(menu_item57);
+    auto* menu_item62 = new wxMenuItem(submenu20, gen_wxToggleButton, "Toggle Button");
+    menu_item62->SetBitmap(wxue_img::bundle_toggle_button_svg(24, 24));
+    submenu20->Append(menu_item62);
+    auto* menu_item58 = new wxMenuItem(submenu20, gen_CloseButton, "Close Button");
+    menu_item58->SetBitmap(wxue_img::bundle_close_btn_svg(24, 24));
+    submenu20->Append(menu_item58);
+    auto* menu_item59 = new wxMenuItem(submenu20, gen_wxCommandLinkButton, "Command Link Button", "wxCommandLinkButton",
+        wxITEM_NORMAL);
+    menu_item59->SetBitmap(wxue_img::bundle_wxCommandLinkButton_svg(24, 24));
+    submenu20->Append(menu_item59);
+    auto* menu_item60 = new wxMenuItem(submenu20, gen_wxContextHelpButton, "Context Help Button");
+    menu_item60->SetBitmap(wxue_img::bundle_ctx_help_btn_svg(24, 24));
+    submenu20->Append(menu_item60);
+    auto* menu_item61 = new wxMenuItem(submenu20, gen_wxStdDialogButtonSizer, "Standard Dialog Buttons");
+    menu_item61->SetBitmap(wxue_img::bundle_stddialogbuttonsizer_svg(24, 24));
+    submenu20->Append(menu_item61);
+    submenu11->AppendSubMenu(submenu20, "Buttons");
+
+    auto* submenu17 = new wxMenu();
+    auto* menu_item66 = new wxMenuItem(submenu17, gen_wxComboBox, "ComboBox");
+    menu_item66->SetBitmap(wxue_img::bundle_wxComboBox_svg(24, 24));
+    submenu17->Append(menu_item66);
+    auto* menu_item68 = new wxMenuItem(submenu17, gen_wxBitmapComboBox, "Bitmap ComboBox");
+    menu_item68->SetBitmap(wxue_img::bundle_bmp_combo_box_svg(24, 24));
+    submenu17->Append(menu_item68);
+    auto* menu_item67 = new wxMenuItem(submenu17, gen_wxChoice, "Choice");
+    menu_item67->SetBitmap(wxue_img::bundle_wxChoice_svg(24, 24));
+    submenu17->Append(menu_item67);
+    auto* menu_item69 = new wxMenuItem(submenu17, gen_wxListBox, "ListBox");
+    menu_item69->SetBitmap(wxue_img::bundle_wxListBox_svg(24, 24));
+    submenu17->Append(menu_item69);
+    auto* menu_item70 = new wxMenuItem(submenu17, gen_wxCheckListBox, "CheckListBox");
+    menu_item70->SetBitmap(wxue_img::bundle_wxCheckListBox_svg(24, 24));
+    submenu17->Append(menu_item70);
+    auto* menu_item71 = new wxMenuItem(submenu17, gen_wxEditableListBox, "Editable ListBox");
+    menu_item71->SetBitmap(wxue_img::bundle_wxEditListBox_svg(24, 24));
+    submenu17->Append(menu_item71);
+    auto* menu_item72 = new wxMenuItem(submenu17, gen_wxListView, "ListView");
+    menu_item72->SetBitmap(wxue_img::bundle_wxListView_svg(24, 24));
+    submenu17->Append(menu_item72);
+    auto* menu_item73 = new wxMenuItem(submenu17, gen_wxRearrangeCtrl, "RearrangeCtrl");
+    menu_item73->SetBitmap(wxue_img::bundle_wxRearrangeCtrl_svg(24, 24));
+    submenu17->Append(menu_item73);
+    auto* menu_item74 = new wxMenuItem(submenu17, gen_wxSimpleHtmlListBox, "Simple Html ListBox");
+    menu_item74->SetBitmap(wxue_img::bundle_wxSimpleHtmlListBox_svg(24, 24));
+    submenu17->Append(menu_item74);
+    submenu11->AppendSubMenu(submenu17, "Choices");
+
+    auto* submenu18 = new wxMenu();
+    auto* menu_item78 = new wxMenuItem(submenu18, gen_wxColourPickerCtrl, "Colour Picker", "wxColourPickerCtrl",
+        wxITEM_NORMAL);
+    menu_item78->SetBitmap(wxue_img::bundle_colourPickerIcon_svg(24, 24));
+    submenu18->Append(menu_item78);
+    auto* menu_item79 = new wxMenuItem(submenu18, gen_wxDatePickerCtrl, "Date Picker", "wxDatePickerCtrl", wxITEM_NORMAL);
+    menu_item79->SetBitmap(wxue_img::bundle_datepicker_svg(24, 24));
+    submenu18->Append(menu_item79);
+    auto* menu_item76 = new wxMenuItem(submenu18, gen_wxDirPickerCtrl, "Directory Picker", "wxDirPickerCtrl", wxITEM_NORMAL);
+    menu_item76->SetBitmap(wxue_img::bundle_dirPicker_svg(24, 24));
+    submenu18->Append(menu_item76);
+    auto* menu_item75 = new wxMenuItem(submenu18, gen_wxFilePickerCtrl, "File Picker", "wxFilePickerCtrl", wxITEM_NORMAL);
+    menu_item75->SetBitmap(wxue_img::bundle_filePicker_svg(24, 24));
+    submenu18->Append(menu_item75);
+    auto* menu_item77 = new wxMenuItem(submenu18, gen_wxFontPickerCtrl, "Font Picker", "wxFontPickerCtrl", wxITEM_NORMAL);
+    menu_item77->SetBitmap(wxue_img::bundle_fontPicker_svg(24, 24));
+    submenu18->Append(menu_item77);
+    auto* menu_item80 = new wxMenuItem(submenu18, gen_wxTimePickerCtrl, "Time Picker", "wxTimePickerCtrl", wxITEM_NORMAL);
+    menu_item80->SetBitmap(wxue_img::bundle_timepicker_svg(24, 24));
+    submenu18->Append(menu_item80);
+    submenu11->AppendSubMenu(submenu18, "Pickers");
+
+    auto* submenu19 = new wxMenu();
+    auto* menu_item81 = new wxMenuItem(submenu19, gen_wxStaticBitmap, "Static Bitmap", "wxStaticBitmap", wxITEM_NORMAL);
+    menu_item81->SetBitmap(wxue_img::bundle_bitmap_svg(24, 24));
+    submenu19->Append(menu_item81);
+    auto* menu_item82 = new wxMenuItem(submenu19, gen_wxStaticLine, "Static Line", "wxStaticLine", wxITEM_NORMAL);
+    menu_item82->SetBitmap(wxue_img::bundle_static_line_svg(24, 24));
+    submenu19->Append(menu_item82);
+    auto* menu_item83 = new wxMenuItem(submenu19, gen_wxSlider, "Slider", "wxSlider", wxITEM_NORMAL);
+    menu_item83->SetBitmap(wxue_img::bundle_slider_svg(24, 24));
+    submenu19->Append(menu_item83);
+    auto* menu_item84 = new wxMenuItem(submenu19, gen_wxGauge, "Gauge", "wxGauge", wxITEM_NORMAL);
+    menu_item84->SetBitmap(wxue_img::bundle_gauge_svg(24, 24));
+    submenu19->Append(menu_item84);
+    submenu11->AppendSubMenu(submenu19, "Other");
+    m_menu_add->AppendSubMenu(submenu11, "Add Common");
+
+    auto* submenu12 = new wxMenu();
+    auto* menu_item91 = new wxMenuItem(submenu12, gen_wxCollapsiblePane, "Collapsible Pane", "wxCollapsiblePane",
+        wxITEM_NORMAL);
+    menu_item91->SetBitmap(wxue_img::bundle_wxCollapsiblePane_svg(24, 24));
+    submenu12->Append(menu_item91);
+    auto* menu_item85 = new wxMenuItem(submenu12, gen_wxPanel, "Panel", "wxPanel", wxITEM_NORMAL);
+    menu_item85->SetBitmap(wxue_img::bundle_wxPanel_svg(24, 24));
+    submenu12->Append(menu_item85);
+    auto* menu_item90 = new wxMenuItem(submenu12, gen_wxScrolledCanvas, "Scrolled Canvas", "wxScrolled<wxWindow>",
+        wxITEM_NORMAL);
+    menu_item90->SetBitmap(wxue_img::bundle_wxScrolledWindow_svg(24, 24));
+    submenu12->Append(menu_item90);
+    auto* menu_item89 = new wxMenuItem(submenu12, gen_wxScrolledWindow, "Scrolled Window", "wxScrolled<wxPanel>",
+        wxITEM_NORMAL);
+    menu_item89->SetBitmap(wxue_img::bundle_wxScrolledWindow_svg(24, 24));
+    submenu12->Append(menu_item89);
+    auto* menu_item86 = new wxMenuItem(submenu12, gen_wxSplitterWindow, "Splitter Window", "wxSplitterWindow", wxITEM_NORMAL);
+    menu_item86->SetBitmap(wxue_img::bundle_wxSplitterWindow_svg(24, 24));
+    submenu12->Append(menu_item86);
+    submenu12->AppendSeparator();
+    auto* menu_item92 = new wxMenuItem(submenu12, gen_wxAuiNotebook, "Aui Notebook", "wxAuiNotebook", wxITEM_NORMAL);
+    menu_item92->SetBitmap(wxue_img::bundle_notebook_aui_svg(24, 24));
+    submenu12->Append(menu_item92);
+    auto* menu_item93 = new wxMenuItem(submenu12, gen_wxChoicebook, "ChoiceBook", "wxChoicebook", wxITEM_NORMAL);
+    menu_item93->SetBitmap(wxue_img::bundle_notebook_choice_svg(24, 24));
+    submenu12->Append(menu_item93);
+    auto* menu_item94 = new wxMenuItem(submenu12, gen_wxListbook, "ListBook", "wxListbook", wxITEM_NORMAL);
+    menu_item94->SetBitmap(wxue_img::bundle_notebook_list_svg(24, 24));
+    submenu12->Append(menu_item94);
+    auto* menu_item95 = new wxMenuItem(submenu12, gen_wxNotebook, "NoteBook", "wxNotebook", wxITEM_NORMAL);
+    menu_item95->SetBitmap(wxue_img::bundle_notebook_svg(24, 24));
+    submenu12->Append(menu_item95);
+    auto* menu_item96 = new wxMenuItem(submenu12, gen_wxSimplebook, "SimpleBook", "wxSimplebook", wxITEM_NORMAL);
+    menu_item96->SetBitmap(wxue_img::bundle_wxSimplebook_svg(24, 24));
+    submenu12->Append(menu_item96);
+    auto* menu_item97 = new wxMenuItem(submenu12, gen_wxToolbook, "ToolBook", "wxToolbook", wxITEM_NORMAL);
+    menu_item97->SetBitmap(wxue_img::bundle_wxToolbook_svg(24, 24));
+    submenu12->Append(menu_item97);
+    auto* menu_item98 = new wxMenuItem(submenu12, gen_wxTreebook, "TreeBook", "wxTreebook", wxITEM_NORMAL);
+    menu_item98->SetBitmap(wxue_img::bundle_wxTreebook_svg(24, 24));
+    submenu12->Append(menu_item98);
+    submenu12->AppendSeparator();
+    auto* menu_item99 = new wxMenuItem(submenu12, gen_BookPage, "Book Page", "Adds a wxPanel, allowing for multiple controls",
+        wxITEM_NORMAL);
+    menu_item99->SetBitmap(wxue_img::bundle_book_page_svg(24, 24));
+    submenu12->Append(menu_item99);
+    auto* menu_item100 = new wxMenuItem(submenu12, gen_PageCtrl, "Page Control", "Adds a single control as the page",
+        wxITEM_NORMAL);
+    menu_item100->SetBitmap(wxue_img::bundle_pagectrl_svg(24, 24));
+    submenu12->Append(menu_item100);
+    m_menu_add->AppendSubMenu(submenu12, "Add Container");
+
+    auto* submenu13 = new wxMenu();
+    auto* menu_item101 = new wxMenuItem(submenu13, gen_wxGrid, "Grid", "wxGrid", wxITEM_NORMAL);
+    menu_item101->SetBitmap(wxue_img::bundle_grid_svg(24, 24));
+    submenu13->Append(menu_item101);
+    submenu13->AppendSeparator();
+    auto* menu_item102 = new wxMenuItem(submenu13, gen_wxPropertyGrid, "Property Grid", "wxPropertyGrid", wxITEM_NORMAL);
+    menu_item102->SetBitmap(wxue_img::bundle_wxPropertyGrid_svg(24, 24));
+    submenu13->Append(menu_item102);
+    auto* menu_item103 = new wxMenuItem(submenu13, gen_wxPropertyGridManager, "Property Grid Manager",
+        "wxPropertyGridManager", wxITEM_NORMAL);
+    menu_item103->SetBitmap(wxue_img::bundle_wxPropertyGridManager_svg(24, 24));
+    submenu13->Append(menu_item103);
+    auto* menu_item104 = new wxMenuItem(submenu13, gen_propGridPage, "PropertyGrid Page", "wxPropertyGrid Page",
+        wxITEM_NORMAL);
+    menu_item104->SetBitmap(wxue_img::bundle_propgridpage_svg(24, 24));
+    submenu13->Append(menu_item104);
+    auto* menu_item105 = new wxMenuItem(submenu13, gen_propGridCategory, "PropertyGrid Category", "wxPropertyGrid Category",
+        wxITEM_NORMAL);
+    menu_item105->SetBitmap(wxue_img::bundle_propgrid_cat_svg(24, 24));
+    submenu13->Append(menu_item105);
+    auto* menu_item106 = new wxMenuItem(submenu13, gen_propGridItem, "PropertyGrid Item", "wxPropertyGrid Item",
+        wxITEM_NORMAL);
+    menu_item106->SetBitmap(wxue_img::bundle_propgriditem_svg(24, 24));
+    submenu13->Append(menu_item106);
+    submenu13->AppendSeparator();
+    auto* menu_item107 = new wxMenuItem(submenu13, gen_wxTreeCtrl, "Tree Control", "wxTreeCtrl", wxITEM_NORMAL);
+    menu_item107->SetBitmap(wxue_img::bundle_tree_ctrl_svg(24, 24));
+    submenu13->Append(menu_item107);
+    auto* menu_item108 = new wxMenuItem(submenu13, gen_wxTreeListCtrl, "Tree List Control", "wxTreeListCtrl", wxITEM_NORMAL);
+    menu_item108->SetBitmap(wxue_img::bundle_treelistctrl_svg(24, 24));
+    submenu13->Append(menu_item108);
+    auto* menu_item109 = new wxMenuItem(submenu13, gen_TreeListCtrlColumn, "TreeListCtrl Column", "wxTreeListCtrl Column",
+        wxITEM_NORMAL);
+    menu_item109->SetBitmap(wxue_img::bundle_treelistctrlcolumn_svg(24, 24));
+    submenu13->Append(menu_item109);
+    submenu13->AppendSeparator();
+    auto* menu_item110 = new wxMenuItem(submenu13, gen_wxDataViewCtrl, "DataView Control");
+    menu_item110->SetBitmap(wxue_img::bundle_dataview_ctrl_svg(24, 24));
+    submenu13->Append(menu_item110);
+    auto* menu_item111 = new wxMenuItem(submenu13, gen_wxDataViewTreeCtrl, "DataView Tree Control");
+    menu_item111->SetBitmap(wxue_img::bundle_dataviewtree_ctrl_svg(24, 24));
+    submenu13->Append(menu_item111);
+    auto* menu_item112 = new wxMenuItem(submenu13, gen_wxDataViewListCtrl, "DataView List Control");
+    menu_item112->SetBitmap(wxue_img::bundle_dataviewlist_ctrl_svg(24, 24));
+    submenu13->Append(menu_item112);
+    m_menu_add->AppendSubMenu(submenu13, "Add Data");
+
+    auto* submenu14 = new wxMenu();
+    auto* menu_item113 = new wxMenuItem(submenu14, gen_wxMenuBar, "Menu Bar", "wxMenuBar", wxITEM_NORMAL);
+    menu_item113->SetBitmap(wxue_img::bundle_wxMenuBar_svg(24, 24));
+    submenu14->Append(menu_item113);
+    auto* menu_item114 = new wxMenuItem(submenu14, gen_wxMenu, "Menu", "wxMenu", wxITEM_NORMAL);
+    menu_item114->SetBitmap(wxue_img::bundle_menu_svg(24, 24));
+    submenu14->Append(menu_item114);
+    auto* menu_item115 = new wxMenuItem(submenu14, gen_wxMenuItem, "Menu Item", "wxMenuItem", wxITEM_NORMAL);
+    menu_item115->SetBitmap(wxue_img::bundle_menuitem_svg(24, 24));
+    submenu14->Append(menu_item115);
+    auto* menu_item116 = new wxMenuItem(submenu14, gen_submenu, "SubMenu", "submenu", wxITEM_NORMAL);
+    menu_item116->SetBitmap(wxue_img::bundle_submenu_svg(24, 24));
+    submenu14->Append(menu_item116);
+    auto* menu_item117 = new wxMenuItem(submenu14, gen_separator, "Separator", "separator", wxITEM_NORMAL);
+    menu_item117->SetBitmap(wxue_img::bundle_separator_svg(24, 24));
+    submenu14->Append(menu_item117);
+    submenu14->AppendSeparator();
+    auto* menu_item120 = new wxMenuItem(submenu14, gen_wxAuiToolBar, "Aui Toolbar", "wxAuiToolBar", wxITEM_NORMAL);
+    menu_item120->SetBitmap(wxue_img::bundle_auitoolbar_svg(24, 24));
+    submenu14->Append(menu_item120);
+
+    auto* submenu24 = new wxMenu();
+    auto* menu_item122 = new wxMenuItem(submenu24, gen_auitool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
+    menu_item122->SetBitmap(wxue_img::bundle_tool_svg(24, 24));
+    submenu24->Append(menu_item122);
+    auto* menu_item123 = new wxMenuItem(submenu24, gen_auitool_label, "Add Label", "Insert a Label", wxITEM_NORMAL);
+    menu_item123->SetBitmap(wxue_img::bundle_wxStaticText_svg(24, 24));
+    submenu24->Append(menu_item123);
+    auto* menu_item124 = new wxMenuItem(submenu24, gen_toolSeparator, "Add Separator", "Add space to separate tools",
+        wxITEM_NORMAL);
+    menu_item124->SetBitmap(wxue_img::bundle_toolseparator_svg(24, 24));
+    submenu24->Append(menu_item124);
+    auto* menu_item125 = new wxMenuItem(submenu24, gen_auitool_spacer, "Add Spacer", "Add space to separate tools",
+        wxITEM_NORMAL);
+    menu_item125->SetBitmap(wxue_img::bundle_toolspacer_svg(24, 24));
+    submenu24->Append(menu_item125);
+    auto* menu_item126 = new wxMenuItem(submenu24, gen_auitool_stretchable, "Add Stretchable Space",
+        "Add space to separate tools", wxITEM_NORMAL);
+    menu_item126->SetBitmap(wxue_img::bundle_toolStretchable_svg(24, 24));
+    submenu24->Append(menu_item126);
+    submenu24->AppendSeparator();
+    auto* menu_item127 = new wxMenuItem(submenu24, gen_wxComboBox, "Add Combobox", "Add a wxComboBox control", wxITEM_NORMAL);
+    menu_item127->SetBitmap(wxue_img::bundle_wxComboBox_svg(24, 24));
+    submenu24->Append(menu_item127);
+    auto* menu_item128 = new wxMenuItem(submenu24, gen_wxSlider, "Add Slider", "Add a wxSlider control", wxITEM_NORMAL);
+    menu_item128->SetBitmap(wxue_img::bundle_slider_svg(24, 24));
+    submenu24->Append(menu_item128);
+    auto* menu_item129 = new wxMenuItem(submenu24, gen_wxSpinCtrl, "Add Spin Control", "Add a wxSpinCtrl control",
+        wxITEM_NORMAL);
+    menu_item129->SetBitmap(wxue_img::bundle_spin_ctrl_svg(24, 24));
+    submenu24->Append(menu_item129);
+    submenu14->AppendSubMenu(submenu24, "Aui Tools");
+    auto* menu_item121 = new wxMenuItem(submenu14, gen_wxToolBar, "Standard Toolbar", "wxToolBar", wxITEM_NORMAL);
+    menu_item121->SetBitmap(wxue_img::bundle_wxToolBar_svg(24, 24));
+    submenu14->Append(menu_item121);
+
+    auto* submenu25 = new wxMenu();
+    auto* menu_item130 = new wxMenuItem(submenu25, gen_tool, "Add Tool", "Insert a normal button tool", wxITEM_NORMAL);
+    menu_item130->SetBitmap(wxue_img::bundle_tool_svg(24, 24));
+    submenu25->Append(menu_item130);
+    auto* menu_item131 = new wxMenuItem(submenu25, gen_tool_dropdown, "Add Dropdown",
+        "Add Dropdown tool that you can add menu items to.", wxITEM_NORMAL);
+    menu_item131->SetBitmap(wxue_img::bundle_tool_dropdown_svg(24, 24));
+    submenu25->Append(menu_item131);
+    auto* menu_item132 = new wxMenuItem(submenu25, gen_toolSeparator, "Add Space", "Add space to separate tools",
+        wxITEM_NORMAL);
+    menu_item132->SetBitmap(wxue_img::bundle_toolspacer_svg(24, 24));
+    submenu25->Append(menu_item132);
+    auto* menu_item133 = new wxMenuItem(submenu25, gen_toolStretchable, "Add Stretchable Space",
+        "Add space to separate tools", wxITEM_NORMAL);
+    menu_item133->SetBitmap(wxue_img::bundle_toolStretchable_svg(24, 24));
+    submenu25->Append(menu_item133);
+    submenu25->AppendSeparator();
+    auto* menu_item134 = new wxMenuItem(submenu25, gen_wxComboBox, "Add Combobox", "Add a wxComboBox control", wxITEM_NORMAL);
+    menu_item134->SetBitmap(wxue_img::bundle_wxComboBox_svg(24, 24));
+    submenu25->Append(menu_item134);
+    auto* menu_item135 = new wxMenuItem(submenu25, gen_wxSlider, "Add Slider", "Add a wxSlider control", wxITEM_NORMAL);
+    menu_item135->SetBitmap(wxue_img::bundle_slider_svg(24, 24));
+    submenu25->Append(menu_item135);
+    auto* menu_item136 = new wxMenuItem(submenu25, gen_wxSpinCtrl, "Add Spin Control", "Add a wxSpinCtrl control",
+        wxITEM_NORMAL);
+    menu_item136->SetBitmap(wxue_img::bundle_spin_ctrl_svg(24, 24));
+    submenu25->Append(menu_item136);
+    submenu14->AppendSubMenu(submenu25, "Toolbar Tools");
+
+    auto* submenu23 = new wxMenu();
+    auto* menu_item137 = new wxMenuItem(submenu23, CreateNewRibbon, "Ribbon Bar...", "wxRibbonBar", wxITEM_NORMAL);
+    menu_item137->SetBitmap(wxue_img::bundle_ribbon_bar_svg(24, 24));
+    submenu23->Append(menu_item137);
+    auto* menu_item138 = new wxMenuItem(submenu23, gen_wxRibbonPage, "Ribbon Page", "wxRibbonPage", wxITEM_NORMAL);
+    menu_item138->SetBitmap(wxue_img::bundle_ribbon_page_svg(24, 24));
+    submenu23->Append(menu_item138);
+    auto* menu_item139 = new wxMenuItem(submenu23, gen_wxRibbonPanel, "Ribbon Panel", "wxRibbonPanel", wxITEM_NORMAL);
+    menu_item139->SetBitmap(wxue_img::bundle_ribbon_panel_svg(24, 24));
+    submenu23->Append(menu_item139);
+    auto* menu_item140 = new wxMenuItem(submenu23, gen_wxRibbonButtonBar, "Add RibbonButtonBar");
+    menu_item140->SetBitmap(wxue_img::bundle_ribbon_buttonbar_svg(24, 24));
+    submenu23->Append(menu_item140);
+    auto* menu_item141 = new wxMenuItem(submenu23, gen_wxRibbonToolBar, "Add RibbonToolBar");
+    menu_item141->SetBitmap(wxue_img::bundle_ribbon_toolbar_svg(24, 24));
+    submenu23->Append(menu_item141);
+    auto* menu_item142 = new wxMenuItem(submenu23, gen_wxRibbonGallery, "Add RibbonGallery");
+    menu_item142->SetBitmap(wxue_img::bundle_ribbon_gallery_svg(24, 24));
+    submenu23->Append(menu_item142);
+    submenu23->AppendSeparator();
+    auto* menu_item143 = new wxMenuItem(submenu23, gen_ribbonButton, "Add Button", "Ribbon Button", wxITEM_NORMAL);
+    menu_item143->SetBitmap(wxue_img::bundle_ribbon_button_svg(24, 24));
+    submenu23->Append(menu_item143);
+    auto* menu_item144 = new wxMenuItem(submenu23, gen_ribbonSeparator, "Add Separator", "Tool Separator", wxITEM_NORMAL);
+    menu_item144->SetBitmap(wxue_img::bundle_ribbon_separator_svg(24, 24));
+    submenu23->Append(menu_item144);
+    auto* menu_item145 = new wxMenuItem(submenu23, gen_ribbonGalleryItem, "Add Gallery Item", "Ribbon Gallery Item",
+        wxITEM_NORMAL);
+    menu_item145->SetBitmap(wxue_img::bundle_ribbon_gallery_item_svg(24, 24));
+    submenu23->Append(menu_item145);
+    submenu14->AppendSubMenu(submenu23, "Ribbon");
+    submenu14->AppendSeparator();
+    auto* menu_item118 = new wxMenuItem(submenu14, gen_wxStatusBar, "Status Bar", "wxStatusBar", wxITEM_NORMAL);
+    menu_item118->SetBitmap(wxue_img::bundle_statusbar_svg(24, 24));
+    submenu14->Append(menu_item118);
+    auto* menu_item119 = new wxMenuItem(submenu14, gen_wxInfoBar, "Info Bar", "wxInfoBar", wxITEM_NORMAL);
+    menu_item119->SetBitmap(wxue_img::bundle_infobar_svg(24, 24));
+    submenu14->Append(menu_item119);
+    m_menu_add->AppendSubMenu(submenu14, "Add Bar");
+
+    auto* submenu15 = new wxMenu();
+    auto* menu_item150 = new wxMenuItem(submenu15, gen_wxCalendarCtrl, "Calendar Control", "wxCalendarCtrl", wxITEM_NORMAL);
+    menu_item150->SetBitmap(wxue_img::bundle_calendar_svg(24, 24));
+    submenu15->Append(menu_item150);
+    auto* menu_item151 = new wxMenuItem(submenu15, gen_wxFileCtrl, "File Control", "wxFileCtrl", wxITEM_NORMAL);
+    menu_item151->SetBitmap(wxue_img::bundle_wxFileCtrl_svg(24, 24));
+    submenu15->Append(menu_item151);
+    auto* menu_item152 = new wxMenuItem(submenu15, gen_wxGenericDirCtrl, "Generic Directory Control", "wxGenericDirCtrl",
+        wxITEM_NORMAL);
+    menu_item152->SetBitmap(wxue_img::bundle_genericdir_ctrl_svg(24, 24));
+    submenu15->Append(menu_item152);
+    auto* menu_item148 = new wxMenuItem(submenu15, gen_wxHyperlinkCtrl, "Hyperlink Control", "wxHyperlinkCtrl", wxITEM_NORMAL);
+    menu_item148->SetBitmap(wxue_img::bundle_hyperlink_ctrl_svg(24, 24));
+    submenu15->Append(menu_item148);
+    auto* menu_item146 = new wxMenuItem(submenu15, gen_wxRichTextCtrl, "Rich Text Control", "wxRichTextCtrl", wxITEM_NORMAL);
+    menu_item146->SetBitmap(wxue_img::bundle_richtextctrl_svg(24, 24));
+    submenu15->Append(menu_item146);
+    auto* menu_item149 = new wxMenuItem(submenu15, gen_wxSearchCtrl, "Search Control", "wxSearchCtrl", wxITEM_NORMAL);
+    menu_item149->SetBitmap(wxue_img::bundle_search_svg(24, 24));
+    submenu15->Append(menu_item149);
+    auto* menu_item147 = new wxMenuItem(submenu15, gen_wxStyledTextCtrl, "Styled Text Control", "wxStyledTextCtrl",
+        wxITEM_NORMAL);
+    menu_item147->SetBitmap(wxue_img::bundle_scintilla_svg(24, 24));
+    submenu15->Append(menu_item147);
+    submenu15->AppendSeparator();
+    auto* menu_item160 = new wxMenuItem(submenu15, gen_CustomControl, "Custom Control", "Custom Control", wxITEM_NORMAL);
+    menu_item160->SetBitmap(wxue_img::bundle_CustomControl_svg(24, 24));
+    submenu15->Append(menu_item160);
+    submenu15->AppendSeparator();
+    auto* menu_item154 = new wxMenuItem(submenu15, gen_wxActivityIndicator, "Activity Indicator", "wxActivityIndicator",
+        wxITEM_NORMAL);
+    menu_item154->SetBitmap(wxue_img::bundle_wxactivityIndicator_svg(24, 24));
+    submenu15->Append(menu_item154);
+    auto* menu_item155 = new wxMenuItem(submenu15, gen_wxAnimationCtrl, "Animation Control", "wxAnimationCtrl", wxITEM_NORMAL);
+    menu_item155->SetBitmap(wxue_img::bundle_wxAnimation_svg(24, 24));
+    submenu15->Append(menu_item155);
+    auto* menu_item156 = new wxMenuItem(submenu15, gen_wxBannerWindow, "Banner Window", "wxBannerWindow", wxITEM_NORMAL);
+    menu_item156->SetBitmap(wxue_img::bundle_wxBannerWindow_svg(24, 24));
+    submenu15->Append(menu_item156);
+    auto* menu_item158 = new wxMenuItem(submenu15, gen_wxHtmlWindow, "Html Window", "wxHtmlWindow", wxITEM_NORMAL);
+    menu_item158->SetBitmap(wxue_img::bundle_htmlwin_svg(24, 24));
+    submenu15->Append(menu_item158);
+    auto* menu_item153 = new wxMenuItem(submenu15, gen_wxScrollBar, "Scrollbar", "wxScrollBar", wxITEM_NORMAL);
+    menu_item153->SetBitmap(wxue_img::bundle_scrollbar_svg(24, 24));
+    submenu15->Append(menu_item153);
+    auto* menu_item157 = new wxMenuItem(submenu15, gen_wxTimer, "Timer", "wxTimer", wxITEM_NORMAL);
+    menu_item157->SetBitmap(wxue_img::bundle_wxTimer_svg(24, 24));
+    submenu15->Append(menu_item157);
+    auto* menu_item159 = new wxMenuItem(submenu15, gen_wxWebView, "Web View", "wxWebView", wxITEM_NORMAL);
+    menu_item159->SetBitmap(wxue_img::bundle_webview_svg(24, 24));
+    submenu15->Append(menu_item159);
+    m_menu_add->AppendSubMenu(submenu15, "Add Other");
+    m_menu_add->AppendSeparator();
+
+    auto* submenu21 = new wxMenu();
+    auto* menu_item35 = new wxMenuItem(submenu21, gen_folder, "Add Folder",
+        "Create a folder that can be used to organize forms.", wxITEM_NORMAL);
+    menu_item35->SetBitmap(wxue_img::bundle_folder_svg(24, 24));
+    submenu21->Append(menu_item35);
+    submenu21->AppendSeparator();
+    auto* menu_item36 = new wxMenuItem(submenu21, gen_Images, "Add Images File", "Create a file containing embedded images",
+        wxITEM_NORMAL);
+    menu_item36->SetBitmap(wxue_img::bundle_images_svg(24, 24));
+    submenu21->Append(menu_item36);
+    auto* menu_item37 = new wxMenuItem(submenu21, gen_embedded_image, "Add Embedded Image",
+        "Add an embedded image to an Images file", wxITEM_NORMAL);
+    menu_item37->SetBitmap(wxue_img::bundle_bitmap_svg(24, 24));
+    submenu21->Append(menu_item37);
+    submenu21->AppendSeparator();
+    auto* menu_item38 = new wxMenuItem(submenu21, gen_Data, "Add Data File", "Create a file containing embedded data files",
+        wxITEM_NORMAL);
+    menu_item38->SetBitmap(wxue_img::bundle_data_list_svg(24, 24));
+    submenu21->Append(menu_item38);
+    auto* menu_item39 = new wxMenuItem(submenu21, gen_data_string, "Add String/Binary Data", "Embed a string or binary file",
+        wxITEM_NORMAL);
+    menu_item39->SetBitmap(wxue_img::bundle_text_file_svg(24, 24));
+    submenu21->Append(menu_item39);
+    auto* menu_item40 = new wxMenuItem(submenu21, gen_data_xml, "Add XML Data", "Add an XML file", wxITEM_NORMAL);
+    menu_item40->SetBitmap(wxue_img::bundle_xml_file_svg(24, 24));
+    submenu21->Append(menu_item40);
+    m_menu_add->AppendSubMenu(submenu21, "Project Files");
+    m_menubar->Append(m_menu_add, "&Add");
 
     m_menuTools = new wxMenu();
     auto* menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, "Generate &Code...",

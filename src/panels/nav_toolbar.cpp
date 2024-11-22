@@ -121,7 +121,7 @@ namespace wxue_img
         30,219,255,208,194,9,94,10,23,157,200,231,220,60,253,2,93,126,142,40
     };
 
-}
+    }
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!

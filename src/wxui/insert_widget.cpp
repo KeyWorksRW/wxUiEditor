@@ -29,7 +29,7 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_text_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_text_name->SetHint("type a portion of the name to filter the list");
+    m_text_name->SetHint("type a name portion to filter list");
     m_text_name->SetToolTip("Use Up/Down arrows to change list selection");
     box_sizer_2->Add(m_text_name, wxSizerFlags(1).Border(wxALL));
 
@@ -37,10 +37,9 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText_2 = new wxStaticText(this, wxID_ANY,
-        "Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added.");
-    staticText_2->Wrap(300);
-    box_sizer_4->Add(staticText_2, wxSizerFlags().Border(wxALL));
+    m_limit_to_children = new wxCheckBox(this, wxID_ANY, "&Limit to allowable children");
+    m_limit_to_children->SetValue(true);
+    box_sizer_4->Add(m_limit_to_children, wxSizerFlags().Expand().Border(wxALL));
 
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
@@ -76,6 +75,7 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     // Event handlers
     Bind(wxEVT_BUTTON, &InsertWidget::OnOK, this, wxID_OK);
+    m_limit_to_children->Bind(wxEVT_CHECKBOX, &InsertWidget::OnChangeLimit, this);
     Bind(wxEVT_INIT_DIALOG, &InsertWidget::OnInit, this);
     m_text_name->Bind(wxEVT_KEY_DOWN, &InsertWidget::OnKeyDown, this);
     m_listbox->Bind(wxEVT_LISTBOX,
@@ -101,13 +101,14 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog to lookup and insert a widget
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator -- Class used to create nodes
+#include "project_handler.h"  // ProjectHandler class
 
 void MainFrame::OnInsertWidget(wxCommandEvent&)
 {
@@ -124,8 +125,22 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
 
 void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
+    // If no node is selected, then if we limit the list to children, there will
+    // be nothing in the list. Instead, uncheck the limit, and disable it.
+    if (auto node = wxGetFrame().getSelectedNode(); !node)
+    {
+        m_limit_to_children->SetValue(false);
+        m_limit_to_children->Disable();
+    }
+
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_text_name->SetFocus();
+    wxCommandEvent dummy;
+    OnNameText(dummy);
+}
+
+void InsertWidget::OnChangeLimit(wxCommandEvent& WXUNUSED(event))
+{
     wxCommandEvent dummy;
     OnNameText(dummy);
 }
@@ -135,8 +150,12 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
     tt_string name = m_text_name->GetValue().utf8_string();
     m_listbox->Clear();
     auto node = wxGetFrame().getSelectedNode();
-
-    if (node->isType(type_widget))
+    if (!node)
+    {
+        node = Project.getProjectNode();
+    }
+    // type_widgets cannot have children, so change the "selected" node to the parent
+    if (node->isType(type_widget) && node->getParent())
     {
         node = node->getParent();
     }
@@ -149,12 +168,22 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
             continue;
         }
 
-        if (!node || !node->isChildAllowed(iter))
+        if (m_limit_to_children->GetValue())
+        {
+            if (!node->isChildAllowed(iter))
+                continue;
+        }
+        else if (!NodeCreation.isValidCreateParent(iter->getGenName(), node))
         {
             continue;
         }
 
-        if (!wxGetApp().isTestingMenuEnabled() && iter->declName().starts_with("Data"))
+        // Only one Data and Images form are allowed per project
+        if (iter->getGenName() == gen_Data && Project.getDataForm())
+        {
+            continue;
+        }
+        else if (iter->getGenName() == gen_Images && Project.getImagesForm())
         {
             continue;
         }

@@ -1187,11 +1187,22 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
     menu_item = Append(wxID_DELETE);
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
 
+    AddSeparatorIfNeeded();
     if (!node->isGen(gen_Images) && !node->isGen(gen_Data))
     {
         menu_item = Append(MenuDUPLICATE, "Duplicate");
         menu_item->SetBitmap(GetSvgImage("duplicate", dpi_size));
     }
+
+    menu_item = Append(MenuInsertWidget, "Insert Widget...");
+    menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& event)
+        {
+            wxGetFrame().OnInsertWidget(event);
+        },
+        MenuInsertWidget);
 }
 
 void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)

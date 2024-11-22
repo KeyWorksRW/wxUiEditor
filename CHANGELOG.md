@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- New Add menu provides an alternative to the main toolbar for adding widgets to your project.
 - By default, all Position and Size properties are scaled when your generated code is run under Windows with a high DPI setting.
 - You can now change the initial size of Art images instead of using their default size.
 - File menu now has a Reload Project command to reload the current project file from disk.
@@ -25,7 +26,7 @@ All notable changes to this project will be documented in this file.
 - Add missing events to wxPropertyGrid and wxPropertyGridManager
 - wxPython now correctly loads embedded animation files for wx.adv.AnimationCtrl
 - XRC generation now includes variant property settings for forms
-- wxPython now places wxTreeListCtrol in the dataview library
+- wxPython now places wxTreeListCtrl in the dataview library
 - Fixed code generation for Python and Ruby wxStdDialogButtonSizer events
 
 ## [Released (1.2.1)]

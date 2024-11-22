@@ -11,6 +11,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/button.h>
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -40,6 +41,7 @@ protected:
 
     // Event handlers
 
+    void OnChangeLimit(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnListBoxDblClick(wxCommandEvent& event);
@@ -50,6 +52,7 @@ private:
 
     // Class member variables
 
+    wxCheckBox* m_limit_to_children;
     wxListBox* m_listbox;
     wxStdDialogButtonSizer* m_stdBtn;
     wxTextCtrl* m_text_name;

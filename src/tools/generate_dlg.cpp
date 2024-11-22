@@ -125,7 +125,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     // First check to see if there is only one code output type. If so, then we can skip the
     // dialog.
 
-
     // Always generate XRC files first in case the XRC files need to be added to a gen_Data section
     // of the other languages.
     if (output_type == OUTPUT_XRC)

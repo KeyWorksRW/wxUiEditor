@@ -354,6 +354,24 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
              UpdateFrame();
          });
 
+    // Create bindings for the range of IDs in the Add menu
+
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& event)
+        {
+            CreateViaNewDlg(static_cast<GenName>(event.GetId()));
+        },
+        CreateNewDialog, MdiMenuBar - 1);
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event)
+        {
+            createToolNode(static_cast<GenName>(event.GetId()));
+        },
+        gen_wxMdiWindow, gen_name_array_size - 1);
+
     Bind(
         wxEVT_MENU,
         [this](wxCommandEvent&)
@@ -1118,11 +1136,6 @@ void MainFrame::UpdateFrame()
 
     bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == "Mock Up");
     m_menuEdit->Enable(wxID_FIND, !isMockup);
-#if defined(_DEBUG)
-    m_menuEdit->Enable(id_insert_widget, true);
-#else
-    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isFormParent());
-#endif  // _DEBUG
 
     UpdateMoveMenu();
     UpdateLayoutTools();

@@ -719,7 +719,6 @@ namespace GenEnum
         gen_folder_wxRuby,
         gen_sizer_child,
         gen_sizeritem_settings,
-        gen_wxMdiWindow,
         gen_wxTopLevelWindow,
         gen_wxTreeCtrlBase,
         gen_wxWindow,
@@ -761,8 +760,12 @@ namespace GenEnum
         gen_folder,
         gen_sub_folder,
 
+        // Note all gen_ values from gen_wxMdiWindow gen_name_array_size are bound to the Add menu
+        // items.
+
         // These are for DocViewApp
 
+        gen_wxMdiWindow,
         gen_DocViewApp,
         gen_MdiFrameMenuBar,
         gen_MdiDocMenuBar,

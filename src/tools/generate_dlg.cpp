@@ -90,7 +90,7 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog for choosing and generating specific language file(s)
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +125,15 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     // First check to see if there is only one code output type. If so, then we can skip the
     // dialog.
 
-    if (output_type == OUTPUT_CPLUS)
+
+    // Always generate XRC files first in case the XRC files need to be added to a gen_Data section
+    // of the other languages.
+    if (output_type == OUTPUT_XRC)
+    {
+        GenerateXrcFiles(results);
+        code_generated = true;
+    }
+    else if (output_type == OUTPUT_CPLUS)
     {
         GenerateCppFiles(results);
         code_generated = true;
@@ -145,17 +153,21 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
         code_generated = true;
     }
-    else if (output_type == OUTPUT_XRC)
-    {
-        GenerateXrcFiles(results);
-        code_generated = true;
-    }
 
     if (!code_generated)
     {
         GenerateDlg dlg(this);
         if (dlg.ShowModal() == wxID_OK)
         {
+            // Always generate XRC files first in case the XRC files need to be added to a gen_Data
+            // section of the other languages.
+            gen_xrc_code = dlg.is_gen_xrc();
+            if (gen_xrc_code)
+            {
+                GenerateXrcFiles(results);
+                code_generated = true;
+            }
+
             gen_base_code = dlg.is_gen_base();
             if (gen_base_code)
             {
@@ -184,21 +196,14 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 code_generated = true;
             }
 
-            gen_xrc_code = dlg.is_gen_xrc();
-            if (gen_xrc_code)
-            {
-                GenerateXrcFiles(results);
-                code_generated = true;
-            }
-
             if (wxGetApp().isTestingMenuEnabled())
             {
                 auto* config = wxConfig::Get();
                 config->SetPath("/preferences");
+                config->Write("gen_xrc_code", gen_xrc_code);
                 config->Write("gen_base_code", gen_base_code);
                 config->Write("gen_python_code", gen_python_code);
                 config->Write("gen_ruby_code", gen_ruby_code);
-                config->Write("gen_xrc_code", gen_xrc_code);
                 config->SetPath("/");
             }
         }
@@ -245,10 +250,10 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     {
         auto* config = wxConfig::Get();
         config->SetPath("/preferences");
+        gen_xrc_code = config->ReadBool("gen_xrc_code", false);
         gen_base_code = config->ReadBool("gen_base_code", true);
         gen_python_code = config->ReadBool("gen_python_code", false);
         gen_ruby_code = config->ReadBool("gen_ruby_code", false);
-        gen_xrc_code = config->ReadBool("gen_xrc_code", false);
         config->SetPath("/");
     }
 
@@ -330,9 +335,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_ruby_code = false;
         m_gen_base_code = false;
         m_gen_xrc_code = true;
-
-        // For XRC preferred files, we still display all the other languages in case the user
-        // is combining XRC with one of those languages.
     }
     else
     {

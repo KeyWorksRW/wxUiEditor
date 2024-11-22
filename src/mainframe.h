@@ -186,14 +186,6 @@ public:
     // that aligns with the PropertyGrid panel.
     void setStatusField(const tt_string text, int position = -1);
 
-    // Search for a sizer to move the node into.
-    // Set include_splitter to treat a splitter window like a sizer.
-    Node* FindChildSizerItem(Node* node, bool include_splitter = false);
-    Node* FindChildSizerItem(const NodeSharedPtr& node, bool include_splitter = false)
-    {
-        return FindChildSizerItem(node.get(), include_splitter);
-    }
-
     const wxSize& GetMenuDpiSize() { return m_dpi_menu_size; }
     const wxSize& GetRibbonDpiSize() { return m_dpi_ribbon_size; }
     const wxSize& GetToolbarDpiSize() { return m_dpi_toolbar_size; }

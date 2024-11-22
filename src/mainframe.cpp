@@ -2025,131 +2025,135 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
 
     if (parent->isGen(gen_wxGridBagSizer))
+    {
         return GridBag::MoveNode(node, where, check_only);
-
-    if (where == MoveDirection::Left)
-    {
-        if (node->isGen(gen_folder) || node->isGen(gen_data_folder))
-            return false;
-        else if (node->isGen(gen_sub_folder) && parent->isGen(gen_folder))
-            return false;  // You can't have Project as the parent of a sub_folder
-
-        if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
-        {
-            if (!check_only)
-            {
-                wxWindowUpdateLocker freeze(this);
-                PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->getParent()));
-            }
-            return true;
-        }
-
-        auto grandparent = parent->getParent();
-        while (grandparent && !grandparent->isSizer())
-        {
-            grandparent = grandparent->getParent();
-        }
-
-        if (check_only)
-            return (grandparent ? true : false);
-
-        if (grandparent)
-        {
-            wxWindowUpdateLocker freeze(this);
-            PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent));
-            return true;
-        }
-        wxMessageBox("There is no sizer to the left of this item that it can be moved into.", "Move item");
     }
-    else if (where == MoveDirection::Right)
+
+    switch (where)
     {
-        if (node->isGen(gen_folder) || node->isGen(gen_data_folder))
-            return false;
+        case MoveDirection::Left:
+            if (node->isGen(gen_folder) || node->isGen(gen_data_folder))
+                return false;
+            else if (node->isGen(gen_sub_folder) && parent->isGen(gen_folder))
+                return false;  // You can't have Project as the parent of a sub_folder
 
-        auto pos = parent->getChildPosition(node) - 1;
-        if (pos < parent->getChildCount())
-        {
-            if (node->isForm() && pos >= 0)
+            if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
             {
-                auto* new_parent = parent->getChild(pos);
-                if (new_parent->isForm())
+                if (!check_only)
                 {
-                    if (!check_only)
-                        wxMessageBox("You cannot move a form to the right of another form.", "Move item");
-                    return false;
+                    wxWindowUpdateLocker freeze(this);
+                    auto grandparent = parent->getParent();
+                    int pos = (to_int) grandparent->getChildPosition(parent) + 1;
+                    PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->getParent(), pos));
                 }
-                else if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
-                {
-                    if (!check_only)
-                    {
-                        wxWindowUpdateLocker freeze(this);
-                        PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent));
-                    }
-                    return true;
-                }
-            }
-            else if (node->isGen(gen_sub_folder) && pos >= 0)
-            {
-                auto* new_parent = parent->getChild(pos);
-                while (new_parent->isForm())
-                {
-                    if (pos == 0)
-                    {
-                        if (!check_only)
-                            wxMessageBox("You cannot move a folder to the right of a form.", "Move item");
-                        return false;
-                    }
-                }
-                if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
-                {
-                    if (!check_only)
-                    {
-                        wxWindowUpdateLocker freeze(this);
-                        PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent));
-                    }
-                    return true;
-                }
-            }
-            parent = FindChildSizerItem(parent->getChild(pos), true);
-
-            if (check_only)
-                return (parent ? true : false);
-
-            if (parent)
-            {
-                wxWindowUpdateLocker freeze(this);
-                PushUndoAction(std::make_shared<ChangeParentAction>(node, parent));
                 return true;
             }
-        }
-        if (!check_only)
-            wxMessageBox("There is nothing above this item that it can be moved into.", "Move item");
-    }
-    else if (where == MoveDirection::Up)
-    {
-        auto pos = parent->getChildPosition(node);
-        if (check_only)
-            return (pos > 0);
-        if (pos > 0)
-        {
-            wxWindowUpdateLocker freeze(this);
-            PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
-            return true;
-        }
-        wxMessageBox("This component cannot be moved up any further.", "Move item");
-    }
-    else if (where == MoveDirection::Down)
-    {
-        auto pos = parent->getChildPosition(node) + 1;
-        if (check_only)
-            return (pos < parent->getChildCount());
-        if (pos < parent->getChildCount())
-        {
-            wxWindowUpdateLocker freeze(this);
-            PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
-            return true;
-        }
-        wxMessageBox(tt_string() << node->declName() << " cannot be moved down any lower.", "Move item");
+
+            if (auto grandparent = parent->getParent(); grandparent)
+            {
+                if (auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(), grandparent); valid_parent)
+                {
+                    if (!check_only)
+                    {
+                        wxWindowUpdateLocker freeze(this);
+                        int pos = -1;
+                        if (grandparent == valid_parent)
+                            pos = (to_int) grandparent->getChildPosition(parent) + 1;
+                        PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent, pos));
+                    }
+                    return true;
+                }
+            }
+            return false;
+
+        case MoveDirection::Right:
+            if (node->isGen(gen_folder) || node->isGen(gen_sub_folder) || node->isGen(gen_data_folder) ||
+                node->isGen(gen_Images) || node->isGen(gen_Data))
+            {
+                return false;
+            }
+
+            if (auto pos = parent->getChildPosition(node) - 1; pos < parent->getChildCount())
+            {
+                if (node->isForm() && pos >= 0)
+                {
+                    auto* new_parent = parent->getChild(pos);
+                    if (new_parent->isForm())
+                    {
+                        ASSERT_MSG(check_only, tt_string()
+                                                   << "MoveDirection::Right called even though check would have failed.");
+                        return false;
+                    }
+                    else if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
+                    {
+                        if (!check_only)
+                        {
+                            wxWindowUpdateLocker freeze(this);
+                            PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent));
+                        }
+                        return true;
+                    }
+                }
+                else if (node->isGen(gen_sub_folder) && pos >= 0)
+                {
+                    auto* new_parent = parent->getChild(pos);
+                    while (new_parent->isForm())
+                    {
+                        if (pos == 0)
+                        {
+                            ASSERT_MSG(check_only,
+                                       tt_string() << "MoveDirection::Right called even though check would have failed.");
+                            return false;
+                        }
+                    }
+                    if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
+                    {
+                        if (!check_only)
+                        {
+                            wxWindowUpdateLocker freeze(this);
+                            PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent));
+                        }
+                        return true;
+                    }
+                }
+
+                auto possible_parent = parent->getChild(pos);
+                if (auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(), possible_parent, false);
+                    valid_parent)
+                {
+                    if (!check_only)
+                    {
+                        wxWindowUpdateLocker freeze(this);
+                        PushUndoAction(std::make_shared<ChangeParentAction>(node, valid_parent));
+                    }
+                    return true;
+                }
+            }
+            return false;
+
+        case MoveDirection::Up:
+            if (auto pos = parent->getChildPosition(node); pos > 0)
+            {
+                if (!check_only)
+                {
+                    wxWindowUpdateLocker freeze(this);
+                    PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
+                }
+                return true;
+            }
+            return false;
+
+        case MoveDirection::Down:
+            if (auto pos = parent->getChildPosition(node) + 1; pos < parent->getChildCount())
+            {
+                if (!check_only)
+                {
+                    wxWindowUpdateLocker freeze(this);
+                    PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
+                }
+                return true;
+            }
+            return false;
     }
 
     return false;
@@ -2186,26 +2190,6 @@ void MainFrame::ChangeEventHandler(NodeEvent* event, const tt_string& value)
         PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
         UpdateWakaTime();
     }
-}
-
-Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
-{
-    if (include_splitter && node->isGen(gen_wxSplitterWindow) && node->getChildCount() < 2)
-        return node;
-    else if (node->getNodeDeclaration()->isSubclassOf(gen_sizer_dimension))
-        return node;
-    else
-    {
-        for (const auto& child: node->getChildNodePtrs())
-        {
-            if (auto result = FindChildSizerItem(child, include_splitter); result)
-            {
-                return result;
-            }
-        }
-    }
-
-    return nullptr;
 }
 
 void MainFrame::UpdateWakaTime(bool FileSavedEvent)

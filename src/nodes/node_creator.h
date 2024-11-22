@@ -101,7 +101,7 @@ public:
     //
     // Returns nullptr if no parent can be found that allows this child type (which might
     // mean that parent already has the maximum number of children allowed).
-    Node* isValidCreateParent(GenName name, Node* parent) const;
+    Node* isValidCreateParent(GenName name, Node* parent, bool use_recursion = true) const;
 
     size_t countChildrenWithSameType(Node* parent, GenType type) const;
 

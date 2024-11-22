@@ -24,21 +24,20 @@ enum : size_t
     OUTPUT_NONE = 0,
     OUTPUT_CPLUS = 1 << 0,
     OUTPUT_DERIVED = 1 << 1,
-    OUTPUT_C_DERIVED = OUTPUT_CPLUS | OUTPUT_DERIVED,
     OUTPUT_PYTHON = 1 << 2,
     OUTPUT_RUBY = 1 << 3,
     OUTPUT_XRC = 1 << 4,
-    OUTPUT_PERL = 1 << 5,
-    OUTPUT_LUA = 1 << 6,
-    OUTPUT_PHP = 1 << 7,
-    OUTPUT_HASKELL = 1 << 8,
+    OUTPUT_FORTRAN = 1 << 5,
+    OUTPUT_HASKELL = 1 << 6,
+    OUTPUT_LUA = 1 << 7,
+    OUTPUT_PERL = 1 << 8,
+    OUTPUT_RUST = 1 << 9,
 };
 
 enum
 {
     OUT_FLAG_NONE = 0,
     OUT_FLAG_IGNORE_DERIVED = 1 << 0,  // Ignore derived output files
-    OUT_FLAG_IGNORE_XRC = 1 << 1,      // Ignore XRC output files
 };
 
 class ProjectHandler

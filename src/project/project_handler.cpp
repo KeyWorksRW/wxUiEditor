@@ -519,8 +519,12 @@ size_t ProjectHandler::getOutputType(int flags) const
                     }
                     result |= OUTPUT_RUBY;
                 }
-                if (not(flags & OUT_FLAG_IGNORE_XRC) && child->hasValue(prop_xrc_file))
+                if (child->hasValue(prop_xrc_file))
                 {
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
+                    {
+                        continue;
+                    }
                     result |= OUTPUT_XRC;
                 }
             }

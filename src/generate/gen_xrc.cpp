@@ -338,6 +338,7 @@ static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_stri
                     return false;
                 }
 
+                results.updated_files.emplace_back(path);
                 return true;
             }
         }

@@ -2462,9 +2462,11 @@ bool PropGridPanel::IsEventPageShowing()
 
 void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
 {
-    CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().getSelectedNode());
-
-    wxGetFrame().GetCppPanel()->OnNodeSelected(custom_event);
+    if (auto panel = wxGetFrame().GetFirstCodePanel(); panel)
+    {
+        CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().getSelectedNode());
+        panel->OnNodeSelected(custom_event);
+    }
 }
 
 tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const

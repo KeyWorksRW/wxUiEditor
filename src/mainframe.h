@@ -78,6 +78,7 @@ public:
     NavigationPanel* getNavigationPanel() { return m_nav_panel; }
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
+    BasePanel* GetFirstCodePanel();
     BasePanel* GetCppPanel() { return m_cppPanel; }
     BasePanel* GetFortranPanel() { return m_fortranPanel; }
     BasePanel* GetHaskellPanel() { return m_haskellPanel; }

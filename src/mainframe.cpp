@@ -2594,6 +2594,12 @@ void MainFrame::UpdateLanguagePanels()
         m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
 }
 
+BasePanel* MainFrame::GetFirstCodePanel()
+{
+    auto page = m_notebook->GetPage(1);
+    return static_cast<BasePanel*>(page);
+}
+
 void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)
 {
     for (auto iter = m_custom_event_handlers.begin(); iter != m_custom_event_handlers.end(); ++iter)

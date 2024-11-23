@@ -790,118 +790,122 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     UserPrefs.set_RightPropGrid(m_check_right_propgrid->GetValue());
     UserPrefs.set_WakaTimeEnabled(m_isWakaTimeEnabled);
 
-    {  // C++ colors
+    if (auto panel = wxGetFrame().GetCppPanel(); panel)
+    {
         if (UserPrefs.get_CppColour() != m_colour_cpp->GetColour())
         {
             UserPrefs.set_CppColour(m_colour_cpp->GetColour());
-            wxGetFrame().GetCppPanel()->SetColor(wxSTC_C_WORD2, m_colour_cpp->GetColour());
+            panel->SetColor(wxSTC_C_WORD2, m_colour_cpp->GetColour());
         }
 
         if (UserPrefs.get_CppCommentColour() != m_colour_cpp_comment->GetColour())
         {
             UserPrefs.set_CppCommentColour(m_colour_cpp_comment->GetColour());
-            wxGetFrame().GetCppPanel()->SetColor(wxSTC_C_COMMENTLINE, m_colour_cpp_comment->GetColour());
+            panel->SetColor(wxSTC_C_COMMENTLINE, m_colour_cpp_comment->GetColour());
         }
 
         if (UserPrefs.get_CppKeywordColour() != m_colour_cpp_keyword->GetColour())
         {
             UserPrefs.set_CppKeywordColour(m_colour_cpp_keyword->GetColour());
-            wxGetFrame().GetCppPanel()->SetColor(wxSTC_C_WORD, m_colour_cpp_keyword->GetColour());
+            panel->SetColor(wxSTC_C_WORD, m_colour_cpp_keyword->GetColour());
         }
 
         if (UserPrefs.get_CppNumberColour() != m_colour_cpp_number->GetColour())
         {
             UserPrefs.set_CppNumberColour(m_colour_cpp_number->GetColour());
-            wxGetFrame().GetCppPanel()->SetColor(wxSTC_C_NUMBER, m_colour_cpp_number->GetColour());
+            panel->SetColor(wxSTC_C_NUMBER, m_colour_cpp_number->GetColour());
         }
 
         if (UserPrefs.get_CppStringColour() != m_colour_cpp_string->GetColour())
         {
             UserPrefs.set_CppStringColour(m_colour_cpp_string->GetColour());
-            wxGetFrame().GetCppPanel()->SetColor(wxSTC_C_STRING, m_colour_cpp_string->GetColour());
+            panel->SetColor(wxSTC_C_STRING, m_colour_cpp_string->GetColour());
         }
     }
 
-    {  // Python colors
+    if (auto panel = wxGetFrame().GetPythonPanel(); panel)
+    {
         if (UserPrefs.get_PythonColour() != m_colour_python->GetColour())
         {
             UserPrefs.set_PythonColour(m_colour_python->GetColour());
-            wxGetFrame().GetPythonPanel()->SetColor(wxSTC_P_WORD2, m_colour_python->GetColour());
+            panel->SetColor(wxSTC_P_WORD2, m_colour_python->GetColour());
         }
 
         if (UserPrefs.get_PythonCommentColour() != m_colour_python_comment->GetColour())
         {
             UserPrefs.set_PythonCommentColour(m_colour_python_comment->GetColour());
-            wxGetFrame().GetPythonPanel()->SetColor(wxSTC_P_COMMENTLINE, m_colour_python_comment->GetColour());
+            panel->SetColor(wxSTC_P_COMMENTLINE, m_colour_python_comment->GetColour());
         }
 
         if (UserPrefs.get_PythonKeywordColour() != m_colour_python_keyword->GetColour())
         {
             UserPrefs.set_PythonKeywordColour(m_colour_python_keyword->GetColour());
-            wxGetFrame().GetPythonPanel()->SetColor(wxSTC_P_WORD, m_colour_python_keyword->GetColour());
+            panel->SetColor(wxSTC_P_WORD, m_colour_python_keyword->GetColour());
         }
 
         if (UserPrefs.get_PythonNumberColour() != m_colour_python_number->GetColour())
         {
             UserPrefs.set_PythonNumberColour(m_colour_python_number->GetColour());
-            wxGetFrame().GetPythonPanel()->SetColor(wxSTC_P_NUMBER, m_colour_python_number->GetColour());
+            panel->SetColor(wxSTC_P_NUMBER, m_colour_python_number->GetColour());
         }
 
         if (UserPrefs.get_PythonStringColour() != m_colour_python_string->GetColour())
         {
             UserPrefs.set_PythonStringColour(m_colour_python_string->GetColour());
-            wxGetFrame().GetPythonPanel()->SetColor(wxSTC_P_STRING, m_colour_python_string->GetColour());
+            panel->SetColor(wxSTC_P_STRING, m_colour_python_string->GetColour());
         }
     }
 
-    {  // Ruby colors
+    if (auto panel = wxGetFrame().GetRubyPanel(); panel)
+    {
         if (UserPrefs.get_RubyColour() != m_colour_ruby->GetColour())
         {
             UserPrefs.set_RubyColour(m_colour_ruby->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_WORD, m_colour_ruby->GetColour());
+            panel->SetColor(wxSTC_RB_WORD, m_colour_ruby->GetColour());
         }
 
         if (UserPrefs.get_RubyCommentColour() != m_colour_ruby_comment->GetColour())
         {
             UserPrefs.set_RubyCommentColour(m_colour_ruby_comment->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_COMMENTLINE, m_colour_ruby_comment->GetColour());
+            panel->SetColor(wxSTC_RB_COMMENTLINE, m_colour_ruby_comment->GetColour());
         }
 
         if (UserPrefs.get_RubyNumberColour() != m_colour_ruby_number->GetColour())
         {
             UserPrefs.set_RubyNumberColour(m_colour_ruby_number->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_NUMBER, m_colour_ruby_number->GetColour());
+            panel->SetColor(wxSTC_RB_NUMBER, m_colour_ruby_number->GetColour());
         }
 
         if (UserPrefs.get_RubyStringColour() != m_colour_ruby_string->GetColour())
         {
             UserPrefs.set_RubyStringColour(m_colour_ruby_string->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_STRING, m_colour_ruby_string->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_STRING_Q, m_colour_ruby_string->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_STRING_QQ, m_colour_ruby_string->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_STRING_QX, m_colour_ruby_string->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_STRING_QR, m_colour_ruby_string->GetColour());
-            wxGetFrame().GetRubyPanel()->SetColor(wxSTC_RB_STRING_QW, m_colour_ruby_string->GetColour());
+            panel->SetColor(wxSTC_RB_STRING, m_colour_ruby_string->GetColour());
+            panel->SetColor(wxSTC_RB_STRING_Q, m_colour_ruby_string->GetColour());
+            panel->SetColor(wxSTC_RB_STRING_QQ, m_colour_ruby_string->GetColour());
+            panel->SetColor(wxSTC_RB_STRING_QX, m_colour_ruby_string->GetColour());
+            panel->SetColor(wxSTC_RB_STRING_QR, m_colour_ruby_string->GetColour());
+            panel->SetColor(wxSTC_RB_STRING_QW, m_colour_ruby_string->GetColour());
         }
     }
 
-    {  // XRC colors
+    if (auto panel = wxGetFrame().GetXrcPanel(); panel)
+    {
         if (UserPrefs.get_XrcAttributeColour() != m_colour_xrc_attribute->GetColour())
         {
             UserPrefs.set_XrcAttributeColour(m_colour_xrc_attribute->GetColour());
-            wxGetFrame().GetXrcPanel()->SetColor(wxSTC_H_ATTRIBUTE, m_colour_xrc_attribute->GetColour());
+            panel->SetColor(wxSTC_H_ATTRIBUTE, m_colour_xrc_attribute->GetColour());
         }
 
         if (UserPrefs.get_XrcDblStringColour() != m_colour_xrc_string->GetColour())
         {
             UserPrefs.set_XrcDblStringColour(m_colour_xrc_string->GetColour());
-            wxGetFrame().GetXrcPanel()->SetColor(wxSTC_H_DOUBLESTRING, m_colour_xrc_string->GetColour());
+            panel->SetColor(wxSTC_H_DOUBLESTRING, m_colour_xrc_string->GetColour());
         }
 
         if (UserPrefs.get_XrcTagColour() != m_colour_xrc_tag->GetColour())
         {
             UserPrefs.set_XrcTagColour(m_colour_xrc_tag->GetColour());
-            wxGetFrame().GetXrcPanel()->SetColor(wxSTC_H_TAG, m_colour_xrc_tag->GetColour());
+            panel->SetColor(wxSTC_H_TAG, m_colour_xrc_tag->GetColour());
         }
     }
 

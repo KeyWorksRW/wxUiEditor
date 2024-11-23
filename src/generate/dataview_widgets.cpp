@@ -164,6 +164,14 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
     handlers.emplace("wxDataViewXmlHandler");
 }
 
+std::pair<bool, tt_string> DataViewCtrl::isLanguageVersionSupported(GenLang language)
+{
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+        return { true, {} };
+
+    return { false, tt_string() << "wxDataViewCtrl is not supported by " << ConvertFromGenLang(language) };
+}
+
 std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
@@ -295,6 +303,14 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxDataViewXmlHandler");
 }
 
+std::pair<bool, tt_string> DataViewListCtrl::isLanguageVersionSupported(GenLang language)
+{
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+        return { true, {} };
+
+    return { false, tt_string() << "wxDataViewListCtrl is not supported by " << ConvertFromGenLang(language) };
+}
+
 std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
@@ -339,6 +355,14 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
+}
+
+std::pair<bool, tt_string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang language)
+{
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+        return { true, {} };
+
+    return { false, tt_string() << "wxDataViewTreeCtrl is not supported by " << ConvertFromGenLang(language) };
 }
 
 std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang language)
@@ -417,6 +441,35 @@ bool DataViewColumn::ConstructionCode(Code& code)
     return true;
 }
 
+std::pair<bool, tt_string> DataViewColumn::isLanguageVersionSupported(GenLang language)
+{
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
+        return { true, {} };
+    };
+
+    return { false, tt_string() << "DataViewColumn is not supported by " << ConvertFromGenLang(language) };
+}
+
+std::optional<tt_string> DataViewColumn::GetWarning(Node* node, GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support DataViewColumn";
+                return msg;
+            }
+        default:
+            return {};
+    }
+}
+
 //////////////////////////////////////////  DataViewListColumn  //////////////////////////////////////////
 
 bool DataViewListColumn::ConstructionCode(Code& code)
@@ -437,4 +490,31 @@ bool DataViewListColumn::ConstructionCode(Code& code)
     }
 
     return true;
+}
+
+std::pair<bool, tt_string> DataViewListColumn::isLanguageVersionSupported(GenLang language)
+{
+    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+        return { true, {} };
+
+    return { false, tt_string() << "DataViewListColumn is not supported by " << ConvertFromGenLang(language) };
+}
+
+std::optional<tt_string> DataViewListColumn::GetWarning(Node* node, GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_RUBY:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << "wxRuby currently does not support DataViewListColumn";
+                return msg;
+            }
+        default:
+            return {};
+    }
 }

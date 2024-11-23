@@ -23,6 +23,7 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
     std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
@@ -40,6 +41,7 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
     std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
@@ -56,6 +58,7 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
     std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
@@ -63,10 +66,16 @@ class DataViewColumn : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
+
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 
 class DataViewListColumn : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
+
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };

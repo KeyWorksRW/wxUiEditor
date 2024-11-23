@@ -502,6 +502,8 @@ const tt_string& Node::getNodeName() const
 tt_string_view Node::getNodeName(GenLang lang) const
 {
     tt_string_view name = getNodeName();
+    if (name.empty())
+        return "unknown node";
     if (lang == GEN_LANG_CPLUSPLUS)
     {
         // Valid for Ruby, but not for C++

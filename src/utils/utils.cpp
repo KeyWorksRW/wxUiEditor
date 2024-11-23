@@ -633,8 +633,11 @@ GenLang ConvertToGenLang(tt_string_view language)
         return GEN_LANG_RUST;
     else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
         return GEN_LANG_XRC;
+
+    // If this wasn't an actual language setting, then return all languages
     else
-        return GEN_LANG_CPLUSPLUS;
+        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_FORTRAN |
+                                    GEN_LANG_HASKELL | GEN_LANG_LUA | GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
 }
 
 std::string GetLanguageExtension(GenLang language)

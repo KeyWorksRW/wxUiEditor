@@ -15,6 +15,7 @@
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 #include "base_generator.h"                   // BaseGenerator -- Base Generator class
+#include "base_generator.h"                   // BaseGenerator -- Base widget generator class
 #include "code.h"                             // Code -- Helper class for generating code
 #include "file_codewriter.h"                  // FileCodeWriter -- Classs to write code to disk
 #include "lambdas.h"                          // Functions for formatting and storage of lamda events
@@ -40,6 +41,10 @@ constexpr auto prop_sheet_events =
 
 void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
+    if (auto generator = event->getNode()->getGenerator();
+        !generator || !generator->isLanguageVersionSupported(code.get_language()).first)
+        return;  // Current language does not support this node
+
     Code handler(event->getNode(), code.m_language);
     tt_string event_code;
     if (code.m_language == GEN_LANG_CPLUSPLUS)

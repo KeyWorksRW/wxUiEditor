@@ -18,7 +18,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
-    std::optional<tt_string> isLanguageVersionSupported(GenLang language) override;
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
 };
 
 class PopupWinGenerator : public PopupWinBaseGenerator

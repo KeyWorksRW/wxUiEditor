@@ -22,7 +22,7 @@ public:
 
     void GenEvent(Code& code, NodeEvent* event, const std::string& class_name) override;
 
-    std::optional<tt_string> isLanguageVersionSupported(GenLang language) override;
+    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
     std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
 };
 

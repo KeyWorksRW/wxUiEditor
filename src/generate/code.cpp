@@ -373,43 +373,45 @@ void Code::Init(Node* node, GenLang language)
     {
         m_indent_size = 2;
         m_language_wxPrefix = "Wx::";
-        m_lang_assignment = " = ";
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
-    else if (language == GEN_LANG_PERL)
+
+    else if (language == GEN_LANG_FORTRAN)
     {
-        m_indent_size = 4;
-        m_language_wxPrefix = "Wx::";
-        m_lang_assignment = " = ";
-        m_break_length = Project.as_size_t(prop_perl_line_length);
-        // Always assume Perl code has one tab at the beginning of the line
+        // REVIEW: [Randalphwa - 11-24-2024] Since wxFortran3 doesn't exist yet, there isn't any way
+        // to know what the prefix will be, so just use a default value for now.
+        m_language_wxPrefix = "wx";
+        m_break_length = Project.as_size_t(prop_fortran_line_length);
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_HASKELL)
+    {
+        m_language_wxPrefix = "wx";  // wxHaskell doesn't change wxWidgets naming
+        m_break_length = Project.as_size_t(prop_haskell_line_length);
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_LUA)
     {
         // Lua simply uses a "wx." prefix before the normal wxWidgets "wx" prefix
         m_language_wxPrefix = "wx.wx";
-        m_lang_assignment = " = ";
-        m_break_length = 90;
-        // Always assume Lua code has one tab at the beginning of the line
+        m_break_length = Project.as_size_t(prop_lua_line_length);
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_indent_size = 4;
+        m_language_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_perl_line_length);
+        // Always assume Perl code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_RUST)
     {
         m_language_wxPrefix = "wx.";
-        m_lang_assignment = " = ";
         m_break_length = 100;
         // Always assume Rust code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_HASKELL)
-    {
-        m_language_wxPrefix = "Wx.";
-        m_lang_assignment = " = ";
-        m_break_length = 90;
-        // Always assume Haskell code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
 
@@ -417,7 +419,6 @@ void Code::Init(Node* node, GenLang language)
     {
         FAIL_MSG("Unknown language");
         m_language_wxPrefix = "wx";
-        m_lang_assignment = " = ";
         m_break_length = 90;
         // Always assume code has one tab at the beginning of the line
         m_break_length -= m_indent_size;

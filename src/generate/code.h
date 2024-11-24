@@ -489,9 +489,8 @@ protected:
     void CloseFontBrace();
 
 private:
-    // wx for C++, wx. for Python, Wx:: for Ruby
+    // This is changed on a per-language basis in Code::Init()
     tt_string m_language_wxPrefix { "wx" };
-    tt_string m_lang_assignment { " = " };  // " = " default, " := " for Go
 
     size_t m_break_length { 80 };
     size_t m_break_at { 80 };       // this should be the same as m_break_length

@@ -155,6 +155,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
     if (id < gen_name_array_size)
     {
         wxGetFrame().createToolNode(static_cast<GenName>(event.GetId()));
+        return;
     }
     else
     {

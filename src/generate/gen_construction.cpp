@@ -43,10 +43,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_warnings.emplace(warning_msg.value());
     }
 
-    if (auto supported_msg = generator->isLanguageVersionSupported(m_language); supported_msg)
+    if (auto supported = generator->isLanguageVersionSupported(m_language); !supported.first)
     {
         Code gen_code(node, m_language);
-        gen_code.AddComment(supported_msg.value(), true);
+        gen_code.AddComment(supported.second, true);
         m_source->writeLine(gen_code);
         return;
     }

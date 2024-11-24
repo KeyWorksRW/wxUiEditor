@@ -197,9 +197,9 @@ public:
     // Call this to retrieve any warning text when generating code for the specific language.
     virtual std::optional<tt_string> GetWarning(Node*, GenLang /* language */) { return {}; }
 
-    // result.has_value() == true indicates that the generator cannot construct the object
-    // using the current language and version. Use result.value() to get the error message.
-    virtual std::optional<tt_string> isLanguageVersionSupported(GenLang /* language */) { return {}; }
+    // result.first == false indicates that the generator cannot construct the object using
+    // the current language and version. result.second contains the error message.
+    virtual std::pair<bool, tt_string> isLanguageVersionSupported(GenLang /* language */) { return { true, {} }; }
 
     // result.has_value() == true indicates that the property is not supported using the
     // current language and version. Use result.value() to get the warning message. This will

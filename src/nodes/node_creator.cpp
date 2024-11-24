@@ -226,9 +226,9 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
         if (auto gen = node->getGenerator(); gen)
         {
             auto result = gen->isLanguageVersionSupported(Project.getCodePreference());
-            if (result.has_value())
+            if (!result.first)
             {
-                if (wxMessageBox(result.value() + ". Create anyway?", "Unsupported widget", wxYES_NO | wxICON_QUESTION) ==
+                if (wxMessageBox(result.second + ". Create anyway?", "Unsupported widget", wxYES_NO | wxICON_QUESTION) ==
                     wxNO)
                 {
                     // Because node only has a sigle reference, it will be deleted when it goes out

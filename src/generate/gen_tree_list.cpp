@@ -36,7 +36,8 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 
 bool TreeListCtrlGenerator::ConstructionCode(Code& code)
 {
-    ASSERT_MSG(!isLanguageVersionSupported(code.get_language()), isLanguageVersionSupported(code.get_language()).value());
+    ASSERT_MSG(isLanguageVersionSupported(code.get_language()).first,
+               isLanguageVersionSupported(code.get_language()).second);
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(code::allow_scaling, true, "wxTL_DEFAULT_STYLE");
 
@@ -79,12 +80,12 @@ std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang l
     }
 }
 
-std::optional<tt_string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
+std::pair<bool, tt_string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
-        return {};
+        return { true, {} };
 
-    return tt_string() << "wxTreeListCtrl is not supported by " << ConvertFromGenLang(language);
+    return { false, tt_string() << "wxTreeListCtrl is not supported by " << ConvertFromGenLang(language) };
 }
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////

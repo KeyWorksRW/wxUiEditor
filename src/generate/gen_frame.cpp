@@ -44,7 +44,7 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
         size_t name_len =
-            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.FrameNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.hasValue(prop_window_name))
@@ -90,6 +90,16 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             code.GetCode().Replace("\t\t\t\t", spaces, true);
         }
     }
+    else if (code.is_lua())
+    {
+        code.Eol().NodeName().Str(" = {}\n");
+        code.Eol().Str("function ").NodeName().Str(":create(parent, id, title, pos, size, style)");
+        code.Indent();
+        code.Eol().Str("this = wx.wxFrame(wx.NULL").Comma().as_string(prop_id).Comma().QuotedString(prop_title);
+        code.Indent(5);
+        code.PosSizeFlags();
+        code.Unindent(5);
+    }
     else
     {
         code.AddComment("Unknown language", true);
@@ -103,6 +113,12 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
 
 bool FrameFormGenerator::SettingsCode(Code& code)
 {
+    if (code.is_lua())
+    {
+        code.ResetIndent();
+        code.ResetBraces();
+        code.Indent();
+    }
     if (!code.node()->isPropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
@@ -163,12 +179,17 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
     }
+    else if (code.is_lua())
+    {
+        // Lua doesn't check the result of creating the window
+    }
     else
     {
         return false;
     }
 
-    if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+    if (isScalingEnabled(code.node(), prop_pos, code.get_language()) ||
+        isScalingEnabled(code.node(), prop_size, code.get_language()))
     {
         code.Eol(eol_if_needed).BeginConditional().Str("pos != ").Add("wxDefaultPosition");
         code.AddConditionalOr().Str("size != ").Add("wxDefaultSize");
@@ -391,7 +412,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     // widget XRC generatorsl
     auto item = object;
 
-    GenXrcObjectAttributes(node, item, "wxDialog");
+    GenXrcObjectAttributes(node, item, "wxFrame");
     if (!node->isPropValue(prop_variant, "normal"))
     {
         ADD_ITEM_PROP(prop_variant, "variant")

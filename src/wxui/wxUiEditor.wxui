@@ -3426,6 +3426,8 @@
         class_name="GenerateDlg"
         title="Generate Code"
         base_file="..\tools\generate_dlg"
+        inserted_hdr_code="public:@@bool is_gen_base() const { return m_gen_base_code; }@@bool is_gen_inherited() const { return m_gen_inherited_code; }@@bool is_gen_fortran() const { return m_gen_fortran_code; }@@bool is_gen_haskell() const { return m_gen_haskell_code; }@@bool is_gen_lua() const { return m_gen_lua_code; }@@bool is_gen_perl() const { return m_gen_perl_code; }@@bool is_gen_python() const { return m_gen_python_code; }@@bool is_gen_ruby() const { return m_gen_ruby_code; }@@bool is_gen_rust() const { return m_gen_rust_code; }@@bool is_gen_xrc() const { return m_gen_xrc_code; }@@@@private:@@wxCheckBox* m_checkBaseCode { nullptr };@@wxCheckBox* m_checkDerived { nullptr };@@wxCheckBox* m_checkFortran { nullptr };@@wxCheckBox* m_checkHaskell { nullptr };@@wxCheckBox* m_checkLua { nullptr };@@wxCheckBox* m_checkPerl { nullptr };@@wxCheckBox* m_checkPython { nullptr };@@wxCheckBox* m_checkRuby { nullptr };@@wxCheckBox* m_checkRust { nullptr };@@wxCheckBox* m_checkXRC { nullptr };@@@@bool m_gen_base_code { false };@@bool m_gen_inherited_code { false };@@bool m_gen_fortran_code { false };@@bool m_gen_haskell_code { false };@@bool m_gen_lua_code { false };@@bool m_gen_perl_code { false };@@bool m_gen_python_code { false };@@bool m_gen_ruby_code { false };@@bool m_gen_rust_code { false };@@bool m_gen_xrc_code { false };"
+        system_hdr_includes="wx/checkbox.h;wx/sizer.h;wx/valgen.h"
         derived_class_name="GenerateDlg"
         derived_file="generatedlg"
         use_derived_class="0"
@@ -3438,40 +3440,9 @@
             class="wxStaticText"
             label="Choose the code you want to generate:" />
           <node
-            class="wxBoxSizer"
-            orientation="wxVERTICAL">
-            <node
-              class="wxCheckBox"
-              label="C++ &amp;Base"
-              var_name="m_checkBaseCode"
-              get_function="is_gen_base"
-              validator_variable="m_gen_base_code" />
-            <node
-              class="wxCheckBox"
-              label="C++ &amp;Derived"
-              var_name="m_checkDerived"
-              get_function="is_gen_inherited"
-              validator_variable="m_gen_inherited_code"
-              tooltip="Generate any derived files that don't currently exist" />
-            <node
-              class="wxCheckBox"
-              label="&amp;Python"
-              var_name="m_checkPython"
-              get_function="is_gen_python"
-              validator_variable="m_gen_python_code" />
-            <node
-              class="wxCheckBox"
-              label="&amp;Ruby"
-              var_name="m_checkRuby"
-              get_function="is_gen_ruby"
-              validator_variable="m_gen_ruby_code" />
-            <node
-              class="wxCheckBox"
-              label="&amp;XRC"
-              var_name="m_checkXRC"
-              get_function="is_gen_xrc"
-              validator_variable="m_gen_xrc_code" />
-          </node>
+            class="wxGridSizer"
+            class_access="protected:"
+            var_name="m_grid_sizer" />
           <node
             class="wxStdDialogButtonSizer"
             flags="wxEXPAND" />

@@ -373,42 +373,45 @@ void Code::Init(Node* node, GenLang language)
     {
         m_indent_size = 2;
         m_language_wxPrefix = "Wx::";
-        m_lang_assignment = " = ";
         m_break_length = Project.as_size_t(prop_ruby_line_length);
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
+    }
+
+    else if (language == GEN_LANG_FORTRAN)
+    {
+        // REVIEW: [Randalphwa - 11-24-2024] wxFortran3 doesn't exist yet, but I'm guessing that
+        // there will be a wx derived type with members accessed using %.
+        m_language_wxPrefix = "wx%";
+        m_break_length = Project.as_size_t(prop_fortran_line_length);
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_HASKELL)
+    {
+        m_language_wxPrefix = "wx";  // wxHaskell doesn't change wxWidgets naming
+        m_break_length = Project.as_size_t(prop_haskell_line_length);
+        m_break_length -= m_indent_size;
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        // Lua simply uses a "wx." prefix before the normal wxWidgets "wx" prefix
+        m_language_wxPrefix = "wx.wx";
+        m_break_length = Project.as_size_t(prop_lua_line_length);
+        m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_PERL)
     {
         m_indent_size = 4;
         m_language_wxPrefix = "Wx::";
-        m_lang_assignment = " = ";
         m_break_length = Project.as_size_t(prop_perl_line_length);
         // Always assume Perl code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        m_language_wxPrefix = "wx.";
-        m_lang_assignment = " = ";
-        m_break_length = 90;
-        // Always assume Lua code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
     else if (language == GEN_LANG_RUST)
     {
         m_language_wxPrefix = "wx.";
-        m_lang_assignment = " = ";
         m_break_length = 100;
         // Always assume Rust code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_HASKELL)
-    {
-        m_language_wxPrefix = "Wx.";
-        m_lang_assignment = " = ";
-        m_break_length = 90;
-        // Always assume Haskell code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
 
@@ -416,7 +419,6 @@ void Code::Init(Node* node, GenLang language)
     {
         FAIL_MSG("Unknown language");
         m_language_wxPrefix = "wx";
-        m_lang_assignment = " = ";
         m_break_length = 90;
         // Always assume code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
@@ -905,6 +907,10 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "$this->";
     }
+    else if (is_lua())
+    {
+        *this += "this:";
+    }
 
     *this += text;
     return *this;
@@ -912,7 +918,7 @@ Code& Code::FormFunction(tt_string_view text)
 
 Code& Code::Class(tt_string_view text)
 {
-    if (is_cpp())
+    if (is_cpp() || is_haskell())
     {
         *this += text;
     }
@@ -932,6 +938,28 @@ Code& Code::Class(tt_string_view text)
         if (text.is_sameprefix("wx"))
         {
             *this << "Wx::" << text.substr(2);
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_lua())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "wx." << text;
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_fortran())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "wx%" << text;
         }
         else
         {
@@ -1474,6 +1502,11 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
             FormFunction("FromDIP(");
             Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
             *this += ')';
+        }
+        else if (is_lua())
+        {
+            CheckLineLength(sizeof("wx.wxSize(999, 999)"));
+            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
         }
     }
     else
@@ -2454,13 +2487,29 @@ void Code::GenFontColourSettings()
         {
             if (bg_clr.starts_with('#'))
             {
-                Object("wxColour").QuotedString(bg_clr) += ')';
+                if (is_lua())
+                {
+                    // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
+                    Class("wxColour(").QuotedString(bg_clr) += ')';
+                }
+                else
+                {
+                    Object("wxColour").QuotedString(bg_clr) += ')';
+                }
             }
             else
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_background_colour);
-                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                if (is_lua())
+                {
+                    // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
+                    Class("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                }
+                else
+                {
+                    Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                }
             }
         }
 

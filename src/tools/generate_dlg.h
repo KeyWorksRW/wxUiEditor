@@ -9,11 +9,15 @@
 
 #pragma once
 
-#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/sizer.h>
 #include <wx/stattext.h>
+
+#include <wx/checkbox.h>
+#include <wx/sizer.h>
+#include <wx/valgen.h>
 
 class GenerateDlg : public wxDialog
 {
@@ -29,11 +33,40 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+public:
     bool is_gen_base() const { return m_gen_base_code; }
     bool is_gen_inherited() const { return m_gen_inherited_code; }
+    bool is_gen_fortran() const { return m_gen_fortran_code; }
+    bool is_gen_haskell() const { return m_gen_haskell_code; }
+    bool is_gen_lua() const { return m_gen_lua_code; }
+    bool is_gen_perl() const { return m_gen_perl_code; }
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
+    bool is_gen_rust() const { return m_gen_rust_code; }
     bool is_gen_xrc() const { return m_gen_xrc_code; }
+
+private:
+    wxCheckBox* m_checkBaseCode { nullptr };
+    wxCheckBox* m_checkDerived { nullptr };
+    wxCheckBox* m_checkFortran { nullptr };
+    wxCheckBox* m_checkHaskell { nullptr };
+    wxCheckBox* m_checkLua { nullptr };
+    wxCheckBox* m_checkPerl { nullptr };
+    wxCheckBox* m_checkPython { nullptr };
+    wxCheckBox* m_checkRuby { nullptr };
+    wxCheckBox* m_checkRust { nullptr };
+    wxCheckBox* m_checkXRC { nullptr };
+
+    bool m_gen_base_code { false };
+    bool m_gen_inherited_code { false };
+    bool m_gen_fortran_code { false };
+    bool m_gen_haskell_code { false };
+    bool m_gen_lua_code { false };
+    bool m_gen_perl_code { false };
+    bool m_gen_python_code { false };
+    bool m_gen_ruby_code { false };
+    bool m_gen_rust_code { false };
+    bool m_gen_xrc_code { false };
 
 protected:
 
@@ -41,21 +74,9 @@ protected:
 
     void OnInit(wxInitDialogEvent& event);
 
-    // Validator variables
-
-    bool m_gen_base_code { false };
-    bool m_gen_inherited_code { false };
-    bool m_gen_python_code { false };
-    bool m_gen_ruby_code { false };
-    bool m_gen_xrc_code { false };
-
     // Class member variables
 
-    wxCheckBox* m_checkBaseCode;
-    wxCheckBox* m_checkDerived;
-    wxCheckBox* m_checkPython;
-    wxCheckBox* m_checkRuby;
-    wxCheckBox* m_checkXRC;
+    wxGridSizer* m_grid_sizer;
     wxStaticText* m_staticText;
 };
 

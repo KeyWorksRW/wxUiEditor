@@ -29,6 +29,15 @@ R"===(
 // ***********************************************
 )===";
 
+inline constexpr const auto end_fortran_block =
+R"===(! ************* End of generated code ***********
+! DO NOT EDIT THIS COMMENT BLOCK!
+!
+! Code below this comment block will be preserved
+! if the code for this class is re-generated.
+! ***********************************************
+)===";
+
 inline constexpr const auto end_python_perl_ruby_block =
 R"===(# ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
@@ -38,7 +47,19 @@ R"===(# ************* End of generated code ***********
 # ***********************************************
 )===";
 
+inline constexpr const auto end_lua_haskell_block =
+R"===(-- ************* End of generated code ***********
+-- DO NOT EDIT THIS COMMENT BLOCK!
+--
+-- Code below this comment block will be preserved
+-- if the code for this class is re-generated.
+-- ***********************************************
+)===";
+
+const char* cpp_rust_end_cmt_line = "// ************* End of generated code";
+const char* fortran_end_cmt_line = "! ************* End of generated code";
 const char* python_perl_ruby_end_cmt_line = "# ************* End of generated code";
+const char* lua_haskell_cmt_line = "-- ************* End of generated code";
 
 // clang-format on
 
@@ -81,6 +102,14 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
             m_buffer += txt_EndCppBlock;
         }
     }
+    else if (language == GEN_LANG_FORTRAN)
+    {
+        m_buffer += end_fortran_block;
+    }
+    else if (language == GEN_LANG_LUA || language == GEN_LANG_HASKELL)
+    {
+        m_buffer += end_lua_haskell_block;
+    }
     else if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY || language == GEN_LANG_PERL)
     {
         m_buffer += end_python_perl_ruby_block;
@@ -117,8 +146,11 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
 
         std::string_view look_for = {};
         if (language == GEN_LANG_CPLUSPLUS)
-            look_for = "// ************* End of generated code";
-        // Ruby uses the same comment blocks as Python
+            look_for = cpp_rust_end_cmt_line;
+        else if (language == GEN_LANG_FORTRAN)
+            look_for = fortran_end_cmt_line;
+        else if (language == GEN_LANG_LUA || language == GEN_LANG_HASKELL)
+            look_for = lua_haskell_cmt_line;
         else if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY || language == GEN_LANG_PERL)
             look_for = python_perl_ruby_end_cmt_line;
 

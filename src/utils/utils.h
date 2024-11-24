@@ -77,7 +77,7 @@ tt_string ConvertToUpperSnakeCase(tt_string_view str);
 
 // Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
 // used.
-bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language = GEN_LANG_NONE);
+bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language = GEN_LANG_NONE);
 
 // Convert the GEN_LANG enum to a string
 std::string_view ConvertFromGenLang(GenLang language);

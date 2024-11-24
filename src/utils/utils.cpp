@@ -566,11 +566,13 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
     return var_name;
 }
 
-bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, int m_language)
+bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language)
 {
     if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either) == true)
         return false;
     else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
+        return false;
+    else if (m_language == GEN_LANG_LUA)
         return false;
     else
         return true;

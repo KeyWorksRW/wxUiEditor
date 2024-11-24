@@ -139,9 +139,8 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
     {
         m_source->writeLine(code);
         m_source->writeLine();
-        m_source->Indent();
-        m_source->Indent();
 
+#if 0
         id_value = wxID_HIGHEST;
         for (auto& iter: m_set_enum_ids)
         {
@@ -153,6 +152,7 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
             // If at least one id was set, add a blank line
             m_source->writeLine();
         }
+#endif
     }
 
     code.clear();
@@ -200,23 +200,18 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
     thrd_get_events.join();
     if (m_events.size())
     {
+        m_source->Indent();
         m_source->writeLine();
         m_source->writeLine("# Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
-
-        m_source->writeLine("\tend", indent::none);
-        m_source->SetLastLineBlank();
-
-        m_source->ResetIndent();
         m_source->writeLine();
-        m_source->Indent();
-        // GenLuaEventHandlers(events);
-    }
-    else
-    {
         m_source->ResetIndent();
-        m_source->writeLine("\t}", indent::none);
     }
+
+    m_source->Indent();
+    m_source->writeLine();
+    m_source->writeLine("return this");
+    m_source->ResetIndent();
 
     if (m_form_node->isGen(gen_wxWizard))
     {
@@ -226,9 +221,8 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
         m_source->writeLine(code);
     }
 
-    // Make certain indentation is reset after all construction code is written
-    m_source->ResetIndent();
-    m_source->writeLine("}\n\n", indent::none);
+    // REVIEW: [Randalphwa - 11-23-2024] This assumes the form is a function
+    m_source->writeLine("end");
 
     m_header->ResetIndent();
 

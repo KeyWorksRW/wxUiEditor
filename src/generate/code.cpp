@@ -389,7 +389,8 @@ void Code::Init(Node* node, GenLang language)
     }
     else if (language == GEN_LANG_LUA)
     {
-        m_language_wxPrefix = "wx.";
+        // Lua simply uses a "wx." prefix before the normal wxWidgets "wx" prefix
+        m_language_wxPrefix = "wx.wx";
         m_lang_assignment = " = ";
         m_break_length = 90;
         // Always assume Lua code has one tab at the beginning of the line
@@ -904,6 +905,10 @@ Code& Code::FormFunction(tt_string_view text)
     else if (is_perl())
     {
         *this += "$this->";
+    }
+    else if (is_lua())
+    {
+        *this += "this:";
     }
 
     *this += text;
@@ -1474,6 +1479,11 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
             FormFunction("FromDIP(");
             Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
             *this += ')';
+        }
+        else if (is_lua())
+        {
+            CheckLineLength(sizeof("wx.wxSize(999, 999)"));
+            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
         }
     }
     else

@@ -92,13 +92,13 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_lua())
     {
+        code.Eol().NodeName().Str(" = {}\n");
         code.Eol().Str("function ").NodeName().Str(":create(parent, id, title, pos, size, style)");
         code.Indent();
-        code.Eol().Str("self.this = wx.wxFrame(wx.NULL").Comma().as_string(prop_id).Comma().QuotedString(prop_title);
+        code.Eol().Str("this = wx.wxFrame(wx.NULL").Comma().as_string(prop_id).Comma().QuotedString(prop_title);
         code.Indent(5);
         code.PosSizeFlags();
         code.Unindent(5);
-        code.Eol().Str("local this = self.this");
     }
     else
     {

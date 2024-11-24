@@ -380,9 +380,9 @@ void Code::Init(Node* node, GenLang language)
 
     else if (language == GEN_LANG_FORTRAN)
     {
-        // REVIEW: [Randalphwa - 11-24-2024] Since wxFortran3 doesn't exist yet, there isn't any way
-        // to know what the prefix will be, so just use a default value for now.
-        m_language_wxPrefix = "wx";
+        // REVIEW: [Randalphwa - 11-24-2024] wxFortran3 doesn't exist yet, but I'm guessing that
+        // there will be a wx derived type with members accessed using %.
+        m_language_wxPrefix = "wx%";
         m_break_length = Project.as_size_t(prop_fortran_line_length);
         m_break_length -= m_indent_size;
     }
@@ -918,7 +918,7 @@ Code& Code::FormFunction(tt_string_view text)
 
 Code& Code::Class(tt_string_view text)
 {
-    if (is_cpp())
+    if (is_cpp() || is_haskell())
     {
         *this += text;
     }
@@ -938,6 +938,28 @@ Code& Code::Class(tt_string_view text)
         if (text.is_sameprefix("wx"))
         {
             *this << "Wx::" << text.substr(2);
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_lua())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "wx." << text;
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_fortran())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "wx%" << text;
         }
         else
         {
@@ -2465,13 +2487,29 @@ void Code::GenFontColourSettings()
         {
             if (bg_clr.starts_with('#'))
             {
-                Object("wxColour").QuotedString(bg_clr) += ')';
+                if (is_lua())
+                {
+                    // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
+                    Class("wxColour(").QuotedString(bg_clr) += ')';
+                }
+                else
+                {
+                    Object("wxColour").QuotedString(bg_clr) += ')';
+                }
             }
             else
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_background_colour);
-                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                if (is_lua())
+                {
+                    // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
+                    Class("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                }
+                else
+                {
+                    Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                }
             }
         }
 

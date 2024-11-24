@@ -88,7 +88,6 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
         WritePropSourceCode(Project.getProjectNode(), prop_lua_project_preamble);
     }
 
-    m_source->writeLine("package.cpath = package.cpath..\";./?.dll;./?.dll;so");
     m_source->writeLine("local wx = require 'wx'");
 
     // Unlike other languages such as Python or Ruby, *all* wxWidgets classes are in the wx module.

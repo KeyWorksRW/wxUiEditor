@@ -4,6 +4,7 @@
   <node
     class="Project"
     art_directory="../art_src"
+    generate_languages="C++"
     cpp_line_length="125"
     generate_cmake="1">
     <node
@@ -3964,8 +3965,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;cpp_logo.svg;[24,24]"
+                class_access="protected:"
                 label="C++"
-                var_name="cpp_page"
+                var_name="m_cpp_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -3982,10 +3984,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseCppFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_cpp_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer7"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_cpp_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn2"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                   </node>
                   <node
                     class="StaticRadioBtnBoxSizer"
@@ -4040,8 +4060,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;python-logo-only.svg;[24,24]"
+                class_access="protected:"
                 label="Python"
-                var_name="python_page"
+                var_name="m_python_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4058,10 +4079,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUsePythonFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_py_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer8"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_py_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn3"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn4"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                   </node>
                   <node
                     class="StaticRadioBtnBoxSizer"
@@ -4089,8 +4128,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;ruby_logo.svg;[24,24]"
+                class_access="protected:"
                 label="Ruby"
-                var_name="ruby_page"
+                var_name="m_ruby_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4107,10 +4147,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseRubyFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_ruby_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer14"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_ruby_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn15"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn16"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                     <node
                       class="StaticRadioBtnBoxSizer"
                       checked="0"
@@ -4154,8 +4212,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;fortran_logo.svg;[24,24]"
+                class_access="protected:"
                 label="Fortran"
-                var_name="fortran_page"
+                var_name="m_fortran_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4172,10 +4231,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseFortranFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_fortran_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer9"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_fortran_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn5"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn6"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                     <node
                       class="StaticRadioBtnBoxSizer"
                       checked="0"
@@ -4219,8 +4296,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;haskell-logo.svg;[24,24]"
+                class_access="protected:"
                 label="Haskell"
-                var_name="haskell_page"
+                var_name="m_haskell_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4237,10 +4315,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseHaskellFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_haskell_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer10"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_haskell_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn7"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn8"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                     <node
                       class="StaticRadioBtnBoxSizer"
                       checked="0"
@@ -4284,8 +4380,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;lua-logo.svg;[24,24]"
+                class_access="protected:"
                 label="Lua"
-                var_name="lua_page"
+                var_name="m_lua_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4302,10 +4399,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseRubyFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_lua_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer11"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_lua_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn9"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn10"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                     <node
                       class="StaticRadioBtnBoxSizer"
                       checked="0"
@@ -4349,8 +4464,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;perl-logo.svg;[24,24]"
+                class_access="protected:"
                 label="Perl"
-                var_name="perl_page"
+                var_name="m_perl_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4367,10 +4483,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseRubyFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_perl_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer12"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_perl_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn11"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn12"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                     <node
                       class="StaticRadioBtnBoxSizer"
                       checked="0"
@@ -4414,8 +4548,9 @@
               <node
                 class="BookPage"
                 bitmap="SVG;rust_logo.svg;[24,24]"
+                class_access="protected:"
                 label="Rust"
-                var_name="rust_page"
+                var_name="m_rust_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4432,10 +4567,28 @@
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseRubyFunction">
                     <node
-                      class="wxTextCtrl"
-                      var_name="m_rust_text_function"
-                      flags="wxEXPAND"
-                      wxEVT_TEXT="OnChange" />
+                      class="wxBoxSizer"
+                      var_name="box_sizer13"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_rust_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn13"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn14"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
                     <node
                       class="StaticRadioBtnBoxSizer"
                       checked="0"

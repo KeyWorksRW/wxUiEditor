@@ -86,7 +86,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         event_code.clear();
     }
 
-    if (event_code.empty())
+    if (event_code.empty() || event_code == "none")
         return;
 
     // This is what we normally use if an ID is needed. However, a C++ lambda needs to put the

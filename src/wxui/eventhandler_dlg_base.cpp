@@ -8,11 +8,8 @@
 // clang-format off
 
 #include <wx/button.h>
-#include <wx/colour.h>
-#include <wx/panel.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
-#include <wx/settings.h>
 
 #include "ui_images.h"
 
@@ -47,24 +44,34 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
 
-    auto* cpp_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(cpp_page, "C++", false, 0);
-    cpp_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_cpp_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_cpp_bookpage, "C++", false, 0);
+    m_cpp_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_cpp_radio_use_function = new wxRadioButton(cpp_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_cpp_radio_use_function = new wxRadioButton(m_cpp_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_cpp_function_box = new wxStaticBoxSizer(new wxStaticBox(cpp_page, wxID_ANY, m_cpp_radio_use_function), wxVERTICAL);
+    m_cpp_function_box = new wxStaticBoxSizer(new wxStaticBox(m_cpp_bookpage, wxID_ANY, m_cpp_radio_use_function), wxVERTICAL);
+
+    auto* box_sizer7 = new wxBoxSizer(wxHORIZONTAL);
 
     m_cpp_text_function = new wxTextCtrl(m_cpp_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_cpp_function_box->Add(m_cpp_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer7->Add(m_cpp_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn = new wxButton(m_cpp_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer7->Add(btn, wxSizerFlags().Border(wxALL));
+
+    auto* btn2 = new wxButton(m_cpp_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer7->Add(btn2, wxSizerFlags().Border(wxALL));
+
+    m_cpp_function_box->Add(box_sizer7, wxSizerFlags().Expand().Border(wxALL));
 
     page_sizer->Add(m_cpp_function_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_cpp_radio_use_lambda = new wxRadioButton(cpp_page, wxID_ANY, "Use lambda", wxDefaultPosition, wxDefaultSize,
+    m_cpp_radio_use_lambda = new wxRadioButton(m_cpp_bookpage, wxID_ANY, "Use lambda", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_cpp_lambda_box = new wxStaticBoxSizer(new wxStaticBox(cpp_page, wxID_ANY, m_cpp_radio_use_lambda), wxVERTICAL);
+    m_cpp_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_cpp_bookpage, wxID_ANY, m_cpp_radio_use_lambda), wxVERTICAL);
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -106,25 +113,37 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_cpp_lambda_box->Add(m_cpp_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     page_sizer->Add(m_cpp_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-    cpp_page->SetSizerAndFit(page_sizer);
+    m_cpp_bookpage->SetSizerAndFit(page_sizer);
 
-    auto* python_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(python_page, "Python", false, 1);
-    python_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_python_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_python_bookpage, "Python", false, 1);
+    m_python_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    m_py_radio_use_function = new wxRadioButton(python_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_py_radio_use_function = new wxRadioButton(m_python_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_py_function_box = new wxStaticBoxSizer(new wxStaticBox(python_page, wxID_ANY, m_py_radio_use_function), wxVERTICAL);
+    m_py_function_box = new wxStaticBoxSizer(new wxStaticBox(m_python_bookpage, wxID_ANY, m_py_radio_use_function),
+        wxVERTICAL);
+
+    auto* box_sizer8 = new wxBoxSizer(wxHORIZONTAL);
 
     m_py_text_function = new wxTextCtrl(m_py_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_py_function_box->Add(m_py_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer8->Add(m_py_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn3 = new wxButton(m_py_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer8->Add(btn3, wxSizerFlags().Border(wxALL));
+
+    auto* btn4 = new wxButton(m_py_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer8->Add(btn4, wxSizerFlags().Border(wxALL));
+
+    m_py_function_box->Add(box_sizer8, wxSizerFlags().Expand().Border(wxALL));
 
     page_sizer_2->Add(m_py_function_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_py_radio_use_lambda = new wxRadioButton(python_page, wxID_ANY, "Lambda", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_py_lambda_box = new wxStaticBoxSizer(new wxStaticBox(python_page, wxID_ANY, m_py_radio_use_lambda), wxVERTICAL);
+    m_py_radio_use_lambda = new wxRadioButton(m_python_bookpage, wxID_ANY, "Lambda", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_py_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_python_bookpage, wxID_ANY, m_py_radio_use_lambda), wxVERTICAL);
 
     auto* staticText_2 = new wxStaticText(m_py_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
     m_py_lambda_box->Add(staticText_2, wxSizerFlags().Border(wxALL));
@@ -133,20 +152,31 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_py_lambda_box->Add(m_py_text_lambda, wxSizerFlags().Expand().Border(wxALL));
 
     page_sizer_2->Add(m_py_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-    python_page->SetSizerAndFit(page_sizer_2);
+    m_python_bookpage->SetSizerAndFit(page_sizer_2);
 
-    auto* ruby_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(ruby_page, "Ruby", false, 2);
-    ruby_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_ruby_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_ruby_bookpage, "Ruby", false, 2);
+    m_ruby_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer_3 = new wxBoxSizer(wxVERTICAL);
 
-    m_ruby_radio_use_function = new wxRadioButton(ruby_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_ruby_radio_use_function = new wxRadioButton(m_ruby_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_ruby_function_box = new wxStaticBoxSizer(new wxStaticBox(ruby_page, wxID_ANY, m_ruby_radio_use_function), wxVERTICAL);
+    m_ruby_function_box = new wxStaticBoxSizer(new wxStaticBox(m_ruby_bookpage, wxID_ANY, m_ruby_radio_use_function),
+        wxVERTICAL);
+
+    auto* box_sizer14 = new wxBoxSizer(wxHORIZONTAL);
 
     m_ruby_text_function = new wxTextCtrl(m_ruby_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_ruby_function_box->Add(m_ruby_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer14->Add(m_ruby_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn15 = new wxButton(m_ruby_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer14->Add(btn15, wxSizerFlags().Border(wxALL));
+
+    auto* btn16 = new wxButton(m_ruby_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer14->Add(btn16, wxSizerFlags().Border(wxALL));
+
+    m_ruby_function_box->Add(box_sizer14, wxSizerFlags().Expand().Border(wxALL));
 
     m_ruby_radio_use_lambda = new wxRadioButton(m_ruby_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
@@ -188,21 +218,31 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_ruby_function_box->Add(m_ruby_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer_3->Add(m_ruby_function_box, wxSizerFlags().Expand().Border(wxALL));
-    ruby_page->SetSizerAndFit(page_sizer_3);
+    m_ruby_bookpage->SetSizerAndFit(page_sizer_3);
 
-    auto* fortran_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(fortran_page, "Fortran", false, 3);
-    fortran_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_fortran_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_fortran_bookpage, "Fortran", false, 3);
+    m_fortran_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer6 = new wxBoxSizer(wxVERTICAL);
 
-    m_fortran_radio_use_function = new wxRadioButton(fortran_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_fortran_function_box = new wxStaticBoxSizer(new wxStaticBox(fortran_page, wxID_ANY, m_fortran_radio_use_function),
-        wxVERTICAL);
+    m_fortran_radio_use_function = new wxRadioButton(m_fortran_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
+        wxDefaultSize, wxRB_SINGLE);
+    m_fortran_function_box = new wxStaticBoxSizer(new wxStaticBox(m_fortran_bookpage, wxID_ANY, m_fortran_radio_use_function
+        ), wxVERTICAL);
+
+    auto* box_sizer9 = new wxBoxSizer(wxHORIZONTAL);
 
     m_fortran_text_function = new wxTextCtrl(m_fortran_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_fortran_function_box->Add(m_fortran_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer9->Add(m_fortran_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn5 = new wxButton(m_fortran_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer9->Add(btn5, wxSizerFlags().Border(wxALL));
+
+    auto* btn6 = new wxButton(m_fortran_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer9->Add(btn6, wxSizerFlags().Border(wxALL));
+
+    m_fortran_function_box->Add(box_sizer9, wxSizerFlags().Expand().Border(wxALL));
 
     m_fortran_radio_use_lambda = new wxRadioButton(m_fortran_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
@@ -244,21 +284,31 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_fortran_function_box->Add(m_fortran_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer6->Add(m_fortran_function_box, wxSizerFlags().Expand().Border(wxALL));
-    fortran_page->SetSizerAndFit(page_sizer6);
+    m_fortran_bookpage->SetSizerAndFit(page_sizer6);
 
-    auto* haskell_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(haskell_page, "Haskell", false, 4);
-    haskell_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_haskell_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_haskell_bookpage, "Haskell", false, 4);
+    m_haskell_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer2 = new wxBoxSizer(wxVERTICAL);
 
-    m_haskell_radio_use_function = new wxRadioButton(haskell_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_haskell_function_box = new wxStaticBoxSizer(new wxStaticBox(haskell_page, wxID_ANY, m_haskell_radio_use_function),
-        wxVERTICAL);
+    m_haskell_radio_use_function = new wxRadioButton(m_haskell_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
+        wxDefaultSize, wxRB_SINGLE);
+    m_haskell_function_box = new wxStaticBoxSizer(new wxStaticBox(m_haskell_bookpage, wxID_ANY, m_haskell_radio_use_function
+        ), wxVERTICAL);
+
+    auto* box_sizer10 = new wxBoxSizer(wxHORIZONTAL);
 
     m_haskell_text_function = new wxTextCtrl(m_haskell_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_haskell_function_box->Add(m_haskell_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer10->Add(m_haskell_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn7 = new wxButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer10->Add(btn7, wxSizerFlags().Border(wxALL));
+
+    auto* btn8 = new wxButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer10->Add(btn8, wxSizerFlags().Border(wxALL));
+
+    m_haskell_function_box->Add(box_sizer10, wxSizerFlags().Expand().Border(wxALL));
 
     m_haskell_radio_use_lambda = new wxRadioButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
@@ -300,20 +350,30 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_haskell_function_box->Add(m_ruby_lambda_box2, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer2->Add(m_haskell_function_box, wxSizerFlags().Expand().Border(wxALL));
-    haskell_page->SetSizerAndFit(page_sizer2);
+    m_haskell_bookpage->SetSizerAndFit(page_sizer2);
 
-    auto* lua_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(lua_page, "Lua", false, 5);
-    lua_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_lua_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_lua_bookpage, "Lua", false, 5);
+    m_lua_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer3 = new wxBoxSizer(wxVERTICAL);
 
-    m_lua_radio_use_function = new wxRadioButton(lua_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_lua_radio_use_function = new wxRadioButton(m_lua_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_lua_function_box = new wxStaticBoxSizer(new wxStaticBox(lua_page, wxID_ANY, m_lua_radio_use_function), wxVERTICAL);
+    m_lua_function_box = new wxStaticBoxSizer(new wxStaticBox(m_lua_bookpage, wxID_ANY, m_lua_radio_use_function), wxVERTICAL);
+
+    auto* box_sizer11 = new wxBoxSizer(wxHORIZONTAL);
 
     m_lua_text_function = new wxTextCtrl(m_lua_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_lua_function_box->Add(m_lua_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer11->Add(m_lua_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn9 = new wxButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer11->Add(btn9, wxSizerFlags().Border(wxALL));
+
+    auto* btn10 = new wxButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer11->Add(btn10, wxSizerFlags().Border(wxALL));
+
+    m_lua_function_box->Add(box_sizer11, wxSizerFlags().Expand().Border(wxALL));
 
     m_lua_radio_use_anon_func = new wxRadioButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
@@ -355,20 +415,31 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_lua_function_box->Add(m_lua_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer3->Add(m_lua_function_box, wxSizerFlags().Expand().Border(wxALL));
-    lua_page->SetSizerAndFit(page_sizer3);
+    m_lua_bookpage->SetSizerAndFit(page_sizer3);
 
-    auto* perl_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(perl_page, "Perl", false, 6);
-    perl_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_perl_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_perl_bookpage, "Perl", false, 6);
+    m_perl_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer4 = new wxBoxSizer(wxVERTICAL);
 
-    m_perl_radio_use_function = new wxRadioButton(perl_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_perl_radio_use_function = new wxRadioButton(m_perl_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_perl_function_box = new wxStaticBoxSizer(new wxStaticBox(perl_page, wxID_ANY, m_perl_radio_use_function), wxVERTICAL);
+    m_perl_function_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_bookpage, wxID_ANY, m_perl_radio_use_function),
+        wxVERTICAL);
+
+    auto* box_sizer12 = new wxBoxSizer(wxHORIZONTAL);
 
     m_perl_text_function = new wxTextCtrl(m_perl_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_perl_function_box->Add(m_perl_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer12->Add(m_perl_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn11 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer12->Add(btn11, wxSizerFlags().Border(wxALL));
+
+    auto* btn12 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer12->Add(btn12, wxSizerFlags().Border(wxALL));
+
+    m_perl_function_box->Add(box_sizer12, wxSizerFlags().Expand().Border(wxALL));
 
     m_perl_radio_use_anon_func = new wxRadioButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
@@ -410,20 +481,31 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_perl_function_box->Add(m_perl_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer4->Add(m_perl_function_box, wxSizerFlags().Expand().Border(wxALL));
-    perl_page->SetSizerAndFit(page_sizer4);
+    m_perl_bookpage->SetSizerAndFit(page_sizer4);
 
-    auto* rust_page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(rust_page, "Rust", false, 7);
-    rust_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_rust_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_rust_bookpage, "Rust", false, 7);
+    m_rust_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer5 = new wxBoxSizer(wxVERTICAL);
 
-    m_php_radio_use_function = new wxRadioButton(rust_page, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_php_radio_use_function = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_php_function_box = new wxStaticBoxSizer(new wxStaticBox(rust_page, wxID_ANY, m_php_radio_use_function), wxVERTICAL);
+    m_php_function_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_bookpage, wxID_ANY, m_php_radio_use_function),
+        wxVERTICAL);
+
+    auto* box_sizer13 = new wxBoxSizer(wxHORIZONTAL);
 
     m_rust_text_function = new wxTextCtrl(m_php_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_php_function_box->Add(m_rust_text_function, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer13->Add(m_rust_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn13 = new wxButton(m_php_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer13->Add(btn13, wxSizerFlags().Border(wxALL));
+
+    auto* btn14 = new wxButton(m_php_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer13->Add(btn14, wxSizerFlags().Border(wxALL));
+
+    m_php_function_box->Add(box_sizer13, wxSizerFlags().Expand().Border(wxALL));
 
     m_php_radio_use_anon_func = new wxRadioButton(m_php_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
@@ -465,7 +547,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_php_function_box->Add(m_php_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer5->Add(m_php_function_box, wxSizerFlags().Expand().Border(wxALL));
-    rust_page->SetSizerAndFit(page_sizer5);
+    m_rust_bookpage->SetSizerAndFit(page_sizer5);
 
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
@@ -498,6 +580,22 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     // Event handlers
     Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
+    btn->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn11->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn13->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn15->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn3->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn5->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn7->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn9->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn10->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn12->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn14->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn16->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn2->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn4->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn6->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn8->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     m_check_capture_this->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnChange, this);
     m_check_include_event->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnChange, this);
     Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);

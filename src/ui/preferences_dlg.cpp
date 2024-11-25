@@ -795,7 +795,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         if (UserPrefs.get_CppColour() != m_colour_cpp->GetColour())
         {
             UserPrefs.set_CppColour(m_colour_cpp->GetColour());
-            panel->SetColor(wxSTC_C_WORD2, m_colour_cpp->GetColour());
+            panel->SetColor(wxSTC_C_WORD, m_colour_cpp->GetColour());
         }
 
         if (UserPrefs.get_CppCommentColour() != m_colour_cpp_comment->GetColour())
@@ -807,7 +807,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         if (UserPrefs.get_CppKeywordColour() != m_colour_cpp_keyword->GetColour())
         {
             UserPrefs.set_CppKeywordColour(m_colour_cpp_keyword->GetColour());
-            panel->SetColor(wxSTC_C_WORD, m_colour_cpp_keyword->GetColour());
+            panel->SetColor(wxSTC_C_WORD2, m_colour_cpp_keyword->GetColour());
         }
 
         if (UserPrefs.get_CppNumberColour() != m_colour_cpp_number->GetColour())
@@ -828,19 +828,19 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         if (UserPrefs.get_PythonColour() != m_colour_python->GetColour())
         {
             UserPrefs.set_PythonColour(m_colour_python->GetColour());
-            panel->SetColor(wxSTC_P_WORD2, m_colour_python->GetColour());
+            panel->SetColor(wxSTC_P_WORD, m_colour_python->GetColour());
+        }
+
+        if (UserPrefs.get_PythonKeywordColour() != m_colour_python_keyword->GetColour())
+        {
+            UserPrefs.set_PythonKeywordColour(m_colour_python_keyword->GetColour());
+            panel->SetColor(wxSTC_P_WORD2, m_colour_python_keyword->GetColour());
         }
 
         if (UserPrefs.get_PythonCommentColour() != m_colour_python_comment->GetColour())
         {
             UserPrefs.set_PythonCommentColour(m_colour_python_comment->GetColour());
             panel->SetColor(wxSTC_P_COMMENTLINE, m_colour_python_comment->GetColour());
-        }
-
-        if (UserPrefs.get_PythonKeywordColour() != m_colour_python_keyword->GetColour())
-        {
-            UserPrefs.set_PythonKeywordColour(m_colour_python_keyword->GetColour());
-            panel->SetColor(wxSTC_P_WORD, m_colour_python_keyword->GetColour());
         }
 
         if (UserPrefs.get_PythonNumberColour() != m_colour_python_number->GetColour())

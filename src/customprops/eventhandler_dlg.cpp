@@ -135,61 +135,78 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
         // On Windows, this saves converting the UTF16 characters to ANSI.
         m_cpp_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENT, UserPrefs.get_CppCommentColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINE, UserPrefs.get_CppCommentColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTDOC, UserPrefs.get_CppCommentColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, UserPrefs.get_CppCommentColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_NUMBER, UserPrefs.get_CppNumberColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_STRING, UserPrefs.get_CppStringColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_STRINGEOL, UserPrefs.get_CppStringColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD, UserPrefs.get_CppKeywordColour());
+        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
     }
     if (m_is_ruby_enabled)
     {
         m_ruby_stc_lambda->SetLexer(wxSTC_LEX_RUBY);
         m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_ruby_keywords);
 
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, "#FF00FF");
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, wxColour(0, 128, 0));
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, *wxRED);
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, UserPrefs.get_RubyCommentColour());
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, UserPrefs.get_RubyNumberColour());
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, UserPrefs.get_RubyStringColour());
+        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
     }
     if (m_is_fortran_enabled)
     {
-        m_fortran_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
+        m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
         m_fortran_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_fortran_keywords);
 
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_FortranStringColour());
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_FortranCommentColour());
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_FortranKeywordColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_COMMENT, UserPrefs.get_FortranCommentColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_NUMBER, UserPrefs.get_FortranNumberColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_STRING1, UserPrefs.get_FortranStringColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_WORD, UserPrefs.get_FortranKeywordColour());
+        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_WORD2, UserPrefs.get_FortranColour());
     }
     if (m_is_haskell_enabled)
     {
         m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
         m_haskell_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
 
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_PythonStringColour());
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_PythonCommentColour());
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_PythonKeywordColour());
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_HaskellCommentColour());
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_NUMBER, UserPrefs.get_HaskellNumberColour());
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_HaskellStringColour());
+        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_HaskellKeywordColour());
     }
     if (m_is_lua_enabled)
     {
         m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
         m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
 
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_PythonStringColour());
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_PythonCommentColour());
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_PythonKeywordColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_LuaCommentColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_NUMBER, UserPrefs.get_LuaNumberColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_LuaStringColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_LuaKeywordColour());
+        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_LuaColour());
     }
     if (m_is_perl_enabled)
     {
         m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
         m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
 
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PythonStringColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PythonCommentColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PythonKeywordColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PerlCommentColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_NUMBER, UserPrefs.get_PerlNumberColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PerlStringColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PerlKeywordColour());
     }
     if (m_is_rust_enabled)
     {
-        m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
         m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
 
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_HPHP_HSTRING, UserPrefs.get_PythonStringColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_HPHP_COMMENT, UserPrefs.get_PythonCommentColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_HPHP_WORD, UserPrefs.get_PythonKeywordColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.get_RustCommentColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.get_RustNumberColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.get_RustStringColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.get_RustKeywordColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_RustColour());
     }
 
     auto form = event->getNode()->getForm();
@@ -208,7 +225,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             if (keywords.size() && keywords.back() == ' ')
                 keywords.pop_back();
             m_cpp_stc_lambda->SetKeyWords(1, keywords);
-            m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
         }
 
         // Python lambdas are an anonymous function expressed as a single statement.
@@ -266,19 +282,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
             m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
         }
-    }
-    if (m_is_cpp_enabled)
-    {
-        m_cpp_stc_lambda->StyleSetBold(wxSTC_C_WORD, true);
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
     }
 
     if (m_code_preference == GEN_LANG_CPLUSPLUS)

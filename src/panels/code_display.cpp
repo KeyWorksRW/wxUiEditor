@@ -173,11 +173,11 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         {
             m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
         }
-        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.get_PythonColour());
-        m_scintilla->StyleSetForeground(wxSTC_P_WORD, UserPrefs.get_PythonKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, UserPrefs.get_PythonCommentColour());
         m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, UserPrefs.get_PythonNumberColour());
         m_scintilla->StyleSetForeground(wxSTC_P_STRING, UserPrefs.get_PythonStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, UserPrefs.get_PythonCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD, UserPrefs.get_PythonColour());
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.get_PythonKeywordColour());
     }
     else if (panel_type == GEN_LANG_RUBY)
     {
@@ -252,43 +252,17 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
             }
         }
 
-        m_scintilla->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_PythonStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_PythonCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_PythonKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_F_COMMENT, UserPrefs.get_FortranCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_F_NUMBER, UserPrefs.get_FortranNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_F_STRING1, UserPrefs.get_FortranStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_F_WORD, UserPrefs.get_FortranColour());
+        m_scintilla->StyleSetForeground(wxSTC_F_WORD2, UserPrefs.get_FortranKeywordColour());
     }
-    else if (panel_type == GEN_LANG_PERL)
+    else if (panel_type == GEN_LANG_HASKELL)
     {
-        m_scintilla->SetLexer(wxSTC_LEX_PERL);
+        m_scintilla->SetLexer(wxSTC_LEX_HASKELL);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
-
-        tt_string wxPerl_keywords;
-        for (auto iter: lst_widgets_keywords)
-        {
-            if (wxPerl_keywords.size())
-                wxPerl_keywords << ' ' << (iter + 2);
-            else
-                wxPerl_keywords = (iter + 2);
-        }
-
-        for (auto iter: NodeCreation.getNodeDeclarationArray())
-        {
-            if (!iter)
-            {
-                // This will happen if there is an enumerated value but no generator for it
-                continue;
-            }
-
-            if (!iter->declName().starts_with("wx"))
-                continue;
-            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
-                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
-                continue;
-            wxPerl_keywords << ' ' << iter->declName().subview(2);
-        }
-
-        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPerl_keywords.c_str());
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
 
         if (UserPrefs.is_DarkMode())
         {
@@ -301,9 +275,10 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
             }
         }
 
-        m_scintilla->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PythonStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PythonCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PythonKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_HaskellCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_NUMBER, UserPrefs.get_HaskellNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_HaskellStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_HaskellColour());
     }
     else if (panel_type == GEN_LANG_LUA)
     {
@@ -350,9 +325,61 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
             }
         }
 
-        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_PythonStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_PythonCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_PythonKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_LuaCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, UserPrefs.get_LuaNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_LuaStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_LuaColour());
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_LuaKeywordColour());
+    }
+    else if (panel_type == GEN_LANG_PERL)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_PERL);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+
+        tt_string wxPerl_keywords;
+        for (auto iter: lst_widgets_keywords)
+        {
+            if (wxPerl_keywords.size())
+                wxPerl_keywords << ' ' << (iter + 2);
+            else
+                wxPerl_keywords = (iter + 2);
+        }
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx"))
+                continue;
+            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                continue;
+            wxPerl_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) wxPerl_keywords.c_str());
+
+        if (UserPrefs.is_DarkMode())
+        {
+            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PerlCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER, UserPrefs.get_PerlNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PerlStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PerlColour());
     }
     else if (panel_type == GEN_LANG_RUST)
     {
@@ -371,30 +398,11 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
             }
         }
 
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_HSTRING, UserPrefs.get_PythonStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_COMMENT, UserPrefs.get_PythonCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_WORD, UserPrefs.get_PythonKeywordColour());
-    }
-    else if (panel_type == GEN_LANG_HASKELL)
-    {
-        m_scintilla->SetLexer(wxSTC_LEX_HASKELL);
-        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
-
-        if (UserPrefs.is_DarkMode())
-        {
-            auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
-            auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
-            {
-                m_scintilla->StyleSetForeground(idx, fg);
-                m_scintilla->StyleSetBackground(idx, bg);
-            }
-        }
-
-        m_scintilla->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_PythonStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_PythonCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_PythonKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.get_RustCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.get_RustNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.get_RustStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.get_RustColour());
+        m_scintilla->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_RustKeywordColour());
     }
 
     else  // C++

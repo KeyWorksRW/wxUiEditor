@@ -106,12 +106,12 @@ public:
     const tt_string& get_RubyVersion() const { return m_ruby_version; }
     void set_RubyVersion(const tt_string& version) { m_ruby_version = version; }
 
-    const wxColour& get_CppColour() const { return m_colour_cpp; }
+    const wxColour& get_CppColour() const { return m_colour_cpp; }  // wxWidgets keywords
     void set_CppColour(const wxColour& colour) { m_colour_cpp = colour; }
+    const wxColour& get_CppKeywordColour() const { return m_colour_cpp_keyword; }  // C++ keywords
+    void set_CppKeywordColour(const wxColour& colour) { m_colour_cpp_keyword = colour; }
     const wxColour& get_CppCommentColour() const { return m_colour_cpp_comment; }
     void set_CppCommentColour(const wxColour& colour) { m_colour_cpp_comment = colour; }
-    const wxColour& get_CppKeywordColour() const { return m_colour_cpp_keyword; }
-    void set_CppKeywordColour(const wxColour& colour) { m_colour_cpp_keyword = colour; }
     const wxColour& get_CppNumberColour() const { return m_colour_cpp_number; }
     void set_CppNumberColour(const wxColour& colour) { m_colour_cpp_number = colour; }
     const wxColour& get_CppStringColour() const { return m_colour_cpp_string; }

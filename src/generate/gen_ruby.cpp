@@ -562,7 +562,6 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_source->writeLine("end\n", indent::none);
 
     m_header->ResetIndent();
 

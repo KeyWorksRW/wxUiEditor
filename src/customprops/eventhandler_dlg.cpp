@@ -622,6 +622,64 @@ void EventHandlerDlg::OnChange(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
+void EventHandlerDlg::OnOK(wxCommandEvent& event)
+{
+    Update_m_value();
+    event.Skip();
+}
+
+void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
+        m_cpp_text_function->SetValue("none");
+    else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
+        m_py_text_function->SetValue("none");
+    else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
+        m_ruby_text_function->SetValue("none");
+
+    else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
+        m_fortran_text_function->SetValue("none");
+    else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
+        m_haskell_text_function->SetValue("none");
+    else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
+        m_lua_text_function->SetValue("none");
+    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
+        m_perl_text_function->SetValue("none");
+    else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
+        m_rust_text_function->SetValue("none");
+}
+
+void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
+{
+    tt_string value;
+    if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+    {
+        value = default_name->second;
+    }
+    else
+    {
+        value = "OnEvent";
+    }
+
+    if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
+        m_cpp_text_function->SetValue(value);
+    else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
+        m_py_text_function->SetValue(ConvertToSnakeCase(value.ToStdString()).make_wxString());
+    else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
+        m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+
+    else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
+        m_fortran_text_function->SetValue(value);
+    else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
+        m_haskell_text_function->SetValue(value);
+    else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
+        m_lua_text_function->SetValue(value);
+    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
+        m_perl_text_function->SetValue(value);
+    else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
+        m_rust_text_function->SetValue(value);
+}
+
 void EventHandlerDlg::FormatBindText()
 {
     auto page = m_notebook->GetSelection();
@@ -768,12 +826,6 @@ void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& 
     {
         CollectMemberVariables(child.get(), variables);
     }
-}
-
-void EventHandlerDlg::OnOK(wxCommandEvent& event)
-{
-    Update_m_value();
-    event.Skip();
 }
 
 // We could just call m_cpp_stc_lambda->GetTextRaw() however this method minimizes both the

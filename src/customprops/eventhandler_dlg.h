@@ -111,6 +111,8 @@ protected:
     void OnUsePythonLambda(wxCommandEvent& event) override;
     void OnUseRubyFunction(wxCommandEvent& event) override;
     void OnUseRubyLambda(wxCommandEvent& WXUNUSED(event)) override;
+    void OnDefault(wxCommandEvent& event) override;
+    void OnNone(wxCommandEvent& event) override;
 
     wxString m_value;
 

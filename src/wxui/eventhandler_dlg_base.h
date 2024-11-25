@@ -10,11 +10,14 @@
 #pragma once
 
 #include <wx/checkbox.h>
+#include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/notebook.h>
+#include <wx/panel.h>
 #include <wx/radiobut.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/stattext.h>
@@ -40,7 +43,9 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnChange(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDefault(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnNone(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
     virtual void OnUseCppFunction(wxCommandEvent& event) { event.Skip(); }
@@ -60,6 +65,14 @@ protected:
     wxCheckBox* m_check_capture_this;
     wxCheckBox* m_check_include_event;
     wxNotebook* m_notebook;
+    wxPanel* m_cpp_bookpage;
+    wxPanel* m_fortran_bookpage;
+    wxPanel* m_haskell_bookpage;
+    wxPanel* m_lua_bookpage;
+    wxPanel* m_perl_bookpage;
+    wxPanel* m_python_bookpage;
+    wxPanel* m_ruby_bookpage;
+    wxPanel* m_rust_bookpage;
     wxRadioButton* m_cpp_radio_use_function;
     wxStaticBoxSizer* m_cpp_function_box;
     wxRadioButton* m_cpp_radio_use_lambda;

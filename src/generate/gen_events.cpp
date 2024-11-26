@@ -180,7 +180,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                     handler.Str(event_name).Str("(:") << event_code << ')';
                 }
             }
-            else if (code.is_ruby() && event->getEventInfo()->get_name() == "wxEVT_SIZE")
+            else if (event->getEventInfo()->get_name() == "wxEVT_SIZE" ||
+                     event->getEventInfo()->get_name() == "wxEVT_GRID_COL_SIZE")
             {
                 // wxRuby3 doesn't allow an id for this event
                 handler.Str(event_name).Str("(:") << event_code << ')';

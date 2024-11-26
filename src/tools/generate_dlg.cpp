@@ -303,23 +303,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             break;
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        auto* config = wxConfig::Get();
-        config->SetPath("/preferences");
-        gen_xrc_code = config->ReadBool("gen_xrc_code", false);
-        gen_base_code = config->ReadBool("gen_base_code", true);
-        gen_derived_code = config->ReadBool("gen_derived_code", false);
-        gen_fortran_code = config->ReadBool("gen_fortran_code", false);
-        gen_haskell_code = config->ReadBool("gen_haskell_code", false);
-        gen_lua_code = config->ReadBool("gen_lua_code", false);
-        gen_perl_code = config->ReadBool("gen_perl_code", false);
-        gen_python_code = config->ReadBool("gen_python_code", false);
-        gen_ruby_code = config->ReadBool("gen_ruby_code", false);
-        gen_rust_code = config->ReadBool("gen_rust_code", false);
-        config->SetPath("/");
-    }
-
     if (languages & GEN_LANG_CPLUSPLUS || gen_base_code || gen_derived_code)
     {
         m_gen_base_code = gen_base_code;

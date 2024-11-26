@@ -84,7 +84,7 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "../wxui/dlg_gen_results.h"
 
-static bool gen_base_code = true;
+static bool gen_base_code = false;
 static bool gen_derived_code = false;
 static bool gen_fortran_code = false;
 static bool gen_haskell_code = false;
@@ -102,13 +102,10 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     ProjectImages.UpdateEmbedNodes();
     bool code_generated = false;
     GenResults results;
+
+    // This looks for
     auto output_type = Project.getOutputType();
 
-    // First check to see if there is only one code output type. If so, then we can skip the
-    // dialog.
-
-    // Always generate XRC files first in case the XRC files need to be added to a gen_Data section
-    // of the other languages.
     if (output_type == OUTPUT_XRC)
     {
         GenerateXrcFiles(results);
@@ -342,6 +339,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     }
     if (languages & GEN_LANG_PERL && gen_perl_code)
     {
+        m_gen_perl_code = gen_perl_code;
         m_checkPerl = new wxCheckBox(this, wxID_ANY, "Perl");
         m_checkPerl->SetValidator(wxGenericValidator(&m_gen_perl_code));
         m_grid_sizer->Add(m_checkPerl, wxSizerFlags().Border(wxALL));
@@ -350,6 +348,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     }
     if (languages & GEN_LANG_PYTHON || gen_python_code)
     {
+        m_gen_python_code = gen_python_code;
         m_checkPython = new wxCheckBox(this, wxID_ANY, "Python");
         m_checkPython->SetValidator(wxGenericValidator(&m_gen_python_code));
         m_grid_sizer->Add(m_checkPython, wxSizerFlags().Border(wxALL));
@@ -358,6 +357,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     }
     if (languages & GEN_LANG_RUBY || gen_ruby_code)
     {
+        m_gen_ruby_code = gen_ruby_code;
         m_checkRuby = new wxCheckBox(this, wxID_ANY, "Ruby");
         m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
         m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
@@ -366,6 +366,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     }
     if (languages & GEN_LANG_RUST || gen_rust_code)
     {
+        m_gen_rust_code = gen_rust_code;
         m_checkRust = new wxCheckBox(this, wxID_ANY, "RUST");
         m_checkRust->SetValidator(wxGenericValidator(&m_gen_rust_code));
         m_grid_sizer->Add(m_checkRust, wxSizerFlags().Border(wxALL));
@@ -374,6 +375,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     }
     if (languages & GEN_LANG_XRC || gen_xrc_code)
     {
+        m_gen_xrc_code = gen_xrc_code;
         m_checkXRC = new wxCheckBox(this, wxID_ANY, "XRC");
         m_checkXRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
         m_grid_sizer->Add(m_checkXRC, wxSizerFlags().Border(wxALL));

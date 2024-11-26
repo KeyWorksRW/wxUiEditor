@@ -25,8 +25,8 @@ using namespace code;
 
 extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 extern const char* python_triple_quote;            // "\"\"\"";
-extern const char* ruby_begin_cmt_block;           // "# begin";
-extern const char* ruby_end_cmt_block;             // "# end";
+extern const char* ruby_begin_cmt_block;           // "=begin";
+extern const char* ruby_end_cmt_block;             // "=end";
 
 /////////////////////////////////////////// Default generator event code ///////////////////////////////////////////
 
@@ -180,7 +180,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                     handler.Str(event_name).Str("(:") << event_code << ')';
                 }
             }
-            else if (code.is_ruby() && event->getEventInfo()->get_name() == "wxEVT_SIZE")
+            else if (event->getEventInfo()->get_name() == "wxEVT_SIZE" ||
+                     event->getEventInfo()->get_name() == "wxEVT_GRID_COL_SIZE")
             {
                 // wxRuby3 doesn't allow an id for this event
                 handler.Str(event_name).Str("(:") << event_code << ')';
@@ -951,7 +952,7 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
             undefined_handlers.Tab().Str("event.skip");
         }
         undefined_handlers.Eol().Unindent();
-        undefined_handlers.Str("end").Eol().Eol();
+        undefined_handlers.Str("end").Eol();
     }
 
     if (undefined_handlers.size())
@@ -959,6 +960,7 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         m_source->writeLine(code, indent::none);
         m_source->writeLine(ruby_begin_cmt_block, indent::none);
         m_source->writeLine(undefined_handlers);
+        m_source->writeLine("end", indent::none);
         m_source->writeLine(ruby_end_cmt_block, indent::none);
 
         m_header->writeLine("# Event handler functions");

@@ -110,9 +110,22 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
     {
         m_buffer += end_lua_haskell_block;
     }
-    else if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY || language == GEN_LANG_PERL)
+    else if (language == GEN_LANG_PYTHON || language == GEN_LANG_PERL)
     {
         m_buffer += end_python_perl_ruby_block;
+    }
+    else if (language == GEN_LANG_RUBY)
+    {
+        m_buffer += end_python_perl_ruby_block;
+
+        // If the file has never been written before, then add "end" line that is required to close
+        // the class definition. This is written outside of the comment block, so presumably any
+        // user edits will be made above this line or they will remove it and replace it with their
+        // own "end" line.
+        if (!file_exists)
+        {
+            m_buffer += "\nend";
+        }
     }
 
     size_t additional_content = (to_size_t) -1;

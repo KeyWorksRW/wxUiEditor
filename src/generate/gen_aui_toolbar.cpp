@@ -298,10 +298,17 @@ void AuiToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
     handlers.emplace("wxAuiToolBarXmlHandler");
 }
 
-bool AuiToolBarFormGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+bool AuiToolBarFormGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
 {
+    if (language == GEN_LANG_RUBY)
+    {
     set_imports.insert("require 'wx/aui'");
     return true;
+    }
+    else
+    {
+    }
+    return false;
 }
 
 //////////////////////////////////////////  AuiToolBarGenerator  //////////////////////////////////////////
@@ -488,10 +495,17 @@ void AuiToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxAuiToolBarXmlHandler");
 }
 
-bool AuiToolBarGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+bool AuiToolBarGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
 {
+    if (language == GEN_LANG_RUBY)
+    {
     set_imports.insert("require 'wx/aui'");
     return true;
+    }
+    else
+    {
+    }
+    return false;
 }
 
 //////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////

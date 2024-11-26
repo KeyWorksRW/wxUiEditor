@@ -94,7 +94,7 @@ void BaseCodeGenerator::GenerateFortranClass(PANEL_PAGE panel_type)
     {
         if (auto* gen = node->getGenerator(); gen)
         {
-            // gen->GetRubyImports(node, imports);
+            // gen->GetImports(node, imports);
         }
         for (auto& child: node->getChildNodePtrs())
         {

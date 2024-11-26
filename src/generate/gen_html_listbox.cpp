@@ -131,10 +131,17 @@ bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     return true;
 }
 
-bool HtmlListBoxGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+bool HtmlListBoxGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
 {
+    if (language == GEN_LANG_RUBY)
+    {
     set_imports.insert("require 'wx/html'");
     return true;
+    }
+    else
+    {
+    }
+    return false;
 }
 
 // ../../wxSnapShot/src/xrc/xh_simplehtmllbox.cpp

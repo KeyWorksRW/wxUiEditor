@@ -94,13 +94,15 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         WritePropSourceCode(Project.getProjectNode(), prop_perl_project_preamble);
     }
 
+    m_source->writeLine();
+
     std::set<std::string> imports;
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
         if (auto* gen = node->getGenerator(); gen)
         {
-            // gen->GetRubyImports(node, imports);
+            // gen->GetPerlImports(node, imports);
         }
         for (auto& child: node->getChildNodePtrs())
         {
@@ -108,6 +110,22 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         }
     };
     GatherImportModules(m_form_node, GatherImportModules);
+
+    if (imports.size())
+    {
+        m_source->writeLine();
+        for (const auto& import: imports)
+        {
+            m_source->writeLine("use " + import + ";");
+        }
+    }
+    else
+    {
+        m_source->writeLine("use Wx qw[:everything];");
+    }
+
+    m_source->writeLine();
+    m_source->writeLine("use strict;");
 
     if (m_form_node->isGen(gen_Images))
     {
@@ -171,6 +189,7 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     }
 
     code.clear();
+    m_source->ResetIndent(1);
     if (generator->SettingsCode(code))
     {
         if (code.size())
@@ -230,7 +249,6 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     else
     {
         m_source->ResetIndent();
-        m_source->writeLine("\t}", indent::none);
     }
 
     if (m_form_node->isGen(gen_wxWizard))
@@ -243,7 +261,9 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
+    m_source->writeLine("\treturn $this;", indent::none);
     m_source->writeLine("}\n\n", indent::none);
+    m_source->writeLine("1;", indent::none);
 
     m_header->ResetIndent();
 

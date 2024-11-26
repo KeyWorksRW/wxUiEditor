@@ -100,6 +100,25 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.PosSizeFlags();
         code.Unindent(5);
     }
+    else if (code.is_perl())
+    {
+        code.Str("package ").NodeName();
+        if (code.ends_with("Base"))
+            code.erase(code.size() - 4);
+        code.Str(";").Eol();
+        code += "sub new {";
+        code.Indent();
+        code.Eol() += "my ($class, $parent, $id, $title, $pos, $size, $style, $name) = @_;";
+        code.Eol() += "$parent = undef unless defined $parent;";
+        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
+        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
+        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
+        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
+        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
+        code.Eol().Str("$name = ").QuotedString(prop_window_name).Str(" unless defined $name;");
+
+        code.Eol().Eol() += "my $this = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+    }
     else
     {
         code.AddComment("Unknown language", true);

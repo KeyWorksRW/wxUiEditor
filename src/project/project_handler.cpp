@@ -519,11 +519,77 @@ size_t ProjectHandler::getOutputType(int flags) const
                     }
                     result |= OUTPUT_RUBY;
                 }
+                if (child->hasValue(prop_fortran_file))
+                {
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
+                    {
+                        if (child->as_string(prop_fortran_file) == child->getPropDefaultValue(prop_fortran_file) &&
+                            getCodePreference(form) != GEN_LANG_FORTRAN)
+                        {
+                            continue;
+                        }
+                    }
+                    result |= OUTPUT_FORTRAN;
+                }
+                if (child->hasValue(prop_haskell_file))
+                {
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
+                    {
+                        if (child->as_string(prop_haskell_file) == child->getPropDefaultValue(prop_haskell_file) &&
+                            getCodePreference(form) != GEN_LANG_HASKELL)
+                        {
+                            continue;
+                        }
+                    }
+                    result |= OUTPUT_HASKELL;
+                }
+                if (child->hasValue(prop_lua_file))
+                {
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
+                    {
+                        if (child->as_string(prop_lua_file) == child->getPropDefaultValue(prop_lua_file) &&
+                            getCodePreference(form) != GEN_LANG_LUA)
+                        {
+                            continue;
+                        }
+                    }
+                    result |= OUTPUT_LUA;
+                }
+                if (child->hasValue(prop_perl_file))
+                {
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
+                    {
+                        if (child->as_string(prop_perl_file) == child->getPropDefaultValue(prop_perl_file) &&
+                            getCodePreference(form) != GEN_LANG_PERL)
+                        {
+                            continue;
+                        }
+                    }
+                    result |= OUTPUT_PERL;
+                }
+                if (child->hasValue(prop_rust_file))
+                {
+                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
+                    {
+                        if (child->as_string(prop_rust_file) == child->getPropDefaultValue(prop_rust_file) &&
+                            getCodePreference(form) != GEN_LANG_RUST)
+                        {
+                            continue;
+                        }
+                    }
+                    result |= OUTPUT_RUST;
+                }
                 if (child->hasValue(prop_xrc_file))
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        continue;
+                        // Note that we do *not* ignore this if getCodePreference(form) !=
+                        // GEN_LANG_XRC. If the language is using XRC for the UI, then the XRC must
+                        // be generated as well.
+                        if (child->as_string(prop_xrc_file) == child->getPropDefaultValue(prop_xrc_file))
+                        {
+                            continue;
+                        }
                     }
                     result |= OUTPUT_XRC;
                 }

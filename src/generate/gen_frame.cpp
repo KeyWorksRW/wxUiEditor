@@ -93,12 +93,20 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
     else if (code.is_lua())
     {
         code.Eol().NodeName().Str(" = {}\n");
-        code.Eol().Str("function ").NodeName().Str(":create(parent, id, title, pos, size, style)");
+        code.Eol().Str("function ").NodeName().Str(":create(parent, id, title, pos, size, style, name)");
         code.Indent();
-        code.Eol().Str("this = wx.wxFrame(wx.NULL").Comma().as_string(prop_id).Comma().QuotedString(prop_title);
-        code.Indent(5);
-        code.PosSizeFlags();
-        code.Unindent(5);
+        code.Eol().Str("parent = parent or wx.NULL");
+        code.Eol().Str("id = id or ").as_string(prop_id);
+        code.Eol().Str("title = title or ").QuotedString(prop_title);
+        code.Eol().Str("pos = pos or ").Pos(prop_pos);
+        code.Eol().Str("size = size or ").WxSize(prop_size);
+        code.Eol().Str("style = style or ").Style();
+        code.Eol().Str("name = name or ");
+        if (code.hasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
+        else
+            code += "\"frame\"";
+        code.Eol().Eol().Str("this = wx.wxFrame(parent, id, title, pos, size, style, name)");
     }
     else if (code.is_perl())
     {

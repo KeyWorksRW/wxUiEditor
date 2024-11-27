@@ -198,6 +198,10 @@ public:
     // If needed, the line will be broken *before* the string is added.
     Code& Add(tt_string_view text);
 
+    // Same as Add() except that Perl won't use a Wx:: prefix, instead it assumes the
+    // constant was defined in the "use Wx qw(...);" statement.
+    Code& AddConstant(tt_string_view text);
+
     Code& Add(const Code& text) { return Add(text.GetView()); }
 
     // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.

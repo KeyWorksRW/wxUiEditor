@@ -433,8 +433,8 @@ bool GridGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLan
 {
     if (language == GEN_LANG_RUBY)
     {
-    set_imports.insert("require 'wx/grid'");
-    return true;
+        set_imports.insert("require 'wx/grid'");
+        return true;
     }
     else
     {

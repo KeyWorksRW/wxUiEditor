@@ -130,8 +130,8 @@ bool HtmlWindowGenerator::GetImports(Node*, std::set<std::string>& set_imports, 
 {
     if (language == GEN_LANG_RUBY)
     {
-    set_imports.insert("require 'wx/html'");
-    return true;
+        set_imports.insert("require 'wx/html'");
+        return true;
     }
     else
     {

@@ -89,6 +89,15 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         m_source->writeLine(txt_PoundCmtBlock);
     }
 
+    code.Str("use Wx;").Eol();
+    code.Str("package ").NodeName();
+    if (code.ends_with("Base"))
+        code.erase(code.size() - 4);
+    code.Str(";").Eol();
+
+    m_source->writeLine(code);
+    code.clear();
+
     if (Project.hasValue(prop_perl_project_preamble))
     {
         WritePropSourceCode(Project.getProjectNode(), prop_perl_project_preamble);
@@ -102,7 +111,7 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     {
         if (auto* gen = node->getGenerator(); gen)
         {
-            // gen->GetPerlImports(node, imports);
+            gen->GetImports(node, imports, GEN_LANG_PERL);
         }
         for (auto& child: node->getChildNodePtrs())
         {
@@ -116,7 +125,7 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         m_source->writeLine();
         for (const auto& import: imports)
         {
-            m_source->writeLine("use " + import + ";");
+            m_source->writeLine(import);
         }
     }
     else

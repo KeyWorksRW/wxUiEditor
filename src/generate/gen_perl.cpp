@@ -41,6 +41,20 @@ R"===(##########################################################################
 
 )===";
 
+inline constexpr const auto txt_perl_frame_app =
+R"===(# Sample code for displaying your MainFrame window.
+# Place this code after the closing comment block in your
+# generated file. You can then call 'Perl filename.pl'
+# where filename.pl is the name of your generated file.
+
+package main;
+
+my $app = Wx::SimpleApp->new;
+my $frame = MainFrame->new(undef, -1, "wxPerl app");
+$frame->Show;
+$app->MainLoop;
+)===";
+
 // clang-format on
 
 // This *must* be written on a line by itself with *no* indentation.
@@ -74,6 +88,21 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     m_header->Clear();
     m_source->Clear();
+
+    if (m_form_node->isGen(gen_wxFrame))
+    {
+        code += txt_perl_frame_app;
+        if (m_form_node->hasValue(prop_class_name))
+        {
+            tt_string class_name = m_form_node->as_string(prop_class_name);
+            if (class_name.ends_with("Base"))
+                class_name.erase(class_name.size() - 4);
+            code.Replace("MainFrame", class_name);
+        }
+        m_header->writeLine(code);
+        code.clear();
+    }
+
     m_source->SetLastLineBlank();
 
 #if !defined(_DEBUG)

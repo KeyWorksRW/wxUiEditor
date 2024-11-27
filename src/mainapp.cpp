@@ -184,6 +184,7 @@ int App::OnRun()
 
     parser.AddLongSwitch("test_menu", "create test menu to the right of the Help menu",
                          wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
+    parser.AddLongSwitch("load_last", "Load last opened project", wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
 
     parser.Parse();
 #if defined(INTERNAL_TESTING)
@@ -484,11 +485,15 @@ int App::OnRun()
         m_frame = new MainFrame();
     }
 
-    if (UserPrefs.is_LoadLastProject() && !is_project_loaded)
+    if (!is_project_loaded)
     {
-        auto& file_history = m_frame->getFileHistory();
-        tt_string file = file_history.GetHistoryFile(0).utf8_string();
-        is_project_loaded = Project.LoadProject(file);
+        if (auto result = parser.FoundSwitch("load_last");
+            result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
+        {
+            auto& file_history = m_frame->getFileHistory();
+            tt_string file = file_history.GetHistoryFile(0).utf8_string();
+            is_project_loaded = Project.LoadProject(file);
+        }
     }
 
     if (!is_project_loaded)

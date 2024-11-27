@@ -60,8 +60,15 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-bool PropertyGridGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+bool PropertyGridGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
 {
+    if (language == GEN_LANG_RUBY)
+    {
     set_imports.insert("require 'wx/pg'");
     return true;
+    }
+    else
+    {
+    }
+    return false;
 }

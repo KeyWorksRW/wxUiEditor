@@ -626,7 +626,7 @@ Code& Code::as_string(PropName prop_name)
             *this << '$' << result;
             return *this;
         }
-        else if (!is_cpp())
+        else if (!is_cpp() && !is_perl())
         {
             result.Replace("wx", m_language_wxPrefix);
         }
@@ -657,6 +657,17 @@ Code& Code::AddType(tt_string_view text)
     }
 
     return *this;
+}
+
+Code& Code::AddConstant(tt_string_view text)
+{
+    if (is_cpp() || is_perl())
+    {
+        CheckLineLength(text.size());
+        *this += text;
+        return *this;
+    }
+    return Add(text);
 }
 
 Code& Code::Add(tt_string_view text)
@@ -1475,7 +1486,10 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
     if (size == wxDefaultSize)
     {
         CheckLineLength((sizeof("DefaultSize") - 1) + m_language_wxPrefix.size());
-        *this << m_language_wxPrefix << "DefaultSize";
+        if (is_perl())
+            *this << "wxDefaultSize";
+        else
+            *this << m_language_wxPrefix << "DefaultSize";
         return *this;
     }
 
@@ -1570,7 +1584,10 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
         CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
-        *this << m_language_wxPrefix << "DefaultPosition";
+        if (is_perl())
+            *this << "wxDefaultPosition";
+        else
+            *this << m_language_wxPrefix << "DefaultPosition";
         return *this;
     }
 
@@ -1633,7 +1650,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         if (style_set)
             *this += '|';
         style_set = true;
-        Add("wxRE_MULTILINE");
+        AddConstant("wxRE_MULTILINE");
     }
 
     if (m_node->hasValue(prop_style))
@@ -1679,7 +1696,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         }
         else
         {
-            as_string(prop_style);
+            AddConstant(m_node->as_string(prop_style));
             cur_pos = size();
         }
         style_set = true;
@@ -1690,7 +1707,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         if (style_set)
             *this += '|';
         style_set = true;
-        as_string(prop_window_style);
+        AddConstant(m_node->as_string(prop_window_style));
         cur_pos = size();
     }
 

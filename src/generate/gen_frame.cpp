@@ -100,6 +100,27 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
         code.PosSizeFlags();
         code.Unindent(5);
     }
+    else if (code.is_perl())
+    {
+        code += "sub new {";
+        code.Indent();
+        code.Eol() += "my ($class, $parent, $id, $title, $pos, $size, $style, $name) = @_;";
+        code.Eol() += "$parent = undef unless defined $parent;";
+        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
+        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
+        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
+        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
+        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
+
+        code.Eol().Str("$name = ");
+        if (code.hasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
+        else
+            code += "\"frame\"";
+        code.Str(" unless defined $name;");
+
+        code.Eol().Eol() += "my $this = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+    }
     else
     {
         code.AddComment("Unknown language", true);
@@ -191,8 +212,8 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     if (isScalingEnabled(code.node(), prop_pos, code.get_language()) ||
         isScalingEnabled(code.node(), prop_size, code.get_language()))
     {
-        code.Eol(eol_if_needed).BeginConditional().Str("pos != ").Add("wxDefaultPosition");
-        code.AddConditionalOr().Str("size != ").Add("wxDefaultSize");
+        code.Eol(eol_if_needed).BeginConditional().Str("pos != ").AddConstant("wxDefaultPosition");
+        code.AddConditionalOr().Str("size != ").AddConstant("wxDefaultSize");
         code.EndConditional().OpenBrace(true);
         code.FormFunction("SetSize(");
         code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
@@ -269,7 +290,7 @@ bool FrameFormGenerator::AfterChildrenCode(Code& code)
     auto& center = code.node()->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
-        code.Eol(eol_if_needed).FormFunction("Centre(").Add(center).EndFunction();
+        code.Eol(eol_if_needed).FormFunction("Centre(").AddConstant(center).EndFunction();
     }
 
     return true;
@@ -520,4 +541,80 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
     }
 
     return true;
+}
+
+bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        tt_string constants;
+
+        auto set_constants = [&]()
+        {
+            if (constants.size())
+            {
+                // remove the leading space
+                constants.erase(0, 1);
+                constants.insert(0, "use Wx qw(");
+                constants += ");";
+                set_imports.emplace(constants);
+                constants.clear();
+            }
+        };
+
+        // wxDefaultPosition and wxDefaultSize can also appear in child components, so put them on
+        // their own line to avoid duplicates.
+        if (node->as_string(prop_pos).empty() || node->as_string(prop_pos) == "wxDefaultPosition")
+            constants += " wxDefaultPosition";
+        if (node->as_string(prop_size).empty() || node->as_string(prop_size) == "wxDefaultSize")
+            constants += " wxDefaultSize";
+        set_constants();
+
+        if (node->as_string(prop_id).empty() || node->as_string(prop_id) == "wxID_ANY")
+            constants += " wxID_ANY";
+        set_constants();
+
+        if (node->hasValue(prop_center))
+            constants += " wxHORIZONTAL wxVERTICAL wxBOTH";
+        set_constants();
+
+        if (node->as_string(prop_style) == "wxDEFAULT_FRAME_STYLE")
+            constants += " wxDEFAULT_FRAME_STYLE";
+        if (node->as_string(prop_style).contains("wxCAPTION"))
+            constants += " wxCAPTION";
+        if (node->as_string(prop_style).contains("wxCLOSE_BOX"))
+            constants += " wxCLOSE_BOX";
+        if (node->as_string(prop_style).contains("wxFRAME_TOOL_WINDOW"))
+            constants += " wxFRAME_TOOL_WINDOW";
+        if (node->as_string(prop_style).contains("wxFRAME_NO_TASKBAR"))
+            constants += " wxFRAME_NO_TASKBAR";
+        if (node->as_string(prop_style).contains("wxFRAME_FLOAT_ON_PARENT"))
+            constants += " wxFRAME_FLOAT_ON_PARENT";
+        if (node->as_string(prop_style).contains("wxFRAME_SHAPED"))
+            constants += " wxFRAME_SHAPED";
+        if (node->as_string(prop_style).contains("wxICONIZE"))
+            constants += " wxICONIZE";
+        if (node->as_string(prop_style).contains("wxMINIMIZE_BOX"))
+            constants += " wxMINIMIZE_BOX";
+        if (node->as_string(prop_style).contains("wxMAXIMIZE_BOX"))
+            constants += " wxMAXIMIZE_BOX";
+        if (node->as_string(prop_style).contains("wxRESIZE_BORDER"))
+            constants += " wxRESIZE_BORDER";
+        if (node->as_string(prop_style).contains("wxSYSTEM_MENU"))
+            constants += " wxSYSTEM_MENU";
+        if (node->as_string(prop_style).contains("wxCLIP_CHILDREN"))
+            constants += " wxCLIP_CHILDREN";
+        if (node->as_string(prop_style).contains("wxSTAY_ON_TOP"))
+            constants += " wxSTAY_ON_TOP";
+        if (node->as_string(prop_style).contains("wxFRAME_EX_CONTEXTHELP"))
+            constants += " wxFRAME_EX_CONTEXTHELP";
+        if (node->as_string(prop_style).contains("wxFRAME_EX_METAL"))
+            constants += " wxFRAME_EX_METAL";
+        set_constants();
+
+        set_imports.emplace("use base qw(Wx::Frame);");
+        return true;
+    }
+
+    return false;
 }

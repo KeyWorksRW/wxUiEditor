@@ -213,7 +213,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     {
         if (auto* gen = node->getGenerator(); gen)
         {
-            gen->GetRubyImports(node, imports);
+            gen->GetImports(node, imports, GEN_LANG_RUBY);
         }
         for (auto& child: node->getChildNodePtrs())
         {

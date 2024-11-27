@@ -204,8 +204,15 @@ void AuiNotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxAuiXmlHandler");
 }
 
-bool AuiNotebookGenerator::GetRubyImports(Node*, std::set<std::string>& set_imports)
+bool AuiNotebookGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
 {
-    set_imports.insert("require 'wx/aui'");
-    return true;
+    if (language == GEN_LANG_RUBY)
+    {
+        set_imports.insert("require 'wx/aui'");
+        return true;
+    }
+    else
+    {
+    }
+    return false;
 }

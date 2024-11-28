@@ -114,6 +114,42 @@ static void SetUniqueRibbonToolID(Node* node)
 
 bool Node::createToolNode(GenName name, int pos)
 {
+    if (isGen(gen_wxFrame))
+    {
+        if (name == gen_MenuBar)
+        {
+            bool has_menubar = false;
+            for (auto& iter: getChildNodePtrs())
+            {
+                if (iter->isGen(gen_MenuBar))
+                {
+                    has_menubar = true;
+                    break;
+                }
+            }
+            if (!has_menubar)
+            {
+                name = gen_wxMenuBar;
+            }
+        }
+        else if (name == gen_ToolBar)
+        {
+            bool has_toolbar = false;
+            for (auto& iter: getChildNodePtrs())
+            {
+                if (iter->isGen(gen_ToolBar))
+                {
+                    has_toolbar = true;
+                    break;
+                }
+            }
+            if (!has_toolbar)
+            {
+                name = gen_wxToolBar;
+            }
+        }
+    }
+
     if (isGen(gen_Project))
     {
         // If needed, change the names to the Form version version the normal child version

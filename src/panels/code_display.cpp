@@ -282,6 +282,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
     }
     else if (panel_type == GEN_LANG_LUA)
     {
+        m_scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+        m_scintilla->SetMarginWidth(0, m_scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_999"));
+
         m_scintilla->SetLexer(wxSTC_LEX_LUA);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
@@ -333,6 +336,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
     }
     else if (panel_type == GEN_LANG_PERL)
     {
+        m_scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+        m_scintilla->SetMarginWidth(0, m_scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_999"));
+
         m_scintilla->SetLexer(wxSTC_LEX_PERL);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);

@@ -580,9 +580,40 @@ void Code::CloseFontBrace()
 
 Code& Code::AddAuto()
 {
-    if (is_cpp() && is_local_var())
+    if (is_local_var())
     {
-        *this += "auto* ";
+        if (is_cpp())
+        {
+            *this += "auto* ";
+        }
+        else if (is_lua())
+        {
+            *this += "local ";
+        }
+        else if (is_perl())
+        {
+            *this += "my ";
+        }
+        else if (is_python())
+        {
+            *this += "self.";
+        }
+        else if (is_ruby())
+        {
+            *this += "@";
+        }
+        else if (is_fortran())
+        {
+            *this += "type(";
+        }
+        else if (is_haskell())
+        {
+            *this += "let ";
+        }
+        else if (is_rust())
+        {
+            *this += "let ";
+        }
     }
     return *this;
 }
@@ -857,6 +888,10 @@ Code& Code::Function(tt_string_view text, bool add_operator)
                     *this += text;
                 }
             }
+        }
+        else if (is_lua())
+        {
+            *this << '.' << text;
         }
         else
         {
@@ -1138,7 +1173,7 @@ Code& Code::NodeName(Node* node)
     if (!node)
         node = m_node;
     auto node_name = node->getNodeName(get_language());
-    if (is_python() && !node->isForm() && !node->isLocal())
+    if ((is_python() || is_lua()) && !node->isForm() && !node->isLocal() && !node_name.starts_with("self."))
     {
         *this += "self.";
     }

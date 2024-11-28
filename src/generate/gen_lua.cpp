@@ -170,6 +170,7 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
     {
         m_source->writeLine(code);
         m_source->writeLine();
+        m_source->Indent();
 
 #if 0
         id_value = wxID_HIGHEST;

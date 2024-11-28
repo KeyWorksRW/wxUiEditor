@@ -146,7 +146,6 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         code.ResetIndent();
         code.ResetBraces();
-        code.Indent();
     }
     if (!code.node()->isPropValue(prop_variant, "normal"))
     {

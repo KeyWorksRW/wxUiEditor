@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - wxPython now places wxTreeListCtrl in the dataview library
 - Fixed code generation for Python and Ruby wxStdDialogButtonSizer events
 - Ruby code generation no longer writes the class `end` line before the final generated comment block
+- You can add a menubar or toolbar to a wxFrame that was created without them
 
 ## [Released (1.2.1)]
 

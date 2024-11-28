@@ -274,7 +274,7 @@ Node* NodeCreator::isValidCreateParent(GenName name, Node* parent, bool use_recu
     // Check for widgets which can ONLY have a frame for a parent.
     if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_toolbar))
     {
-        if (!parent->isType(type_form))
+        if (!parent->isType(type_frame_form))
         {
             return parent->getParent();
         }

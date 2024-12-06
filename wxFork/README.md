@@ -1,4 +1,4 @@
-This folder assumes a wxWidgets repository at the same level as wxUiEditor, which is presumably a fork of wxWidgets. By default, all source and header files will be build from the ../../wxWidgets directory.
+This folder assumes a `../../wxWidgets/` repository (same level as wxUiEditor), which is presumably a fork of wxWidgets. By default, all source and header files will be built from the ../../wxWidgets directory.
 
 wxCLib.cmake and wxWidgets.cmake contain the list of sources. Note that these lists are _not_ a part of wxWidgets itself, so care must be taken to ensure that the list of files matches the list of files in the wxWidgets repository. This _will_ be an issue whenever a new file is added to wxWidgets, since until it gets added to one of these lists it won't be built.
 

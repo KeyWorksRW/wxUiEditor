@@ -32,6 +32,9 @@ option(INTERNAL_FEATURE3 "Build with Feature #3 enabled")  # unused
 # Realistically, this is only going to be usable by the maintainers of this project.
 
 option(BUILD_FORK "Builds wxWidgets using wxFork")
+option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
+option(BUILD_SNAPSHOT "Builds wxWidgets using wxSnapshot" )
+option(BUILD_BUILTIN "Builds wxWidgets using builtin copy of wxWidgets 3.3" ON )
 
 # The following options cannot be combined, are only usable for MSVC compiler, and are only for
 # a Release build.
@@ -44,18 +47,30 @@ option(BUILD_FORK "Builds wxWidgets using wxFork")
 # option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
 # option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
 
-option(BUILD_CUSTOM "Builds with custom version of wxWidgets")
 
-if (BUILD_CUSTOM AND BUILD_FORK)
-    message(FATAL_ERROR "You cannot combine BUILD_FORK or BUILD_CUSTOM")
+# Count how many of the mutually exclusive options are enabled
+set( MUTUALLY_EXCLUSIVE_OPTION_COUNT 0 )
+
+if( BUILD_FORK )
+    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
 endif()
 
-if (BUILD_FORK)
-    message(NOTICE "Building with forked/cloned version of wxWidgets")
-elseif (BUILD_CUSTOM)
-    message(NOTICE "Building with custom build of wxWidgets")
-else()
-    message(NOTICE "Building with wxWidgets 3.3")
+if( BUILD_SNAPSHOT )
+    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
+endif()
+
+if( BUILD_CUSTOM )
+    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
+endif()
+
+if( BUILD_BUILTIN )
+    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
+endif()
+
+# If more than one option is enabled, display an error message
+if( MUTUALLY_EXCLUSIVE_OPTION_COUNT GREATER 1 )
+    message( FATAL_ERROR "Only one of BUILD_FORK, BUILD_SNAPSHOT, BUILD_CUSTOM, and BUILD_BUILTIN, "
+                         "can be enabled at a time." )
 endif()
 
 ####################### Check for Multi-Config Generator #######################
@@ -179,10 +194,14 @@ endif()
 if (BUILD_FORK)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
     add_subdirectory(wxFork)
+elseif(BUILD_SNAPSHOT)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxSnapshot)
+    add_subdirectory(wxSnapshot)
 elseif(BUILD_CUSTOM)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/wx_custom)
     add_subdirectory(${widget_dir})
 else()
+    # Default to BUILD_BUILTIN
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxWidgets)
     add_subdirectory(${widget_dir})
 endif()
@@ -190,6 +209,8 @@ endif()
 if (WIN32)
     if (BUILD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxFork/win)
+    elseif(BUILD_SNAPSHOT)
+        set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/../wxSnapshot/win)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${BUILD_CUSTOM_DIR}/win)
     else()
@@ -198,6 +219,8 @@ if (WIN32)
 elseif (UNIX)
     if (BUILD_FORK)
         set(setup_dir ${CMAKE_CURRENT_LIST_DIR}/wxFork/unix)
+    elseif(BUILD_SNAPSHOT)
+        set(setup_dir ${BUILD_CUSTOM_DIR}/../wxSnapshot/unix)
     elseif(BUILD_CUSTOM)
         set(setup_dir ${BUILD_CUSTOM_DIR}/unix)
     else()
@@ -265,7 +288,7 @@ if (MSVC)
 
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>")
 
-    # Assume the manifest is in the resource file
+    # Manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
 endif()
 
@@ -288,8 +311,6 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
-
-    ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/3rdparty/lunasvg/include
 )
 
 target_include_directories(check_build PRIVATE
@@ -308,8 +329,6 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
-
-    ${CMAKE_CURRENT_LIST_DIR}/wxWidgets/3rdparty/lunasvg/include
 )
 
 ####################### Testing #######################

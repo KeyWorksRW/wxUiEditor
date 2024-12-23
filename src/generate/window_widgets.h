@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Scroll window component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +19,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 
     tt_string GetHelpURL(Node*) override { return tt_string("group__group__class__miscwnd.html"); };
 };

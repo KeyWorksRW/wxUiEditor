@@ -74,7 +74,7 @@ int ScrolledCanvasGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxScrolledWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                          DlgSize(node, prop_size), GetStyleInt(node));
+                                       DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

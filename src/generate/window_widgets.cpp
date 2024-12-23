@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Scroll window component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +30,7 @@ bool ScrolledCanvasGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.AddAuto().NodeName().Str(" = new wxScrolled<wxWindow>(");
+        code.AddAuto().NodeName().Str(" = new wxScrolledCanvas(");
         code.ValidParentName().Comma().as_string(prop_id);
         code.PosSizeFlags();
     }
@@ -62,11 +62,18 @@ bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set
     return true;
 }
 
+int ScrolledCanvasGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+{
+    auto item = InitializeXrcObject(node, object);
+    ADD_ITEM_COMMENT(" XRC does not support wxScrolledCanvas (wxScrolled<wxWindow>) ")
+    return BaseGenerator::xrc_updated;
+}
+
 //////////////////////////////////////////  ScrolledWindowGenerator  //////////////////////////////////////////
 
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+    auto widget = new wxScrolledWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                           DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
 
@@ -79,7 +86,7 @@ bool ScrolledWindowGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
-        code.AddAuto().NodeName().Str(" = new wxScrolled<wxPanel>(");
+        code.AddAuto().NodeName().Str(" = new wxScrolledWindow(");
         code.ValidParentName().Comma().as_string(prop_id);
         code.PosSizeFlags();
     }

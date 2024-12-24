@@ -51,9 +51,26 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto generator = node->getNodeDeclaration()->getGenerator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
-    if (result == BaseGenerator::xrc_not_supported && node->isGen(gen_Project))
+    if (result == BaseGenerator::xrc_not_supported)
     {
-        result = BaseGenerator::xrc_updated;
+        if (node->isGen(gen_Project))
+        {
+            result = BaseGenerator::xrc_updated;
+        }
+        else
+        {
+            auto item = InitializeXrcObject(node, object);
+            auto comment = generator->GetWarning(node, GEN_LANG_XRC);
+            if (comment)
+            {
+                // We need a dummy item to hold the comment but which will not show up in the UI
+                GenXrcObjectAttributes(node, item, "wxBoxSizer");
+
+                object.append_child(pugi::node_comment).set_value(comment->c_str());
+            }
+
+            return BaseGenerator::xrc_form_not_supported;
+        }
     }
 
     if (result == BaseGenerator::xrc_sizer_item_created)

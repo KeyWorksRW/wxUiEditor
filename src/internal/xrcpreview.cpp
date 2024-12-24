@@ -171,7 +171,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Test XRC
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -338,6 +338,9 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
         wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Dialog Preview");
         return;
     }
+
+    tt_cwd cwd(true);
+    wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
 
     wxDialog dlg;
     if (xrc_resource->LoadDialog(&dlg, this, dlg_name))

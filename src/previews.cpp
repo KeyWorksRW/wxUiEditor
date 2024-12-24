@@ -166,6 +166,9 @@ void Preview(Node* form_node)
             return;
         }
 
+        tt_cwd cwd(true);
+        wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
+
         XrcCompare dlg_compare;
         if (!dlg_compare.DoCreate(wxGetMainFrame(), form_node))
         {
@@ -255,6 +258,9 @@ void PreviewXrc(Node* form_node)
             wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Preview");
             return;
         }
+
+        tt_cwd cwd(true);
+        wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
 
         switch (form_node->getGenName())
         {

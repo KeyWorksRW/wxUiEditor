@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxContextHelpButton generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -68,9 +68,26 @@ bool CtxHelpButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     return true;
 }
 
-int CtxHelpButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int CtxHelpButtonGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
 {
-    auto item = InitializeXrcObject(node, object);
-    ADD_ITEM_COMMENT(" XRC does not support wxContextHelpButton ")
     return BaseGenerator::xrc_not_supported;
+}
+
+std::optional<tt_string> CtxHelpButtonGenerator::GetWarning(Node* node, GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_XRC:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << " XRC currently does not support wxContextHelpButton ";
+                return msg;
+            }
+        default:
+            return {};
+    }
 }

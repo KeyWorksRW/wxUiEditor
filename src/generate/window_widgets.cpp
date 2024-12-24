@@ -62,11 +62,28 @@ bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set
     return true;
 }
 
-int ScrolledCanvasGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int ScrolledCanvasGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
 {
-    auto item = InitializeXrcObject(node, object);
-    ADD_ITEM_COMMENT(" XRC does not support wxScrolledCanvas (wxScrolled<wxWindow>) ")
-    return BaseGenerator::xrc_updated;
+    return xrc_not_supported;
+}
+
+std::optional<tt_string> ScrolledCanvasGenerator::GetWarning(Node* node, GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_XRC:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << " XRC currently does not support wxScrolledCanvas ";
+                return msg;
+            }
+        default:
+            return {};
+    }
 }
 
 //////////////////////////////////////////  ScrolledWindowGenerator  //////////////////////////////////////////

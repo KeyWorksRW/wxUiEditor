@@ -97,6 +97,25 @@ int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* ob
     return BaseGenerator::xrc_not_supported;
 }
 
+std::optional<tt_string> RibbonToolBarGenerator::GetWarning(Node* node, GenLang language)
+{
+    switch (language)
+    {
+        case GEN_LANG_XRC:
+            {
+                tt_string msg;
+                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                {
+                    msg << form->as_string(prop_class_name) << ": ";
+                }
+                msg << " XRC currently does not support wxRibbonToolBar ";
+                return msg;
+            }
+        default:
+            return {};
+    }
+}
+
 //////////////////////////////////////////  RibbonToolGenerator  //////////////////////////////////////////
 
 bool RibbonToolGenerator::ConstructionCode(Code& code)

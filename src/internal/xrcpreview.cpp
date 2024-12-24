@@ -171,7 +171,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Test XRC
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -339,6 +339,9 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
+    tt_cwd cwd(true);
+    wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
+
     wxDialog dlg;
     if (xrc_resource->LoadDialog(&dlg, this, dlg_name))
     {
@@ -399,6 +402,9 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 
     event.Skip();
+
+    wxCommandEvent dummy;
+    OnGenerate(dummy);
 }
 
 void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))

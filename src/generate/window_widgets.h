@@ -22,6 +22,8 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 
     tt_string GetHelpURL(Node*) override { return tt_string("group__group__class__miscwnd.html"); };
+    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
+
 };
 
 class ScrolledWindowGenerator : public BaseGenerator

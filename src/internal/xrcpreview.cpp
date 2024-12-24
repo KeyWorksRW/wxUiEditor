@@ -402,6 +402,9 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 
     event.Skip();
+
+    wxCommandEvent dummy;
+    OnGenerate(dummy);
 }
 
 void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))

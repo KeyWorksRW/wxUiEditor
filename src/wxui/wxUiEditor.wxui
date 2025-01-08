@@ -4562,7 +4562,7 @@
                     checked="0"
                     class_access="protected:"
                     label="Use function"
-                    radiobtn_var_name="m_php_radio_use_function"
+                    radiobtn_var_name="m_rust_radio_use_function"
                     var_name="m_php_function_box"
                     flags="wxEXPAND"
                     wxEVT_RADIOBUTTON="OnUseRubyFunction">
@@ -4594,8 +4594,8 @@
                       checked="0"
                       class_access="protected:"
                       label="Anonymous function"
-                      radiobtn_var_name="m_php_radio_use_anon_func"
-                      var_name="m_php_lambda_box"
+                      radiobtn_var_name="m_rust_radio_use_anon_func"
+                      var_name="m_rust_lambda_box"
                       flags="wxEXPAND"
                       proportion="1"
                       wxEVT_RADIOBUTTON="OnUseRustLambda">

@@ -146,8 +146,11 @@ protected:
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents();
+    void GenCppEventHandlers(EventVector& events);
+    void GenPerlEventHandlers(EventVector& events);
     void GenPythonEventHandlers(EventVector& events);
     void GenRubyEventHandlers(EventVector& events);
+    void GenRustEventHandlers(EventVector& events);
 
     // Generates all the code lines for validator_variables initialized in the header file
     void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);

@@ -1339,6 +1339,14 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
             m_source->writeLine();
             m_source->writeLine("// Event handlers");
             GenSrcEventBinding(m_form_node, m_events);
+
+            if (m_events.size())
+            {
+                m_source->writeLine();
+                m_source->ResetIndent();
+                GenCppEventHandlers(m_events);
+                m_source->Indent();
+            }
         }
 
         code.clear();

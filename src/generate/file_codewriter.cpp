@@ -17,7 +17,7 @@ using namespace code;
 
 // clang-format off
 
-inline constexpr const auto txt_EndCppBlock =
+inline constexpr const auto end_cpp_block =
 R"===(
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -79,7 +79,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
         if (flags & flag_add_closing_brace)
         {
             tt_string_vector lines;
-            lines.ReadString(txt_EndCppBlock);
+            lines.ReadString(end_cpp_block);
             for (auto& iter: lines)
             {
                 if (iter.is_sameprefix("// clang-format on"))
@@ -99,7 +99,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
         }
         else
         {
-            m_buffer += txt_EndCppBlock;
+            m_buffer += end_cpp_block;
         }
     }
     else if (language == GEN_LANG_FORTRAN)

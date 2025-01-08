@@ -509,6 +509,8 @@ tt_string_view Node::getNodeName(GenLang lang) const
         // Valid for Ruby, but not for C++
         if (name[0] == '@')
             name.remove_prefix(1);
+        else if (name[0] == '$')  // commonly used for Perl variables
+            name.remove_prefix(1);
         // Used for local Python variables, but non-standard for C++ where '_' is typically used for
         // member variables
         else if (name[0] == '_' && isLocal())
@@ -517,6 +519,11 @@ tt_string_view Node::getNodeName(GenLang lang) const
     }
 
     if (name[0] == '@' && lang != GEN_LANG_RUBY)
+    {
+        name.remove_prefix(1);
+        return name;
+    }
+    else if (name[0] == '$' && lang != GEN_LANG_PERL)
     {
         name.remove_prefix(1);
         return name;

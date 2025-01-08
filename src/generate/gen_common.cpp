@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1312,6 +1312,7 @@ void GenToolCode(Code& code)
     }
 
     code.QuotedString(prop_label).Comma();
+
     if (!code.hasValue(prop_bitmap))
     {
         code.Add("wxNullBitmap");
@@ -1331,14 +1332,23 @@ void GenToolCode(Code& code)
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
 
-            GenerateBundleParameter(code, parts);
-
-            if (code.is_cpp() && Project.is_wxWidgets31())
+            // TODO: [Randalphwa - 01-07-2025] wxPerl doesn't support wxBitmapBundle. It
+            // does support wxBitmap, but wxUE doesn't generate code for that yet.
+            else if (code.is_perl())
             {
-                code.Eol() += "#else\n\t";
-                code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
-                code.Eol() += "#endif";
-                code.Eol();
+                code.Add("wxNullBitmap");
+            }
+            else
+            {
+                GenerateBundleParameter(code, parts);
+
+                if (code.is_cpp() && Project.is_wxWidgets31())
+                {
+                    code.Eol() += "#else\n\t";
+                    code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
+                    code.Eol() += "#endif";
+                    code.Eol();
+                }
             }
         }
     }

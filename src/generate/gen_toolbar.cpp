@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -501,6 +501,55 @@ int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
 void ToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxToolBarXmlHandler");
+}
+
+bool ToolBarGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        tt_string constants;
+
+        auto set_constants = [&]()
+        {
+            if (constants.size())
+            {
+                // remove the leading space
+                constants.erase(0, 1);
+                constants.insert(0, "use Wx qw(");
+                constants += ");";
+                set_imports.emplace(constants);
+                constants.clear();
+            }
+        };
+
+        if (node->as_string(prop_style).contains("wxTB_FLAT"))
+            constants += " wxTB_FLAT";
+        if (node->as_string(prop_style).contains("wxTB_DOCKABLE"))
+            constants += " wxTB_DOCKABLE";
+        if (node->as_string(prop_style).contains("wxTB_HORIZONTAL"))
+            constants += " wxTB_HORIZONTAL";
+        if (node->as_string(prop_style).contains("wxTB_VERTICAL"))
+            constants += " wxTB_VERTICAL";
+        if (node->as_string(prop_style).contains("wxTB_TEXT"))
+            constants += " wxTB_TEXT";
+        if (node->as_string(prop_style).contains("wxTB_NOICONS"))
+            constants += " wxTB_NOICONS";
+        if (node->as_string(prop_style).contains("wxTB_NODIVIDER"))
+            constants += " wxTB_NODIVIDER";
+        if (node->as_string(prop_style).contains("wxTB_NOALIGN"))
+            constants += " wxTB_NOALIGN";
+        if (node->as_string(prop_style).contains("wxTB_HORZ_LAYOUT"))
+            constants += " wxTB_HORZ_LAYOUT";
+        if (node->as_string(prop_style).contains("wxTB_HORZ_TEXT"))
+            constants += " wxTB_HORZ_TEXT";
+        set_constants();
+
+        set_imports.emplace("use Wx qw(wxITEM_NORMAL wxITEM_CHECK wxITEM_DROPDOWN wxITEM_RADIO);");
+
+        return true;
+    }
+
+    return false;
 }
 
 //////////////////////////////////////////  ToolGenerator  //////////////////////////////////////////

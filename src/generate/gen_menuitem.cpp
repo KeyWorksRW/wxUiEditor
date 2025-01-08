@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu Item Generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -226,6 +226,10 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         {
             code.NodeName().Function("SetBitmap(");
             code.Bundle(prop_bitmap).EndFunction();
+        }
+        else if (code.is_perl())
+        {
+            code.AddComment("wxPerl does not support bundle, currently wxUE does not support non-bundle bitmaps");
         }
         else
         {

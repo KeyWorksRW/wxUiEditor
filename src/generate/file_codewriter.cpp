@@ -63,9 +63,10 @@ const char* lua_haskell_cmt_line = "-- ************* End of generated code";
 
 // clang-format on
 
-int FileCodeWriter::WriteFile(GenLang language, int flags)
+int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
 {
     ASSERT_MSG(m_filename.size(), "Filename must be set before calling WriteFile()");
+    m_node = node;
     bool file_exists = m_filename.file_exists();
     if (!file_exists && (flags & flag_test_only))
         return write_needed;
@@ -110,7 +111,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
     {
         m_buffer += end_lua_haskell_block;
     }
-    else if (language == GEN_LANG_PYTHON || language == GEN_LANG_PERL)
+    else if (language == GEN_LANG_PYTHON)
     {
         m_buffer += end_python_perl_ruby_block;
     }
@@ -125,7 +126,35 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
         if (!file_exists)
         {
             m_buffer += "\nend";
+            if (m_node)
+            {
+                m_buffer += "  # " + m_node->getNodeName();
+            }
         }
+    }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_buffer += end_python_perl_ruby_block;
+
+        // If the file has never been written before, then add "1;" line that is required to close
+        // the package. This is written outside of the comment block, so presumably any
+        // user edits will be made above this line or they will remove it and replace it with their
+        // own "1;" line.
+        if (!file_exists)
+        {
+            // TODO: [Randalphwa - 01-09-2025] Ideally, this should be followed with a comment
+            // indicating that it is the end of the form's package. However, that requires knowing
+            // the node we are writing.
+            m_buffer += "\n1;";
+            if (m_node)
+            {
+                m_buffer += "  # " + m_node->getNodeName();
+            }
+        }
+    }
+    else if (language == GEN_LANG_RUST)
+    {
+        m_buffer += end_cpp_block;
     }
 
     size_t additional_content = (to_size_t) -1;
@@ -158,7 +187,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags)
         new_file.ReadString(m_buffer);
 
         std::string_view look_for = {};
-        if (language == GEN_LANG_CPLUSPLUS)
+        if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_RUST)
             look_for = cpp_rust_end_cmt_line;
         else if (language == GEN_LANG_FORTRAN)
             look_for = fortran_end_cmt_line;

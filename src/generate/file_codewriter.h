@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Classs to write code to disk
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +33,8 @@ namespace code
     };
 };  // namespace code
 
+class Node;  // forward declaration
+
 class FileCodeWriter : public WriteCode
 {
 public:
@@ -57,8 +59,9 @@ public:
     void Clear() override { m_buffer.clear(); };
     tt_string& GetString() { return m_buffer; };
 
-    // Returns one of code::write_ enums
-    int WriteFile(GenLang language, int flags = code::flag_none);
+    // Returns one of code::write_ enums. Errors are negative values, 0 is current, positive
+    // values indicate success or update needed (if testing).
+    int WriteFile(GenLang language, int flags = code::flag_none, Node* node = nullptr);
 
 protected:
     void doWrite(tt_string_view code) override { m_buffer += code; };
@@ -67,6 +70,7 @@ protected:
 
 private:
     tt_string m_filename;
+    Node* m_node { nullptr };
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

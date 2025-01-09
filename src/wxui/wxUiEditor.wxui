@@ -4563,9 +4563,9 @@
                     class_access="protected:"
                     label="Use function"
                     radiobtn_var_name="m_rust_radio_use_function"
-                    var_name="m_php_function_box"
+                    var_name="m_rust_function_box"
                     flags="wxEXPAND"
-                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    wxEVT_RADIOBUTTON="OnUseRustFunction">
                     <node
                       class="wxBoxSizer"
                       var_name="box_sizer13"

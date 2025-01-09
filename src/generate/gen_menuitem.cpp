@@ -229,7 +229,12 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
         else if (code.is_perl())
         {
-            code.AddComment("wxPerl does not support bundle, currently wxUE does not support non-bundle bitmaps");
+            code.AddComment("# TODO: wxBitmapBundle in wxPerl not currently supported");
+        }
+        else if (code.is_rust())
+        {
+            code.AddComment(
+                "wxRust does not currently support wxBitmapBundle, currently wxUE does not support non-bundle bitmaps");
         }
         else
         {
@@ -445,6 +450,18 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }
+    }
+    return false;
+}
+
+bool MenuItemGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        // REVIEW: [Randalphwa - 01-09-2025] Currently, wxEVT_UPDATE_UI cannot be imported from the
+        // Wx::Event module.
+        set_imports.emplace("use Wx::Event qw(EVT_MENU);");
+        return true;
     }
     return false;
 }

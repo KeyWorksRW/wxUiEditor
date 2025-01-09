@@ -1573,7 +1573,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
     int flags = flag_no_ui;
     if (pClassList)
         flags |= flag_test_only;
-    auto retval = cpp_cw->WriteFile(language, flags);
+    auto retval = cpp_cw->WriteFile(language, flags, form);
 
     if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
     {

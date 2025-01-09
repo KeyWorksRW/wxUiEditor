@@ -23,6 +23,9 @@
 
 using namespace code;
 
+extern const char* cpp_rust_end_cmt_line;          // "// ************* End of generated code"
+extern const char* perl_begin_cmt_block;           // "=pod" -- must be written with no indentation
+extern const char* perl_end_cmt_block;             // "=cut" -- must be written with no indentation
 extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 extern const char* python_triple_quote;            // "\"\"\"";
 extern const char* ruby_begin_cmt_block;           // "=begin";
@@ -51,6 +54,10 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
     }
+    else if (code.m_language == GEN_LANG_PERL)
+    {
+        event_code = EventHandlerDlg::GetPerlValue(event->get_value());
+    }
     else if (code.m_language == GEN_LANG_PYTHON)
     {
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
@@ -59,6 +66,14 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetRubyValue(event->get_value());
     }
+    else if (code.m_language == GEN_LANG_RUST)
+    {
+        event_code = EventHandlerDlg::GetRustValue(event->get_value());
+    }
+
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+    // here in case they do get supported in the future.
+
     else if (code.m_language == GEN_LANG_FORTRAN)
     {
         event_code = EventHandlerDlg::GetFortranValue(event->get_value());
@@ -67,17 +82,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetHaskellValue(event->get_value());
     }
-    else if (code.m_language == GEN_LANG_PERL)
-    {
-        event_code = EventHandlerDlg::GetPerlValue(event->get_value());
-    }
     else if (code.m_language == GEN_LANG_LUA)
     {
         event_code = EventHandlerDlg::GetLuaValue(event->get_value());
-    }
-    else if (code.m_language == GEN_LANG_RUST)
-    {
-        event_code = EventHandlerDlg::GetRustValue(event->get_value());
     }
 
     else
@@ -159,6 +166,12 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             else if (code.is_python())
                 handler.Add(", self.") << event_code;
         }
+        else if (code.is_perl())
+        {
+            // remove "wx" prefix
+            event_name.erase(0, 2);
+            handler.Str(event_name).Str("($self, ").NodeName().Str("->GetId(), $self->can('") << event_code << "'));";
+        }
         else if (code.is_ruby())
         {
             // remove "wx" prefix, make the rest of the name lower case
@@ -202,6 +215,11 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             {
                 handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
             }
+        }
+        else if (code.is_rust())
+        {
+            // wxRust1 uses contro.connect and a generated extern "C" function
+            // wxRust2 uses form.base.bind(wx::RustEvent::..., move |event: &wx::EventType| { ... })
         }
     }
 
@@ -254,7 +272,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                 code.AddIfPython("id=").NodeName(event->getNode()).Function("GetId()").EndFunction();
             }
         }
-        else if (code.is_ruby())
+        else
         {
             code << handler;
         }
@@ -665,11 +683,10 @@ void BaseCodeGenerator::GenHdrEvents()
 }
 
 // This function simply generates unhandled event handlers in a multi-string comment.
-
 void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
 {
     ASSERT_MSG(events.size(), "GenCppEventHandlers() shouldn't be called if there are no events");
-    if (events.empty())
+    if (events.empty() || m_form_node->as_bool(prop_use_derived_class))
     {
         return;
     }
@@ -687,7 +704,11 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
     std::sort(events.begin(), events.end(), sort_event_handlers);
 
     bool found_user_handlers = false;
+
+    // In Debug mode, always compare to see if the event handler has been implemented
+#if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
+#endif  // _DEBUG
     {
         tt_view_vector org_file;
         auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
@@ -736,20 +757,29 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
         {
             auto handler = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's
-            if (handler.starts_with("[cpp:lambda]"))
+            if (handler.starts_with("["))
                 continue;
 
             tt_string set_code;
             set_code << "void " << m_form_node->getNodeName() << "::" << handler;
-            if (code_lines.find(set_code) != code_lines.end())
+            for (auto& iter: code_lines)
+            {
+                if (iter.starts_with(set_code))
+                {
+                    // This event handler has already been created by the user
+                    set_code.clear();
+                    break;
+                }
+            }
+            if (set_code.empty())
                 continue;
 
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
 
-            code.Str(
-                "// Unimplemented Event handler functions\n// Copy any of the following and paste them below the comment block, or "
-                "to your inherited class.");
+            code.Str("// Unimplemented Event handler functions\n// Copy any of the following and paste them below the "
+                     "comment block, or "
+                     "to your inherited class.");
             code.Eol().Str("\n/*").Eol();
             break;
         }
@@ -764,7 +794,8 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
         // The user hasn't defined their own event handlers in this module
         is_all_events_implemented = false;
 
-        code.Str("// Unimplemented Event handler functions\n// Copy any of the following and paste them below the comment block, or "
+        code.Str("// Unimplemented Event handler functions\n// Copy any of the following and paste them below the comment "
+                 "block, or "
                  "to your inherited class.");
         code.Eol().Str("\n/*").Eol();
     }
@@ -777,12 +808,22 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
         {
             auto handler = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's
-            if (handler.empty() || handler.starts_with("[cpp:lambda]"))
+            if (handler.empty() || handler.starts_with("["))
                 continue;
 
+            // The user's declaration will typically include the event parameter, often
             tt_string set_code;
-            set_code << "void " << m_form_node->getNodeName() << "::" << handler;
-            if (code_lines.find(set_code) != code_lines.end())
+            set_code << "void " << m_form_node->getNodeName() << "::" << handler << '(';
+            for (auto& iter: code_lines)
+            {
+                if (iter.starts_with(set_code))
+                {
+                    // This event handler has already been created by the user
+                    set_code.clear();
+                    break;
+                }
+            }
+            if (set_code.empty())
                 continue;
 
             // Add it to our set of handled events in case the user specified
@@ -811,7 +852,7 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
             {
                 code.Str("event.Skip();").Eol().Eol();
             }
-            code.CloseBrace();
+            code.CloseBrace().Eol();
         }
     }
 
@@ -821,6 +862,176 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
         m_source->writeLine("\n*/");
     }
 }
+
+// This function simply generates unhandled event handlers in a multi-string comment.
+
+void BaseCodeGenerator::GenPerlEventHandlers(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenPerlEventHandlers() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_PERL);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetPerlValue(a->get_value()) < EventHandlerDlg::GetPerlValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".pl";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto handler = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("sub "))
+                {
+                    code_lines.emplace(handler);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
+            // Ignore lambda's
+            if (handler.starts_with("[perl:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "sub " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "sub " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                     "to your inherited class.");
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
+            // Ignore lambda's
+            if (handler.empty() || handler.starts_with("[perl:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "sub " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
+
+            code.Str(set_code).Eol();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("$self->EndModal(wxID_CLOSE);").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("$self->EndModal(wxID_YES);").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("$self->EndModal(wxID_NO);").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("$event->Skip();").Eol().Eol();
+            }
+        }
+    }
+
+    // Write the unimplemented event handlers to the source file without the
+    // comment block to make it easier for the user to cut and paste and/or add
+    // them to an inherited class.
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!is_all_events_implemented)
+    {
+        m_source->ResetIndent();
+        m_source->writeLine(perl_begin_cmt_block);
+        m_source->Indent();
+        m_source->writeLine(code);
+        m_source->Unindent();
+        m_source->writeLine(perl_end_cmt_block);
+        m_source->Indent();
+    }
+}
+
+// This function simply generates unhandled event handlers in a multi-string comment.
 
 void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
 {
@@ -954,7 +1165,10 @@ void BaseCodeGenerator::GenPythonEventHandlers(EventVector& events)
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
-            auto foo = event->get_name();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
             if (event->get_name() == "CloseButtonClicked")
             {
                 code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
@@ -1123,4 +1337,174 @@ void BaseCodeGenerator::GenRubyEventHandlers(EventVector& events)
         m_header->writeLine(undefined_handlers);
     }
     m_header->Unindent();
+}
+
+// This function simply generates unhandled event handlers in a multi-string comment.
+
+void BaseCodeGenerator::GenRustEventHandlers(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenRustEventHandlers() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_RUST);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetRustValue(a->get_value()) < EventHandlerDlg::GetRustValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".rs";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(cpp_rust_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto handler = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("fn "))
+                {
+                    code_lines.emplace(handler);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetRustValue(event->get_value());
+            // Ignore lambda's
+            if (handler.starts_with("[rust:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "fn " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "fn " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str(
+                "// Unimplemented Event handler functions\n// Copy any listed and paste them below the comment block, or "
+                "to your inherited class.");
+            code.Eol().Str("/*").Eol();
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them below the comment block, or "
+                 "to your inherited class.");
+        code.Eol().Str("/*").Eol();
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetRustValue(event->get_value());
+            // Ignore lambda's
+            if (handler.empty() || handler.starts_with("[rust:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "fn " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
+
+            code.Str(set_code).Eol();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            code.OpenBrace();
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wxID_CLOSE);").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wxID_YES);").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wxID_NO);").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("event.Skip();").Eol().Eol();
+            }
+            code.CloseBrace();
+        }
+    }
+
+    // Write the unimplemented event handlers to the source file without the
+    // comment block to make it easier for the user to cut and paste and/or add
+    // them to an inherited class.
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!is_all_events_implemented)
+    {
+        code.Eol(eol_if_needed).Str("/*").Eol().Eol();
+        m_source->writeLine(code);
+        m_source->writeLine("*/");
+    }
 }

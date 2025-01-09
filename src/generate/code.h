@@ -462,7 +462,7 @@ public:
     void ResetIndent() { m_indent = 0; }
 
     // Call Indent() and Eol(eol_if_needed).
-    // In C++ "{" will be added before calling Indent().
+    // In C++, Perl, and Rust "{" will be added before calling Indent().
     Code& OpenBrace(bool all_languages = false);
 
     // In C++, this adds "\\n}" and removes indentation set by OpenBrace().

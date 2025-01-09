@@ -82,10 +82,10 @@ bool HasPerlMapConstant(std::string_view value)
     return false;
 }
 
-// This *must* be written on a line by itself with *no* indentation.
+// This *MUST* be written without any indendation
 const char* perl_begin_cmt_block = "=pod";
 
-// This *must* be written on a line by itself with *no* indentation.
+// This *MUST* be written without any indendation
 const char* perl_end_cmt_block = "=cut";
 
 void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
@@ -349,13 +349,13 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         m_source->writeLine("# Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
 
-        m_source->writeLine("\tend", indent::none);
+        m_source->writeLine("\t# end Event handlers\n", indent::none);
         m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        // GenPerlEventHandlers(events);
+        GenPerlEventHandlers(m_events);
     }
     else
     {
@@ -374,7 +374,15 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     m_source->ResetIndent();
     m_source->writeLine("\treturn $self;", indent::none);
     m_source->writeLine("}\n\n", indent::none);
-    m_source->writeLine("1;", indent::none);
+
+    // Only add this when writing to disk. Otherwise, it needs to be added after
+    // the comment block, and only if there is no user code after the comment
+    // block. This is to ensure that the user can add event handlers that are
+    // part of the package.
+    if (panel_type != NOT_PANEL)
+    {
+        m_source->writeLine("1;", indent::none);
+    }
 
     m_header->ResetIndent();
 

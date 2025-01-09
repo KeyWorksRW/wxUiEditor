@@ -329,9 +329,7 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
             break;
 
         case GEN_LANG_RUST:
-            prefix_list = &s_short_rust_map;
-            global_list = &g_map_rust_prefix;
-            break;
+            return "wx::";
 
         case GEN_LANG_CPLUSPLUS:
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
@@ -516,14 +514,20 @@ Code& Code::Eol(int flag)
 
 Code& Code::OpenBrace(bool all_languages)
 {
-    if (!all_languages && !is_cpp())
+    if (!all_languages && !is_cpp() && !is_perl() && !is_rust())
     {
         return *this;
     }
 
-    if (is_cpp() || is_perl())
+    if (is_cpp() || is_perl() || is_rust())
     {
-        Eol(eol_if_needed);
+        // Perl and Rust place the brace at the end of the function. wxUiEditor
+        // follows CppCoreGuidelines and places the brace on the next line for
+        // C++ code.
+        if (is_cpp())
+        {
+            Eol(eol_if_needed);
+        }
         *this += "{";
         Indent();
         Eol();
@@ -540,7 +544,7 @@ Code& Code::OpenBrace(bool all_languages)
 
 Code& Code::CloseBrace(bool all_languages, bool close_ruby)
 {
-    if (!all_languages && !is_cpp())
+    if (!all_languages && !is_cpp() && !is_perl() && !is_rust())
     {
         return *this;
     }
@@ -550,7 +554,7 @@ Code& Code::CloseBrace(bool all_languages, bool close_ruby)
         pop_back();
     Unindent();
 
-    if (is_cpp() || is_perl())
+    if (is_cpp() || is_perl() || is_rust())
     {
         m_within_braces = false;
         Eol();
@@ -1146,13 +1150,17 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
             *this += class_name;
         }
 
-        if (is_ruby())
+        if (is_perl())
+        {
+            *this += "->new";
+        }
+        else if (is_ruby())
         {
             *this += ".new";
         }
-        else if (is_perl())
+        else if (is_rust())
         {
-            *this += "->new";
+            *this += "::new";
         }
     }
 
@@ -1203,7 +1211,7 @@ Code& Code::EndFunction()
         *this += ')';
     }
 
-    if (is_cpp() || is_perl())
+    if (is_cpp() || is_perl() || is_rust())
     {
         *this += ';';
     }

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -57,13 +57,17 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     m_gen_languages = Project.getGenerateLanguages();
     m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
+    m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
     m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
     m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
+    m_is_rust_enabled = (m_gen_languages & GEN_LANG_RUST);
+
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+    // here in case they do get supported in the future.
+
     m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
     m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
     m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
-    m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
-    m_is_rust_enabled = (m_gen_languages & GEN_LANG_RUST);
 
     m_code_preference = Project.getCodePreference(event->getNode());
 
@@ -145,6 +149,27 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD, UserPrefs.get_CppKeywordColour());
         m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
     }
+    if (m_is_perl_enabled)
+    {
+        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
+        m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PerlCommentColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_NUMBER, UserPrefs.get_PerlNumberColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PerlStringColour());
+        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PerlKeywordColour());
+    }
+    if (m_is_rust_enabled)
+    {
+        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
+        m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
+
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.get_RustCommentColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.get_RustNumberColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.get_RustStringColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.get_RustKeywordColour());
+        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_RustColour());
+    }
     if (m_is_ruby_enabled)
     {
         m_ruby_stc_lambda->SetLexer(wxSTC_LEX_RUBY);
@@ -155,6 +180,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, UserPrefs.get_RubyStringColour());
         m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
     }
+
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+    // here in case they do get supported in the future.
+
     if (m_is_fortran_enabled)
     {
         m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
@@ -187,27 +216,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_LuaKeywordColour());
         m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_LuaColour());
     }
-    if (m_is_perl_enabled)
-    {
-        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
-
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PerlCommentColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_NUMBER, UserPrefs.get_PerlNumberColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PerlStringColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PerlKeywordColour());
-    }
-    if (m_is_rust_enabled)
-    {
-        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
-        m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
-
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.get_RustCommentColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.get_RustNumberColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.get_RustStringColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.get_RustKeywordColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_RustColour());
-    }
 
     auto form = event->getNode()->getForm();
     if (form)
@@ -231,6 +239,11 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         // m_py_text_lambda is a single line text control, so there is no scintilla properties to
         // set.
 
+        if (m_is_perl_enabled)
+        {
+            m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
+            m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+        }
         if (m_is_ruby_enabled)
         {
             // Unfortunately, RUBY_LEXER only supports one set of keywords so we either combine
@@ -257,6 +270,15 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             }
             m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
         }
+        if (m_is_rust_enabled)
+        {
+            m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
+            m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
+        }
+
+        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
+        // are here in case they do get supported in the future.
+
         if (m_is_fortran_enabled)
         {
             m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
@@ -272,34 +294,28 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
             m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
         }
-        if (m_is_perl_enabled)
-        {
-            m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
-            m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
-        }
-        if (m_is_rust_enabled)
-        {
-            m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
-            m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
-        }
     }
 
     if (m_code_preference == GEN_LANG_CPLUSPLUS)
         m_notebook->SetSelection(EVENT_PAGE_CPP);
+    else if (m_code_preference == GEN_LANG_PERL)
+        m_notebook->SetSelection(m_perl_page);
     else if (m_code_preference == GEN_LANG_PYTHON)
         m_notebook->SetSelection(m_python_page);
     else if (m_code_preference == GEN_LANG_RUBY)
         m_notebook->SetSelection(m_ruby_page);
+    else if (m_code_preference == GEN_LANG_RUST)
+        m_notebook->SetSelection(m_rust_page);
+
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+    // here in case they do get supported in the future.
+
     else if (m_code_preference == GEN_LANG_FORTRAN)
         m_notebook->SetSelection(m_fortran_page);
     else if (m_code_preference == GEN_LANG_HASKELL)
         m_notebook->SetSelection(m_haskell_page);
     else if (m_code_preference == GEN_LANG_LUA)
         m_notebook->SetSelection(m_lua_page);
-    else if (m_code_preference == GEN_LANG_PERL)
-        m_notebook->SetSelection(m_perl_page);
-    else if (m_code_preference == GEN_LANG_RUST)
-        m_notebook->SetSelection(m_rust_page);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
@@ -323,6 +339,12 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
             m_cpp_radio_use_function->SetValue(true);
             m_cpp_lambda_box->GetStaticBox()->Enable(false);
         }
+        if (m_is_perl_enabled)
+        {
+            m_perl_text_function->SetValue(m_value);
+            m_perl_radio_use_function->SetValue(true);
+            m_perl_lambda_box->GetStaticBox()->Enable(false);
+        }
         if (m_is_python_enabled)
         {
             // Pylint recommends snake_case for Python functions, so we convert the default
@@ -336,6 +358,12 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
             m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
             m_ruby_radio_use_function->SetValue(true);
             m_ruby_lambda_box->GetStaticBox()->Enable(false);
+        }
+        if (m_is_rust_enabled)
+        {
+            m_rust_text_function->SetValue(m_value);
+            m_rust_radio_use_function->SetValue(true);
+            m_rust_lambda_box->GetStaticBox()->Enable(false);
         }
     }
     else
@@ -382,7 +410,19 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                 }
             }
         }
+        if (m_is_perl_enabled)
+        {
+            value = GetPerlValue(m_value.utf8_string());
+            if (value.size())
+            {
+                m_perl_radio_use_anon_func->SetValue(false);
+                m_perl_lambda_box->GetStaticBox()->Enable(false);
 
+                m_perl_function_box->GetStaticBox()->Enable(true);
+                m_perl_radio_use_function->SetValue(true);
+                m_perl_text_function->SetValue(value.make_wxString());
+            }
+        }
         if (m_is_python_enabled)
         {
             value = GetPythonValue(m_value.utf8_string());
@@ -444,6 +484,33 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                     m_ruby_text_function->SetValue(value.make_wxString());
                     m_ruby_radio_use_function->SetValue(true);
                     m_ruby_radio_use_lambda->SetValue(false);
+                }
+            }
+        }
+
+        if (m_is_rust_enabled)
+        {
+            value = GetRustValue(m_value.utf8_string());
+            if (value.size())
+            {
+                if (auto pos_lambda = value.find('['); pos_lambda != tt::npos)
+                {
+                    m_rust_radio_use_function->SetValue(false);
+                    m_rust_radio_use_anon_func->SetValue(true);
+                    m_rust_function_box->GetStaticBox()->Enable(false);
+                    m_rust_lambda_box->GetStaticBox()->Enable(true);
+
+                    // remove leading and trailing brackets
+                    value.erase(pos_lambda, sizeof("[python:lambda]") - 1);
+
+                    // m_rust_text_lambda->SetValue(value.make_wxString());
+                    m_is_rust_lambda = true;
+                }
+                else
+                {
+                    m_rust_text_function->SetValue(value.make_wxString());
+                    m_rust_radio_use_function->SetValue(true);
+                    m_rust_radio_use_anon_func->SetValue(false);
                 }
             }
         }
@@ -531,6 +598,32 @@ void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
+void EventHandlerDlg::OnUseRustFunction(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_rust_radio_use_function->GetValue())
+    {
+        m_rust_radio_use_anon_func->SetValue(false);
+        m_rust_lambda_box->GetStaticBox()->Enable(false);
+        m_rust_function_box->GetStaticBox()->Enable(true);
+
+        auto value = GetPythonValue(m_value.utf8_string());
+
+        if (value.empty() || value.contains("["))
+        {
+            if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+            {
+                value = default_name->second;
+            }
+            else
+            {
+                value = "OnEvent";
+            }
+        }
+        m_rust_text_function->SetValue(value);
+    }
+    FormatBindText();
+}
+
 void EventHandlerDlg::OnUseCppLambda(wxCommandEvent& WXUNUSED(event))
 {
     if (m_cpp_radio_use_lambda->GetValue())
@@ -613,6 +706,20 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
         m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
         m_is_python_lambda = m_py_radio_use_lambda->GetValue();
     }
+    else if (m_is_rust_enabled && event.GetSelection() == (to_int) m_rust_page)
+    {
+        if (m_is_rust_lambda)
+        {
+            m_rust_radio_use_anon_func->SetValue(true);
+            m_rust_radio_use_function->SetValue(false);
+            m_rust_function_box->GetStaticBox()->Enable(false);
+            m_rust_lambda_box->GetStaticBox()->Enable(true);
+
+            m_is_rust_lambda = false;
+        }
+        m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
+        m_is_python_lambda = m_py_radio_use_lambda->GetValue();
+    }
 
     FormatBindText();
 }
@@ -632,21 +739,23 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
 {
     if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
         m_cpp_text_function->SetValue("none");
+    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
+        m_perl_text_function->SetValue("none");
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
         m_py_text_function->SetValue("none");
     else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
         m_ruby_text_function->SetValue("none");
+    else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
+        m_rust_text_function->SetValue("none");
 
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+    // here in case they do get supported in the future.
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue("none");
     else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
         m_haskell_text_function->SetValue("none");
     else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
         m_lua_text_function->SetValue("none");
-    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
-        m_perl_text_function->SetValue("none");
-    else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
-        m_rust_text_function->SetValue("none");
 }
 
 void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
@@ -663,21 +772,23 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
 
     if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
         m_cpp_text_function->SetValue(value);
+    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
+        m_perl_text_function->SetValue(value);
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
         m_py_text_function->SetValue(ConvertToSnakeCase(value.ToStdString()).make_wxString());
     else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
         m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+    else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
+        m_rust_text_function->SetValue(value);
 
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+    // here in case they do get supported in the future.
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue(value);
     else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
         m_haskell_text_function->SetValue(value);
     else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
         m_lua_text_function->SetValue(value);
-    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
-        m_perl_text_function->SetValue(value);
-    else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
-        m_rust_text_function->SetValue(value);
 }
 
 void EventHandlerDlg::FormatBindText()
@@ -842,6 +953,9 @@ void EventHandlerDlg::Update_m_value()
     tt_string cpp_value;
     tt_string py_value;
     tt_string ruby_value;
+    tt_string perl_value;
+    tt_string rust_value;
+
     m_value.clear();
 
     if (m_is_cpp_enabled)
@@ -937,11 +1051,37 @@ void EventHandlerDlg::Update_m_value()
         }
     }
 
+    if (m_is_perl_enabled)
+    {
+        if (m_perl_radio_use_function->GetValue())
+        {
+            if (!m_is_cpp_enabled && !m_is_python_enabled && !m_is_ruby_enabled && !m_is_rust_enabled)
+                perl_value = m_perl_text_function->GetValue().utf8_string();
+            else
+                perl_value << "[perl:" << m_perl_text_function->GetValue().utf8_string() << "]";
+        }
+    }
+
+    if (m_is_rust_enabled)
+    {
+        if (m_rust_radio_use_function->GetValue())
+        {
+            if (!m_is_cpp_enabled && !m_is_perl_enabled && !m_is_python_enabled && !m_is_ruby_enabled)
+                rust_value = m_rust_text_function->GetValue().utf8_string();
+            else
+                rust_value << "[rust:" << m_rust_text_function->GetValue().utf8_string() << "]";
+        }
+    }
+
     // If we get here, then more than one language has been specified.
 
     if (m_is_cpp_enabled)
     {
         m_value = cpp_value.make_wxString();
+    }
+    if (m_is_perl_enabled)
+    {
+        m_value << perl_value.make_wxString();
     }
     if (m_is_python_enabled)
     {
@@ -950,6 +1090,10 @@ void EventHandlerDlg::Update_m_value()
     if (m_is_ruby_enabled)
     {
         m_value << ruby_value.make_wxString();
+    }
+    if (m_is_rust_enabled)
+    {
+        m_value << rust_value.make_wxString();
     }
 }
 
@@ -961,13 +1105,21 @@ void EventHandlerDlg::Update_m_value()
 
 tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
 {
-    if (auto pos_python = value.find("[python:"); pos_python != tt::npos)
+    if (auto pos = value.find("[python:"); pos != tt::npos)
     {
-        value.remove_suffix(value.size() - pos_python);
+        value.remove_suffix(value.size() - pos);
     }
-    if (auto pos_ruby = value.find("[ruby:"); pos_ruby != tt::npos)
+    if (auto pos = value.find("[perl:"); pos != tt::npos)
     {
-        value.remove_suffix(value.size() - pos_ruby);
+        value.remove_suffix(value.size() - pos);
+    }
+    if (auto pos = value.find("[ruby:"); pos != tt::npos)
+    {
+        value.remove_suffix(value.size() - pos);
+    }
+    if (auto pos = value.find("[rust:"); pos != tt::npos)
+    {
+        value.remove_suffix(value.size() - pos);
     }
 
     tt_string result(value);
@@ -994,6 +1146,10 @@ tt_string EventHandlerDlg::GetPerlValue(tt_string_view value)
             {
                 result.erase(pos_other, result.size() - pos_other);
             }
+            if (auto pos_other = result.find("[python:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
         }
         return result;
     }
@@ -1004,7 +1160,7 @@ tt_string EventHandlerDlg::GetPerlValue(tt_string_view value)
 
     if (!value.starts_with("[perl:lambda]"))
     {
-        // This is just a function name, so remove the "[python:" and the trailing ']'
+        // This is just a function name, so remove the "[perl:" and the trailing ']'
         value.remove_prefix(sizeof("[perl:") - 1);
         if (auto end = value.find(']'); end != tt::npos)
         {
@@ -1075,6 +1231,14 @@ tt_string EventHandlerDlg::GetRustValue(tt_string_view value)
         {
             result = value;
             if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+            if (auto pos_other = result.find("[python:"); pos_other != tt::npos)
+            {
+                result.erase(pos_other, result.size() - pos_other);
+            }
+            if (auto pos_other = result.find("[perl:"); pos_other != tt::npos)
             {
                 result.erase(pos_other, result.size() - pos_other);
             }

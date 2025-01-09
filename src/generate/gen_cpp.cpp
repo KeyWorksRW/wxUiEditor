@@ -229,7 +229,7 @@ static void GenCppForm(GenData& gen_data, Node* form)
         flags |= flag_test_only;
     if (form->as_bool(prop_no_closing_brace))
         flags |= flag_add_closing_brace;
-    auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+    auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
     if (form->as_bool(prop_no_closing_brace))
         flags = flags & ~flag_add_closing_brace;
 
@@ -267,7 +267,7 @@ static void GenCppForm(GenData& gen_data, Node* form)
     }
 
     path.replace_extension(source_ext);
-    retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+    retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
 
     if (retval > 0)
     {
@@ -1339,6 +1339,18 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
             m_source->writeLine();
             m_source->writeLine("// Event handlers");
             GenSrcEventBinding(m_form_node, m_events);
+
+            // Only generate potential events if no derived class is being
+            // created. If a derived class is being created, then we don't know
+            // the name of that class's file, and therefore have no idea if the
+            // event has been implemented or not.
+            if (m_events.size() && !m_form_node->as_bool(prop_derived_class))
+            {
+                m_source->writeLine();
+                m_source->ResetIndent();
+                GenCppEventHandlers(m_events);
+                m_source->Indent();
+            }
         }
 
         code.clear();

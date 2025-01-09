@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Helper class for generating code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +57,10 @@ using namespace code;
 
 extern const view_map g_map_python_prefix;
 extern const view_map g_map_ruby_prefix;
+
+// Returns true if value exists in one of the use Wx qw(...) declarations.
+// If true, then the constant is available without modification.
+bool HasPerlMapConstant(std::string_view value);
 
 class Code : public tt_string
 {
@@ -206,6 +210,13 @@ public:
 
     // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.
     Code& Add(GenEnum::PropName prop_name) { return as_string(prop_name); }
+
+    Code& AddIfLang(GenLang lang, tt_string_view text)
+    {
+        if (m_language == lang)
+            Add(text);
+        return *this;
+    }
 
     Code& AddIfCpp(tt_string_view text)
     {
@@ -451,7 +462,7 @@ public:
     void ResetIndent() { m_indent = 0; }
 
     // Call Indent() and Eol(eol_if_needed).
-    // In C++ "{" will be added before calling Indent().
+    // In C++, Perl, and Rust "{" will be added before calling Indent().
     Code& OpenBrace(bool all_languages = false);
 
     // In C++, this adds "\\n}" and removes indentation set by OpenBrace().

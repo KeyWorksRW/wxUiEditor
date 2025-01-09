@@ -193,6 +193,10 @@ bool MenuBarGenerator::ConstructionCode(Code& code)
     {
         code.Add(code.node()->as_string(prop_style));
     }
+    else if (code.is_rust())
+    {
+        code.Add("0");
+    }
     code.EndFunction();
 
     return true;

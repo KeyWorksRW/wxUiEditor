@@ -213,7 +213,6 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
         m_source->writeLine("// Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
 
-        m_source->writeLine("\tend", indent::none);
         m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
@@ -237,7 +236,9 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_source->writeLine("}\n\n", indent::none);
+
+    //
+    // m_source->writeLine("}\n\n", indent::none);
 
     m_header->ResetIndent();
 

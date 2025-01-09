@@ -489,37 +489,37 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     auto* page_sizer5 = new wxBoxSizer(wxVERTICAL);
 
-    m_php_radio_use_function = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+    m_rust_radio_use_function = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_php_function_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_bookpage, wxID_ANY, m_php_radio_use_function),
+    m_rust_function_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_bookpage, wxID_ANY, m_rust_radio_use_function),
         wxVERTICAL);
 
     auto* box_sizer13 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_rust_text_function = new wxTextCtrl(m_php_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_rust_text_function = new wxTextCtrl(m_rust_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
     box_sizer13->Add(m_rust_text_function, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto* btn13 = new wxButton(m_php_function_box->GetStaticBox(), wxID_ANY, "Default");
+    auto* btn13 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Default");
     box_sizer13->Add(btn13, wxSizerFlags().Border(wxALL));
 
-    auto* btn14 = new wxButton(m_php_function_box->GetStaticBox(), wxID_ANY, "None");
+    auto* btn14 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "None");
     box_sizer13->Add(btn14, wxSizerFlags().Border(wxALL));
 
-    m_php_function_box->Add(box_sizer13, wxSizerFlags().Expand().Border(wxALL));
+    m_rust_function_box->Add(box_sizer13, wxSizerFlags().Expand().Border(wxALL));
 
-    m_php_radio_use_anon_func = new wxRadioButton(m_php_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
+    m_rust_radio_use_anon_func = new wxRadioButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_php_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_php_function_box->GetStaticBox(), wxID_ANY,
-        m_php_radio_use_anon_func), wxVERTICAL);
+    m_rust_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_function_box->GetStaticBox(), wxID_ANY,
+        m_rust_radio_use_anon_func), wxVERTICAL);
 
     auto* box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_php_lambda_box->Add(box_sizer5, wxSizerFlags().Border(wxALL));
+    m_rust_lambda_box->Add(box_sizer5, wxSizerFlags().Border(wxALL));
 
-    auto* staticText5 = new wxStaticText(m_php_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
-    m_php_lambda_box->Add(staticText5, wxSizerFlags().Border(wxALL));
+    auto* staticText5 = new wxStaticText(m_rust_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
+    m_rust_lambda_box->Add(staticText5, wxSizerFlags().Border(wxALL));
 
-    m_rust_stc_lambda = new wxStyledTextCtrl(m_php_lambda_box->GetStaticBox());
+    m_rust_stc_lambda = new wxStyledTextCtrl(m_rust_lambda_box->GetStaticBox());
     {
         m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
         m_rust_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
@@ -542,11 +542,11 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_rust_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_rust_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_php_lambda_box->Add(m_rust_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+    m_rust_lambda_box->Add(m_rust_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
-    m_php_function_box->Add(m_php_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
+    m_rust_function_box->Add(m_rust_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
-    page_sizer5->Add(m_php_function_box, wxSizerFlags().Expand().Border(wxALL));
+    page_sizer5->Add(m_rust_function_box, wxSizerFlags().Expand().Border(wxALL));
     m_rust_bookpage->SetSizerAndFit(page_sizer5);
 
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
@@ -610,12 +610,12 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_py_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonLambda, this);
     m_lua_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
-    m_php_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_lua_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_ruby_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_haskell_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
-    m_php_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustLambda, this);
+    m_rust_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustFunction, this);
+    m_rust_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustLambda, this);
     m_cpp_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_fortran_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_haskell_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);

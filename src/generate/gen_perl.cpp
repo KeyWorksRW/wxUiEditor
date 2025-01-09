@@ -1,13 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Perl code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <set>
 #include <thread>
 #include <unordered_set>
+
+#include <frozen/map.h>
 
 #include "mainframe.h"
 
@@ -57,10 +59,33 @@ $app->MainLoop;
 
 // clang-format on
 
-// This *must* be written on a line by itself with *no* indentation.
+// extern constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>;
+
+// If the node contains the specified property, then the string contains all
+// possible contants that could be used separated by spaces.
+constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>({
+
+    { prop_bitmap, "wxNullBitmap" },
+    { prop_id, "wxID_ANY" },
+    { prop_pos, "wxDefaultPosition" },
+    { prop_size, "wxDefaultSize" },
+
+});
+
+bool HasPerlMapConstant(std::string_view value)
+{
+    for (auto& iter: map_perl_constants)
+    {
+        if (tt::contains(iter.second, value))
+            return true;
+    }
+    return false;
+}
+
+// This *MUST* be written without any indendation
 const char* perl_begin_cmt_block = "=pod";
 
-// This *must* be written on a line by itself with *no* indentation.
+// This *MUST* be written without any indendation
 const char* perl_end_cmt_block = "=cut";
 
 void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
@@ -134,32 +159,80 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     m_source->writeLine();
 
-    std::set<std::string> imports;
+    std::set<std::string> use_classes;
+    std::set<std::string> use_constants;
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
         if (auto* gen = node->getGenerator(); gen)
         {
+            std::set<std::string> imports;
             gen->GetImports(node, imports, GEN_LANG_PERL);
+            for (auto& iter: imports)
+            {
+                if (iter.starts_with("use Wx"))
+                    use_constants.emplace(iter);
+                else
+                    use_classes.emplace(iter);
+            }
+            for (auto& iter: map_perl_constants)
+            {
+                if (node->hasProp(iter.first))
+                {
+                    tt_string constants("use Wx qw(");
+                    constants += iter.second;
+                    constants += ");";
+                    use_constants.emplace(constants);
+                }
+            }
         }
         for (auto& child: node->getChildNodePtrs())
         {
+            std::set<std::string> imports;
             GatherImportModules(child.get(), GatherImportModules);
+            for (auto& iter: imports)
+            {
+                if (iter.starts_with("use "))
+                    use_classes.emplace(iter);
+                else
+                    use_constants.emplace(iter);
+            }
+            for (auto& iter: map_perl_constants)
+            {
+                if (child.get()->hasProp(iter.first))
+                {
+                    tt_string constants("use Wx qw(");
+                    constants += iter.second;
+                    constants += ");";
+                    use_constants.emplace(constants);
+                }
+            }
         }
     };
     GatherImportModules(m_form_node, GatherImportModules);
 
-    if (imports.size())
+    if (use_classes.size())
     {
         m_source->writeLine();
-        for (const auto& import: imports)
+        for (const auto& import: use_classes)
         {
             m_source->writeLine(import);
         }
+        m_source->writeLine();
     }
     else
     {
-        m_source->writeLine("use Wx qw[:everything];");
+        m_source->writeLine("use Wx qw[:allclasses];");
+    }
+
+    if (use_constants.size())
+    {
+        m_source->writeLine();
+        for (const auto& import: use_constants)
+        {
+            m_source->writeLine(import);
+        }
+        m_source->writeLine();
     }
 
     m_source->writeLine();
@@ -276,13 +349,13 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         m_source->writeLine("# Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
 
-        m_source->writeLine("\tend", indent::none);
+        m_source->writeLine("\t# end Event handlers\n", indent::none);
         m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        // GenPerlEventHandlers(events);
+        GenPerlEventHandlers(m_events);
     }
     else
     {
@@ -299,9 +372,17 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_source->writeLine("\treturn $this;", indent::none);
+    m_source->writeLine("\treturn $self;", indent::none);
     m_source->writeLine("}\n\n", indent::none);
-    m_source->writeLine("1;", indent::none);
+
+    // Only add this when writing to disk. Otherwise, it needs to be added after
+    // the comment block, and only if there is no user code after the comment
+    // block. This is to ensure that the user can add event handlers that are
+    // part of the package.
+    if (panel_type != NOT_PANEL)
+    {
+        m_source->writeLine("1;", indent::none);
+    }
 
     m_header->ResetIndent();
 

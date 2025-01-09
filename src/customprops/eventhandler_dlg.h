@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -111,6 +111,7 @@ protected:
     void OnUsePythonLambda(wxCommandEvent& event) override;
     void OnUseRubyFunction(wxCommandEvent& event) override;
     void OnUseRubyLambda(wxCommandEvent& WXUNUSED(event)) override;
+    void OnUseRustFunction(wxCommandEvent& event) override;
     void OnDefault(wxCommandEvent& event) override;
     void OnNone(wxCommandEvent& event) override;
 

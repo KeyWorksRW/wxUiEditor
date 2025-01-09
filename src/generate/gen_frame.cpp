@@ -1,12 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFrame generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/frame.h>              // wxFrame class interface
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+
+#include <frozen/set.h>
 
 #include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
@@ -127,7 +129,22 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             code += "\"frame\"";
         code.Str(" unless defined $name;");
 
-        code.Eol().Eol() += "my $this = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+        code.Eol().Eol() += "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+    }
+    else if (code.is_rust())
+    {
+        code.Str("#[derive(Clone)]").Eol().Str("struct ").NodeName();
+        code.OpenBrace();
+        code.Str("base: wx::WeakRef<wx::Frame>").Eol();
+        code.CloseBrace().Eol();
+        code.Str("impl ").NodeName();
+        code.OpenBrace();
+        code.Str("fn new(");
+        code.Str(
+            "parent: &wx::Window, id: i32, title: &str, pos: wx::Point, size: wx::Size, style: i32, name: &str) -> Self");
+        code.OpenBrace();
+        code.Str("let frame = wx::Frame::builder(parent, id, title, pos, size, style, name).build();").Eol();
+        return true;
     }
     else
     {
@@ -298,6 +315,12 @@ bool FrameFormGenerator::AfterChildrenCode(Code& code)
     if (center.size() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Centre(").AddConstant(center).EndFunction();
+    }
+
+    if (code.is_rust())
+    {
+        code.Eol(eol_if_needed).NodeName();
+        code.OpenBrace().Str("base: frame.to_weak_ref()").CloseBrace();
     }
 
     return true;
@@ -550,6 +573,9 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
     return true;
 }
 
+// defined in code.cpp
+extern constexpr auto set_perl_constants = frozen::make_set<std::string_view>;
+
 bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_PERL)
@@ -568,22 +594,6 @@ bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_impor
                 constants.clear();
             }
         };
-
-        // wxDefaultPosition and wxDefaultSize can also appear in child components, so put them on
-        // their own line to avoid duplicates.
-        if (node->as_string(prop_pos).empty() || node->as_string(prop_pos) == "wxDefaultPosition")
-            constants += " wxDefaultPosition";
-        if (node->as_string(prop_size).empty() || node->as_string(prop_size) == "wxDefaultSize")
-            constants += " wxDefaultSize";
-        set_constants();
-
-        if (node->as_string(prop_id).empty() || node->as_string(prop_id) == "wxID_ANY")
-            constants += " wxID_ANY";
-        set_constants();
-
-        if (node->hasValue(prop_center))
-            constants += " wxHORIZONTAL wxVERTICAL wxBOTH";
-        set_constants();
 
         if (node->as_string(prop_style) == "wxDEFAULT_FRAME_STYLE")
             constants += " wxDEFAULT_FRAME_STYLE";
@@ -613,10 +623,14 @@ bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_impor
             constants += " wxCLIP_CHILDREN";
         if (node->as_string(prop_style).contains("wxSTAY_ON_TOP"))
             constants += " wxSTAY_ON_TOP";
-        if (node->as_string(prop_style).contains("wxFRAME_EX_CONTEXTHELP"))
+        if (node->as_string(prop_extra_style).contains("wxFRAME_EX_CONTEXTHELP"))
             constants += " wxFRAME_EX_CONTEXTHELP";
-        if (node->as_string(prop_style).contains("wxFRAME_EX_METAL"))
+        if (node->as_string(prop_extra_style).contains("wxFRAME_EX_METAL"))
             constants += " wxFRAME_EX_METAL";
+        set_constants();
+
+        if (node->as_string(prop_center) != "no")
+            constants += " wxBOTH wxHORIZONTAL wxVERTICAL";
         set_constants();
 
         set_imports.emplace("use base qw(Wx::Frame);");

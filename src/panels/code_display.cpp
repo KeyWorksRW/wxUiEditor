@@ -389,7 +389,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
     }
     else if (panel_type == GEN_LANG_RUST)
     {
-        m_scintilla->SetLexer(wxSTC_LEX_PHPSCRIPT);
+        m_scintilla->SetLexer(wxSTC_LEX_RUST);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Helper class for generating code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +18,8 @@
 #include <array>
 #include <charconv>  // for std::to_chars()
 #include <map>
+
+#include <frozen/set.h>
 
 #include "code.h"
 
@@ -277,6 +279,16 @@ static const view_map s_short_rust_map
 {
 };
 
+constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
+
+    "wxNullBitmap",
+    "wxITEM_CHECK",
+    "wxITEM_DROPDOWN",
+    "wxITEM_NORMAL",
+    "wxITEM_RADIO",
+    "wxID_ANY",
+});
+
 // clang-format on
 
 std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
@@ -317,9 +329,7 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
             break;
 
         case GEN_LANG_RUST:
-            prefix_list = &s_short_rust_map;
-            global_list = &g_map_rust_prefix;
-            break;
+            return "wx::";
 
         case GEN_LANG_CPLUSPLUS:
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
@@ -504,14 +514,20 @@ Code& Code::Eol(int flag)
 
 Code& Code::OpenBrace(bool all_languages)
 {
-    if (!all_languages && !is_cpp())
+    if (!all_languages && !is_cpp() && !is_perl() && !is_rust())
     {
         return *this;
     }
 
-    if (is_cpp() || is_perl())
+    if (is_cpp() || is_perl() || is_rust())
     {
-        Eol(eol_if_needed);
+        // Perl and Rust place the brace at the end of the function. wxUiEditor
+        // follows CppCoreGuidelines and places the brace on the next line for
+        // C++ code.
+        if (is_cpp())
+        {
+            Eol(eol_if_needed);
+        }
         *this += "{";
         Indent();
         Eol();
@@ -528,7 +544,7 @@ Code& Code::OpenBrace(bool all_languages)
 
 Code& Code::CloseBrace(bool all_languages, bool close_ruby)
 {
-    if (!all_languages && !is_cpp())
+    if (!all_languages && !is_cpp() && !is_perl() && !is_rust())
     {
         return *this;
     }
@@ -538,7 +554,7 @@ Code& Code::CloseBrace(bool all_languages, bool close_ruby)
         pop_back();
     Unindent();
 
-    if (is_cpp() || is_perl())
+    if (is_cpp() || is_perl() || is_rust())
     {
         m_within_braces = false;
         Eol();
@@ -592,7 +608,7 @@ Code& Code::AddAuto()
         }
         else if (is_perl())
         {
-            *this += "my ";
+            *this += "my $";
         }
         else if (is_python())
         {
@@ -793,7 +809,32 @@ Code& Code::Add(tt_string_view text)
         }
         else if (text.is_sameprefix("wx") && !is_cpp())
         {
-            if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
+            if (is_perl())
+            {
+                if (set_perl_constants.contains(text))
+                {
+                    CheckLineLength(text.size());
+                    *this += text;
+                    return *this;
+                }
+                else if (text == "wxEmptyString")
+                {
+                    *this << "\"\"";
+                    return *this;
+                }
+
+                if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
+                {
+                    CheckLineLength(language_prefix.size() + text.size() - 2);
+                    *this << language_prefix << text.substr(2);
+                }
+                else
+                {
+                    CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+                    *this << m_language_wxPrefix << text.substr(2);
+                }
+            }
+            else if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
             {
                 CheckLineLength(language_prefix.size() + text.size() - 2);
                 *this << language_prefix << text.substr(2);
@@ -951,7 +992,7 @@ Code& Code::FormFunction(tt_string_view text)
     }
     else if (is_perl())
     {
-        *this += "$this->";
+        *this += "$self->";
     }
     else if (is_lua())
     {
@@ -1108,9 +1149,18 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
         {
             *this += class_name;
         }
-        if (is_ruby())
+
+        if (is_perl())
+        {
+            *this += "->new";
+        }
+        else if (is_ruby())
         {
             *this += ".new";
+        }
+        else if (is_rust())
+        {
+            *this += "::new";
         }
     }
 
@@ -1161,7 +1211,7 @@ Code& Code::EndFunction()
         *this += ')';
     }
 
-    if (is_cpp() || is_perl())
+    if (is_cpp() || is_perl() || is_rust())
     {
         *this += ';';
     }
@@ -1177,9 +1227,40 @@ Code& Code::NodeName(Node* node)
     {
         *this += "self.";
     }
-    if (is_ruby() && !node->isForm() && !node->isLocal() && node_name[0] != '@')
+    else if (is_ruby() && !node->isForm() && !node->isLocal() && node_name[0] != '@')
     {
         *this += "@";
+    }
+    else if (is_perl() && !node->isForm())
+    {
+        if (node->isLocal())
+        {
+            if (!node_name.starts_with("$") && (size() < 1 || back() != '$'))
+            {
+                *this += "$";
+            }
+            *this += node_name;
+            return *this;
+        }
+        else
+        {
+            if (node_name.starts_with("$self->"))
+            {
+                *this += node_name;
+                return *this;
+            }
+            *this += "$self->{";
+            if (node_name.is_sameprefix("$"))
+            {
+                *this += node_name.subview(1);
+            }
+            else
+            {
+                *this += node_name;
+            }
+            *this += "}";
+            return *this;
+        }
     }
     *this += node_name;
     return *this;
@@ -1203,11 +1284,21 @@ Code& Code::VarName(tt_string_view var_name, bool class_access)
             *this += "self.";
         else if (is_ruby())
             *this += "@";
+        else if (is_perl())
+        {
+            Str("$self->{");
+            if (var_name.is_sameprefix("m_"))
+                *this += var_name.subview(2);
+            else
+                *this += var_name;
+            *this += "}";
+            return *this;
+        }
     }
 
     else if (is_perl())
     {
-        *this += "my $";
+        *this += "$";
     }
 
     if (var_name.is_sameprefix("m_"))
@@ -2244,6 +2335,11 @@ void Code::GenWindowSettings()
 Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 {
     FontProperty fontprop(m_node->getPropPtr(prop_name));
+    if (is_perl())
+    {
+        // REVIEW: [Randalphwa - 01-07-2025] As of wx-3.005, wxPerl doesn't support wxFontinfo
+        return *this;
+    }
     if (fontprop.isDefGuiFont())
     {
         OpenFontBrace();
@@ -2317,7 +2413,12 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         }
         else
         {
-            Eol(eol_if_needed).Add("font_info").CreateClass(false, "wxFontInfo");
+            Eol(eol_if_needed);
+            if (is_perl())
+            {
+                *this += "my $";
+            }
+            Add("font_info").CreateClass(false, "wxFontInfo");
         }
 
         if (point_size != static_cast<int>(point_size))  // is there a fractional value?
@@ -2385,56 +2486,76 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
         }
 
-        if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-            VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
-        if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-            VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
-        if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-            VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
-        if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+        if (is_perl())
         {
-            if (is_cpp() && Project.is_wxWidgets31())
+            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
             {
-                Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
+                Eol().Str("$font_info->").Str("FaceName = ");
+                QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ";";
+            }
+            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+            {
+                Eol().Str("$font_info->").Str("Family = ");
+                Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ";";
+            }
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+            {
+                Eol().Str("$font_info->").Str("Style = ");
+                Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ";";
+            }
+        }
+        else
+        {
+            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+                VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
+            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+                VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+            {
+                if (is_cpp() && Project.is_wxWidgets31())
                 {
-                    // wxFontInfo::SetFlag() would have worked around this, unfortunately it is a private: function
-                    bool is_code_added = false;
-                    if (fontprop.GetWeight() == wxFONTWEIGHT_LIGHT)
+                    Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
                     {
-                        VariableMethod("Light();");
-                        is_code_added = true;
-                    }
-                    else if (fontprop.GetWeight() == wxFONTWEIGHT_BOLD)
-                    {
-                        VariableMethod("Bold()");
-                        is_code_added = true;
-                    }
+                        // wxFontInfo::SetFlag() would have worked around this, unfortunately it is a private: function
+                        bool is_code_added = false;
+                        if (fontprop.GetWeight() == wxFONTWEIGHT_LIGHT)
+                        {
+                            VariableMethod("Light();");
+                            is_code_added = true;
+                        }
+                        else if (fontprop.GetWeight() == wxFONTWEIGHT_BOLD)
+                        {
+                            VariableMethod("Bold()");
+                            is_code_added = true;
+                        }
 
-                    if (!is_code_added)
+                        if (!is_code_added)
+                        {
+                            Str("// Only Bold and Light are supported in wxWidgets 3.1.1 and earlier");
+                        }
+                    }
+                    Eol().Str("#else // Weight() is new to wxWidgets 3.1.2").Eol().Tab();
                     {
-                        Str("// Only Bold and Light are supported in wxWidgets 3.1.1 and earlier");
+                        VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+                    }
+                    Eol().Str("#endif").Eol();
+                    if (!fontprop.IsUnderlined() && !fontprop.IsStrikethrough())
+                    {
+                        Str(";").Eol();
                     }
                 }
-                Eol().Str("#else // Weight() is new to wxWidgets 3.1.2").Eol().Tab();
+                else
                 {
                     VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
                 }
-                Eol().Str("#endif").Eol();
-                if (!fontprop.IsUnderlined() && !fontprop.IsStrikethrough())
-                {
-                    Str(";").Eol();
-                }
             }
-            else
-            {
-                VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
-            }
+            if (fontprop.IsUnderlined())
+                VariableMethod("Underlined()");
+            if (fontprop.IsStrikethrough())
+                VariableMethod("Strikethrough()");
         }
-        if (fontprop.IsUnderlined())
-            VariableMethod("Underlined()");
-        if (fontprop.IsStrikethrough())
-            VariableMethod("Strikethrough()");
-
         if (back() == '.')
         {
             pop_back();
@@ -2461,12 +2582,12 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
             else
             {
-                FormFunction(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
+                FormFunction(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
             }
         }
         else
         {
-            NodeName().Function(font_function).Object("wxFont").Str("font_info").Str(")").EndFunction();
+            NodeName().Function(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
         }
         CloseFontBrace();
     }

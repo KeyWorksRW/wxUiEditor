@@ -253,14 +253,14 @@ public:
     // The comment will be followed by a newline.
     Code& AddComment(std::string_view comment, bool force = false);
 
-    // Adds "true" for all languages except Python, which adds "True"
-    Code& True() { return Str(is_python() ? "True" : "true"); }
+    // Adds "True" for Python, "1" for Perl, and "true" for all other languages
+    Code& True();
 
     // Calls AddTrue() or AddFalse() depending on the boolean value of the property
     Code& TrueFalseIf(GenEnum::PropName prop_name);
 
-    // Adds "false" for all languages except Python, which adds "False"
-    Code& False() { return Str(is_python() ? "False" : "false"); }
+    // Adds "False" for Python, "0" for Perl, and "false" for all other languages
+    Code& False();
 
     // Use Str() instead of Add() if you are *absolutely* certain you will never need
     // wxPython or wxRuby (or any other language) processing.

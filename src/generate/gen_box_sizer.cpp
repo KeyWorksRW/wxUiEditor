@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxBoxSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +55,14 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        code.NodeName().Function("ShowItems(").False().EndFunction();
+        if (code.is_perl())
+        {
+            code.AddComment("Perl does not support ShowItems()", true);
+        }
+        else
+        {
+            code.NodeName().Function("ShowItems(").False().EndFunction();
+        }
     }
 
     auto parent = code.m_node->getParent();

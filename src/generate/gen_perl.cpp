@@ -69,6 +69,7 @@ constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::str
     { prop_id, "wxID_ANY" },
     { prop_pos, "wxDefaultPosition" },
     { prop_size, "wxDefaultSize" },
+    { prop_orientation, "wxBOTH wxHORIZONTAL wxVERTICAL" },
 
 });
 

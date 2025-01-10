@@ -46,9 +46,9 @@ const char* g_ruby_keywords = "ENCODING LINE FILE BEGIN END alias and begin brea
                               " elsif end ensure false for if in module next nil not or redo require rescue retry"
                               " return self super then true undef unless until when while yield";
 
-const char* g_perl_keywords = "do if else elsif unless while until for foreach last next redo continue "
-                              "sub return goto and or not xor "
-                              "use no package require my our local state";
+const char* g_perl_keywords = "do if else elsif unless while until for foreach last next pod cut redo continue "
+                              "qw sub return goto and or not xor "
+                              "unless use no package require my our local state ";
 
 const char* g_lua_keywords =
     "and break do else elseif end false for function goto if in local nil not or repeat return then true until while";

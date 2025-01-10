@@ -287,6 +287,10 @@ constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
     "wxITEM_NORMAL",
     "wxITEM_RADIO",
     "wxID_ANY",
+    "wxVERTICAL",
+    "wxHORIZONTAL",
+    "wxBOTH",
+
 });
 
 // clang-format on
@@ -785,6 +789,14 @@ Code& Code::Add(tt_string_view text)
                     *this += '|';
                 if (iter.is_sameprefix("wx") && !is_cpp())
                 {
+                    if (is_perl() && (HasPerlMapConstant(text) || set_perl_constants.contains(text)))
+                    {
+                        CheckLineLength(text.size());
+                        *this += text;
+                        initial_combined_value_set = true;
+                        continue;
+                    }
+
                     if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
                     {
                         // Some languages will have a module added after their standard prefix.
@@ -811,7 +823,7 @@ Code& Code::Add(tt_string_view text)
         {
             if (is_perl())
             {
-                if (set_perl_constants.contains(text))
+                if (HasPerlMapConstant(text) || set_perl_constants.contains(text))
                 {
                     CheckLineLength(text.size());
                     *this += text;
@@ -1387,7 +1399,18 @@ Code& Code::ValidParentName()
         }
         else if (parent->isForm())
         {
-            *this += (is_cpp()) ? "this" : "self";
+            if (is_cpp())
+            {
+                *this += "this";
+            }
+            else if (is_perl())
+            {
+                *this += "$self";
+            }
+            else
+            {
+                *this += "self";
+            }
             return *this;
         }
 
@@ -2888,6 +2911,42 @@ Code& Code::EndConditional()
     }
 
     // Ruby doesn't need anything to complete the conditional statement
+
+    return *this;
+}
+
+Code& Code::True()
+{
+    if (is_python())
+    {
+        *this << "True";
+    }
+    else if (is_perl())
+    {
+        *this << "1";
+    }
+    else
+    {
+        *this << "true";
+    }
+
+    return *this;
+}
+
+Code& Code::False()
+{
+    if (is_python())
+    {
+        *this << "False";
+    }
+    else if (is_perl())
+    {
+        *this << "0";
+    }
+    else
+    {
+        *this << "false";
+    }
 
     return *this;
 }

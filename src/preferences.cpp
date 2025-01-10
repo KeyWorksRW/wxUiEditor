@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Set/Get wxUiEditor preferences
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -175,6 +175,21 @@ wxColour Prefs::GetColour(wxSystemColour index)
 {
     if (!is_DarkMode())
     {
+        switch (index)
+        {
+            case wxSYS_COLOUR_WINDOW:
+                if (is_HighContrast())
+                    return *wxWHITE;
+                break;
+
+            case wxSYS_COLOUR_WINDOWTEXT:
+                if (is_HighContrast())
+                    return *wxBLACK;
+                break;
+
+            default:
+                break;
+        }
         return wxSystemSettings::GetColour(index);
     }
 
@@ -189,10 +204,9 @@ wxColour Prefs::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_APPWORKSPACE:
         case wxSYS_COLOUR_INFOBK:
         case wxSYS_COLOUR_LISTBOX:
-        case wxSYS_COLOUR_WINDOW:
         case wxSYS_COLOUR_BTNFACE:
             if (is_HighContrast())
-                return wxColour(0, 0, 0);
+                return *wxBLACK;
             else
                 return wxColour(0x202020);
 
@@ -203,8 +217,22 @@ wxColour Prefs::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT:
         case wxSYS_COLOUR_LISTBOXTEXT:
         case wxSYS_COLOUR_MENUTEXT:
+            if (is_HighContrast())
+                return *wxWHITE;
+            else
+                return wxColour(0xe0e0e0);
+
+        case wxSYS_COLOUR_WINDOW:
+            if (is_HighContrast())
+                return *wxBLACK;
+            else
+                return wxColour(0x202020);
+
         case wxSYS_COLOUR_WINDOWTEXT:
-            return wxColour(0xe0e0e0);
+            if (is_HighContrast())
+                return *wxWHITE;
+            else
+                return wxColour(0xe0e0e0);
 
         case wxSYS_COLOUR_HOTLIGHT:
             return wxColour(0x474747);

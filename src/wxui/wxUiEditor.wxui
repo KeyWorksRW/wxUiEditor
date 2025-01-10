@@ -8861,7 +8861,7 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
-                  colour="#FF00FF"
+                  colour="#C76605"
                   var_name="m_colour_cpp" />
                 <node
                   class="wxStaticText"

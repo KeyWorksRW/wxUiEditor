@@ -174,7 +174,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* staticText_7 = new wxStaticText(page_cpp, wxID_ANY, "wxWidgets &keyword color:");
     grid_sizer3->Add(staticText_7, wxSizerFlags().CenterVertical().Border(wxALL));
 
-    m_colour_cpp = new wxColourPickerCtrl(page_cpp, wxID_ANY, wxColour("#FF00FF"));
+    m_colour_cpp = new wxColourPickerCtrl(page_cpp, wxID_ANY, wxColour("#C76605"));
     grid_sizer3->Add(m_colour_cpp, wxSizerFlags().Border(wxALL));
 
     auto* staticText9 = new wxStaticText(page_cpp, wxID_ANY, "&C++ keyword color:");

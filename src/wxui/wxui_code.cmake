@@ -72,24 +72,18 @@ set (wxue_generated_code
 
 set (wxue_generated_code_data
 
-    ${CMAKE_CURRENT_LIST_DIR}/../../.gitignore
-    ${CMAKE_CURRENT_LIST_DIR}/../res/console_pch.h
-    ${CMAKE_CURRENT_LIST_DIR}/../res/.gitattributes
-    ${CMAKE_CURRENT_LIST_DIR}/../res/readme.md
-    ${CMAKE_CURRENT_LIST_DIR}/../res/license.txt
-    ${CMAKE_CURRENT_LIST_DIR}/../res/.clang-format
-    ${CMAKE_CURRENT_LIST_DIR}/../res/CMakeLists.txt
-    ${CMAKE_CURRENT_LIST_DIR}/../res/CMakePresets.json
-    ${CMAKE_CURRENT_LIST_DIR}/../res/gui_pch.h
-    ${CMAKE_CURRENT_LIST_DIR}/../res/project.manifest
-    ${CMAKE_CURRENT_LIST_DIR}/../res/assertion_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../res/assertion_dlg.h
-    ${CMAKE_CURRENT_LIST_DIR}/../res/console.rc
-    ${CMAKE_CURRENT_LIST_DIR}/../res/window.rc
-    ${CMAKE_CURRENT_LIST_DIR}/../res/wxConsole.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../res/wxConsole.h
-    ${CMAKE_CURRENT_LIST_DIR}/../res/wxMain.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../res/wxMain.h
-    ${CMAKE_CURRENT_LIST_DIR}/../res/rust_launch.json
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/forms.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/widgets.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/containers.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/bars.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/project.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/sizers.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/text_ctrls.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/buttons.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/boxes.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/data_ctrls.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/mdi.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/pickers.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../xml/interfaces.xml
 
 )

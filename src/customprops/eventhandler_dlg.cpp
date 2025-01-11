@@ -341,8 +341,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     else if (m_code_preference == GEN_LANG_RUST)
         m_notebook->SetSelection(m_rust_page);
 
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-    // here in case they do get supported in the future.
+        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+        // here in case they do get supported in the future.
 
 #if GENERATE_NEW_LANG_CODE
     else if (m_code_preference == GEN_LANG_FORTRAN)
@@ -791,8 +791,8 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
         m_rust_text_function->SetValue("none");
 
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-    // here in case they do get supported in the future.
+        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+        // here in case they do get supported in the future.
 #if GENERATE_NEW_LANG_CODE
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue("none");
@@ -826,8 +826,8 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
         m_rust_text_function->SetValue(value);
 
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-    // here in case they do get supported in the future.
+        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
+        // here in case they do get supported in the future.
 #if GENERATE_NEW_LANG_CODE
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue(value);

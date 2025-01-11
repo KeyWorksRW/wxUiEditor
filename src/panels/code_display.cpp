@@ -106,17 +106,42 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         clr_variables = "#94e6fa";
     }
 
-    if (panel_type == GEN_LANG_XRC)
+    if (panel_type == GEN_LANG_CPLUSPLUS)
     {
-        m_scintilla->SetLexer(wxSTC_LEX_XML);
-        // [Randalphwa - 03-04-2024] Default tab width for wxSTC_LEX_XML appears to be 8 at
-        // least in wxWidgets 3.3, but we want 4 for XRC to improve readability.
-        m_scintilla->SetTabWidth(4);
+        m_scintilla->SetLexer(wxSTC_LEX_CPP);
+        // On Windows, this saves converting the UTF16 characters to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
+
+        // Add regular classes that have different generator class names
+
+        tt_string widget_keywords;
+        for (auto iter: lst_widgets_keywords)
+        {
+            if (widget_keywords.size())
+                widget_keywords << ' ' << iter;
+            else
+                widget_keywords = iter;
+        }
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                continue;
+            widget_keywords << ' ' << iter->declName();
+        }
+        widget_keywords << " wxAuiToolBarItem wxToolBarToolBase";
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+        m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
 
-        m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
+        // First set all possible foreground/background colours
         if (UserPrefs.is_DarkMode())
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
@@ -124,30 +149,102 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
                 m_scintilla->StyleSetForeground(idx, fg);
                 m_scintilla->StyleSetBackground(idx, bg);
             }
+        }
 
-            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT,
-                                            UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
-            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
-            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING,
-                                            UserPrefs.is_HighContrast() ? clr_strings : wxColour("#85e085"));
-            m_scintilla->StyleSetForeground(
-                wxSTC_H_ATTRIBUTE, UserPrefs.is_HighContrast() ? clr_variables : UserPrefs.get_XrcAttributeColour());
-            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING,
-                                            UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_XrcDblStringColour());
-            m_scintilla->StyleSetForeground(wxSTC_H_TAG,
-                                            UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_XrcTagColour());
+        if (UserPrefs.is_DarkMode())
+        {
+            if (UserPrefs.is_HighContrast())
+            {
+                m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour("#569CD6"));
+            }
+            else
+            {
+                m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+            }
         }
         else
         {
-            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, clr_comments);
-            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, clr_numbers);
-            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, clr_types);
-            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, clr_strings);
-            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, UserPrefs.get_XrcAttributeColour());
-            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, UserPrefs.get_XrcDblStringColour());
-            m_scintilla->StyleSetForeground(wxSTC_H_TAG, UserPrefs.get_XrcTagColour());
+            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
         }
+
+        m_scintilla->StyleSetForeground(wxSTC_C_STRING,
+                                        UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_CppStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL,
+                                        UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_CppStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT,
+                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE,
+                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC,
+                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC,
+                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD,
+                                        UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_CppKeywordColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD2,
+                                        UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_CppColour());
+        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER,
+                                        UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_CppNumberColour());
+    }
+    else if (panel_type == GEN_LANG_PERL)
+    {
+        m_scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+        m_scintilla->SetMarginWidth(0, m_scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_999"));
+
+        m_scintilla->SetLexer(wxSTC_LEX_PERL);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        // m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+
+        tt_string wxPerl_keywords(g_perl_keywords);
+        for (auto iter: lst_widgets_keywords)
+        {
+            if (wxPerl_keywords.size())
+                wxPerl_keywords << ' ' << iter;
+            else
+                wxPerl_keywords = iter;
+        }
+
+        for (auto iter: NodeCreation.getNodeDeclarationArray())
+        {
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->declName().starts_with("wx"))
+                continue;
+            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                continue;
+            wxPerl_keywords << ' ' << iter->declName().subview(2);
+        }
+
+        // Unfortunately, PERL_LEXER only supports one set of keywords so we have to combine the
+        // regular keywords with the wxWidgets keywords.
+
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxPerl_keywords.c_str());
+        m_scintilla->StyleSetBold(wxSTC_PL_WORD, true);
+
+        if (UserPrefs.is_DarkMode())
+        {
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+        }
+
+        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE,
+                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_PerlCommentColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER,
+                                        UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_PerlNumberColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_STRING,
+                                        UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_PerlStringColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_WORD,
+                                        UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_PerlColour());
+        m_scintilla->StyleSetForeground(wxSTC_PL_PREPROCESSOR,
+                                        UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_PerlColour());
     }
     else if (panel_type == GEN_LANG_PYTHON)
     {
@@ -279,66 +376,6 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         m_scintilla->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_variables);
         m_scintilla->StyleSetForeground(wxSTC_RB_CLASS_VAR, clr_keywords);
     }
-    else if (panel_type == GEN_LANG_PERL)
-    {
-        m_scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-        m_scintilla->SetMarginWidth(0, m_scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_999"));
-
-        m_scintilla->SetLexer(wxSTC_LEX_PERL);
-        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        // m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
-
-        tt_string wxPerl_keywords(g_perl_keywords);
-        for (auto iter: lst_widgets_keywords)
-        {
-            if (wxPerl_keywords.size())
-                wxPerl_keywords << ' ' << iter;
-            else
-                wxPerl_keywords = iter;
-        }
-
-        for (auto iter: NodeCreation.getNodeDeclarationArray())
-        {
-            if (!iter)
-            {
-                // This will happen if there is an enumerated value but no generator for it
-                continue;
-            }
-
-            if (!iter->declName().starts_with("wx"))
-                continue;
-            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
-                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
-                continue;
-            wxPerl_keywords << ' ' << iter->declName().subview(2);
-        }
-
-        // Unfortunately, PERL_LEXER only supports one set of keywords so we have to combine the
-        // regular keywords with the wxWidgets keywords.
-
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxPerl_keywords.c_str());
-        m_scintilla->StyleSetBold(wxSTC_PL_WORD, true);
-
-        if (UserPrefs.is_DarkMode())
-        {
-            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
-            {
-                m_scintilla->StyleSetForeground(idx, fg);
-                m_scintilla->StyleSetBackground(idx, bg);
-            }
-        }
-
-        m_scintilla->StyleSetForeground(wxSTC_PL_COMMENTLINE,
-                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_PerlCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_NUMBER,
-                                        UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_PerlNumberColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_STRING,
-                                        UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_PerlStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_WORD,
-                                        UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_PerlColour());
-        m_scintilla->StyleSetForeground(wxSTC_PL_PREPROCESSOR,
-                                        UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_PerlColour());
-    }
     else if (panel_type == GEN_LANG_RUST)
     {
         m_scintilla->SetLexer(wxSTC_LEX_RUST);
@@ -394,6 +431,51 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         m_scintilla->StyleSetForeground(wxSTC_RUST_WORD2,
                                         UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_RustKeywordColour());
     }
+    else if (panel_type == GEN_LANG_XRC)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_XML);
+        // [Randalphwa - 03-04-2024] Default tab width for wxSTC_LEX_XML appears to be 8 at
+        // least in wxWidgets 3.3, but we want 4 for XRC to improve readability.
+        m_scintilla->SetTabWidth(4);
+
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+
+        m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
+        if (UserPrefs.is_DarkMode())
+        {
+            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
+            {
+                m_scintilla->StyleSetForeground(idx, fg);
+                m_scintilla->StyleSetBackground(idx, bg);
+            }
+
+            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT,
+                                            UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING,
+                                            UserPrefs.is_HighContrast() ? clr_strings : wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(
+                wxSTC_H_ATTRIBUTE, UserPrefs.is_HighContrast() ? clr_variables : UserPrefs.get_XrcAttributeColour());
+            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING,
+                                            UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_XrcDblStringColour());
+            m_scintilla->StyleSetForeground(wxSTC_H_TAG,
+                                            UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_XrcTagColour());
+        }
+        else
+        {
+            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, clr_comments);
+            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, clr_numbers);
+            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, clr_types);
+            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, clr_strings);
+            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, UserPrefs.get_XrcAttributeColour());
+            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, UserPrefs.get_XrcDblStringColour());
+            m_scintilla->StyleSetForeground(wxSTC_H_TAG, UserPrefs.get_XrcTagColour());
+        }
+    }
+
+#if GENERATE_NEW_LANG_CODE
     else if (panel_type == GEN_LANG_FORTRAN)
     {
         m_scintilla->SetLexer(wxSTC_LEX_FORTRAN);
@@ -487,43 +569,19 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
         m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_LuaColour());
         m_scintilla->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_LuaKeywordColour());
     }
+#endif  // GENERATE_NEW_LANG_CODE
 
-    else  // C++
+    else  // Unknown language, default to xml
     {
-        m_scintilla->SetLexer(wxSTC_LEX_CPP);
-        // On Windows, this saves converting the UTF16 characters to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
-
-        // Add regular classes that have different generator class names
-
-        tt_string widget_keywords;
-        for (auto iter: lst_widgets_keywords)
-        {
-            if (widget_keywords.size())
-                widget_keywords << ' ' << iter;
-            else
-                widget_keywords = iter;
-        }
-
-        for (auto iter: NodeCreation.getNodeDeclarationArray())
-        {
-            if (!iter)
-            {
-                // This will happen if there is an enumerated value but no generator for it
-                continue;
-            }
-
-            if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
-                continue;
-            widget_keywords << ' ' << iter->declName();
-        }
-        widget_keywords << " wxAuiToolBarItem wxToolBarToolBase";
+        m_scintilla->SetLexer(wxSTC_LEX_XML);
+        // [Randalphwa - 03-04-2024] Default tab width for wxSTC_LEX_XML appears to be 8 at
+        // least in wxWidgets 3.3, but we want 4 for XRC to improve readability.
+        m_scintilla->SetTabWidth(4);
 
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
-        m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 
-        // First set all possible foreground/background colours
+        m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
         if (UserPrefs.is_DarkMode())
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
@@ -531,57 +589,35 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
                 m_scintilla->StyleSetForeground(idx, fg);
                 m_scintilla->StyleSetBackground(idx, bg);
             }
+
+            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT,
+                                            UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
+            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING,
+                                            UserPrefs.is_HighContrast() ? clr_strings : wxColour("#85e085"));
+            m_scintilla->StyleSetForeground(
+                wxSTC_H_ATTRIBUTE, UserPrefs.is_HighContrast() ? clr_variables : UserPrefs.get_XrcAttributeColour());
+            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING,
+                                            UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_XrcDblStringColour());
+            m_scintilla->StyleSetForeground(wxSTC_H_TAG,
+                                            UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_XrcTagColour());
         }
 
-        if (UserPrefs.is_DarkMode())
-        {
-            if (UserPrefs.is_HighContrast())
-            {
-                m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour("#569CD6"));
-            }
-            else
-            {
-                m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-            }
-        }
-        else
-        {
-            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-        }
+        // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not
+        // cross-platform. See issue #597.
 
-        m_scintilla->StyleSetForeground(wxSTC_C_STRING,
-                                        UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_CppStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL,
-                                        UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_CppStringColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT,
-                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE,
-                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC,
-                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC,
-                                        UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD,
-                                        UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_CppKeywordColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_WORD2,
-                                        UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_CppColour());
-        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER,
-                                        UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_CppNumberColour());
+        FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+        m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+
+        // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+        // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+        m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
+
+        Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
+        Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
     }
-
-    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not cross-platform.
-    // See issue #597.
-
-    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
-
-    // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-
-    m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
-
-    Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
-    Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
 }
 
 void CodeDisplay::OnFind(wxFindDialogEvent& event)

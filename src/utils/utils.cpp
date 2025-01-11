@@ -585,12 +585,23 @@ std::string_view ConvertFromGenLang(GenLang language)
         case GEN_LANG_CPLUSPLUS:
             return "C++";
             break;
+        case GEN_LANG_PERL:
+            return "Perl";
+            break;
         case GEN_LANG_PYTHON:
             return "Python";
             break;
         case GEN_LANG_RUBY:
             return "Ruby";
             break;
+        case GEN_LANG_RUST:
+            return "Rust";
+            break;
+        case GEN_LANG_XRC:
+            return "XRC";
+            break;
+
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             return "Fortran";
             break;
@@ -600,15 +611,8 @@ std::string_view ConvertFromGenLang(GenLang language)
         case GEN_LANG_LUA:
             return "Lua";
             break;
-        case GEN_LANG_PERL:
-            return "Perl";
-            break;
-        case GEN_LANG_RUST:
-            return "Rust";
-            break;
-        case GEN_LANG_XRC:
-            return "XRC";
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
+
         default:
             return "an unknown language";
             break;
@@ -619,27 +623,37 @@ GenLang ConvertToGenLang(tt_string_view language)
 {
     if (language.starts_with("C++") || language.starts_with("Folder C++"))
         return GEN_LANG_CPLUSPLUS;
+    else if (language == "Perl" || language.starts_with("wxPerl") || language.starts_with("Folder wxPerl"))
+        return GEN_LANG_PERL;
     else if (language == "Python" || language.starts_with("wxPython") || language.starts_with("Folder wxPython"))
         return GEN_LANG_PYTHON;
     else if (language == "Ruby" || language.starts_with("wxRuby") || language.starts_with("Folder wxRuby"))
         return GEN_LANG_RUBY;
+    else if (language == "Rust" || language.starts_with("wxRust") || language.starts_with("Folder wxRust"))
+        return GEN_LANG_RUST;
+    else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
+        return GEN_LANG_XRC;
+
+#if GENERATE_NEW_LANG_CODE
     else if (language == "Fortran" || language.starts_with("wxFortran") || language.starts_with("Folder wxFortran"))
         return GEN_LANG_FORTRAN;
     else if (language == "Haskell" || language.starts_with("wxHaskell") || language.starts_with("Folder wxHaskell"))
         return GEN_LANG_HASKELL;
     else if (language == "Lua" || language.starts_with("wxLua") || language.starts_with("Folder wxLua"))
         return GEN_LANG_LUA;
-    else if (language == "Perl" || language.starts_with("wxPerl") || language.starts_with("Folder wxPerl"))
-        return GEN_LANG_PERL;
-    else if (language == "Rust" || language.starts_with("wxRust") || language.starts_with("Folder wxRust"))
-        return GEN_LANG_RUST;
-    else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
-        return GEN_LANG_XRC;
+#endif  // GENERATE_NEW_LANG_CODE
 
     // If this wasn't an actual language setting, then return all languages
     else
+    {
+#if GENERATE_NEW_LANG_CODE
         return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_FORTRAN |
                                     GEN_LANG_HASKELL | GEN_LANG_LUA | GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
+#else
+        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_PERL | GEN_LANG_RUST |
+                                    GEN_LANG_XRC);
+#endif  // GENERATE_NEW_LANG_CODE
+    }
 }
 
 std::string GetLanguageExtension(GenLang language)
@@ -648,12 +662,6 @@ std::string GetLanguageExtension(GenLang language)
     {
         case GEN_LANG_CPLUSPLUS:
             return ".cpp";
-        case GEN_LANG_FORTRAN:
-            return ".f90";
-        case GEN_LANG_HASKELL:
-            return ".hs";
-        case GEN_LANG_LUA:
-            return ".lua";
         case GEN_LANG_PERL:
             return ".pl";
         case GEN_LANG_PYTHON:
@@ -664,6 +672,16 @@ std::string GetLanguageExtension(GenLang language)
             return ".rs";
         case GEN_LANG_XRC:
             return ".xrc";
+
+#if GENERATE_NEW_LANG_CODE
+        case GEN_LANG_FORTRAN:
+            return ".f90";
+        case GEN_LANG_HASKELL:
+            return ".hs";
+        case GEN_LANG_LUA:
+            return ".lua";
+#endif  // GENERATE_NEW_LANG_CODE
+
         default:
             return ".cpp";
     }

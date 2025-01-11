@@ -35,25 +35,30 @@ extern const char* g_rust_keywords;
     #define SCI_SETKEYWORDS 4005
 #endif
 
-constexpr size_t EVENT_PAGE_CPP = 0;
-constexpr size_t EVENT_PAGE_PYTHON = 1;
-constexpr size_t EVENT_PAGE_RUBY = 2;
-constexpr size_t EVENT_PAGE_FORTRAN = 3;
-constexpr size_t EVENT_PAGE_HASKELL = 4;
-constexpr size_t EVENT_PAGE_LUA = 5;
-constexpr size_t EVENT_PAGE_PERL = 6;
-constexpr size_t EVENT_PAGE_RUST = 7;
+constexpr int EVENT_PAGE_CPP = 0;
+constexpr int EVENT_PAGE_PERL = 1;
+constexpr int EVENT_PAGE_PYTHON = 2;
+constexpr int EVENT_PAGE_RUBY = 3;
+constexpr int EVENT_PAGE_RUST = 4;
+
+// Keep these even if !GENERATE_NEW_LANG_CODE so that they can be removed
+constexpr int EVENT_PAGE_FORTRAN = 5;
+constexpr int EVENT_PAGE_HASKELL = 6;
+constexpr int EVENT_PAGE_LUA = 7;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
     // Page numbers can be reduced if the language before it was removed
+    m_perl_page = EVENT_PAGE_PERL;
     m_python_page = EVENT_PAGE_PYTHON;
     m_ruby_page = EVENT_PAGE_RUBY;
+    m_rust_page = EVENT_PAGE_RUST;
+
+#if GENERATE_NEW_LANG_CODE
     m_fortran_page = EVENT_PAGE_FORTRAN;
     m_haskell_page = EVENT_PAGE_HASKELL;
     m_lua_page = EVENT_PAGE_LUA;
-    m_perl_page = EVENT_PAGE_PERL;
-    m_rust_page = EVENT_PAGE_RUST;
+#endif  // GENERATE_NEW_LANG_CODE
 
     m_gen_languages = Project.getGenerateLanguages();
     m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
@@ -64,42 +69,76 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
-
+#if GENERATE_NEW_LANG_CODE
     m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
     m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
     m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
+#endif  // GENERATE_NEW_LANG_CODE
 
     m_code_preference = Project.getCodePreference(event->getNode());
 
     if (!m_is_cpp_enabled)
     {
         m_notebook->RemovePage(EVENT_PAGE_CPP);
+        m_perl_page--;
         m_python_page--;
         m_ruby_page--;
+        m_rust_page--;
+
+#if GENERATE_NEW_LANG_CODE
         m_fortran_page--;
         m_haskell_page--;
         m_lua_page--;
-        m_perl_page--;
+#endif  // GENERATE_NEW_LANG_CODE
+    }
+    if (!m_is_perl_enabled)
+    {
+        m_notebook->RemovePage(m_perl_page);
+        m_python_page--;
+        m_ruby_page--;
         m_rust_page--;
+
+#if GENERATE_NEW_LANG_CODE
+        m_fortran_page--;
+        m_haskell_page--;
+        m_lua_page--;
+#endif  // GENERATE_NEW_LANG_CODE
     }
     if (!m_is_python_enabled)
     {
         m_notebook->RemovePage(m_python_page);
         m_ruby_page--;
+        m_rust_page--;
+
+#if GENERATE_NEW_LANG_CODE
         m_fortran_page--;
         m_haskell_page--;
         m_lua_page--;
-        m_perl_page--;
-        m_rust_page--;
+#endif  // GENERATE_NEW_LANG_CODE
     }
     if (!m_is_ruby_enabled)
     {
         m_notebook->RemovePage(m_ruby_page);
-        m_fortran_page--;
-        m_lua_page--;
-        m_perl_page--;
         m_rust_page--;
+
+#if GENERATE_NEW_LANG_CODE
+        m_fortran_page--;
+        m_haskell_page--;
+        m_lua_page--;
+#endif  // GENERATE_NEW_LANG_CODE
     }
+    if (!m_is_rust_enabled)
+    {
+        m_notebook->RemovePage(m_rust_page);
+
+#if GENERATE_NEW_LANG_CODE
+        m_fortran_page--;
+        m_haskell_page--;
+        m_lua_page--;
+#endif  // GENERATE_NEW_LANG_CODE
+    }
+
+#if GENERATE_NEW_LANG_CODE
     if (!m_is_fortran_enabled)
     {
         m_notebook->RemovePage(m_fortran_page);
@@ -121,16 +160,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_perl_page--;
         m_rust_page--;
     }
-    if (!m_is_perl_enabled)
-    {
-        m_notebook->RemovePage(m_perl_page);
-        m_rust_page--;
-    }
-    if (!m_is_rust_enabled)
-    {
-        m_notebook->RemovePage(m_rust_page);
-    }
-
+#endif
     m_value = event->get_value().make_wxString();
 
     if (m_is_cpp_enabled)
@@ -184,6 +214,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
 
+#if GENERATE_NEW_LANG_CODE
     if (m_is_fortran_enabled)
     {
         m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
@@ -216,6 +247,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_LuaKeywordColour());
         m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_LuaColour());
     }
+#endif  // GENERATE_NEW_LANG_CODE
 
     auto form = event->getNode()->getForm();
     if (form)
@@ -278,6 +310,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
         // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
         // are here in case they do get supported in the future.
+#if GENERATE_NEW_LANG_CODE
 
         if (m_is_fortran_enabled)
         {
@@ -294,6 +327,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
             m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
         }
+#endif  // GENERATE_NEW_LANG_CODE
     }
 
     if (m_code_preference == GEN_LANG_CPLUSPLUS)
@@ -310,17 +344,26 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
 
+#if GENERATE_NEW_LANG_CODE
     else if (m_code_preference == GEN_LANG_FORTRAN)
         m_notebook->SetSelection(m_fortran_page);
     else if (m_code_preference == GEN_LANG_HASKELL)
         m_notebook->SetSelection(m_haskell_page);
     else if (m_code_preference == GEN_LANG_LUA)
         m_notebook->SetSelection(m_lua_page);
+#endif  // GENERATE_NEW_LANG_CODE
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_static_bind_text->SetLabel(wxEmptyString);
+
+#if !GENERATE_NEW_LANG_CODE
+    // Remove in reverse order so prevent positions from changing
+    m_notebook->RemovePage(EVENT_PAGE_LUA);
+    m_notebook->RemovePage(EVENT_PAGE_HASKELL);
+    m_notebook->RemovePage(EVENT_PAGE_FORTRAN);
+#endif  // !GENERATE_NEW_LANG_CODE
 
     if (m_value.empty())
     {
@@ -664,7 +707,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
     // once and been corrected, then further changes work fine. I have not been able to figure
     // out why this is happening, but this code works around it.
 
-    if (m_is_python_enabled && event.GetSelection() == (to_int) m_python_page)
+    if (m_is_python_enabled && event.GetSelection() == m_python_page)
     {
         if (m_is_python_lambda)
         {
@@ -678,7 +721,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
         m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
         m_is_ruby_lambda = m_ruby_radio_use_lambda->GetValue();
     }
-    else if (m_is_cpp_enabled && event.GetSelection() == (to_int) EVENT_PAGE_CPP)
+    else if (m_is_cpp_enabled && event.GetSelection() == EVENT_PAGE_CPP)
     {
         if (m_is_cpp_lambda)
         {
@@ -692,7 +735,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
         m_is_python_lambda = m_py_radio_use_lambda->GetValue();
         m_is_ruby_lambda = m_ruby_radio_use_lambda->GetValue();
     }
-    else if (m_is_ruby_enabled && event.GetSelection() == (to_int) m_ruby_page)
+    else if (m_is_ruby_enabled && event.GetSelection() == m_ruby_page)
     {
         if (m_is_ruby_lambda)
         {
@@ -706,7 +749,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
         m_is_cpp_lambda = m_cpp_radio_use_lambda->GetValue();
         m_is_python_lambda = m_py_radio_use_lambda->GetValue();
     }
-    else if (m_is_rust_enabled && event.GetSelection() == (to_int) m_rust_page)
+    else if (m_is_rust_enabled && event.GetSelection() == m_rust_page)
     {
         if (m_is_rust_lambda)
         {
@@ -750,12 +793,14 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
 
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
+#if GENERATE_NEW_LANG_CODE
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue("none");
     else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
         m_haskell_text_function->SetValue("none");
     else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
         m_lua_text_function->SetValue("none");
+#endif  // GENERATE_NEW_LANG_CODE
 }
 
 void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
@@ -783,23 +828,25 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
 
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
+#if GENERATE_NEW_LANG_CODE
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue(value);
     else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
         m_haskell_text_function->SetValue(value);
     else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
         m_lua_text_function->SetValue(value);
+#endif  // GENERATE_NEW_LANG_CODE
 }
 
 void EventHandlerDlg::FormatBindText()
 {
     auto page = m_notebook->GetSelection();
     GenLang language;
-    if (m_is_cpp_enabled && page == (to_int) EVENT_PAGE_CPP)
+    if (m_is_cpp_enabled && page == EVENT_PAGE_CPP)
         language = GEN_LANG_CPLUSPLUS;
-    else if (m_is_python_enabled && page == (to_int) m_python_page)
+    else if (m_is_python_enabled && page == m_python_page)
         language = GEN_LANG_PYTHON;
-    else if (m_is_ruby_enabled && page == (to_int) m_ruby_page)
+    else if (m_is_ruby_enabled && page == m_ruby_page)
         language = GEN_LANG_RUBY;
     else
         return;

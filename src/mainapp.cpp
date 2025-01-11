@@ -223,6 +223,10 @@ int App::OnRun()
         {
             generate_type = GEN_LANG_CPLUSPLUS;
         }
+        else if (parser.Found("gen_perl", &filename))
+        {
+            generate_type = GEN_LANG_PERL;
+        }
         else if (parser.Found("gen_python", &filename))
         {
             generate_type = GEN_LANG_PYTHON;
@@ -231,10 +235,15 @@ int App::OnRun()
         {
             generate_type = GEN_LANG_RUBY;
         }
+        else if (parser.Found("gen_rust", &filename))
+        {
+            generate_type = GEN_LANG_RUST;
+        }
         else if (parser.Found("gen_xrc", &filename))
         {
             generate_type = GEN_LANG_XRC;
         }
+#if GENERATE_NEW_LANG_CODE
         else if (parser.Found("gen_haskell", &filename))
         {
             generate_type = GEN_LANG_HASKELL;
@@ -243,23 +252,24 @@ int App::OnRun()
         {
             generate_type = GEN_LANG_LUA;
         }
-        else if (parser.Found("gen_perl", &filename))
-        {
-            generate_type = GEN_LANG_PERL;
-        }
-        else if (parser.Found("gen_rust", &filename))
-        {
-            generate_type = GEN_LANG_RUST;
-        }
+#endif  // GENERATE_NEW_LANG_CODE
+
         else if (parser.Found("gen_all", &filename))
         {
-            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_HASKELL | GEN_LANG_LUA |
-                             GEN_LANG_PERL | GEN_LANG_RUST);
+            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_RUST);
+#if GENERATE_NEW_LANG_CODE
+            generate_type |= (GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA);
+#endif  // GENERATE_NEW_LANG_CODE
         }
 
         if (parser.Found("test_cpp", &filename))
         {
             generate_type = (generate_type | GEN_LANG_CPLUSPLUS);
+            test_only = true;
+        }
+        if (parser.Found("test_perl", &filename))
+        {
+            generate_type = (generate_type | GEN_LANG_PERL);
             test_only = true;
         }
         if (parser.Found("test_python", &filename))
@@ -272,11 +282,17 @@ int App::OnRun()
             generate_type = (generate_type | GEN_LANG_RUBY);
             test_only = true;
         }
+        if (parser.Found("test_rust", &filename))
+        {
+            generate_type = (generate_type | GEN_LANG_RUST);
+            test_only = true;
+        }
         if (parser.Found("test_xrc", &filename))
         {
             generate_type = (generate_type | GEN_LANG_XRC);
             test_only = true;
         }
+#if GENERATE_NEW_LANG_CODE
         if (parser.Found("test_haskell", &filename))
         {
             generate_type = (generate_type | GEN_LANG_HASKELL);
@@ -287,16 +303,7 @@ int App::OnRun()
             generate_type = (generate_type | GEN_LANG_LUA);
             test_only = true;
         }
-        if (parser.Found("test_perl", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_PERL);
-            test_only = true;
-        }
-        if (parser.Found("test_rust", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_RUST);
-            test_only = true;
-        }
+#endif  // GENERATE_NEW_LANG_CODE
 
         if (generate_type != GEN_LANG_NONE && filename.empty())
         {
@@ -414,6 +421,14 @@ int App::OnRun()
                 GenerateCppFiles(results, test_only ? &class_list : nullptr);
                 log_results("Generating C++ files");
             }
+            if (generate_type & GEN_LANG_PERL)
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PERL);
+                log_results("Generating Perl files");
+            }
             if (generate_type & GEN_LANG_PYTHON)
             {
                 results.clear();
@@ -438,6 +453,15 @@ int App::OnRun()
                 GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
                 log_results("Generating XRC files");
             }
+            if (generate_type & GEN_LANG_RUST)
+            {
+                results.clear();
+                if (wxGetApp().isTestingMenuEnabled())
+                    results.StartClock();
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUST);
+                log_results("Generating Rust files");
+            }
+#if GENERATE_NEW_LANG_CODE
             if (generate_type & GEN_LANG_HASKELL)
             {
                 results.clear();
@@ -454,22 +478,7 @@ int App::OnRun()
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_LUA);
                 log_results("Generating Lua files");
             }
-            if (generate_type & GEN_LANG_PERL)
-            {
-                results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PERL);
-                log_results("Generating Perl files");
-            }
-            if (generate_type & GEN_LANG_RUST)
-            {
-                results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUST);
-                log_results("Generating Rust files");
-            }
+#endif
 
             if (log.size())
             {

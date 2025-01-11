@@ -87,6 +87,13 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_derived_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_derived_hdr_panel, "derived_hdr", false, wxWithImages::NO_IMAGE);
     }
+    else if (m_panel_type == GEN_LANG_PERL)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
     else if (m_panel_type == GEN_LANG_PYTHON)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
@@ -108,6 +115,15 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
+    else if (m_panel_type == GEN_LANG_RUST)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+
+#if GENERATE_NEW_LANG_CODE
     else if (m_panel_type == GEN_LANG_FORTRAN)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
@@ -129,20 +145,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_PERL)
-    {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
-    }
-    else if (m_panel_type == GEN_LANG_RUST)
-    {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
-    }
+#endif  // GENERATE_NEW_LANG_CODE
 
     else
     {
@@ -349,6 +352,27 @@ void BasePanel::GenerateBaseClass()
             codegen.GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
             break;
 
+        case GEN_LANG_PERL:
+            codegen.GeneratePerlClass(panel_page);
+            break;
+
+        case GEN_LANG_PYTHON:
+            codegen.GeneratePythonClass(panel_page);
+            break;
+
+        case GEN_LANG_RUBY:
+            codegen.GenerateRubyClass(panel_page);
+            break;
+
+        case GEN_LANG_RUST:
+            codegen.GenerateRustClass(panel_page);
+            break;
+
+        case GEN_LANG_XRC:
+            codegen.GenerateXrcClass(panel_page);
+            break;
+
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             codegen.GenerateFortranClass(panel_page);
             break;
@@ -360,26 +384,7 @@ void BasePanel::GenerateBaseClass()
         case GEN_LANG_LUA:
             codegen.GenerateLuaClass(panel_page);
             break;
-
-        case GEN_LANG_PERL:
-            codegen.GeneratePerlClass(panel_page);
-            break;
-
-        case GEN_LANG_RUST:
-            codegen.GenerateRustClass(panel_page);
-            break;
-
-        case GEN_LANG_PYTHON:
-            codegen.GeneratePythonClass(panel_page);
-            break;
-
-        case GEN_LANG_RUBY:
-            codegen.GenerateRubyClass(panel_page);
-            break;
-
-        case GEN_LANG_XRC:
-            codegen.GenerateXrcClass(panel_page);
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             FAIL_MSG("Unknown panel type!")

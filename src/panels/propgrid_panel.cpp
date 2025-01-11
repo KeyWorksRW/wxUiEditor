@@ -599,15 +599,15 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_xrc_file:
                     case prop_combined_xrc_file:
                     case prop_folder_combined_xrc_file:
+                    case prop_perl_file:
                     case prop_python_file:
                     case prop_python_combined_file:
                     case prop_ruby_file:
                     case prop_ruby_combined_file:
+                    case prop_rust_file:
                     case prop_fortran_file:
                     case prop_haskell_file:
                     case prop_lua_file:
-                    case prop_perl_file:
-                    case prop_rust_file:
                     case prop_cmake_file:
                     case prop_folder_cmake_file:
                     case prop_subclass_header:
@@ -1128,6 +1128,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Perl"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Perl")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
             else if (grid_property->GetLabel().Contains("Python"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Python")
@@ -1150,6 +1161,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+            else if (grid_property->GetLabel().Contains("Rust"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Rust")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
             else if (grid_property->GetLabel().Contains("XRC"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "XRC")
@@ -1161,6 +1183,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
+#if GENERATE_NEW_LANG_CODE
             else if (grid_property->GetLabel().Contains("Fortran"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Fortran")
@@ -1194,28 +1217,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("Perl"))
-            {
-                if (prop->as_string() != "any" && prop->as_string() != "Perl")
-                {
-                    m_prop_grid->Collapse(grid_property);
-                }
-                else
-                {
-                    m_prop_grid->Expand(grid_property);
-                }
-            }
-            else if (grid_property->GetLabel().Contains("Rust"))
-            {
-                if (prop->as_string() != "any" && prop->as_string() != "Rust")
-                {
-                    m_prop_grid->Collapse(grid_property);
-                }
-                else
-                {
-                    m_prop_grid->Expand(grid_property);
-                }
-            }
+#endif  // GENERATE_NEW_LANG_CODE
 
             grid_iterator.Next();
         }
@@ -2073,6 +2075,17 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
+    else if (name.contains("wxPerl"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
+        if (Project.getCodePreference(node) != GEN_LANG_PERL)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
     else if (name.contains("wxPython"))
     {
         if (UserPrefs.is_DarkMode())
@@ -2095,17 +2108,30 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
+    else if (name.contains("wxRust"))
+    {
+        if (UserPrefs.is_DarkMode())
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
+        else
+            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
+        if (Project.getCodePreference(node) != GEN_LANG_RUST)
+        {
+            m_prop_grid->Collapse(id);
+        }
+    }
     else if (name.contains("XRC"))
     {
         if (UserPrefs.is_DarkMode())
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#00b35c"));  // Gainsboro
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffe6"));  // Mint Cream
-        if (Project.getCodePreference(node) != GEN_LANG_PERL)
+        if (Project.getCodePreference(node) != GEN_LANG_XRC)
         {
             m_prop_grid->Collapse(id);
         }
     }
+
+#if GENERATE_NEW_LANG_CODE
     else if (name.contains("wxFortran"))
     {
         if (UserPrefs.is_DarkMode())
@@ -2139,28 +2165,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node, NodeDecl
             m_prop_grid->Collapse(id);
         }
     }
-    else if (name.contains("wxPerl"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
-        if (Project.getCodePreference(node) != GEN_LANG_XRC)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxRust"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
-        if (Project.getCodePreference(node) != GEN_LANG_RUST)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
+#endif  // GENERATE_NEW_LANG_CODE
 
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
         it != m_expansion_map.end())
@@ -2331,6 +2336,10 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_base_file);
             break;
 
+        case GEN_LANG_PERL:
+            ChangeOutputFile(prop_perl_file);
+            break;
+
         case GEN_LANG_PYTHON:
             ChangeOutputFile(prop_python_file);
             break;
@@ -2339,10 +2348,15 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_ruby_file);
             break;
 
+        case GEN_LANG_RUST:
+            ChangeOutputFile(prop_rust_file);
+            break;
+
         case GEN_LANG_XRC:
             ChangeOutputFile(prop_xrc_file);
             break;
 
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             ChangeOutputFile(prop_fortran_file);
             break;
@@ -2354,14 +2368,7 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
         case GEN_LANG_LUA:
             ChangeOutputFile(prop_lua_file);
             break;
-
-        case GEN_LANG_PERL:
-            ChangeOutputFile(prop_perl_file);
-            break;
-
-        case GEN_LANG_RUST:
-            ChangeOutputFile(prop_rust_file);
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             break;

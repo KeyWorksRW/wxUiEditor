@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -2370,60 +2370,6 @@ void MainFrame::UpdateLanguagePanels()
         m_cppPanel = nullptr;
     }
 
-    if (languages & GEN_LANG_FORTRAN && !m_fortranPanel)
-    {
-        m_fortranPanel = new BasePanel(m_notebook, this, GEN_LANG_FORTRAN);
-        if (Project.getCodePreference() == GEN_LANG_FORTRAN)
-        {
-            m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_FORTRAN) && m_fortranPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_fortranPanel));
-        m_fortranPanel = nullptr;
-    }
-
-    if (languages & GEN_LANG_HASKELL && !m_haskellPanel)
-    {
-        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
-        if (Project.getCodePreference() == GEN_LANG_HASKELL)
-        {
-            m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_HASKELL) && m_haskellPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_haskellPanel));
-        m_haskellPanel = nullptr;
-    }
-
-    if (languages & GEN_LANG_LUA && !m_luaPanel)
-    {
-        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
-        if (Project.getCodePreference() == GEN_LANG_LUA)
-        {
-            m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_LUA) && m_luaPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_luaPanel));
-        m_luaPanel = nullptr;
-    }
-
     if (languages & GEN_LANG_PERL && !m_perlPanel)
     {
         m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
@@ -2496,6 +2442,62 @@ void MainFrame::UpdateLanguagePanels()
         m_rustPanel = nullptr;
     }
 
+#if GENERATE_NEW_LANG_CODE
+    if (languages & GEN_LANG_FORTRAN && !m_fortranPanel)
+    {
+        m_fortranPanel = new BasePanel(m_notebook, this, GEN_LANG_FORTRAN);
+        if (Project.getCodePreference() == GEN_LANG_FORTRAN)
+        {
+            m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_FORTRAN) && m_fortranPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_fortranPanel));
+        m_fortranPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_HASKELL && !m_haskellPanel)
+    {
+        m_haskellPanel = new BasePanel(m_notebook, this, GEN_LANG_HASKELL);
+        if (Project.getCodePreference() == GEN_LANG_HASKELL)
+        {
+            m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_HASKELL) && m_haskellPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_haskellPanel));
+        m_haskellPanel = nullptr;
+    }
+
+    if (languages & GEN_LANG_LUA && !m_luaPanel)
+    {
+        m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
+        if (Project.getCodePreference() == GEN_LANG_LUA)
+        {
+            m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+        }
+        else
+        {
+            m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+        }
+    }
+    else if (!(languages & GEN_LANG_LUA) && m_luaPanel)
+    {
+        m_notebook->DeletePage(m_notebook->GetPageIndex(m_luaPanel));
+        m_luaPanel = nullptr;
+    }
+#endif  // GENERATE_NEW_LANG_CODE
+
     int position;
     switch (Project.getCodePreference())
     {
@@ -2506,36 +2508,6 @@ void MainFrame::UpdateLanguagePanels()
             {
                 m_notebook->RemovePage(position);
                 m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_FORTRAN:
-            ASSERT(m_fortranPanel);
-            position = m_notebook->GetPageIndex(m_fortranPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_HASKELL:
-            ASSERT(m_haskellPanel);
-            position = m_notebook->GetPageIndex(m_haskellPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_LUA:
-            ASSERT(m_luaPanel);
-            position = m_notebook->GetPageIndex(m_luaPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
             }
             break;
 
@@ -2578,6 +2550,38 @@ void MainFrame::UpdateLanguagePanels()
                 m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
             }
             break;
+
+#if GENERATE_NEW_LANG_CODE
+        case GEN_LANG_FORTRAN:
+            ASSERT(m_fortranPanel);
+            position = m_notebook->GetPageIndex(m_fortranPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_fortranPanel, "Fortran", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_HASKELL:
+            ASSERT(m_haskellPanel);
+            position = m_notebook->GetPageIndex(m_haskellPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_haskellPanel, "Haskell", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
+        case GEN_LANG_LUA:
+            ASSERT(m_luaPanel);
+            position = m_notebook->GetPageIndex(m_luaPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             break;

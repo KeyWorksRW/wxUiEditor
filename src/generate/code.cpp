@@ -302,21 +302,6 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
 
     switch (language)
     {
-        case GEN_LANG_FORTRAN:
-            prefix_list = &s_short_fortran_map;
-            global_list = &g_map_fortran_prefix;
-            break;
-
-        case GEN_LANG_HASKELL:
-            prefix_list = &s_short_haskell_map;
-            global_list = &g_map_haskell_prefix;
-            break;
-
-        case GEN_LANG_LUA:
-            prefix_list = &s_short_lua_map;
-            global_list = &g_map_lua_prefix;
-            break;
-
         case GEN_LANG_PERL:
             prefix_list = &s_short_perl_map;
             global_list = &g_map_perl_prefix;
@@ -338,6 +323,23 @@ std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language)
         case GEN_LANG_CPLUSPLUS:
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
             return {};
+
+#if GENERATE_NEW_LANG_CODE
+        case GEN_LANG_FORTRAN:
+            prefix_list = &s_short_fortran_map;
+            global_list = &g_map_fortran_prefix;
+            break;
+
+        case GEN_LANG_HASKELL:
+            prefix_list = &s_short_haskell_map;
+            global_list = &g_map_haskell_prefix;
+            break;
+
+        case GEN_LANG_LUA:
+            prefix_list = &s_short_lua_map;
+            global_list = &g_map_lua_prefix;
+            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             FAIL_MSG("Unknown language");
@@ -376,6 +378,14 @@ void Code::Init(Node* node, GenLang language)
         // Always assume C++ code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
+    else if (language == GEN_LANG_PERL)
+    {
+        m_indent_size = 4;
+        m_language_wxPrefix = "Wx::";
+        m_break_length = Project.as_size_t(prop_perl_line_length);
+        // Always assume Perl code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
+    }
     else if (language == GEN_LANG_PYTHON)
     {
         m_language_wxPrefix = "wx.";
@@ -391,7 +401,15 @@ void Code::Init(Node* node, GenLang language)
         // Always assume Ruby code has two tabs at the beginning of the line
         m_break_length -= (m_indent_size * 2);
     }
+    else if (language == GEN_LANG_RUST)
+    {
+        m_language_wxPrefix = "wx.";
+        m_break_length = 100;
+        // Always assume Rust code has one tab at the beginning of the line
+        m_break_length -= m_indent_size;
+    }
 
+#if GENERATE_NEW_LANG_CODE
     else if (language == GEN_LANG_FORTRAN)
     {
         // REVIEW: [Randalphwa - 11-24-2024] wxFortran3 doesn't exist yet, but I'm guessing that
@@ -413,21 +431,7 @@ void Code::Init(Node* node, GenLang language)
         m_break_length = Project.as_size_t(prop_lua_line_length);
         m_break_length -= m_indent_size;
     }
-    else if (language == GEN_LANG_PERL)
-    {
-        m_indent_size = 4;
-        m_language_wxPrefix = "Wx::";
-        m_break_length = Project.as_size_t(prop_perl_line_length);
-        // Always assume Perl code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_RUST)
-    {
-        m_language_wxPrefix = "wx.";
-        m_break_length = 100;
-        // Always assume Rust code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
+#endif  // GENERATE_NEW_LANG_CODE
 
     else
     {
@@ -2778,15 +2782,6 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
             case GEN_LANG_RUBY:
                 RubyBundleCode(*this, prop_name);
                 break;
-
-            case GEN_LANG_HASKELL:
-                // HaskellBundleCode(*this, prop_name);
-                break;
-
-            case GEN_LANG_LUA:
-                // LuaBundleCode(*this, prop_name);
-                break;
-
             case GEN_LANG_PERL:
                 // PerlBundleCode(*this, prop_name);
                 break;
@@ -2794,6 +2789,16 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
             case GEN_LANG_RUST:
                 // RustBundleCode(*this, prop_name);
                 break;
+
+#if GENERATE_NEW_LANG_CODE
+            case GEN_LANG_HASKELL:
+                // HaskellBundleCode(*this, prop_name);
+                break;
+
+            case GEN_LANG_LUA:
+                // LuaBundleCode(*this, prop_name);
+                break;
+#endif
 
             default:
                 break;

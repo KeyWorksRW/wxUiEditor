@@ -160,27 +160,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 code_generated = true;
             }
 
-            gen_fortran_code = dlg.is_gen_fortran();
-            if (gen_fortran_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_FORTRAN);
-                code_generated = true;
-            }
-
-            gen_haskell_code = dlg.is_gen_haskell();
-            if (gen_haskell_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_HASKELL);
-                code_generated = true;
-            }
-
-            gen_lua_code = dlg.is_gen_lua();
-            if (gen_lua_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_LUA);
-                code_generated = true;
-            }
-
             gen_perl_code = dlg.is_gen_perl();
             if (gen_perl_code)
             {
@@ -209,6 +188,29 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 code_generated = true;
             }
 
+#if GENERATE_NEW_LANG_CODE
+            gen_fortran_code = dlg.is_gen_fortran();
+            if (gen_fortran_code)
+            {
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_FORTRAN);
+                code_generated = true;
+            }
+
+            gen_haskell_code = dlg.is_gen_haskell();
+            if (gen_haskell_code)
+            {
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_HASKELL);
+                code_generated = true;
+            }
+
+            gen_lua_code = dlg.is_gen_lua();
+            if (gen_lua_code)
+            {
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_LUA);
+                code_generated = true;
+            }
+#endif  // GENERATE_NEW_LANG_CODE
+
             if (wxGetApp().isTestingMenuEnabled())
             {
                 auto* config = wxConfig::Get();
@@ -216,13 +218,17 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 config->Write("gen_xrc_code", gen_xrc_code);
                 config->Write("gen_base_code", gen_base_code);
                 config->Write("gen_derived_code", gen_derived_code);
-                config->Write("gen_fortran_code", gen_fortran_code);
-                config->Write("gen_haskell_code", gen_haskell_code);
-                config->Write("gen_lua_code", gen_lua_code);
                 config->Write("gen_perl_code", gen_perl_code);
                 config->Write("gen_python_code", gen_python_code);
                 config->Write("gen_ruby_code", gen_ruby_code);
                 config->Write("gen_rust_code", gen_rust_code);
+
+#if GENERATE_NEW_LANG_CODE
+                config->Write("gen_fortran_code", gen_fortran_code);
+                config->Write("gen_haskell_code", gen_haskell_code);
+                config->Write("gen_lua_code", gen_lua_code);
+#endif  // GENERATE_NEW_LANG_CODE
+
                 config->SetPath("/");
             }
         }
@@ -272,15 +278,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         case GEN_LANG_CPLUSPLUS:
             gen_base_code = true;
             break;
-        case GEN_LANG_FORTRAN:
-            gen_fortran_code = true;
-            break;
-        case GEN_LANG_HASKELL:
-            gen_haskell_code = true;
-            break;
-        case GEN_LANG_LUA:
-            gen_lua_code = true;
-            break;
         case GEN_LANG_PERL:
             gen_perl_code = true;
             break;
@@ -295,6 +292,16 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             break;
         case GEN_LANG_XRC:
             gen_xrc_code = true;
+            break;
+
+        case GEN_LANG_FORTRAN:
+            gen_fortran_code = false;
+            break;
+        case GEN_LANG_HASKELL:
+            gen_haskell_code = false;
+            break;
+        case GEN_LANG_LUA:
+            gen_lua_code = false;
             break;
         default:
             break;
@@ -312,30 +319,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkDerived->SetValidator(wxGenericValidator(&m_gen_inherited_code));
         m_checkDerived->SetToolTip("Generate any derived files that don\'t currently exist");
         m_grid_sizer->Add(m_checkDerived, wxSizerFlags().Border(wxALL));
-    }
-    if (languages & GEN_LANG_FORTRAN || gen_fortran_code)
-    {
-        m_gen_fortran_code = gen_fortran_code;
-        m_checkFortran = new wxCheckBox(this, wxID_ANY, "Fortran");
-        m_checkFortran->SetValidator(wxGenericValidator(&m_gen_fortran_code));
-        m_grid_sizer->Add(m_checkFortran, wxSizerFlags().Border(wxALL));
-        if (gen_fortran_code)
-            m_checkFortran->SetValue(true);
-    }
-    if (languages & GEN_LANG_HASKELL || gen_haskell_code)
-    {
-        m_checkHaskell = new wxCheckBox(this, wxID_ANY, "Haskell");
-        m_checkHaskell->SetValidator(wxGenericValidator(&m_gen_haskell_code));
-        m_grid_sizer->Add(m_checkHaskell, wxSizerFlags().Border(wxALL));
-        if (gen_haskell_code)
-            m_checkHaskell->SetValue(true);
-    }
-    if (languages & GEN_LANG_LUA || gen_lua_code)
-    {
-        m_gen_lua_code = gen_lua_code;
-        m_checkLua = new wxCheckBox(this, wxID_ANY, "Lua");
-        m_checkLua->SetValidator(wxGenericValidator(&m_gen_lua_code));
-        m_grid_sizer->Add(m_checkLua, wxSizerFlags().Border(wxALL));
     }
     if (languages & GEN_LANG_PERL && gen_perl_code)
     {
@@ -382,6 +365,33 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         if (gen_xrc_code)
             m_checkXRC->SetValue(true);
     }
+
+#if GENERATE_NEW_LANG_CODE
+    if (languages & GEN_LANG_FORTRAN || gen_fortran_code)
+    {
+        m_gen_fortran_code = gen_fortran_code;
+        m_checkFortran = new wxCheckBox(this, wxID_ANY, "Fortran");
+        m_checkFortran->SetValidator(wxGenericValidator(&m_gen_fortran_code));
+        m_grid_sizer->Add(m_checkFortran, wxSizerFlags().Border(wxALL));
+        if (gen_fortran_code)
+            m_checkFortran->SetValue(true);
+    }
+    if (languages & GEN_LANG_HASKELL || gen_haskell_code)
+    {
+        m_checkHaskell = new wxCheckBox(this, wxID_ANY, "Haskell");
+        m_checkHaskell->SetValidator(wxGenericValidator(&m_gen_haskell_code));
+        m_grid_sizer->Add(m_checkHaskell, wxSizerFlags().Border(wxALL));
+        if (gen_haskell_code)
+            m_checkHaskell->SetValue(true);
+    }
+    if (languages & GEN_LANG_LUA || gen_lua_code)
+    {
+        m_gen_lua_code = gen_lua_code;
+        m_checkLua = new wxCheckBox(this, wxID_ANY, "Lua");
+        m_checkLua->SetValidator(wxGenericValidator(&m_gen_lua_code));
+        m_grid_sizer->Add(m_checkLua, wxSizerFlags().Border(wxALL));
+    }
+#endif  // GENERATE_NEW_LANG_CODE
 
     // You have to reset minimum size to allow the window to shrink
     SetMinSize(wxSize(-1, -1));

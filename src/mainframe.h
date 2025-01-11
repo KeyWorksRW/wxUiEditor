@@ -80,14 +80,15 @@ public:
 
     BasePanel* GetFirstCodePanel();
     BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetPerlPanel() { return m_perlPanel; }
+    BasePanel* GetPythonPanel() { return m_pythonPanel; }
+    BasePanel* GetRubyPanel() { return m_rubyPanel; }
+    BasePanel* GetRustPanel() { return m_rustPanel; }
+    BasePanel* GetXrcPanel() { return m_xrcPanel; }
+
     BasePanel* GetFortranPanel() { return m_fortranPanel; }
     BasePanel* GetHaskellPanel() { return m_haskellPanel; }
     BasePanel* GetLuaPanel() { return m_luaPanel; }
-    BasePanel* GetPerlPanel() { return m_perlPanel; }
-    BasePanel* GetRustPanel() { return m_rustPanel; }
-    BasePanel* GetPythonPanel() { return m_pythonPanel; }
-    BasePanel* GetRubyPanel() { return m_rubyPanel; }
-    BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
     void UpdateLanguagePanels();
 
@@ -369,15 +370,15 @@ private:
 
     // Language panels -- whether they are actually created is dependent on defitions in pch.h as
     // well as user preferences.
+    BasePanel* m_perlPanel { nullptr };
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
     BasePanel* m_fortranPanel { nullptr };
     BasePanel* m_haskellPanel { nullptr };
     BasePanel* m_luaPanel { nullptr };
-    BasePanel* m_perlPanel { nullptr };
-    BasePanel* m_rustPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };
 

@@ -296,6 +296,10 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "#if defined(__WINDOWS__)";
                 break;
 
+            case GEN_LANG_PERL:
+                code.Eol() << "if $^O eq 'MSWin32'";
+                break;
+
             case GEN_LANG_PYTHON:
                 code.Eol() << "if wx.Platform == \"msw\"";
                 break;
@@ -304,6 +308,11 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
                 break;
 
+            case GEN_LANG_RUST:
+                code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
+                break;
+
+#if GENERATE_NEW_LANG_CODE
             case GEN_LANG_FORTRAN:
                 code.Eol() << "if defined(__WINDOWS__)";
                 break;
@@ -315,14 +324,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
             case GEN_LANG_LUA:
                 code.Eol() << "if wxPlatform == \"msw\"";
                 break;
-
-            case GEN_LANG_PERL:
-                code.Eol() << "if $^O eq 'MSWin32'";
-                break;
-
-            case GEN_LANG_RUST:
-                code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
-                break;
+#endif  // GENERATE_NEW_LANG_CODE
 
             default:
                 FAIL_MSG(tt_string() << "Unsupported language: " << m_language);
@@ -341,6 +343,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "defined(__UNIX__)";
                 break;
 
+            case GEN_LANG_PERL:
+                if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "$^O eq 'linux' or $^O eq 'darwin'";
+                break;
+
             case GEN_LANG_PYTHON:
                 if (code.size())
                     code << " or ";
@@ -357,6 +367,15 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "Wx::PLATFORM == 'WXUNIX'";
                 break;
 
+            case GEN_LANG_RUST:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "PHP_OS == 'Linux'";
+                break;
+
+#if GENERATE_NEW_LANG_CODE
             case GEN_LANG_FORTRAN:
                 if (code.size())
                     code << " .OR. ";
@@ -380,22 +399,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code.Eol() << "if ";
                 code << "wxPlatform == \"gtk\"";
                 break;
-
-            case GEN_LANG_PERL:
-                if (code.size())
-                    code << " or ";
-                else
-                    code.Eol() << "if ";
-                code << "$^O eq 'linux' or $^O eq 'darwin'";
-                break;
-
-            case GEN_LANG_RUST:
-                if (code.size())
-                    code << " || ";
-                else
-                    code.Eol() << "if ";
-                code << "PHP_OS == 'Linux'";
-                break;
+#endif  // GENERATE_NEW_LANG_CODE
 
             default:
                 break;
@@ -411,6 +415,14 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 else
                     code.Eol() << "#if ";
                 code << "defined(__WXOSX__)";
+                break;
+
+            case GEN_LANG_PERL:
+                if (code.size())
+                    code << " or ";
+                else
+                    code.Eol() << "if ";
+                code << "$^O eq 'darwin'";
                 break;
 
             case GEN_LANG_PYTHON:
@@ -429,6 +441,15 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "Wx::PLATFORM == 'WXOSX'";
                 break;
 
+            case GEN_LANG_RUST:
+                if (code.size())
+                    code << " || ";
+                else
+                    code.Eol() << "if ";
+                code << "PHP_OS == 'Darwin'";
+                break;
+
+#if GENERATE_NEW_LANG_CODE
             case GEN_LANG_FORTRAN:
                 if (code.size())
                     code << " .OR. ";
@@ -452,22 +473,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                     code.Eol() << "if ";
                 code << "wxPlatform == \"mac\"";
                 break;
-
-            case GEN_LANG_PERL:
-                if (code.size())
-                    code << " or ";
-                else
-                    code.Eol() << "if ";
-                code << "$^O eq 'darwin'";
-                break;
-
-            case GEN_LANG_RUST:
-                if (code.size())
-                    code << " || ";
-                else
-                    code.Eol() << "if ";
-                code << "PHP_OS == 'Darwin'";
-                break;
+#endif  // GENERATE_NEW_LANG_CODE
 
             default:
                 break;
@@ -487,6 +493,9 @@ void BaseCodeGenerator::EndPlatformCode()
             m_source->writeLine("#endif  // limited to specific platforms");
             break;
 
+        case GEN_LANG_PERL:
+            break;
+
         case GEN_LANG_PYTHON:
             m_source->Unindent();
             break;
@@ -496,6 +505,11 @@ void BaseCodeGenerator::EndPlatformCode()
             m_source->writeLine("end");
             break;
 
+        case GEN_LANG_RUST:
+            m_source->Unindent();
+            break;
+
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             m_source->Unindent();
             break;
@@ -507,13 +521,7 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_LUA:
             m_source->Unindent();
             break;
-
-        case GEN_LANG_PERL:
-            break;
-
-        case GEN_LANG_RUST:
-            m_source->Unindent();
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             break;

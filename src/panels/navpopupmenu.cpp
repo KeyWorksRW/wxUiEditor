@@ -299,6 +299,12 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case MenuSingleGenPerl:
+            {
+                OnGenerateSingleLanguage(GEN_LANG_PERL);
+            }
+            break;
+
         case MenuSingleGenPython:
             {
                 OnGenerateSingleLanguage(GEN_LANG_PYTHON);
@@ -311,6 +317,12 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case MenuSingleGenRust:
+            {
+                OnGenerateSingleLanguage(GEN_LANG_RUST);
+            }
+            break;
+
         case MenuSingleGenXRC:
             {
                 wxCommandEvent dummy;
@@ -318,6 +330,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+#if GENERATE_NEW_LANG_CODE
         case MenuSingleGenFortran:
             {
                 OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
@@ -335,18 +348,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
                 OnGenerateSingleLanguage(GEN_LANG_LUA);
             }
             break;
-
-        case MenuSingleGenPerl:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_PERL);
-            }
-            break;
-
-        case MenuSingleGenRust:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_RUST);
-            }
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         case MenuADD_PAGE:
             if (m_node->isGen(gen_BookPage))

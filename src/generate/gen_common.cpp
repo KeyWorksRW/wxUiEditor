@@ -1537,6 +1537,10 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
 
     switch (language)
     {
+        case GEN_LANG_PERL:
+            codegen.GeneratePerlClass();
+            break;
+
         case GEN_LANG_PYTHON:
             codegen.GeneratePythonClass();
             break;
@@ -1545,6 +1549,11 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             codegen.GenerateRubyClass();
             break;
 
+        case GEN_LANG_RUST:
+            codegen.GenerateRustClass();
+            break;
+
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             codegen.GenerateFortranClass();
             break;
@@ -1556,14 +1565,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
         case GEN_LANG_LUA:
             codegen.GenerateLuaClass();
             break;
-
-        case GEN_LANG_PERL:
-            codegen.GeneratePerlClass();
-            break;
-
-        case GEN_LANG_RUST:
-            codegen.GenerateRustClass();
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             ASSERT_MSG(false, "Unknown language specified for code generation!");

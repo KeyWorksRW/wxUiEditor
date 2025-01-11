@@ -90,14 +90,15 @@ set (file_list
 
     generate/gen_cpp.cpp           # Generate C++ code
     generate/gen_derived.cpp       # Generate C++ Derived code
-    generate/gen_fortran.cpp       # Generate wxFortran code
-    generate/gen_haskell.cpp       # Generate wxHaskell code
-    generate/gen_lua.cpp           # Generate wxLua/wxLuaJIT code
     generate/gen_perl.cpp          # Generate wxPerl code
     generate/gen_python.cpp        # Generate wxPython code
     generate/gen_ruby.cpp          # Generate wxRuby3 code
     generate/gen_rust.cpp          # Generate wxRust code
     generate/gen_xrc.cpp           # Generate XRC
+
+    # generate/gen_fortran.cpp       # Generate wxFortran code
+    # generate/gen_haskell.cpp       # Generate wxHaskell code
+    # generate/gen_lua.cpp           # Generate wxLua/wxLuaJIT code
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object

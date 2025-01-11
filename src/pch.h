@@ -113,12 +113,18 @@
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
 #endif
 
+// REVIEW: [Randalphwa - 01-10-2025] Currently, there are no plans to support these languages,
+// however there is some code throughout the codebase that would make it possible to start
+// supporting them at some point in the future.
 #if defined(_DEBUG)
-    #define GENERATE_HASKELL_CODE 1
-    #define GENERATE_LUA_CODE     1
-    #define GENERATE_PERL_CODE    1
-    #define GENERATE_PHP_CODE     1
+
+    #define GENERATE_FORTRAN_CODE 0
+    #define GENERATE_HASKELL_CODE 0
+    #define GENERATE_LUA_CODE     0
 #endif  // _DEBUG
+
+// Set this to 1 if you set any of the languages above to 1
+#define GENERATE_NEW_LANG_CODE 0
 
 enum class MoveDirection
 {
@@ -132,21 +138,21 @@ enum class MoveDirection
 // supports a single language at a time, and passing in multiple languages will cause it to fail to
 // generate any language. As bit flags, this can be used by generators to indicate which languages
 // the generator supports.
-enum GenLang : size_t
+enum GenLang
 {
     GEN_LANG_NONE = 0,
     GEN_LANG_CPLUSPLUS = 1,
-    GEN_LANG_PYTHON = 1 << 1,
-    GEN_LANG_RUBY = 1 << 2,
+    GEN_LANG_PERL = 1 << 2,
+    GEN_LANG_PYTHON = 1 << 3,
+    GEN_LANG_RUBY = 1 << 4,
+    GEN_LANG_RUST = 1 << 5,
 
-    // Ports exist, code generation is not yet implemented
-    GEN_LANG_FORTRAN = 1 << 3,
-    GEN_LANG_HASKELL = 1 << 4,
-    GEN_LANG_LUA = 1 << 5,
-    GEN_LANG_PERL = 1 << 6,
-    GEN_LANG_RUST = 1 << 7,
+    // REVIEW: [Randalphwa - 01-10-2025] These languages are currently not supported
+    GEN_LANG_FORTRAN = 1 << 6,
+    GEN_LANG_HASKELL = 1 << 7,
+    GEN_LANG_LUA = 1 << 8,
 
-    GEN_LANG_XRC = 1 << 8,
+    GEN_LANG_XRC = 1 << 9,
     GEN_LANG_LAST = GEN_LANG_XRC,
 };
 
@@ -161,7 +167,7 @@ enum PropIndex
 
 namespace xrc
 {
-    enum : size_t
+    enum
     {
         all_unsupported = 0,
         min_size_supported = 1 << 0,
@@ -169,7 +175,7 @@ namespace xrc
         hidden_supported = 1 << 2,
     };
 
-    enum : size_t
+    enum
     {
         no_flags = 0,
         add_comments = 1 << 0,  // add comments about unsupported properties
@@ -185,7 +191,7 @@ using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
 // wxUiEditor.exe.manifest and ../CMakeLists.txt
 
 constexpr const char* txtVersion = "wxUiEditor 1.2.9.0";
-constexpr const char* txtCopyRight = "Copyright (c) 2019-2024 KeyWorks Software";
+constexpr const char* txtCopyRight = "Copyright (c) 2019-2025 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
 // This is the highest project number supported by this build of wxUiEditor. It should be

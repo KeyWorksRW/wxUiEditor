@@ -17,7 +17,11 @@ void UpdateFormClass(Node* form_node)
     auto filename = CreateBaseFilename(form_node, form_node->as_string(prop_class_name));
     form_node->set_value(prop_base_file, filename);
 
-    if (Project.getCodePreference() == GEN_LANG_PYTHON)
+    if (Project.getCodePreference() == GEN_LANG_PERL)
+    {
+        form_node->set_value(prop_perl_file, filename);
+    }
+    else if (Project.getCodePreference() == GEN_LANG_PYTHON)
     {
         form_node->set_value(prop_python_file, filename);
     }
@@ -25,6 +29,16 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_ruby_file, filename);
     }
+    else if (Project.getCodePreference() == GEN_LANG_RUST)
+    {
+        form_node->set_value(prop_rust_file, filename);
+    }
+    else if (Project.getCodePreference() == GEN_LANG_XRC)
+    {
+        form_node->set_value(prop_xrc_file, filename);
+    }
+
+#if GENERATE_NEW_LANG_CODE
     else if (Project.getCodePreference() == GEN_LANG_FORTRAN)
     {
         form_node->set_value(prop_fortran_file, filename);
@@ -37,18 +51,7 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_lua_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_PERL)
-    {
-        form_node->set_value(prop_perl_file, filename);
-    }
-    else if (Project.getCodePreference() == GEN_LANG_RUST)
-    {
-        form_node->set_value(prop_rust_file, filename);
-    }
-    else if (Project.getCodePreference() == GEN_LANG_XRC)
-    {
-        form_node->set_value(prop_xrc_file, filename);
-    }
+#endif  // GENERATE_NEW_LANG_CODE
 
     if (is_base_class)
     {

@@ -929,20 +929,23 @@ std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenL
     {
         switch (language)
         {
-            case GEN_LANG_LUA:
-                return "persist is not supported in Lua";
             case GEN_LANG_PERL:
                 return "persist is not supported in Perl";
             case GEN_LANG_RUST:
                 return "persist is not supported in Rust";
             case GEN_LANG_PYTHON:
                 return "persist is not supported in Python";
+            case GEN_LANG_XRC:
+                return "persist is not supported in XRC";
+
+#if GENERATE_NEW_LANG_CODE
             case GEN_LANG_FORTRAN:
                 return "persist is not supported in Fortran";
             case GEN_LANG_HASKELL:
                 return "persist is not supported in Haskell";
-            case GEN_LANG_XRC:
-                return "persist is not supported in XRC";
+            case GEN_LANG_LUA:
+                return "persist is not supported in Lua";
+#endif  // GENERATE_NEW_LANG_CODE
             default:
                 return {};
         }

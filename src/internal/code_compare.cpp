@@ -230,12 +230,23 @@ void CodeCompare::OnRadioButton(GenLang language)
         case GEN_LANG_CPLUSPLUS:
             result = GenerateCppFiles(results, &m_class_list);
             break;
+        case GEN_LANG_PERL:
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PERL);
+            break;
         case GEN_LANG_PYTHON:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PYTHON);
             break;
         case GEN_LANG_RUBY:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUBY);
             break;
+        case GEN_LANG_RUST:
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUST);
+            break;
+        case GEN_LANG_XRC:
+            result = GenerateXrcFiles(results, {}, &m_class_list);
+            break;
+
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_FORTRAN);
             break;
@@ -245,15 +256,7 @@ void CodeCompare::OnRadioButton(GenLang language)
         case GEN_LANG_LUA:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_LUA);
             break;
-        case GEN_LANG_PERL:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PERL);
-            break;
-        case GEN_LANG_RUST:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUST);
-            break;
-        case GEN_LANG_XRC:
-            result = GenerateXrcFiles(results, {}, &m_class_list);
-            break;
+#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             FAIL_MSG(tt_string() << "Unknown language: " << language);

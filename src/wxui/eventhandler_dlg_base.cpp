@@ -33,13 +33,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     {
         wxWithImages::Images bundle_list;
         bundle_list.push_back(wxue_img::bundle_cpp_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_perl_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_python_logo_only_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_ruby_logo_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_rust_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_fortran_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_haskell_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_lua_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_perl_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_rust_logo_svg(24, 24));
         m_notebook->SetImages(bundle_list);
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
@@ -115,8 +115,74 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer->Add(m_cpp_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
     m_cpp_bookpage->SetSizerAndFit(page_sizer);
 
+    m_perl_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_perl_bookpage, "Perl", false, 1);
+    m_perl_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer4 = new wxBoxSizer(wxVERTICAL);
+
+    m_perl_radio_use_function = new wxRadioButton(m_perl_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_perl_function_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_bookpage, wxID_ANY, m_perl_radio_use_function),
+        wxVERTICAL);
+
+    auto* box_sizer12 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_perl_text_function = new wxTextCtrl(m_perl_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer12->Add(m_perl_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn11 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer12->Add(btn11, wxSizerFlags().Border(wxALL));
+
+    auto* btn12 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer12->Add(btn12, wxSizerFlags().Border(wxALL));
+
+    m_perl_function_box->Add(box_sizer12, wxSizerFlags().Expand().Border(wxALL));
+
+    m_perl_radio_use_anon_func = new wxRadioButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_perl_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_function_box->GetStaticBox(), wxID_ANY,
+        m_perl_radio_use_anon_func), wxVERTICAL);
+
+    auto* box_sizer4 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_perl_lambda_box->Add(box_sizer4, wxSizerFlags().Border(wxALL));
+
+    auto* staticText4 = new wxStaticText(m_perl_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
+    m_perl_lambda_box->Add(staticText4, wxSizerFlags().Border(wxALL));
+
+    m_perl_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box->GetStaticBox());
+    {
+        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
+        m_perl_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_perl_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_perl_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_perl_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_perl_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_perl_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_perl_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_perl_stc_lambda->SetAdditionalCaretsBlink(true);
+        m_perl_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_perl_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_perl_stc_lambda->SetMarginWidth(1, 0);
+        m_perl_stc_lambda->SetMarginWidth(0, 16);
+        m_perl_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_perl_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_perl_stc_lambda->SetMarginSensitive(0, false);
+        m_perl_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_perl_stc_lambda->SetUseTabs(false);
+        m_perl_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_perl_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_perl_lambda_box->Add(m_perl_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_perl_function_box->Add(m_perl_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer4->Add(m_perl_function_box, wxSizerFlags().Expand().Border(wxALL));
+    m_perl_bookpage->SetSizerAndFit(page_sizer4);
+
     m_python_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_python_bookpage, "Python", false, 1);
+    m_notebook->AddPage(m_python_bookpage, "Python", false, 2);
     m_python_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer_2 = new wxBoxSizer(wxVERTICAL);
@@ -155,7 +221,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_python_bookpage->SetSizerAndFit(page_sizer_2);
 
     m_ruby_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_ruby_bookpage, "Ruby", false, 2);
+    m_notebook->AddPage(m_ruby_bookpage, "Ruby", false, 3);
     m_ruby_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer_3 = new wxBoxSizer(wxVERTICAL);
@@ -220,8 +286,74 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer_3->Add(m_ruby_function_box, wxSizerFlags().Expand().Border(wxALL));
     m_ruby_bookpage->SetSizerAndFit(page_sizer_3);
 
+    m_rust_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_rust_bookpage, "Rust", false, 4);
+    m_rust_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer5 = new wxBoxSizer(wxVERTICAL);
+
+    m_rust_radio_use_function = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
+        wxRB_SINGLE);
+    m_rust_function_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_bookpage, wxID_ANY, m_rust_radio_use_function),
+        wxVERTICAL);
+
+    auto* box_sizer13 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_rust_text_function = new wxTextCtrl(m_rust_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer13->Add(m_rust_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn13 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer13->Add(btn13, wxSizerFlags().Border(wxALL));
+
+    auto* btn14 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "None");
+    box_sizer13->Add(btn14, wxSizerFlags().Border(wxALL));
+
+    m_rust_function_box->Add(box_sizer13, wxSizerFlags().Expand().Border(wxALL));
+
+    m_rust_radio_use_anon_func = new wxRadioButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_rust_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_function_box->GetStaticBox(), wxID_ANY,
+        m_rust_radio_use_anon_func), wxVERTICAL);
+
+    auto* box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_rust_lambda_box->Add(box_sizer5, wxSizerFlags().Border(wxALL));
+
+    auto* staticText5 = new wxStaticText(m_rust_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
+    m_rust_lambda_box->Add(staticText5, wxSizerFlags().Border(wxALL));
+
+    m_rust_stc_lambda = new wxStyledTextCtrl(m_rust_lambda_box->GetStaticBox());
+    {
+        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
+        m_rust_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_rust_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_rust_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_rust_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_rust_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_rust_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_rust_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_rust_stc_lambda->SetAdditionalCaretsBlink(true);
+        m_rust_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_rust_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_rust_stc_lambda->SetMarginWidth(1, 0);
+        m_rust_stc_lambda->SetMarginWidth(0, 16);
+        m_rust_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_rust_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_rust_stc_lambda->SetMarginSensitive(0, false);
+        m_rust_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_rust_stc_lambda->SetUseTabs(false);
+        m_rust_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_rust_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_rust_lambda_box->Add(m_rust_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_rust_function_box->Add(m_rust_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer5->Add(m_rust_function_box, wxSizerFlags().Expand().Border(wxALL));
+    m_rust_bookpage->SetSizerAndFit(page_sizer5);
+
     m_fortran_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_fortran_bookpage, "Fortran", false, 3);
+    m_notebook->AddPage(m_fortran_bookpage, "Fortran", false, 5);
     m_fortran_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer6 = new wxBoxSizer(wxVERTICAL);
@@ -287,7 +419,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_fortran_bookpage->SetSizerAndFit(page_sizer6);
 
     m_haskell_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_haskell_bookpage, "Haskell", false, 4);
+    m_notebook->AddPage(m_haskell_bookpage, "Haskell", false, 6);
     m_haskell_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer2 = new wxBoxSizer(wxVERTICAL);
@@ -353,7 +485,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_haskell_bookpage->SetSizerAndFit(page_sizer2);
 
     m_lua_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_lua_bookpage, "Lua", false, 5);
+    m_notebook->AddPage(m_lua_bookpage, "Lua", false, 7);
     m_lua_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer3 = new wxBoxSizer(wxVERTICAL);
@@ -416,138 +548,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     page_sizer3->Add(m_lua_function_box, wxSizerFlags().Expand().Border(wxALL));
     m_lua_bookpage->SetSizerAndFit(page_sizer3);
-
-    m_perl_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_perl_bookpage, "Perl", false, 6);
-    m_perl_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer4 = new wxBoxSizer(wxVERTICAL);
-
-    m_perl_radio_use_function = new wxRadioButton(m_perl_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_perl_function_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_bookpage, wxID_ANY, m_perl_radio_use_function),
-        wxVERTICAL);
-
-    auto* box_sizer12 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_perl_text_function = new wxTextCtrl(m_perl_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer12->Add(m_perl_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn11 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer12->Add(btn11, wxSizerFlags().Border(wxALL));
-
-    auto* btn12 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer12->Add(btn12, wxSizerFlags().Border(wxALL));
-
-    m_perl_function_box->Add(box_sizer12, wxSizerFlags().Expand().Border(wxALL));
-
-    m_perl_radio_use_anon_func = new wxRadioButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_perl_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_function_box->GetStaticBox(), wxID_ANY,
-        m_perl_radio_use_anon_func), wxVERTICAL);
-
-    auto* box_sizer4 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_perl_lambda_box->Add(box_sizer4, wxSizerFlags().Border(wxALL));
-
-    auto* staticText4 = new wxStaticText(m_perl_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
-    m_perl_lambda_box->Add(staticText4, wxSizerFlags().Border(wxALL));
-
-    m_perl_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box->GetStaticBox());
-    {
-        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_perl_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_perl_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_perl_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_perl_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_perl_stc_lambda->SetAdditionalCaretsBlink(true);
-        m_perl_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda->SetMarginWidth(1, 0);
-        m_perl_stc_lambda->SetMarginWidth(0, 16);
-        m_perl_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_perl_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_perl_stc_lambda->SetMarginSensitive(0, false);
-        m_perl_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_perl_stc_lambda->SetUseTabs(false);
-        m_perl_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_perl_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_perl_lambda_box->Add(m_perl_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_perl_function_box->Add(m_perl_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer4->Add(m_perl_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_perl_bookpage->SetSizerAndFit(page_sizer4);
-
-    m_rust_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_rust_bookpage, "Rust", false, 7);
-    m_rust_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer5 = new wxBoxSizer(wxVERTICAL);
-
-    m_rust_radio_use_function = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_rust_function_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_bookpage, wxID_ANY, m_rust_radio_use_function),
-        wxVERTICAL);
-
-    auto* box_sizer13 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_rust_text_function = new wxTextCtrl(m_rust_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer13->Add(m_rust_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn13 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer13->Add(btn13, wxSizerFlags().Border(wxALL));
-
-    auto* btn14 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer13->Add(btn14, wxSizerFlags().Border(wxALL));
-
-    m_rust_function_box->Add(box_sizer13, wxSizerFlags().Expand().Border(wxALL));
-
-    m_rust_radio_use_anon_func = new wxRadioButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_rust_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_function_box->GetStaticBox(), wxID_ANY,
-        m_rust_radio_use_anon_func), wxVERTICAL);
-
-    auto* box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_rust_lambda_box->Add(box_sizer5, wxSizerFlags().Border(wxALL));
-
-    auto* staticText5 = new wxStaticText(m_rust_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
-    m_rust_lambda_box->Add(staticText5, wxSizerFlags().Border(wxALL));
-
-    m_rust_stc_lambda = new wxStyledTextCtrl(m_rust_lambda_box->GetStaticBox());
-    {
-        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
-        m_rust_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_rust_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_rust_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_rust_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_rust_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_rust_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_rust_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_rust_stc_lambda->SetAdditionalCaretsBlink(true);
-        m_rust_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_rust_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_rust_stc_lambda->SetMarginWidth(1, 0);
-        m_rust_stc_lambda->SetMarginWidth(0, 16);
-        m_rust_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_rust_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_rust_stc_lambda->SetMarginSensitive(0, false);
-        m_rust_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_rust_stc_lambda->SetUseTabs(false);
-        m_rust_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_rust_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_rust_lambda_box->Add(m_rust_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_rust_function_box->Add(m_rust_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer5->Add(m_rust_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_rust_bookpage->SetSizerAndFit(page_sizer5);
 
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 

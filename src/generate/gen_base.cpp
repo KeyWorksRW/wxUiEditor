@@ -375,6 +375,10 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
     }
+    else if (node->hasValue(prop_subclass))
+    {
+        code << node->as_string(prop_subclass) << "* " << node->getNodeName() << ';';
+    }
     else if (class_name == "CloseButton")
     {
         code << "wxBitmapButton* " << node->getNodeName() << ';';
@@ -456,6 +460,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         }
         code << node->as_string(prop_class_name) << "* " << node->getNodeName() << ';';
     }
+
     else if (class_name.is_sameas("dataViewColumn") || class_name.is_sameas("dataViewListColumn"))
     {
         code << "wxDataViewColumn* " << node->getNodeName() << ';';

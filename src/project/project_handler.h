@@ -7,6 +7,8 @@
 
 #pragma once  // NOLINT(#pragma once in main file)
 
+#include <wx/filename.h>  // wxFileName
+
 #include <utility>  // for pair<>
 
 #include "gen_enums.h"  // Enumerations for generators
@@ -228,6 +230,8 @@ private:
 
     tt_string m_projectFile;
     tt_string m_projectPath;
+
+    wxFileName m_project_wx_filename;
 
     int m_ProjectVersion;
     int m_OriginalProjectVersion;

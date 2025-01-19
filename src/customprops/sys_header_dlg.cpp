@@ -51,6 +51,7 @@ bool SysHeaderDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title
     auto* box_sizer4 = new wxBoxSizer(wxHORIZONTAL);
 
     m_static_text = new wxStaticText(this, wxID_ANY, "&Include Directory Root:");
+    m_static_text->SetMinSize(FromDIP(wxSize(600, -1)));
     box_sizer4->Add(m_static_text, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(box_sizer4, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
@@ -82,7 +83,6 @@ bool SysHeaderDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
-    SetMinSize(FromDIP(wxSize(800, -1)));
     if (pos != wxDefaultPosition)
     {
         SetPosition(FromDIP(pos));
@@ -125,14 +125,16 @@ bool SysHeaderDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/arrstr.h>  // wxArrayString
-#include <wx/config.h>  // wxConfig
-#include <wx/dir.h>     // wxDir
-#include <wx/dirdlg.h>  // wxDirDialog
+#include <wx/arrstr.h>    // wxArrayString
+#include <wx/config.h>    // wxConfig
+#include <wx/dir.h>       // wxDir
+#include <wx/dirdlg.h>    // wxDirDialog
+#include <wx/filename.h>  // wxFileName
+#include <wx/tokenzr.h>   // wxTokenizer
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -156,20 +158,38 @@ void SysHeaderDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
     if (m_combo_root->GetCount() < 9)
     {
-        wxString wxwin_path;
-        if (wxGetEnv("WXWIN", &wxwin_path))
+        wxString wxwin;
+        if (wxGetEnv("WXWIN", &wxwin))
         {
-            tt_string path = wxwin_path.utf8_string();
-            if (!path.contains("include"))
+            if (wxwin.Last() != wxFILE_SEP_PATH)
             {
-                path.append_filename("include");
+                wxwin += wxFILE_SEP_PATH;
             }
-            m_combo_root->AppendString(path);
+            wxFileName wxwin_path(wxwin);
+            if (wxwin_path.IsOk() && wxwin_path.DirExists())
+            {
+                // check to see if the last directory is "include" and if not, append it
+                if (wxwin_path.GetDirs().Last() != "include")
+                {
+                    wxwin_path.AppendDir("include");
+                }
+                m_combo_root->AppendString(wxwin_path.GetFullPath());
+            }
         }
     }
+
     if (m_combo_root->GetCount() < 9)
     {
         m_combo_root->AppendString(Project.getProjectPath());
+
+        // Add all the directories in the $INCLUDE environment variable
+        wxString include_path;
+        wxGetEnv("INCLUDE", &include_path);
+        auto include_paths = wxStringTokenize(include_path, wxASCII_STR(",;"), wxTOKEN_STRTOK);
+        for (const auto& path: include_paths)
+        {
+            m_combo_root->AppendString(path);
+        }
     }
     m_combo_root->SetSelection(0);
     wxCommandEvent dummy;
@@ -180,22 +200,30 @@ void SysHeaderDlg::OnRootSelected(wxCommandEvent& WXUNUSED(event))
 {
     m_check_list_files->Clear();
     tt_string root_path = m_combo_root->GetStringSelection().utf8_string();
-    if (root_path.empty())
+    if (root_path.empty() || !root_path.dir_exists())
         return;
 
-    // Fill wxCheckListBox with filenames containing .h, .hh, .hpp, or .hxx
-    for (const auto& entry: std::filesystem::recursive_directory_iterator(root_path.make_path()))
+    try
     {
-        if (entry.is_regular_file())
+        // Fill wxCheckListBox with filenames containing .h, .hh, .hpp, or .hxx
+        for (const auto& entry: std::filesystem::recursive_directory_iterator(root_path.make_path()))
         {
-            tt_string file = entry.path().string();
-            auto hdr_ext = file.extension();
-            if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
+            if (entry.is_regular_file())
             {
-                file.make_relative(root_path);
-                m_check_list_files->Append(file);
+                tt_string file = entry.path().string();
+                auto hdr_ext = file.extension();
+                if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
+                {
+                    file.make_relative(root_path);
+                    m_check_list_files->Append(file);
+                }
             }
         }
+    }
+    catch (const std::exception& e)
+    {
+        // In Release version, we simply stop adding filenames and return
+        MSG_ERROR(e.what());
     }
 }
 

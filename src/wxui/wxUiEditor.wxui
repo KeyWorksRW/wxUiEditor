@@ -5341,7 +5341,7 @@
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Add System Header(s)"
-        minimum_size="800,-1"
+        minimum_size="-1,-1"
         base_file="..\customprops\sys_header_dlg.cpp"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h"
@@ -5390,7 +5390,8 @@
             <node
               class="wxStaticText"
               label="&amp;Include Directory Root:"
-              var_name="m_static_text" />
+              var_name="m_static_text"
+              minimum_size="600,-1" />
           </node>
           <node
             class="wxBoxSizer"

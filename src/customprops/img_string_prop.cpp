@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for handling wxImage files or art
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -68,9 +68,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         tt_cwd cwd(true);
         if (Project.hasValue(prop_art_directory))
         {
-            if (auto dir = Project.ArtDirectory(); dir.dir_exists())
+            if (auto dir = Project.getArtPath(); dir->DirExists())
             {
-                wxFileName::SetCwd(dir.make_wxString());
+                dir->SetCwd();
             }
         }
 

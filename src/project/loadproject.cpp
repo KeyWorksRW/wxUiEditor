@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Load wxUiEditor project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/stc/stc.h>  // A wxWidgets implementation of Scintilla.
-#include <wx/utils.h>    // Miscellaneous utilities
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
+#include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.
+#include <wx/utils.h>     // Miscellaneous utilities
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "dlg_msgs.h"         // wxMessageDialog dialogs
@@ -1124,17 +1125,12 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             m_project_node->set_value(prop_src_preamble, preamble);
         }
 
-        // Set the current working directory to the first file imported.
-        tt_string path(file_list[0]);
-        if (path.size())
+        wxFileName path(file_list[0]);
+        if (path.IsOk())
         {
-            path.replace_extension(".wxui");
-            path.make_absolute();
-            path.backslashestoforward();
-            m_projectFile = path;
-            m_projectPath = m_projectFile;
-            m_projectPath.make_absolute();
-            m_projectPath.remove_filename();
+            path.SetExt("wxui");
+            path.MakeAbsolute();
+            setProjectPath(&path);
         }
         wxGetFrame().setImportedFlag();
     }

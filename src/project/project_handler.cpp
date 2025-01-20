@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <thread>
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
@@ -28,6 +29,19 @@
 
 ProjectHandler& Project = ProjectHandler::getInstance();
 
+ProjectHandler::ProjectHandler()
+{
+    m_project_path = std::make_unique<wxFileName>();
+    m_art_path = std::make_unique<wxFileName>();
+}
+
+ProjectHandler::~ProjectHandler()
+{
+    // m_project_path will be automatically deleted. We need the destructor to be defined in the
+    // source module so that wx/filename.h doesn't need to be included in the header file (and
+    // therefore in every file that needs to include the ProjectHandler header file).
+}
+
 void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
 {
     m_project_node = project;
@@ -40,12 +54,37 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     ProjectData.Clear();
 }
 
+void ProjectHandler::setProjectPath(const wxFileName* path)
+{
+    m_project_path->Assign(*path);
+
+    // If the Project File is being set, then assume the art directory will need to be changed
+    m_art_path->Clear();
+}
+
 void ProjectHandler::setProjectFile(const tt_string& file)
 {
-    m_projectFile = file;
-    m_projectPath = m_projectFile;
-    m_projectPath.make_absolute();
-    m_projectPath.remove_filename();
+    ASSERT(m_project_path);
+    m_project_path->Assign(file);
+    m_project_path->MakeAbsolute();
+
+    // If the Project File is being set, then assume the art directory will need to be changed
+    m_art_path->Clear();
+}
+
+tt_string ProjectHandler::getProjectFile() const
+{
+    return m_project_path->GetFullPath().utf8_string();
+}
+
+tt_string ProjectHandler::getProjectPath() const
+{
+    return m_project_path->GetPath().utf8_string();
+}
+
+bool ProjectHandler::ChangeDir() const
+{
+    return m_project_path->SetCwd();
 }
 
 void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
@@ -148,25 +187,39 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     lambda(ruby_filenames, prop_ruby_file);
 }
 
-tt_string ProjectHandler::ArtDirectory() const
+const wxFileName* ProjectHandler::getArtPath()
 {
-    tt_string result;
+    if (m_art_path->IsOk())
+    {
+        return m_art_path.get();
+    }
+    else
+    {
+        if (m_project_node->hasValue(prop_art_directory))
+        {
+            m_art_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString, wxEmptyString, wxPATH_NATIVE);
+            m_art_path->MakeRelativeTo(m_project_path->GetPath());
+            m_art_path->MakeAbsolute();
+            return m_art_path.get();
+        }
+        else
+        {
+            m_art_path->Assign(m_project_path->GetFullPath());
+            return m_art_path.get();
+        }
+    }
+}
 
-    if (m_project_node->hasValue(prop_art_directory))
-        result = m_project_node->as_string(prop_art_directory);
-    if (result.empty())
-        result = m_projectPath;
-
-    result.make_absolute();
-
-    return result;
+tt_string ProjectHandler::ArtDirectory()
+{
+    return getArtPath()->GetFullPath();
 }
 
 tt_string ProjectHandler::getBaseDirectory(Node* node, GenLang language) const
 {
     if (!node || node == m_project_node.get())
     {
-        return m_projectPath;
+        return getProjectPath();
     }
 
     if (!node->isForm() && !node->isFolder())
@@ -174,7 +227,7 @@ tt_string ProjectHandler::getBaseDirectory(Node* node, GenLang language) const
         node = node->getForm();
         if (!node)
         {
-            return m_projectPath;
+            return getProjectPath();
         }
     }
 
@@ -259,7 +312,7 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
     }
 
     if (result.empty())
-        result = m_projectPath;
+        result = getProjectPath();
 
     tt_string base_file;
     switch (language)
@@ -369,7 +422,7 @@ tt_string ProjectHandler::getDerivedDirectory(Node* node, GenLang language) cons
     }
 
     if (result.empty())
-        result = m_projectPath;
+        result = getProjectPath();
 
     result.make_absolute();
 

@@ -1,13 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once  // NOLINT(#pragma once in main file)
-
-#include <wx/filename.h>  // wxFileName
 
 #include <utility>  // for pair<>
 
@@ -42,10 +40,14 @@ enum
     OUT_FLAG_IGNORE_DERIVED = 1 << 0,  // Ignore derived output files
 };
 
+class wxFileName;  // forward declaration
+
 class ProjectHandler
 {
 private:
-    ProjectHandler() {}
+    // ProjectHandler() {}
+    ProjectHandler();
+    ~ProjectHandler();
 
 public:
     ProjectHandler(ProjectHandler const&) = delete;
@@ -63,12 +65,13 @@ public:
 
     // This will convert the project path into a full path
     void setProjectFile(const tt_string& file);
+    void setProjectPath(const wxFileName* path);
 
     // Returns the full path to the directory the project file is in
-    tt_string getProjectPath() const { return m_projectPath; }
+    tt_string getProjectPath() const;
 
     // Returns the full path to the project filename
-    tt_string getProjectFile() const { return m_projectFile; }
+    tt_string getProjectFile() const;
 
     // Get a bit flag indicating which output types are enabled.
     //
@@ -76,9 +79,10 @@ public:
     size_t getOutputType(int flags = OUT_FLAG_NONE) const;
 
     // Change to the project's directory
-    bool ChangeDir() const { return m_projectPath.ChangeDir(); }
+    bool ChangeDir() const;
 
-    tt_string ArtDirectory() const;
+    tt_string ArtDirectory();
+    const wxFileName* getArtPath();
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
@@ -228,10 +232,11 @@ private:
     Node* m_ImagesForm { nullptr };
     Node* m_DataForm { nullptr };
 
-    tt_string m_projectFile;
-    tt_string m_projectPath;
+    // Creating the wxFileName class this way means callers don't need to include
+    // wx/filename.h and all the files it includes.
 
-    wxFileName m_project_wx_filename;
+    std::unique_ptr<wxFileName> m_project_path;
+    std::unique_ptr<wxFileName> m_art_path;
 
     int m_ProjectVersion;
     int m_OriginalProjectVersion;

@@ -73,6 +73,8 @@ public:
     // Returns the full path to the project filename
     tt_string getProjectFile() const;
 
+    const wxFileName* get_wxFileName() const { return m_project_path.get(); }
+
     // Get a bit flag indicating which output types are enabled.
     //
     // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.

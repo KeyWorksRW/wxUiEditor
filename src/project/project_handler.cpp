@@ -195,6 +195,30 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     lambda(xrc_filenames, prop_xrc_file);
 }
 
+const wxFileName* ProjectHandler::get_wxFileName() const
+{
+    if (m_project_path->IsOk())
+    {
+        return m_project_path.get();
+    }
+    else
+    {
+        if (m_project_node->hasValue(prop_art_directory))
+        {
+            m_project_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString, wxEmptyString,
+                                   wxPATH_NATIVE);
+            m_project_path->MakeRelativeTo(m_project_path->GetPath());
+            m_project_path->MakeAbsolute();
+            return m_project_path.get();
+        }
+        else
+        {
+            m_project_path->Assign(m_project_path->GetFullPath());
+            return m_project_path.get();
+        }
+    }
+}
+
 const wxFileName* ProjectHandler::getArtPath()
 {
     if (m_art_path->IsOk())

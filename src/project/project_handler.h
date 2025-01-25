@@ -70,10 +70,13 @@ public:
     // Returns the full path to the directory the project file is in
     tt_string getProjectPath() const;
 
+    // Returns the full path to the directory the project file is in
+    tt_string getwxProjectPath() const;
+
     // Returns the full path to the project filename
     tt_string getProjectFile() const;
 
-    const wxFileName* get_wxFileName() const { return m_project_path.get(); }
+    const wxFileName* get_wxFileName() const;
 
     // Get a bit flag indicating which output types are enabled.
     //

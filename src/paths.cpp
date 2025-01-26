@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for directory and file properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 // This module handles changes to art_directory, base_directory, and derived_directory
+
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 
 #include "paths.h"
 
@@ -16,25 +18,25 @@
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {
-    tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
-    if (newValue.empty())
+    wxFileName newValue;
+    newValue.AssignDir(event.GetPropertyValue().GetString());
+    if (!newValue.IsOk())
         return;
 
-    newValue.make_absolute();
-    newValue.make_relative(Project.getProjectPath());
-    newValue.backslashestoforward();
+    newValue.MakeAbsolute();
+    newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
 
     tt_cwd cwd(true);
     Project.ChangeDir();
 
-    if (!newValue.dir_exists())
+    if (!newValue.DirExists())
     {
         // Displaying the message box can cause a focus change event which will call validation again in the OnIdle()
         // processing. Preserve the focus to avoid validating twice.
         auto focus = wxWindow::FindFocus();
 
-        auto result = wxMessageBox(tt_string() << "The directory \"" << newValue
-                                               << "\" does not exist. Do you want to use this name anyway?",
+        auto result = wxMessageBox(wxString() << "The directory \"" << newValue.GetFullPath()
+                                              << "\" does not exist. Do you want to use this name anyway?",
                                    "Directory doesn't exist", wxYES_NO | wxICON_WARNING, wxGetMainFrame());
         if (focus)
         {
@@ -53,7 +55,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
     // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
     // otherwise it will revert back to the original name before the Veto.
 
-    event.GetProperty()->SetValueFromString(newValue);
+    event.GetProperty()->SetValueFromString(newValue.GetFullPath());
 }
 
 // Unlike the AllowDirectoryChange() above, this will *not* allow a duplicate prop_base_file filename since the generated
@@ -65,15 +67,16 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_ruby_file) ||
         prop->isProp(prop_xrc_file))
     {
-        tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
-        if (newValue.empty())
+        wxFileName newValue;
+        newValue.Assign(event.GetPropertyValue().GetString());
+        if (!newValue.IsOk())
             return;
 
-        newValue.make_absolute();
-        newValue.make_relative(Project.getProjectPath());
-        newValue.backslashestoforward();
+        newValue.MakeAbsolute();
+        newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
 
-        auto filename = newValue;
+        tt_string filename = newValue.GetFullPath().utf8_string();
+        filename.backslashestoforward();
 
         std::vector<Node*> forms;
         Project.CollectForms(forms);
@@ -144,7 +147,28 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     return;
                 }
             }
-            else
+            else if (prop->isProp(prop_perl_file))
+            {
+                if (child->as_string(prop_perl_file).filename() == filename)
+                {
+                    auto focus = wxWindow::FindFocus();
+
+                    wxMessageBox(wxString() << "The perl filename \"" << filename.make_wxString()
+                                            << "\" is already in use by " << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                 "Duplicate perl filename", wxICON_STOP);
+                    if (focus)
+                    {
+                        focus->SetFocus();
+                    }
+
+                    event.Veto();
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    return;
+                }
+            }
+            else if (prop->isProp(prop_xrc_file))
             {
                 // Currently, XRC files don't have a directory property, so the full path
                 // relative to the project file is what we check. It *is* valid to have the
@@ -174,7 +198,7 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
         // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
         // otherwise it will revert back to the original name before the Veto.
 
-        event.GetProperty()->SetValueFromString(newValue);
+        event.GetProperty()->SetValueFromString(newValue.GetFullPath());
     }
 }
 
@@ -183,19 +207,26 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     // If the user clicked the path button, the current directory may have changed.
     Project.ChangeDir();
 
-    tt_string newValue = event.GetPropertyValue().GetString().utf8_string();
+    wxFileName newValue;
+    newValue.AssignDir(event.GetPropertyValue().GetString());
+    if (!newValue.IsOk())
+        return;
+
     if (!node->isGen(gen_wxFilePickerCtrl))
     {
-        newValue.make_absolute();
-        newValue.make_relative(Project.getProjectPath());
-        newValue.backslashestoforward();
+        newValue.MakeAbsolute();
+        newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
     }
+
+    tt_string dir = newValue.GetFullPath().utf8_string();
+    dir.backslashestoforward();
+
     // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
     // with a backslash. However, modifyProperty() will save our forward slash version, so even thought the
     // display isn't correct, it will be stored in the project file correctly.
 
-    event.GetProperty()->SetValueFromString(newValue);
-    tt_string value(newValue);
+    event.GetProperty()->SetValueFromString(dir.make_wxString());
+    tt_string value(dir);
     if (value != prop->as_string())
     {
         if (prop->isProp(prop_derived_directory))

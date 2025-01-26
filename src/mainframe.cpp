@@ -609,54 +609,55 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
 
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
-    tt_string filename = Project.getProjectFile().filename();
-    if (filename.is_sameas(txtEmptyProject))
+    wxFileName filename(*Project.get_wxFileName());
+    if (!filename.IsOk())
     {
-        filename = "MyProject";
+        filename.Assign("MyProject");
     }
-    tt_string path = Project.getProjectPath();
+
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", path.make_wxString(), filename.make_wxString(),
+    wxFileDialog dialog(this, "Save Project As", wxFileName::GetCwd(), filename.GetFullName(),
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        filename = dialog.GetPath().utf8_string();
-        if (filename.extension().empty())
+        filename = dialog.GetPath();
+        // Note that under Windows, any extension the user added will be followed with a .wxui extension
+        auto ext = filename.GetExt();
+        if (ext.empty())
         {
-            filename.replace_extension(".wxui");
+            filename.SetExt("wxui");
         }
 
         // Don't allow the user to walk over existing project file types that are probably associated with another
         // designer tool
 
-        else if (filename.extension().is_sameas(".fbp", tt::CASE::either))
+        else if (ext.CmpNoCase("fbp") == 0)
         {
             wxMessageBox("You cannot save the project as a wxFormBuilder project file", "Save Project As");
             return;
         }
-        else if (filename.extension().is_sameas(".fjd", tt::CASE::either))
+        else if (ext.CmpNoCase("fjd") == 0)
         {
             wxMessageBox("You cannot save the project as a DialogBlocks project file", "Save Project As");
             return;
         }
-        else if (filename.extension().is_sameas(".wxg", tt::CASE::either))
+        else if (ext.CmpNoCase("wxg") == 0)
         {
             wxMessageBox("You cannot save the project as a wxGlade file", "Save Project As");
             return;
         }
-        else if (filename.extension().is_sameas(".wxs", tt::CASE::either))
+        else if (ext.CmpNoCase("wxs") == 0)
         {
             wxMessageBox("You cannot save the project as a wxSmith file", "Save Project As");
             return;
         }
-        else if (filename.extension().is_sameas(".xrc", tt::CASE::either))
+        else if (ext.CmpNoCase("xrc") == 0)
         {
             wxMessageBox("You cannot save the project as a XRC file", "Save Project As");
             return;
         }
-        else if (filename.extension().is_sameas(".rc", tt::CASE::either) ||
-                 filename.extension().is_sameas(".dlg", tt::CASE::either))
+        else if (ext.CmpNoCase("rc") == 0 || ext.CmpNoCase("dlg") == 0)
         {
             wxMessageBox("You cannot save the project as a Windows Resource file", "Save Project As");
             return;
@@ -664,18 +665,18 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
 
         pugi::xml_document doc;
         Project.getProjectNode()->createDoc(doc);
-        if (doc.save_file(filename, "  ", pugi::format_indent_attributes))
+        if (doc.save_file(filename.GetFullPath().utf8_string(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             m_isImported = false;
-            m_FileHistory.AddFileToHistory(filename);
-            Project.setProjectFile(filename);
+            m_FileHistory.AddFileToHistory(filename.GetFullPath());
+            Project.setProjectPath(&filename);
             ProjectSaved();
             FireProjectLoadedEvent();
         }
         else
         {
-            wxMessageBox(wxString("Unable to save the project: ") << filename, "Save Project As");
+            wxMessageBox(wxString("Unable to save the project: ") << filename.GetFullPath(), "Save Project As");
         }
     };
 }

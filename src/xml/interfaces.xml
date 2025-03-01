@@ -246,10 +246,12 @@
 			help="Specify the code to insert into the python file after the generated import statements. This is usually used to import addtional modules, but can be any valid python code for use before the class definition."/>
 		<property name="python_import_list" type="include_files"
 			help="Specifies the python modules that should be imported. These will be added using the import command."/>
-		<!-- <property name="python_variable_args" type="bool"
+<!--
+		<property name="python_variable_args" type="bool"
 			help="If checked, the form
 		parameters will be set to (*args, **kwargs) instead of listing all the parameters and their
-		default values.">1</property> -->
+		default values.">1</property>
+-->
 		<property name="python_inherit_name" type="string"
 			help="The name to use for an inherited class. If specified, the Inherit tab in the Python panel will include a sample for creating an inherited class."/>
 	</gen>
@@ -271,7 +273,7 @@
 		<property name="insert_rust_code" type="code_edit"
 			help="Specify the code to insert into the rust file after the generated import statements. This can be any valid rust code for use before the class definition."/>
 	</gen>
-
+<!--
 	<gen class="XRC Settings" type="interface">
 		<property name="xrc_file" type="file"
 			help="The filename to use if generating XRC (wxPython can override this with its own file name)."/>
@@ -299,6 +301,7 @@
 		<property name="insert_lua_code" type="code_edit"
 			help="Specify the code to insert into the lua file after the generated import statements. This can be any valid lua code for use before the class definition."/>
 	</gen>
+-->
 
 	<gen class="C++" type="interface">
 		<property name="wxWidgets_version" type="option"
@@ -418,7 +421,7 @@
 		<property name="rust_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
-
+<!--
 	<gen class="wxFortran" type="interface">
 		<property name="wxFortran_version" type="option"
 			help="Specifies the minimum version of wxFortran needed to run the generated code.">
@@ -457,7 +460,7 @@
 			100</property>
 		<property name="lua_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
-	</gen>
+	</gen> -->
 
 	<gen class="Folder C++ Overrides" type="interface">
 		<property name="folder_base_directory" type="path"

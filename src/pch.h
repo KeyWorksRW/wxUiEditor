@@ -113,17 +113,9 @@
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
 #endif
 
-// REVIEW: [Randalphwa - 01-10-2025] Currently, there are no plans to support these languages,
-// however there is some code throughout the codebase that would make it possible to start
-// supporting them at some point in the future.
-#if defined(_DEBUG)
-
-    #define GENERATE_FORTRAN_CODE 0
-    #define GENERATE_HASKELL_CODE 0
-    #define GENERATE_LUA_CODE     0
-#endif  // _DEBUG
-
-// Set this to 1 if you set any of the languages above to 1
+// This is used around languages that are not supported by wxUiEditor. They surround code that might
+// be useful if any of the languages are enabled (in which case, the specific code should be moved
+// out of the conditional block.
 #define GENERATE_NEW_LANG_CODE 0
 
 enum class MoveDirection
@@ -147,15 +139,16 @@ enum GenLang
     GEN_LANG_RUBY = 1 << 4,
     GEN_LANG_RUST = 1 << 5,
 
-    // REVIEW: [Randalphwa - 01-10-2025] These languages are currently not supported
-    GEN_LANG_FORTRAN = 1 << 6,
-    GEN_LANG_HASKELL = 1 << 7,
-    GEN_LANG_LUA = 1 << 8,
+    // REVIEW: [Randalphwa - 01-10-2025] These languages are currently not supported. If you enable
+    // any of them then you *MUST* change the values of GEN_LANG_XRC and GEN_LANG_XML below.
+
+    // GEN_LANG_FORTRAN = 1 << 6,
+    // GEN_LANG_HASKELL = 1 << 7,
+    // GEN_LANG_LUA = 1 << 8,
 
     // These should always be the last languages in the list.
-    GEN_LANG_XRC = 1 << 9,
-    GEN_LANG_XML = 1 << 10,
-    GEN_LANG_LAST = GEN_LANG_XML,
+    GEN_LANG_XRC = 1 << 6,
+    GEN_LANG_XML = 1 << 7,
 };
 
 // Used to index fields in a bitmap property

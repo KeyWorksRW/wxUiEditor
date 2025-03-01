@@ -13,7 +13,6 @@
 #include <wx/sizer.h>
 
 #include "../wxui/ui_images.h"
-#include "utils.h"  // Miscellaneous utility functions
 
 #include "xrcpreview.h"
 
@@ -201,6 +200,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "preferences.h"               // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"           // ProjectHandler class
 #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"                     // Utility functions that work with properties
 
 #include "pugixml.hpp"
 

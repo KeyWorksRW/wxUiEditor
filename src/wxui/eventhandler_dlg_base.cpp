@@ -37,9 +37,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         bundle_list.push_back(wxue_img::bundle_python_logo_only_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_ruby_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_rust_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_fortran_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_haskell_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_lua_logo_svg(24, 24));
         m_notebook->SetImages(bundle_list);
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
@@ -352,203 +349,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer5->Add(m_rust_function_box, wxSizerFlags().Expand().Border(wxALL));
     m_rust_bookpage->SetSizerAndFit(page_sizer5);
 
-    m_fortran_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_fortran_bookpage, "Fortran", false, 5);
-    m_fortran_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer6 = new wxBoxSizer(wxVERTICAL);
-
-    m_fortran_radio_use_function = new wxRadioButton(m_fortran_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
-        wxDefaultSize, wxRB_SINGLE);
-    m_fortran_function_box = new wxStaticBoxSizer(new wxStaticBox(m_fortran_bookpage, wxID_ANY, m_fortran_radio_use_function
-        ), wxVERTICAL);
-
-    auto* box_sizer9 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_fortran_text_function = new wxTextCtrl(m_fortran_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer9->Add(m_fortran_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn5 = new wxButton(m_fortran_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer9->Add(btn5, wxSizerFlags().Border(wxALL));
-
-    auto* btn6 = new wxButton(m_fortran_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer9->Add(btn6, wxSizerFlags().Border(wxALL));
-
-    m_fortran_function_box->Add(box_sizer9, wxSizerFlags().Expand().Border(wxALL));
-
-    m_fortran_radio_use_lambda = new wxRadioButton(m_fortran_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_fortran_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_fortran_function_box->GetStaticBox(), wxID_ANY,
-        m_fortran_radio_use_lambda), wxVERTICAL);
-
-    auto* box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_fortran_lambda_box->Add(box_sizer6, wxSizerFlags().Border(wxALL));
-
-    auto* staticText6 = new wxStaticText(m_fortran_lambda_box->GetStaticBox(), wxID_ANY, "Lambda body:");
-    m_fortran_lambda_box->Add(staticText6, wxSizerFlags().Border(wxALL));
-
-    m_fortran_stc_lambda = new wxStyledTextCtrl(m_fortran_lambda_box->GetStaticBox());
-    {
-        m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
-        m_fortran_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_fortran_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_fortran_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_fortran_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_fortran_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_fortran_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_fortran_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_fortran_stc_lambda->SetAdditionalCaretsBlink(true);
-        m_fortran_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_fortran_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_fortran_stc_lambda->SetMarginWidth(1, 0);
-        m_fortran_stc_lambda->SetMarginWidth(0, 16);
-        m_fortran_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_fortran_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_fortran_stc_lambda->SetMarginSensitive(0, false);
-        m_fortran_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_fortran_stc_lambda->SetUseTabs(false);
-        m_fortran_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_fortran_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_fortran_lambda_box->Add(m_fortran_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_fortran_function_box->Add(m_fortran_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer6->Add(m_fortran_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_fortran_bookpage->SetSizerAndFit(page_sizer6);
-
-    m_haskell_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_haskell_bookpage, "Haskell", false, 6);
-    m_haskell_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer2 = new wxBoxSizer(wxVERTICAL);
-
-    m_haskell_radio_use_function = new wxRadioButton(m_haskell_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
-        wxDefaultSize, wxRB_SINGLE);
-    m_haskell_function_box = new wxStaticBoxSizer(new wxStaticBox(m_haskell_bookpage, wxID_ANY, m_haskell_radio_use_function
-        ), wxVERTICAL);
-
-    auto* box_sizer10 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_haskell_text_function = new wxTextCtrl(m_haskell_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer10->Add(m_haskell_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn7 = new wxButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer10->Add(btn7, wxSizerFlags().Border(wxALL));
-
-    auto* btn8 = new wxButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer10->Add(btn8, wxSizerFlags().Border(wxALL));
-
-    m_haskell_function_box->Add(box_sizer10, wxSizerFlags().Expand().Border(wxALL));
-
-    m_haskell_radio_use_lambda = new wxRadioButton(m_haskell_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_ruby_lambda_box2 = new wxStaticBoxSizer(new wxStaticBox(m_haskell_function_box->GetStaticBox(), wxID_ANY,
-        m_haskell_radio_use_lambda), wxVERTICAL);
-
-    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_ruby_lambda_box2->Add(box_sizer2, wxSizerFlags().Border(wxALL));
-
-    auto* staticText2 = new wxStaticText(m_ruby_lambda_box2->GetStaticBox(), wxID_ANY, "Lambda body:");
-    m_ruby_lambda_box2->Add(staticText2, wxSizerFlags().Border(wxALL));
-
-    m_haskell_stc_lambda = new wxStyledTextCtrl(m_ruby_lambda_box2->GetStaticBox());
-    {
-        m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
-        m_haskell_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_haskell_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_haskell_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_haskell_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_haskell_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_haskell_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_haskell_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_haskell_stc_lambda->SetAdditionalCaretsBlink(true);
-        m_haskell_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_haskell_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_haskell_stc_lambda->SetMarginWidth(1, 0);
-        m_haskell_stc_lambda->SetMarginWidth(0, 16);
-        m_haskell_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_haskell_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_haskell_stc_lambda->SetMarginSensitive(0, false);
-        m_haskell_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_haskell_stc_lambda->SetUseTabs(false);
-        m_haskell_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_haskell_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_ruby_lambda_box2->Add(m_haskell_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_haskell_function_box->Add(m_ruby_lambda_box2, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer2->Add(m_haskell_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_haskell_bookpage->SetSizerAndFit(page_sizer2);
-
-    m_lua_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_lua_bookpage, "Lua", false, 7);
-    m_lua_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer3 = new wxBoxSizer(wxVERTICAL);
-
-    m_lua_radio_use_function = new wxRadioButton(m_lua_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_lua_function_box = new wxStaticBoxSizer(new wxStaticBox(m_lua_bookpage, wxID_ANY, m_lua_radio_use_function), wxVERTICAL);
-
-    auto* box_sizer11 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_lua_text_function = new wxTextCtrl(m_lua_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer11->Add(m_lua_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn9 = new wxButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer11->Add(btn9, wxSizerFlags().Border(wxALL));
-
-    auto* btn10 = new wxButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer11->Add(btn10, wxSizerFlags().Border(wxALL));
-
-    m_lua_function_box->Add(box_sizer11, wxSizerFlags().Expand().Border(wxALL));
-
-    m_lua_radio_use_anon_func = new wxRadioButton(m_lua_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_lua_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_lua_function_box->GetStaticBox(), wxID_ANY,
-        m_lua_radio_use_anon_func), wxVERTICAL);
-
-    auto* box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_lua_lambda_box->Add(box_sizer3, wxSizerFlags().Border(wxALL));
-
-    auto* staticText3 = new wxStaticText(m_lua_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
-    m_lua_lambda_box->Add(staticText3, wxSizerFlags().Border(wxALL));
-
-    m_lua_stc_lambda = new wxStyledTextCtrl(m_lua_lambda_box->GetStaticBox());
-    {
-        m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
-        m_lua_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_lua_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_lua_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_lua_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_lua_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_lua_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_lua_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_lua_stc_lambda->SetAdditionalCaretsBlink(true);
-        m_lua_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_lua_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_lua_stc_lambda->SetMarginWidth(1, 0);
-        m_lua_stc_lambda->SetMarginWidth(0, 16);
-        m_lua_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_lua_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_lua_stc_lambda->SetMarginSensitive(0, false);
-        m_lua_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_lua_stc_lambda->SetUseTabs(false);
-        m_lua_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_lua_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_lua_lambda_box->Add(m_lua_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_lua_function_box->Add(m_lua_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer3->Add(m_lua_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_lua_bookpage->SetSizerAndFit(page_sizer3);
-
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
@@ -585,41 +385,26 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     btn13->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn15->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn3->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
-    btn5->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
-    btn7->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
-    btn9->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
-    btn10->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn12->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn14->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn16->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn2->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn4->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
-    btn6->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
-    btn8->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     m_check_capture_this->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnChange, this);
     m_check_include_event->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnChange, this);
     Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);
     m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &EventHandlerDlgBase::OnPageChanged, this);
     m_cpp_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseCppFunction, this);
     m_cpp_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseCppLambda, this);
-    m_fortran_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseFortranFunction, this);
-    m_fortran_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseFortranLambda, this);
-    m_haskell_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseHaskellFunction, this);
     m_perl_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_py_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonFunction, this);
     m_py_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonLambda, this);
-    m_lua_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
-    m_lua_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_ruby_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
-    m_haskell_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_rust_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustFunction, this);
     m_rust_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustLambda, this);
     m_cpp_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_fortran_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_haskell_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_lua_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_perl_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_lambda->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);

@@ -86,14 +86,17 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 static bool gen_base_code = false;
 static bool gen_derived_code = false;
-static bool gen_fortran_code = false;
-static bool gen_haskell_code = false;
-static bool gen_lua_code = false;
 static bool gen_perl_code = false;
 static bool gen_python_code = false;
 static bool gen_ruby_code = false;
 static bool gen_rust_code = false;
 static bool gen_xrc_code = false;
+
+#if GENERATE_NEW_LANG_CODE
+static bool gen_fortran_code = false;
+static bool gen_haskell_code = false;
+static bool gen_lua_code = false;
+#endif
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
 // in generate/gen_codefiles.cpp
@@ -294,6 +297,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             gen_xrc_code = true;
             break;
 
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             gen_fortran_code = false;
             break;
@@ -303,6 +307,8 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         case GEN_LANG_LUA:
             gen_lua_code = false;
             break;
+#endif
+
         default:
             break;
     }

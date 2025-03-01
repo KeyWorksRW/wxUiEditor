@@ -50,9 +50,6 @@ protected:
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
     virtual void OnUseCppFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseCppLambda(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseFortranFunction(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseFortranLambda(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseHaskellFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePerlLambda(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePythonFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUsePythonLambda(wxCommandEvent& event) { event.Skip(); }
@@ -67,9 +64,6 @@ protected:
     wxCheckBox* m_check_include_event;
     wxNotebook* m_notebook;
     wxPanel* m_cpp_bookpage;
-    wxPanel* m_fortran_bookpage;
-    wxPanel* m_haskell_bookpage;
-    wxPanel* m_lua_bookpage;
     wxPanel* m_perl_bookpage;
     wxPanel* m_python_bookpage;
     wxPanel* m_ruby_bookpage;
@@ -78,18 +72,6 @@ protected:
     wxStaticBoxSizer* m_cpp_function_box;
     wxRadioButton* m_cpp_radio_use_lambda;
     wxStaticBoxSizer* m_cpp_lambda_box;
-    wxRadioButton* m_fortran_radio_use_function;
-    wxStaticBoxSizer* m_fortran_function_box;
-    wxRadioButton* m_fortran_radio_use_lambda;
-    wxStaticBoxSizer* m_fortran_lambda_box;
-    wxRadioButton* m_haskell_radio_use_function;
-    wxStaticBoxSizer* m_haskell_function_box;
-    wxRadioButton* m_haskell_radio_use_lambda;
-    wxStaticBoxSizer* m_ruby_lambda_box2;
-    wxRadioButton* m_lua_radio_use_anon_func;
-    wxStaticBoxSizer* m_lua_lambda_box;
-    wxRadioButton* m_lua_radio_use_function;
-    wxStaticBoxSizer* m_lua_function_box;
     wxRadioButton* m_perl_radio_use_anon_func;
     wxStaticBoxSizer* m_perl_lambda_box;
     wxRadioButton* m_perl_radio_use_function;
@@ -108,16 +90,10 @@ protected:
     wxStaticBoxSizer* m_rust_function_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_cpp_stc_lambda;
-    wxStyledTextCtrl* m_fortran_stc_lambda;
-    wxStyledTextCtrl* m_haskell_stc_lambda;
-    wxStyledTextCtrl* m_lua_stc_lambda;
     wxStyledTextCtrl* m_perl_stc_lambda;
     wxStyledTextCtrl* m_ruby_stc_lambda;
     wxStyledTextCtrl* m_rust_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
-    wxTextCtrl* m_fortran_text_function;
-    wxTextCtrl* m_haskell_text_function;
-    wxTextCtrl* m_lua_text_function;
     wxTextCtrl* m_perl_text_function;
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_py_text_lambda;

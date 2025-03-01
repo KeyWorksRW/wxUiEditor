@@ -610,10 +610,6 @@ Code& Code::AddAuto()
         {
             *this += "auto* ";
         }
-        else if (is_lua())
-        {
-            *this += "local ";
-        }
         else if (is_perl())
         {
             *this += "my $";
@@ -626,6 +622,12 @@ Code& Code::AddAuto()
         {
             *this += "@";
         }
+        else if (is_rust())
+        {
+            *this += "let ";
+        }
+#if GENERATE_NEW_LANG_CODE
+
         else if (is_fortran())
         {
             *this += "type(";
@@ -634,10 +636,11 @@ Code& Code::AddAuto()
         {
             *this += "let ";
         }
-        else if (is_rust())
+        else if (is_lua())
         {
-            *this += "let ";
+            *this += "local ";
         }
+#endif  // GENERATE_NEW_LANG_CODE
     }
     return *this;
 }
@@ -946,10 +949,12 @@ Code& Code::Function(tt_string_view text, bool add_operator)
                 }
             }
         }
+#if GENERATE_NEW_LANG_CODE
         else if (is_lua())
         {
             *this << '.' << text;
         }
+#endif
         else
         {
             *this << "->" << text;
@@ -1010,10 +1015,13 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "$self->";
     }
+#if GENERATE_NEW_LANG_CODE
+
     else if (is_lua())
     {
         *this += "this:";
     }
+#endif
 
     *this += text;
     return *this;
@@ -1021,7 +1029,7 @@ Code& Code::FormFunction(tt_string_view text)
 
 Code& Code::Class(tt_string_view text)
 {
-    if (is_cpp() || is_haskell())
+    if (is_cpp())
     {
         *this += text;
     }
@@ -1047,17 +1055,8 @@ Code& Code::Class(tt_string_view text)
             *this += text;
         }
     }
-    else if (is_lua())
-    {
-        if (text.is_sameprefix("wx"))
-        {
-            *this << "wx." << text;
-        }
-        else
-        {
-            *this += text;
-        }
-    }
+#if GENERATE_NEW_LANG_CODE
+
     else if (is_fortran())
     {
         if (text.is_sameprefix("wx"))
@@ -1069,6 +1068,23 @@ Code& Code::Class(tt_string_view text)
             *this += text;
         }
     }
+    else if (is_lua())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << "wx." << text;
+        }
+        else
+        {
+            *this += text;
+        }
+    }
+    else if (is_haskell())
+    {
+        *this += text;
+    }
+#endif
+
     return *this;
 }
 
@@ -1239,7 +1255,7 @@ Code& Code::NodeName(Node* node)
     if (!node)
         node = m_node;
     auto node_name = node->getNodeName(get_language());
-    if ((is_python() || is_lua()) && !node->isForm() && !node->isLocal() && !node_name.starts_with("self."))
+    if (is_python() && !node->isForm() && !node->isLocal() && !node_name.starts_with("self."))
     {
         *this += "self.";
     }
@@ -1278,6 +1294,13 @@ Code& Code::NodeName(Node* node)
             return *this;
         }
     }
+#if GENERATE_NEW_LANG_CODE
+    else if (is_lua() && !node->isForm() && !node->isLocal() && !node_name.starts_with("self."))
+    {
+        *this += "self.";
+    }
+#endif
+
     *this += node_name;
     return *this;
 }
@@ -1670,11 +1693,13 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
             Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
             *this += ')';
         }
+#if GENERATE_NEW_LANG_CODE
         else if (is_lua())
         {
             CheckLineLength(sizeof("wx.wxSize(999, 999)"));
             Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
         }
+#endif
     }
     else
     {
@@ -2687,12 +2712,14 @@ void Code::GenFontColourSettings()
         {
             if (bg_clr.starts_with('#'))
             {
+#if GENERATE_NEW_LANG_CODE
                 if (is_lua())
                 {
                     // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
                     Class("wxColour(").QuotedString(bg_clr) += ')';
                 }
                 else
+#endif
                 {
                     Object("wxColour").QuotedString(bg_clr) += ')';
                 }
@@ -2701,12 +2728,14 @@ void Code::GenFontColourSettings()
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_background_colour);
+#if GENERATE_NEW_LANG_CODE
                 if (is_lua())
                 {
                     // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
                     Class("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
                 }
                 else
+#endif
                 {
                     Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
                 }
@@ -2861,18 +2890,28 @@ Code& Code::BeginConditional()
 
 Code& Code::AddConditionalAnd()
 {
-    if (is_cpp() || is_ruby() || is_perl() || is_rust() || is_haskell())
+    if (is_cpp() || is_ruby() || is_perl() || is_rust())
     {
         *this << " && ";
     }
-    else if (is_python() || is_lua())
+    else if (is_python())
     {
         *this << " and ";
     }
+#if GENERATE_NEW_LANG_CODE
     else if (is_fortran())
     {
         *this << " .AND. ";
     }
+    else if (is_haskell())
+    {
+        *this << " && ";
+    }
+    else if (is_lua())
+    {
+        *this << " and ";
+    }
+#endif
 
     else
     {
@@ -2883,18 +2922,28 @@ Code& Code::AddConditionalAnd()
 }
 Code& Code::AddConditionalOr()
 {
-    if (is_cpp() || is_ruby() || is_perl() || is_rust() || is_haskell())
+    if (is_cpp() || is_ruby() || is_perl() || is_rust())
     {
         *this << " || ";
     }
-    else if (is_python() || is_lua())
+    else if (is_python())
     {
         *this << " or ";
     }
+#if GENERATE_NEW_LANG_CODE
     else if (is_fortran())
     {
         *this << " .OR. ";
     }
+    else if (is_haskell())
+    {
+        *this << " || ";
+    }
+    else if (is_lua())
+    {
+        *this << " or ";
+    }
+#endif
     else
     {
         MSG_WARNING("unknown language");
@@ -2910,10 +2959,17 @@ Code& Code::EndConditional()
     {
         *this << ')';
     }
-    else if (is_python() || is_lua())
+    else if (is_python())
     {
         *this << ':';
     }
+#if GENERATE_NEW_LANG_CODE
+
+    else if (is_lua())
+    {
+        *this << ':';
+    }
+#endif
 
     // Ruby doesn't need anything to complete the conditional statement
 

@@ -603,21 +603,21 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase
             m_scintilla->StyleSetForeground(wxSTC_H_TAG,
                                             UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_XrcTagColour());
         }
-
-        // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not
-        // cross-platform. See issue #597.
-
-        FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
-        m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
-
-        // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-        // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-
-        m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
-
-        Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
-        Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
     }
+
+    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not
+    // cross-platform. See issue #597.
+
+    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+
+    // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+    m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
+
+    Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
+    Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
 }
 
 void CodeDisplay::OnFind(wxFindDialogEvent& event)

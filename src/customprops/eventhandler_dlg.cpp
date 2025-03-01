@@ -165,50 +165,20 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     if (m_is_cpp_enabled)
     {
-        m_cpp_stc_lambda->SetLexer(wxSTC_LEX_CPP);
-
-        // On Windows, this saves converting the UTF16 characters to ANSI.
-        m_cpp_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENT, UserPrefs.get_CppCommentColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINE, UserPrefs.get_CppCommentColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTDOC, UserPrefs.get_CppCommentColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, UserPrefs.get_CppCommentColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_NUMBER, UserPrefs.get_CppNumberColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_STRING, UserPrefs.get_CppStringColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_STRINGEOL, UserPrefs.get_CppStringColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD, UserPrefs.get_CppKeywordColour());
-        m_cpp_stc_lambda->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.get_CppColour());
+        SetStcColors(m_cpp_stc_lambda, GEN_LANG_CPLUSPLUS);
     }
     if (m_is_perl_enabled)
     {
-        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
-
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.get_PerlCommentColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_NUMBER, UserPrefs.get_PerlNumberColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.get_PerlStringColour());
-        m_perl_stc_lambda->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.get_PerlKeywordColour());
+        SetStcColors(m_perl_stc_lambda, GEN_LANG_PERL);
     }
     if (m_is_rust_enabled)
     {
+        SetStcColors(m_rust_stc_lambda, GEN_LANG_RUST);
         m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
-        m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
-
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.get_RustCommentColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.get_RustNumberColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.get_RustStringColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.get_RustKeywordColour());
-        m_rust_stc_lambda->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.get_RustColour());
     }
     if (m_is_ruby_enabled)
     {
-        m_ruby_stc_lambda->SetLexer(wxSTC_LEX_RUBY);
-        m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_ruby_keywords);
-
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_COMMENTLINE, UserPrefs.get_RubyCommentColour());
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_NUMBER, UserPrefs.get_RubyNumberColour());
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_STRING, UserPrefs.get_RubyStringColour());
-        m_ruby_stc_lambda->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.get_RubyColour());
+        SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
     }
 
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
@@ -217,35 +187,15 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 #if GENERATE_NEW_LANG_CODE
     if (m_is_fortran_enabled)
     {
-        m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
-        m_fortran_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_fortran_keywords);
-
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_COMMENT, UserPrefs.get_FortranCommentColour());
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_NUMBER, UserPrefs.get_FortranNumberColour());
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_STRING1, UserPrefs.get_FortranStringColour());
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_WORD, UserPrefs.get_FortranKeywordColour());
-        m_fortran_stc_lambda->StyleSetForeground(wxSTC_F_WORD2, UserPrefs.get_FortranColour());
+        SetStcColors(m_fortran_stc_lambda, GEN_LANG_FORTRAN);
     }
     if (m_is_haskell_enabled)
     {
-        m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
-        m_haskell_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
-
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_COMMENTLINE, UserPrefs.get_HaskellCommentColour());
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_NUMBER, UserPrefs.get_HaskellNumberColour());
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_STRING, UserPrefs.get_HaskellStringColour());
-        m_haskell_stc_lambda->StyleSetForeground(wxSTC_HA_KEYWORD, UserPrefs.get_HaskellKeywordColour());
+        SetStcColors(m_haskell_stc_lambda, GEN_LANG_HASKELL);
     }
     if (m_is_lua_enabled)
     {
-        m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
-        m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
-
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_COMMENT, UserPrefs.get_LuaCommentColour());
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_NUMBER, UserPrefs.get_LuaNumberColour());
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_STRING, UserPrefs.get_LuaStringColour());
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD, UserPrefs.get_LuaKeywordColour());
-        m_lua_stc_lambda->StyleSetForeground(wxSTC_LUA_WORD2, UserPrefs.get_LuaColour());
+        SetStcColors(m_lua_stc_lambda, GEN_LANG_LUA);
     }
 #endif  // GENERATE_NEW_LANG_CODE
 

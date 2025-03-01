@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class for node properties and events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +70,7 @@ static std::map<GenLang, std::string> s_lang_category_prefix;
 
 PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
-    for (size_t lang = 1; lang <= GEN_LANG_LAST; lang <<= 1)
+    for (size_t lang = 1; lang <= GEN_LANG_XRC; lang <<= 1)
     {
         s_lang_category_prefix[static_cast<GenLang>(lang)] = ConvertFromGenLang(static_cast<GenLang>(lang));
     }

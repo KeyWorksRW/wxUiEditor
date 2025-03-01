@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,7 @@
 #include "lambdas.h"             // Functions for formatting and storage of lamda events
 #include "mainframe.h"           // MainFrame -- Main window frame
 
+#include "utils.h"                     // Miscellaneous utility functions
 #include "wxui/editcodedialog_base.h"  // auto-generated: wxui/editcodedialog_base.cpp
 
 // Defined in base_panel.cpp
@@ -31,22 +32,7 @@ EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeD
 {
     SetTitle(tt_string() << prop->declName() << " property editor");
     m_value = prop->as_wxString();
-
-    m_stc->SetLexer(wxSTC_LEX_CPP);
-
-    // On Windows, this saves converting the UTF16 characters to ANSI.
-    m_stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
-
-    m_stc->StyleSetBold(wxSTC_C_WORD, true);
-    m_stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    m_stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-    m_stc->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+    SetStcColors(m_stc, GEN_LANG_CPLUSPLUS);
 };
 
 void EditCodeDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))

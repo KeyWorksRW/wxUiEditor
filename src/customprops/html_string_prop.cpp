@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for HTML
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "lambdas.h"             // Functions for formatting and storage of lamda events
 #include "mainframe.h"           // MainFrame -- Main window frame
+#include "utils.h"               // Miscellaneous utility functions
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
@@ -26,10 +27,7 @@ EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlD
     SetTitle(tt_string() << prop->declName() << " property editor");
     m_value = prop->as_wxString();
 
-    m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-    m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-    m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+    SetStcColors(m_scintilla, GEN_LANG_XML, false, false);
 };
 
 void EditHtmlDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))

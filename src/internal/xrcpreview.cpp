@@ -13,6 +13,7 @@
 #include <wx/sizer.h>
 
 #include "../wxui/ui_images.h"
+#include "utils.h"  // Miscellaneous utility functions
 
 #include "xrcpreview.h"
 
@@ -171,7 +172,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Test XRC
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -363,41 +364,12 @@ extern const char* g_xrc_keywords;
 
 void XrcPreview::OnInit(wxInitDialogEvent& event)
 {
-    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+    SetStcColors(m_scintilla, GEN_LANG_XRC, false, true);
 
     m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-    if (UserPrefs.is_DarkMode())
-    {
-        auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-        for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
-        {
-            m_scintilla->StyleSetForeground(idx, fg);
-            m_scintilla->StyleSetBackground(idx, bg);
-        }
 
-        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
-        m_scintilla->StyleSetForeground(wxSTC_H_TAG, wxColour("#80ccff"));
-        m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour("#85e085"));
-        m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, wxColour("#ff6666"));
-        m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, wxColour("#ff6666"));
-        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour("#85e085"));
-        m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour("#85e085"));
-    }
-    else
-    {
-        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#FF00FF"));
-        m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
-        m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
-    }
-
-    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 

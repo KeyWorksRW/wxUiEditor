@@ -388,14 +388,6 @@ bool isValidVarName(const std::string& str, GenLang language)
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
     }
-    else if (language == GEN_LANG_HASKELL)
-    {
-        return lambda(g_set_haskell_keywords, g_haskell_keywords);
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        return lambda(g_set_lua_keywords, g_lua_keywords);
-    }
     else if (language == GEN_LANG_PERL)
     {
         return lambda(g_set_perl_keywords, g_perl_keywords);
@@ -404,6 +396,16 @@ bool isValidVarName(const std::string& str, GenLang language)
     {
         return lambda(g_set_rust_keywords, g_rust_keywords);
     }
+#if GENERATE_NEW_LANG_CODE
+    else if (language == GEN_LANG_HASKELL)
+    {
+        return lambda(g_set_haskell_keywords, g_haskell_keywords);
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        return lambda(g_set_lua_keywords, g_lua_keywords);
+    }
+#endif
 
     return true;
 }
@@ -572,8 +574,10 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_languag
         return false;
     else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
         return false;
+#if GENERATE_NEW_LANG_CODE
     else if (m_language == GEN_LANG_LUA)
         return false;
+#endif
     else
         return true;
 }

@@ -41,10 +41,11 @@ constexpr int EVENT_PAGE_PYTHON = 2;
 constexpr int EVENT_PAGE_RUBY = 3;
 constexpr int EVENT_PAGE_RUST = 4;
 
-// Keep these even if !GENERATE_NEW_LANG_CODE so that they can be removed
+#if GENERATE_NEW_LANG_CODE
 constexpr int EVENT_PAGE_FORTRAN = 5;
 constexpr int EVENT_PAGE_HASKELL = 6;
 constexpr int EVENT_PAGE_LUA = 7;
+#endif
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
@@ -308,7 +309,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_static_bind_text->SetLabel(wxEmptyString);
 
-#if !GENERATE_NEW_LANG_CODE
+#if GENERATE_NEW_LANG_CODE
     // Remove in reverse order so prevent positions from changing
     m_notebook->RemovePage(EVENT_PAGE_LUA);
     m_notebook->RemovePage(EVENT_PAGE_HASKELL);

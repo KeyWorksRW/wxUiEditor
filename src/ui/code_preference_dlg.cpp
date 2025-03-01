@@ -42,18 +42,6 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_Ruby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
     grid_sizer->Add(m_radioBtn_Ruby, wxSizerFlags().Border(wxALL));
 
-    m_radioBtn_Fortran = new wxRadioButton(this, wxID_ANY, "&Fortran");
-    m_radioBtn_Fortran->SetValidator(wxGenericValidator(&m_gen_fortran_code));
-    grid_sizer->Add(m_radioBtn_Fortran, wxSizerFlags().Border(wxALL));
-
-    m_radioBtn_Haskell = new wxRadioButton(this, wxID_ANY, "&Haskell");
-    m_radioBtn_Haskell->SetValidator(wxGenericValidator(&m_gen_haskell_code));
-    grid_sizer->Add(m_radioBtn_Haskell, wxSizerFlags().Border(wxALL));
-
-    m_radioBtn_Lua = new wxRadioButton(this, wxID_ANY, "&Lua");
-    m_radioBtn_Lua->SetValidator(wxGenericValidator(&m_gen_lua_code));
-    grid_sizer->Add(m_radioBtn_Lua, wxSizerFlags().Border(wxALL));
-
     m_radioBtn_Perl = new wxRadioButton(this, wxID_ANY, "P&erl");
     m_radioBtn_Perl->SetValidator(wxGenericValidator(&m_gen_perl_code));
     grid_sizer->Add(m_radioBtn_Perl, wxSizerFlags().Border(wxALL));
@@ -118,12 +106,14 @@ void CodePreferenceDlg::OnInit(wxInitDialogEvent& event)
 {
     if (!wxGetApp().isTestingSwitch())
     {
-        m_radioBtn_Fortran->Hide();
-        m_radioBtn_Haskell->Hide();
-        m_radioBtn_Lua->Hide();
         m_radioBtn_Perl->Hide();
         m_radioBtn_Rust->Hide();
         m_radioBtn_XRC->Hide();
+#if GENERATE_NEW_LANG_CODE
+        m_radioBtn_Fortran->Hide();
+        m_radioBtn_Haskell->Hide();
+        m_radioBtn_Lua->Hide();
+#endif
 
         Layout();
     }

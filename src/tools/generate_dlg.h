@@ -36,9 +36,6 @@ public:
 public:
     bool is_gen_base() const { return m_gen_base_code; }
     bool is_gen_inherited() const { return m_gen_inherited_code; }
-    bool is_gen_fortran() const { return m_gen_fortran_code; }
-    bool is_gen_haskell() const { return m_gen_haskell_code; }
-    bool is_gen_lua() const { return m_gen_lua_code; }
     bool is_gen_perl() const { return m_gen_perl_code; }
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
@@ -48,9 +45,6 @@ public:
 private:
     wxCheckBox* m_checkBaseCode { nullptr };
     wxCheckBox* m_checkDerived { nullptr };
-    wxCheckBox* m_checkFortran { nullptr };
-    wxCheckBox* m_checkHaskell { nullptr };
-    wxCheckBox* m_checkLua { nullptr };
     wxCheckBox* m_checkPerl { nullptr };
     wxCheckBox* m_checkPython { nullptr };
     wxCheckBox* m_checkRuby { nullptr };
@@ -59,9 +53,6 @@ private:
 
     bool m_gen_base_code { false };
     bool m_gen_inherited_code { false };
-    bool m_gen_fortran_code { false };
-    bool m_gen_haskell_code { false };
-    bool m_gen_lua_code { false };
     bool m_gen_perl_code { false };
     bool m_gen_python_code { false };
     bool m_gen_ruby_code { false };

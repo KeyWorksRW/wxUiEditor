@@ -98,6 +98,7 @@ enum
     id_GenerateLua,
     id_GeneratePerl,
     id_GenerateRust,
+    id_GenerateXrc,
     id_GenSingleCpp,
     id_GenSinglePython,
     id_GenSingleRuby,
@@ -106,6 +107,7 @@ enum
     id_GenSingleLua,
     id_GenSinglePerl,
     id_GenSingleRust,
+    id_GenSingleXrc,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -444,31 +446,6 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
                 OnGenerateSingleLanguage(GEN_LANG_RUBY);
             },
             id_GenSingleRuby);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
-            },
-            id_GenSingleFortran);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
-            },
-            id_GenSingleHaskell);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_LUA);
-            },
-            id_GenSingleLua);
-
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
@@ -483,14 +460,13 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
                 OnGenerateSingleLanguage(GEN_LANG_RUST);
             },
             id_GenSingleRust);
-
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateLanguage(GEN_LANG_XRC);
+                OnGenerateSingleLanguage(GEN_LANG_XRC);
             },
-            id_GeneratePython);
+            id_GenSingleXrc);
 
         Bind(
             wxEVT_MENU,
@@ -500,6 +476,31 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
             },
             id_GenerateRuby);
 
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_PERL);
+            },
+            id_GeneratePerl);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_RUST);
+            },
+            id_GenerateRust);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateLanguage(GEN_LANG_XRC);
+            },
+            id_GenerateXrc);
+
+#if GENERATE_NEW_LANG_CODE
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
@@ -528,17 +529,26 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateLanguage(GEN_LANG_PERL);
+                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
             },
-            id_GeneratePerl);
+            id_GenSingleFortran);
 
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateLanguage(GEN_LANG_RUST);
+                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
             },
-            id_GenerateRust);
+            id_GenSingleHaskell);
+
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                OnGenerateSingleLanguage(GEN_LANG_LUA);
+            },
+            id_GenSingleLua);
+#endif
 
         Bind(
             wxEVT_MENU,

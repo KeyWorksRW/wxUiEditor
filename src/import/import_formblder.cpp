@@ -160,8 +160,10 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                         m_language |= GEN_LANG_CPLUSPLUS;
                     else if (tt::contains(xml_prop.text().as_view(), "Rust"))
                         m_language |= GEN_LANG_RUST;
+#if GENERATE_NEW_LANG_CODE
                     else if (tt::contains(xml_prop.text().as_view(), "Lua"))
                         m_language |= GEN_LANG_LUA;
+#endif
                     else if (tt::contains(xml_prop.text().as_view(), "XRC"))
                         m_language |= GEN_LANG_XRC;
 

@@ -40,15 +40,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_ruby = new wxRadioButton(this, wxID_ANY, "&Ruby");
     grid_sizer->Add(m_radio_ruby, wxSizerFlags().Border(wxALL));
 
-    m_radio_fortran = new wxRadioButton(this, wxID_ANY, "&Fortran");
-    grid_sizer->Add(m_radio_fortran, wxSizerFlags().Border(wxALL));
-
-    m_radio_haskell = new wxRadioButton(this, wxID_ANY, "&Haskell");
-    grid_sizer->Add(m_radio_haskell, wxSizerFlags().Border(wxALL));
-
-    m_radio_lua = new wxRadioButton(this, wxID_ANY, "&Lua");
-    grid_sizer->Add(m_radio_lua, wxSizerFlags().Border(wxALL));
-
     m_radio_perl = new wxRadioButton(this, wxID_ANY, "&Perl");
     grid_sizer->Add(m_radio_perl, wxSizerFlags().Border(wxALL));
 
@@ -105,9 +96,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btn->Bind(wxEVT_BUTTON, &CodeCompare::OnWinMerge, this);
     Bind(wxEVT_INIT_DIALOG, &CodeCompare::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnCPlusPlus, this);
-    m_radio_fortran->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnFortran, this);
-    m_radio_haskell->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnHaskell, this);
-    m_radio_lua->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnLua, this);
     m_radio_perl->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPerl, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPython, this);
     m_radio_ruby->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnRuby, this);
@@ -288,21 +276,6 @@ void CodeCompare::OnRuby(wxCommandEvent& WXUNUSED(event))
     OnRadioButton(GEN_LANG_RUBY);
 }
 
-void CodeCompare::OnFortran(wxCommandEvent& WXUNUSED(event))
-{
-    OnRadioButton(GEN_LANG_FORTRAN);
-}
-
-void CodeCompare::OnHaskell(wxCommandEvent& /* event */)
-{
-    OnRadioButton(GEN_LANG_HASKELL);
-}
-
-void CodeCompare::OnLua(wxCommandEvent& /* event */)
-{
-    OnRadioButton(GEN_LANG_LUA);
-}
-
 void CodeCompare::OnPerl(wxCommandEvent& /* event */)
 {
     OnRadioButton(GEN_LANG_PERL);
@@ -317,6 +290,23 @@ void CodeCompare::OnXRC(wxCommandEvent& /* event */)
 {
     OnRadioButton(GEN_LANG_XRC);
 }
+
+#if GENERATE_NEW_LANG_CODE
+void CodeCompare::OnFortran(wxCommandEvent& WXUNUSED(event))
+{
+    OnRadioButton(GEN_LANG_FORTRAN);
+}
+
+void CodeCompare::OnHaskell(wxCommandEvent& /* event */)
+{
+    OnRadioButton(GEN_LANG_HASKELL);
+}
+
+void CodeCompare::OnLua(wxCommandEvent& /* event */)
+{
+    OnRadioButton(GEN_LANG_LUA);
+}
+#endif
 
 // clang-format off
 

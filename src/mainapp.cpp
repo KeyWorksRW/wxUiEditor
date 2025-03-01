@@ -244,6 +244,10 @@ int App::OnRun()
             generate_type = GEN_LANG_XRC;
         }
 #if GENERATE_NEW_LANG_CODE
+        else if (parser.Found("gen_fortran", &filename))
+        {
+            generate_type = GEN_LANG_FORTRAN;
+        }
         else if (parser.Found("gen_haskell", &filename))
         {
             generate_type = GEN_LANG_HASKELL;

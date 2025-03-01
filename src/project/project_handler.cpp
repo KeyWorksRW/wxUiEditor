@@ -361,6 +361,16 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
         case GEN_LANG_RUBY:
             base_file = form->as_string(prop_ruby_file);
             break;
+        case GEN_LANG_PERL:
+            base_file = form->as_string(prop_perl_file);
+            break;
+        case GEN_LANG_RUST:
+            base_file = form->as_string(prop_rust_file);
+            break;
+        case GEN_LANG_XRC:
+            base_file = form->as_string(prop_xrc_file);
+            break;
+#if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
             base_file = form->as_string(prop_fortran_file);
             break;
@@ -370,16 +380,7 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
         case GEN_LANG_LUA:
             base_file = form->as_string(prop_lua_file);
             break;
-        case GEN_LANG_PERL:
-            base_file = form->as_string(prop_perl_file);
-            break;
-        case GEN_LANG_RUST:
-            base_file = form->as_string(prop_rust_file);
-            break;
-
-        case GEN_LANG_XRC:
-            base_file = form->as_string(prop_xrc_file);
-            break;
+#endif
 
         default:
             FAIL_MSG(tt_string() << "Unknown language: " << language);

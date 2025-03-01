@@ -148,17 +148,6 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code.GetCode().Replace("\t\t\t\t", spaces, true);
         }
     }
-    else if (code.is_haskell())
-    {
-        code.Str("instance ").NodeName().Str("Class where");
-        code.Eol().Str("create parent id title pos size style name = do");
-        code.Indent();
-        code.Eol().Str("dialog <- wxDialogCreate parent id title pos size style name");
-    }
-    else if (code.is_lua())
-    {
-        code.Eol().NodeName().Str(" = wx.wxDialog(parent, id, title, pos, size, style, name)");
-    }
     else if (code.is_perl())
     {
         code.Str("sub new {");
@@ -176,6 +165,19 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Indent();
         code.Eol().Str("parent::__construct($parent, $id, $title, $pos, $size, $style, $name);");
     }
+#if GENERATE_NEW_LANG_CODE
+    else if (code.is_haskell())
+    {
+        code.Str("instance ").NodeName().Str("Class where");
+        code.Eol().Str("create parent id title pos size style name = do");
+        code.Indent();
+        code.Eol().Str("dialog <- wxDialogCreate parent id title pos size style name");
+    }
+    else if (code.is_lua())
+    {
+        code.Eol().NodeName().Str(" = wx.wxDialog(parent, id, title, pos, size, style, name)");
+    }
+#endif
 
     else
     {

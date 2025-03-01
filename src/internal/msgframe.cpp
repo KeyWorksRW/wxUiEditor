@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Stores messages
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +18,7 @@
 #include "node.h"             // Node class
 #include "preferences.h"      // Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Miscellaneous utility functions
 
 #include "pugixml.hpp"
 
@@ -40,51 +41,73 @@ static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
     }
 }
 
-#ifndef SCI_SETKEYWORDS
-    #define SCI_SETKEYWORDS 4005
-    #define SCI_GETTEXT_MSG 2182
-#endif
-
-extern const char* g_xrc_keywords;
-
 MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
 {
+    // These will adjust for both dark mode and high contrast mode if needed
+    auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+
+    m_textCtrl->SetBackgroundColour(bg);
+    m_textCtrl->SetForegroundColour(fg);
+
+    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+    m_textCtrl->SetFont(font_prop.GetFont());
+
+    wxTextAttr textAttr(fg, bg);
+    textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+    textAttr.SetBackgroundColour(bg);
+
+    wxColor clrError(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
+    wxColor clrWarning(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
+    wxColor clrInfo(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
+
     for (auto& iter: *m_pMsgs)
     {
         if (iter.starts_with("Error:"))
         {
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+            textAttr.SetTextColour(clrError);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText("Error: ");
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            textAttr.SetTextColour(fg);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
-        if (iter.starts_with("wxError:"))
+        else if (iter.starts_with("wxError:"))
         {
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+            textAttr.SetTextColour(clrError);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText("wxError: ");
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            textAttr.SetTextColour(fg);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else if (iter.starts_with("Warning:"))
         {
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+            textAttr.SetTextColour(clrWarning);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText("Warning: ");
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            textAttr.SetTextColour(fg);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else if (iter.starts_with("wxWarning:"))
         {
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+            textAttr.SetTextColour(clrWarning);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText("wxWarning: ");
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            textAttr.SetTextColour(fg);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else if (iter.starts_with("wxInfo:"))
         {
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
+            textAttr.SetTextColour(clrInfo);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText("wxInfo: ");
-            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            textAttr.SetTextColour(fg);
+            m_textCtrl->SetDefaultStyle(textAttr);
             m_textCtrl->AppendText(iter.view_stepover().make_wxString());
         }
         else
@@ -101,16 +124,7 @@ MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* pa
         m_menu_item_info->Check(true);
 
     // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
-
-    m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-    m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
-    m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-    m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
-    m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-    m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+    SetStcColors(m_scintilla, GEN_LANG_XRC, false, true);
 
     wxPersistentRegisterAndRestore(this, "MsgWindow");
 }
@@ -119,9 +133,17 @@ void MsgFrame::AddWarningMsg(tt_string_view msg)
 {
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
-        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+        auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        wxTextAttr textAttr(fg, bg);
+        textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+        textAttr.SetBackgroundColour(bg);
+        textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
+        m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("Warning: ");
-        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+
+        textAttr.SetTextColour(fg);
+        m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText(msg.make_wxString());
     }
 }
@@ -130,9 +152,17 @@ void MsgFrame::Add_wxWarningMsg(tt_string_view msg)
 {
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
-        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+        auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        wxTextAttr textAttr(fg, bg);
+        textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+        textAttr.SetBackgroundColour(bg);
+        textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
+        m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("wxWarning: ");
-        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+
+        textAttr.SetTextColour(fg);
+        m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText(msg.make_wxString());
     }
 }
@@ -141,9 +171,18 @@ void MsgFrame::Add_wxInfoMsg(tt_string_view msg)
 {
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
-        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
+        auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        wxTextAttr textAttr(fg, bg);
+        textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+        textAttr.SetBackgroundColour(bg);
+
+        textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
+        m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("wxInfo: ");
-        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+
+        textAttr.SetTextColour(fg);
+        m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText(msg.make_wxString());
     }
 }
@@ -152,9 +191,17 @@ void MsgFrame::AddErrorMsg(tt_string_view msg)
 {
     // Note that we always display error messages
 
-    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+    auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+    auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    wxTextAttr textAttr(fg, bg);
+    textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+    textAttr.SetBackgroundColour(bg);
+    textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
+    m_textCtrl->SetDefaultStyle(textAttr);
     m_textCtrl->AppendText("Error: ");
-    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+
+    textAttr.SetTextColour(fg);
+    m_textCtrl->SetDefaultStyle(textAttr);
     m_textCtrl->AppendText(msg.make_wxString());
 }
 
@@ -162,9 +209,17 @@ void MsgFrame::Add_wxErrorMsg(tt_string_view msg)
 {
     // Note that we always display error messages
 
-    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+    auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+    auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    wxTextAttr textAttr(fg, bg);
+    textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+    textAttr.SetBackgroundColour(bg);
+    textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
+    m_textCtrl->SetDefaultStyle(textAttr);
     m_textCtrl->AppendText("wxError: ");
-    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+
+    textAttr.SetTextColour(fg);
+    m_textCtrl->SetDefaultStyle(textAttr);
     m_textCtrl->AppendText(msg.make_wxString());
 }
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Miscellaneous utility functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,7 @@ class wxColour;
 class wxImage;
 class wxPoint;
 class wxSize;
+class wxStyledTextCtrl;
 class Node;
 
 tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue);
@@ -85,3 +86,7 @@ std::string_view ConvertFromGenLang(GenLang language);
 GenLang ConvertToGenLang(tt_string_view language);
 
 std::string GetLanguageExtension(GenLang language);
+
+// This will set the lexer and colors taking into account the user's preferences for dark
+// mode, and specific language colors
+void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true, bool add_keywords = true);

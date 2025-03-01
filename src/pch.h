@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Precompiled header file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -152,8 +152,10 @@ enum GenLang
     GEN_LANG_HASKELL = 1 << 7,
     GEN_LANG_LUA = 1 << 8,
 
+    // These should always be the last languages in the list.
     GEN_LANG_XRC = 1 << 9,
-    GEN_LANG_LAST = GEN_LANG_XRC,
+    GEN_LANG_XML = 1 << 10,
+    GEN_LANG_LAST = GEN_LANG_XML,
 };
 
 // Used to index fields in a bitmap property

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Panel to display original imported file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +59,8 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     m_scintilla->SetUseTabs(false);
     m_scintilla->SetTabWidth(4);
     m_scintilla->SetBackSpaceUnIndents(true);
+
+    SetStcColors(m_scintilla, GEN_LANG_XRC);
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
     parent_sizer->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
@@ -135,13 +137,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             }
 
             m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
-            m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
-            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+            SetStcColors(m_scintilla, GEN_LANG_XML, false, false);
             break;
 
         case wxSTC_LEX_CPP:
@@ -151,16 +147,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             // m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
             m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
-            m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-            m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
-            m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-            m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
+            SetStcColors(m_scintilla, GEN_LANG_CPLUSPLUS, false, false);
             break;
 
         case wxSTC_LEX_JSON:
@@ -170,13 +157,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
 
             m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-            m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
-            m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
-            m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
-            m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
-            m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
-            m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+            SetStcColors(m_scintilla, GEN_LANG_XML, false, false);
             break;
 
         default:

@@ -314,6 +314,7 @@ set (file_list
 
     utils/dlg_msgs.cpp          # wxMessageDialog dialogs
     utils/font_prop.cpp         # FontProperty class
+    utils/set_stc_colors.cpp    # Contains function for initializing wxStyledTextCtrl colors
     utils/utils.cpp             # Utility functions that work with properties
 
     # Testing

@@ -4736,6 +4736,77 @@
       </node>
       <node
         class="wxDialog"
+        class_name="GridPropertyDlg"
+        title="Property Editor"
+        base_file="grid_property_dlg"
+        source_preamble="// This is the base class for editing multiple-field properties"
+        wxEVT_INIT_DIALOG="OnInit"
+        wxEVT_UPDATE_UI="OnUpdateUI">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer">
+            <node
+              class="wxStaticText"
+              label="property label"
+              var_comment="Shown to the left of the toolbar"
+              var_name="m_prop_label"
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="wxToolBar"
+              style="wxTB_HORIZONTAL|wxTB_NODIVIDER">
+              <node
+                class="tool"
+                bitmap="Art;wxART_NEW|wxART_TOOLBAR"
+                id="id_NewRow"
+                label=""
+                var_name="tool_new"
+                wxEVT_TOOL="OnNewRow" />
+              <node
+                class="tool"
+                bitmap="Art;wxART_DELETE|wxART_TOOLBAR"
+                id="id_DeleteRow"
+                label=""
+                var_name="tool_delete"
+                wxEVT_TOOL="OnDeleteRow" />
+              <node
+                class="tool"
+                bitmap="Art;wxART_UNDO|wxART_TOOLBAR"
+                id="id_UndoDeleteRow"
+                label=""
+                var_name="tool_undo_delete"
+                wxEVT_TOOL="OnUndoDelete" />
+            </node>
+          </node>
+          <node
+            class="wxGrid"
+            cell_vert_alignment="wxALIGN_CENTER"
+            col_label_values="name;value"
+            cols="2"
+            drag_row_size="0"
+            rows="1"
+            selection_mode="wxGridSelectRows"
+            flags="wxEXPAND"
+            proportion="1" />
+          <node
+            class="wxStaticText"
+            label="Help text"
+            var_comment="Shown below the grid (initially hidden)"
+            var_name="m_help_text"
+            wrap="300"
+            hidden="1" />
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND"
+            CancelButtonClicked="OnCancel"
+            OKButtonClicked="OnOK" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
         class_name="IDEditorDlg"
         title="ID Editor"
         base_file="..\customprops\id_editor_dlg"
@@ -6614,77 +6685,6 @@
         <node
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND"
-          OKButtonClicked="OnOK" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      class_name="GridPropertyDlg"
-      title="Property Editor"
-      base_file="grid_property_dlg"
-      source_preamble="// This is the base class for editing multiple-field properties"
-      wxEVT_INIT_DIALOG="OnInit"
-      wxEVT_UPDATE_UI="OnUpdateUI">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxBoxSizer">
-          <node
-            class="wxStaticText"
-            label="property label"
-            var_comment="Shown to the left of the toolbar"
-            var_name="m_prop_label"
-            alignment="wxALIGN_CENTER" />
-          <node
-            class="wxToolBar"
-            style="wxTB_HORIZONTAL|wxTB_NODIVIDER">
-            <node
-              class="tool"
-              bitmap="Art;wxART_NEW|wxART_TOOLBAR"
-              id="id_NewRow"
-              label=""
-              var_name="tool_new"
-              wxEVT_TOOL="OnNewRow" />
-            <node
-              class="tool"
-              bitmap="Art;wxART_DELETE|wxART_TOOLBAR"
-              id="id_DeleteRow"
-              label=""
-              var_name="tool_delete"
-              wxEVT_TOOL="OnDeleteRow" />
-            <node
-              class="tool"
-              bitmap="Art;wxART_UNDO|wxART_TOOLBAR"
-              id="id_UndoDeleteRow"
-              label=""
-              var_name="tool_undo_delete"
-              wxEVT_TOOL="OnUndoDelete" />
-          </node>
-        </node>
-        <node
-          class="wxGrid"
-          cell_vert_alignment="wxALIGN_CENTER"
-          col_label_values="name;value"
-          cols="2"
-          drag_row_size="0"
-          rows="1"
-          selection_mode="wxGridSelectRows"
-          flags="wxEXPAND"
-          proportion="1" />
-        <node
-          class="wxStaticText"
-          label="Help text"
-          var_comment="Shown below the grid (initially hidden)"
-          var_name="m_help_text"
-          wrap="300"
-          hidden="1" />
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND"
-          CancelButtonClicked="OnCancel"
           OKButtonClicked="OnOK" />
       </node>
     </node>

@@ -154,11 +154,9 @@ int App::OnRun()
     // the project filename with the extension changed to ".log".
 
     parser.AddLongOption("gen_cpp", "generate C++ files and exit");
+    parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_python", "generate python files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
-    parser.AddLongOption("gen_haskell", "generate Haskell files and exit");
-    parser.AddLongOption("gen_lua", "generate Lua files and exit");
-    parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_rust", "generate Rust files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
@@ -173,11 +171,9 @@ int App::OnRun()
     // the part where files get written, and generates the log file.
 
     parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_python", "generate Python code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_ruby", "generate Ruby code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_haskell", "generate Haskell code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_lua", "generate Lua code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_rust", "generate Rust code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);

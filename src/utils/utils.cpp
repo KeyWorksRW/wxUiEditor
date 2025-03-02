@@ -574,6 +574,14 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_languag
         return false;
     else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
         return false;
+
+#if !PERL_FROM_DIP
+    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does not
+    // have a FromDIP function. So we need to disable DPI scaling for Perl.
+    else if (m_language == GEN_LANG_PERL)
+        return false;
+#endif
+
 #if GENERATE_NEW_LANG_CODE
     else if (m_language == GEN_LANG_LUA)
         return false;

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Property editor for status bar fields
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -61,13 +61,19 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     auto col_width = m_grid->GetTextExtent("wxSB_NORMAL ");
     m_grid->SetDefaultColSize(col_width.GetWidth(), true);
 
+    const wxString choices[] = {
+        "wxSB_NORMAL",
+        "wxSB_FLAT",
+        "wxSB_RAISED",
+        "wxSB_SUNKEN",
+    };
     for (int row = 0; auto& iter: fields)
     {
-        if (wxGridCellChoiceEditor* editor = static_cast<wxGridCellChoiceEditor*>(m_grid->GetCellEditor(row, 0)); editor)
-            editor->SetParameters("wxSB_NORMAL,wxSB_FLAT,wxSB_RAISED,wxSB_SUNKEN");
+        m_grid->SetCellEditor(row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices));
         m_grid->SetCellValue(row, 0, iter.style);
         m_grid->SetCellValue(row, 1, iter.width);
-        m_grid->SetRowLabelValue(row, " ");
+        // m_grid->SetRowLabelValue(row, " ");
+        m_grid->SetRowLabelValue(row, tt::itoa(row));
         ++row;
     }
 
@@ -99,7 +105,8 @@ void SBarFieldsDialog::OnOK(wxCommandEvent& event)
     // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we sometimes get
     // a warning about undeleted events. Since none of the other custom property editors have this issue, it's most
     // likely due to something in m_grid.
-    m_grid->GetEventHandler()->DeletePendingEvents();
+    // m_grid->GetEventHandler()->DeletePendingEvents();
+    // GetEventHandler()->DeletePendingEvents();
 
     event.Skip();
 }
@@ -123,9 +130,16 @@ void SBarFieldsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
-    m_grid->SetRowLabelValue(new_row, " ");
+    const wxString choices[] = {
+        "wxSB_NORMAL",
+        "wxSB_FLAT",
+        "wxSB_RAISED",
+        "wxSB_SUNKEN",
+    };
+    m_grid->SetCellEditor(new_row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices));
+    m_grid->SetRowLabelValue(new_row, tt::itoa(new_row));
     m_grid->SelectRow(new_row);
-    m_grid->SetCellValue(new_row, 0, "wxSB_NORMAL");
+    m_grid->SetCellValue(new_row, 0, choices[0]);
     m_grid->SetCellValue(new_row, 1, "-1");
     Fit();
 }

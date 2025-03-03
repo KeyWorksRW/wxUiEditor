@@ -228,6 +228,13 @@ public:
         return *this;
     }
 
+    Code& AddIfPerl(tt_string_view text)
+    {
+        if (is_perl())
+            Add(text);
+        return *this;
+    }
+
     Code& AddIfPython(tt_string_view text)
     {
         if (is_python())
@@ -322,7 +329,8 @@ public:
 
     // Adds the object's class name and a open parenthesis: class(
     //
-    // For Ruby, the object will be followed by ".new": class.new(
+    // For Perl, the class name will be followed by "->new("
+    // For Ruby, the class name will be followed by ".new("
     Code& Object(tt_string_view class_name);
 
     // For non-C++ languages, this will remove any "m_" prefix from the node name

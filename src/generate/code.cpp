@@ -536,6 +536,11 @@ Code& Code::OpenBrace(bool all_languages)
         {
             Eol(eol_if_needed);
         }
+        else if (is_perl())
+        {
+            if (size() && back() != ' ')
+                *this += ' ';
+        }
         *this += "{";
         Indent();
         Eol();
@@ -894,7 +899,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
 {
     if (!add_operator)
     {
-        if (text.is_sameprefix("wx") && (is_python() || is_ruby()))
+        if (text.is_sameprefix("wx") && (is_python() || is_ruby() || is_perl()))
         {
             if (is_ruby())
                 *this << m_language_wxPrefix << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
@@ -930,7 +935,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
                 *this += ConvertToSnakeCase(text);
             }
         }
-        else if (is_python() || is_ruby())
+        else if (is_python())
         {
             *this << '.';
             if (text.is_sameprefix("wx"))
@@ -939,14 +944,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
             }
             else
             {
-                if (is_ruby())
-                {
-                    *this += ConvertToSnakeCase(text);
-                }
-                else
-                {
-                    *this += text;
-                }
+                *this += text;
             }
         }
 #if GENERATE_NEW_LANG_CODE
@@ -1093,6 +1091,18 @@ Code& Code::Object(tt_string_view class_name)
     if (is_cpp())
     {
         *this += class_name;
+    }
+    else if (is_perl())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << "Wx::" << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+        *this << "->new";
     }
     else if (is_python())
     {
@@ -1647,6 +1657,34 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
         else
         {
             Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+        }
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
+    else if (is_perl())
+    {
+        if (size == wxDefaultSize)
+        {
+            CheckLineLength((sizeof("wxDefaultSize") - 1));
+            *this += "wxDefaultSize";
+            return *this;
+        }
+
+        if (size_scaling)
+        {
+            CheckLineLength(sizeof(", $self->FromDIP->new(Wx::Size->new(999, 999))"));
+            FormFunction("FromDIP->new(");
+            Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << "))";
+        }
+        else
+        {
+            CheckLineLength(sizeof("Wx::Size->new(999, 999)"));
+            Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << ')';
         }
 
         if (m_auto_break && this->size() > m_break_at)
@@ -2856,7 +2894,14 @@ void Code::GenFontColourSettings()
             {
                 if (bg_clr.starts_with('#'))
                 {
-                    Object("wxColour").QuotedString(bg_clr) += ')';
+                    if (is_perl())
+                    {
+                        Class("wxColour->new(").QuotedString(bg_clr) += ")";
+                    }
+                    else
+                    {
+                        Object("wxColour").QuotedString(bg_clr) += ')';
+                    }
                 }
                 else
                 {
@@ -2941,9 +2986,20 @@ bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
 {
     if (enable_dpi_scaling == code::no_dpi_scaling ||
         tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either) == true)
+    {
         return false;
+    }
     else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
+    {
         return false;
+    }
+#if !PERL_FROM_DIP
+    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does not
+    // have a FromDIP function. So we need to disable DPI scaling for Perl.
+    else if (m_language == GEN_LANG_PERL)
+        return false;
+#endif
+
     if (enable_dpi_scaling == code::conditional_scaling && m_node->isForm())
         return false;
 
@@ -2977,7 +3033,7 @@ Code& Code::AddComment(std::string_view comment, bool force)
 
 Code& Code::BeginConditional()
 {
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         *this << "if (";
     }

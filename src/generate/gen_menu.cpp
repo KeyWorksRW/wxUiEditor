@@ -35,7 +35,10 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         if (node->as_string(prop_stock_id) != "none")
         {
             // Call Function(..., false) so that Ruby will convert the function to snake-case
-            code.Function("wxGetStockLabel(", false).Add(prop_stock_id).Str(")");
+            if (code.is_perl())
+                code.Function("wxGetStockLabel(", false).Str(code.node()->as_string(prop_stock_id)).Str(")");
+            else
+                code.Function("wxGetStockLabel(", false).Add(prop_stock_id).Str(")");
         }
         else
         {

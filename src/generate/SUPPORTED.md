@@ -10,35 +10,35 @@ The following tables indicate whether or not code is being generated in a specif
 
 ### Bars
 
-| Class                | C++ | Perl | Python | Ruby | XRC | file                                  |
-| -------------------- | --- | ---- | ------ | ---- | --- | ------------------------------------- |
-| wxAuiToolBar         | yes | ---  | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
-| AuiTool              | yes | ---  | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
-| AuiToolLabel         | yes | ---  | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
-| AuiToolSpacer        | yes | ---  | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
-| AuiToolStretchSpacer | yes | ---  | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
-| wxInfoBar            | yes | ---  | ---    | ---  | yes | ../src/generate/gen_infobar.cpp       |
-| wxMenu               | yes | ---  | yes    | yes  | --- | ../src/generate/gen_menu.cpp          |
-| wxMenuBar            | yes | ---  | yes    | yes  | --- | ../src/generate/menu_widgets.cpp      |
-| wxMenuItem           | yes | ---  | yes    | yes  | --- | ../src/generate/gen_menuitem.cpp      |
-| SubMenu              | yes | ---  | ---    | ---  | --- | ../src/generate/gen_submenu.cpp       |
-| wxRibbonBar          | yes | ---  | yes    | yes  | --- | ../src/generate/gen_ribbon_bar.cpp    |
-| wxRibbonButtonBar    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_ribbon_button.cpp |
-| wxRibbonGallery      | yes | ---  | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
-| wxRibbonToolBar      | yes | ---  | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
-| RibbonButton         | yes | ---  | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
-| RibbonGalleryItem    | yes | ---  | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
-| RibbonTool           | yes | ---  | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
-| wxRibbonPage         | yes | ---  | yes    | yes  | --- | ../src/generate/gen_ribbon_page.cpp   |
-| wxRibbonPanel        | yes | ---  | yes    | yes  | --- | ../src/generate/gen_ribbon_page.cpp   |
-| wxScrollBar          | yes | ---  | yes    | yes  | yes | ../src/generate/gen_scrollbar.cpp     |
-| wxStatusBar          | yes | ---  | yes    | yes  | yes | ../src/generate/gen_status_bar.cpp    |
-| wxToolBar            | yes | ---  | yes    | yes  | yes | ../src/generate/gen_toolbar.cpp       |
-| ToolDropDown         | yes | ---  | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
-| ToolGenerator        | yes | ---  | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
-| ToolSeparator        | yes | ---  | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
-| ToolStretchable      | yes | ---  | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
-| Separator            | yes | ---  | ---    | ---  | --- | ../src/generate/menu_widgets.cpp      |
+| Class                | C++ | Perl    | Python | Ruby | XRC | file                                  |
+| -------------------- | --- | ------- | ------ | ---- | --- | ------------------------------------- |
+| wxAuiToolBar         | yes | ---     | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
+| AuiTool              | yes | ---     | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
+| AuiToolLabel         | yes | ---     | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
+| AuiToolSpacer        | yes | ---     | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
+| AuiToolStretchSpacer | yes | ---     | yes    | yes  | yes | ../src/generate/gen_aui_toolbar.cpp   |
+| wxInfoBar            | yes | ---     | ---    | ---  | yes | ../src/generate/gen_infobar.cpp       |
+| wxMenu               | yes | yes     | yes    | yes  | --- | ../src/generate/gen_menu.cpp          |
+| wxMenuBar            | yes | yes     | yes    | yes  | --- | ../src/generate/menu_widgets.cpp      |
+| wxMenuItem           | yes | yes     | yes    | yes  | --- | ../src/generate/gen_menuitem.cpp      |
+| SubMenu              | yes | ---     | ---    | ---  | --- | ../src/generate/gen_submenu.cpp       |
+| wxRibbonBar          | yes | ---     | yes    | yes  | --- | ../src/generate/gen_ribbon_bar.cpp    |
+| wxRibbonButtonBar    | yes | ---     | yes    | yes  | --- | ../src/generate/gen_ribbon_button.cpp |
+| wxRibbonGallery      | yes | ---     | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
+| wxRibbonToolBar      | yes | ---     | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
+| RibbonButton         | yes | ---     | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
+| RibbonGalleryItem    | yes | ---     | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
+| RibbonTool           | yes | ---     | yes    | yes  | --- | ../src/generate/ribbon_widgets.cpp    |
+| wxRibbonPage         | yes | ---     | yes    | yes  | --- | ../src/generate/gen_ribbon_page.cpp   |
+| wxRibbonPanel        | yes | ---     | yes    | yes  | --- | ../src/generate/gen_ribbon_page.cpp   |
+| wxScrollBar          | yes | ---     | yes    | yes  | yes | ../src/generate/gen_scrollbar.cpp     |
+| wxStatusBar          | yes | partial | yes    | yes  | yes | ../src/generate/gen_status_bar.cpp    |
+| wxToolBar            | yes | ---     | yes    | yes  | yes | ../src/generate/gen_toolbar.cpp       |
+| ToolDropDown         | yes | ---     | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
+| ToolGenerator        | yes | ---     | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
+| ToolSeparator        | yes | ---     | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
+| ToolStretchable      | yes | ---     | ---    | ---  | --- | ../src/generate/gen_toolbar.cpp       |
+| Separator            | yes | yes     | ---    | ---  | --- | ../src/generate/menu_widgets.cpp      |
 
 ### Books
 
@@ -57,7 +57,7 @@ The following tables indicate whether or not code is being generated in a specif
 | Class                  | C++ | Perl | Python | Ruby | XRC | file                                    |
 | ---------------------- | --- | ---- | ------ | ---- | --- | --------------------------------------- |
 | wxDialog               | yes | ---  | yes    | yes  | yes | ../src/generate/gen_dialog.cpp          |
-| wxFrame                | yes | ---  | yes    | yes  | yes | ../src/generate/gen_frame.cpp           |
+| wxFrame                | yes | yes  | yes    | yes  | yes | ../src/generate/gen_frame.cpp           |
 | wxMenu                 | yes | ---  | yes    | ---  | --- | ../src/generate/menu_widgets.cpp        |
 | wxMenuBar              | yes | ---  | yes    | ---  | --- | ../src/generate/menu_widgets.cpp        |
 | wxPanel                | yes | ---  | yes    | ---  | --- | ../src/generate/gen_panel_form.cpp      |
@@ -175,6 +175,8 @@ Neither wxPython nor XRC support setting the initial folder in wxGenericDirCtrl,
 - wxTreeListCtrl
 
 # Perl Unsupported
+
+- wxStatusBar doesn't support wxSB_SUNKEN style, and it doesn't appear to allow more than one field.
 
 # Ruby Unsupported
 

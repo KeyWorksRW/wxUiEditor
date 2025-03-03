@@ -105,7 +105,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
+        code.Eol(eol_if_needed).AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
     }
 
     if (node->hasValue(prop_window_name))
@@ -161,6 +161,23 @@ bool StatusBarGenerator::SettingsCode(Code& code)
     else
     {
         code.Eol(eol_if_empty).NodeName().Function("SetStatusWidths([").Str(widths).Str("]").EndFunction();
+        // REVIEW: [Randalphwa - 03-02-2025] Currently, wxPerl 3.2 doesn't support wxSB_SUNKEN, so we add it as a variable
+        if (code.is_perl())
+        {
+            bool sunken_style = false;
+            for (auto& iter: fields)
+            {
+                if (iter.style == "wxSB_SUNKEN")
+                {
+                    sunken_style = true;
+                    break;
+                }
+            }
+            if (sunken_style)
+            {
+                code.Eol(eol_if_needed).Str("my $statusBarSunkenStyle = 3;  # wxSB_SUNKEN");
+            }
+        }
         code.Eol(eol_if_empty).NodeName().Function("SetStatusStyles([");
         bool is_first_style_set = false;
         for (auto& iter: fields)
@@ -169,7 +186,21 @@ bool StatusBarGenerator::SettingsCode(Code& code)
                 code.Comma();
             else
                 is_first_style_set = true;
-            code.Add(iter.style);
+            if (code.is_perl())
+            {
+                if (iter.style == "wxSB_SUNKEN")
+                {
+                    code.Str("$statusBarSunkenStyle");
+                }
+                else
+                {
+                    code.Str(iter.style);
+                }
+            }
+            else
+            {
+                code.Add(iter.style);
+            }
         }
         code.Str("]").EndFunction();
     }
@@ -242,4 +273,16 @@ int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void StatusBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxStatusBarXmlHandler");
+}
+
+bool StatusBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        // REVIEW: [Randalphwa - 03-02-2025] wxPerl 3.2 doesn't support wxSB_SUNKEN
+        set_imports.emplace("use Wx qw(wxSB_NORMAL wxSB_FLAT wxSB_RAISED);");
+        return true;
+    }
+
+    return false;
 }

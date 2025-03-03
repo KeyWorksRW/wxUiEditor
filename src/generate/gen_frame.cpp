@@ -36,6 +36,25 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             code.EndFunction();
         }
     }
+    else if (code.is_perl())
+    {
+        code += "sub new {";
+        code.Indent();
+        code.Eol() += "my ($class, $parent, $id, $title, $pos, $size, $style, $name) = @_;";
+        code.Eol() += "$parent = undef unless defined $parent;";
+        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
+        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
+        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
+        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
+        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
+
+        code.Eol().Str("$name = ");
+        if (code.hasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
+        else
+            code += "\"frame\"";
+        code.Str(" unless defined $name;");
+    }
     else if (code.is_python())
     {
         code.Add("class ").NodeName().Add("(wx.Frame):\n");
@@ -91,27 +110,6 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
             std::string spaces(indent_pos, ' ');
             code.GetCode().Replace("\t\t\t\t", spaces, true);
         }
-    }
-    else if (code.is_perl())
-    {
-        code += "sub new {";
-        code.Indent();
-        code.Eol() += "my ($class, $parent, $id, $title, $pos, $size, $style, $name) = @_;";
-        code.Eol() += "$parent = undef unless defined $parent;";
-        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
-        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
-        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
-        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
-        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
-
-        code.Eol().Str("$name = ");
-        if (code.hasValue(prop_window_name))
-            code.QuotedString(prop_window_name);
-        else
-            code += "\"frame\"";
-        code.Str(" unless defined $name;");
-
-        code.Eol().Eol() += "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
     }
     else if (code.is_rust())
     {
@@ -229,6 +227,10 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
     }
+    else if (code.is_perl())
+    {
+        code.Eol(eol_if_needed) += "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+    }
 #if GENERATE_NEW_LANG_CODE
     else if (code.is_lua())
     {
@@ -243,13 +245,25 @@ bool FrameFormGenerator::SettingsCode(Code& code)
     if (isScalingEnabled(code.node(), prop_pos, code.get_language()) ||
         isScalingEnabled(code.node(), prop_size, code.get_language()))
     {
-        code.Eol(eol_if_needed).BeginConditional().Str("pos != ").AddConstant("wxDefaultPosition");
-        code.AddConditionalOr().Str("size != ").AddConstant("wxDefaultSize");
-        code.EndConditional().OpenBrace(true);
-        code.FormFunction("SetSize(");
-        code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
-        code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
-        code.Add("wxSIZE_USE_EXISTING").EndFunction();
+        code.Eol(eol_if_needed).BeginConditional();
+        if (code.is_perl())
+        {
+            code.Str("$pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
+            code.Str("$size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
+            code.Str("my $dip_pos = $self->FromDIP->new($pos);").Eol();
+            code.Str("my $dip_size = $self->FromDIP->new($size);").Eol();
+            code.Str("$self->SetSize($dip_pos->x, $dip_pos->y, $dip_size->x, $dip_size->y,").Eol();
+            code.Tab().Str("wxSIZE_USE_EXISTING);").Eol();
+        }
+        else
+        {
+            code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
+            code.Str("size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
+            code.FormFunction("SetSize(");
+            code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
+            code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
+            code.Add("wxSIZE_USE_EXISTING").EndFunction();
+        }
         code.CloseBrace(true);
     }
 
@@ -602,7 +616,9 @@ bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_impor
             }
         };
 
-        if (node->as_string(prop_style) == "wxDEFAULT_FRAME_STYLE")
+        if (isScalingEnabled(node, prop_pos, language) || isScalingEnabled(node, prop_size, language))
+            constants += " wxSIZE_USE_EXISTING";
+        if (node->as_string(prop_style).contains("wxDEFAULT_FRAME_STYLE"))
             constants += " wxDEFAULT_FRAME_STYLE";
         if (node->as_string(prop_style).contains("wxCAPTION"))
             constants += " wxCAPTION";

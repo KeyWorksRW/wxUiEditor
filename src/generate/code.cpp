@@ -1715,6 +1715,106 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
     return *this;
 }
 
+Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
+{
+    auto cur_pos = this->size();
+    auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
+
+    if (is_ruby())
+    {
+        if (position == wxDefaultPosition)
+        {
+            CheckLineLength((sizeof("Wx::DEFAULT_POSITION") - 1));
+            *this += "Wx::DEFAULT_POSITION";
+            return *this;
+        }
+
+        if (pos_scaling)
+        {
+            CheckLineLength(sizeof(", from_DIP(Wx::Point.new(999, 999))"));
+        }
+        else
+        {
+            CheckLineLength(sizeof("Wx::Point.new(999, 999)"));
+        }
+
+        if (pos_scaling)
+        {
+            FormFunction("FromDIP(");
+            Class("Wx::Point.new(").itoa(position.x).Comma().itoa(position.y) << ')';
+            *this += ')';
+        }
+        else
+        {
+            Class("Wx::Point.new(").itoa(position.x).Comma().itoa(position.y) << ')';
+        }
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
+
+    // The following code is for non-Ruby languages
+
+    if (position == wxDefaultPosition)
+    {
+        CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
+        if (is_perl())
+            *this << "wxDefaultPosition";
+        else
+            *this << m_language_wxPrefix << "DefaultPosition";
+        return *this;
+    }
+
+    if (pos_scaling)
+    {
+        if (is_cpp())
+        {
+            if (Project.is_wxWidgets31())
+            {
+                CheckLineLength(sizeof("wxPoint(999, 999)"));
+                Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+            }
+            else
+            {
+                CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
+                FormFunction("FromDIP(");
+                Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+                *this += ')';
+            }
+        }
+        else if (is_python())
+        {
+            CheckLineLength(sizeof("self.FromDIP(wxPoint(999, 999))"));
+            FormFunction("FromDIP(");
+            Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+            *this += ')';
+        }
+#if GENERATE_NEW_LANG_CODE
+        else if (is_lua())
+        {
+            CheckLineLength(sizeof("wx.wxPoint(999, 999)"));
+            Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
+        }
+#endif
+    }
+    else
+    {
+        CheckLineLength(sizeof("wxPoint(999, 999)"));
+        Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+    }
+
+    if (m_auto_break && this->size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
+    return *this;
+}
+
 Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
     auto cur_pos = size();

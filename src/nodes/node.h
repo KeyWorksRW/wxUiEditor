@@ -174,7 +174,7 @@ public:
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
-    tt_string_view getParentName(GenLang lang) const;
+    tt_string_view getParentName(GenLang lang, bool ignore_sizers = false) const;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.
     Node* getForm() noexcept;

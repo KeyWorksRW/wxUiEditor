@@ -544,11 +544,23 @@ const tt_string& Node::getParentName() const
     return tt_empty_cstr;
 }
 
-tt_string_view Node::getParentName(GenLang lang) const
+tt_string_view Node::getParentName(GenLang lang, bool ignore_sizers) const
 {
-    if (m_parent)
-        return m_parent->getNodeName(lang);
-
+    if (ignore_sizers)
+    {
+        auto parent = getParent();
+        while (parent && parent->isSizer())
+        {
+            parent = parent->getParent();
+        }
+        if (parent)
+            return parent->getNodeName(lang);
+    }
+    else
+    {
+        if (m_parent)
+            return m_parent->getNodeName(lang);
+    }
     return tt_empty_cstr;
 }
 

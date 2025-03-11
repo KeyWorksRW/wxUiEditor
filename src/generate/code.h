@@ -418,6 +418,10 @@ public:
     Code& WxSize(wxSize size, int enable_dpi_scaling = conditional_scaling);
 
     // Will either generate wxPoint(...) or FromDIP(wxPoint(...))
+    // Uses prop_pos to determine scaling if conditional_scaling is set
+    Code& WxPoint(wxPoint position, int enable_dpi_scaling = conditional_scaling);
+
+    // Will either generate wxPoint(...) or FromDIP(wxPoint(...))
     Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, int enable_dpi_scaling = conditional_scaling);
 
     // Check for pos, size, style, window_style, and window name, and generate code if needed

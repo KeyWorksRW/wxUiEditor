@@ -126,19 +126,13 @@ bool CustomControl::ConstructionCode(Code& code)
             else if (iter.second == prop_pos)
             {
                 auto pos = code.node()->as_wxPoint(prop_pos);
-                if (pos.x == -1 && pos.y == -1)
-                    code_temp.Add("wxDefaultPosition");
-                else
-                    code_temp.Add("wxPoint(") << pos.x << ", " << pos.y << ")";
+                code_temp.WxPoint(pos);
                 parameters.Replace(iter.first, code_temp);
             }
             else if (iter.second == prop_size)
             {
                 auto size = code.node()->as_wxSize(prop_size);
-                if (size.x == -1 && size.y == -1)
-                    code_temp.Add("wxDefaultSize");
-                else
-                    code_temp.Add("wxSize(") << size.x << ", " << size.y << ")";
+                code_temp.WxSize(size);
                 parameters.Replace(iter.first, code_temp);
             }
             else

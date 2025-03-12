@@ -11,6 +11,7 @@
 
 #include "../nodes/node.h"       // Node class
 #include "../nodes/node_prop.h"  // NodeProperty class
+#include "mainframe.h"           // MainFrame -- Main window frame
 
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.h wxui/editstringdialog_base.cpp
 
@@ -19,49 +20,136 @@ EditParamProperty::EditParamProperty(const wxString& label, NodeProperty* prop) 
 {
 }
 
-class EditParamDialog : public EditStringDialogBase
+EditParamsDialog::EditParamsDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
 {
-public:
-    EditParamDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
-    {
-        SetTitle(tt_string() << prop->declName() << " property editor");
-        m_value = prop->as_wxString();
-        m_static_hdr_text->Show();
-        m_node = prop->getNode();
-        m_prop = prop;
-
-        m_textCtrl->Bind(wxEVT_TEXT, &EditParamDialog::UpdateStaticText, this);
-        Fit();
-    };
-
-    void UpdateStaticText(wxCommandEvent& /* event */)
-    {
-        tt_string static_text;
-        if (m_prop->isProp(prop_cpp_conditional))
-        {
-            auto text = m_textCtrl->GetValue().utf8_string();
-            if (!text.starts_with("#"))
-                static_text << "#if ";
-            static_text << m_textCtrl->GetValue().utf8_string();
-        }
-        else
-        {
-            if (m_node->isPropValue(prop_class_access, "none"))
-                static_text << "auto ";
-            static_text << m_node->as_string(prop_var_name) << " = new " << m_node->as_string(prop_class_name);
-            static_text << m_textCtrl->GetValue().utf8_string() << ';';
-        }
-        m_static_hdr_text->SetLabel(static_text.make_wxString());
-    }
-
-private:
-    Node* m_node;
-    NodeProperty* m_prop;
+    m_prop = prop;
 };
 
-bool EditParamDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
+void EditParamsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
-    EditParamDialog dlg(propGrid->GetPanel(), m_prop);
+    m_prop_label->SetLabel("Custom Control Parameters");
+    m_grid->SetColLabelValue(0, "Parameter");
+    // m_grid->SetColFormatCustom(0, wxGRID_VALUE_CHOICE);
+
+    auto fields = m_prop->as_ArrayString(',');
+
+    if ((to_int) fields.size() > m_grid->GetNumberRows())
+    {
+        m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
+    }
+
+    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent of the longest line
+    // including an additional space at the end solves the problem, at least running on Windows 11.
+    auto col_width = m_grid->GetTextExtent("my_special_parameter_name_here ");
+    m_grid->SetDefaultColSize(col_width.GetWidth(), true);
+
+    // clang-format off
+    const wxString choices[] = {
+        "${parent}",
+        "self",
+        "this",
+        "${id}",
+        "${pos}",
+        "${size}",
+        "${window_style}",
+        "${window_extra_style}",
+        "${window_name}",
+    };
+    // clang-format on
+
+    for (int row = 0; auto& iter: fields)
+    {
+        m_grid->SetCellEditor(row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices, true));
+        m_grid->SetCellValue(row, 0, iter);
+        m_grid->SetRowLabelValue(row, tt::itoa(row));
+        ++row;
+    }
+
+    m_grid->DeleteCols(1, 1);                 // Remove the second column
+    m_toolBar->DeleteTool(id_UndoDeleteRow);  // Remove the Undo button
+
+    Fit();
+}
+
+void EditParamsDialog::OnOK(wxCommandEvent& event)
+{
+    m_value.clear();
+    for (int row = 0; row < m_grid->GetNumberRows(); ++row)
+    {
+        if (m_value.size())
+            m_value += ", ";
+        m_value += m_grid->GetCellValue(row, 0);
+        m_value.Trim();
+    }
+
+    event.Skip();
+}
+
+void EditParamsDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
+{
+    auto array = m_grid->GetSelectedRows();
+    m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
+}
+
+void EditParamsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
+{
+    m_grid->AppendRows(1);
+    auto new_row = m_grid->GetNumberRows() - 1;
+
+    // clang-format off
+    const wxString choices[] = {
+        "${parent}",
+        "self",
+        "this",
+        "${id}",
+        "${pos}",
+        "${size}",
+        "${window_style}",
+        "${window_extra_style}",
+        "${window_name}",
+    };
+    // clang-format on
+    m_grid->SetCellEditor(new_row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices, true));
+    m_grid->SetRowLabelValue(new_row, tt::itoa(new_row));
+    m_grid->SelectRow(new_row);
+    m_grid->SetCellValue(new_row, 0, wxEmptyString);
+
+    Fit();
+}
+
+void EditParamsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
+{
+    auto array = m_grid->GetSelectedRows();
+    if (array.empty())
+    {
+        wxMessageBox("No rows selected", "Error", wxOK | wxICON_ERROR);
+        return;
+    }
+
+    for (auto iter = array.rbegin(); iter != array.rend(); ++iter)
+    {
+        m_deleted_col_0 = m_grid->GetCellValue(*iter, 0);
+        m_grid->DeleteRows(*iter);
+    }
+    Fit();
+}
+
+void EditParamsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
+{
+    m_grid->AppendRows(1);
+    if (m_deleted_col_0.size())
+    {
+        m_grid->SetCellValue(m_grid->GetNumberRows() - 1, 0, m_deleted_col_0);
+        m_deleted_col_0.clear();
+    }
+    m_grid->SelectRow(m_grid->GetNumberRows() - 1);
+
+    Fit();
+}
+
+bool EditParamsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+{
+    EditParamsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)
     {
         SetValue(dlg.GetResults());

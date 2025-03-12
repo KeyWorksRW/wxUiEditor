@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeProperty class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -406,29 +406,37 @@ std::vector<tt_string> NodeProperty::as_vector() const
     return array;
 }
 
-std::vector<tt_string> NodeProperty::as_ArrayString() const
+std::vector<tt_string> NodeProperty::as_ArrayString(char separator) const
 {
-    tt_string_vector result;
-
-    if (m_value.size())
+    if (separator == 0)
     {
-        if (type() == type_stringlist_semi)
+        tt_string_vector result;
+
+        if (m_value.size())
         {
-            result.SetString(m_value, ";", tt::TRIM::both);
-        }
-        else if (type() == type_stringlist_escapes || m_value[0] == '"')
-        {
-            auto view = m_value.view_substr(0, '"', '"');
-            while (view.size() > 0)
+            if (type() == type_stringlist_semi)
             {
-                result.emplace_back(view);
-                view = tt::stepover(view.data() + view.size());
-                view = view.view_substr(0, '"', '"');
+                result.SetString(m_value, ";", tt::TRIM::both);
+            }
+            else if (type() == type_stringlist_escapes || m_value[0] == '"')
+            {
+                auto view = m_value.view_substr(0, '"', '"');
+                while (view.size() > 0)
+                {
+                    result.emplace_back(view);
+                    view = tt::stepover(view.data() + view.size());
+                    view = view.view_substr(0, '"', '"');
+                }
             }
         }
-    }
 
-    return result;
+        return result;
+    }
+    else
+    {
+        tt_string_vector result(m_value, separator, tt::TRIM::both);
+        return result;
+    }
 }
 
 wxArrayString NodeProperty::as_wxArrayString() const

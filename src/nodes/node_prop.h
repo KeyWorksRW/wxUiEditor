@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeProperty class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -113,8 +113,11 @@ public:
     wxSize as_size() const;
     wxArrayString as_wxArrayString() const;
 
-    // Assumes all values are within quotes, or separated by semi-colons
-    std::vector<tt_string> as_ArrayString() const;
+    // Unless separator is set, assumes all values are within quotes,
+    // or separated by semi-colons.
+    //
+    // Specify separator to use a specific character as the separator
+    std::vector<tt_string> as_ArrayString(char separator = 0) const;
 
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
     wxString as_wxString() const { return m_value.make_wxString(); }

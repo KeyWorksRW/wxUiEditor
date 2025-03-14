@@ -41,11 +41,14 @@ namespace GenEnum
 
         // "_escapes" makes it possible for the user to include \n, \t, \r, and "\" in the string
 
-        type_string_code_single,   // includes single-line custom editor, does not process escapes
-        type_string_edit,          // includes a button that triggers a small text editor dialog
-        type_string_edit_escapes,  // includes editor dialog and also escapes characters
-        type_string_edit_single,   // includes single-line text editor, does not process escapes
-        type_string_escapes,       // doubles the backslash in escaped characters: \n, \t, \r, and "\""
+        type_string_code_grow_columns,  // uses GridPropertyDlg to edit a list of growable columns
+        type_string_code_grow_rows,     // uses GridPropertyDlg to edit a list of growable rows
+        type_string_code_cstm_param,    // uses GridPropertyDlg to edit a list of custom parameters
+        type_string_code_single,        // includes single-line custom editor, does not process escapes
+        type_string_edit,               // includes a button that triggers a small text editor dialog
+        type_string_edit_escapes,       // includes editor dialog and also escapes characters
+        type_string_edit_single,        // includes single-line text editor, does not process escapes
+        type_string_escapes,            // doubles the backslash in escaped characters: \n, \t, \r, and "\""
 
         // All the stringlist variants use wxArrayStringProperty, but with different separators.
         // All of them include a button to edit/move multiple choices.

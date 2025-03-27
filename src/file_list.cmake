@@ -33,6 +33,7 @@ set (file_list
 
     # Custom property handling for Property Grid panel
 
+    customprops/code_single_prop.cpp    # Derived wxStringProperty class for single line code wxStringProperty class for code
     customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
     customprops/custom_colour_prop.cpp  # Property editor for colour
     customprops/custom_param_prop.cpp   # Derived wxStringProperty class for custom control parameters
@@ -46,6 +47,8 @@ set (file_list
     customprops/include_files_prop.cpp  # Derived wxStringProperty class for Include Files
     customprops/rearrange_prop.cpp      # wxRearangeList contents editor
     customprops/sb_fields_prop.cpp      # Property editor for status bar fields
+    customprops/sizer_grow_columns.cpp  # Property editor for Growable Sizer Columns
+    customprops/sizer_grow_rows.cpp     # Property editor for Growable Sizer Rows
     customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
 
     customprops/eventhandler_dlg.cpp    # Dialog for editing event handlers

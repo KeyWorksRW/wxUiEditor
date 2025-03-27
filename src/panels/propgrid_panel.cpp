@@ -41,6 +41,7 @@
 
 // Various customized wxPGProperty classes
 
+#include "../customprops/code_single_prop.h"    // EditCodeDialogAdapter -- Derived wxStringProperty class for code
 #include "../customprops/code_string_prop.h"    // EditCodeDialogAdapter -- Derived wxStringProperty class for code
 #include "../customprops/custom_colour_prop.h"  // EditColourDialogAdapter -- Property editor for colour
 #include "../customprops/custom_param_prop.h"   // EditParamProperty -- dialog for editing CustomControl parameter
@@ -56,6 +57,8 @@
 #include "../customprops/pg_point.h"            // CustomPointProperty -- custom wxPGProperty for handling wxPoint
 #include "../customprops/rearrange_prop.h"      // RearrangeProperty -- Property editor for rearranging items
 #include "../customprops/sb_fields_prop.h"      // SBarFieldsProperty -- Property editor for status bar fields
+#include "../customprops/sizer_grow_columns.h"  // Property editor for Growable Sizer Columns
+#include "../customprops/sizer_grow_rows.h"     // Property editor for Growable Sizer Columns
 #include "../customprops/tt_file_property.h"    // ttFileProperty -- Property editor for file names
 #include "../customprops/txt_string_prop.h"     // EditStringProperty -- dialog for editing single-line strings
 
@@ -390,9 +393,19 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             // This includes a button that triggers a dialog to edit the fields.
             return new RearrangeProperty(prop->declName().make_wxString(), prop);
 
-        case type_string_code_single:
+        case type_string_code_grow_columns:
+            return new GrowColumnsProperty(prop->declName().make_wxString(), prop);
+
+        case type_string_code_grow_rows:
+            return new GrowRowsProperty(prop->declName().make_wxString(), prop);
+
+        case type_string_code_cstm_param:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditParamProperty(prop->declName().make_wxString(), prop);
+
+        case type_string_code_single:
+            // This includes a button that triggers a small single-line custom text editor dialog
+            return new EditCodeSingleProperty(prop->declName().make_wxString(), prop);
 
         case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.

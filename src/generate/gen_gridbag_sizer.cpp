@@ -124,10 +124,25 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
                 {
                     proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
                 }
+
+                // REVIEW: [Randalphwa - 03-14-2025] Forcing the column/row count to be at least one
+                // more than the growable index is a bit of a hack to prevent an assertion warning.
+                // What we should be doing is warning the user about setting a growable index that
+                // is greater than the number of rows/columns.
                 if (prop_name == prop_growablecols)
+                {
+                    auto new_column = iter.atoi();
+                    if (new_column >= sizer->GetCols())
+                        sizer->SetCols(new_column + 1);
                     sizer->AddGrowableCol(iter.atoi(), proportion);
+                }
                 else
+                {
+                    auto new__row = iter.atoi();
+                    if (new__row >= sizer->GetRows())
+                        sizer->SetRows(new__row + 1);
                     sizer->AddGrowableRow(iter.atoi(), proportion);
+                }
             }
         }
     };

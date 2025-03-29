@@ -128,6 +128,15 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                 break;
             case ClassOverrideType::Subclass:
                 code.NodeName() << " = new " << node->as_string(prop_subclass) << "(";
+                if (node->hasValue(prop_subclass_params))
+                {
+                    code += node->as_string(prop_subclass_params);
+                    code.RightTrim();
+                    if (code.back() != ',')
+                        code.Comma();
+                    else
+                        code += ' ';
+                }
                 break;
             case ClassOverrideType::None:
                 code.NodeName() << " = new wxStaticBitmap(";
@@ -210,6 +219,15 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                 break;
             case ClassOverrideType::Subclass:
                 code.NodeName() << " = new " << node->as_string(prop_subclass) << "(";
+                if (node->hasValue(prop_subclass_params))
+                {
+                    code += node->as_string(prop_subclass_params);
+                    code.RightTrim();
+                    if (code.back() != ',')
+                        code.Comma();
+                    else
+                        code += ' ';
+                }
                 break;
             case ClassOverrideType::None:
                 code.NodeName() << " = new wxStaticBitmap(";

@@ -87,6 +87,14 @@ GenLang ConvertToGenLang(tt_string_view language);
 
 std::string GetLanguageExtension(GenLang language);
 
+enum class ClassOverrideType
+{
+    None = 0,
+    Subclass,  // User specified a subclass
+    Generic,   // Use the wxGeneric version of the class
+};
+ClassOverrideType GetClassOverrideType(Node* node);
+
 // This will set the lexer and colors taking into account the user's preferences for dark
 // mode, and specific language colors
 void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true, bool add_keywords = true);

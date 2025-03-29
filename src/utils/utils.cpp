@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Utility functions that work with properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -688,5 +688,29 @@ std::string GetLanguageExtension(GenLang language)
 
         default:
             return ".cpp";
+    }
+}
+
+ClassOverrideType GetClassOverrideType(Node* node)
+{
+    ASSERT(node != nullptr);
+    if (node->hasValue(prop_subclass))
+    {
+        if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+        {
+            return ClassOverrideType::Generic;  // Use the wxGeneric version of the class
+        }
+        else
+        {
+            return ClassOverrideType::Subclass;  // User specified a subclass
+        }
+    }
+    else if (node->as_bool(prop_use_generic))
+    {
+        return ClassOverrideType::Generic;  // Use the wxGeneric version of the class
+    }
+    else
+    {
+        return ClassOverrideType::None;  // No override specified
     }
 }

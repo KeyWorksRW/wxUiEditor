@@ -2278,7 +2278,6 @@
       base_file="test_dlg.cpp"
       generate_const_values="1"
       inserted_hdr_code="// Inserted code"
-      local_hdr_includes="images.h"
       no_closing_brace="1"
       derived_class_name="TestDialogDerived_copy"
       derived_file="cpp/derived_code/testdialog_derived.cpp"
@@ -2324,11 +2323,6 @@
                 <node
                   class="wxStaticBitmap"
                   var_name="bmp2" />
-                <node
-                  class="CustomControl"
-                  parameters="${parent}, ${pos}, ${size}"
-                  pos="50,-1"
-                  size="100,-1" />
               </node>
               <node
                 class="wxCollapsiblePane"

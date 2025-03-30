@@ -7,8 +7,7 @@
     base_directory="generated"
     cmake_file="generated/codegen.cmake"
     cpp_line_length="125"
-    generate_cmake="1"
-    wxWidgets_version="3.2">
+    generate_cmake="1">
     <node
       class="wxFrame"
       class_name="MainFrameBase"
@@ -178,7 +177,6 @@
       derived_file="testdialog_derived"
       python_file="tools_dlg"
       ruby_file="tools_dlg"
-      xrc_file="test_dlg"
       wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]">
       <node
         class="wxBoxSizer"
@@ -328,7 +326,6 @@
       python_file="wizard"
       python_inherit_name="Wizard"
       ruby_file="wizard"
-      xrc_file="wizard"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange[python:OnBeforeChange][ruby:on_before_page_change]">
       <node
@@ -442,8 +439,7 @@
       base_file="booktest_dlg"
       use_derived_class="0"
       python_file="booktest_dlg"
-      ruby_file="booktest_dlg"
-      xrc_file="booktest_dlg">
+      ruby_file="booktest_dlg">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1013,7 +1009,6 @@
       derived_class_name="CommonCtrls"
       derived_file="../ui/commonctrls"
       use_derived_class="0"
-      xrc_file="commonctrls"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_CONTEXT_MENU="OnContextMenu">
       <node
@@ -1420,7 +1415,6 @@
       insert_python_code="import popupwin"
       python_file="main_test_dlg"
       ruby_file="main_test_dlg"
-      xrc_file="main_test_dlg"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -2264,6 +2258,108 @@
           minimum_size="-1,150"
           flags="wxEXPAND"
           proportion="1" />
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      center="no"
+      class_name="GenericControlsDialog"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Generic Controls Test Dialog"
+      font="large"
+      foreground_colour="#FF0000"
+      minimum_size="-1,-1"
+      pos="-1,-1"
+      size="-1,-1"
+      base_file="test_dlg.cpp"
+      generate_const_values="1"
+      inserted_hdr_code="// Inserted code"
+      local_hdr_includes="images.h"
+      no_closing_brace="1"
+      derived_class_name="TestDialogDerived_copy"
+      derived_file="cpp/derived_code/testdialog_derived.cpp"
+      use_derived_class="0"
+      insert_python_code="# What hath God wrought?"
+      python_file="test_dlg"
+      ruby_file="test_dlg"
+      wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]"
+      wxEVT_CONTEXT_MENU="OnContextMenu">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        flags="wxEXPAND">
+        <node
+          class="wxPanel"
+          var_name="m_pPDector"
+          window_style="wxTAB_TRAVERSAL">
+          <node
+            class="wxBoxSizer"
+            var_name="panel_sizer"
+            flags="wxEXPAND">
+            <node
+              class="wxStaticBitmap"
+              subclass="wxGeneric"
+              subclass_params="&quot;test&quot;" />
+            <node
+              class="wxAnimationCtrl"
+              subclass="wxGeneric" />
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer2"
+              flags="wxEXPAND">
+              <node
+                class="wxStaticText"
+                pos="50,-1"
+                size="100,-1"
+                subclass="wxGeneric" />
+              <node
+                class="wxBoxSizer"
+                var_name="m_pBatterySizer"
+                proportion="2">
+                <node
+                  class="wxStaticBitmap"
+                  var_name="bmp2" />
+                <node
+                  class="CustomControl"
+                  parameters="${parent}, ${pos}, ${size}"
+                  pos="50,-1"
+                  size="100,-1" />
+              </node>
+              <node
+                class="wxCollapsiblePane"
+                flags="wxEXPAND">
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer3">
+                  <node
+                    class="wxStaticText"
+                    var_name="m_staticText2" />
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxGridBagSizer"
+          growablecols="1:3, 3">
+          <node
+            class="wxHyperlinkCtrl"
+            subclass="wxGeneric" />
+          <node
+            class="wxCalendarCtrl"
+            subclass="wxGeneric"
+            row="1" />
+          <node
+            class="wxTreeCtrl"
+            subclass="wxGeneric"
+            column="2"
+            row="1" />
+        </node>
         <node
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND" />

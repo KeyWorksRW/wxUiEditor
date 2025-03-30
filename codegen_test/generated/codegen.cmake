@@ -9,6 +9,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/commonctrls.cpp
     ${CMAKE_CURRENT_LIST_DIR}/popupwin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/propsheet_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/test_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/wizard.cpp
 
     # Base classes

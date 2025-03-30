@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for the Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -75,17 +75,72 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
                 (perm == Permission::Protected && prop->as_string() == "protected:"))
             {
                 auto code = GetDeclaration(node);
-                if (node->isGen(gen_wxTimer))
+
+                auto ChangeClass = [&](const std::string& generic_class)
+                {
+                    if (auto pos = code.find('*'); pos != std::string::npos)
+                    {
+                        code = generic_class + code.substr(pos);
+                    }
+                };
+
+                if (node->isGen(gen_wxAnimationCtrl))
+                {
+                    if ((node->hasValue(prop_animation) &&
+                         node->as_string(prop_animation).contains(".ani", tt::CASE::either)) ||
+                        node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        // The generic version is required to display .ANI files on wxGTK.
+                        ChangeClass("wxGenericAnimationCtrl");
+                    }
+                }
+                else if (node->isGen(gen_wxHyperlinkCtrl))
+                {
+                    if (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        // If the underlined property is false, we need to use the generic version.
+                        ChangeClass("wxGenericHyperlinkCtrl");
+                    }
+                }
+                else if (node->isGen(gen_wxStaticBitmap))
+                {
+                    if (node->as_string(prop_scale_mode) != "None" ||
+                        node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        // If we are using a scale mode, we must use wxGenericStaticBitmap.
+                        ChangeClass("wxGenericStaticBitmap");
+                    }
+                }
+                else if (node->isGen(gen_wxStaticText))
+                {
+                    if (node->as_string(prop_subclass).starts_with("wxGeneric") ||
+                        (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0))
+                    {
+                        // If we are using markup or the wrap is <= 0, we must use wxGenericStaticText.
+                        ChangeClass("wxGenericStaticText");
+                    }
+                }
+                else if (node->isGen(gen_wxCalendarCtrl))
+                {
+                    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        ChangeClass("wxGenericCalendarCtrl");
+                    }
+                }
+                else if (node->isGen(gen_wxTreeCtrl))
+                {
+                    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        ChangeClass("wxGenericTreeCtrl");
+                    }
+                }
+
+                else if (node->isGen(gen_wxTimer))
                 {
                     // Remove the pointer, wxTimer needs to be a class.
                     code.Replace("*", "");
                 }
-                else if (node->isGen(gen_wxAnimationCtrl) && node->hasValue(prop_animation) &&
-                         node->as_string(prop_animation).contains(".ANI", tt::CASE::either))
-                {
-                    // The generic version is required to display .ANI files on wxGTK.
-                    code.Replace("wxAnimationCtrl", "wxGenericAnimationCtrl");
-                }
+
                 if (code.empty() && node->isGen(gen_auitool))
                 {
                     code += "wxAuiToolBarItem* " + node->as_string(prop_var_name) + ';';

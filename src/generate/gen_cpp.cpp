@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -545,6 +545,22 @@ void BaseCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
         ordered_includes.emplace_back("#include <wx/stattext.h>");
         ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
     }
+    if (auto pos = hdr_includes.find("#include <wx/generic/treectlg.h>"); pos != hdr_includes.end())
+    {
+        hdr_includes.erase(pos);
+        if (pos = hdr_includes.find("#include <wx/treectrl.h>"); pos != hdr_includes.end())
+        {
+            hdr_includes.erase(pos);
+        }
+
+        if (ordered_includes.empty())
+        {
+            ordered_includes.emplace_back("// Order dependent includes");
+        }
+
+        ordered_includes.emplace_back("#include <wx/treectrl.h>");
+        ordered_includes.emplace_back("#include <wx/generic/treectlg.h>");
+    }
 
     if (ordered_includes.size())
     {
@@ -799,6 +815,22 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
         ordered_includes.emplace_back("#include <wx/stattext.h>");
         ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
+    }
+    if (auto pos = src_includes.find("#include <wx/generic/treectlg.h>"); pos != src_includes.end())
+    {
+        src_includes.erase(pos);
+        if (pos = src_includes.find("#include <wx/treectrl.h>"); pos != src_includes.end())
+        {
+            src_includes.erase(pos);
+        }
+
+        if (ordered_includes.empty())
+        {
+            ordered_includes.emplace_back("// Order dependent includes");
+        }
+
+        ordered_includes.emplace_back("#include <wx/treectrl.h>");
+        ordered_includes.emplace_back("#include <wx/generic/treectlg.h>");
     }
 
     if (ordered_includes.size())

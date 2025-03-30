@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxAnimationCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -86,8 +86,9 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     else
     {
         // The generic version is required to display .ANI files on wxGTK.
-        code.AddAuto().NodeName().CreateClass(code.node()->hasValue(prop_animation) &&
-                                              code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either));
+        bool use_generic_version = (code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either) ||
+                                    code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
+        code.AddAuto().NodeName().CreateClass(use_generic_version);
         code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
         code.PosSizeFlags();
     }
@@ -254,8 +255,12 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
-    if (node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either))
+    if ((node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either)) ||
+        node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
         InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
+    }
+
     return true;
 }
 

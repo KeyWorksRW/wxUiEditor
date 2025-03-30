@@ -1,11 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxCalendarCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/calctrl.h>  // date-picker control
+#include <wx/calctrl.h>           // date-picker control
+#include <wx/generic/calctrlg.h>  // date-picker control
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
@@ -21,8 +22,17 @@
 
 wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), GetStyleInt(node));
+    wxCalendarCtrlBase* widget;
+    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
+        widget = new wxGenericCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
+                                           DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    }
+    else
+    {
+        widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
+                                    DlgSize(node, prop_size), GetStyleInt(node));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -31,7 +41,8 @@ wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool CalendarCtrlGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass();
+    bool use_generic_version = code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
+    code.AddAuto().NodeName().CreateClass(use_generic_version);
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.is_ruby())
     {
@@ -63,7 +74,15 @@ bool CalendarCtrlGenerator::SettingsCode(Code& code)
 bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                                         GenLang /* language */)
 {
-    InsertGeneratorInclude(node, "#include <wx/calctrl.h>", set_src, set_hdr);
+    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
+        InsertGeneratorInclude(node, "#include <wx/calctrl.h>\n#include <wx/generic/calctrlg.h>", set_src, set_hdr);
+    }
+    else
+    {
+        InsertGeneratorInclude(node, "#include <wx/calctrl.h>", set_src, set_hdr);
+    }
+
     return true;
 }
 

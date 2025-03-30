@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStaticBitmap generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,9 +22,6 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxBitmapBundle(prop_bitmap),
                                             DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
-#if defined(_DEBUG)
-    // auto default_size = node->as_wxBitmapBundle(prop_bitmap).GetDefaultSize();
-#endif  // _DEBUG
 
     if (auto value = node->as_string(prop_scale_mode); value != "None")
     {
@@ -95,7 +92,14 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
 
 void StaticBitmapGenerator::GenCppConstruction(Code& code)
 {
-    Node* node = code.node();
+    Node* node = code.node();  // for convenience
+    auto class_override_type = GetClassOverrideType(node);
+    if (class_override_type == ClassOverrideType::None && node->as_string(prop_scale_mode) != "None")
+    {
+        // If we are using a scale mode, we must use the wxGenericStaticBitmap.
+        class_override_type = ClassOverrideType::Generic;
+    }
+
     if (node->hasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);
@@ -117,13 +121,27 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
         if (node->isLocal())
             code << "auto* ";
 
-        bool use_generic_version =
-            (node->as_string(prop_scale_mode) != "None" || node->as_string(prop_subclass) == "wxGenericStaticBitmap");
-
-        if (use_generic_version)
-            code.NodeName() << " = new wxGenericStaticBitmap(";
-        else
-            code.NodeName() << " = new wxStaticBitmap(";
+        switch (class_override_type)
+        {
+            case ClassOverrideType::Generic:
+                code.NodeName() << " = new wxGenericStaticBitmap(";
+                break;
+            case ClassOverrideType::Subclass:
+                code.NodeName() << " = new " << node->as_string(prop_subclass) << "(";
+                if (node->hasValue(prop_subclass_params))
+                {
+                    code += node->as_string(prop_subclass_params);
+                    code.RightTrim();
+                    if (code.back() != ',')
+                        code.Comma();
+                    else
+                        code += ' ';
+                }
+                break;
+            case ClassOverrideType::None:
+                code.NodeName() << " = new wxStaticBitmap(";
+                break;
+        }
 
         code.ValidParentName().Comma().as_string(prop_id).Comma();
 
@@ -142,7 +160,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                 code.PosSizeFlags();
 
                 code += "\n#else\n\t";
-                if (use_generic_version)
+                if (class_override_type == ClassOverrideType::Generic)
                 {
                     // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
                     code << GenerateBitmapCode(description);
@@ -172,7 +190,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                 code.PosSizeFlags();
 
                 code += "\n#else\n\t\t";
-                if (use_generic_version)
+                if (class_override_type == ClassOverrideType::Generic)
                 {
                     // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
                     code << GenerateBitmapCode(description);
@@ -194,13 +212,27 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
         if (node->isLocal())
             code << "auto* ";
 
-        bool use_generic_version =
-            (node->as_string(prop_scale_mode) != "None" || node->as_string(prop_subclass) == "wxGenericStaticBitmap");
-
-        if (use_generic_version)
-            code.NodeName() += " = new wxGenericStaticBitmap(";
-        else
-            code.NodeName() += " = new wxStaticBitmap(";
+        switch (class_override_type)
+        {
+            case ClassOverrideType::Generic:
+                code.NodeName() << " = new wxGenericStaticBitmap(";
+                break;
+            case ClassOverrideType::Subclass:
+                code.NodeName() << " = new " << node->as_string(prop_subclass) << "(";
+                if (node->hasValue(prop_subclass_params))
+                {
+                    code += node->as_string(prop_subclass_params);
+                    code.RightTrim();
+                    if (code.back() != ',')
+                        code.Comma();
+                    else
+                        code += ' ';
+                }
+                break;
+            case ClassOverrideType::None:
+                code.NodeName() << " = new wxStaticBitmap(";
+                break;
+        }
 
         code.ValidParentName().Comma().as_string(prop_id).Comma();
         code += "wxNullBitmap";
@@ -255,7 +287,7 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                                         GenLang /* language */)
 {
-    if (node->as_string(prop_scale_mode) != "None" || node->as_string(prop_subclass) == "wxGenericStaticBitmap")
+    if (node->as_string(prop_scale_mode) != "None" || node->as_string(prop_subclass).starts_with("wxGeneric"))
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/statbmp.h>", set_src, set_hdr);

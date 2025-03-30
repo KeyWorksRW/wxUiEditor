@@ -1131,13 +1131,13 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     if (is_cpp())
     {
         *this += "new ";
-        if (m_node->hasValue(prop_subclass))
+        if (m_node->hasValue(prop_subclass) && !m_node->as_string(prop_subclass).starts_with("wxGeneric"))
         {
             *this += m_node->as_string(prop_subclass);
             *this += '(';
-            if (m_node->hasValue(prop_derived_params))
+            if (m_node->hasValue(prop_subclass_params))
             {
-                *this += m_node->as_string(prop_derived_params);
+                *this += m_node->as_string(prop_subclass_params);
                 RightTrim();
                 if (back() != ',')
                     Comma();
@@ -1197,9 +1197,9 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     }
 
     *this += '(';
-    if (m_node->hasValue(prop_derived_params))
+    if (m_node->hasValue(prop_subclass_params))
     {
-        *this += m_node->as_string(prop_derived_params);
+        *this += m_node->as_string(prop_subclass_params);
         RightTrim();
         if (back() != ',')
             Comma();

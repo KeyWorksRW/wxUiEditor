@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxHyperlinkCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@
 wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxHyperlinkCtrlBase* widget;
-    if (node->as_bool(prop_underlined))
+    if (node->as_bool(prop_underlined) && !node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
         widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                                      node->as_wxString(prop_url), DlgPoint(node, prop_pos), DlgSize(node, prop_size),
@@ -61,9 +61,9 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass();
-    if (code.is_cpp() && !code.IsTrue(prop_underlined))
-        code.Replace("wxHyperlinkCtrl", "wxGenericHyperlinkCtrl");
+    bool use_generic_version =
+        code.is_cpp() && (!code.IsTrue(prop_underlined) || code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
+    code.AddAuto().NodeName().CreateClass(use_generic_version);
 
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma().QuotedString(prop_url);
@@ -183,7 +183,7 @@ void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
 
 bool HyperlinkGenerator::IsGeneric(Node* node)
 {
-    return (!node->as_bool(prop_underlined));
+    return (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"));
 }
 
 bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr,
@@ -193,7 +193,7 @@ bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_s
     // That means the order of inclusion is critical, hence the hack below to change the
     // alphabetical order of the two headers. See https://github.com/wxWidgets/wxWidgets/issues/23060
 
-    if (!node->as_bool(prop_underlined))
+    if (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"))
         set_hdr.insert("#include <wx/hyperlink.h>\n#include <wx/generic/hyperlink.h>");
     else
         set_hdr.insert("#include <wx/hyperlink.h>");

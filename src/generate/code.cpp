@@ -1131,7 +1131,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     if (is_cpp())
     {
         *this += "new ";
-        if (m_node->hasValue(prop_subclass))
+        if (m_node->hasValue(prop_subclass) && !m_node->as_string(prop_subclass).starts_with("wxGeneric"))
         {
             *this += m_node->as_string(prop_subclass);
             *this += '(';

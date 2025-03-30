@@ -1,11 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTreeCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/treectrl.h>  // wxTreeCtrl base header
+// clang-format off
+#include <wx/treectrl.h>          // wxTreeCtrl base header
+#include <wx/generic/treectlg.h>  // wxGenericTreeCtrl
+// clang-format on
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
@@ -17,8 +20,17 @@
 
 wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    wxTreeCtrlBase* widget;
+    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
+        widget = new wxGenericTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                       DlgSize(node, prop_size), GetStyleInt(node));
+    }
+    else
+    {
+        widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                GetStyleInt(node));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -27,7 +39,8 @@ wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool TreeCtrlGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
+    bool use_generic_version = code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
+    code.AddAuto().NodeName().CreateClass(use_generic_version).ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(code::allow_scaling, true, "wxTR_DEFAULT_STYLE");
 
     return true;
@@ -37,6 +50,10 @@ bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
                                     GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/treectrl.h>", set_src, set_hdr);
+    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
+        InsertGeneratorInclude(node, "#include <wx/generic/treectlg.h>", set_src, set_hdr);
+    }
     return true;
 }
 

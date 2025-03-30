@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStaticText generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,8 @@
 wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxStaticTextBase* widget;
-    if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)
+    if (node->as_string(prop_subclass).starts_with("wxGeneric") ||
+        (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0))
     {
         widget = new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
                                          DlgSize(node, prop_size), GetStyleInt(node));
@@ -75,7 +76,11 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName();
     // Neither wxPython or wxRuby3 support wxGenericStaticText
     if (code.is_cpp())
-        code.CreateClass((code.m_node->as_bool(prop_markup) && code.m_node->as_int(prop_wrap) <= 0));
+    {
+        bool use_generic_version = (code.node()->as_string(prop_subclass).starts_with("wxGeneric") ||
+                                    (code.node()->as_bool(prop_markup) && code.node()->as_int(prop_wrap) <= 0));
+        code.CreateClass(use_generic_version);
+    }
     else
         code.CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
@@ -166,8 +171,11 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
                                       GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/stattext.h>", set_src, set_hdr);
-    if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)
+    if (node->as_string(prop_subclass).starts_with("wxGeneric") ||
+        (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0))
+    {
         InsertGeneratorInclude(node, "#include <wx/generic/stattextg.h>", set_src, set_hdr);
+    }
     if (node->as_string(prop_validator_variable).size())
         set_src.insert("#include <wx/valgen.h>");
 

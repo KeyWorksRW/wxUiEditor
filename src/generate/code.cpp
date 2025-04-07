@@ -281,15 +281,24 @@ static const view_map s_short_rust_map
 
 constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
 
-    "wxNullBitmap",
+    "wxALL",
+    "wxLEFT",
+    "wxRIGHT",
+    "wxTOP",
+    "wxBOTTOM",
+
     "wxITEM_CHECK",
     "wxITEM_DROPDOWN",
     "wxITEM_NORMAL",
     "wxITEM_RADIO",
+
+    "wxNullBitmap",
     "wxID_ANY",
+
     "wxVERTICAL",
     "wxHORIZONTAL",
     "wxBOTH",
+
     "wxWINDOW_VARIANT_LARGE",
     "wxWINDOW_VARIANT_SMALL",
     "wxWINDOW_VARIANT_MINI",
@@ -2310,14 +2319,14 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxALL"))
         {
             if (border_size == 5)
-                SizerFlagsFunction("Border").Add("wxALL)");
+                SizerFlagsFunction("Border").Add("wxALL").Str(")");
             else if (border_size == 10)
-                SizerFlagsFunction("DoubleBorder").Add("wxALL)");
+                SizerFlagsFunction("DoubleBorder").Add("wxALL").Str(")");
             else if (border_size == 15)
-                SizerFlagsFunction("TripleBorder").Add("wxALL)");
+                SizerFlagsFunction("TripleBorder").Add("wxALL").Str(")");
             else
             {
-                SizerFlagsFunction("Border").Add("wxALL, ");
+                SizerFlagsFunction("Border").Add("wxALL").Comma();
                 BorderSize() += ')';
             }
         }

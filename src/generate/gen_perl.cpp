@@ -174,6 +174,31 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
             else if (node->as_string(prop_variant) == "mini")
                 use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_MINI);");
         }
+
+        if (node->isSizer())
+        {
+            if (node->as_string(prop_borders).contains("wxALL"))
+            {
+                use_constants.emplace("use Wx qw(wxALL);");
+            }
+            if (node->as_string(prop_borders).contains("wxLEFT"))
+            {
+                use_constants.emplace("use Wx qw(wxLEFT);");
+            }
+            if (node->as_string(prop_borders).contains("wxRIGHT"))
+            {
+                use_constants.emplace("use Wx qw(wxRIGHT);");
+            }
+            if (node->as_string(prop_borders).contains("wxTOP"))
+            {
+                use_constants.emplace("use Wx qw(wxTOP);");
+            }
+            if (node->as_string(prop_borders).contains("wxBOTTOM"))
+            {
+                use_constants.emplace("use Wx qw(wxBOTTOM);");
+            }
+        }
+
         if (auto* gen = node->getGenerator(); gen)
         {
             std::set<std::string> imports;

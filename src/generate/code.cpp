@@ -290,6 +290,9 @@ constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
     "wxVERTICAL",
     "wxHORIZONTAL",
     "wxBOTH",
+    "wxWINDOW_VARIANT_LARGE",
+    "wxWINDOW_VARIANT_SMALL",
+    "wxWINDOW_VARIANT_MINI",
 
 });
 

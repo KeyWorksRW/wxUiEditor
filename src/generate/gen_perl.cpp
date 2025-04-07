@@ -165,6 +165,15 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
+        if (node->hasValue(prop_variant) && node->as_string(prop_variant) != "normal")
+        {
+            if (node->as_string(prop_variant) == "large")
+                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_LARGE);");
+            else if (node->as_string(prop_variant) == "small")
+                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_SMALL);");
+            else if (node->as_string(prop_variant) == "mini")
+                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_MINI);");
+        }
         if (auto* gen = node->getGenerator(); gen)
         {
             std::set<std::string> imports;

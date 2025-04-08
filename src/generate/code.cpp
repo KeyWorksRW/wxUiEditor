@@ -287,6 +287,19 @@ constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
     "wxTOP",
     "wxBOTTOM",
 
+    "wxEXPAND",
+    "wxSHAPED",
+    "wxFIXED_MINSIZE",
+    "wxRESERVE_SPACE_EVEN_IF_HIDDEN",
+
+    "wxALIGN_CENTER_HORIZONTAL",
+    "wxALIGN_CENTER_VERTICAL",
+    "wxALIGN_LEFT",
+    "wxALIGN_RIGHT",
+    "wxALIGN_TOP",
+    "wxALIGN_BOTTOM",
+    "wxALIGN_CENTER",
+
     "wxITEM_CHECK",
     "wxITEM_DROPDOWN",
     "wxITEM_NORMAL",

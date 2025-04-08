@@ -181,21 +181,34 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
             {
                 use_constants.emplace("use Wx qw(wxALL);");
             }
-            if (node->as_string(prop_borders).contains("wxLEFT"))
+
+            if (node->as_string(prop_borders).contains("wxLEFT") || node->as_string(prop_borders).contains("wxRIGHT") ||
+                node->as_string(prop_borders).contains("wxTOP") || node->as_string(prop_borders).contains("wxBOTTOM"))
             {
-                use_constants.emplace("use Wx qw(wxLEFT);");
+                use_constants.emplace("use Wx qw(wxLEFT wxRIGHT wxTOP wxBOTTOM);");
             }
-            if (node->as_string(prop_borders).contains("wxRIGHT"))
+
+            if (node->as_string(prop_flags).contains("wxEXPAND"))
             {
-                use_constants.emplace("use Wx qw(wxRIGHT);");
+                use_constants.emplace("use Wx qw(wxEXPAND);");
             }
-            if (node->as_string(prop_borders).contains("wxTOP"))
+            if (node->as_string(prop_flags).contains("wxSHAPED"))
             {
-                use_constants.emplace("use Wx qw(wxTOP);");
+                use_constants.emplace("use Wx qw(wxSHAPED);");
             }
-            if (node->as_string(prop_borders).contains("wxBOTTOM"))
+            if (node->as_string(prop_flags).contains("wxFIXED_MINSIZE"))
             {
-                use_constants.emplace("use Wx qw(wxBOTTOM);");
+                use_constants.emplace("use Wx qw(wxFIXED_MINSIZE);");
+            }
+            if (node->as_string(prop_flags).contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
+            {
+                use_constants.emplace("use Wx qw(wxRESERVE_SPACE_EVEN_IF_HIDDEN);");
+            }
+
+            if (node->as_string(prop_alignment).contains("wxALIGN"))
+            {
+                use_constants.emplace("use Wx qw(wxALIGN_CENTER_HORIZONTAL wxALIGN_CENTER_VERTICAL);");
+                use_constants.emplace("use Wx qw(wxALIGN_LEFT wxALIGN_RIGHT wxALIGN_TOP wxALIGN_BOTTOM wxALIGN_CENTER);");
             }
         }
 

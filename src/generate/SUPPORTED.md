@@ -168,6 +168,8 @@ The following tables indicate whether or not code is being generated in a specif
 
 Neither wxPython nor XRC support setting the initial folder in wxGenericDirCtrl, though it works fine in wxRuby3
 
+The Unsupported lists below are for controls that the language port doesn't support.
+
 # Python Unsupported
 
 - CheckBoxSizer
@@ -177,6 +179,7 @@ Neither wxPython nor XRC support setting the initial folder in wxGenericDirCtrl,
 # Perl Unsupported
 
 - wxStatusBar doesn't support wxSB_SUNKEN style, and it doesn't appear to allow more than one field.
+- wxSizerFlags
 
 # Ruby Unsupported
 

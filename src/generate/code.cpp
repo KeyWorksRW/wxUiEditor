@@ -2216,6 +2216,52 @@ Code& Code::SizerFlagsFunction(tt_string_view function_name)
 
 Code& Code::GenSizerFlags()
 {
+    if (is_perl())
+    {
+        // Perl doesn't have a wxSizerFlags() function, so we have to use the old wxSizer::Add() function.
+        Add(m_node->as_string(prop_proportion)).Comma();
+
+        tt_string prop_combined_flags;
+        auto lambda = [&](GenEnum::PropName prop_name) -> void
+        {
+            if (auto& prop = m_node->as_string(prop_name); prop.size())
+            {
+                tt_string_vector vector(prop, "|", tt::TRIM::both);
+                for (auto& iter: vector)
+                {
+                    if (prop_combined_flags.size())
+                        prop_combined_flags << '|';
+                    prop_combined_flags << iter;
+                }
+            }
+        };
+        lambda(prop_alignment);
+        lambda(prop_flags);
+
+        if (prop_combined_flags.size())
+        {
+            Add(prop_combined_flags);
+        }
+        else
+        {
+            Add("0");
+        }
+        Comma();
+
+        prop_combined_flags.clear();
+        lambda(prop_borders);
+
+        if (prop_combined_flags.size())
+        {
+            Add(prop_combined_flags);
+        }
+        else
+        {
+            Add("0");
+        }
+
+        return *this;
+    }
     // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
     // shut off auto_break and then restore it when we are done, after which we can check whether
     // or note the entire wxSizerFlags() statement needs to be broken.

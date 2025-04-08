@@ -45,7 +45,8 @@ public:
     bool is_DarkModePending() const { return m_dark_mode_pending; }
     void set_DarkMode(bool value) { m_dark_mode = value; }
     void set_DarkModePending(size_t value) { m_dark_mode_pending = value; }
-    bool is_HighContrast() const { return m_high_constrast; }
+    // Only true if both dark mode and high contrast are enabled
+    bool is_HighContrast() const { return (m_dark_mode && m_high_constrast); }
     void set_HighContrast(bool value) { m_high_constrast = value; }
 
     bool is_FullPathTitle() const { return m_fullpath_title; }

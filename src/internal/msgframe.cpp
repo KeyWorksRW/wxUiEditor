@@ -59,9 +59,9 @@ MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* pa
     textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
     textAttr.SetBackgroundColour(bg);
 
-    wxColor clrError(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
-    wxColor clrWarning(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
-    wxColor clrInfo(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
+    wxColor clrError(UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
+    wxColor clrWarning(UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
+    wxColor clrInfo(UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
 
     for (auto& iter: *m_pMsgs)
     {
@@ -138,7 +138,7 @@ void MsgFrame::AddWarningMsg(tt_string_view msg)
         wxTextAttr textAttr(fg, bg);
         textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
         textAttr.SetBackgroundColour(bg);
-        textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
+        textAttr.SetTextColour(UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
         m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("Warning: ");
 
@@ -157,7 +157,7 @@ void MsgFrame::Add_wxWarningMsg(tt_string_view msg)
         wxTextAttr textAttr(fg, bg);
         textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
         textAttr.SetBackgroundColour(bg);
-        textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
+        textAttr.SetTextColour(UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
         m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("wxWarning: ");
 
@@ -177,7 +177,7 @@ void MsgFrame::Add_wxInfoMsg(tt_string_view msg)
         textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
         textAttr.SetBackgroundColour(bg);
 
-        textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
+        textAttr.SetTextColour(UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
         m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("wxInfo: ");
 
@@ -196,7 +196,7 @@ void MsgFrame::AddErrorMsg(tt_string_view msg)
     wxTextAttr textAttr(fg, bg);
     textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
     textAttr.SetBackgroundColour(bg);
-    textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
+    textAttr.SetTextColour(UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
     m_textCtrl->SetDefaultStyle(textAttr);
     m_textCtrl->AppendText("Error: ");
 
@@ -214,7 +214,7 @@ void MsgFrame::Add_wxErrorMsg(tt_string_view msg)
     wxTextAttr textAttr(fg, bg);
     textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
     textAttr.SetBackgroundColour(bg);
-    textAttr.SetTextColour(UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
+    textAttr.SetTextColour(UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
     m_textCtrl->SetDefaultStyle(textAttr);
     m_textCtrl->AppendText("wxError: ");
 

@@ -193,13 +193,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     tt_string name(" ");
 
-    GenLang language = GEN_LANG_CPLUSPLUS;
-    if (m_panel_type == GEN_LANG_PYTHON)
-        language = GEN_LANG_PYTHON;
-    else if (m_panel_type == GEN_LANG_RUBY)
-        language = GEN_LANG_RUBY;
-
-    Code code(node, language);
+    Code code(node, m_panel_type);
 
     if (page == CPP_PANEL)
     {

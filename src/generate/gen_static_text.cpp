@@ -84,11 +84,10 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
     else
         code.CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.m_node->as_bool(prop_markup))
+    if (code.m_node->as_bool(prop_markup) && !code.is_perl())
     {
         code.EmptyString();
     }
-
     else
     {
         auto& label = code.m_node->as_string(prop_label);
@@ -111,9 +110,16 @@ bool StaticTextGenerator::SettingsCode(Code& code)
 {
     if (code.m_node->as_bool(prop_markup) && code.m_node->as_int(prop_wrap) <= 0)
     {
-        code.NodeName().Function("SetLabelMarkup(");
-        code.QuotedString(prop_label);
-        code.EndFunction();
+        if (code.is_perl())
+        {
+            code.Eol(eol_if_needed).Str("# wxPerl does not support SetLabelMarkup()");
+        }
+        else
+        {
+            code.NodeName().Function("SetLabelMarkup(");
+            code.QuotedString(prop_label);
+            code.EndFunction();
+        }
     }
 
     // Note that wrap MUST be called after the text is set, otherwise it will be ignored.

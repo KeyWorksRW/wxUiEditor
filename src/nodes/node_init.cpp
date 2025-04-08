@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize NodeCreator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -836,17 +836,18 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             {
                 opts.emplace_back();
                 opts[opts.size() - 1].name = "none";
-                opts[opts.size() - 1].help = "Derived classes do not have access to this item.";
+                opts[opts.size() - 1].help = "The item can only be accessed within the class.";
             }
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "protected:";
-            opts[opts.size() - 1].help = "Derived classes can access this item. In Python, item will have a self. prefix.";
+            opts[opts.size() - 1].help = "In C++, only derived classes can access this item.\nIn wxPython, item will have a "
+                                         "self. prefix.\nIn wxPerl, item will have a $self-> prefix.";
 
             opts.emplace_back();
             opts[opts.size() - 1].name = "public:";
-            opts[opts.size() - 1].help =
-                "In C++, item is added as a public: class member. In Python, item will have a self. prefix.";
+            opts[opts.size() - 1].help = "In C++, item is added as a public: class member.\nIn Python, item will have a "
+                                         "self. prefix.\nIn wxPerl, item will have a $self-> prefix.";
         }
 
         elem_prop = elem_prop.next_sibling("property");

@@ -80,7 +80,7 @@ using namespace GenEnum;
 
 enum
 {
-    IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
+    IDM_IMPORT_WINRES = START_TESTING_IDS,
 
     id_TestSwitch,
     id_CodeDiffDlg,
@@ -119,7 +119,7 @@ enum
 
 const char* txtEmptyProject = "Empty Project";
 
-MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_ImportHistory(9, wxID_FILE1 + 1000)
+MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_ImportHistory(9, START_IMPORT_FILE_IDS)
 {
     m_dpi_menu_size = FromDIP(wxSize(16, 16));
     m_dpi_toolbar_size = FromDIP(wxSize(16, 16));
@@ -252,7 +252,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
         m_ImportHistory.AddFilesToMenu();
         config->SetPath("/");
 
-        Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
+        Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, START_IMPORT_FILE_IDS, START_IMPORT_FILE_IDS + 9);
     }
 
 #if defined(_DEBUG)
@@ -824,7 +824,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
-    tt_string file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000)).utf8_string();
+    tt_string file = m_ImportHistory.GetHistoryFile(event.GetId() - (START_IMPORT_FILE_IDS)).utf8_string();
 
     if (!SaveWarning())
         return;

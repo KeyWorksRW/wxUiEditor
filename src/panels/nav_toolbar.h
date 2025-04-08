@@ -27,7 +27,7 @@ class NavToolbar : public wxToolBar
 public:
     enum
     {
-        id_NavCollExpand = wxID_HIGHEST + 1,
+        id_NavCollExpand = START_NAVTOOL_IDS,
         id_NavCollapse,
         id_NavExpand,
         id_NavMoveDown,

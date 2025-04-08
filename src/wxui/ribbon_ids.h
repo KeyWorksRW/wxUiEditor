@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ribbon panel ids
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,7 @@
 
 enum
 {
-    NewPopupWin = wxID_HIGHEST + 1,
+    NewPopupWin = START_RIBBON_IDS + 100,
     NewCheckbox,
     NewButton,
     NewSpin,

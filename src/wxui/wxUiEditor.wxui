@@ -595,6 +595,7 @@
         class_name="MainFrameBase"
         base_file="mainframe_base"
         generate_ids="0"
+        initial_enum_string="START_MAINFRAME_IDS"
         local_src_includes="mainframe.h;project_handler.h"
         derived_class_name="MainFrame"
         minimum_size="800,800"
@@ -2400,6 +2401,7 @@
         class_name="NavToolbar"
         style="wxTB_FLAT|wxTB_HORIZONTAL"
         base_file="..\panels\nav_toolbar"
+        initial_enum_string="START_NAVTOOL_IDS"
         local_src_includes="mainframe.h;project_handler.h"
         private_members="0"
         use_derived_class="0">
@@ -2473,6 +2475,7 @@
         size="-1,-1"
         base_file="ribbonpanel_base"
         generate_ids="0"
+        initial_enum_string="START_RIBBON_IDS"
         source_preamble="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
         derived_class_name="RibbonPanel">
         <node
@@ -3350,6 +3353,7 @@
         class_name="DocViewPanel"
         window_style="0"
         base_file="..\panels\doc_view.cpp"
+        initial_enum_string="START_DOCVIEW_IDS"
         header_preamble="class CustomEvent;@@class wxWebView;@@class MainFrame;"
         no_closing_brace="1"
         derived_class_name="DocView"

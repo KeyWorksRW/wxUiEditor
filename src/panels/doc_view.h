@@ -24,7 +24,7 @@ class DocViewPanel : public wxPanel
 public:
     enum
     {
-        ID_CPLUS = wxID_HIGHEST + 1,
+        ID_CPLUS = START_DOCVIEW_IDS,
         ID_PYTHON,
         ID_RUBY
     };

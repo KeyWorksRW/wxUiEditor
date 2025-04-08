@@ -118,6 +118,16 @@
 // out of the conditional block.
 #define GENERATE_NEW_LANG_CODE 0
 
+// To prevent accidentally overlapping event ids, all starting values for enumerated id values
+// should use one of these defines.
+
+#define START_RIBBON_IDS      wxID_HIGHEST + 1
+#define START_MAINFRAME_IDS   wxID_HIGHEST + 1000
+#define START_NAVTOOL_IDS     wxID_HIGHEST + 2000
+#define START_DOCVIEW_IDS     wxID_HIGHEST + 3000
+#define START_TESTING_IDS     wxID_HIGHEST + 4000
+#define START_IMPORT_FILE_IDS wxID_HIGHEST + 5000
+
 enum class MoveDirection
 {
     Up = 1,

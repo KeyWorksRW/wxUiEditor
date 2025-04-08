@@ -342,7 +342,7 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 if (!iter->declName().starts_with("wx"))
                     continue;
                 else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
-                         iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                         iter->declName().starts_with("wxRuby"))
                     continue;
                 wxRuby_keywords << ' ' << iter->declName().subview(2);
             }
@@ -363,7 +363,7 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 stc->StyleSetBackground(idx, bg);
             }
         }
-        stc->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_RubyColour());
+        stc->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_RubyColour());
         stc->StyleSetForeground(wxSTC_RB_STRING,
                                 UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
         stc->StyleSetForeground(wxSTC_RB_STRING_Q,
@@ -381,7 +381,8 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         stc->StyleSetForeground(wxSTC_RB_NUMBER,
                                 UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_RubyNumberColour());
         stc->StyleSetForeground(wxSTC_RB_SYMBOL, clr_functions);
-        stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_variables);
+        // stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_variables);
+        stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_keywords);
         stc->StyleSetForeground(wxSTC_RB_CLASS_VAR, clr_keywords);
     }
     else if (language == GEN_LANG_RUST)

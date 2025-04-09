@@ -75,7 +75,7 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
 {
     for (size_t lang = 1; lang <= GEN_LANG_XRC; lang <<= 1)
     {
-        s_lang_category_prefix[static_cast<GenLang>(lang)] = ConvertFromGenLang(static_cast<GenLang>(lang));
+        s_lang_category_prefix[static_cast<GenLang>(lang)] = GenLangToString(static_cast<GenLang>(lang));
     }
 
     for (auto& iter: list_wx_ids)
@@ -216,7 +216,7 @@ void PropGridPanel::Create()
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
 
-            auto lang_prefix = ConvertFromGenLang(Project.getCodePreference());
+            auto lang_prefix = GenLangToString(Project.getCodePreference());
 
             if (node->isForm() || node->isGen(gen_Project))
             {

@@ -308,5 +308,5 @@ std::pair<bool, tt_string> PopupWinBaseGenerator::isLanguageVersionSupported(Gen
     // in which case call Project.getLangVersion()
 
     return { false, tt_string() << "wxPopupWindow and wxPopupTransientWindow are not supported by "
-                                << ConvertFromGenLang(language) };
+                                << GenLangToString(language) };
 }

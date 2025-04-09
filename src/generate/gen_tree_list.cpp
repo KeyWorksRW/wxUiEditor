@@ -72,7 +72,7 @@ std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang l
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
-                msg << ConvertFromGenLang(language) << " currently does not support wxTreeListCtrl";
+                msg << GenLangToString(language) << " currently does not support wxTreeListCtrl";
                 return msg;
             }
         default:
@@ -85,7 +85,7 @@ std::pair<bool, tt_string> TreeListCtrlGenerator::isLanguageVersionSupported(Gen
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxTreeListCtrl is not supported by " << ConvertFromGenLang(language) };
+    return { false, tt_string() << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
 }
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////

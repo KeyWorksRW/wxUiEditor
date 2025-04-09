@@ -1691,7 +1691,7 @@ void OnGenerateSingleLanguage(GenLang language)
         }
     }
 
-    wxMessageBox(msg, tt_string() << ConvertFromGenLang(language) << " Code Generation", wxOK | wxICON_INFORMATION);
+    wxMessageBox(msg, tt_string() << GenLangToString(language) << " Code Generation", wxOK | wxICON_INFORMATION);
 }
 
 void OnGenerateLanguage(GenLang language)
@@ -1722,5 +1722,5 @@ void OnGenerateLanguage(GenLang language)
         }
     }
 
-    wxMessageBox(msg, tt_string() << ConvertFromGenLang(language) << " Code Generation", wxOK | wxICON_INFORMATION);
+    wxMessageBox(msg, tt_string() << GenLangToString(language) << " Code Generation", wxOK | wxICON_INFORMATION);
 }

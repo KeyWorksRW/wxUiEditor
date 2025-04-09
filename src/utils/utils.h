@@ -81,7 +81,7 @@ tt_string ConvertToUpperSnakeCase(tt_string_view str);
 bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language = GEN_LANG_NONE);
 
 // Convert the GEN_LANG enum to a string
-std::string_view ConvertFromGenLang(GenLang language);
+std::string_view GenLangToString(GenLang language);
 
 GenLang ConvertToGenLang(tt_string_view language);
 

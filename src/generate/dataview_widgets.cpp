@@ -169,7 +169,7 @@ std::pair<bool, tt_string> DataViewCtrl::isLanguageVersionSupported(GenLang lang
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewCtrl is not supported by " << ConvertFromGenLang(language) };
+    return { false, tt_string() << "wxDataViewCtrl is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
@@ -308,7 +308,7 @@ std::pair<bool, tt_string> DataViewListCtrl::isLanguageVersionSupported(GenLang 
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewListCtrl is not supported by " << ConvertFromGenLang(language) };
+    return { false, tt_string() << "wxDataViewListCtrl is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang language)
@@ -362,7 +362,7 @@ std::pair<bool, tt_string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang 
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewTreeCtrl is not supported by " << ConvertFromGenLang(language) };
+    return { false, tt_string() << "wxDataViewTreeCtrl is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang language)
@@ -448,7 +448,7 @@ std::pair<bool, tt_string> DataViewColumn::isLanguageVersionSupported(GenLang la
         return { true, {} };
     };
 
-    return { false, tt_string() << "DataViewColumn is not supported by " << ConvertFromGenLang(language) };
+    return { false, tt_string() << "DataViewColumn is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewColumn::GetWarning(Node* node, GenLang language)
@@ -497,7 +497,7 @@ std::pair<bool, tt_string> DataViewListColumn::isLanguageVersionSupported(GenLan
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "DataViewListColumn is not supported by " << ConvertFromGenLang(language) };
+    return { false, tt_string() << "DataViewListColumn is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewListColumn::GetWarning(Node* node, GenLang language)

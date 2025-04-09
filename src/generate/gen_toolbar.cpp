@@ -544,7 +544,7 @@ bool ToolBarGenerator::GetImports(Node* node, std::set<std::string>& set_imports
             constants += " wxTB_HORZ_TEXT";
         set_constants();
 
-        set_imports.emplace("use Wx qw(wxITEM_NORMAL wxITEM_CHECK wxITEM_DROPDOWN wxITEM_RADIO);");
+        set_imports.emplace("use Wx qw(wxITEM_NORMAL wxITEM_CHECK wxITEM_RADIO wxITEM_DROPDOWN);");
 
         return true;
     }

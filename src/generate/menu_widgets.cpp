@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +182,38 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
     }
 
     return sub_menu;
+}
+
+bool MenuBarBase::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        // REVIEW: [Randalphwa - 01-09-2025] Currently, wxEVT_UPDATE_UI cannot be imported from the
+        // Wx::Event module.
+        set_imports.emplace("use Wx::Event qw(EVT_MENU);");
+
+        tt_string constants;
+        for (auto& menu: node->getChildNodePtrs())
+        {
+            if (menu->hasValue(prop_stock_id) && menu->as_string(prop_stock_id) != "none")
+            {
+                if (constants.size())
+                {
+                    constants += ' ';
+                }
+                constants << menu->as_string(prop_stock_id);
+            }
+        }
+        if (constants.size())
+        {
+            constants.insert(0, "use Wx qw(");
+            constants += ");";
+            set_imports.emplace(constants);
+        }
+
+        return true;
+    }
+    return false;
 }
 
 //////////////////////////////////////////  MenuBarGenerator  //////////////////////////////////////////

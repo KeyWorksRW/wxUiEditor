@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTextCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -106,7 +106,14 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.hasValue(prop_hint))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        if (code.is_perl())
+        {
+            code.Eol(eol_if_needed).Str("# wxPerl does not support SetHint()");
+        }
+        else
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        }
     }
 
     if (code.IsTrue(prop_focus))
@@ -129,6 +136,12 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                 code << "#if !defined(__WXGTK__)";
                 code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
                 code.GetCode() += "#endif";
+            }
+            else if (code.is_perl())
+            {
+                code.Str("if (Wx::wxVERSION_STRING() !~ /GTK/)").OpenBrace();
+                code.Eol(eol_if_needed).NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.CloseBrace();
             }
             else
             {
@@ -183,9 +196,13 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                 code.EndFunction();
             }
         }
+        else if (code.is_perl())
+        {
+            code.Eol(eol_if_needed).Str("# wxPerl does not support wxTextProofOptions").Eol();
+        }
         else if (code.is_python())
         {
-            code.Eol(eol_if_needed).Add("# wxPython 4.2.0 does not support wxTextProofOptions").Eol();
+            code.Eol(eol_if_needed).Str("# wxPython 4.2.0 does not support wxTextProofOptions").Eol();
         }
         else if (code.is_ruby())
         {
@@ -297,4 +314,31 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxActivityIndicatorXmlHandler");
+}
+
+bool TextCtrlGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        if (auto& styles = node->as_string(prop_style); styles.contains("wxTE_"))
+        {
+            tt_string constants;
+            tt_string_vector vector(styles, "|", tt::TRIM::both);
+            for (auto& iter: vector)
+            {
+                if (iter.is_sameprefix("wxTE_"))
+                {
+                    if (constants.size())
+                        constants << ' ';
+                    constants << iter;
+                }
+            }
+            constants.insert(0, "use Wx qw(");
+            constants << ");";
+            set_imports.emplace(constants);
+            return true;
+        }
+    }
+
+    return false;
 }

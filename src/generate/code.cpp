@@ -281,15 +281,40 @@ static const view_map s_short_rust_map
 
 constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
 
-    "wxNullBitmap",
+    "wxALL",
+    "wxLEFT",
+    "wxRIGHT",
+    "wxTOP",
+    "wxBOTTOM",
+
+    "wxEXPAND",
+    "wxSHAPED",
+    "wxFIXED_MINSIZE",
+    "wxRESERVE_SPACE_EVEN_IF_HIDDEN",
+
+    "wxALIGN_CENTER_HORIZONTAL",
+    "wxALIGN_CENTER_VERTICAL",
+    "wxALIGN_LEFT",
+    "wxALIGN_RIGHT",
+    "wxALIGN_TOP",
+    "wxALIGN_BOTTOM",
+    "wxALIGN_CENTER",
+
     "wxITEM_CHECK",
     "wxITEM_DROPDOWN",
     "wxITEM_NORMAL",
     "wxITEM_RADIO",
+
+    "wxNullBitmap",
     "wxID_ANY",
+
     "wxVERTICAL",
     "wxHORIZONTAL",
     "wxBOTH",
+
+    "wxWINDOW_VARIANT_LARGE",
+    "wxWINDOW_VARIANT_SMALL",
+    "wxWINDOW_VARIANT_MINI",
 
 });
 
@@ -535,6 +560,11 @@ Code& Code::OpenBrace(bool all_languages)
         if (is_cpp())
         {
             Eol(eol_if_needed);
+        }
+        else if (is_perl())
+        {
+            if (size() && back() != ' ')
+                *this += ' ';
         }
         *this += "{";
         Indent();
@@ -894,7 +924,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
 {
     if (!add_operator)
     {
-        if (text.is_sameprefix("wx") && (is_python() || is_ruby()))
+        if (text.is_sameprefix("wx") && (is_python() || is_ruby() || is_perl()))
         {
             if (is_ruby())
                 *this << m_language_wxPrefix << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
@@ -930,7 +960,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
                 *this += ConvertToSnakeCase(text);
             }
         }
-        else if (is_python() || is_ruby())
+        else if (is_python())
         {
             *this << '.';
             if (text.is_sameprefix("wx"))
@@ -939,14 +969,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
             }
             else
             {
-                if (is_ruby())
-                {
-                    *this += ConvertToSnakeCase(text);
-                }
-                else
-                {
-                    *this += text;
-                }
+                *this += text;
             }
         }
 #if GENERATE_NEW_LANG_CODE
@@ -1093,6 +1116,18 @@ Code& Code::Object(tt_string_view class_name)
     if (is_cpp())
     {
         *this += class_name;
+    }
+    else if (is_perl())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << "Wx::" << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+        *this << "->new";
     }
     else if (is_python())
     {
@@ -1656,6 +1691,34 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
 
         return *this;
     }
+    else if (is_perl())
+    {
+        if (size == wxDefaultSize)
+        {
+            CheckLineLength((sizeof("wxDefaultSize") - 1));
+            *this += "wxDefaultSize";
+            return *this;
+        }
+
+        if (size_scaling)
+        {
+            CheckLineLength(sizeof(", $self->FromDIP->new(Wx::Size->new(999, 999))"));
+            FormFunction("FromDIP->new(");
+            Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << "))";
+        }
+        else
+        {
+            CheckLineLength(sizeof("Wx::Size->new(999, 999)"));
+            Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << ')';
+        }
+
+        if (m_auto_break && this->size() > m_break_at)
+        {
+            InsertLineBreak(cur_pos);
+        }
+
+        return *this;
+    }
 
     // The following code is for non-Ruby languages
 
@@ -2166,6 +2229,52 @@ Code& Code::SizerFlagsFunction(tt_string_view function_name)
 
 Code& Code::GenSizerFlags()
 {
+    if (is_perl())
+    {
+        // Perl doesn't have a wxSizerFlags() function, so we have to use the old wxSizer::Add() function.
+        Add(m_node->as_string(prop_proportion)).Comma();
+
+        tt_string prop_combined_flags;
+        auto lambda = [&](GenEnum::PropName prop_name) -> void
+        {
+            if (auto& prop = m_node->as_string(prop_name); prop.size())
+            {
+                tt_string_vector vector(prop, "|", tt::TRIM::both);
+                for (auto& iter: vector)
+                {
+                    if (prop_combined_flags.size())
+                        prop_combined_flags << '|';
+                    prop_combined_flags << iter;
+                }
+            }
+        };
+        lambda(prop_alignment);
+        lambda(prop_flags);
+
+        if (prop_combined_flags.size())
+        {
+            Add(prop_combined_flags);
+        }
+        else
+        {
+            Add("0");
+        }
+        Comma();
+
+        prop_combined_flags.clear();
+        lambda(prop_borders);
+
+        if (prop_combined_flags.size())
+        {
+            Add(prop_combined_flags);
+        }
+        else
+        {
+            Add("0");
+        }
+
+        return *this;
+    }
     // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
     // shut off auto_break and then restore it when we are done, after which we can check whether
     // or note the entire wxSizerFlags() statement needs to be broken.
@@ -2269,14 +2378,14 @@ Code& Code::GenSizerFlags()
         if (prop.contains("wxALL"))
         {
             if (border_size == 5)
-                SizerFlagsFunction("Border").Add("wxALL)");
+                SizerFlagsFunction("Border").Add("wxALL").Str(")");
             else if (border_size == 10)
-                SizerFlagsFunction("DoubleBorder").Add("wxALL)");
+                SizerFlagsFunction("DoubleBorder").Add("wxALL").Str(")");
             else if (border_size == 15)
-                SizerFlagsFunction("TripleBorder").Add("wxALL)");
+                SizerFlagsFunction("TripleBorder").Add("wxALL").Str(")");
             else
             {
-                SizerFlagsFunction("Border").Add("wxALL, ");
+                SizerFlagsFunction("Border").Add("wxALL").Comma();
                 BorderSize() += ')';
             }
         }
@@ -2856,7 +2965,14 @@ void Code::GenFontColourSettings()
             {
                 if (bg_clr.starts_with('#'))
                 {
-                    Object("wxColour").QuotedString(bg_clr) += ')';
+                    if (is_perl())
+                    {
+                        Class("wxColour->new(").QuotedString(bg_clr) += ")";
+                    }
+                    else
+                    {
+                        Object("wxColour").QuotedString(bg_clr) += ')';
+                    }
                 }
                 else
                 {
@@ -2941,9 +3057,20 @@ bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
 {
     if (enable_dpi_scaling == code::no_dpi_scaling ||
         tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either) == true)
+    {
         return false;
+    }
     else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
+    {
         return false;
+    }
+#if !PERL_FROM_DIP
+    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does not
+    // have a FromDIP function. So we need to disable DPI scaling for Perl.
+    else if (m_language == GEN_LANG_PERL)
+        return false;
+#endif
+
     if (enable_dpi_scaling == code::conditional_scaling && m_node->isForm())
         return false;
 
@@ -2977,7 +3104,7 @@ Code& Code::AddComment(std::string_view comment, bool force)
 
 Code& Code::BeginConditional()
 {
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         *this << "if (";
     }

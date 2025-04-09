@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +24,8 @@ public:
 protected:
     wxMenu* MakeSubMenu(Node* node);
     void OnLeftMenuClick(wxMouseEvent& event);
+
+    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 
 private:
     Node* m_node_menubar;

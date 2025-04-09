@@ -67,8 +67,8 @@ constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::str
 
     { prop_bitmap, "wxNullBitmap" },
     { prop_id, "wxID_ANY" },
-    { prop_pos, "wxDefaultPosition" },
-    { prop_size, "wxDefaultSize" },
+    { prop_pos, "wxDefaultPosition wxDefaultSize" },
+    { prop_size, "wxDefaultPosition wxDefaultSize" },
     { prop_orientation, "wxBOTH wxHORIZONTAL wxVERTICAL" },
 
 });
@@ -165,6 +165,53 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
+        if (node->hasValue(prop_variant) && node->as_string(prop_variant) != "normal")
+        {
+            if (node->as_string(prop_variant) == "large")
+                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_LARGE);");
+            else if (node->as_string(prop_variant) == "small")
+                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_SMALL);");
+            else if (node->as_string(prop_variant) == "mini")
+                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_MINI);");
+        }
+
+        if (node->isSizer())
+        {
+            if (node->as_string(prop_borders).contains("wxALL"))
+            {
+                use_constants.emplace("use Wx qw(wxALL);");
+            }
+
+            if (node->as_string(prop_borders).contains("wxLEFT") || node->as_string(prop_borders).contains("wxRIGHT") ||
+                node->as_string(prop_borders).contains("wxTOP") || node->as_string(prop_borders).contains("wxBOTTOM"))
+            {
+                use_constants.emplace("use Wx qw(wxLEFT wxRIGHT wxTOP wxBOTTOM);");
+            }
+
+            if (node->as_string(prop_flags).contains("wxEXPAND"))
+            {
+                use_constants.emplace("use Wx qw(wxEXPAND);");
+            }
+            if (node->as_string(prop_flags).contains("wxSHAPED"))
+            {
+                use_constants.emplace("use Wx qw(wxSHAPED);");
+            }
+            if (node->as_string(prop_flags).contains("wxFIXED_MINSIZE"))
+            {
+                use_constants.emplace("use Wx qw(wxFIXED_MINSIZE);");
+            }
+            if (node->as_string(prop_flags).contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
+            {
+                use_constants.emplace("use Wx qw(wxRESERVE_SPACE_EVEN_IF_HIDDEN);");
+            }
+
+            if (node->as_string(prop_alignment).contains("wxALIGN"))
+            {
+                use_constants.emplace("use Wx qw(wxALIGN_CENTER_HORIZONTAL wxALIGN_CENTER_VERTICAL);");
+                use_constants.emplace("use Wx qw(wxALIGN_LEFT wxALIGN_RIGHT wxALIGN_TOP wxALIGN_BOTTOM wxALIGN_CENTER);");
+            }
+        }
+
         if (auto* gen = node->getGenerator(); gen)
         {
             std::set<std::string> imports;

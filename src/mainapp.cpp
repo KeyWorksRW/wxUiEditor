@@ -1,10 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <chrono>
 #include <iostream>
 
 #include <wx/arrstr.h>   // wxArrayString class
@@ -371,10 +372,10 @@ int App::OnRun()
 
             tt_string_vector log;
             std::vector<tt_string> class_list;
+            auto start_time = std::chrono::steady_clock::now();
 
             auto log_results = [&](std::string_view language_type = {})
             {
-                results.msgs.emplace_back(language_type);
                 if (results.updated_files.size() || class_list.size())
                 {
                     if (test_only)
@@ -397,11 +398,13 @@ int App::OnRun()
                 else
                 {
                     auto& log_msg = log.emplace_back();
-                    log_msg << "All " << results.file_count << " generated files are current";
+                    log_msg << "All " << results.file_count << " generated " << language_type << " files are current";
                 }
 
                 for (auto& iter: results.msgs)
                 {
+                    if (iter.contains("Elapsed time"))
+                        continue;
                     auto& log_msg = log.emplace_back();
                     log_msg << iter;
                 }
@@ -416,74 +419,59 @@ int App::OnRun()
             if (generate_type & GEN_LANG_CPLUSPLUS)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateCppFiles(results, test_only ? &class_list : nullptr);
-                log_results("Generating C++ files");
+                log_results(GenLangToString(GEN_LANG_CPLUSPLUS));
             }
             if (generate_type & GEN_LANG_PERL)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PERL);
-                log_results("Generating Perl files");
+                log_results(GenLangToString(GEN_LANG_PERL));
             }
             if (generate_type & GEN_LANG_PYTHON)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PYTHON);
-                log_results("Generating Python files");
+                log_results(GenLangToString(GEN_LANG_PYTHON));
             }
             if (generate_type & GEN_LANG_RUBY)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUBY);
-                log_results("Generating Ruby files");
+                log_results(GenLangToString(GEN_LANG_RUBY));
             }
             if (generate_type & GEN_LANG_XRC)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
-                log_results("Generating XRC files");
+                log_results(GenLangToString(GEN_LANG_XRC));
             }
             if (generate_type & GEN_LANG_RUST)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUST);
-                log_results("Generating Rust files");
+                log_results(GenLangToString(GEN_LANG_RUST));
             }
 #if GENERATE_NEW_LANG_CODE
             if (generate_type & GEN_LANG_HASKELL)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_HASKELL);
-                log_results("Generating Haskell files");
+                log_results(GenLangToString(GEN_LANG_HASKELL));
             }
             if (generate_type & GEN_LANG_LUA)
             {
                 results.clear();
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
                 GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_LUA);
-                log_results("Generating Lua files");
+                log_results(GenLangToString(GEN_LANG_LUA));
             }
 #endif
+            auto& log_msg = log.emplace_back();
+            auto end_time = std::chrono::steady_clock::now();
+            size_t total_elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 
-            if (log.size())
-            {
-                log.WriteFile(log_file);
-            }
+            log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
+            log.WriteFile(log_file);
 
             return 0;
         }

@@ -510,6 +510,10 @@ public:
     // to conditional_scaling and the node is a form.
     bool is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling = code::allow_scaling) const;
 
+    // For Ruby, this will place any member variables declared as public in a attr_accessor
+    // list.
+    void AddPublicRubyMembers();
+
 protected:
     void InsertLineBreak(size_t cur_pos);
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDialog generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -115,8 +115,9 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        code.Add("class ").NodeName().Add(" < Wx::Dialog");
-        code.Eol().Tab().Add("def initialize(parent");
+        code.Add("class ").NodeName().Add(" < Wx::Dialog").Eol();
+        code.AddPublicRubyMembers();
+        code.Eol(eol_if_needed).Tab().Add("def initialize(parent");
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id = ");

@@ -78,8 +78,9 @@ bool FrameFormGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        code.Add("class ").NodeName().Add(" < Wx::Frame");
-        code.Eol().Tab().Add("def initialize(parent");
+        code.Add("class ").NodeName().Add(" < Wx::Frame").Eol();
+        code.AddPublicRubyMembers();
+        code.Eol(eol_if_needed).Tab().Add("def initialize(parent");
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id = ");

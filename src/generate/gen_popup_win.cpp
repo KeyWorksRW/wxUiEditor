@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxPopupWindow/wxPopupTransientWindow generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,8 +36,9 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        code.Add("class ").NodeName().Add(" < Wx::PopupWindow");
-        code.Eol().Tab().Add("def initialize(parent, flags = ");
+        code.Add("class ").NodeName().Add(" < Wx::PopupWindow").Eol();
+        code.AddPublicRubyMembers();
+        code.Eol(eol_if_needed).Tab().Add("def initialize(parent, flags = ");
         // Indent any wrapped lines
         code.Indent(3);
         code.Add(prop_border);
@@ -76,8 +77,9 @@ bool PopupTransientWinGenerator::ConstructionCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        code.Add("class ").NodeName().Add(" < Wx::PopupTransientWindow");
-        code.Eol().Tab().Add("def initialize(parent, flags = ");
+        code.Add("class ").NodeName().Add(" < Wx::PopupTransientWindow").Eol();
+        code.AddPublicRubyMembers();
+        code.Eol(eol_if_needed).Tab().Add("def initialize(parent, flags = ");
         // Indent any wrapped lines
         code.Indent(3);
         code.Add(prop_border);

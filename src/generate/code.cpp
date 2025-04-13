@@ -646,11 +646,11 @@ Code& Code::AddAuto()
         }
         else if (is_python())
         {
-            *this += "self.";
+            return *this;  // no modifier for local variables in Python
         }
         else if (is_ruby())
         {
-            *this += "@";
+            return *this;  // no modifier for local variables in Ruby
         }
         else if (is_rust())
         {
@@ -1290,9 +1290,13 @@ Code& Code::NodeName(Node* node)
     if (!node)
         node = m_node;
     auto node_name = node->getNodeName(get_language());
-    if (is_python() && !node->isForm() && !node->isLocal() && !node_name.starts_with("self."))
+    if (is_python())
     {
-        *this += "self.";
+        if (!node->isForm() && node->as_string(prop_class_access) != "none" &&
+            node->as_string(prop_class_access) != "public")
+        {
+            *this += "self.";
+        }
     }
     else if (is_ruby() && !node->isForm() && !node->isLocal() && node_name[0] != '@')
     {
@@ -3237,4 +3241,41 @@ Code& Code::False()
     }
 
     return *this;
+}
+
+void Code::AddPublicRubyMembers()
+{
+    ASSERT(is_ruby());
+    std::set<tt_string> public_members;
+    auto FindPublicMembers = [&](Node* node, auto&& FindPublicMembers) -> void
+    {
+        if (node->hasProp(prop_var_name) && node->as_string(prop_class_access) == "public:")
+        {
+            public_members.insert(tt_string(":") << node->getNodeName(get_language()));
+        }
+        if (node->getChildCount())
+        {
+            for (const auto& child: node->getChildNodePtrs())
+            {
+                FindPublicMembers(child.get(), FindPublicMembers);
+            }
+        }
+    };
+
+    FindPublicMembers(m_node, FindPublicMembers);
+
+    if (public_members.size())
+    {
+        Indent(1);
+        Tab() << "attr_accessor ";
+        for (auto iter = public_members.begin(); iter != public_members.end(); ++iter)
+        {
+            if (iter != public_members.begin())
+                *this << ", ";
+            *this << *iter;
+            CheckLineLength();
+        }
+        ResetIndent();
+        Eol();
+    }
 }

@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPthon code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
 - derived_class property in the wxWindows category has been changed to subclass to better reflect that the generated class derives from your specified class. The derived_class_name in the various language categories remain unchanged to indicate you derive your class from the generated class.
 - wxRuby3 generated code now supports persistence property (`Wx.persistent_register_and_restore`)
+- wxRuby3 generated code includes a `attr_accessor` list of all class members that specify `public:` access
 - The dialog for editing Custom Control parameters now has a drop-down list of all the possible macros you can use
 
 ### Fixed

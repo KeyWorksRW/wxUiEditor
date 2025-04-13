@@ -143,10 +143,16 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                 code.Eol(eol_if_needed).NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
                 code.CloseBrace();
             }
-            else
+            else if (code.is_python())
             {
                 code.Add("if wx.Platform != \'__WXGTK__\':");
                 code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+            }
+            else if (code.is_ruby())
+            {
+                code.Add("if Wx::PLATFORM == 'WXGTK'");
+                code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.Str("end");
             }
         }
         else

@@ -534,7 +534,6 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine("\tend", indent::none);
         m_source->writeLine("end", indent::none);
-
     }
     m_header->ResetIndent();
     m_header->writeLine("end", indent::none);

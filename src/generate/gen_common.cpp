@@ -278,14 +278,6 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
     if (code.size())
         code << '\n';
 
-    bool is_old_widgets = (Project.is_wxWidgets31());
-    if (is_old_widgets)
-    {
-        if (code.size() && !(code.back() == '\n'))
-            code << '\n';
-        code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-    }
-
     if (has_additional_bitmaps)
     {
         if (code.size() && !(code.back() == '\n'))
@@ -344,48 +336,6 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
     if (has_additional_bitmaps)
     {
         code << "\n}";
-    }
-
-    /////////// wxWidgets 3.1 code ///////////
-
-    if (is_old_widgets)
-    {
-        code << "\n#else\n";
-        code << node->getNodeName() << "->SetBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ");";
-
-        if (node->hasValue(prop_disabled_bmp))
-        {
-            if (code.size())
-                code << '\n';
-            code << node->getNodeName() << "->SetBitmapDisabled(" << GenerateBitmapCode(node->as_string(prop_disabled_bmp))
-                 << ");";
-        }
-
-        if (node->hasValue(prop_pressed_bmp))
-        {
-            if (code.size())
-                code << '\n';
-            code << node->getNodeName() << "->SetBitmapPressed(" << GenerateBitmapCode(node->as_string(prop_pressed_bmp))
-                 << ");";
-        }
-
-        if (node->hasValue(prop_focus_bmp))
-        {
-            if (code.size())
-                code << '\n';
-            code << node->getNodeName() << "->SetBitmapFocus(" << GenerateBitmapCode(node->as_string(prop_focus_bmp))
-                 << ");";
-        }
-
-        if (node->hasValue(prop_current))
-        {
-            if (code.size())
-                code << '\n';
-            code << node->getNodeName() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->as_string(prop_current))
-                 << ");";
-        }
-
-        code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
     }
 
     return is_vector_generated;
@@ -619,21 +569,8 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                     name = "wxue_img::" + embed->imgs[0].array_name;
                 }
 
-                if (Project.is_wxWidgets31())
-                {
-                    code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                    code << "wxBitmapBundle::FromBitmap(wxueImage(";
-                    code << name << ", sizeof(" << name << ")))";
-                    code << "\n#else\n\t";
-                    code << "wxueImage(";
-                    code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
-                    code << "\n#endif\n";
-                }
-                else
-                {
-                    code << "wxBitmapBundle::FromBitmap(wxueImage(";
-                    code << name << ", sizeof(" << name << ")))";
-                }
+                code << "wxBitmapBundle::FromBitmap(wxueImage(";
+                code << name << ", sizeof(" << name << ")))";
             }
             else if (bundle->lst_filenames.size() == 2)
             {
@@ -650,22 +587,6 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                     second_function = ProjectImages.GetBundleFuncName(embed);
                     second_name = "wxue_img::" + embed->imgs[0].array_name;
                 }
-
-                if (Project.is_wxWidgets31())
-                {
-                    code << "\n#if !wxCHECK_VERSION(3, 1, 6)\n\t";
-                    if (first_function.size())
-                    {
-                        code << first_function;
-                    }
-                    else
-                    {
-                        code << "wxueImage(";
-                        code << first_name << ", sizeof(" << first_name << "))";  // one less closing parenthesis
-                    }
-                    code << "\n#else\n";
-                }
-
                 code << "wxBitmapBundle::FromBitmaps(\n\t\t";
                 if (first_function.size())
                 {
@@ -688,37 +609,10 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                     code << second_name << ", sizeof(" << second_name << "))";
                 }
                 code << ")";  // Close FromBitmaps()
-
-                if (Project.is_wxWidgets31())
-                {
-                    code << "\n#endif\n";
-                }
             }
             else if (bundle->lst_filenames.size() > 2)
             {
                 tt_string name, function;
-                if (Project.is_wxWidgets31())
-                {
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                    {
-                        function = ProjectImages.GetBundleFuncName(embed);
-                        name = "wxue_img::" + embed->imgs[0].array_name;
-                    }
-
-                    if (function.size())
-                    {
-                        code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                        code << function;
-                        code << "\n#else\n";
-                        ASSERT_MSG(name.size(), "Image is embedded, but has no array name!");
-                        code << "wxueImage(";
-                        code << name << ", sizeof(" << name << "))";  // one less closing parenthesis
-                        code << "\n#endif\n";
-                        return false;
-                    }
-
-                    code << "\n#if wxCHECK_VERSION(3, 1, 6)\n";
-                }
 
                 code << "{\n\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
@@ -1156,11 +1050,6 @@ tt_string GenerateIconCode(const tt_string& description)
         return code;
     }
 
-    if (Project.is_wxWidgets31() && !parts[IndexType].is_sameas("SVG"))
-    {
-        code << "#if wxCHECK_VERSION(3, 1, 6)\n";
-    }
-
     if (parts[IndexType].contains("Art"))
     {
         tt_string art_id(parts[IndexArtID]);
@@ -1254,25 +1143,6 @@ tt_string GenerateIconCode(const tt_string& description)
         }
     }
 
-    if (Project.is_wxWidgets31())
-    {
-        code << "#else\n";
-        auto image_code = GenerateBitmapCode(description);
-        if (!image_code.contains(".Scale") && image_code.starts_with("wxImage("))
-        {
-            code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");\n";
-        }
-        else
-        {
-            code << "{\n";
-            code << "\twxIcon icon;\n";
-            code << "\ticon.CopyFromBitmap(" << GenerateBitmapCode(description) << ");\n";
-            code << "\tSetIcon(wxIcon(icon));\n";
-            code << "}\n";
-        }
-        code << "#endif\n";
-    }
-
     return code;
 }
 
@@ -1327,22 +1197,7 @@ void GenToolCode(Code& code)
         }
         else
         {
-            if (code.is_cpp() && Project.is_wxWidgets31())
-            {
-                code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-            }
-            else
-            {
-                GenerateBundleParameter(code, parts);
-
-                if (code.is_cpp() && Project.is_wxWidgets31())
-                {
-                    code.Eol() += "#else\n\t";
-                    code << "wxBitmap(" << GenerateBitmapCode(node->as_string(prop_bitmap)) << ")";
-                    code.Eol() += "#endif";
-                    code.Eol();
-                }
-            }
+            GenerateBundleParameter(code, parts);
         }
     }
 
@@ -1446,11 +1301,6 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
 
     //////////////// C++ code starts here ////////////////
-    if (Project.is_wxWidgets31())
-    {
-        code.Add("#if wxCHECK_VERSION(3, 1, 6)");
-    }
-
     bool use_lambda = (node->hasValue(prop_var_name) &&
                        (node->isGen(gen_tool_dropdown) ||
                         (node->isGen(gen_auitool) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));

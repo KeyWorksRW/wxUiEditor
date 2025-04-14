@@ -135,18 +135,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
             parent_name += "()";
         code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
         code.Comma();
-        if (Project.is_wxWidgets31())
-        {
-            code.Eol().Str("#if wxCHECK_VERSION(3, 1, 1)").Eol().Tab();
-            code.as_string(prop_radiobtn_var_name) << "),";
-            code.Eol().Str("#else").Eol().Tab().Str("wxEmptyString),");
-            code.Eol().Str("#endif").Eol();
-            code.as_string(prop_orientation).EndFunction();
-        }
-        else
-        {
-            code.as_string(prop_radiobtn_var_name).Str("), ").as_string(prop_orientation).EndFunction();
-        }
+        code.as_string(prop_radiobtn_var_name).Str("), ").as_string(prop_orientation).EndFunction();
     }
     else if (code.is_ruby())
     {

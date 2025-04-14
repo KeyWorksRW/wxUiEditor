@@ -67,8 +67,7 @@
             help="Hides all of the sizer's children.">0</property>
     </gen>
 
-    <gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer"
-        help="Available since wxWidgets 3.1.1">
+    <gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer">
         <inherits class="sizer_dimension"/>
         <inherits class="sizer_child"/>
         <inherits class="Boolean Validator"/>

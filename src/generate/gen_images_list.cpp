@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Images List Embedded images generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -168,8 +168,6 @@ void BaseCodeGenerator::GenerateImagesForm()
         return;
     }
 
-    bool is_old_widgets = (Project.is_wxWidgets31());
-
     if (m_panel_type != HDR_PANEL)
     {
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
@@ -190,22 +188,11 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->writeLine(iter, indent::none);
             }
 
-            if (is_old_widgets)
-            {
-                m_source->writeLine();
-                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-            }
-
             function.clear();
             function.ReadString(txt_get_bundle_svg_function);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
-            }
-
-            if (is_old_widgets)
-            {
-                m_source->writeLine("#endif // wxCHECK_VERSION(3, 1, 6)", indent::none);
             }
         }
 
@@ -241,12 +228,6 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
 
         m_source->writeLine();
-
-        if (is_old_widgets)
-        {
-            m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-            m_source->SetLastLineBlank();
-        }
 
         for (const auto& child: m_form_node->getChildNodePtrs())
         {
@@ -319,11 +300,6 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
         }
 
-        if (is_old_widgets)
-        {
-            m_source->writeLine("#endif  // wxCHECK_VERSION(3, 1, 6)", indent::none);
-        }
-
         for (auto embed: m_embedded_images)
         {
             // Unlike the wxBitmapBundle functions above, the wxImage functions work on a much wider variety of
@@ -352,28 +328,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != CPP_PANEL)
     {
-        if (m_NeedSVGFunction && is_old_widgets)
-        {
-            m_source->writeLine();
-            m_header->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
-            m_header->Indent();
-            m_header->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"");
-            m_header->Unindent();
-            m_header->writeLine("#endif", indent::none);
-        }
-        else if (!m_NeedSVGFunction && is_old_widgets)
-        {
-            tt_string code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
-            code << "#include <wx/bmpbndl.h>";
-            code << "\n#else\n\t";
-            code << "#include <wx/image.h>";
-            code << "\n#endif";
-            m_header->writeLine(code, indent::auto_keep_whitespace);
-        }
-        else
-        {
-            m_header->writeLine("#include <wx/bmpbndl.h>");
-        }
+        m_header->writeLine("#include <wx/bmpbndl.h>");
 
         m_header->writeLine();
         m_header->writeLine("namespace wxue_img\n{");
@@ -382,12 +337,6 @@ void BaseCodeGenerator::GenerateImagesForm()
         m_header->writeLine("wxImage get_image(const unsigned char* data, size_t size_data);");
 
         m_header->writeLine();
-        if (is_old_widgets)
-        {
-            m_header->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-            m_header->writeLine("wxBitmapBundle get_bundle_svg(const unsigned char* data, size_t size_data, size_t "
-                                "size_svg, wxSize def_size);");
-        }
 
         for (const auto& child: m_form_node->getChildNodePtrs())
         {
@@ -417,11 +366,6 @@ void BaseCodeGenerator::GenerateImagesForm()
                 }
                 m_header->writeLine(code);
             }
-        }
-
-        if (is_old_widgets)
-        {
-            m_header->writeLine("#endif", indent::none);
         }
 
         m_header->writeLine();

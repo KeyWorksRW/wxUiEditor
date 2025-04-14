@@ -484,12 +484,6 @@ void AddPythonImageName(Code& code, const EmbeddedImage* embed)
 
 static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
 {
-    if (code.is_cpp() && Project.is_wxWidgets31())
-    {
-        code.Eol().Tab().Str("wxNullBitmap /* SVG images require wxWidgets 3.2 or higher */").Eol().Tab();
-        return;
-    }
-
     wxSize svg_size { -1, -1 };
     if (parts[IndexSize].size())
     {
@@ -586,7 +580,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
 static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
 {
     code.Add("wxArtProvider");
-    if (get_bitmap || (code.is_cpp() && Project.is_wxWidgets31()))
+    if (get_bitmap)
     {
         code.ClassMethod("GetBitmap(");
     }
@@ -934,14 +928,7 @@ void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get
 
     if (parts[IndexType].starts_with("SVG"))
     {
-        if (code.is_cpp() && Project.is_wxWidgets31())
-        {
-            code += "wxNullBitmap";
-        }
-        else
-        {
-            GenerateSVGBundle(code, parts, get_bitmap);
-        }
+        GenerateSVGBundle(code, parts, get_bitmap);
     }
     else if (parts[IndexType].contains("Art"))
     {

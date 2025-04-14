@@ -556,33 +556,14 @@ void BaseCodeGenerator::GenHdrEvents()
                     continue;
                 }
             }
-            if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
-                 event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-                Project.is_wxWidgets31())
+            if (m_form_node->as_bool(prop_use_derived_class))
             {
-                code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
-                if (m_form_node->as_bool(prop_use_derived_class))
-                {
-                    code << "virtual void " << event->get_value() << "(" << event->getEventInfo()->get_event_class()
-                         << "& event) { event.Skip(); }";
-                }
-                else
-                {
-                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
-                }
-                code << "\n#endif";
+                code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
+                     << "& event) { event.Skip(); }";
             }
             else
             {
-                if (m_form_node->as_bool(prop_use_derived_class))
-                {
-                    code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
-                         << "& event) { event.Skip(); }";
-                }
-                else
-                {
-                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
-                }
+                code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
             }
             code_lines.insert(code);
         }

@@ -572,8 +572,6 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_languag
 {
     if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either) == true)
         return false;
-    else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
-        return false;
 
 #if !PERL_FROM_DIP
     // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does not

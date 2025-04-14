@@ -1740,18 +1740,10 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
     {
         if (is_cpp())
         {
-            if (Project.is_wxWidgets31())
-            {
-                CheckLineLength(sizeof("wxSize(999, 999)"));
-                Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-            }
-            else
-            {
-                CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
-                FormFunction("FromDIP(");
-                Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-                *this += ')';
-            }
+            CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
+            FormFunction("FromDIP(");
+            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
+            *this += ')';
         }
         else if (is_python())
         {
@@ -1840,18 +1832,10 @@ Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
     {
         if (is_cpp())
         {
-            if (Project.is_wxWidgets31())
-            {
-                CheckLineLength(sizeof("wxPoint(999, 999)"));
-                Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
-            }
-            else
-            {
-                CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
-                FormFunction("FromDIP(");
-                Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
-                *this += ')';
-            }
+            CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
+            FormFunction("FromDIP(");
+            Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+            *this += ')';
         }
         else if (is_python())
         {
@@ -2319,9 +2303,9 @@ Code& Code::GenSizerFlags()
         }
         else if (prop.contains("wxALIGN_CENTER"))
         {
-            // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
-            // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
-            // support it. Center() just works without the assertion check.
+            // Note that CenterHorizontal() and CenterVertical() generate an assert if you try to
+            // use one that is invalid if the sizer parent's orientation doesn't support it.
+            // Center() just works without the assertion check.
             SizerFlagsFunction("Center") += ')';
         }
 
@@ -2688,40 +2672,11 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 
         if (point_size != static_cast<int>(point_size))  // is there a fractional value?
         {
-            if (is_cpp() && Project.is_wxWidgets31())
+            std::array<char, 10> float_str;
+            if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                ec == std::errc())
             {
-                Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
-                {
-                    if (point_size <= 0)
-                    {
-                        Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
-                        VariableMethod("GetPointSize()").EndFunction();
-                    }
-                    else
-                    {
-                        // GetPointSize() will round the result rather than truncating the decimal
-                        itoa(fontprop.GetPointSize()).EndFunction();
-                    }
-                }
-                Eol().Str("#else // fractional point sizes are new to wxWidgets 3.1.2").Eol().Tab();
-                {
-                    std::array<char, 10> float_str;
-                    if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
-                        ec == std::errc())
-                    {
-                        Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
-                    }
-                }
-                Eol().Str("#endif");
-            }
-            else
-            {
-                std::array<char, 10> float_str;
-                if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
-                    ec == std::errc())
-                {
-                    Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
-                }
+                Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
             }
         }
         else
@@ -2779,42 +2734,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
                 VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
             if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
             {
-                if (is_cpp() && Project.is_wxWidgets31())
-                {
-                    Eol().Str("#if !wxCHECK_VERSION(3, 1, 2)").Eol().Tab();
-                    {
-                        // wxFontInfo::SetFlag() would have worked around this, unfortunately it is a private: function
-                        bool is_code_added = false;
-                        if (fontprop.GetWeight() == wxFONTWEIGHT_LIGHT)
-                        {
-                            VariableMethod("Light();");
-                            is_code_added = true;
-                        }
-                        else if (fontprop.GetWeight() == wxFONTWEIGHT_BOLD)
-                        {
-                            VariableMethod("Bold()");
-                            is_code_added = true;
-                        }
-
-                        if (!is_code_added)
-                        {
-                            Str("// Only Bold and Light are supported in wxWidgets 3.1.1 and earlier");
-                        }
-                    }
-                    Eol().Str("#else // Weight() is new to wxWidgets 3.1.2").Eol().Tab();
-                    {
-                        VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
-                    }
-                    Eol().Str("#endif").Eol();
-                    if (!fontprop.IsUnderlined() && !fontprop.IsStrikethrough())
-                    {
-                        Str(";").Eol();
-                    }
-                }
-                else
-                {
-                    VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
-                }
+                VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
             }
             if (fontprop.IsUnderlined())
                 VariableMethod("Underlined()");
@@ -3061,10 +2981,6 @@ bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
 {
     if (enable_dpi_scaling == code::no_dpi_scaling ||
         tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either) == true)
-    {
-        return false;
-    }
-    else if (m_language == GEN_LANG_CPLUSPLUS && Project.is_wxWidgets31())
     {
         return false;
     }

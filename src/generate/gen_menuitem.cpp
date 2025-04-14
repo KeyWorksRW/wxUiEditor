@@ -116,12 +116,6 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             // auto_indent = indent::auto_keep_whitespace;
             code.OpenBrace().Add("wxAcceleratorEntry entry;").Eol();
 
-            bool is_old_widgets = (Project.is_wxWidgets31());
-            if (is_old_widgets)
-            {
-                code += "#if wxCHECK_VERSION(3, 1, 6)\n";
-            }
-
             for (auto& accel: accel_list)
             {
                 if (accel.size())
@@ -129,11 +123,6 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                     code.Eol(eol_if_needed) << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
                     code.Eol().Tab().NodeName().Function("AddExtraAccel(entry").EndFunction();
                 }
-            }
-
-            if (is_old_widgets)
-            {
-                code.Eol(eol_if_needed) += "#endif";
             }
             code.CloseBrace();
             code.UpdateBreakAt();
@@ -180,20 +169,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 if (!is_vector_code)
                 {
                     code.NodeName().Function("SetBitmap(");
-                    if (!Project.is_wxWidgets31())
-                    {
-                        code += bundle_code;
-                        code.EndFunction();
-                    }
-                    else
-                    {
-                        code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                        code += bundle_code;
-                        code.Eol() += "#else";
-                        code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")";
-                        code.Eol() += "#endif";
-                        code.Eol().EndFunction();
-                    }
+                    code += bundle_code;
+                    code.EndFunction();
                     code.Eol();
                 }
                 else  // bundle_code contains a vector
@@ -201,13 +178,6 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                     code += bundle_code;
                     code.Tab().NodeName().Function("SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
                     code.CloseBrace();
-                    if (Project.is_wxWidgets31())
-                    {
-                        code += "#else";
-                        code.Eol().NodeName().Function("SetBitmap(");
-                        code << "wxBitmap(" << GenerateBitmapCode(description) << "));\n";
-                        code << "#endif\n";
-                    }
                 }
             }
         }
@@ -267,45 +237,20 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 if (!is_vector_code)
                 {
                     code.NodeName().Function("SetBitmap(");
-                    if (!Project.is_wxWidgets31())
-                    {
-                        code += bundle_code;
-                        code.UpdateBreakAt();
-                        code.Comma() += "false";
-                        code.EndFunction();
-                    }
-                    else
-                    {
-                        code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                        code += bundle_code;
-                        code.Eol() += "#else";
-                        code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ", false)";
-                        code.Eol() += "#endif";
-                        code.Eol().EndFunction();
-                    }
+                    code += bundle_code;
+                    code.UpdateBreakAt();
+                    code.Comma() += "false";
+                    code.EndFunction();
                     code.UpdateBreakAt();
                 }
                 else  // bundle_code contains a vector
                 {
                     code += bundle_code;
                     code.Tab().NodeName().Function("SetBitmap(");
-                    if (!Project.is_wxWidgets31())
-                    {
-                        code += "wxBitmapBundle::FromBitmaps(bitmaps)";
-                        code.UpdateBreakAt();
-                        code.Comma() += "false";
-                        code.EndFunction().CloseBrace();
-                    }
-                    else
-                    {
-                        code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                        code.Tab() += "wxBitmapBundle::FromBitmaps(bitmaps), false";
-                        code += "\n#else\n\t";
-                        code.Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ", false)\n";
-                        code << "#endif\n";
-                        code.UpdateBreakAt();
-                        code.Tab().EndFunction().CloseBrace();
-                    }
+                    code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+                    code.UpdateBreakAt();
+                    code.Comma() += "false";
+                    code.EndFunction().CloseBrace();
                 }
             }
         }

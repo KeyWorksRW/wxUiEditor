@@ -1017,7 +1017,6 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
             auto grandparent = evt_flags->getParent()->getParent();
             if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
-                // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
                 GetPropInfoBar()->ShowMessage(
                     "For the toolbar to be owned by the frame window, it should be placed directly under the frame, "
                     "not under a sizer. Use Cut and Paste to move it.",

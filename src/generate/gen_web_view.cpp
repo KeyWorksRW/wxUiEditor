@@ -75,15 +75,6 @@ void WebViewGenerator::GenEvent(Code& code, NodeEvent* event, const std::string&
         BaseGenerator::GenEvent(code, event, class_name);
         return;
     }
-    if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
-         event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-        Project.is_wxWidgets31())
-    {
-        code.Add("\n#if wxCHECK_VERSION(3, 1, 5)\n");
-        BaseGenerator::GenEvent(code, event, class_name);
-        code.Add("\n#endif");
-        return;
-    }
 }
 
 bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,

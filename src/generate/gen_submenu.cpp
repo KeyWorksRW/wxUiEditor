@@ -67,33 +67,14 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
                 if (!is_vector_code)
                 {
                     code.Str(submenu_item_name).Function("SetBitmap(");
-                    if (!Project.is_wxWidgets31())
-                    {
-                        code += bundle_code;
-                        code.EndFunction();
-                    }
-                    else
-                    {
-                        code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                        code += bundle_code;
-                        code.Eol() += "#else";
-                        code.Eol().Tab() << "wxBitmap(" << GenerateBitmapCode(description) << ")";
-                        code.Eol() += "#endif";
-                        code.Eol().EndFunction();
-                    }
+                    code += bundle_code;
+                    code.EndFunction();
                     code.Eol();
                 }
                 else  // bundle_code contains a vector
                 {
                     code += bundle_code;
                     code.Str(submenu_item_name).Function("SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
-                    if (Project.is_wxWidgets31())
-                    {
-                        code += "#else";
-                        code.Eol().Str(submenu_item_name).Function("SetBitmap(");
-                        code << "wxBitmap(" << GenerateBitmapCode(description) << "));\n";
-                        code << "#endif\n";
-                    }
                 }
             }
         }

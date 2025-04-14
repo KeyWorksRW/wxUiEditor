@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - wxRuby3 generated code now supports persistence property (`Wx.persistent_register_and_restore`)
 - wxRuby3 generated code includes a `attr_accessor` list of all class members that specify `public:` access
 - The dialog for editing Custom Control parameters now has a drop-down list of all the possible macros you can use
+- C++ code generation no longer supports wxWidgets 3.1 -- you should link to a current 3.2 or higher version of wxWidgets.
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.

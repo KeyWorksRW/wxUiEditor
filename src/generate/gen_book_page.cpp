@@ -316,39 +316,6 @@ bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-#if 0
-    int depth = 0;
-    if (node->getParent()->isGen(gen_BookPage))
-    {
-        auto treebook = node->getParent()->getParent();
-        ++depth;
-        while (!treebook->isGen(gen_wxTreebook))
-        {
-            if (treebook->isForm())
-            {
-                FAIL_MSG("Expected a wxTreeBook parent for nested Book Page")
-                return BaseGenerator::xrc_not_supported;
-            }
-            ++depth;
-            treebook = treebook->getParent();
-        }
-        // Now that we've found the depth, let's find the xml node of the treebook
-        for(;;)
-        {
-            auto class_attr = object.attribute("class");
-            if (class_attr.value() != "wxTreebook")
-            {
-                object = object.parent();
-                ASSERT(!object.empty())
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
-#endif
-
     auto item = InitializeXrcObject(node, object);
 
     tt_string page_type;

@@ -48,9 +48,9 @@
             help="If one or more strings are entered, they will be used to initialize autocomplete."/>
         <property name="prop_spellcheck" type="bitlist">
             <option name="enabled"
-                help="Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6"/>
+                help="Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style."/>
             <option name="grammar"
-                help="Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6"/>
+                help="Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style."/>
         </property>
         <property name="style" type="bitlist">
             <option name="wxTE_PROCESS_ENTER"
@@ -516,10 +516,8 @@
                     help="Wrapped sublines are aligned to first subline indent."/>
 				<option name="indent"
                     help="Wrapped sublines are aligned to first subline indent plus one more level of indentation."/>
-                <!-- SC_WRAPINDENT_DEEPINDENT is not supported in 3.1.15
-					<option name="deep_indent"
-					help="Wrapped sublines are aligned to first subline indent plus two more levels of indentation." /> -->
-        fixed </property>
+                fixed
+            </property>
             <property name="wrap_start_indent" type="int"
                 help="If wrap_indent_mode is set to &quot;fixed&quot; this sets the size of indentation of sublines for wrapped lines in terms of the average character width. There are no limits on indent sizes, but values less than 0 or large values may have undesirable effects. The indention of sublines is independent of visual flags, but if wrap_visual_flag is set to str start then an indent of at least 1 is used. "/>
         </category>

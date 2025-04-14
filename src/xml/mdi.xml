@@ -91,9 +91,9 @@
 			help="The name of the Document class to view."/>
 		<property name="spellcheck" type="bitlist">
 			<option name="enabled"
-				help="Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6"/>
+				help="Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style."/>
 			<option name="grammar"
-				help="Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6"/>
+				help="Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style."/>
 		</property>
 		<property name="style" type="bitlist">
 			<option name="wxTE_RICH"

@@ -470,11 +470,6 @@ void BaseCodeGenerator::GenCppImageFunctions()
 
     if (m_NeedSVGFunction)
     {
-        if (Project.is_wxWidgets31())
-        {
-            m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
-        }
-
         tt_string_vector function;
         function.ReadString(txt_GetBundleFromSVG);
         for (auto& iter: function)
@@ -482,11 +477,6 @@ void BaseCodeGenerator::GenCppImageFunctions()
             m_source->writeLine(iter, indent::none);
         }
         m_source->writeLine();
-        if (Project.is_wxWidgets31())
-        {
-            m_source->writeLine("#endif  // requires wxCHECK_VERSION(3, 1, 6)", indent::none);
-            m_source->writeLine();
-        }
     }
 
     if (m_NeedAnimationFunction)
@@ -763,32 +753,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     // Make certain there is a blank line before the the wxWidget #includes
     m_source->writeLine();
 
-    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the header set. If the user specified
-    // 3.1 for the wxWidgets library, then code generation will create conditional code that uses wxBitmapBundle if 3.1.6 or
-    // wxBitmap if older. We need to conditionalize the header output by removing the "#include <wx/bmpbndl.h>" entry and
-    // creating our own conditionalized header.
-
-    if (Project.is_wxWidgets31())
-    {
-        if (auto bmpbndl_hdr = src_includes.find("#include <wx/bmpbndl.h>"); bmpbndl_hdr != src_includes.end())
-        {
-            src_includes.erase(bmpbndl_hdr);
-            if (auto bitmap_hdr = src_includes.find("#include <wx/bitmap.h>"); bitmap_hdr != src_includes.end())
-            {
-                src_includes.erase(bitmap_hdr);
-            }
-
-            code.clear();
-            code += "#if wxCHECK_VERSION(3, 1, 6)";
-            code.Eol().Tab().Str("#include <wx/bmpbndl.h>");
-            code.Eol().Str("#else");
-            code.Eol().Tab().Str("#include <wx/bitmap.h>");
-            code.Eol().Str("#endif");
-
-            m_source->writeLine(code);
-            m_source->writeLine();
-        }
-    }
+    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the header set.
 
     if (auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
     {

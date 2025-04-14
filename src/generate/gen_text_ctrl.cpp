@@ -185,22 +185,10 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            if (Project.is_wxWidgets31())
-            {
-                code.Eol(eol_if_needed) << "#if wxCHECK_VERSION(3, 1, 6)";
-                code.Eol().Tab().NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
-                if (code.PropContains(prop_spellcheck, "grammar"))
-                    code << ".GrammarCheck()";
-                code << ");";
-                code.Eol() << "#endif";
-            }
-            else
-            {
-                code.Eol(eol_if_needed).NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
-                if (code.PropContains(prop_spellcheck, "grammar"))
-                    code << ".GrammarCheck()";
-                code.EndFunction();
-            }
+            code.Eol(eol_if_needed).NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
+            if (code.PropContains(prop_spellcheck, "grammar"))
+                code << ".GrammarCheck()";
+            code.EndFunction();
         }
         else if (code.is_perl())
         {

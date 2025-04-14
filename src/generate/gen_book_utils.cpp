@@ -58,7 +58,6 @@ void AddBookImageList(Node* node_book, wxObject* widget)
 {
     if (isBookDisplayImages(node_book) && isBookHasImage(node_book))
     {
-#if 1
         wxBookCtrlBase::Images bundle_list;
         for (const auto& child_node: node_book->getChildNodePtrs())
         {
@@ -79,39 +78,6 @@ void AddBookImageList(Node* node_book, wxObject* widget)
         }
         auto book = wxStaticCast(widget, wxBookCtrlBase);
         book->SetImages(bundle_list);
-#else
-        // Don't remove this section -- we need to use it to compare with our code generation for pre-3.1.6 code
-
-        wxImageList* img_list = nullptr;
-
-        for (const auto& child_node: node_book->getChildNodePtrs())
-        {
-            if (child_node->hasValue(prop_bitmap))
-            {
-                auto img = wxGetApp().GetImage(child_node->as_string(prop_bitmap));
-                ASSERT(img.IsOk());
-                if (!img_list)
-                {
-                    img_list = new wxImageList(img.GetWidth(), img.GetHeight());
-                    img_list->Add(img);
-                }
-                else
-                {
-                    auto size = img_list->GetSize();
-                    // If the image is already the desired size, then Scale() will return immediately without doing anything
-                    img_list->Add(img.Scale(size.x, size.y));
-                }
-            }
-
-            if (node_book->isGen(gen_wxTreebook) && img_list)
-            {
-                AddTreebookSubImages(child_node.get(), img_list);
-            }
-        }
-
-        auto book = wxStaticCast(widget, wxBookCtrlBase);
-        book->AssignImageList(img_list);
-#endif
     }
 }
 
@@ -120,17 +86,6 @@ void BookCtorAddImagelist(Code& code)
     if ((code.IsTrue(prop_display_images) || code.IsGen(gen_wxToolbook)) && isBookHasImage(code.node()))
     {
         code.OpenBrace();
-        if (code.is_cpp() && Project.is_wxWidgets31())
-        {
-            if (code.back() == '\t')
-            {
-                // Remove the trailing tab so that writeline() will know not to indend the #if
-                // statement.
-                code.pop_back();
-            }
-
-            code << "#if wxCHECK_VERSION(3, 1, 6)";
-        }
         code.Eol(eol_if_needed);
         if (code.is_cpp())
         {
@@ -188,41 +143,6 @@ void BookCtorAddImagelist(Code& code)
         }
 
         code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
-
-        if (code.is_cpp() && Project.is_wxWidgets31())
-        {
-            // Don't use Eol() here, because we want to insert the #if at the beginning of the line
-            code << "\n\n#else  // older version of wxWidgets that don't support bitmap bundles\n";
-
-            code.Eol() << "auto img_list = new wxImageList;";
-
-            size_t image_index = 0;
-            for (const auto& child_node: code.node()->getChildNodePtrs())
-            {
-                // Note: when we generate the code, we could look at the actual image and determine whether it's already
-                // the correct size and only scale it if needed. However, that requires the user to know to regenerate
-                // the code any time the image is changed to ensure it has the correct dimensions.
-
-                if (child_node->hasValue(prop_bitmap))
-                {
-                    code.Eol() << "auto img_" << image_index << " = ";
-                    code << GenerateBitmapCode(child_node->as_string(prop_bitmap)) << ";";
-                    code.Eol() << "img_list->Add(img_" << image_index;
-                    if (child_node->as_string(prop_bitmap).starts_with("Art;"))
-                        code << ".ConvertToImage()";
-                    code.EndFunction();
-                    ++image_index;
-                }
-                if (code.IsGen(gen_wxTreebook))
-                {
-                    // This is a recursive function that will handle unlimited nesting
-                    AddTreebookImageCode(code, child_node.get(), image_index);
-                }
-            }
-            code.Eol().NodeName().Function("AssignImageList(img_list").EndFunction();
-            // Don't use Eol() here, because we want to insert the #if at the beginning of the line
-            code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
-        }
 
         code.CloseBrace();
     }

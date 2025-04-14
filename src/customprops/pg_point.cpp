@@ -72,8 +72,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         type != CustomPointProperty::type_BITMAP && !prop->getNode()->isGen(gen_wxWizard))
     {
         AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
-        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays. Requires wxWidgets 3.2 or later, "
-                               "ignored on wxWidgets 3.1.");
+        Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");
     }
 }
 

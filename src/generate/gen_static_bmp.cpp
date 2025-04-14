@@ -147,64 +147,11 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
 
         if (!is_vector_code)
         {
-            if (!Project.is_wxWidgets31())
-            {
-                code += bundle_code;
-            }
-            else
-            {
-                code.GetCode().insert(0, "\t");
-                code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
-                code += bundle_code;
-                code.UpdateBreakAt();
-                code.PosSizeFlags();
-
-                code += "\n#else\n\t";
-                if (class_override_type == ClassOverrideType::Generic)
-                {
-                    // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-                    code << GenerateBitmapCode(description);
-                }
-                else
-                {
-                    // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
-                    code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
-                }
-                code.UpdateBreakAt();
-                code.PosSizeFlags();
-                code << "\n#endif";
-                return;
-            }
+            code += bundle_code;
         }
         else  // bundle_code contains a vector
         {
-            if (!Project.is_wxWidgets31())
-            {
-                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
-            }
-            else
-            {
-                code += "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
-                code += "wxBitmapBundle::FromBitmaps(bitmaps)";
-                code.Eol().Tab();
-                code.PosSizeFlags();
-
-                code += "\n#else\n\t\t";
-                if (class_override_type == ClassOverrideType::Generic)
-                {
-                    // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-                    code << GenerateBitmapCode(description);
-                }
-                else
-                {
-                    // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
-                    code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
-                }
-                code.PosSizeFlags();
-
-                code << "\n#endif";
-                return;
-            }
+            code += "wxBitmapBundle::FromBitmaps(bitmaps)";
         }
     }
     else  // no bitmap

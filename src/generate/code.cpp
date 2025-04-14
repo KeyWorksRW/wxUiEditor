@@ -3032,7 +3032,7 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
                 RubyBundleCode(*this, prop_name);
                 break;
             case GEN_LANG_PERL:
-                // PerlBundleCode(*this, prop_name);
+                PerlBundleCode(*this, prop_name);
                 break;
 
             case GEN_LANG_RUST:

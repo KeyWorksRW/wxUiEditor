@@ -251,3 +251,14 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
               });
 #endif
 }
+
+tt_string MakeRustPath(Node* node)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_RUST);
+
+    if (path.empty())
+        path = "./";
+    else if (has_base_file)
+        path.remove_filename();
+    return path;
+}

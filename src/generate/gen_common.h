@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common code generation functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +90,16 @@ tt_string GenerateIconCode(const tt_string& description);
 // Generates wxNullColour if the property is empty.
 void ColourCode(Code& code, GenEnum::PropName prop_name);
 
+struct GenResults;
+// Common function to generate all files for a specific language
+bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+
+// Called by GenerateLanguageFiles and in OnGenSingle...() to generate a single form
+bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+
+void OnGenerateSingleLanguage(GenLang language);
+void OnGenerateLanguage(GenLang language);
+
 /////////////////////////////////////// Code-enabled Functions ///////////////////////////////////////
 
 // Generate settings common to all forms
@@ -104,6 +114,15 @@ void GenToolCode(Code& code);
 // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
 bool BitmapList(Code& code, const GenEnum::PropName prop);
 
+/////////////////////////////////////// wxPerl Functions ///////////////////////////////////////
+
+// Deterimes where the perl code will be written to, and returns an absolute path to that
+// location.
+tt_string MakePerlPath(Node* node);
+
+// Generates code to load a bitmap from Art, SVG, or up to three bitmap files.
+bool PerlBundleCode(Code& code, GenEnum::PropName prop);
+
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
 // Returns true if a list was created. List name will be called "bitmaps".
@@ -113,7 +132,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop);
 bool PythonBundleCode(Code& code, GenEnum::PropName prop);
 
 // Deterimes where the python code will be written to, and returns an absolute path to that
-// location which can be used as the parameter for make_relative().
+// location.
 tt_string MakePythonPath(Node* node);
 
 // Python version of GenBtnBimapCode()
@@ -122,18 +141,14 @@ void PythonBtnBimapCode(Code& code, bool is_single = false);
 /////////////////////////////////////// wxRuby Functions ///////////////////////////////////////
 
 // Deterimes where the ruby code will be written to, and returns an absolute path to that
-// location which can be used as the parameter for make_relative().
+// location.
 tt_string MakeRubyPath(Node* node);
 
 // Generates code to load a bitmap from Art, SVG, or up to three bitmap files.
 bool RubyBundleCode(Code& code, GenEnum::PropName prop);
 
-struct GenResults;
-// Common function to generate all files for a specific language
-bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+/////////////////////////////////////// wxRust Functions ///////////////////////////////////////
 
-// Called by GenerateLanguageFiles and in OnGenSingle...() to generate a single form
-bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
-
-void OnGenerateSingleLanguage(GenLang language);
-void OnGenerateLanguage(GenLang language);
+// Deterimes where the perl code will be written to, and returns an absolute path to that
+// location.
+tt_string MakeRustPath(Node* node);

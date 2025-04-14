@@ -47,7 +47,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxAuiNotebook | yes | ---  | yes    | yes  | --- | ../src/generate/gen_aui_notebook.cpp |
 | wxChoicebook  | yes | ---  | yes    | yes  | --- | ../src/generate/gen_choicebook.cpp   |
 | wxListbook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_listbook.cpp     |
-| wxNotebook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_notebook.cpp     |
+| wxNotebook    | yes | ---  | yes    | yes  | yes | ../src/generate/gen_notebook.cpp     |
 | wxSimplebook  | yes | ---  | yes    | yes  | --- | ../src/generate/gen_simplebook.cpp   |
 | wxToolbook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_toolbook.cpp     |
 | wxTreebook    | yes | ---  | yes    | yes  | yes | ../src/generate/gen_treebook.cpp     |
@@ -118,7 +118,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxHyperlinkCtrl        | yes | ---     | yes     | yes  | yes     | ../src/generate/gen_hyperlink.cpp     |
 | wxListBox              | yes | ---     | yes     | yes  | yes     | ../src/generate/gen_listbox.cpp       |
 | wxListView             | yes | ---     | yes     | yes  | partial | ../src/generate/gen_listview.cpp      |
-| wxPanel                | yes | ---     | yes     | yes  | ---     | ../src/generate/gen_panel.cpp         |
+| wxPanel                | yes | yes     | yes     | yes  | yes     | ../src/generate/gen_panel.cpp         |
 | wxPropertyGrid         | yes | ---     | yes     | yes  | no      | ../src/generate/gen_prop_grid.cpp     |
 | wxPropertyGridManager  | yes | ---     | yes     | yes  | no      | ../src/generate/grid_widgets.cpp      |
 | wxPropertySheetDialog  | no  | ---     | no      | no   | no      | ../src/generate/gen_propsheet_dlg.cpp |

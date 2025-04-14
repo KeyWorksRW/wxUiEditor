@@ -1331,13 +1331,6 @@ void GenToolCode(Code& code)
             {
                 code.Eol() += "#if wxCHECK_VERSION(3, 1, 6)\n\t";
             }
-
-            // TODO: [Randalphwa - 01-07-2025] wxPerl doesn't support wxBitmapBundle. It
-            // does support wxBitmap, but wxUE doesn't generate code for that yet.
-            else if (code.is_perl())
-            {
-                code.Add("wxNullBitmap");
-            }
             else
             {
                 GenerateBundleParameter(code, parts);

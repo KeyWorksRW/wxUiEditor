@@ -647,8 +647,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
 #endif  // GENERATE_NEW_LANG_CODE
 
         default:
-            FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(code.m_language) << " ("
-                                 << code.m_language << ")");
+            FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(code.m_language) << " (" << code.m_language
+                                 << ")");
             event_code = EventHandlerDlg::GetCppValue(event->get_value());
             break;
     }

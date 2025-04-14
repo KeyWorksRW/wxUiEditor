@@ -590,6 +590,11 @@ static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool ge
     {
         code.ClassMethod("GetBitmap(");
     }
+    else if (code.is_perl())
+    {
+        // Perl doesn't support wxArtProvider.GetBitmapBundle()
+        code.Str("::GetBitmap(");
+    }
     else
     {
         code.ClassMethod("GetBitmapBundle(");
@@ -603,10 +608,30 @@ static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool ge
         art_id.erase(pos);
     }
 
-    code.Add(art_id);
+    if (code.is_cpp() || code.is_perl())
+    {
+        // No need to change it for C++ or wxPerl
+        code.Str(art_id);
+    }
+    else
+    {
+        code.Add(art_id);
+    }
+
     // Note that current documentation states that the client is required, but the header file says otherwise
     if (art_client.size())
-        code.Comma().Add(art_client);
+    {
+        code.Comma();
+        if (code.is_cpp() || code.is_perl())
+        {
+            // No need to change it for C++ or wxPerl
+            code.Str(art_client);
+        }
+        else
+        {
+            code.Add(art_client);
+        }
+    }
     if (parts.size() > IndexSize)
     {
         code.Comma();

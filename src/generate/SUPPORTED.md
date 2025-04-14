@@ -47,7 +47,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxAuiNotebook | yes | ---  | yes    | yes  | --- | ../src/generate/gen_aui_notebook.cpp |
 | wxChoicebook  | yes | ---  | yes    | yes  | --- | ../src/generate/gen_choicebook.cpp   |
 | wxListbook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_listbook.cpp     |
-| wxNotebook    | yes | ---  | yes    | yes  | yes | ../src/generate/gen_notebook.cpp     |
+| wxNotebook    | yes | yes  | yes    | yes  | yes | ../src/generate/gen_notebook.cpp     |
 | wxSimplebook  | yes | ---  | yes    | yes  | --- | ../src/generate/gen_simplebook.cpp   |
 | wxToolbook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_toolbook.cpp     |
 | wxTreebook    | yes | ---  | yes    | yes  | yes | ../src/generate/gen_treebook.cpp     |

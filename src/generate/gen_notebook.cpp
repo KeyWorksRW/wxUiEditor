@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxNotebook generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -91,4 +91,39 @@ int NotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void NotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxNotebookXmlHandler");
+}
+
+bool NotebookGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        tt_string styles;
+        if (node->hasValue(prop_tab_position) && node->as_string(prop_tab_position) != "wxBK_DEFAULT")
+        {
+            if (styles.size())
+                styles << ' ';
+            else
+            {
+                styles = "use Wx qw(";
+            }
+            styles << node->as_string(prop_tab_position);
+        }
+        if (node->hasValue(prop_style))
+        {
+            if (styles.size())
+                styles << ' ';
+            else
+            {
+                styles = "use Wx qw(";
+            }
+            styles << node->as_string(prop_style);
+            styles.Replace("|", " ", true, tt::CASE::exact);
+        }
+        if (styles.size())
+        {
+            styles << ");";
+            set_imports.emplace(styles);
+        }
+    }
+    return false;
 }

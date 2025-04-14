@@ -579,7 +579,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
 
 static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool get_bitmap)
 {
-    code.Add("wxArtProvider");
+    code.Class("wxArtProvider");
     if (get_bitmap)
     {
         code.ClassMethod("GetBitmap(");

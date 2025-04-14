@@ -767,18 +767,9 @@ Code& Code::AddConstant(tt_string_view text)
 Code& Code::Add(tt_string_view text)
 {
     bool old_linebreak = m_auto_break;
-    if (is_ruby() && text.size())
-    {
-        // Ruby doesn't like breaking the parenthesis for a function call onto the next line,
-        // or the .new function
-        if (text.front() == '.' || text.front() == '(')
-        {
-            old_linebreak = m_auto_break;
-            m_auto_break = false;
-        }
-    }
-
-    if (is_cpp() || text.size() < 3)
+    // Ruby changes the prefix to "Wx::", and Python changes it to "wx."
+    // C++, Perl, and Rust use the constant unmodified.
+    if (is_cpp() || is_perl() || is_rust() || text.size() < 3)
     {
         CheckLineLength(text.size());
         *this += text;
@@ -787,6 +778,16 @@ Code& Code::Add(tt_string_view text)
     {
         if (is_ruby())
         {
+            if (text.size())
+            {
+                // Ruby doesn't like breaking the parenthesis for a function call onto the next line,
+                // or the .new function
+                if (text.front() == '.' || text.front() == '(')
+                {
+                    old_linebreak = m_auto_break;
+                    m_auto_break = false;
+                }
+            }
             if (text == "wxEmptyString")
             {
                 // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
@@ -832,6 +833,7 @@ Code& Code::Add(tt_string_view text)
                     *this += '|';
                 if (iter.is_sameprefix("wx") && !is_cpp())
                 {
+#if 0
                     if (is_perl() && (HasPerlMapConstant(text) || set_perl_constants.contains(text)))
                     {
                         CheckLineLength(text.size());
@@ -839,7 +841,7 @@ Code& Code::Add(tt_string_view text)
                         initial_combined_value_set = true;
                         continue;
                     }
-
+#endif
                     if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
                     {
                         // Some languages will have a module added after their standard prefix.

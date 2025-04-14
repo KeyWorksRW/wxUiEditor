@@ -73,6 +73,27 @@ constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::str
 
 });
 
+// Collects classes and constants that get output as "use Wx qw(...), use Wx::Class qw(...),
+// etc."
+
+class GatherPerlUsages
+{
+public:
+    GatherPerlUsages(Node* form_node);
+
+    std::set<std::string>& use_classes() { return m_use_classes; }
+    std::set<std::string>& use_constants() { return m_use_constants; }
+
+protected:
+    std::set<std::string> m_use_classes;
+    std::set<std::string> m_use_constants;
+
+    void ParseNodes(Node* node);
+
+private:
+    std::set<std::string> m_art_ids;
+};
+
 bool HasPerlMapConstant(std::string_view value)
 {
     for (auto& iter: map_perl_constants)
@@ -160,109 +181,12 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
 
     m_source->writeLine();
 
-    std::set<std::string> use_classes;
-    std::set<std::string> use_constants;
+    GatherPerlUsages usages(m_form_node);
 
-    auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
-    {
-        if (node->hasValue(prop_variant) && node->as_string(prop_variant) != "normal")
-        {
-            if (node->as_string(prop_variant) == "large")
-                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_LARGE);");
-            else if (node->as_string(prop_variant) == "small")
-                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_SMALL);");
-            else if (node->as_string(prop_variant) == "mini")
-                use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_MINI);");
-        }
-
-        if (node->isSizer())
-        {
-            if (node->as_string(prop_borders).contains("wxALL"))
-            {
-                use_constants.emplace("use Wx qw(wxALL);");
-            }
-
-            if (node->as_string(prop_borders).contains("wxLEFT") || node->as_string(prop_borders).contains("wxRIGHT") ||
-                node->as_string(prop_borders).contains("wxTOP") || node->as_string(prop_borders).contains("wxBOTTOM"))
-            {
-                use_constants.emplace("use Wx qw(wxLEFT wxRIGHT wxTOP wxBOTTOM);");
-            }
-
-            if (node->as_string(prop_flags).contains("wxEXPAND"))
-            {
-                use_constants.emplace("use Wx qw(wxEXPAND);");
-            }
-            if (node->as_string(prop_flags).contains("wxSHAPED"))
-            {
-                use_constants.emplace("use Wx qw(wxSHAPED);");
-            }
-            if (node->as_string(prop_flags).contains("wxFIXED_MINSIZE"))
-            {
-                use_constants.emplace("use Wx qw(wxFIXED_MINSIZE);");
-            }
-            if (node->as_string(prop_flags).contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
-            {
-                use_constants.emplace("use Wx qw(wxRESERVE_SPACE_EVEN_IF_HIDDEN);");
-            }
-
-            if (node->as_string(prop_alignment).contains("wxALIGN"))
-            {
-                use_constants.emplace("use Wx qw(wxALIGN_CENTER_HORIZONTAL wxALIGN_CENTER_VERTICAL);");
-                use_constants.emplace("use Wx qw(wxALIGN_LEFT wxALIGN_RIGHT wxALIGN_TOP wxALIGN_BOTTOM wxALIGN_CENTER);");
-            }
-        }
-
-        if (auto* gen = node->getGenerator(); gen)
-        {
-            std::set<std::string> imports;
-            gen->GetImports(node, imports, GEN_LANG_PERL);
-            for (auto& iter: imports)
-            {
-                if (iter.starts_with("use Wx"))
-                    use_constants.emplace(iter);
-                else
-                    use_classes.emplace(iter);
-            }
-            for (auto& iter: map_perl_constants)
-            {
-                if (node->hasProp(iter.first))
-                {
-                    tt_string constants("use Wx qw(");
-                    constants += iter.second;
-                    constants += ");";
-                    use_constants.emplace(constants);
-                }
-            }
-        }
-        for (auto& child: node->getChildNodePtrs())
-        {
-            std::set<std::string> imports;
-            GatherImportModules(child.get(), GatherImportModules);
-            for (auto& iter: imports)
-            {
-                if (iter.starts_with("use "))
-                    use_classes.emplace(iter);
-                else
-                    use_constants.emplace(iter);
-            }
-            for (auto& iter: map_perl_constants)
-            {
-                if (child.get()->hasProp(iter.first))
-                {
-                    tt_string constants("use Wx qw(");
-                    constants += iter.second;
-                    constants += ");";
-                    use_constants.emplace(constants);
-                }
-            }
-        }
-    };
-    GatherImportModules(m_form_node, GatherImportModules);
-
-    if (use_classes.size())
+    if (usages.use_classes().size())
     {
         m_source->writeLine();
-        for (const auto& import: use_classes)
+        for (const auto& import: usages.use_classes())
         {
             m_source->writeLine(import);
         }
@@ -273,10 +197,10 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         m_source->writeLine("use Wx qw[:allclasses];");
     }
 
-    if (use_constants.size())
+    if (usages.use_constants().size())
     {
         m_source->writeLine();
-        for (const auto& import: use_constants)
+        for (const auto& import: usages.use_constants())
         {
             m_source->writeLine(import);
         }
@@ -442,4 +366,173 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
                   return (a->array_name.compare(b->array_name) < 0);
               });
 #endif
+}
+
+bool PerlBundleCode(Code& code, GenEnum::PropName prop)
+{
+    auto& description = code.node()->as_string(prop);
+    if (description.empty())
+    {
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts.size() <= 1 || parts[IndexImage].empty())
+    {
+        code.Add("wxNullBitmap");
+        return false;
+    }
+
+    return false;
+}
+
+tt_string MakePerlPath(Node* node)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_PERL);
+
+    if (path.empty())
+        path = "./";
+    else if (has_base_file)
+        path.remove_filename();
+    return path;
+}
+
+GatherPerlUsages::GatherPerlUsages(Node* form_node)
+{
+    ParseNodes(form_node);
+
+    if (m_art_ids.size())
+    {
+        tt_string art_ids;
+        for (auto& iter: m_art_ids)
+        {
+            if (art_ids.empty())
+            {
+                art_ids = "use Wx::ArtProvider qw(";
+            }
+            else
+            {
+                art_ids += ' ';
+            }
+            art_ids += iter;
+            if (art_ids.size() > (Project.as_size_t(prop_perl_line_length) - 15))
+            {
+                art_ids += ");";
+                m_use_constants.emplace(art_ids);
+                art_ids.clear();
+            }
+        }
+        if (art_ids.size())
+        {
+            art_ids += ");";
+            m_use_constants.emplace(art_ids);
+        }
+    }
+}
+
+void GatherPerlUsages::ParseNodes(Node* node)
+{
+    if (node->hasValue(prop_variant) && node->as_string(prop_variant) != "normal")
+    {
+        if (node->as_string(prop_variant) == "large")
+            m_use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_LARGE);");
+        else if (node->as_string(prop_variant) == "small")
+            m_use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_SMALL);");
+        else if (node->as_string(prop_variant) == "mini")
+            m_use_constants.emplace("use Wx qw(wxWINDOW_VARIANT_MINI);");
+    }
+
+    if (node->hasValue(prop_bitmap) && node->as_string(prop_bitmap).contains("wxART_"))
+    {
+        auto& description = node->as_string(prop_bitmap);
+        size_t pos_start = 0;
+        auto lambda = [&](size_t& pos_start)
+        {
+            auto new_pos_start = description.subview(pos_start, description.size() - pos_start).find("wxART_");
+            if (new_pos_start == tt::npos)
+            {
+                pos_start = tt::npos;
+                return;
+            }
+            pos_start += new_pos_start;
+            auto pos_end = pos_start + sizeof("wxART_");
+            while (pos_end < description.size() && (tt::is_alnum(description[pos_end]) || description[pos_end] == '_'))
+                ++pos_end;
+            if (pos_end > pos_start)
+                m_art_ids.emplace(description.substr(pos_start, pos_end - pos_start));
+            pos_start = pos_end + 1;
+        };
+        while (pos_start < description.size())
+        {
+            lambda(pos_start);
+        }
+    }
+
+    if (node->isSizer())
+    {
+        if (node->as_string(prop_borders).contains("wxALL"))
+        {
+            m_use_constants.emplace("use Wx qw(wxALL);");
+        }
+
+        if (node->as_string(prop_borders).contains("wxLEFT") || node->as_string(prop_borders).contains("wxRIGHT") ||
+            node->as_string(prop_borders).contains("wxTOP") || node->as_string(prop_borders).contains("wxBOTTOM"))
+        {
+            m_use_constants.emplace("use Wx qw(wxLEFT wxRIGHT wxTOP wxBOTTOM);");
+        }
+
+        if (node->as_string(prop_flags).contains("wxEXPAND"))
+        {
+            m_use_constants.emplace("use Wx qw(wxEXPAND);");
+        }
+        if (node->as_string(prop_flags).contains("wxSHAPED"))
+        {
+            m_use_constants.emplace("use Wx qw(wxSHAPED);");
+        }
+        if (node->as_string(prop_flags).contains("wxFIXED_MINSIZE"))
+        {
+            m_use_constants.emplace("use Wx qw(wxFIXED_MINSIZE);");
+        }
+        if (node->as_string(prop_flags).contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
+        {
+            m_use_constants.emplace("use Wx qw(wxRESERVE_SPACE_EVEN_IF_HIDDEN);");
+        }
+
+        if (node->as_string(prop_alignment).contains("wxALIGN"))
+        {
+            m_use_constants.emplace("use Wx qw(wxALIGN_CENTER_HORIZONTAL wxALIGN_CENTER_VERTICAL);");
+            m_use_constants.emplace("use Wx qw(wxALIGN_LEFT wxALIGN_RIGHT wxALIGN_TOP wxALIGN_BOTTOM wxALIGN_CENTER);");
+        }
+    }
+
+    if (auto* gen = node->getGenerator(); gen)
+    {
+        std::set<std::string> imports;
+        gen->GetImports(node, imports, GEN_LANG_PERL);
+        for (auto& iter: imports)
+        {
+            if (iter.starts_with("use Wx"))
+                m_use_constants.emplace(iter);
+            else
+                m_use_classes.emplace(iter);
+        }
+        for (auto& iter: map_perl_constants)
+        {
+            if (node->hasProp(iter.first))
+            {
+                tt_string constants("use Wx qw(");
+                constants += iter.second;
+                constants += ");";
+                m_use_constants.emplace(constants);
+            }
+        }
+    }
+
+    // Now recurse through any children and their children
+    for (auto& child: node->getChildNodePtrs())
+    {
+        ParseNodes(child.get());
+    }
 }

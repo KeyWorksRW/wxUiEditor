@@ -336,6 +336,7 @@
     <gen class="wxSimplebook" image="wxSimplebook" type="simplebook">
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_simplebook</property>
         <property name="show_effect" type="option"
             help="Set the effects to use when showing a page.">

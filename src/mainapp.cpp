@@ -489,7 +489,16 @@ int App::OnRun()
         {
             auto& file_history = m_frame->getFileHistory();
             tt_string file = file_history.GetHistoryFile(0).utf8_string();
-            is_project_loaded = Project.LoadProject(file);
+            if (!file.file_exists())
+            {
+                file_history.RemoveFileFromHistory(0);
+                wxMessageBox(tt_string("Last project file does not exist: ") << file, "Missing Project File",
+                             wxOK | wxICON_ERROR);
+            }
+            else
+            {
+                is_project_loaded = Project.LoadProject(file);
+            }
         }
     }
 

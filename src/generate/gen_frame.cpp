@@ -598,66 +598,13 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
 // defined in code.cpp
 extern constexpr auto set_perl_constants = frozen::make_set<std::string_view>;
 
-bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool FrameFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
-        tt_string constants;
-
-        auto set_constants = [&]()
-        {
-            if (constants.size())
-            {
-                // remove the leading space
-                constants.erase(0, 1);
-                constants.insert(0, "use Wx qw(");
-                constants += ");";
-                set_imports.emplace(constants);
-                constants.clear();
-            }
-        };
-
-        if (isScalingEnabled(node, prop_pos, language) || isScalingEnabled(node, prop_size, language))
-            constants += " wxSIZE_USE_EXISTING";
-        if (node->as_string(prop_style).contains("wxDEFAULT_FRAME_STYLE"))
-            constants += " wxDEFAULT_FRAME_STYLE";
-        if (node->as_string(prop_style).contains("wxCAPTION"))
-            constants += " wxCAPTION";
-        if (node->as_string(prop_style).contains("wxCLOSE_BOX"))
-            constants += " wxCLOSE_BOX";
-        if (node->as_string(prop_style).contains("wxFRAME_TOOL_WINDOW"))
-            constants += " wxFRAME_TOOL_WINDOW";
-        if (node->as_string(prop_style).contains("wxFRAME_NO_TASKBAR"))
-            constants += " wxFRAME_NO_TASKBAR";
-        if (node->as_string(prop_style).contains("wxFRAME_FLOAT_ON_PARENT"))
-            constants += " wxFRAME_FLOAT_ON_PARENT";
-        if (node->as_string(prop_style).contains("wxFRAME_SHAPED"))
-            constants += " wxFRAME_SHAPED";
-        if (node->as_string(prop_style).contains("wxICONIZE"))
-            constants += " wxICONIZE";
-        if (node->as_string(prop_style).contains("wxMINIMIZE_BOX"))
-            constants += " wxMINIMIZE_BOX";
-        if (node->as_string(prop_style).contains("wxMAXIMIZE_BOX"))
-            constants += " wxMAXIMIZE_BOX";
-        if (node->as_string(prop_style).contains("wxRESIZE_BORDER"))
-            constants += " wxRESIZE_BORDER";
-        if (node->as_string(prop_style).contains("wxSYSTEM_MENU"))
-            constants += " wxSYSTEM_MENU";
-        if (node->as_string(prop_style).contains("wxCLIP_CHILDREN"))
-            constants += " wxCLIP_CHILDREN";
-        if (node->as_string(prop_style).contains("wxSTAY_ON_TOP"))
-            constants += " wxSTAY_ON_TOP";
-        if (node->as_string(prop_extra_style).contains("wxFRAME_EX_CONTEXTHELP"))
-            constants += " wxFRAME_EX_CONTEXTHELP";
-        if (node->as_string(prop_extra_style).contains("wxFRAME_EX_METAL"))
-            constants += " wxFRAME_EX_METAL";
-        set_constants();
-
-        if (node->as_string(prop_center) != "no")
-            constants += " wxBOTH wxHORIZONTAL wxVERTICAL";
-        set_constants();
-
-        set_imports.emplace("use base qw(Wx::Frame);");
+        set_imports.emplace("use base qw[Wx::Frame];");
+        set_imports.emplace("use Wx qw[:frame];");
+        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
         return true;
     }
 

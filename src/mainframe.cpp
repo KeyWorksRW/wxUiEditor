@@ -2593,6 +2593,16 @@ void MainFrame::UpdateLanguagePanels()
             break;
 #endif  // GENERATE_NEW_LANG_CODE
 
+        case GEN_LANG_XRC:
+            ASSERT(m_xrcPanel);
+            position = m_notebook->GetPageIndex(m_xrcPanel);
+            if (position != 1)
+            {
+                m_notebook->RemovePage(position);
+                m_notebook->InsertPage(1, m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+            }
+            break;
+
         default:
             break;
     }
@@ -2603,7 +2613,8 @@ void MainFrame::UpdateLanguagePanels()
         m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
 
-    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+    if (Project.getCodePreference() != GEN_LANG_XRC)
+        m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
     if (m_docviewPanel)
         m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
 }

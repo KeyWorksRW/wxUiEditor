@@ -457,6 +457,12 @@ void Code::Init(Node* node, GenLang language)
         m_break_length -= m_indent_size;
     }
 #endif  // GENERATE_NEW_LANG_CODE
+    else if (language == GEN_LANG_XRC)
+    {
+        m_language_wxPrefix = "wx";
+        m_break_length = 500;  // XRC files are XML, so we don't need to break lines.
+        m_break_length -= m_indent_size;
+    }
 
     else
     {

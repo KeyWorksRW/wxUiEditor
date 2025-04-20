@@ -996,7 +996,7 @@ Code& Code::Function(tt_string_view text, bool add_operator)
 
 Code& Code::ClassMethod(tt_string_view function_name)
 {
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         *this += "::";
     }
@@ -1018,7 +1018,14 @@ Code& Code::ClassMethod(tt_string_view function_name)
 
 Code& Code::VariableMethod(tt_string_view function_name)
 {
-    *this += '.';
+    if (is_perl())
+    {
+        *this += "->";
+    }
+    else
+    {
+        *this += '.';
+    }
     if (is_ruby())
     {
         *this += ConvertToSnakeCase(function_name);

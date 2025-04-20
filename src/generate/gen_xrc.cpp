@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate XRC file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +47,7 @@
 
 const char* txt_dlg_name = "_wxue_temp_dlg";
 
-int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto generator = node->getNodeDeclaration()->getGenerator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
@@ -113,12 +113,12 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
                 }
                 auto child_object = actual_object.append_child("object");
                 child_object.append_child("depth").text().set(depth);
-                GenXrcObject(child.get(), child_object, xrc_flags);
+                GenerateXrcObject(child.get(), child_object, xrc_flags);
                 continue;
             }
 
             auto child_object = actual_object.append_child("object");
-            auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
+            auto child_result = GenerateXrcObject(child.get(), child_object, xrc_flags);
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 actual_object.remove_child(child_object);
@@ -136,7 +136,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
         for (const auto& child: node->getChildNodePtrs())
         {
             auto child_object = object.append_child("object");
-            auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
+            auto child_result = GenerateXrcObject(child.get(), child_object, xrc_flags);
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 object.remove_child(child_object);
@@ -203,7 +203,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     }
     else if (node_start->isGen(gen_Project))
     {
-        GenXrcObject(node_start, root, xrc_flags);
+        GenerateXrcObject(node_start, root, xrc_flags);
     }
     else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_PanelForm))
     {
@@ -221,7 +221,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         sizer_item.append_attribute("class").set_value("sizeritem");
         object = sizer_item.append_child("object");
 
-        GenXrcObject(node_start, object, xrc_flags);
+        GenerateXrcObject(node_start, object, xrc_flags);
     }
     else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
     {
@@ -229,16 +229,26 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         object.append_attribute("class").set_value("wxPanel");
         object.append_attribute("name").set_value(txt_dlg_name);
         object = object.append_child("object");
-        GenXrcObject(node_start->getChild(0), object, xrc_flags);
+        GenerateXrcObject(node_start->getChild(0), object, xrc_flags);
     }
     else
     {
         auto object = root.append_child("object");
-        GenXrcObject(node_start, object, xrc_flags);
+        GenerateXrcObject(node_start, object, xrc_flags);
     }
 
     std::ostringstream xml_stream;
-    doc.save(xml_stream, "\t");
+    auto format_flags = pugi::format_default;
+    if (xrc_flags & xrc::format_no_indent_nodes)
+    {
+        format_flags = 0;
+    }
+    else if (xrc_flags & xrc::format_indent_attributes)
+    {
+        format_flags = pugi::format_indent_attributes;
+    }
+    std::string indentation(xrc_flags & xrc::format_indent_with_spaces ? "  " : "\t");
+    doc.save(xml_stream, indentation.c_str(), format_flags);
     return xml_stream.str();
 }
 
@@ -254,10 +264,14 @@ void BaseCodeGenerator::GenerateXrcClass(PANEL_PAGE panel_type)
 
     if (m_panel_type != HDR_PANEL)
     {
-        size_t xrc_flags = xrc::use_xrc_dir;
+        XrcGenerator xrc_gen;
+        xrc_gen.AddProjectFlags();
         if (m_panel_type == CPP_PANEL)
-            xrc_flags |= xrc::add_comments;
-        auto doc_str = GenerateXrcStr(m_form_node, xrc_flags);
+        {
+            xrc_gen.AddXrcFlags(xrc::add_comments);
+        }
+        xrc_gen.AddNode(m_form_node);
+        auto doc_str = xrc_gen.getXmlString();
         m_source->doWrite(doc_str);
     }
 
@@ -281,161 +295,12 @@ void BaseCodeGenerator::GenerateXrcClass(PANEL_PAGE panel_type)
     }
 }
 
-// This assumes each form is being generated to a single file.
-static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
+bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
-    if (path.empty())
-    {
-        // If the form type is supported, warn the user about not having an XRC file for it.
-        if (!form->isGen(gen_Images) && !form->isGen(gen_Data) && !form->isGen(gen_wxPopupTransientWindow))
-            results.msgs.emplace_back() << "No XRC filename specified for " << form->as_string(prop_class_name) << '\n';
-        return false;
-    }
-    if (path.extension().empty())
-    {
-        path.replace_extension(".xrc");
-    }
-
-    pugi::xml_document doc_new;
-    doc_new.append_child(pugi::node_comment)
-        .set_value("Generated by wxUiEditor -- see https://github.com/KeyWorksRW/wxUiEditor ");
-    doc_new.append_child(pugi::node_comment)
-        .set_value("DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!");
-
-    auto root = doc_new.append_child("resource");
-    root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
-    root.append_attribute("version") = "2.5.3.0";
-
-    auto form_object = root.append_child("object");
-    GenXrcObject(form, form_object, false);
-
-    if (path.file_exists())
-    {
-        wxFile file_original(path.make_wxString(), wxFile::read_write);
-        if (file_original.IsOpened())
-        {
-            // Check to see if the file would be changed. If not, we don't need to update it.
-            std::ostringstream xml_stream;
-            doc_new.save(xml_stream, "\t");
-            auto new_str = xml_stream.str();
-
-            auto in_size = file_original.Length();
-            if (new_str.size() == (to_size_t) in_size)
-            {
-                auto buffer = std::make_unique<unsigned char[]>(in_size);
-                if (file_original.Read(buffer.get(), in_size) == in_size)
-                {
-                    if (std::memcmp(buffer.get(), new_str.data(), in_size) == 0)
-                    {
-                        if (pClassList)
-                        {
-                            pClassList->emplace_back(form->as_string(prop_class_name));
-                        }
-                        else
-                        {
-                            ++results.file_count;
-                        }
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                file_original.Close();
-                if (!file_original.Create(path.make_wxString(), true))
-                {
-                    results.msgs.emplace_back() << "Cannot create the file " << path << '\n';
-                    return false;
-                }
-
-                if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
-                {
-                    results.msgs.emplace_back() << "Cannot write to the file " << path << '\n';
-                    return false;
-                }
-
-                results.updated_files.emplace_back(path);
-                return true;
-            }
-        }
-
-        if (!doc_new.save_file(path))
-        {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
-        }
-        else
-        {
-            results.updated_files.emplace_back(path);
-        }
-        return true;
-    }
-    return false;
-}
-
-bool GenerateXrcFiles(GenResults& results, tt_string out_file, std::vector<tt_string>* pClassList)
-{
-    if (Project.getChildCount() == 0)
-    {
-        wxMessageBox("This project does not yet contain any forms -- nothing to save!", "Export XRC");
-        return false;
-    }
-
-    tt_cwd cwd(true);
-    Project.getProjectPath().ChangeDir();
-
-    if (out_file.size())
-    {
-        if (out_file.extension().empty())
-        {
-            out_file.replace_extension(".xrc");
-        }
-
-        pugi::xml_document doc;
-        doc.append_child(pugi::node_comment)
-            .set_value("Generated by wxUiEditor -- see https://github.com/KeyWorksRW/wxUiEditor ");
-        doc.append_child(pugi::node_comment)
-            .set_value("DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!");
-
-        auto root = doc.append_child("resource");
-        root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
-        root.append_attribute("version") = "2.5.3.0";
-
-        root.append_child(pugi::node_comment)
-            .set_value("Generated by wxUiEditor -- see https://github.com/KeyWorksRW/wxUiEditor ");
-        root.append_child(pugi::node_comment)
-            .set_value("DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!");
-
-        GenXrcObject(Project.getProjectNode(), root, false);
-        if (!doc.save_file(out_file))
-        {
-            std::string msg("Unable to save\n    \"" + out_file + "\"\n");
-            wxMessageDialog dlg(nullptr, msg, "", wxICON_ERROR | wxOK);
-            dlg.ShowModal();
-        }
-        return true;
-    }
-
-    bool generate_result = false;
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
-
-    if (wxGetApp().isTestingMenuEnabled())
-        results.EndClock();
-
-    for (auto& form: forms)
-    {
-        GenerateXrcForm(form, results, pClassList);
-        if (results.updated_files.size())
-        {
-            generate_result = true;
-        }
-    }
-
-    if (wxGetApp().isTestingMenuEnabled())
-        results.EndClock();
-
-    return generate_result;
+    XrcGenerator xrc_gen;
+    xrc_gen.AddProjectFlags();
+    xrc_gen.GenerateAllXrcForms(results, pClassList);
+    return true;
 }
 
 void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
@@ -450,9 +315,90 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
         wxMessageBox("You must select a form before you can generate code.", "Code Generation");
         return;
     }
+    else if (form->isGen(gen_Images) || form->isGen(gen_Data) || form->isGen(gen_wxPopupTransientWindow))
+    {
+        wxMessageBox("You cannot generate an XRC file for this type of form.", "Code Generation");
+        return;
+    }
 
     GenResults results;
-    GenerateXrcForm(form, results, nullptr);
+    XrcGenerator xrc_gen;
+    xrc_gen.AddProjectFlags();
+    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
+    if (path.empty())
+    {
+        wxMessageBox("No XRC filename specified for " + form->as_string(prop_class_name), "Code Generation");
+        return;
+    }
+    if (path.extension().empty())
+    {
+        path.replace_extension(".xrc");
+    }
+
+    xrc_gen.AddNode(form);
+
+    if (path.file_exists())
+    {
+        // Compare the new document with the existing file, and only write it if it has changed
+        wxFile file_original(path.make_wxString(), wxFile::read_write);
+        if (file_original.IsOpened())
+        {
+            // Check to see if the file would be changed. If not, we don't need to update it.
+            auto new_str = xrc_gen.getXmlString();
+
+            auto in_size = file_original.Length();
+            if (new_str.size() == (to_size_t) in_size)
+            {
+                auto buffer = std::make_unique<unsigned char[]>(in_size);
+                if (file_original.Read(buffer.get(), in_size) == in_size)
+                {
+                    if (std::memcmp(buffer.get(), new_str.data(), in_size) == 0)
+                    {
+                        ++results.file_count;
+                    }
+                }
+            }
+            else
+            {
+                // The document differs from the file, so write the document to the file.
+                file_original.Close();
+                if (!file_original.Create(path.make_wxString(), true))
+                {
+                    results.msgs.emplace_back() << "Cannot create the file " << path << '\n';
+                }
+                else
+                {
+                    if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
+                    {
+                        results.msgs.emplace_back() << "Cannot write to the file " << path << '\n';
+                    }
+                    else
+                    {
+                        results.updated_files.emplace_back(path);
+                        if (results.updated_files.size())
+                        {
+                            results.file_count += results.updated_files.size();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else  // file doesn't exist, so write it out
+    {
+        if (!xrc_gen.getDocument().save_file(path))
+        {
+            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+        }
+        else
+        {
+            results.updated_files.emplace_back(path);
+            if (results.updated_files.size())
+            {
+                results.file_count += results.updated_files.size();
+            }
+        }
+    }
 
     tt_string msg;
     if (results.updated_files.size())
@@ -478,4 +424,293 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
     }
 
     wxMessageBox(msg, "XRC Code Generation", wxOK | wxICON_INFORMATION);
+}
+
+XrcGenerator::XrcGenerator() {};
+
+void XrcGenerator::AddProjectFlags()
+{
+    if (Project.as_bool(prop_xrc_no_whitespace))
+    {
+        m_xrc_flags |= xrc::format_no_indent_nodes;
+    }
+    else
+    {
+        if (Project.as_bool(prop_xrc_indent_attributes))
+        {
+            m_xrc_flags |= xrc::format_indent_attributes;
+        }
+        if (Project.as_bool(prop_xrc_indent_with_spaces))
+        {
+            m_xrc_flags |= xrc::format_indent_with_spaces;
+        }
+    }
+
+    if (Project.as_bool(prop_xrc_add_var_comments))
+    {
+        m_xrc_flags |= xrc::add_comments;
+    }
+}
+
+std::string XrcGenerator::getXmlString()
+{
+    std::ostringstream xml_stream;
+    auto format_flags = pugi::format_default;
+    if (m_xrc_flags & xrc::format_no_indent_nodes)
+    {
+        format_flags = 0;
+    }
+    else if (m_xrc_flags & xrc::format_indent_attributes)
+    {
+        format_flags = pugi::format_indent_attributes;
+    }
+    std::string indentation(m_xrc_flags & xrc::format_indent_with_spaces ? "  " : "\t");
+    m_doc.save(xml_stream, indentation.c_str(), format_flags);
+    return xml_stream.str();
+}
+
+void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_string>* pClassList)
+{
+    bool combine_forms = Project.as_bool(prop_combine_all_forms);
+    if (combine_forms)
+    {
+        auto path = Project.as_string(prop_combined_xrc_file);
+        if (path.empty())
+        {
+            results.msgs.emplace_back() << "No combined XRC filename specified for the project.\n";
+            return;
+        }
+        ClearDocument();
+        AddGeneratedComments();
+    }
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+    for (auto& form: forms)
+    {
+        if (!combine_forms)
+        {
+            ClearDocument();
+            AddGeneratedComments();
+            auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
+            if (path.empty())
+            {
+                // If the form type is supported, warn the user about not having an XRC file for it.
+                if (!form->isGen(gen_Images) && !form->isGen(gen_Data) && !form->isGen(gen_wxPopupTransientWindow))
+                    results.msgs.emplace_back()
+                        << "No XRC filename specified for " << form->as_string(prop_class_name) << '\n';
+                continue;
+            }
+            if (path.extension().empty())
+            {
+                path.replace_extension(".xrc");
+            }
+
+            AddNode(form);
+
+            if (path.file_exists())
+            {
+                // Compare the new document with the existing file, and only write it if it has changed
+                wxFile file_original(path.make_wxString(), wxFile::read_write);
+                if (file_original.IsOpened())
+                {
+                    // Check to see if the file would be changed. If not, we don't need to update it.
+                    std::ostringstream xml_stream;
+                    m_doc.save(xml_stream, getIndentationString().c_str());
+                    auto new_str = xml_stream.str();
+
+                    auto in_size = file_original.Length();
+                    if (new_str.size() == (to_size_t) in_size)
+                    {
+                        auto buffer = std::make_unique<unsigned char[]>(in_size);
+                        if (file_original.Read(buffer.get(), in_size) == in_size)
+                        {
+                            if (std::memcmp(buffer.get(), new_str.data(), in_size) == 0)
+                            {
+                                if (pClassList)
+                                {
+                                    pClassList->emplace_back(form->as_string(prop_class_name));
+                                }
+                                else
+                                {
+                                    ++results.file_count;
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // The document differs from the file, so write the document to the file.
+                        file_original.Close();
+                        if (!file_original.Create(path.make_wxString(), true))
+                        {
+                            results.msgs.emplace_back() << "Cannot create the file " << path << '\n';
+                        }
+                        else
+                        {
+                            if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
+                            {
+                                results.msgs.emplace_back() << "Cannot write to the file " << path << '\n';
+                            }
+                            else
+                            {
+                                results.updated_files.emplace_back(path);
+                                if (results.updated_files.size())
+                                {
+                                    results.file_count += results.updated_files.size();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else  // file doesn't exist, so write it out
+            {
+                if (!m_doc.save_file(path))
+                {
+                    results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                }
+                else
+                {
+                    results.updated_files.emplace_back(path);
+                    if (results.updated_files.size())
+                    {
+                        results.file_count += results.updated_files.size();
+                    }
+                }
+            }
+        }
+        else
+        {
+            AddNode(form);
+        }
+    }
+
+    if (combine_forms)
+    {
+        auto path = Project.as_string(prop_xrc_directory);
+        if (path.empty())
+        {
+            path = Project.as_string(prop_combined_xrc_file);
+        }
+        else
+        {
+            auto base_file = Project.as_string(prop_combined_xrc_file);
+            base_file.backslashestoforward();
+            if (base_file.contains("/"))
+            {
+                path.backslashestoforward();
+                if (path.back() == '/')
+                    path.pop_back();
+
+                // If the first part of the base_file is a folder and it matches the last folder in
+                // result, then assume the folder name is duplicated in base_file. Remove the folder
+                // from result before adding the base_file path.
+                if (auto end_folder = base_file.find('/'); end_folder != tt::npos)
+                {
+                    if (path.ends_with(base_file.substr(0, end_folder)))
+                    {
+                        path.erase(path.size() - end_folder, end_folder);
+                    }
+                }
+            }
+            path.append_filename(base_file);
+            path.make_absolute();
+            path.backslashestoforward();
+        }
+        if (path.extension().empty())
+        {
+            path.replace_extension(".xrc");
+        }
+
+        if (!m_doc.save_file(path))
+        {
+            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            return;
+        }
+        results.updated_files.emplace_back(path);
+    }
+}
+
+void XrcGenerator::AddNode(Node* node_start)
+{
+    if (!m_root)
+    {
+        m_root = m_doc.append_child("resource");
+        m_root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
+        m_root.append_attribute("version") = "2.5.3.0";
+    }
+
+    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
+    {
+        if (auto temp_form = NodeCreation.createNode(gen_PanelForm, nullptr).first; temp_form)
+        {
+            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get()).first;
+            temp_form->adoptChild(sizer);
+            auto node_copy = NodeCreation.makeCopy(node_start, sizer.get());
+            sizer->adoptChild(node_copy);
+            node_start = temp_form.get();
+        }
+    }
+
+    if (!node_start)
+    {
+        m_root.append_child("object");
+    }
+    else if (node_start->isGen(gen_Project))
+    {
+        GenerateXrcObject(node_start, m_root, m_xrc_flags);
+    }
+    else if ((m_xrc_flags & xrc::previewing) && node_start->isGen(gen_PanelForm))
+    {
+        auto object = m_root.append_child("object");
+        object.append_attribute("class").set_value("wxDialog");
+        object.append_attribute("name").set_value(txt_dlg_name);
+        object.append_child("style").text().set("wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER");
+        object.append_child("centered").text().set("1");
+        object.append_child("title").text().set(node_start->as_string(prop_class_name));
+        auto item = object.append_child("object");
+        item.append_attribute("class").set_value("wxBoxSizer");
+        item.append_attribute("name").set_value("_wxue_temp_sizer");
+        item.append_child("orient").text().set("wxVERTICAL");
+        auto sizer_item = item.append_child("object");
+        sizer_item.append_attribute("class").set_value("sizeritem");
+        object = sizer_item.append_child("object");
+
+        GenerateXrcObject(node_start, object, m_xrc_flags);
+    }
+    else if ((m_xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
+    {
+        auto object = m_root.append_child("object");
+        object.append_attribute("class").set_value("wxPanel");
+        object.append_attribute("name").set_value(txt_dlg_name);
+        object = object.append_child("object");
+        GenerateXrcObject(node_start->getChild(0), object, m_xrc_flags);
+    }
+    else
+    {
+        auto object = m_root.append_child("object");
+        GenerateXrcObject(node_start, object, m_xrc_flags);
+    }
+}
+
+void XrcGenerator::AddGeneratedComments()
+{
+    m_doc.append_child(pugi::node_comment)
+        .set_value("Generated by wxUiEditor -- see https://github.com/KeyWorksRW/wxUiEditor ");
+    m_doc.append_child(pugi::node_comment)
+        .set_value("DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!");
+}
+
+std::string XrcGenerator::getIndentationString()
+{
+    if (Project.as_bool(prop_xrc_indent_with_spaces))
+    {
+        return "  ";  // Two spaces
+    }
+    else
+    {
+        return "\t";  // Tab character
+    }
 }

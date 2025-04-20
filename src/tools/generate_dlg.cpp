@@ -111,12 +111,12 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
     if (output_type == OUTPUT_XRC)
     {
-        GenerateXrcFiles(results);
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
         code_generated = true;
     }
     else if (output_type == OUTPUT_CPLUS)
     {
-        GenerateCppFiles(results);
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
         code_generated = true;
     }
     else if (output_type == OUTPUT_DERIVED)
@@ -145,14 +145,14 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             gen_xrc_code = dlg.is_gen_xrc();
             if (gen_xrc_code)
             {
-                GenerateXrcFiles(results);
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
                 code_generated = true;
             }
 
             gen_base_code = dlg.is_gen_base();
             if (gen_base_code)
             {
-                GenerateCppFiles(results);
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
                 code_generated = true;
             }
 

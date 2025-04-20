@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common XRC generating functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -411,7 +411,13 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
     if (node->hasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         object.append_attribute("name").set_value(node->as_string(prop_id));
     else if (node->hasProp(prop_var_name))
+    {
         object.append_attribute("name").set_value(node->as_string(prop_var_name));
+        if (node->hasValue(prop_var_comment) && Project.as_bool(prop_xrc_add_var_comments))
+        {
+            object.append_child(pugi::node_comment).set_value(node->as_string(prop_var_comment).c_str());
+        }
+    }
     else
         object.append_attribute("name").set_value(node->as_string(prop_class_name));
 }

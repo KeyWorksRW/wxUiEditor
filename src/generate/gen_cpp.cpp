@@ -306,17 +306,6 @@ static void GenCppForm(GenData& gen_data, Node* form)
 
 bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
-    if (Project.getChildCount() == 0)
-    {
-        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
-        return false;
-    }
-    tt_cwd cwd(true);
-    Project.ChangeDir();
-
-    if (wxGetApp().isTestingMenuEnabled())
-        results.StartClock();
-
     if (Project.as_bool(prop_generate_cmake))
     {
         auto is_testing = pClassList ? 1 : 0;
@@ -376,9 +365,6 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
     {
         GenCppForm(gen_data, form);
     }
-
-    if (wxGetApp().isTestingMenuEnabled())
-        results.EndClock();
 
     if (pClassList)
         return pClassList->size() > 0;

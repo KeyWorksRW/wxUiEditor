@@ -216,7 +216,7 @@ void CodeCompare::OnRadioButton(GenLang language)
     switch (language)
     {
         case GEN_LANG_CPLUSPLUS:
-            result = GenerateCppFiles(results, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_CPLUSPLUS);
             break;
         case GEN_LANG_PERL:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PERL);
@@ -231,7 +231,7 @@ void CodeCompare::OnRadioButton(GenLang language)
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUST);
             break;
         case GEN_LANG_XRC:
-            result = GenerateXrcFiles(results, {}, &m_class_list);
+            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_XRC);
             break;
 
 #if GENERATE_NEW_LANG_CODE

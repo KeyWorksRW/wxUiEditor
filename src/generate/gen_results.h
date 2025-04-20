@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code generation file writing functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -61,6 +61,6 @@ void GenInhertedClass(GenResults& results);
 // updating.
 //
 // ../generate/gen_xrc.cpp
-bool GenerateXrcFiles(GenResults& results, tt_string out_file = {}, std::vector<tt_string>* pClassList = nullptr);
+bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
 void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, GenLang language = GEN_LANG_CPLUSPLUS);

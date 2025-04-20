@@ -489,7 +489,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     for (auto& iter: propInfo->getOptions())
                     {
                         // If not testing, do not show Code preference options for code we don't currently generate
-                        if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" && iter.name != "XRC")
+                        if (iter.name != "C++" && iter.name != "Perl" && iter.name != "Python" && iter.name != "Ruby" &&
+                            iter.name != "XRC")
                             continue;
                         bit_flags.Add(iter.name.make_wxString(), 1 << index++);
                     }

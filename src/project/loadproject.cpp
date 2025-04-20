@@ -987,25 +987,62 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
             {
+                tt_string generate_languages = project->as_string(prop_generate_languages);
+                bool generated_changed = false;
                 if (dlg.is_gen_python())
                 {
                     project->set_value(prop_code_preference, "Python");
+                    if (!generate_languages.contains("Python", tt::CASE::either))
+                    {
+                        if (generate_languages.size())
+                            generate_languages << '|';
+                        generate_languages << "Python";
+                        generated_changed = true;
+                    }
                 }
                 else if (dlg.is_gen_ruby())
                 {
                     project->set_value(prop_code_preference, "Ruby");
+                    if (!generate_languages.contains("Ruby", tt::CASE::either))
+                    {
+                        if (generate_languages.size())
+                            generate_languages << '|';
+                        generate_languages << "Ruby";
+                        generated_changed = true;
+                    }
                 }
                 else if (dlg.is_gen_perl())
                 {
                     project->set_value(prop_code_preference, "Perl");
+                    if (!generate_languages.contains("Perl", tt::CASE::either))
+                    {
+                        if (generate_languages.size())
+                            generate_languages << '|';
+                        generate_languages << "Perl";
+                        generated_changed = true;
+                    }
                 }
                 else if (dlg.is_gen_rust())
                 {
                     project->set_value(prop_code_preference, "Rust");
+                    if (!generate_languages.contains("Rust", tt::CASE::either))
+                    {
+                        if (generate_languages.size())
+                            generate_languages << '|';
+                        generate_languages << "Rust";
+                        generated_changed = true;
+                    }
                 }
                 else if (dlg.is_gen_xrc())
                 {
                     project->set_value(prop_code_preference, "XRC");
+                    if (!generate_languages.contains("XRC", tt::CASE::either))
+                    {
+                        if (generate_languages.size())
+                            generate_languages << '|';
+                        generate_languages << "XRC";
+                        generated_changed = true;
+                    }
                 }
 #if GENERATE_NEW_LANG_CODE
                 else if (dlg.is_gen_haskell())
@@ -1020,6 +1057,11 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 else  // default to C++
                 {
                     project->set_value(prop_code_preference, "C++");
+                }
+
+                if (generated_changed)
+                {
+                    project->set_value(prop_generate_languages, generate_languages);
                 }
             }
         }

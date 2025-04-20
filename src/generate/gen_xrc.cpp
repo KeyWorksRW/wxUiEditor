@@ -47,7 +47,7 @@
 
 const char* txt_dlg_name = "_wxue_temp_dlg";
 
-int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto generator = node->getNodeDeclaration()->getGenerator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
@@ -113,12 +113,12 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
                 }
                 auto child_object = actual_object.append_child("object");
                 child_object.append_child("depth").text().set(depth);
-                GenXrcObject(child.get(), child_object, xrc_flags);
+                GenerateXrcObject(child.get(), child_object, xrc_flags);
                 continue;
             }
 
             auto child_object = actual_object.append_child("object");
-            auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
+            auto child_result = GenerateXrcObject(child.get(), child_object, xrc_flags);
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 actual_object.remove_child(child_object);
@@ -136,7 +136,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
         for (const auto& child: node->getChildNodePtrs())
         {
             auto child_object = object.append_child("object");
-            auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
+            auto child_result = GenerateXrcObject(child.get(), child_object, xrc_flags);
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 object.remove_child(child_object);
@@ -203,7 +203,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     }
     else if (node_start->isGen(gen_Project))
     {
-        GenXrcObject(node_start, root, xrc_flags);
+        GenerateXrcObject(node_start, root, xrc_flags);
     }
     else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_PanelForm))
     {
@@ -221,7 +221,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         sizer_item.append_attribute("class").set_value("sizeritem");
         object = sizer_item.append_child("object");
 
-        GenXrcObject(node_start, object, xrc_flags);
+        GenerateXrcObject(node_start, object, xrc_flags);
     }
     else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
     {
@@ -229,12 +229,12 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         object.append_attribute("class").set_value("wxPanel");
         object.append_attribute("name").set_value(txt_dlg_name);
         object = object.append_child("object");
-        GenXrcObject(node_start->getChild(0), object, xrc_flags);
+        GenerateXrcObject(node_start->getChild(0), object, xrc_flags);
     }
     else
     {
         auto object = root.append_child("object");
-        GenXrcObject(node_start, object, xrc_flags);
+        GenerateXrcObject(node_start, object, xrc_flags);
     }
 
     std::ostringstream xml_stream;
@@ -307,7 +307,7 @@ static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_stri
     root.append_attribute("version") = "2.5.3.0";
 
     auto form_object = root.append_child("object");
-    GenXrcObject(form, form_object, false);
+    GenerateXrcObject(form, form_object, false);
 
     if (path.file_exists())
     {

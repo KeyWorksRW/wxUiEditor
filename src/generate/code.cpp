@@ -615,8 +615,7 @@ Code& Code::CloseBrace(bool all_languages, bool close_ruby)
 
 void Code::OpenFontBrace()
 {
-    // REVIEW: [Randalphwa - 09-26-2024] Will this be needed for wxPerl as well?
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         m_within_font_braces = true;
         Eol(eol_if_needed);
@@ -628,7 +627,7 @@ void Code::OpenFontBrace()
 
 void Code::CloseFontBrace()
 {
-    if (is_cpp())
+    if (is_cpp() || is_perl())
     {
         while (size() && tt::is_whitespace(back()))
             pop_back();
@@ -2599,13 +2598,17 @@ void Code::GenWindowSettings()
 Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 {
     FontProperty fontprop(m_node->getPropPtr(prop_name));
-    if (is_perl())
-    {
-        // REVIEW: [Randalphwa - 01-07-2025] As of wx-3.005, wxPerl doesn't support wxFontinfo
-        return *this;
-    }
     if (fontprop.isDefGuiFont())
     {
+        std::string font_var_name;
+        if (is_perl())
+        {
+            font_var_name = "$font";
+        }
+        else
+        {
+            font_var_name = "font";
+        }
         OpenFontBrace();
         if (is_cpp())
         {
@@ -2613,159 +2616,182 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         }
         else
         {
-            Add("font").CreateClass(false, "wxFont");
+            AddIfPerl("my ").Str(font_var_name).CreateClass(false, "wxFont");
         }
-        Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+        Class("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
         EndFunction();
 
         if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
             Eol()
-                .Str("font")
+                .Str(font_var_name)
                 .VariableMethod("SetSymbolicSize(")
                 .Add(font_symbol_pairs.GetValue(fontprop.GetSymbolSize()))
                 .EndFunction();
         if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-            Eol().Str("font").VariableMethod("SetStyle(").Add(font_style_pairs.GetValue(fontprop.GetStyle())).EndFunction();
+            Eol()
+                .Str(font_var_name)
+                .VariableMethod("SetStyle(")
+                .Add(font_style_pairs.GetValue(fontprop.GetStyle()))
+                .EndFunction();
         if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
             Eol()
-                .Str("font")
+                .Str(font_var_name)
                 .VariableMethod("SetWeight(")
                 .Add(font_weight_pairs.GetValue(fontprop.GetWeight()))
                 .EndFunction();
         if (fontprop.IsUnderlined())
-            Eol().Str("font").VariableMethod("SetUnderlined(").True().EndFunction();
+            Eol().Str(font_var_name).VariableMethod("SetUnderlined(").True().EndFunction();
         if (fontprop.IsStrikethrough())
-            Eol().Str("font").VariableMethod("SetStrikethrough(").True().EndFunction();
+            Eol().Str(font_var_name).VariableMethod("SetStrikethrough(").True().EndFunction();
         Eol();
 
         if (m_node->isForm())
         {
             if (m_node->isGen(gen_wxPropertySheetDialog))
             {
-                FormFunction("GetBookCtrl()").Function("SetFont(").Add("font").EndFunction();
+                FormFunction("GetBookCtrl()").Function("SetFont(").Str(font_var_name).EndFunction();
             }
             else
             {
-                FormFunction("SetFont(font").EndFunction();
+                FormFunction("SetFont(").Str(font_var_name).EndFunction();
             }
             CloseFontBrace();
         }
         else if (m_node->isGen(gen_wxStyledTextCtrl))
         {
             NodeName().Function("StyleSetFont(").Add("wxSTC_STYLE_DEFAULT");
-            Comma().Str("font").EndFunction();
+            Comma().Str(font_var_name).EndFunction();
             CloseFontBrace();
         }
         else
         {
-            NodeName().Function(font_function).Str("font").EndFunction();
+            NodeName().Function(font_function).Str(font_var_name).EndFunction();
             CloseFontBrace();
         }
     }
     else  // not isDefGuiFont()
     {
-        bool more_than_pointsize =
-            ((fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default") ||
-             fontprop.GetFamily() != wxFONTFAMILY_DEFAULT || fontprop.GetStyle() != wxFONTSTYLE_NORMAL ||
-             fontprop.GetWeight() != wxFONTWEIGHT_NORMAL || fontprop.IsUnderlined() || fontprop.IsStrikethrough());
-
-        const auto point_size = fontprop.GetFractionalPointSize();
-        if (is_cpp())
+        if (is_perl())
         {
             OpenFontBrace();
-            Str("wxFontInfo font_info(");
+            Str("my $font = ");
+            Class("wxFont").Function("new(");
+            itoa(fontprop.GetPointSize()).Comma();
+            Str(font_family_pairs.GetValue(fontprop.GetFamily())).Comma();
+            Str(font_style_pairs.GetValue(fontprop.GetStyle())).Comma();
+            Str(font_weight_pairs.GetValue(fontprop.GetWeight())).Comma();
+            Str(fontprop.IsUnderlined() ? "1" : "0").Comma();
+            QuotedString(fontprop.GetFaceName().utf8_string()).Str(");");
         }
         else
         {
-            Eol(eol_if_needed);
-            if (is_perl())
-            {
-                *this += "my $";
-            }
-            Add("font_info").CreateClass(false, "wxFontInfo");
-        }
+            bool more_than_pointsize =
+                ((fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default") ||
+                 fontprop.GetFamily() != wxFONTFAMILY_DEFAULT || fontprop.GetStyle() != wxFONTSTYLE_NORMAL ||
+                 fontprop.GetWeight() != wxFONTWEIGHT_NORMAL || fontprop.IsUnderlined() || fontprop.IsStrikethrough());
 
-        if (point_size != static_cast<int>(point_size))  // is there a fractional value?
-        {
-            std::array<char, 10> float_str;
-            if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
-                ec == std::errc())
+            const auto point_size = fontprop.GetFractionalPointSize();
+            if (is_cpp())
             {
-                Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
+                OpenFontBrace();
+                Str("wxFontInfo font_info(");
             }
-        }
-        else
-        {
-            if (point_size <= 0)
+            else
             {
-                Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
-                VariableMethod("GetPointSize()").EndFunction();
-                if (!is_cpp() && more_than_pointsize)
+                Eol(eol_if_needed);
+                if (is_perl())
                 {
-                    Eol().Str("font_info");
+                    *this += "my $";
+                }
+                Add("font_info").CreateClass(false, "wxFontInfo");
+            }
+
+            if (point_size != static_cast<int>(point_size))  // is there a fractional value?
+            {
+                std::array<char, 10> float_str;
+                if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                    ec == std::errc())
+                {
+                    Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
                 }
             }
             else
             {
-                // GetPointSize() will round the result rather than truncating the decimal
-                itoa(fontprop.GetPointSize()).EndFunction();
+                if (point_size <= 0)
+                {
+                    Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+                    VariableMethod("GetPointSize()").EndFunction();
+                    if (!is_cpp() && more_than_pointsize)
+                    {
+                        Eol().Str("font_info");
+                    }
+                }
+                else
+                {
+                    // GetPointSize() will round the result rather than truncating the decimal
+                    itoa(fontprop.GetPointSize()).EndFunction();
+                }
             }
-        }
 
-        if (is_cpp())
-        {
-            Eol();
-            if (more_than_pointsize)
+            if (is_cpp())
             {
-                Str("font_info");
+                Eol();
+                if (more_than_pointsize)
+                {
+                    Str("font_info");
+                }
             }
-        }
 
-        if (is_perl())
-        {
-            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+#if defined(_WIN32)
+            // REVIEW: [Randalphwa - 04-18-2025] Currently, wxPerl does support wxFontInfo, but leave this code
+            // in case it is added later.
+            if (is_perl())
             {
-                Eol().Str("$font_info->").Str("FaceName = ");
-                QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ";";
+                if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+                {
+                    Eol().Str("$font_info->").Str("FaceName = ");
+                    QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ";";
+                }
+                if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+                {
+                    Eol().Str("$font_info->").Str("Family = ");
+                    Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ";";
+                }
+                if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                {
+                    Eol().Str("$font_info->").Str("Style = ");
+                    Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ";";
+                }
             }
-            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+#endif
+            else
             {
-                Eol().Str("$font_info->").Str("Family = ");
-                Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ";";
+                if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+                    VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
+                if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+                    VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
+                if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                    VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
+                if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                {
+                    VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+                }
+                if (fontprop.IsUnderlined())
+                    VariableMethod("Underlined()");
+                if (fontprop.IsStrikethrough())
+                    VariableMethod("Strikethrough()");
             }
-            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+            if (back() == '.')
             {
-                Eol().Str("$font_info->").Str("Style = ");
-                Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ";";
-            }
-        }
-        else
-        {
-            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
-            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-                VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
-            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-                VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
-            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-            {
-                VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
-            }
-            if (fontprop.IsUnderlined())
-                VariableMethod("Underlined()");
-            if (fontprop.IsStrikethrough())
-                VariableMethod("Strikethrough()");
-        }
-        if (back() == '.')
-        {
-            pop_back();
-        }
-        if (is_cpp())
-        {
-            while (back() == '\t')
                 pop_back();
-            if (back() != '\n')
-                *this += ';';
+            }
+            if (is_cpp())
+            {
+                while (back() == '\t')
+                    pop_back();
+                if (back() != '\n')
+                    *this += ';';
+            }
         }
         Eol(eol_if_needed);
 
@@ -2773,21 +2799,43 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         {
             if (m_node->isGen(gen_wxPropertySheetDialog))
             {
-                FormFunction("GetBookCtrl()")
-                    .Function(font_function)
-                    .Object("wxFont")
-                    .Str("font_info")
-                    .Str(")")
-                    .EndFunction();
+                if (!is_perl())
+                {
+                    FormFunction("GetBookCtrl()")
+                        .Function(font_function)
+                        .Object("wxFont")
+                        .Str("font_info")
+                        .Str(")")
+                        .EndFunction();
+                }
+                else
+                {
+                    FormFunction("GetBookCtrl()").Function(font_function).Str("$font").EndFunction();
+                }
             }
             else
             {
-                FormFunction(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
+                if (!is_perl())
+                {
+                    FormFunction(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
+                }
+                else
+                {
+                    FormFunction(font_function).Str("$font").EndFunction();
+                }
             }
         }
         else
         {
-            NodeName().Function(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
+            if (!is_perl())
+            {
+                NodeName().Function(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
+            }
+            else
+            {
+                // wxPerl doesn't support wxFontInfo, so use the font creation generated above
+                NodeName().Function(font_function).Str("$font").EndFunction();
+            }
         }
         CloseFontBrace();
     }

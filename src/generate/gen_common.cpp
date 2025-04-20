@@ -1466,7 +1466,6 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassLi
     }
 
     ASSERT_MSG(language != GEN_LANG_NONE, "No language specified for code generation!");
-    ASSERT_MSG(language <= GEN_LANG_XRC, "Invalid language specified for code generation!");
 
     if (wxGetApp().isTestingMenuEnabled())
         results.StartClock();
@@ -1479,6 +1478,10 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassLi
     if (language == GEN_LANG_CPLUSPLUS)
     {
         generate_result = GenerateCppFiles(results, pClassList);
+    }
+    else if (language == GEN_LANG_XRC)
+    {
+        generate_result = GenerateXrcFiles(results, pClassList);
     }
     else
     {

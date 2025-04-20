@@ -111,7 +111,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
     if (output_type == OUTPUT_XRC)
     {
-        GenerateXrcFiles(results);
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
         code_generated = true;
     }
     else if (output_type == OUTPUT_CPLUS)
@@ -145,7 +145,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             gen_xrc_code = dlg.is_gen_xrc();
             if (gen_xrc_code)
             {
-                GenerateXrcFiles(results);
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
                 code_generated = true;
             }
 

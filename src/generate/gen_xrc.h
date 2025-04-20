@@ -46,6 +46,8 @@ public:
     // it will generate a separate XRC file for each form.
     void GenerateAllXrcForms(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
+    pugi::xml_document& getDocument() { return m_doc; }
+
     void ClearDocument()
     {
         m_doc.reset();

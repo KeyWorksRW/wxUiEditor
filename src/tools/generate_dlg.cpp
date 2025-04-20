@@ -116,7 +116,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     }
     else if (output_type == OUTPUT_CPLUS)
     {
-        GenerateCppFiles(results);
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
         code_generated = true;
     }
     else if (output_type == OUTPUT_DERIVED)
@@ -152,7 +152,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             gen_base_code = dlg.is_gen_base();
             if (gen_base_code)
             {
-                GenerateCppFiles(results);
+                GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
                 code_generated = true;
             }
 

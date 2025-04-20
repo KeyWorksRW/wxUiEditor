@@ -1467,28 +1467,34 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassLi
 
     ASSERT_MSG(language != GEN_LANG_NONE, "No language specified for code generation!");
     ASSERT_MSG(language <= GEN_LANG_XRC, "Invalid language specified for code generation!");
-    ASSERT_MSG(language != GEN_LANG_CPLUSPLUS, "Use GenerateCppFiles() for C++ code generation!");
+
+    if (wxGetApp().isTestingMenuEnabled())
+        results.StartClock();
 
     tt_cwd cwd(true);
     Project.ChangeDir();
 
     bool generate_result = false;
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
 
-    if (wxGetApp().isTestingMenuEnabled())
-        results.StartClock();
-
-    for (const auto& form: forms)
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        GenerateLanguageForm(form, results, pClassList, language);
+        generate_result = GenerateCppFiles(results, pClassList);
+    }
+    else
+    {
+        std::vector<Node*> forms;
+        Project.CollectForms(forms);
 
-        if (results.updated_files.size())
+        for (const auto& form: forms)
         {
-            generate_result = true;
+            GenerateLanguageForm(form, results, pClassList, language);
+
+            if (results.updated_files.size())
+            {
+                generate_result = true;
+            }
         }
     }
-
     if (wxGetApp().isTestingMenuEnabled())
         results.EndClock();
 

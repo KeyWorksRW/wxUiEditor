@@ -419,7 +419,7 @@ int App::OnRun()
             if (generate_type & GEN_LANG_CPLUSPLUS)
             {
                 results.clear();
-                GenerateCppFiles(results, test_only ? &class_list : nullptr);
+                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_CPLUSPLUS);
                 log_results(GenLangToString(GEN_LANG_CPLUSPLUS));
             }
             if (generate_type & GEN_LANG_PERL)

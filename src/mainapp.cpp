@@ -416,56 +416,28 @@ int App::OnRun()
             // mechanism and write any special messages that code generation caused (warnings,
             // errors, timing, etc.) to a log file.
 
-            if (generate_type & GEN_LANG_CPLUSPLUS)
+            auto lambda = [&](GenLang language)
             {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_CPLUSPLUS);
-                log_results(GenLangToString(GEN_LANG_CPLUSPLUS));
-            }
-            if (generate_type & GEN_LANG_PERL)
-            {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PERL);
-                log_results(GenLangToString(GEN_LANG_PERL));
-            }
-            if (generate_type & GEN_LANG_PYTHON)
-            {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_PYTHON);
-                log_results(GenLangToString(GEN_LANG_PYTHON));
-            }
-            if (generate_type & GEN_LANG_RUBY)
-            {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUBY);
-                log_results(GenLangToString(GEN_LANG_RUBY));
-            }
-            if (generate_type & GEN_LANG_XRC)
-            {
-                results.clear();
-                GenerateXrcFiles(results, {}, test_only ? &class_list : nullptr);
-                log_results(GenLangToString(GEN_LANG_XRC));
-            }
-            if (generate_type & GEN_LANG_RUST)
-            {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_RUST);
-                log_results(GenLangToString(GEN_LANG_RUST));
-            }
+                if (generate_type & language)
+                {
+                    results.clear();
+                    GenerateLanguageFiles(results, test_only ? &class_list : nullptr, language);
+                    log_results(GenLangToString(language));
+                }
+            };
+
+            lambda(GEN_LANG_CPLUSPLUS);
+            lambda(GEN_LANG_PERL);
+            lambda(GEN_LANG_PYTHON);
+            lambda(GEN_LANG_RUBY);
+            lambda(GEN_LANG_RUST);
+            lambda(GEN_LANG_XRC);
 #if GENERATE_NEW_LANG_CODE
-            if (generate_type & GEN_LANG_HASKELL)
-            {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_HASKELL);
-                log_results(GenLangToString(GEN_LANG_HASKELL));
-            }
-            if (generate_type & GEN_LANG_LUA)
-            {
-                results.clear();
-                GenerateLanguageFiles(results, test_only ? &class_list : nullptr, GEN_LANG_LUA);
-                log_results(GenLangToString(GEN_LANG_LUA));
-            }
+            lambda(GEN_LANG_FORTRAN);
+            lambda(GEN_LANG_HASKELL);
+            lambda(GEN_LANG_LUA);
 #endif
+
             auto& log_msg = log.emplace_back();
             auto end_time = std::chrono::steady_clock::now();
             size_t total_elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();

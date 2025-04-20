@@ -313,7 +313,7 @@ public:
     // Adds ");" or ")"
     Code& EndFunction();
 
-    // Adds wxClass or wx.Class
+    // Adds wxClass, Wx::Class, wx.Class, or any other language-required class name variant.
     Code& Class(tt_string_view text);
 
     // Adds " = "

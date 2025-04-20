@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - wxRuby3 generated code includes a `attr_accessor` list of all class members that specify `public:` access
 - The dialog for editing Custom Control parameters now has a drop-down list of all the possible macros you can use
 - C++ code generation no longer supports wxWidgets 3.1 -- you should link to a current 3.2 or higher version of wxWidgets.
+- Added new formatting options for XRC output.
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.
@@ -34,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - Ruby code generation no longer writes the class `end` line before the final generated comment block
 - You can add a menubar or toolbar to a wxFrame that was created without them
 - Fixed inconsistent generation of wxScrolledWindow versus wxScrolled<wxPanel> -- wxScrolledWindow is now always used.
+- XRC combine_all_forms will now generates a single XRC file containing all forms
 
 ## [Released (1.2.1)]
 

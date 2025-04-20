@@ -273,7 +273,15 @@
 		<property name="insert_rust_code" type="code_edit"
 			help="Specify the code to insert into the rust file after the generated import statements. This can be any valid rust code for use before the class definition."/>
 	</gen>
-<!--
+
+	<gen class="XRC Settings" type="interface">
+		<property name="xrc_file" type="file"
+			help="The filename to use if generating XRC."/>
+		<property name="xrc_no_whitespace" type="bool"
+			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
+	</gen>
+
+	<!--
 	<gen class="XRC Settings" type="interface">
 		<property name="xrc_file" type="file"
 			help="The filename to use if generating XRC (wxPython can override this with its own file name)."/>

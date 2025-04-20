@@ -281,7 +281,6 @@ void BaseCodeGenerator::GenerateXrcClass(PANEL_PAGE panel_type)
     }
 }
 
-// This assumes each form is being generated to a single file.
 static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList)
 {
     auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
@@ -359,18 +358,15 @@ static bool GenerateXrcForm(Node* form, GenResults& results, std::vector<tt_stri
                 return true;
             }
         }
-
-        if (!doc_new.save_file(path))
-        {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
-        }
-        else
-        {
-            results.updated_files.emplace_back(path);
-        }
-        return true;
     }
-    return false;
+
+    if (!doc_new.save_file(path))
+    {
+        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+        return false;
+    }
+    results.updated_files.emplace_back(path);
+    return true;
 }
 
 bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList)

@@ -476,6 +476,17 @@ void GatherPerlUsages::ParseNodes(Node* node)
         m_use_packages.emplace("use Wx::ArtProvider qw[:artid :clientid];");
     }
 
+    if (node->hasValue(prop_font))
+    {
+        m_use_expands.emplace("use Wx qw[:font];");
+        FontProperty fontprop(node->getPropPtr(prop_font));
+        if (fontprop.isDefGuiFont())
+        {
+            // If the font is a default GUI font, then we need to include the wxDefaultGuiFont constant.
+            m_use_expands.emplace("use Wx qw[:systemsettings];");
+        }
+    }
+
     if (auto* gen = node->getGenerator(); gen)
     {
         std::set<std::string> imports;

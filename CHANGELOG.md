@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - File menu now has a Reload Project command to reload the current project file from disk.
 - Dialogs now support the variant property
 - Added support for wxPopupWindow as a form
+- Any comments you add to a control's `var_comment` property can optionally be written to any generated XRC file (`xrc_add_var_comments` in XRC Settings in the Project file)
 
 ### Changed
 

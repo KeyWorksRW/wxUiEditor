@@ -276,19 +276,10 @@
 
 	<gen class="XRC Settings" type="interface">
 		<property name="xrc_file" type="file"
-			help="The filename to use if generating XRC."/>
-		<property name="xrc_no_whitespace" type="bool"
-			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
+			help="The filename to use if generating XRC. This will be ignored if the project specifies combined XRC files."/>
 	</gen>
 
 	<!--
-	<gen class="XRC Settings" type="interface">
-		<property name="xrc_file" type="file"
-			help="The filename to use if generating XRC (wxPython can override this with its own file name)."/>
-		<property name="xrc_no_whitespace" type="bool"
-			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
-	</gen>
-
 	<gen class="wxFortran Settings" type="interface">
 		<property name="fortran_file" type="file"
 			help="The filename to use if generating code for wxFortran."/>
@@ -357,6 +348,14 @@
 	<gen class="XRC" type="interface">
 		<property name="xrc_directory" type="path"
 			help="The directory to generate xrc files in. Leave blank to generate them in the same directory as the project file."/>
+		<property name="xrc_add_var_comments" type="bool"
+			help="If checked, any var_comments you add to controls will be added to the XRC file."> 1</property>
+		<property name="xrc_no_whitespace" type="bool"
+			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
+		<property name="xrc_indent_attributes" type="bool"
+			help="If checked, attributes will be indented. This makes the file larger, but more readable. Ignored if xrc_no_whitespace is checked">1</property>
+		<property name="xrc_indent_with_spaces" type="bool"
+			help="If checked, indentation will be done with 2 spaces instead of a single tab.">0</property>
 		<property name="combine_all_forms" type="bool"
 			help="If checked, Export XRC (File menu) will create a single XRC file containing all forms.">1</property>
 		<property name="combined_xrc_file" type="file"

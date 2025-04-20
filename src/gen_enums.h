@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -487,6 +487,9 @@ namespace GenEnum
         prop_xrc_art_directory,
         prop_xrc_directory,
         prop_xrc_file,
+        prop_xrc_add_var_comments,
+        prop_xrc_indent_attributes,
+        prop_xrc_indent_with_spaces,
         prop_xrc_no_whitespace,
 
         prop_folder_base_directory,

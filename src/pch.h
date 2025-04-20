@@ -183,9 +183,13 @@ namespace xrc
     enum
     {
         no_flags = 0,
-        add_comments = 1 << 0,  // add comments about unsupported properties
+        add_comments = 1 << 0,  // add comments prop_var_comment comments
         use_xrc_dir = 1 << 1,   // if prop_xrc_dir is set, use that instead of prop_art_directory
         previewing = 1 << 2,    // overrides add_comments and use_xrc_dir
+
+        format_no_indent_nodes = 1 << 3,     // do not indent nodes in the XRC file (pugi::format_indent off)
+        format_indent_attributes = 1 << 4,   // indent attributes in the XRC file (pugi::format_indent_attributes on)
+        format_indent_with_spaces = 1 << 5,  // indent with spaces instead of tabs
     };
 }  // namespace xrc
 
@@ -212,8 +216,9 @@ constexpr const int minRequiredVer = 15;
 // 1.1.0 == version 16
 // 1.1.1 == version 17 (beta 1 of 1.1.2)
 // 1.1.2 == version 18
-// 1.2.0 == version 19 (1.2.0)
-// 1.2.1 == version 20 (1.2.1)
+// 1.2.0 == version 19
+// 1.2.1 == version 20
+// 1.2.9 == version 21 (beta of 1.3.0)
 // 1.3.0 == version 21 (1.3.0)
 
 // Use when you need to return an empty const tt_string&

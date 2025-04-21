@@ -70,7 +70,8 @@ set (file_list
     # Code generation modules
 
     generate/code.cpp              # Helper class for generating code
-    generate/code_add.cpp          # Code::Add() functions
+    generate/code_add.cpp          # Code::Add...() functions
+    generate/code_gen.cpp          # Code::Gen...() functions
     generate/file_codewriter.cpp   # Classs to write code to disk
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_codefiles.cpp     # Generate code functions

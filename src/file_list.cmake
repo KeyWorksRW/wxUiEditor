@@ -301,6 +301,7 @@ set (file_list
 
     panels/nav_panel.cpp        # Navigation panel
     panels/navpopupmenu.cpp     # Context-menu for Navigation panel
+    panels/propgrid_events.cpp  # Property panel event handlers
     panels/propgrid_panel.cpp   # Property panel
     panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Common Book utilities
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "ui_images.h"        // Generated images header
+#include "utils.h"
 
 #include "gen_book_utils.h"
 
@@ -85,6 +86,8 @@ void BookCtorAddImagelist(Code& code)
 {
     if ((code.IsTrue(prop_display_images) || code.IsGen(gen_wxToolbook)) && isBookHasImage(code.node()))
     {
+        if (code.is_perl())
+            code.Eol();
         code.OpenBrace();
         code.Eol(eol_if_needed);
         if (code.is_cpp())
@@ -120,8 +123,9 @@ void BookCtorAddImagelist(Code& code)
                 {
                     Code bundle_code(child_node.get(), code.get_language());
                     bundle_code.Bundle(prop_bitmap);
-                    code.Eol() << bundle_code;
-                    code.Str(",");
+                    // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is imperative
+                    // that the comma is not broken out into the next line.
+                    code.Eol() << bundle_code << ",";
                 }
             }
 
@@ -137,12 +141,62 @@ void BookCtorAddImagelist(Code& code)
             code.Unindent();
             code.Eol(eol_if_needed).Str("]");
         }
+        else if (code.is_perl())
+        {
+            code << "my $images = Wx::ImageList->new(";
+            bool size_found = false;
+            for (const auto& child_node: code.node()->getChildNodePtrs())
+            {
+                if (child_node->hasValue(prop_bitmap))
+                {
+                    auto& description = child_node->as_string(prop_bitmap);
+                    if (description.empty())
+                        continue;
+                    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                    if (parts.size() <= 1 || parts[IndexImage].empty())
+                        continue;
+                    if (parts[IndexType].contains("Art"))
+                    {
+                        auto art_size = GetSizeInfo(parts[IndexSize]);
+                        if (art_size != wxDefaultSize)
+                        {
+                            code << art_size.x << ", " << art_size.y;
+                            size_found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!size_found)
+            {
+                code << "16, 16";  // Default size
+            }
+            code << ");";
+
+            for (const auto& child_node: code.node()->getChildNodePtrs())
+            {
+                if (child_node->hasValue(prop_bitmap))
+                {
+                    Code bundle_code(child_node.get(), code.get_language());
+                    bundle_code.Bundle(prop_bitmap);
+                    // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is imperative
+                    // that the comma is not broken out into the next line.
+                    code.Eol().Str("$images->Add(") << bundle_code << ");";
+                }
+            }
+            code.Eol(eol_if_needed);
+            code.NodeName().Function("AssignImageList($images);");
+        }
         else
         {
             FAIL_MSG("Unknown language");
         }
 
-        code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
+        if (!code.is_perl())
+        {
+            code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
+        }
 
         code.CloseBrace();
     }

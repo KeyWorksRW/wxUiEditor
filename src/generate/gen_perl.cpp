@@ -222,6 +222,7 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     }
 
     m_source->writeLine();
+    m_source->writeLine("use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
     m_source->writeLine("use strict;");
 
     if (m_form_node->isGen(gen_Images))
@@ -397,6 +398,27 @@ bool PerlBundleCode(Code& code, GenEnum::PropName prop)
     {
         code.Add("wxNullBitmap");
         return false;
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        tt_string art_id(parts[IndexArtID]);
+        tt_string art_client;
+        if (auto pos = art_id.find('|'); tt::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code << "Wx::ArtProvider::GetBitmap(" << art_id;
+        if (art_client.size())
+            code << ", " << art_client;
+        wxSize art_size { 16, 16 };
+        art_size = GetSizeInfo(parts[IndexSize]);
+
+        // Size is a hack for now...
+        code << ", Wx::Size->new(" << art_size.x << ", " << art_size.y << "))";
+        return true;
     }
 
     return false;

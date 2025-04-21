@@ -9,6 +9,7 @@ set (file_list
 
     mainapp.cpp           # Main application class
     mainframe.cpp         # Main window frame
+    mainframe_events.cpp  # Main window frame event handlers
     assertion_dlg.cpp     # Assertion Dialog
 
     bitmaps.cpp           # Map of bitmaps accessed by name

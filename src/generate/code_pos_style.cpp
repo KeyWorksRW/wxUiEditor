@@ -7,7 +7,7 @@
 
 #include "code.h"
 
-#include "mainframe.h"        // MainFrame class
+#include "mainframe.h"  // MainFrame class
 
 Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {

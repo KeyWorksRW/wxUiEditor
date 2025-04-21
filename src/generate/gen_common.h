@@ -120,9 +120,6 @@ bool BitmapList(Code& code, const GenEnum::PropName prop);
 // location.
 tt_string MakePerlPath(Node* node);
 
-// Generates code to load a bitmap from Art, SVG, or up to three bitmap files.
-bool PerlBundleCode(Code& code, GenEnum::PropName prop);
-
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
 // Returns true if a list was created. List name will be called "bitmaps".
@@ -143,9 +140,6 @@ void PythonBtnBimapCode(Code& code, bool is_single = false);
 // Deterimes where the ruby code will be written to, and returns an absolute path to that
 // location.
 tt_string MakeRubyPath(Node* node);
-
-// Generates code to load a bitmap from Art, SVG, or up to three bitmap files.
-bool RubyBundleCode(Code& code, GenEnum::PropName prop);
 
 /////////////////////////////////////// wxRust Functions ///////////////////////////////////////
 

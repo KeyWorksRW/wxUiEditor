@@ -1719,57 +1719,6 @@ Code& Code::ColourCode(GenEnum::PropName prop_name)
     return *this;
 }
 
-Code& Code::Bundle(GenEnum::PropName prop_name)
-{
-    tt_string_vector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, tt::TRIM::both);
-
-    if (parts.size() <= 1 || parts[IndexImage].empty())
-    {
-        return Add("wxNullBitmap");
-    }
-
-    if (parts[IndexType].contains("SVG"))
-    {
-        GenerateBundleParameter(*this, parts);
-    }
-
-    else
-    {
-        switch (m_language)
-        {
-            case GEN_LANG_PYTHON:
-                PythonBundleCode(*this, prop_name);
-                break;
-
-            case GEN_LANG_RUBY:
-                RubyBundleCode(*this, prop_name);
-                break;
-            case GEN_LANG_PERL:
-                PerlBundleCode(*this, prop_name);
-                break;
-
-            case GEN_LANG_RUST:
-                // RustBundleCode(*this, prop_name);
-                break;
-
-#if GENERATE_NEW_LANG_CODE
-            case GEN_LANG_HASKELL:
-                // HaskellBundleCode(*this, prop_name);
-                break;
-
-            case GEN_LANG_LUA:
-                // LuaBundleCode(*this, prop_name);
-                break;
-#endif
-
-            default:
-                break;
-        }
-    }
-
-    return *this;
-}
-
 bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling) const
 {
     if (enable_dpi_scaling == code::no_dpi_scaling ||

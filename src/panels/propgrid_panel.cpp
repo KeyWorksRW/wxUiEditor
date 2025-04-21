@@ -42,7 +42,7 @@
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 
-#include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
+#include "../customprops/evt_string_prop.h"  // EventStringProperty -- dialog for editing event handlers
 
 #include "id_lists.h"  // wxID_ strings
 

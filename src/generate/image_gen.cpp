@@ -463,18 +463,6 @@ void BaseCodeGenerator::GenerateRubyImagesForm()
     m_source->writeLine();
 }
 
-void AddPythonImageName(Code& code, const EmbeddedImage* embed)
-{
-    if (embed->form->isGen(gen_Images))
-    {
-        tt_string import_name = embed->form->as_string(prop_python_file).filename();
-        import_name.remove_extension();
-
-        code.Str(import_name).Str(".");
-    }
-    code.Str(embed->imgs[0].array_name);
-}
-
 // ******************************* Bundle Code Generation *******************************
 //
 // Call GenerateBundleParameter() to generate the code to create a wxBitmapBundle, or
@@ -742,7 +730,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             {
                 code.Str("wx.Bitmap(");
             }
-            AddPythonImageName(code, embed);
+            code.AddPythonImageName(embed);
             code += get_bitmap ? ".Image" : ".Bitmap";
             if (get_bitmap)
             {
@@ -775,12 +763,12 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         else if (code.is_python())
         {
             code.CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap)"));
-            AddPythonImageName(code, embed);
+            code.AddPythonImageName(embed);
             code += ".Bitmap";
             if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
                 code.Comma().CheckLineLength(embed2->imgs[0].array_name.size() + sizeof(".Bitmap)"));
-                AddPythonImageName(code, embed2);
+                code.AddPythonImageName(embed2);
                 code += ".Bitmap";
             }
             else
@@ -841,7 +829,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
                 bool is_embed_success = false;
                 if (auto embed_img = ProjectImages.GetEmbeddedImage(iter); embed_img)
                 {
-                    AddPythonImageName(code, embed_img);
+                    code.AddPythonImageName(embed_img);
                     code += ".Bitmap";
                     needs_comma = true;
                     is_embed_success = true;

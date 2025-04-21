@@ -44,13 +44,13 @@ The following tables indicate whether or not code is being generated in a specif
 
 | Class         | C++ | Perl | Python | Ruby | XRC | file                                 |
 | ------------- | --- | ---- | ------ | ---- | --- | ------------------------------------ |
-| wxAuiNotebook | yes | ---  | yes    | yes  | --- | ../src/generate/gen_aui_notebook.cpp |
-| wxChoicebook  | yes | ---  | yes    | yes  | --- | ../src/generate/gen_choicebook.cpp   |
-| wxListbook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_listbook.cpp     |
+| wxAuiNotebook | yes | yes  | yes    | yes  | yes | ../src/generate/gen_aui_notebook.cpp |
+| wxChoicebook  | yes | yes  | yes    | yes  | yes | ../src/generate/gen_choicebook.cpp   |
+| wxListbook    | yes | yes  | yes    | yes  | yes | ../src/generate/gen_listbook.cpp     |
 | wxNotebook    | yes | yes  | yes    | yes  | yes | ../src/generate/gen_notebook.cpp     |
-| wxSimplebook  | yes | ---  | yes    | yes  | --- | ../src/generate/gen_simplebook.cpp   |
-| wxToolbook    | yes | ---  | yes    | yes  | --- | ../src/generate/gen_toolbook.cpp     |
-| wxTreebook    | yes | ---  | yes    | yes  | yes | ../src/generate/gen_treebook.cpp     |
+| wxSimplebook  | yes | no  | yes    | yes  | yes | ../src/generate/gen_simplebook.cpp   |
+| wxToolbook    | yes | yes  | yes    | yes  | yes | ../src/generate/gen_toolbook.cpp     |
+| wxTreebook    | yes | yes  | yes    | yes  | yes | ../src/generate/gen_treebook.cpp     |
 
 ### Forms
 
@@ -185,6 +185,7 @@ The Unsupported lists below are for controls that the language port doesn't supp
 - wxTextCtrl.SetHint()
 - wxTextProofOptions (for wxTextCtrl)
 - wxWindow.FromDIP()
+- wxSimpleBook
 
 # Ruby Unsupported
 

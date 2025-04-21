@@ -485,7 +485,14 @@ void GatherPerlUsages::ParseNodes(Node* node)
             m_use_expands.emplace("use Wx qw[:systemsettings];");
         }
     }
-
+    if (node->hasValue(prop_foreground_colour) || node->hasValue(prop_background_colour))
+    {
+        if (node->as_string(prop_foreground_colour).contains("wxSYS") ||
+            node->as_string(prop_background_colour).contains("wxSYS"))
+        {
+            m_use_expands.emplace("use Wx qw[:systemsettings];");
+        }
+    }
     if (auto* gen = node->getGenerator(); gen)
     {
         std::set<std::string> imports;

@@ -402,34 +402,14 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
     return false;
 }
 
-bool MenuItemGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool MenuItemGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
         // REVIEW: [Randalphwa - 01-09-2025] Currently, wxEVT_UPDATE_UI cannot be imported from the
         // Wx::Event module.
         set_imports.emplace("use Wx::Event qw(EVT_MENU);");
-        set_imports.emplace("use Wx qw(wxITEM_NORMAL wxITEM_CHECK wxITEM_RADIO wxITEM_DROPDOWN);");
-
-        tt_string constants;
-        auto parent = node->getParent();
-        for (auto& menu_item: parent->getChildNodePtrs())
-        {
-            if (menu_item->hasValue(prop_stock_id) && menu_item->as_string(prop_stock_id) != "none")
-            {
-                if (constants.size())
-                {
-                    constants += ' ';
-                }
-                constants << menu_item->as_string(prop_stock_id);
-            }
-        }
-        if (constants.size())
-        {
-            constants.insert(0, "use Wx qw(");
-            constants += ");";
-            set_imports.emplace(constants);
-        }
+        set_imports.emplace("use Wx qw[:menu];");
         return true;
     }
     return false;

@@ -279,8 +279,7 @@ bool StatusBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set
 {
     if (language == GEN_LANG_PERL)
     {
-        // REVIEW: [Randalphwa - 03-02-2025] wxPerl 3.2 doesn't support wxSB_SUNKEN
-        set_imports.emplace("use Wx qw(wxSB_NORMAL wxSB_FLAT wxSB_RAISED);");
+        set_imports.emplace("use Wx qw[:statusbar];");
         return true;
     }
 

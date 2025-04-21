@@ -310,28 +310,11 @@ void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxActivityIndicatorXmlHandler");
 }
 
-bool TextCtrlGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool TextCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
-        if (auto& styles = node->as_string(prop_style); styles.contains("wxTE_"))
-        {
-            tt_string constants;
-            tt_string_vector vector(styles, "|", tt::TRIM::both);
-            for (auto& iter: vector)
-            {
-                if (iter.is_sameprefix("wxTE_"))
-                {
-                    if (constants.size())
-                        constants << ' ';
-                    constants << iter;
-                }
-            }
-            constants.insert(0, "use Wx qw(");
-            constants << ");";
-            set_imports.emplace(constants);
-            return true;
-        }
+        set_imports.emplace("use Wx qw[:textctrl];");
     }
 
     return false;

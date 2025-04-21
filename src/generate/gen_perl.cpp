@@ -66,7 +66,6 @@ $app->MainLoop;
 constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>({
 
     { prop_bitmap, "wxNullBitmap" },
-    { prop_id, "wxID_ANY" },
 
 });
 

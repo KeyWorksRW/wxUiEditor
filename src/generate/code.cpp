@@ -768,7 +768,10 @@ Code& Code::Add(tt_string_view text)
     bool old_linebreak = m_auto_break;
     // Ruby changes the prefix to "Wx::", and Python changes it to "wx."
     // C++, Perl, and Rust use the constant unmodified.
-    if (is_cpp() || is_perl() || is_rust() || text.size() < 3)
+    //
+    // "wx" is the shortest string that could be changed -- no single letter will ever be changed by
+    // this function.
+    if (is_cpp() || is_perl() || is_rust() || text.size() < (sizeof("wx") - 1))
     {
         CheckLineLength(text.size());
         *this += text;

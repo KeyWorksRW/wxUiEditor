@@ -519,6 +519,8 @@ protected:
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis
     Code& SizerFlagsFunction(tt_string_view function_name);
 
+    std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language);
+
     void OpenFontBrace();
     void CloseFontBrace();
 

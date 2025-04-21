@@ -2719,7 +2719,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             {
                 if (point_size <= 0)
                 {
-                    Add("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+                    Class("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
                     VariableMethod("GetPointSize()").EndFunction();
                     if (!is_cpp() && more_than_pointsize)
                     {
@@ -2871,7 +2871,7 @@ void Code::GenFontColourSettings()
         }
         if (fg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Add(fg_clr) += ")";
+            Class("wxSystemSettings").ClassMethod("GetColour(").Add(fg_clr) += ")";
         }
         else
         {
@@ -2902,7 +2902,7 @@ void Code::GenFontColourSettings()
         }
         if (bg_clr.contains("wx"))
         {
-            Add("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
+            Class("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
         }
         else
         {
@@ -2946,7 +2946,7 @@ void Code::GenFontColourSettings()
             FormFunction("GetBookCtrl()").Function("SetBackgroundColour(");
             if (bg_clr.contains("wx"))
             {
-                Add("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
+                Class("wxSystemSettings").ClassMethod("GetColour(").Add(bg_clr) += ")";
             }
             else
             {

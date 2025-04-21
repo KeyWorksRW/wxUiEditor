@@ -301,6 +301,7 @@ set (file_list
 
     panels/nav_panel.cpp        # Navigation panel
     panels/navpopupmenu.cpp     # Context-menu for Navigation panel
+    panels/propgrid_create.cpp  # PropGridPanel Create functions
     panels/propgrid_events.cpp  # PropGridPanel event handlers
     panels/propgrid_modify.cpp  # PropGridPanel modification functions
     panels/propgrid_panel.cpp   # Property panel

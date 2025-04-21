@@ -73,7 +73,7 @@ bool PanelGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imp
 {
     if (language == GEN_LANG_PERL)
     {
-        set_imports.emplace("use Wx qw(wxTAB_TRAVERSAL);");
+        set_imports.emplace("use Wx qw[:panel];");
     }
     return false;
 }

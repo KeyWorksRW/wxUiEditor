@@ -194,6 +194,12 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool BookPageGenerator::ConstructionCode(Code& code)
 {
+    if (code.is_perl() && code.node()->getParent()->isGen(gen_wxSimplebook))
+    {
+        code += "# Can't add books to wxSimplebook which is not supported in Perl";
+        return true;
+    }
+
     code.AddAuto().NodeName().CreateClass();
 
     Node* node = code.node();
@@ -371,7 +377,7 @@ bool BookPageGenerator::GetImports(Node* /* node */, std::set<std::string>& set_
 {
     if (language == GEN_LANG_PERL)
     {
-        set_imports.emplace("use Wx qw(wxTAB_TRAVERSAL);");
+        set_imports.emplace("use Wx qw[:panel];");
     }
     return false;
 }

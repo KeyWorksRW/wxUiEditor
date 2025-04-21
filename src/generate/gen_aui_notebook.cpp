@@ -211,6 +211,11 @@ bool AuiNotebookGenerator::GetImports(Node*, std::set<std::string>& set_imports,
         set_imports.insert("require 'wx/aui'");
         return true;
     }
+    else if (language == GEN_LANG_PERL)
+    {
+        set_imports.insert("use Wx::Aui;");
+        return true;
+    }
     else
     {
     }

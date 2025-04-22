@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include "gen_enums.h"     // Enumerations for generators
-#include "node_classes.h"  // Forward defintions of Node classes
-
+#include "gen_enums.h"   // Enumerations for generators
 #include "import_xml.h"  // ImportXML -- Base class for XML importing
+
+class Node;
+using NodeSharedPtr = std::shared_ptr<Node>;
 
 class DialogBlocks : public ImportXML
 {

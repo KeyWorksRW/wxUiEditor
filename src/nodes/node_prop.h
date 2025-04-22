@@ -10,10 +10,10 @@
 #include "image_handler.h"  // ProjectImage class
 
 #include "font_prop.h"     // FontProperty class
-#include "node_classes.h"  // Forward defintions of Node classes
 #include "prop_decl.h"     // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
 
 class wxAnimation;
+class Node;
 
 struct NODEPROP_STATUSBAR_FIELD
 {

@@ -1,15 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxFormBuider project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2019-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2019-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include <map>
-
-#include "node_classes.h"  // Forward defintions of Node classes
+class Node;
 
 #include "import_xml.h"  // ImportXML -- Base class for XML importing
 

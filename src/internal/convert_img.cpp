@@ -11,7 +11,6 @@
 // likely to notice the extra spacing that sometimes occurs.
 
 #include <filesystem>
-#include <fstream>
 
 #include <wx/artprov.h>  // wxArtProvider class
 #include <wx/mstream.h>  // Memory stream classes
@@ -23,7 +22,6 @@
 
 #include "bitmaps.h"          // Map of bitmaps accessed by name
 #include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 

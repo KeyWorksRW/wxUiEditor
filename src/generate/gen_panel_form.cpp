@@ -11,6 +11,7 @@
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
+#include "node_creator.h"   // Class used to create nodes
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file

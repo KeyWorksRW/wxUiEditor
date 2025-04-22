@@ -8,8 +8,10 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mockup_parent.h"  // Top-level MockUp Parent window
+#include "node.h"           // Node class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 

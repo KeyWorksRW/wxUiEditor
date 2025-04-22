@@ -8,6 +8,9 @@ project(wxUiEditor
 
 ####################### Options #######################
 
+# creates a compile_commands.json file in the build directory, suitable for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Shared libs should *never* be used for a Release build!
 option(BUILD_SHARED_LIBS "Build with wxWidgets shared libraries" OFF)
 
@@ -305,6 +308,7 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/mockup
     ${CMAKE_CURRENT_LIST_DIR}/src/project
     ${CMAKE_CURRENT_LIST_DIR}/src/utils
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
@@ -323,6 +327,7 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/mockup
     ${CMAKE_CURRENT_LIST_DIR}/src/project
     ${CMAKE_CURRENT_LIST_DIR}/src/utils
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops

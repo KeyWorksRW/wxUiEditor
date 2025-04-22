@@ -7,7 +7,6 @@
 
 #include <set>
 #include <thread>
-#include <unordered_set>
 
 #include "mainframe.h"
 
@@ -25,8 +24,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
-
-#include "pugixml.hpp"
 
 using namespace code;
 

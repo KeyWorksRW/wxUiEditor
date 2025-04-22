@@ -14,11 +14,14 @@
 #include <optional>
 #include <set>
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
 #include "category.h"    // NodeCategory -- Node property categories
 #include "gen_enums.h"   // Enumerations for generators
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
+
+class BaseGenerator;
+class NodeDeclaration;
+class NodeEventInfo;
+class PropDeclaration;
 
 using namespace GenEnum;
 

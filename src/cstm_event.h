@@ -9,8 +9,9 @@
 
 #include <wx/event.h>
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
+class Node;
+class NodeEvent;
+class NodeProperty;
 class UndoAction;
 
 class CustomEvent : public wxEvent

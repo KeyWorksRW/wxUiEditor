@@ -11,7 +11,6 @@
 #include "node.h"
 
 #include "gridbag_item.h"     // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
-#include "image_handler.h"    // ProjectImage class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class

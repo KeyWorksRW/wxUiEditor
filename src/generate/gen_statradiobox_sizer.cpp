@@ -10,7 +10,9 @@
 #include <wx/statbox.h>
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
 #include "mainapp.h"          // App -- Main application class
+#include "mockup_parent.h"    // Top-level MockUp Parent window
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 

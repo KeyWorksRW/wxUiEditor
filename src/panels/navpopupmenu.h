@@ -10,8 +10,9 @@
 #include <wx/event.h>  // Event classes
 #include <wx/menu.h>   // wxMenu and wxMenuBar classes
 
-#include "gen_enums.h"     // Enumerations for generators
-#include "node_classes.h"  // Forward defintions of Node classes
+#include "gen_enums.h"  // Enumerations for generators
+
+class Node;
 
 // Creates a context-menu for the specified object
 class NavPopupMenu : public wxMenu

@@ -7,8 +7,10 @@
 
 #include <wx/sizer.h>
 
-#include "gen_common.h"  // Common component functions
-#include "node.h"        // Node class
+#include "gen_common.h"     // Common component functions
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mockup_parent.h"  // Top-level MockUp Parent window
+#include "node.h"           // Node class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 

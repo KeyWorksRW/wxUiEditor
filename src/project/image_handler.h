@@ -9,13 +9,13 @@
 
 #include <filesystem>
 #include <map>
-#include <mutex>
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
+class Node;
 class wxAnimation;
+
+using NodeSharedPtr = std::shared_ptr<Node>;
 
 // This simply contains a list of the filenames that would be used to create a bundle.
 struct ImageBundle

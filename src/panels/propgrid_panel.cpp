@@ -8,8 +8,6 @@
 // See propgrid_events.cpp for event handlers for this class
 // See progrid_modify.cpp for functions that modify properties in the property grid
 
-#include <unordered_set>
-
 #include <wx/arrstr.h>             // wxArrayString class
 #include <wx/aui/auibook.h>        // wxaui: wx advanced user interface - notebook
 #include <wx/config.h>             // wxConfig base header
@@ -25,11 +23,10 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "base_panel.h"       // BasePanel -- Code generation panel
-#include "bitmaps.h"          // Map of bitmaps accessed by name
 #include "category.h"         // NodeCategory class
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
+#include "cstm_propman.h"     // CustomPropertyManager -- Derived wxPropertyGrid class
 #include "font_prop.h"        // FontProperty -- FontProperty class
-#include "image_handler.h"    // ImageHandler class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
@@ -39,7 +36,6 @@
 #include "preferences.h"      // Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "prop_decl.h"        // PropChildDeclaration and PropDeclaration classes
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 
 #include "../customprops/evt_string_prop.h"  // EventStringProperty -- dialog for editing event handlers

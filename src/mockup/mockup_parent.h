@@ -9,9 +9,8 @@
 
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
 class CustomEvent;
+class Node;
 class MockupTitleBar;
 class MockupContent;
 class wxStaticText;

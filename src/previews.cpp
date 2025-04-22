@@ -25,18 +25,18 @@
 
 #include "../tools/preview_settings.h"  // PreviewSettings
 #include "../ui/xrccompare.h"           // C++/XRC UI Comparison dialog
-#include "dlg_msgs.h"                   // wxMessageDialog dialogs
-#include "gen_common.h"                 // GeneratorLibrary -- Generator classes
-#include "generate/gen_xrc.h"           // Generate XRC file
-#include "mainapp.h"                    // App -- Main application class
-#include "mainframe.h"                  // MainFrame -- Main window frame
-#include "node.h"                       // Node class
-#include "panels/base_panel.h"          // BasePanel -- Code generation panel
-#include "preferences.h"                // Preferences -- Stores user preferences
-#include "project_handler.h"            // ProjectHandler class
-#include "utils.h"                      // Utility functions that work with properties
 
-#include "pugixml.hpp"
+#include "dlg_msgs.h"           // wxMessageDialog dialogs
+#include "gen_common.h"         // GeneratorLibrary -- Generator classes
+#include "generate/gen_xrc.h"   // Generate XRC file
+#include "mainapp.h"            // App -- Main application class
+#include "mainframe.h"          // MainFrame -- Main window frame
+#include "node.h"               // Node class
+#include "node_creator.h"       // NodeCreator class
+#include "panels/base_panel.h"  // BasePanel -- Code generation panel
+#include "preferences.h"        // Preferences -- Stores user preferences
+#include "project_handler.h"    // ProjectHandler class
+#include "utils.h"              // Utility functions that work with properties
 
 // Defined in mockup/mockup_preview.cpp
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,

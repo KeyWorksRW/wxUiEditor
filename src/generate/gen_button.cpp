@@ -7,10 +7,11 @@
 
 #include <wx/button.h>  // wxButtonBase class
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
-#include "write_code.h"  // Write code to Scintilla or file
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // Write code to Scintilla or file
 
 #include "gen_button.h"
 

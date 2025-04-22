@@ -443,7 +443,7 @@ void MainFrame::UpdateStatusWidths()
         m_SecondarySashPosition = m_SecondarySplitter->GetSashPosition();
     }
 
-    int widths[StatusPanels] = { 1, (m_MainSashPosition + m_SecondarySashPosition - 16), -1 };
+    int widths[STATUS_PANELS] = { 1, (m_MainSashPosition + m_SecondarySashPosition - 16), -1 };
     SetStatusWidths(sizeof(widths) / sizeof(int), widths);
 }
 

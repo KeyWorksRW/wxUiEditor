@@ -13,7 +13,7 @@
 #include <wx/pen.h>    // Base header for wxPen
 #include <wx/sizer.h>  // provide wxSizer class for layout
 
-#include "node_classes.h"  // Forward defintions of Node classes
+class Node;
 
 class MockupParent;
 class MockupWizard;

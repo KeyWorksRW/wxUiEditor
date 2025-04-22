@@ -9,11 +9,12 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 #include <wx/radiobut.h>          // wxRadioButton declaration
 
-#include "code.h"        // Code -- Helper class for generating code
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "gen_radio_btn.h"
 

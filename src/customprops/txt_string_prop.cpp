@@ -9,9 +9,9 @@
 
 #include "txt_string_prop.h"
 
-#include "image_handler.h"  // ImageHandler class
-#include "node_prop.h"      // NodeProperty class
-#include "utils.h"          // Miscellaneous utility functions
+#include "node_prop.h"       // NodeProperty class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "utils.h"           // Miscellaneous utility functions
 
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.cpp
 

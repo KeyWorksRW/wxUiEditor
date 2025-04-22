@@ -119,6 +119,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 
 #include "sys_header_dlg.h"    // SysHeaderDlg class
 #include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {

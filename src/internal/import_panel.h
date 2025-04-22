@@ -1,12 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Panel to display original imported file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/fdrepdlg.h>
 #include <wx/panel.h>
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
+
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 class MainFrame;
 class wxStyledTextCtrl;

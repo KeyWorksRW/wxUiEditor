@@ -23,6 +23,8 @@ namespace pugi
 #include "node_event.h"  // NodeEvent and NodeEventInfo classes
 #include "node_prop.h"   // NodeProperty class
 
+#include "hash_map.h"  // Find std::string_view key in std::unordered_map
+
 class wxSizerFlags;
 class wxAnimation;
 struct ImageBundle;

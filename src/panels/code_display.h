@@ -11,7 +11,8 @@
 
 #include "codedisplay_base.h"
 
-#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "write_code.h"      // WriteCode -- Write code to Scintilla or file
 
 class wxFindDialogEvent;
 class Node;

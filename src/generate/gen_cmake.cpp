@@ -5,11 +5,10 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <fstream>
-
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results, int flag)
 {

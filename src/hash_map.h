@@ -22,7 +22,6 @@
 #pragma once
 
 #include <functional>  // for std::hash
-#include <unordered_map>
 
 struct str_view_hash
 {

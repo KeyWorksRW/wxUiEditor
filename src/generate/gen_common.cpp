@@ -20,6 +20,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 

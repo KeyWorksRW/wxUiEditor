@@ -16,7 +16,8 @@
 
 #include "gen_enums.h"  // Enumerations for generators
 
-#include "node.h"  // Node class
+#include "node.h"              // Node class
+#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
 
 namespace code
 {
@@ -64,6 +65,9 @@ namespace code
 
 // Assume anyone including this header file needs access to the code namespace
 using namespace code;
+
+// Maps tt_string_view to std::string_view, allowing std::string_view comparisons
+using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
 
 extern const view_map g_map_python_prefix;
 extern const view_map g_map_ruby_prefix;

@@ -13,10 +13,11 @@
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "utils.h"         // Utility functions that work with properties
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "utils.h"           // Utility functions that work with properties
 
 tt_string DoubleToStr(double val)
 {

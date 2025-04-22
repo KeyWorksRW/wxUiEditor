@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <fstream>
-#include <iostream>
 #include <set>
 
 #include <frozen/map.h>
@@ -22,6 +20,7 @@
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 #include "import_frmbldr_maps.cpp"  // set_ignore_flags and map_evt_pair

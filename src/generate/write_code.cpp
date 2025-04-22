@@ -9,7 +9,8 @@
 
 #include "write_code.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"            // Code -- Helper class for generating code
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 void WriteCode::writeLine(const Code& code)
 {

@@ -7,7 +7,8 @@
 
 #include "code.h"
 
-#include "mainframe.h"  // MainFrame class
+#include "mainframe.h"       // MainFrame class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {

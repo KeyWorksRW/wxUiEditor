@@ -11,6 +11,7 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void PropGridPanel::modifyProperty(NodeProperty* prop, tt_string_view str)

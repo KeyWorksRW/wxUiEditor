@@ -8,9 +8,6 @@
 #pragma once
 
 #include <map>
-#include <unordered_map>
-
-#include "hash_map.h"  // Find std::string_view key in std::unordered_map
 
 namespace GenEnum
 {

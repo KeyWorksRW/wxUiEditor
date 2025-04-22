@@ -11,6 +11,7 @@
 #include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 WxGlade::WxGlade() {}

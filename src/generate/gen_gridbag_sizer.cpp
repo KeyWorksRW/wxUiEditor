@@ -7,14 +7,15 @@
 
 #include <wx/gbsizer.h>
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mockup_parent.h"  // Top-level MockUp Parent window
-#include "node.h"           // Node class
+#include "gen_gridbag_sizer.h"
+
+#include "gen_common.h"      // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"   // Common XRC generating functions
+#include "mockup_parent.h"   // Top-level MockUp Parent window
+#include "node.h"            // Node class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 #include "pugixml.hpp"  // xml read/write/create/process
-
-#include "gen_gridbag_sizer.h"
 
 wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {

@@ -10,8 +10,9 @@
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // Common component functions
 #include "gen_enums.h"
-#include "node.h"       // Node class
-#include "ui_images.h"  // Generated images header
+#include "node.h"            // Node class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "ui_images.h"       // Generated images header
 #include "utils.h"
 
 #include "gen_book_utils.h"

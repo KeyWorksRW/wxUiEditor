@@ -22,6 +22,7 @@
 #include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 #include "to_casts.h"        // to_int, to_size_t, and to_char classes
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"           // Miscellaneous utility functions
 
 #ifndef SCI_SETKEYWORDS

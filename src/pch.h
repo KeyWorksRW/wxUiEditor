@@ -90,24 +90,9 @@
 #endif
 
 #include <map>
-#include <unordered_map>
-
-#include <set>
-#include <unordered_set>
-
-#include <memory>
-#include <optional>
-#include <stdexcept>
 #include <string>
-#include <string_view>
-#include <vector>
 
-#include "tt/tt.h"  // tt namespace functions and declarations
-
-#include "tt/tt_string.h"         // tt_string -- std::string with additional methods
-#include "tt/tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
-#include "tt/tt_string_view.h"    // tt_string_view -- std::string_view with additional methods
-#include "tt/tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_string.h"  // tt_string -- std::string with additional methods
 
 #ifndef wxBITMAP_TYPE_SVG
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
@@ -192,9 +177,6 @@ namespace xrc
         format_indent_with_spaces = 1 << 5,  // indent with spaces instead of tabs
     };
 }  // namespace xrc
-
-// Maps tt_string_view to std::string_view, allowing std::string_view comparisons
-using view_map = std::map<tt_string_view, std::string_view, std::less<>>;
 
 // When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
 // wxUiEditor.exe.manifest and ../CMakeLists.txt

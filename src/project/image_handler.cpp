@@ -23,6 +23,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler -- Project class
 #include "pugixml.hpp"        // xml parser
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "ui_images.h"
 #include "utils.h"  // Miscellaneous utility functions
 

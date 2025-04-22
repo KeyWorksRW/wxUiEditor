@@ -20,6 +20,7 @@
 #include "file_codewriter.h"                  // FileCodeWriter -- Classs to write code to disk
 #include "lambdas.h"                          // Functions for formatting and storage of lamda events
 #include "project_handler.h"                  // ProjectHandler class
+#include "tt_view_vector.h"                   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 using namespace code;
 

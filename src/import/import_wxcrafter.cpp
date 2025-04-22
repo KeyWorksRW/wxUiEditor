@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <fstream>
-#include <iostream>
 #include <set>
 
 #include <frozen/map.h>
@@ -16,17 +15,16 @@
 #define RAPIDJSON_HAS_STDSTRING 1
 #define RAPIDJSON_ASSERT(x)     ASSERT(x)
 
-#include "rapidjson/rapidjson.h"
-
 #include "import_wxcrafter.h"  // This will include rapidjson/document.h
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "font_prop.h"       // FontProperty class
 #include "gen_enums.h"       // Enumerations for generators
-#include "mainframe.h"       // Main window frame
+#include "mainapp.h"         // MainApp class
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 #include "import_crafter_maps.cpp"  // Map of wxCrafter properties to wxUiEditor properties

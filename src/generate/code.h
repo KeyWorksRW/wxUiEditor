@@ -460,6 +460,12 @@ public:
     // property
     Code& Bundle(GenEnum::PropName prop);
 
+    void BundlePerl(const tt_string_vector& parts);
+    void BundlePython(const tt_string_vector& parts);
+    void BundleRuby(const tt_string_vector& parts);
+
+    void AddPythonImageName(const EmbeddedImage* embed);
+
     // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
     // Generates wxNullColour if the property is empty.
     Code& ColourCode(GenEnum::PropName prop_name);
@@ -518,6 +524,8 @@ protected:
     void InsertLineBreak(size_t cur_pos);
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis
     Code& SizerFlagsFunction(tt_string_view function_name);
+
+    std::string_view GetLanguagePrefix(tt_string_view candidate, GenLang language);
 
     void OpenFontBrace();
     void CloseFontBrace();

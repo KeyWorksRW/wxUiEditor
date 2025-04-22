@@ -7,9 +7,11 @@ set (file_list
 
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise
 
-    mainapp.cpp           # Main application class
-    mainframe.cpp         # Main window frame
-    assertion_dlg.cpp     # Assertion Dialog
+    mainapp.cpp            # Main application class
+    mainframe.cpp          # Main window frame
+    mainframe_events.cpp   # Main window frame event handlers
+    mainframe_updates.cpp  # Main window frame event handlers
+    assertion_dlg.cpp      # Assertion Dialog
 
     bitmaps.cpp           # Map of bitmaps accessed by name
     clipboard.cpp         # Handles reading and writing OS clipboard data
@@ -70,6 +72,11 @@ set (file_list
     # Code generation modules
 
     generate/code.cpp              # Helper class for generating code
+    generate/code_add.cpp          # Code::Add...() functions
+    generate/code_bundle.cpp       # Code::Bundle() functions
+    generate/code_gen.cpp          # Code::Gen...() functions
+    generate/code_pos_style.cpp    # Code::Pose...()/Style() functions
+
     generate/file_codewriter.cpp   # Classs to write code to disk
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_codefiles.cpp     # Generate code functions
@@ -301,6 +308,9 @@ set (file_list
 
     panels/nav_panel.cpp        # Navigation panel
     panels/navpopupmenu.cpp     # Context-menu for Navigation panel
+    panels/propgrid_create.cpp  # PropGridPanel Create functions
+    panels/propgrid_events.cpp  # PropGridPanel event handlers
+    panels/propgrid_modify.cpp  # PropGridPanel modification functions
     panels/propgrid_panel.cpp   # Property panel
     panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar

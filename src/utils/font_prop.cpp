@@ -5,13 +5,14 @@
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
 
+#include <array>
 #include <charconv>  // for std::to_chars
 #include <cstdlib>   // for std::atof
 
 #include "font_prop.h"
 
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "node_prop.h"     // NodeProperty class
+#include "node_prop.h"       // NodeProperty class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 namespace font
 {

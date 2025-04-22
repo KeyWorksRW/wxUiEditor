@@ -8,10 +8,11 @@
 #include <array>
 #include <charconv>
 #include <cstdlib>
-#include <sstream>
 
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
+
+#include "node_prop.h"
 
 #include "font_prop.h"        // FontProperty -- FontProperty class
 #include "image_handler.h"    // ImageHandler class
@@ -19,9 +20,8 @@
 #include "node.h"             // Node -- Node class
 #include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler singleton class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
-
-#include "node_prop.h"
 
 using namespace GenEnum;
 

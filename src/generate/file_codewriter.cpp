@@ -11,7 +11,8 @@
 
 #include "file_codewriter.h"
 
-#include "mainapp.h"  // App -- Main application class
+#include "mainapp.h"         // App -- Main application class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 using namespace code;
 

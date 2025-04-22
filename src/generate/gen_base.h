@@ -10,6 +10,7 @@
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
 #include "gen_enums.h"             // Enumerations for generators
 #include "gen_xrc.h"               // BaseXrcGenerator -- Generate XRC file
+#include "tt_string_vector.h"      // tt_string_vector -- Class for reading and writing line-oriented strings/files
 
 class Code;
 class Node;

@@ -10,10 +10,10 @@
 
 #include "pg_point.h"
 
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node -- Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node -- Node class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "utils.h"           // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 

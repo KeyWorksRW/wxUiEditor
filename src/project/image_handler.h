@@ -12,6 +12,8 @@
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
+#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+
 class Node;
 class wxAnimation;
 

@@ -7,11 +7,10 @@
 
 #include <wx/artprov.h>  // wxArtProvider class
 
-#include "image_handler.h"    // ImageHandler class
-#include "img_props.h"        // ImageProperties
-#include "node.h"             // Node -- Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "image_handler.h"   // ImageHandler class
+#include "img_props.h"       // ImageProperties
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "utils.h"           // Utility functions that work with properties
 
 void ImageProperties::InitValues(tt_string_view value)
 {

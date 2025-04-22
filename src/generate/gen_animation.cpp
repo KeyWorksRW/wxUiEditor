@@ -17,6 +17,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "pugixml.hpp"        // xml read/write/create/process
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
 
 #include "gen_animation.h"

@@ -31,10 +31,11 @@
 
 #include "import_dialogblocks.h"
 
-#include "dlg_msgs.h"      // wxMessageDialog dialogs
-#include "mainapp.h"       // App -- Main application class
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
+#include "dlg_msgs.h"        // wxMessageDialog dialogs
+#include "mainapp.h"         // App -- Main application class
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 DialogBlocks::DialogBlocks() {}
 

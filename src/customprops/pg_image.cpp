@@ -27,6 +27,7 @@ using namespace wxue_img;
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 #include "art_ids.cpp"  // wxART_ strings
 

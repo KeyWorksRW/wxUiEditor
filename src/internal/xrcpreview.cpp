@@ -12,9 +12,11 @@
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 
-#include "../wxui/ui_images.h"
-
 #include "xrcpreview.h"
+
+#include "../wxui/ui_images.h"
+#include "tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
+
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)

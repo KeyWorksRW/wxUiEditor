@@ -11,11 +11,10 @@
 #include <wx/filedlg.h>   // wxFileDialog base header
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "pugixml.hpp"  // xml processing
-
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
-#include "mainapp.h"  // App -- App class
+#include "mainapp.h"         // App -- App class
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 

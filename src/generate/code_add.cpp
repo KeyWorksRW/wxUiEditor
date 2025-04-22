@@ -9,8 +9,9 @@
 
 #include "code.h"
 
-#include "preferences.h"  // Prefs -- Set/Get wxUiEditor preferences
-#include "utils.h"        // Miscellaneous utilities
+#include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
+#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "utils.h"           // Miscellaneous utilities
 
 // clang-format off
 

@@ -9,12 +9,12 @@
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator -- NodeCreator class
-#include "project_handler.h"  // ProjectHandler class
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "node_creator.h"   // NodeCreator -- NodeCreator class
+#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "gen_menu.h"
 

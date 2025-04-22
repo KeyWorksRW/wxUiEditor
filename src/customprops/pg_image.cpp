@@ -23,7 +23,6 @@ using namespace wxue_img;
 
 #include "bitmaps.h"          // Contains various images handling functions
 #include "image_handler.h"    // ImageHandler class
-#include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node -- Node class
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 #include "preferences.h"      // Preferences -- Stores user preferences

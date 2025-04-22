@@ -8,14 +8,14 @@
 #pragma once
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
-#include "node_classes.h"    // Forward defintions of Node classes
-
-#include "gen_enums.h"  // Enumerations for generators
-using namespace GenEnum;
+#include "gen_enums.h"       // Enumerations for generators
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
 class FontProperty;
+class Node;
+
+using namespace GenEnum;
 
 extern const char* g_xrc_keywords;
 

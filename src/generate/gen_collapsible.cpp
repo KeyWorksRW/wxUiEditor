@@ -7,14 +7,14 @@
 
 #include <wx/collpane.h>  // wxCollapsiblePane
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-
-#include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
+#include "gen_common.h"      // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"   // Common XRC generating functions
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "mockup_content.h"  // MockupContent -- Mockup of a form's contents
+#include "mockup_parent.h"   // MockupParent -- Top-level MockUp Parent window
+#include "node.h"            // Node class
+#include "pugixml.hpp"       // xml read/write/create/process
+#include "utils.h"           // Utility functions that work with properties
 
 #include "gen_collapsible.h"
 

@@ -5,20 +5,15 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <future>
-#include <thread>
-#include <unordered_set>
-
 #include <wx/datetime.h>  // wxDateTime
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
 #include "gen_base.h"
 
+#include "base_generator.h"   // BaseGenerator -- Base Generator class
 #include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // Common component functions
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties

@@ -8,9 +8,10 @@
 #include <wx/dataview.h>  // wxDataViewCtrl base classes
 #include <wx/event.h>     // Event classes
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "dataview_widgets.h"
 

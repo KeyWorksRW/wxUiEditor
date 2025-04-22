@@ -10,13 +10,14 @@
 
 #include <frozen/set.h>
 
-#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "node_prop.h"   // NodeProperty -- NodeProperty class
-#include "pugixml.hpp"   // xml_object_range
-#include "utils.h"       // Utility functions that work with properties
-#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "node_prop.h"      // NodeProperty -- NodeProperty class
+#include "pugixml.hpp"      // xml_object_range
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_frame.h"
 

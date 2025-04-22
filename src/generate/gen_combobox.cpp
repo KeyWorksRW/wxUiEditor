@@ -7,10 +7,11 @@
 
 #include <wx/combobox.h>  // wxComboBox declaration
 
-#include "code.h"        // Code -- Helper class for generating code
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "gen_combobox.h"
 

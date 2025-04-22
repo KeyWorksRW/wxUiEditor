@@ -8,13 +8,12 @@
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 #include <wx/ribbon/toolbar.h>    // Ribbon-style tool bar
 
-#include "bitmaps.h"     // Contains various images handling functions
-#include "code.h"        // Code -- Helper class for generating code
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "image_gen.h"   // Functions for generating embedded images
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "bitmaps.h"    // Contains various images handling functions
+#include "code.h"       // Code -- Helper class for generating code
+#include "image_gen.h"  // Functions for generating embedded images
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
+#include "utils.h"      // Utility functions that work with properties
 
 #include "gen_ribbon_tool.h"
 

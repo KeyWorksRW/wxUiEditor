@@ -7,15 +7,12 @@
 
 #pragma once
 
-#include <map>
-
-#include "gen_enums.h"     // Enumerations for generators
-#include "node_classes.h"  // Forward defintions of Node classes
-
+#include "gen_enums.h"   // Enumerations for generators
 #include "import_xml.h"  // ImportXML -- Base class for XML importing
 
 #include "rapidjson/document.h"
 
+class Node;
 class wxImage;
 
 using ImportNameMap = std::unordered_map<std::string, const char*>;

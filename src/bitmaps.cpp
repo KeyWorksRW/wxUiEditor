@@ -9,14 +9,12 @@
 
 #include <frozen/map.h>
 
-#include <wx/bitmap.h>  // wxBitmap class interface
-#include <wx/icon.h>    // wxIcon base header
-
 #include <wx/animate.h>  // wxAnimation and wxAnimationCtrl
+#include <wx/bitmap.h>   // wxBitmap class interface
+#include <wx/icon.h>     // wxIcon base header
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "wxui/ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
-#include "wxui/ui_images.h"         // This is generated from the Images List
+#include "wxui/ui_images.h"  // This is generated from the Images List
 
 #include "bitmaps.h"
 

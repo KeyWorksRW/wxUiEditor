@@ -11,11 +11,11 @@
 #include "gen_enums.h"             // Enumerations for generators
 #include "gen_xrc.h"               // BaseXrcGenerator -- Generate XRC file
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
 class Code;
-class ProjectSettings;
+class Node;
 class NodeCreator;
+class NodeEvent;
+class ProjectSettings;
 class WriteCode;
 class wxWindow;
 

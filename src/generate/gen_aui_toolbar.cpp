@@ -9,11 +9,12 @@
 #include <wx/aui/framemanager.h>  // wxaui: wx advanced user interface - docking window manager
 #include <wx/toolbar.h>           // wxToolBar interface declaration
 
-#include "bitmaps.h"          // Map of bitmaps accessed by name
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "bitmaps.h"        // Map of bitmaps accessed by name
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mockup_parent.h"  // Top-level MockUp Parent window
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "gen_aui_toolbar.h"
 

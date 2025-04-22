@@ -50,7 +50,7 @@ class ModifyProperties;
 bool isClipboardDataAvailable();
 
 // Warning! This MUST be at least 3!
-constexpr const size_t StatusPanels = 3;
+#define STATUS_PANELS 3
 
 inline constexpr auto txt_main_window_config = "/main_window";
 

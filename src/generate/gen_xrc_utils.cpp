@@ -12,7 +12,6 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 // clang-format off
 

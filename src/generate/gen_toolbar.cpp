@@ -7,12 +7,13 @@
 
 #include <wx/toolbar.h>  // wxToolBar interface declaration
 
-#include "bitmaps.h"          // Map of bitmaps accessed by name
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "mockup_parent.h"  // Top-level MockUp Parent window
+#include "node.h"           // Node class
+#include "node_creator.h"   // Class used to create nodes
 #include "ui_images.h"
 #include "utils.h"  // Utility functions that work with properties
 

@@ -7,8 +7,6 @@
 
 #include <wx/artprov.h>
 
-#include <charconv>  // for std::to_chars
-
 #include "gen_common.h"
 
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
@@ -20,6 +18,7 @@
 #include "mainapp.h"          // wxGetApp()
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // WriteCode -- Write code to Scintilla or file

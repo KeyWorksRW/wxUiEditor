@@ -9,7 +9,7 @@
 #include <wx/stattext.h>          // wxStaticText base header
 
 #include "bitmaps.h"        // Contains various images handling functions
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process

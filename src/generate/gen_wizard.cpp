@@ -7,12 +7,12 @@
 
 #include <wx/wizard.h>  // wxWizard class: a GUI control presenting the user with a
 
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "../mockup/mockup_wizard.h"  // WizardPageSimple
 #include "../panels/navpopupmenu.h"   // NavPopupMenu -- Context-menu for Navigation Panel

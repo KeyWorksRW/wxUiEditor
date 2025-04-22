@@ -17,13 +17,12 @@
 #include "gen_common.h"       // Common component functions
 #include "lambdas.h"          // Functions for formatting and storage of lamda events
 #include "mainframe.h"        // MainFrame -- Main window frame
+#include "mockup_parent.h"    // Top-level MockUp Parent window
 #include "node.h"             // Node class
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
-
-#include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
 MockupParent* BaseGenerator::getMockup()
 {

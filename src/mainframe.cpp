@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // mainframe_events.cpp contains the event handlers for the MainFrame class.
+// mainframe_updates.cpp contains the MainFrame::Update...() functions
 
 #include <sstream>
 
@@ -28,7 +29,6 @@
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "bitmaps.h"          // Map of bitmaps accessed by name
 #include "clipboard.h"        // wxUiEditorData -- Handles reading and writing OS clipboard data
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "gen_base.h"         // Generate Base class
@@ -42,7 +42,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // Write code to Scintilla or file
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
 #include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
@@ -53,12 +52,10 @@
 #include "wxui/ui_images.h"  // This is generated from the Images List
 
 #include "internal/code_compare.h"  // CodeCompare
+#include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #include "internal/msg_logging.h"   // MsgLogging -- Message logging class
 #include "internal/node_info.h"     // NodeInfo
 #include "internal/undo_info.h"     // UndoInfo
-
-#include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
-#include "internal/xrcpreview.h"    // XrcPreview
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     #include "internal/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
@@ -67,6 +64,9 @@
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
 #include "pugixml.hpp"
+
+// Warning! This MUST be at least 3!
+constexpr const size_t StatusPanels = 3;
 
 using namespace wxue_img;
 using namespace GenEnum;

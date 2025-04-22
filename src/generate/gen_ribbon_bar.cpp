@@ -7,10 +7,12 @@
 
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 
-#include "code.h"        // Code -- Helper class for generating code
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mockup_parent.h"  // Top-level MockUp Parent window
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "gen_ribbon_bar.h"
 

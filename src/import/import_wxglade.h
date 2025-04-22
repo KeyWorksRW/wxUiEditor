@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "node_classes.h"
-
 #include "import_xml.h"  // ImportXML -- Base class for XML importing
+
+class Node;
 
 class WxGlade : public ImportXML
 {

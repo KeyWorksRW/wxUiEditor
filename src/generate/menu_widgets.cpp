@@ -10,11 +10,13 @@
 #include <wx/statline.h>  // wxStaticLine class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include "gen_common.h"    // GeneratorLibrary -- Generator classes
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator -- NodeCreator class
-#include "utils.h"         // Utility functions that work with properties
-#include "write_code.h"    // Write code to Scintilla or file
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mockup_parent.h"  // Top-level MockUp Parent window
+#include "node.h"           // Node class
+#include "node_creator.h"   // NodeCreator -- NodeCreator class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // Write code to Scintilla or file
 
 #include "menu_widgets.h"
 

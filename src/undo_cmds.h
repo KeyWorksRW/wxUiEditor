@@ -7,9 +7,14 @@
 
 #pragma once
 
-#include "gen_enums.h"     // Enumerations for generators
-#include "node_classes.h"  // Forward defintions of Node classes
-#include "undo_stack.h"    // UndoAction -- Maintain a undo and redo stack
+#include "gen_enums.h"   // Enumerations for generators
+#include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
+
+class Node;
+class NodeEvent;
+class NodeProperty;
+
+using NodeSharedPtr = std::shared_ptr<Node>;
 
 // Specify node, parent node, undo string, and optional position
 class InsertNodeAction : public UndoAction

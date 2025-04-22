@@ -15,21 +15,13 @@
 
 #include "gen_data_list.h"
 
-#include "bitmaps.h"          // Contains various images handling functions
-#include "data_handler.h"     // DataHandler class
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "image_handler.h"    // ImageHandler class
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // Write code to Scintilla or file
-
-#include "ui_images.h"
-
-#include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
-#include "../mockup/mockup_parent.h"   // MockupParent -- Top-level MockUp Parent window
+#include "data_handler.h"   // DataHandler class
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
+#include "node.h"           // Node class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // Write code to Scintilla or file
 
 // using namespace wxue_data;
 

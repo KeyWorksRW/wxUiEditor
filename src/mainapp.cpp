@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <chrono>
-#include <iostream>
 
 #include <wx/arrstr.h>   // wxArrayString class
 #include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command
@@ -19,20 +18,16 @@
 
 #include "mainapp.h"
 
-#include "bitmaps.h"               // Contains various images handling functions
 #include "gen_common.h"            // Common component functions
 #include "gen_results.h"           // Code generation file writing functions
 #include "internal/msg_logging.h"  // MsgLogging -- Message logging class
 #include "mainframe.h"             // MainFrame -- Main window frame
-#include "node.h"                  // Node -- Node class
 #include "node_creator.h"          // NodeCreator class
 #include "preferences.h"           // Set/Get wxUiEditor preferences
 #include "project_handler.h"       // ProjectHandler class
 #include "utils.h"                 // Utility functions that work with properties
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
-
-#include "pugixml.hpp"
 
 #if defined(_WIN32) && defined(_MSC_VER)
     #pragma comment(lib, "kernel32.lib")

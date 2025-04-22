@@ -19,20 +19,12 @@
 
 */
 
-#include <array>
-#include <charconv>  // for std::to_chars()
-#include <map>
-
 #include <frozen/set.h>
 
 #include "code.h"
 
-#include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
-#include "mainapp.h"          // App class
-#include "mainframe.h"        // MainFrame class
 #include "node.h"             // Node class
-#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 

@@ -7,9 +7,9 @@
 
 #include <wx/menu.h>  // wxMenu and wxMenuBar classes
 
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
 
 #include "gen_submenu.h"
 

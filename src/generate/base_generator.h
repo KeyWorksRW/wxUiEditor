@@ -11,7 +11,9 @@
 #include <set>
 #include <string>
 
-#include "node_classes.h"  // Forward defintions of Node classes
+class Node;
+class NodeEvent;
+class NodeProperty;
 
 class BaseCodeGenerator;
 class MockupParent;

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "node_classes.h"  // Forward defintions of Node classes
+class Node;
 
 class GridBag
 {

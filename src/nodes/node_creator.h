@@ -9,7 +9,6 @@
 
 #include <array>
 #include <map>
-#include <set>
 #include <unordered_set>
 #include <utility>  // for std::pair
 
@@ -17,18 +16,17 @@
 
 #include "node_decl.h"   // NodeDeclaration class
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
-#include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
-
-#include "node_classes.h"  // Forward defintions of Node classes
 
 #include "pugixml.hpp"
 
 #include "gen_enums.h"  // Enumerations for generators
 using namespace GenEnum;
 
+class Node;
 class NodeCategory;
 
 using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
+using NodeSharedPtr = std::shared_ptr<Node>;
 
 // Contains definitions of all components
 class NodeCreator

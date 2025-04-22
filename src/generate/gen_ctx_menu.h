@@ -9,7 +9,7 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
-#include "node_classes.h"  // Forward defintions of Node classes
+class Node;
 
 class CtxMenuGenerator : public BaseGenerator
 {

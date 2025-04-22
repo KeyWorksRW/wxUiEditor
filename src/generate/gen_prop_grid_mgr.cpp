@@ -11,9 +11,10 @@
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 #include "utils_prop_grid.h"  // PropertyGrid utilities
+
+#include "../mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
 #include "gen_prop_grid_mgr.h"
 

@@ -56,8 +56,8 @@ wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id,
     m_statBar = new ueStatusBar(this, id, style, name);
     m_statBar->SetFieldsCount(number);
     {
-        int styles[StatusPanels] = { wxSB_FLAT, wxSB_NORMAL, wxSB_NORMAL };
-        m_statBar->SetStatusStyles(StatusPanels, styles);
+        int styles[STATUS_PANELS] = { wxSB_FLAT, wxSB_NORMAL, wxSB_NORMAL };
+        m_statBar->SetStatusStyles(STATUS_PANELS, styles);
     }
 
     return m_statBar;

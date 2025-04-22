@@ -12,8 +12,6 @@
 #include <filesystem>
 #include <map>
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
 class Code;
 class WriteCode;
 

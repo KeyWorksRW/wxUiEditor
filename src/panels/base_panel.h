@@ -9,8 +9,6 @@
 
 #include <wx/panel.h>  // Base header for wxPanel
 
-#include "node_classes.h"  // Forward defintions of Node classes
-
 class CodeDisplay;
 class CustomEvent;
 class MainFrame;

@@ -13,9 +13,7 @@
 #include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
-#include "../nodes/node_classes.h"  // Forward defintions of Node classes
-#include "cstm_propman.h"           // CustomPropertyManager -- Derived wxPropertyGrid class
-#include "gen_enums.h"              // Enumerations for generators
+#include "gen_enums.h"  // Enumerations for generators
 
 using namespace GenEnum;
 
@@ -24,6 +22,9 @@ using EventSet = std::set<std::string>;
 
 class CustomEvent;
 class MainFrame;
+class Node;
+class NodeEvent;
+class NodeProperty;
 class wxAuiNotebook;
 
 class PropGridPanel : public wxPanel

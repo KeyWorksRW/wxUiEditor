@@ -7,7 +7,8 @@
 
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
-#include "../nodes/node_classes.h"  // Forward defintions of Node classes
+class Node;
+class NodeProperty;
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);

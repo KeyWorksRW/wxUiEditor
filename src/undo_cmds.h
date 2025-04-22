@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "gen_enums.h"     // Enumerations for generators
-#include "undo_stack.h"    // UndoAction -- Maintain a undo and redo stack
+#include "gen_enums.h"   // Enumerations for generators
+#include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
 
 class Node;
 class NodeEvent;

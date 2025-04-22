@@ -9,8 +9,8 @@
 
 #include "image_handler.h"  // ProjectImage class
 
-#include "font_prop.h"     // FontProperty class
-#include "prop_decl.h"     // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
+#include "font_prop.h"  // FontProperty class
+#include "prop_decl.h"  // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
 
 class wxAnimation;
 class Node;

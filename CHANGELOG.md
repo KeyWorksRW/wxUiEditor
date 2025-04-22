@@ -37,6 +37,7 @@ All notable changes to this project will be documented in this file.
 - You can add a menubar or toolbar to a wxFrame that was created without them
 - Fixed inconsistent generation of wxScrolledWindow versus wxScrolled<wxPanel> -- wxScrolledWindow is now always used.
 - XRC combine_all_forms will now generates a single XRC file containing all forms
+- wxTreebook correctly utilizes images in nested books -- fixed for all generated languages
 
 ## [Released (1.2.1)]
 

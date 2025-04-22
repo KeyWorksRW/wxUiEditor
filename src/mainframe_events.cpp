@@ -39,7 +39,8 @@
 namespace wxue_img
 {
     wxBitmapBundle bundle_debug_logo_svg(int width, int height);
-}
+    wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
+}  // namespace wxue_img
 
 void MainFrame::OnAbout(wxCommandEvent&)
 {
@@ -70,7 +71,7 @@ void MainFrame::OnAbout(wxCommandEvent&)
 #if defined(_DEBUG)
     aboutInfo.SetIcon(wxue_img::bundle_debug_logo_svg(64, 64).GetIconFor(this));
 #else
-    aboutInfo.SetIcon(bundle_wxUiEditor_svg(64, 64).GetIconFor(this));
+    aboutInfo.SetIcon(wxue_img::bundle_wxUiEditor_svg(64, 64).GetIconFor(this));
 #endif  // _DEBUG
 
     wxAboutBox(aboutInfo);

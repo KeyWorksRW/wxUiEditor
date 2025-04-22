@@ -7,10 +7,11 @@ set (file_list
 
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise
 
-    mainapp.cpp           # Main application class
-    mainframe.cpp         # Main window frame
-    mainframe_events.cpp  # Main window frame event handlers
-    assertion_dlg.cpp     # Assertion Dialog
+    mainapp.cpp            # Main application class
+    mainframe.cpp          # Main window frame
+    mainframe_events.cpp   # Main window frame event handlers
+    mainframe_updates.cpp  # Main window frame event handlers
+    assertion_dlg.cpp      # Assertion Dialog
 
     bitmaps.cpp           # Map of bitmaps accessed by name
     clipboard.cpp         # Handles reading and writing OS clipboard data

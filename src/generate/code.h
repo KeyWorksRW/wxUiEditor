@@ -47,9 +47,19 @@ namespace code
         eol_always
     };
 
+// REVIEW: [Randalphwa - 04-22-2025] clangd version 18.1.4 claims this is an unsed variable, but
+// it is used in several files that #include code.h and require this.
+#if defined(__clang__)
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunused-const-variable"
+#endif
+
     constexpr const bool no_dpi_scaling = false;
     constexpr const bool allow_dpi_scaling = true;
 
+#if defined(__clang__)
+    #pragma clang diagnostic pop
+#endif
 };  // namespace code
 
 // Assume anyone including this header file needs access to the code namespace

@@ -13,8 +13,8 @@
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
 
-#include "panels/base_panel.h"      // BasePanel -- C++ panel
-#include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
+#include "panels/base_panel.h"  // BasePanel -- C++ panel
+#include "panels/doc_view.h"    // Panel for displaying docs in wxWebView
 
 #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 

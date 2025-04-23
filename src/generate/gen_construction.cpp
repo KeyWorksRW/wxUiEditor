@@ -679,11 +679,30 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             if (node->getForm()->isGen(gen_wxDialog) && node->as_bool(prop_static_line))
             {
                 if (is_cpp())
+                {
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
+                }
                 else if (code.is_ruby())
+                {
                     code.ParentName().Function("Add(").Str(ConvertToSnakeCase("CreateSeparatedSizer(")).NodeName() << "), ";
+                }
+                else if (code.is_perl())
+                {
+                    // wxPerl doesn't support CreateSeparatedSizer() so we have to add the line ourselves
+                    code << "unless (Wx::wxMAC())";
+                    code.OpenBrace();
+                    code.Str(
+                        "my $stdBtn_line = Wx::StaticLine->new($self, wxID_ANY, wxDefaultPosition, Wx::Size->new(20, -1));");
+                    code.Eol().ParentName().Function("Add(").Str("$stdBtn_line").Comma();
+                    code.Str("0, wxEXPAND|wxALL").Comma().as_string(prop_border_size) << ");";
+                    code.CloseBrace();
+
+                    code.Eol().ParentName().Function("Add(").NodeName() << ", ";
+                }
                 else
+                {
                     code.ParentName().Function("Add(").NodeName() << ", ";
+                }
             }
             else
                 code.ParentName().Function("Add(").NodeName() << ", ";
@@ -728,7 +747,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     if (need_closing_brace)
     {
         m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
-        if (m_language == GEN_LANG_CPLUSPLUS)
+        if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
         {
             m_source->writeLine("}");
         }

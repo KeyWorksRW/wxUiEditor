@@ -154,7 +154,20 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Str("sub new {");
         code.Indent();
         code.Eol().Str("my( $class, $parent, $id, $title, $pos, $size, $style, $name ) = @_;");
-        code.Eol().Str("my $this = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
+        code.Eol() += "$parent = undef unless defined $parent;";
+        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
+        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
+        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
+        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
+        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
+        code.Eol().Str("$name = ");
+        if (code.hasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
+        else
+            code += "\"frame\"";
+        code.Str(" unless defined $name;");
+
+        code.Eol().Str("my $self = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
     }
     else if (code.is_rust())
     {
@@ -551,4 +564,17 @@ void DialogFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& ha
         handlers.emplace("wxIconXmlHandler");
         handlers.emplace("wxBitmapXmlHandler");
     }
+}
+
+bool DialogFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use base qw[Wx::Dialog];");
+        set_imports.emplace("use Wx qw[:dialog];");
+        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
+        return true;
+    }
+
+    return false;
 }

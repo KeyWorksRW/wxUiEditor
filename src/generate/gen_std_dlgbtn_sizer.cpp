@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStdDialogButtonSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,17 +10,17 @@
 #include <wx/sizer.h>
 #include <wx/statline.h>
 
-#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
-#include "code.h"                             // Code -- Helper class for generating code
-#include "gen_common.h"                       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"                    // Common XRC generating functions
-#include "lambdas.h"                          // Functions for formatting and storage of lamda events
-#include "node.h"                             // Node class
-#include "utils.h"                            // Utility functions that work with properties
+#include "gen_std_dlgbtn_sizer.h"
+
+#include "code.h"              // Code -- Helper class for generating code
+#include "eventhandler_dlg.h"  // EventHandlerDlg static functions
+#include "gen_common.h"        // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"     // Common XRC generating functions
+#include "lambdas.h"           // Functions for formatting and storage of lamda events
+#include "node.h"              // Node class
+#include "utils.h"             // Utility functions that work with properties
 
 #include "pugixml.hpp"  // xml read/write/create/process
-
-#include "gen_std_dlgbtn_sizer.h"
 
 wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -94,12 +94,13 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
         return true;
     }
 
+#if 0
     else if (code.is_ruby())
     {
         GenRubyConstruction(code);
         return true;
     }
-
+#endif
     code.AddAuto();
 
     Node* node = code.node();  // purely for convenience
@@ -114,8 +115,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     if (node->getForm()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
-        code.NodeName();
-        code += " = CreateStdDialogButtonSizer(";
+        code.NodeName().Assign().FormFunction("CreateStdDialogButtonSizer(");
 
         tt_string flags;
 
@@ -356,89 +356,6 @@ void StdDialogButtonSizerGenerator::GenPythonConstruction(Code& code)
         code.Eol().NodeName().Add("_ContextHelp").Function("SetDefault()");
 
     code.Eol().NodeName().Function("Realize()");
-}
-
-void StdDialogButtonSizerGenerator::GenRubyConstruction(Code& code)
-{
-    // Note that wxRuby3 does not support CreateStdDialogButtonSizer or CreateSeparatedSizer
-
-    Node* node = code.node();  // purely for convenience
-
-    // Add a static line above the buttons unless it is a Mac
-
-    code += "if Wx::PLATFORM != 'WXMAC'";
-    code.Eol().Tab().NodeName().Str("_line = Wx::StaticLine.new(self, Wx::ID_ANY, Wx::DEFAULT_POSITION, ");
-    code.Eol().Tab(9 + (to_int) node->getNodeName().size()).Str("Wx::Size.new(20, -1))");
-    code.Eol().Tab().ParentName().Function("Add(").NodeName() += "_line, Wx::SizerFlags.new.expand.border(Wx::ALL))";
-    code.Eol() += "end";
-    code.Eol().NodeName().Add(" = Wx::StdDialogButtonSizer.new");
-
-    auto min_size = node->as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
-    {
-        code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
-        code.EndFunction();
-    }
-
-    auto& default_btn_name = node->as_string(prop_default_button);
-
-    auto gen_btn_code = [&](std::string_view def_btn_name, std::string_view btn_name, std::string_view id)
-    {
-        if (def_btn_name == default_btn_name || code.node()->getMapEvents().size())
-        {
-            code.Eol().NodeName().Str(btn_name).Str(" = Wx::Button.new(self, ").Str(id).Str(")");
-            code.Eol().NodeName().Function("add_button(").NodeName().Str(btn_name).Str(")");
-
-            if (def_btn_name == default_btn_name)
-            {
-                code.Eol().NodeName().Str(btn_name).Str(".set_default");
-            }
-        }
-        else
-        {
-            code.Eol().NodeName().Function("add_button(").Str("Wx::Button.new(self, ").Str(id).Str("))");
-        }
-    };
-
-    // You can only have one of: Ok, Yes, Save
-    if (node->as_bool(prop_OK))
-    {
-        gen_btn_code("OK", "_ok", "Wx::ID_OK");
-    }
-    else if (node->as_bool(prop_Yes))
-    {
-        gen_btn_code("Yes", "_yes", "Wx::ID_YES");
-    }
-    else if (node->as_bool(prop_Save))
-    {
-        gen_btn_code("Save", "_save", "Wx::ID_SAVE");
-    }
-
-    if (node->as_bool(prop_No))
-    {
-        gen_btn_code("No", "_no", "Wx::ID_NO");
-    }
-
-    // You can only have one of: Cancel, Close
-    if (node->as_bool(prop_Cancel))
-    {
-        gen_btn_code("Cancel", "_cancel", "Wx::ID_CANCEL");
-    }
-    else if (node->as_bool(prop_Close))
-    {
-        gen_btn_code("Close", "_close", "Wx::ID_CLOSE");
-    }
-
-    if (node->as_bool(prop_Help))
-    {
-        gen_btn_code("Help", "_help", "Wx::ID_HELP");
-    }
-    else if (node->as_bool(prop_ContextHelp))
-    {
-        code.Eol().NodeName().Function("add_button(").Str("Wx::ContextHelpButton.new(self, Wx::ID_CONTEXT_HELP))");
-    }
-
-    code.Eol().NodeName().Function("realize");
 }
 
 int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)

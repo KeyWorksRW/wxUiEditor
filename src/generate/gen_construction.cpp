@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top level Object construction code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,7 @@
 #include "node.h"             // Node class
 #include "node_decl.h"        // NodeDeclaration class
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
 // clang-format off
@@ -679,6 +680,8 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             {
                 if (is_cpp())
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
+                else if (code.is_ruby())
+                    code.ParentName().Function("Add(").Str(ConvertToSnakeCase("CreateSeparatedSizer(")).NodeName() << "), ";
                 else
                     code.ParentName().Function("Add(").NodeName() << ", ";
             }

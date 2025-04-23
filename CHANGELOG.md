@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - The dialog for editing Custom Control parameters now has a drop-down list of all the possible macros you can use
 - C++ code generation no longer supports wxWidgets 3.1 -- you should link to a current 3.2 or higher version of wxWidgets.
 - Added new formatting options for XRC output.
+- wxRuby code will now call create_std_dialog_button_sizer() and create_separated_sizer() to create a wxStdDialogButtonSizer in a Dialog.
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.

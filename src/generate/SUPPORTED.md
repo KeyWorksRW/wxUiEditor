@@ -151,7 +151,7 @@ The following tables indicate whether or not code is being generated in a specif
 
 | Class              | C++ | Perl | Python | Ruby | XRC | file                 |
 | ------------------ | --- | ---- | ------ | ---- | --- | -------------------- |
-| BookPage           | yes | ---  | yes    | yes  | yes | gen_book_page.cpp    |
+| BookPage           | yes | yes  | yes    | yes  | yes | gen_book_page.cpp    |
 | Check3State        | yes | ---  | ---    | ---  | --- | gen_checkbox.cpp     |
 | CustomControl      | yes | ---  | no     | ---  | --- | gen_custom_ctrl.cpp  |
 | DataViewColumn     | yes | ---  | yes    | no   | no  | dataview_widgets.cpp |
@@ -163,6 +163,24 @@ The following tables indicate whether or not code is being generated in a specif
 | Spacer             | yes | ---  | ---    | ---  | --- | gen_spacer_sizer.cpp |
 | TreeListCtrlColumn | yes | ---  | ---    | ---  | no  | gen_tree_list.cpp    |
 | wxContextMenuEvent | yes | ---  | no     | ---  | no  | gen_ctx_menu.cpp     |
+| wxTextProofOptions | yes | ---  | no     | ---  | --- | ---                  |
+| wxSizerFlags       | yes | no   | yes    | yes  | no  | ---                  |
+
+# Functions
+
+| Function                   | C++ | Perl | Python | Ruby | XRC | file                     |
+| -------------------------- | --- | ---- | ------ | ---- | --- | ------------------------ |
+| CreateSeparatedSizer       | yes | no   | ---    | yes  | no  | gen_std_dlgbtn_sizer.cpp |
+| CreateStdDialogButtonSizer | yes | yes  | ---    | yes  | --- | gen_std_dlgbtn_sizer     |
+| FromDIP                    | yes | no   | yes    | yes  | yes | ---                      |
+| GetControlSizer            | yes | ---  | no     | ???  | --- | gen_choicebook.cpp       |
+
+
+# Constants
+
+| Constant       | C++ | Perl | Python | Ruby | XRC |
+| -------------- | --- | ---- | ------ | ---- | --- |
+| wxDefaultCoord | yes | no   | yes    | yes  | yes |
 
 # Special Notes:
 
@@ -189,6 +207,8 @@ The Unsupported lists below are for controls that the language port doesn't supp
 
 - wxREMOVE_LEADING_SPACES not a valid constant for wxWrapSizer
 - wxWRAPSIZER_DEFAULT_FLAGS not a valid constant for wxWrapSizer
+- wxDefaultCoord not a valid constant
+- Dialog::CreateSeparatedSizer()
 
 # Ruby Unsupported
 
@@ -197,7 +217,6 @@ The Unsupported lists below are for controls that the language port doesn't supp
 - wxRearrangeCtrl
 - wxSpinCtrlDouble
 - wxWebView
-- wxWrapSizer
 - wxCommandLinkButton
 
 - wxDataViewListCtrl

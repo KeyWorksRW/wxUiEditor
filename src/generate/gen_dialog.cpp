@@ -277,35 +277,52 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
             code.Eol(eol_if_needed).FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
         }
 
-        // While the dev may have specified default values for either pos or size, the code that creates the dialog
-        // may have overridden either pos or size. It they did, then we need to scale those values here.
+        if (code.is_cpp())
+        {
+            // For C++ the dialog's Create() method is what gets exposed which allows the dev to specify
+            // default values for either pos or size when the class in instantiated. If the dev uses
+            // 2-step initialization, then the code that creates the dialog may have overridden either
+            // pos or size. It they did, then we need to scale those values here.
 
-        code.Eol(eol_if_needed).BeginConditional().Str("pos != ").Add("wxDefaultPosition").EndConditional().OpenBrace(true);
-        code.AddComment("Now that the dialog is created, set the scaled position");
-        code.FormFunction("SetPosition(").FormFunction("FromDIP(pos)").EndFunction().CloseBrace(true);
+            code.Eol(eol_if_needed)
+                .BeginConditional()
+                .Str("pos != ")
+                .Add("wxDefaultPosition")
+                .EndConditional()
+                .OpenBrace(true);
+            code.AddComment("Now that the dialog is created, set the scaled position");
+            code.FormFunction("SetPosition(").FormFunction("FromDIP(pos)").EndFunction().CloseBrace(true);
 
-        // The default will be size == wxDefaultSize, in which case all we need to do is call
-        // SetSizerAndFit(child_node)
-        code.Eol().BeginConditional().Str("size == ").Add("wxDefaultSize").EndConditional().OpenBrace(true);
-        code.AddComment("If default size let the sizer set the dialog's size");
-        code.AddComment("so that it is large enough to fit it's child controls.");
-        code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true, false);
+            // The default will be size == wxDefaultSize, in which case all we need to do is call
+            // SetSizerAndFit(child_node)
+            code.Eol().BeginConditional().Str("size == ").Add("wxDefaultSize").EndConditional().OpenBrace(true);
+            code.AddComment("If default size let the sizer set the dialog's size");
+            code.AddComment("so that it is large enough to fit it's child controls.");
+            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true, false);
 
-        // If size != wxDefaultSize, it's more complicated because either the width or the height might still
-        // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
+            // If size != wxDefaultSize, it's more complicated because either the width or the height might still
+            // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
 
-        code.Eol().Str("else").AddIfPython(":").OpenBrace(true);
-        code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
+            code.Eol().Str("else").AddIfPython(":").OpenBrace(true);
+            code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
 
-        code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
-        code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
-        code.EndConditional().OpenBrace(true);
-        code.AddComment("Use the sizer to calculate the missing dimension");
-        code.FormFunction("Fit(").EndFunction();
-        code.CloseBrace(true);
-        code.Eol().FormFunction("SetSize(").FormFunction("FromDIP(size)").EndFunction();
-        code.Eol().FormFunction("Layout(").EndFunction();
-        code.CloseBrace(true);
+            code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
+            code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
+            code.EndConditional().OpenBrace(true);
+            code.AddComment("Use the sizer to calculate the missing dimension");
+            code.FormFunction("Fit(").EndFunction();
+            code.CloseBrace(true);
+            code.Eol().FormFunction("SetSize(");
+            code.FormFunction("FromDIP(size)").EndFunction();
+            code.Eol().FormFunction("Layout(").EndFunction();
+            code.CloseBrace(true);
+        }
+        else
+        {
+            // For Perl, Python, and Ruby, any scaling is handled by the code that instantiates the dialog,
+            // so all we need is SetSizerAndFit().
+            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
+        }
     }
 
     bool is_focus_set = false;

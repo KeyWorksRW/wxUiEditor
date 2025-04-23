@@ -960,33 +960,34 @@ void BaseCodeGenerator::GenPerlEventHandlers(EventVector& events)
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "sub " << handler << " {";
-            if (code_lines.find(set_code) != code_lines.end())
-                continue;
+
             if (code_lines.find(set_code) != code_lines.end())
                 continue;
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
+            code.Tab().Str("my ($self, $event) = @_;").Eol();
 #if defined(_DEBUG)
             auto& dbg_event_name = event->get_name();
             wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
             if (event->get_name() == "CloseButtonClicked")
             {
-                code.Tab().Str("$self->EndModal(wxID_CLOSE);").Eol().Eol();
+                code.Tab().Str("$self->EndModal(wxID_CLOSE);").Eol();
             }
             else if (event->get_name() == "YesButtonClicked")
             {
-                code.Tab().Str("$self->EndModal(wxID_YES);").Eol().Eol();
+                code.Tab().Str("$self->EndModal(wxID_YES);").Eol();
             }
             else if (event->get_name() == "NoButtonClicked")
             {
-                code.Tab().Str("$self->EndModal(wxID_NO);").Eol().Eol();
+                code.Tab().Str("$self->EndModal(wxID_NO);").Eol();
             }
             else
             {
-                code.Tab().Str("$event->Skip();").Eol().Eol();
+                code.Tab().Str("$event->Skip();").Eol();
             }
+            code.Str("}").Eol();
         }
     }
 

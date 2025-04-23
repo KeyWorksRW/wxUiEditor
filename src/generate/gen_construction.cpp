@@ -686,6 +686,10 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
                 {
                     code.ParentName().Function("Add(").Str(ConvertToSnakeCase("CreateSeparatedSizer(")).NodeName() << "), ";
                 }
+                else if (code.is_python())
+                {
+                    code.ParentName().Function("Add(").Str("self.CreateSeparatedSizer(").NodeName() << "), ";
+                }
                 else if (code.is_perl())
                 {
                     // wxPerl doesn't support CreateSeparatedSizer() so we have to add the line ourselves

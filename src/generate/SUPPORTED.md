@@ -83,9 +83,9 @@ The following tables indicate whether or not code is being generated in a specif
 | ------------------------ | --- | ---- | ------ | ---- | ------- | -------------------------- |
 | wxBoxSizer               | yes | yes  | yes    | yes  | yes     | gen_box_sizer.cpp          |
 | wxCheckBoxSizer          | yes | ---  | no     | yes  | ---     | gen_statchkbox_sizer.cpp   |
-| wxFlexGridSizer          | yes | ---  | yes    | yes  | yes     | gen_flexgrid_sizer.cpp     |
+| wxFlexGridSizer          | yes | yes  | yes    | yes  | yes     | gen_flexgrid_sizer.cpp     |
 | wxGridBagSizer           | yes | yes  | yes    | yes  | yes     | gen_gridbag_sizer.cpp      |
-| wxGridSizer              | yes | ---  | yes    | yes  | yes     | gen_grid_sizer.cpp         |
+| wxGridSizer              | yes | yes  | yes    | yes  | yes     | gen_grid_sizer.cpp         |
 | wxStaticRadioBtnBoxSizer | yes | ---  | no     | yes  | ---     | gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer         | yes | ---  | yes    | yes  | yes     | gen_staticbox_sizer.cpp    |
 | wxStdDialogButtonSizer   | yes | ---  | yes    | yes  | partial | gen_std_dlgbtn_sizer.cpp   |
@@ -186,6 +186,9 @@ The Unsupported lists below are for controls that the language port doesn't supp
 - wxTextProofOptions (for wxTextCtrl)
 - wxWindow.FromDIP()
 - wxSimpleBook
+
+- wxREMOVE_LEADING_SPACES not a valid constant for wxWrapSizer
+- wxWRAPSIZER_DEFAULT_FLAGS not a valid constant for wxWrapSizer
 
 # Ruby Unsupported
 

@@ -94,13 +94,6 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
         return true;
     }
 
-#if 0
-    else if (code.is_ruby())
-    {
-        GenRubyConstruction(code);
-        return true;
-    }
-#endif
     code.AddAuto();
 
     Node* node = code.node();  // purely for convenience

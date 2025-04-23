@@ -8,6 +8,8 @@
 #pragma once
 
 #include <map>
+#include <optional>
+#include <string_view>
 
 namespace GenEnum
 {

@@ -412,18 +412,6 @@ Code& Code::GenSizerFlags()
         };
         lambda(prop_alignment);
         lambda(prop_flags);
-
-        if (prop_combined_flags.size())
-        {
-            Add(prop_combined_flags);
-        }
-        else
-        {
-            Add("0");
-        }
-        Comma();
-
-        prop_combined_flags.clear();
         lambda(prop_borders);
 
         if (prop_combined_flags.size())
@@ -434,6 +422,7 @@ Code& Code::GenSizerFlags()
         {
             Add("0");
         }
+        Comma().as_string(prop_border_size);
 
         return *this;
     }

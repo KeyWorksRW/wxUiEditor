@@ -157,7 +157,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
         {
             if (auto file = gen->GetHelpURL(cur_sel); file.size())
             {
-                wxString url("https://docs.wxwidgets.org/3.2.0/class");
+                wxString url("https://docs.wxwidgets.org/3.2.7/class");
                 if (file.starts_with("group"))
                     url.RemoveLast(sizeof("class") - 1);
                 url << file.make_wxString();

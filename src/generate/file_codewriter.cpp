@@ -11,6 +11,7 @@
 
 #include "file_codewriter.h"
 
+#include "code.h"            // Code -- Helper class for generating code
 #include "mainapp.h"         // App -- Main application class
 #include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
@@ -132,17 +133,13 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
     {
         m_buffer += end_python_perl_ruby_block;
 
-        // If the file has never been written before, then add "end" line that is required to close
-        // the class definition. This is written outside of the comment block, so presumably any
-        // user edits will be made above this line or they will remove it and replace it with their
-        // own "end" line.
+        // If the file has never been written before, then we end the class outside of the closing comment block.
+        // This allows the user to add event handlers or other functionality within the class.
         if (!file_exists)
         {
-            m_buffer += "\nend";
-            if (m_node)
-            {
-                m_buffer += "  # " + m_node->getNodeName();
-            }
+            Code code(node, GEN_LANG_RUBY);
+            code.Eol().Str("end  # end of ").Str(node->getNodeName()).Str(" class");
+            m_buffer += code;
         }
     }
     else if (language == GEN_LANG_RUST)

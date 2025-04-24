@@ -42,7 +42,29 @@ bool WrapSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().as_string(prop_orientation).Comma();
     if (code.hasValue(prop_wrap_flags))
-        code.as_string(prop_wrap_flags);
+    {
+        if (code.is_perl())
+        {
+            // REVIEW: [Randalphwa - 04-22-2025] wxPerl only contains the wxEXTEND_LAST_ON_EACH_LINE and is
+            // missing the other two. We generate numerical values so the the functionality is at lest there.
+            int flags = 0;
+            auto& wrap_flag_string = code.node()->as_string(prop_wrap_flags);
+            if (wrap_flag_string.contains("wxWRAPSIZER_DEFAULT_FLAGS"))
+                flags |= wxWRAPSIZER_DEFAULT_FLAGS;
+            else
+            {
+                if (wrap_flag_string.contains("wxEXTEND_LAST_ON_EACH_LINE"))
+                    flags |= wxEXTEND_LAST_ON_EACH_LINE;
+                if (wrap_flag_string.contains("wxREMOVE_LEADING_SPACES"))
+                    flags |= wxREMOVE_LEADING_SPACES;
+            }
+            code.itoa(flags);
+        }
+        else
+        {
+            code.as_string(prop_wrap_flags);
+        }
+    }
     else
         code += "0";
     code.EndFunction();

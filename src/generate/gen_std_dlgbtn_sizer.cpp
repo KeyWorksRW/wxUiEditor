@@ -148,96 +148,66 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
         code.EndFunction();
     }
 
+    auto lambda_AddButton = [&](std::string_view var_name, std::string_view id)
+    {
+        if (!code.is_local_var() || def_btn_name == var_name)
+        {
+            tt_string btn_name;
+            if (code.is_cpp())
+            {
+                // For Python, Ruby, and Perl, we use the variable name as the button name
+                btn_name = var_name;
+            }
+            else
+            {
+                // For C++, we convert the variable name to lower case and prepend an underscore
+                // to avoid conflicts with wxID_ constants.
+                btn_name = "_";
+                for (auto& ch: var_name)
+                    btn_name += static_cast<char>(std::tolower(ch));
+            }
+            code.Eol().NodeName().Str(btn_name).CreateClass(false, "wxButton");
+            code.FormParent().Comma().Add(id).EndFunction();
+            code.Eol().NodeName().Function("AddButton(").NodeName().Str(btn_name).EndFunction();
+            if (def_btn_name == var_name)
+            {
+                code.Eol().NodeName().Str(btn_name).Function("SetDefault(").EndFunction();
+            }
+        }
+        else
+        {
+            code.Eol().NodeName().Function("AddButton(");
+            code.CreateClass(false, "wxButton", false);
+            code.FormParent().Comma().Add(id).Str(")").EndFunction();
+        }
+    };
+
     // You can only have one of: Ok, Yes, Save
     if (node->as_bool(prop_OK))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_OK));";
-    }
+        lambda_AddButton("OK", "wxID_OK");
     else if (node->as_bool(prop_Yes))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_YES));";
-    }
+        lambda_AddButton("Yes", "wxID_YES");
     else if (node->as_bool(prop_Save))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_SAVE));";
-    }
+        lambda_AddButton("Save", "wxID_SAVE");
 
     if (node->as_bool(prop_No))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_NO));";
-    }
+        lambda_AddButton("No", "wxID_NO");
 
     // You can only have one of: Cancel, Close
     if (node->as_bool(prop_Cancel))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_CANCEL));";
-    }
+        lambda_AddButton("Cancel", "wxID_CANCEL");
     else if (node->as_bool(prop_Close))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_CLOSE));";
-    }
+        lambda_AddButton("Close", "wxID_CLOSE");
 
     if (node->as_bool(prop_Apply))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_APPLY));";
-    }
+        lambda_AddButton("Apply", "wxID_APPLY");
 
     // You can only have one of: Help, ContextHelp
     if (node->as_bool(prop_Help))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxButton(this, wxID_HELP));";
-    }
+        lambda_AddButton("Help", "wxID_HELP");
     else if (node->as_bool(prop_ContextHelp))
-    {
-        code.Eol().NodeName().Function("AddButton(");
-        code += "new wxContextHelpButton(this, wxID_CONTEXT_HELP));";
-    }
-
-    if (def_btn_name == "OK" || def_btn_name == "Yes" || def_btn_name == "Save")
-        code.Eol().NodeName().Function("GetAffirmativeButton()").Function("SetDefault(").EndFunction();
-    else if (def_btn_name == "Cancel" || def_btn_name == "Close")
-        code.Eol().NodeName().Function("GetCancelButton()").Function("SetDefault(").EndFunction();
-    else if (def_btn_name == "No")
-        code.Eol().NodeName().Function("GetNegativeButton()").Function("SetDefault(").EndFunction();
-    else if (def_btn_name == "Apply")
-        code.Eol().NodeName().Function("GetApplyButton()").Function("SetDefault(").EndFunction();
-    else if (def_btn_name == "Help" || def_btn_name == "ContextHelp")
-        code.Eol().NodeName().Function("GetHelpButton()").Function("SetDefault(").EndFunction();
-
+        lambda_AddButton("ContextHelp", "wxID_CONTEXT_HELP");
     code.Eol().NodeName().Function("Realize(").EndFunction();
-
-    if (!node->isLocal())
-    {
-        code.Eol(eol_if_needed);
-        if (node->as_bool(prop_OK))
-            code.NodeName() << "OK = wxStaticCast(FindWindowById(wxID_OK), wxButton);\n";
-        if (node->as_bool(prop_Yes))
-            code.NodeName() << "Yes = wxStaticCast(FindWindowById(wxID_YES), wxButton);\n";
-        if (node->as_bool(prop_Save))
-            code.NodeName() << "Save = wxStaticCast(FindWindowById(wxID_SAVE), wxButton);\n";
-        if (node->as_bool(prop_Apply))
-            code.NodeName() << "Apply = wxStaticCast(FindWindowById(wxID_APPLY), wxButton);\n";
-
-        if (node->as_bool(prop_No))
-            code.NodeName() << "No = wxStaticCast(FindWindowById(wxID_NO), wxButton);\n";
-        if (node->as_bool(prop_Cancel))
-            code.NodeName() << "Cancel = wxStaticCast(FindWindowById(wxID_CANCEL), wxButton);\n";
-        if (node->as_bool(prop_Close))
-            code.NodeName() << "Close = wxStaticCast(FindWindowById(wxID_CLOSE), wxButton);\n";
-        if (node->as_bool(prop_Help))
-            code.NodeName() << "Help = wxStaticCast(FindWindowById(wxID_HELP), wxButton);\n";
-        if (node->as_bool(prop_ContextHelp))
-            code.NodeName() << "ContextHelp = wxStaticCast(FindWindowById(wxID_CONTEXT_HELP), wxButton);\n";
-    }
-
     return true;
 }
 
@@ -500,7 +470,7 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
         code.Add("Bind(").Add(event_name) << comma << handler.GetCode() << comma;
     }
 
-    if (code.m_language == GEN_LANG_PYTHON || code.m_language == GEN_LANG_RUBY)
+    if (code.m_language == GEN_LANG_PERL || code.m_language == GEN_LANG_PYTHON || code.m_language == GEN_LANG_RUBY)
     {
         if (event->get_name().starts_with("OKButton"))
             code.NodeName(event->getNode()).Add("_ok");

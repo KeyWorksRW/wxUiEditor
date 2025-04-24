@@ -143,7 +143,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxTextCtrl             | yes | yes     | yes     | yes  | yes     | gen_text_ctrl.cpp     |
 | wxToggleButton         | yes | ---     | yes     | yes  | partial | gen_toggle_btn.cpp    |
 | wxTreeCtrl             | yes | ---     | yes     | yes  | yes     | gen_tree_ctrl.cpp     |
-| wxTreeListCtrl         | yes | ---     | no      | no   | no      | gen_tree_list.cpp     |
+| wxTreeListCtrl         | yes | ---     | yes     | no   | no      | gen_tree_list.cpp     |
 | wxWebView              | yes | ---     | yes     | no   | no      | gen_web_view.cpp      |
 | wxWizardPageSimple     | yes | ---     | yes     | yes  | yes     | gen_wizard.cpp        |
 
@@ -193,7 +193,6 @@ The Unsupported lists below are for controls that the language port doesn't supp
 
 - CheckBoxSizer
 - RadioBoxSizer
-- wxTreeListCtrl
 - wxTextProofOptions (for wxTextCtrl)
 
 # Perl Unsupported

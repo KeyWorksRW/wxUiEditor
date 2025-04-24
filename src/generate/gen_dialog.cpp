@@ -277,7 +277,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         !is_scaling_enabled)
     {
         // If is_scaling_enabled == false, then neither pos or size have high dpi scaling enabled
-        code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
+        code.Eol(eol_if_needed).FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
     }
     else
     {
@@ -311,7 +311,11 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
             code.Eol().BeginConditional().Str("size == ").Add("wxDefaultSize").EndConditional().OpenBrace(true);
             code.AddComment("If default size let the sizer set the dialog's size");
             code.AddComment("so that it is large enough to fit it's child controls.");
-            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true, false);
+            code.Eol(eol_if_needed)
+                .FormFunction("SetSizerAndFit(")
+                .NodeName(child_node)
+                .EndFunction()
+                .CloseBrace(true, false);
 
             // If size != wxDefaultSize, it's more complicated because either the width or the height might still
             // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
@@ -334,7 +338,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         {
             // For Perl, Python, and Ruby, any scaling is handled by the code that instantiates the dialog,
             // so all we need is SetSizerAndFit().
-            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
+            code.Eol(eol_if_needed).FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
         }
     }
 

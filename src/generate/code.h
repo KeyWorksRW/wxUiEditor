@@ -370,6 +370,9 @@ public:
     // non-sizer parents.
     Code& ValidParentName();
 
+    // Adds "this" for C++, "$self" for Perl, and "self" for Python, Ruby, and Rust.
+    Code& FormParent();
+
     // Handles regular or or'd properties.
     //
     // If the property value begins with wx and the language is not C++, this will change the

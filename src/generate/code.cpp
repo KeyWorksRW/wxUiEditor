@@ -789,6 +789,27 @@ Code& Code::FormFunction(tt_string_view text)
     return *this;
 }
 
+Code& Code::FormParent()
+{
+    if (is_cpp())
+    {
+        *this += "this";
+    }
+    else if (is_python() || is_ruby() || is_rust())
+    {
+        *this += "self";
+    }
+    else if (is_perl())
+    {
+        *this += "$self";
+    }
+    else
+    {
+        MSG_WARNING("unknown language");
+    }
+    return *this;
+}
+
 Code& Code::Class(tt_string_view text)
 {
     if (is_cpp())

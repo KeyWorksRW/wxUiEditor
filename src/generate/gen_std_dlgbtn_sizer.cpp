@@ -150,6 +150,13 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     auto lambda_AddButton = [&](std::string_view var_name, std::string_view id)
     {
+        if (id == "wxID_CONTEXT_HELP")
+        {
+            code.Eol().NodeName().Function("AddButton(");
+            code.CreateClass(false, "wxContextHelpButton", false);
+            code.FormParent().Comma().Add(id).Str(")").EndFunction();
+            return;
+        }
         if (!code.is_local_var() || def_btn_name == var_name)
         {
             tt_string btn_name;

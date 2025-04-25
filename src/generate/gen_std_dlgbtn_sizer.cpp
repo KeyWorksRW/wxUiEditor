@@ -541,3 +541,17 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
 
     return true;
 }
+
+bool StdDialogButtonSizerGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        if (node->as_bool(prop_ContextHelp))
+        {
+            set_imports.emplace("use Wx::Help;");
+            return true;
+        }
+    }
+
+    return false;
+}

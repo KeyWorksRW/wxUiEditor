@@ -113,7 +113,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         else
             code += "wxPropertySheetDialog";
         code += "::Create(parent, id, title, pos, size, style, name))";
-        code.Eol().Tab() += "return false;\n";
+        code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
 
         code.Eol().Str("CreateButtons(").Add(prop_buttons).EndFunction();
     }

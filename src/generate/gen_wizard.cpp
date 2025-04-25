@@ -177,7 +177,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code.Comma().Str("pos").Comma().Str("style))");
-            code.Eol().Tab().Str("return;");
+            code.Eol().OpenBrace().Str("return;").CloseBrace();
         }
         else
         {
@@ -190,7 +190,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, wxNullBitmap, pos, style))");
-            code.Eol().Tab().Str("return;");
+            code.Eol().OpenBrace().Str("return;").CloseBrace();
         }
         else if (code.is_python())
         {

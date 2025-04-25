@@ -167,18 +167,43 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
             }
             else
             {
-                // For C++, we convert the variable name to lower case and prepend an underscore
-                // to avoid conflicts with wxID_ constants.
-                btn_name = "_";
+                // For non-C++ languages, we convert the variable name to lower case and prepend an
+                // underscore.
+                if (code.is_perl())
+                {
+                    btn_name = "$self->{";
+                    btn_name += code.node()->getNodeName();
+                    btn_name += "_";
+                }
+                else
+                {
+                    btn_name = "_";
+                }
                 for (auto& ch: var_name)
                     btn_name += static_cast<char>(std::tolower(ch));
+                if (code.is_perl())
+                {
+                    btn_name += "}";
+                }
             }
-            code.Eol().NodeName().Str(btn_name).CreateClass(false, "wxButton");
+
+            code.Eol();
+            // In Perl, the variable name is in {} brackets, so we had to add the underscore
+            // and suffix id above, so the btn_name is now complete.
+            if (!code.is_perl())
+                code.NodeName();
+            code.Str(btn_name).CreateClass(false, "wxButton");
             code.FormParent().Comma().Add(id).EndFunction();
-            code.Eol().NodeName().Function("AddButton(").NodeName().Str(btn_name).EndFunction();
+            code.Eol().NodeName().Function("AddButton(");
+            if (!code.is_perl())
+                code.NodeName();
+            code.Str(btn_name).EndFunction();
             if (def_btn_name == var_name)
             {
-                code.Eol().NodeName().Str(btn_name).Function("SetDefault(").EndFunction();
+                code.Eol();
+                if (!code.is_perl())
+                    code.NodeName();
+                code.Str(btn_name).Function("SetDefault(").EndFunction();
             }
         }
         else

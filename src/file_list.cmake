@@ -20,7 +20,7 @@ set (file_list
     gen_enums.cpp         # Enumerations for generators
     id_lists.cpp          # wxID_ strings
     paths.cpp             # Handles *_directory properties
-    preferences.cpp       # Set/Get wxUiEditor preferences
+    preferences.cpp       # Prefs/UserPrefs -- Set/Get wxUiEditor preferences
     previews.cpp          # Top level Preview functions
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
@@ -35,50 +35,50 @@ set (file_list
 
     # Custom property handling for Property Grid panel
 
-    customprops/code_single_prop.cpp    # Derived wxStringProperty class for single line code wxStringProperty class for code
-    customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
-    customprops/custom_colour_prop.cpp  # Property editor for colour
-    customprops/custom_param_prop.cpp   # Derived wxStringProperty class for custom control parameters
-    customprops/directory_prop.cpp      # Derived wxStringProperty class for choosing a directory
+    customprops/code_single_prop.cpp    # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
+    customprops/code_string_prop.cpp    # EditCodeProperty --Derived wxStringProperty class for code
+    customprops/custom_colour_prop.cpp  # EditColourProperty -- Property editor for colour
+    customprops/custom_param_prop.cpp   # EditParamProperty -- Derived wxStringProperty class for custom control parameters
+    customprops/directory_prop.cpp      # DirectoryProperty -- Derived wxStringProperty class for choosing a directory
     customprops/edit_custom_mockup.cpp  # Custom Property editor for pop_custom_mockup
-    customprops/evt_string_prop.cpp     # Derived wxStringProperty class for event function
-    customprops/font_string_prop.cpp    # Derived wxStringProperty class for font property
-    customprops/html_string_prop.cpp    # Derived wxStringProperty class for HTML
-    customprops/id_prop.cpp             # Uses IDEditorDlg to edit a custom ID
-    customprops/img_string_prop.cpp     # Derived wxStringProperty class for handling wxImage files or art
-    customprops/include_files_prop.cpp  # Derived wxStringProperty class for Include Files
-    customprops/rearrange_prop.cpp      # wxRearangeList contents editor
-    customprops/sb_fields_prop.cpp      # Property editor for status bar fields
-    customprops/sizer_grow_columns.cpp  # Property editor for Growable Sizer Columns
-    customprops/sizer_grow_rows.cpp     # Property editor for Growable Sizer Rows
-    customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
+    customprops/evt_string_prop.cpp     # EventStringProperty -- Derived wxStringProperty class for event function
+    customprops/font_string_prop.cpp    # FontStringProperty -- Derived wxStringProperty class for font property
+    customprops/html_string_prop.cpp    # EditHtmlProperty - Derived wxStringProperty class for HTML
+    customprops/id_prop.cpp             # ID_Property -- Uses IDEditorDlg to edit a custom ID
+    customprops/img_string_prop.cpp     # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
+    customprops/include_files_prop.cpp  # IncludeFilesProperty -- Derived wxStringProperty class for Include Files
+    customprops/rearrange_prop.cpp      # RearrangeProperty -- wxRearangeList contents editor
+    customprops/sb_fields_prop.cpp      # SBarFieldsProperty -- Property editor for status bar fields
+    customprops/sizer_grow_columns.cpp  # GrowColumnsProperty -- Property editor for Growable Sizer Columns
+    customprops/sizer_grow_rows.cpp     # GrowRowsProperty -- Property editor for Growable Sizer Rows
+    customprops/txt_string_prop.cpp     # EditStringProperty -- Derived wxStringProperty class for single-line text
 
-    customprops/eventhandler_dlg.cpp    # Dialog for editing event handlers
-    customprops/font_prop_dlg.cpp       # Dialog for editing Font Property
-    customprops/img_props.cpp           # Handles property grid image properties
+    customprops/eventhandler_dlg.cpp    # EventHandlerDlg -- Dialog for editing event handlers
+    customprops/font_prop_dlg.cpp       # FontPropDlg -- Dialog for editing Font Property
+    customprops/img_props.cpp           # ImageProperties -- Handles property grid image properties
 
-    customprops/tt_file_property.cpp    # Version of wxFileProperty specific to wxUiEditor
+    customprops/tt_file_property.cpp    # ttFileProperty -- Version of wxFileProperty specific to wxUiEditor
 
-    customprops/pg_image.cpp            # Custom property grid class for images
-    customprops/pg_animation.cpp        # Custom property grid class for animations
-    customprops/pg_point.cpp            # Custom wxPGProperty for wxPoint
+    customprops/pg_image.cpp            # PropertyGrid_Image -- Custom property grid class for images
+    customprops/pg_animation.cpp        # PropertyGrid_Animation -- Custom property grid class for animations
+    customprops/pg_point.cpp            # CustomPointProperty -- Custom wxPGProperty for wxPoint
     # (generated) customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
     # (generated) customprops/include_files_dlg.cpp
     # (generated) customprops/id_editor_dlg.cpp
 
-    custom_ctrls/colour_rect_ctrl.cpp   # Control that displays a solid color
-    custom_ctrls/kw_color_picker.cpp    # Modified version of wxColourPickerCtrl
+    custom_ctrls/colour_rect_ctrl.cpp   # ColourRectCtrl -- Control that displays a solid color
+    custom_ctrls/kw_color_picker.cpp    # kwColourPickerCtrl -- Modified version of wxColourPickerCtrl
 
     # Code generation modules
 
-    generate/code.cpp              # Helper class for generating code
+    generate/code.cpp              # Code -- Helper class for generating code
     generate/code_add.cpp          # Code::Add...() functions
     generate/code_bundle.cpp       # Code::Bundle() functions
     generate/code_gen.cpp          # Code::Gen...() functions
     generate/code_pos_style.cpp    # Code::Pose...()/Style() functions
 
-    generate/file_codewriter.cpp   # Classs to write code to disk
-    generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
+    generate/file_codewriter.cpp   # FileCodeWriter -- Class to write code to disk
+    generate/gen_base.cpp          # BaseCodeGenerator -- Generate Src and Hdr files for Base and Derived Class
     generate/gen_codefiles.cpp     # Generate code functions
     generate/gen_construction.cpp  # Top level Object construction code
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
@@ -86,7 +86,7 @@ set (file_list
     generate/write_code.cpp        # Write code to Scintilla or file
     generate/image_gen.cpp         # Functions for generating embedded images
 
-    generate/base_generator.cpp    # Base widget generator class
+    generate/base_generator.cpp    # BaseGenerator -- Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes
     generate/gen_common.cpp        # Common widget generation functions
 

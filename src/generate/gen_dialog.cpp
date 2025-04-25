@@ -87,7 +87,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
                 code += ' ';
         }
         code += "parent, id, title, pos, size, style, name))";
-        code.Eol().Tab() += "return false;\n";
+        code.OpenBrace().Str("return false;").CloseBrace();
     }
     else if (code.is_python())
     {

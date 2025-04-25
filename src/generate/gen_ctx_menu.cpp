@@ -73,7 +73,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
     if (code.is_cpp())
     {
         code.Add("wxMenu ctx_menu").Str(code.is_cpp() ? ";" : "");
-        code.Eol().Str("auto p_ctx_menu = &ctx_menu;  // convenience variable for the auto-generated code");
+        code.Eol().Str("auto* p_ctx_menu = &ctx_menu;  // convenience variable for the auto-generated code");
     }
     else
     {

@@ -150,6 +150,13 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     auto lambda_AddButton = [&](std::string_view var_name, std::string_view id)
     {
+        if (id == "wxID_CONTEXT_HELP")
+        {
+            code.Eol().NodeName().Function("AddButton(");
+            code.CreateClass(false, "wxContextHelpButton", false);
+            code.FormParent().Comma().Add(id).Str(")").EndFunction();
+            return;
+        }
         if (!code.is_local_var() || def_btn_name == var_name)
         {
             tt_string btn_name;
@@ -160,18 +167,43 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
             }
             else
             {
-                // For C++, we convert the variable name to lower case and prepend an underscore
-                // to avoid conflicts with wxID_ constants.
-                btn_name = "_";
+                // For non-C++ languages, we convert the variable name to lower case and prepend an
+                // underscore.
+                if (code.is_perl())
+                {
+                    btn_name = "$self->{";
+                    btn_name += code.node()->getNodeName();
+                    btn_name += "_";
+                }
+                else
+                {
+                    btn_name = "_";
+                }
                 for (auto& ch: var_name)
                     btn_name += static_cast<char>(std::tolower(ch));
+                if (code.is_perl())
+                {
+                    btn_name += "}";
+                }
             }
-            code.Eol().NodeName().Str(btn_name).CreateClass(false, "wxButton");
+
+            code.Eol();
+            // In Perl, the variable name is in {} brackets, so we had to add the underscore
+            // and suffix id above, so the btn_name is now complete.
+            if (!code.is_perl())
+                code.NodeName();
+            code.Str(btn_name).CreateClass(false, "wxButton");
             code.FormParent().Comma().Add(id).EndFunction();
-            code.Eol().NodeName().Function("AddButton(").NodeName().Str(btn_name).EndFunction();
+            code.Eol().NodeName().Function("AddButton(");
+            if (!code.is_perl())
+                code.NodeName();
+            code.Str(btn_name).EndFunction();
             if (def_btn_name == var_name)
             {
-                code.Eol().NodeName().Str(btn_name).Function("SetDefault(").EndFunction();
+                code.Eol();
+                if (!code.is_perl())
+                    code.NodeName();
+                code.Str(btn_name).Function("SetDefault(").EndFunction();
             }
         }
         else
@@ -533,4 +565,18 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
         set_src.insert("#include <wx/cshelp.h>");
 
     return true;
+}
+
+bool StdDialogButtonSizerGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        if (node->as_bool(prop_ContextHelp))
+        {
+            set_imports.emplace("use Wx::Help;");
+            return true;
+        }
+    }
+
+    return false;
 }

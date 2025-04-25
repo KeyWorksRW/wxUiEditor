@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate the C++ derived class source and header file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,12 +26,12 @@
 
 #include "gen_base.h"
 
-#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
-#include "node.h"                             // Node class
-#include "node_creator.h"                     // NodeCreator class
-#include "project_handler.h"                  // ProjectHandler class
-
-#include "write_code.h"  // Write code to Scintilla or file
+#include "code.h"              // Code -- Helper class for generating code
+#include "eventhandler_dlg.h"  // EventHandlerDlg static functions
+#include "node.h"              // Node class
+#include "node_creator.h"      // NodeCreator class
+#include "project_handler.h"   // ProjectHandler class
+#include "write_code.h"        // Write code to Scintilla or file
 
 // clang-format off
 
@@ -413,26 +413,23 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                     }
                     else if (close_type_button)
                     {
-                        m_source->writeLine("if (!Validate() || !TransferDataFromWindow())");
-                        m_source->Indent();
-                        m_source->writeLine("return;");
-                        m_source->Unindent();
-                        m_source->writeLine();
-                        m_source->writeLine("if (IsModal())");
+                        Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+                        code.Str("if (!Validate() || !TransferDataFromWindow())");
+                        code.OpenBrace();
+                        code.Str("return;");
+                        code.CloseBrace();
 
-                        m_source->Indent();
-                        m_source->writeLine("EndModal(wxID_OK);");
-                        m_source->Unindent();
+                        code.Eol().Eol(eol_always).Str("if (IsModal())");
+                        code.OpenBrace();
+                        code.Str("EndModal(wxID_OK);");
+                        code.CloseBrace();
 
-                        m_source->writeLine("else");
-                        m_source->writeLine("{");
-
-                        m_source->Indent();
-                        m_source->writeLine("    SetReturnCode(wxID_OK);");
-                        m_source->writeLine("    Show(false);");
-                        m_source->Unindent();
-
-                        m_source->writeLine("}");
+                        code.Eol().Str("else");
+                        code.OpenBrace();
+                        code.Str("SetReturnCode(wxID_OK);");
+                        code.Eol().Str("Show(false);");
+                        code.CloseBrace();
+                        m_source->writeLine(code);
 
                         if (m_form_node->as_bool(prop_persist))
                         {

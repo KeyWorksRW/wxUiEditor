@@ -132,7 +132,7 @@ bool PanelFormGenerator::SettingsCode(Code& code)
         else
             code += "wxPanel";
         code += "::Create(parent, id, pos, size, style, name))";
-        code.Eol().Tab().Str("return false;\n");
+        code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
     }
     else if (code.is_python())
     {

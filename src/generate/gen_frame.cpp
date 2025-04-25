@@ -10,6 +10,7 @@
 
 #include <frozen/set.h>
 
+#include "code.h"
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
@@ -218,7 +219,7 @@ bool FrameFormGenerator::SettingsCode(Code& code)
                 code += ' ';
         }
         code += "parent, id, title, pos, size, style, name))";
-        code.Eol().Tab() += "return false;\n";
+        code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
     }
     else if (code.is_python())
     {

@@ -220,12 +220,6 @@ bool DialogFormGenerator::SettingsCode(Code& code)
 
     if (code.is_python())
     {
-        if (code.hasValue(prop_extra_style))
-        {
-            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
-            code.EndFunction();
-        }
-
         if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
             code.AddComment("Scaling of pos and size are handled after the dialog")
                 .AddComment("has been created and controls added.");
@@ -238,21 +232,19 @@ bool DialogFormGenerator::SettingsCode(Code& code)
             code.AddComment("Scaling of pos and size are handled after the dialog")
                 .AddComment("has been created and controls added.");
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
+    }
 
-        if (code.hasValue(prop_extra_style))
+    if (code.hasValue(prop_extra_style))
+    {
+        // C++ calls wxDialog::Create(), which means SetExtraStyle() needs to be set *before* that
+        // call. Perl, Python, and Ruby need to set it after the wxDialog is created.
+        if (code.is_python() || code.is_perl() || code.is_ruby())
         {
             code.Eol(eol_if_needed).FormFunction("SetExtraStyle(");
-            code.Function("GetExtraStyle").Str(" | ").Add(prop_extra_style);
+            code.FormFunction("GetExtraStyle()").Str(" | ").Add(prop_extra_style);
             code.EndFunction();
         }
     }
-    else if (code.is_perl())
-    {
-        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(");
-        code.FormFunction("GetExtraStyle").Str(" | ").Add(prop_extra_style);
-        code.EndFunction();
-    }
-
     code.Eol(eol_if_needed).GenFontColourSettings();
 
     return true;

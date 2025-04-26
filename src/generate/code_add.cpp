@@ -358,10 +358,27 @@ Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
 
 Code& Code::AddConstant(tt_string_view text)
 {
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
         CheckLineLength(text.size());
         *this += text;
+        return *this;
+    }
+    else if (is_perl())
+    {
+        // In some cases, wxPerl doesn't supprt a constant, but if we use the numeric value instead,
+        // then it works fine.
+        if (text.contains("wxBU_NOTEXT"))
+        {
+            tt_string new_value(text);
+            new_value.Replace("wxBU_NOTEXT", "2");
+            CheckLineLength(new_value.size());
+            *this += new_value;
+        }
+        else
+        {
+            *this += text;
+        }
         return *this;
     }
     return Add(text);

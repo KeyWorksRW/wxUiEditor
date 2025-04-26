@@ -66,8 +66,16 @@ Code& Code::Add(tt_string_view text)
     // this function.
     if (is_cpp() || is_perl() || is_rust() || text.size() < (sizeof("wx") - 1))
     {
-        CheckLineLength(text.size());
-        *this += text;
+        if (is_perl() && text == "wxEmptyString")
+        {
+            // wxPerl doesn't support wxEmptyString
+            *this += "\"\"";
+        }
+        else
+        {
+            CheckLineLength(text.size());
+            *this += text;
+        }
     }
     else
     {

@@ -111,12 +111,10 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         if (code.is_cpp())
         {
-            handler << event->get_name() << ',' << event_code;
-            // Put the lambda expression on it's own line
-            handler.GetCode().Replace("[", "\n\t[");
-            comma = ",\n\t";
-            ExpandLambda(handler.GetCode());
+            handler << event->get_name() << ',';
+            handler.ExpandEventLambda(event_code);
             is_lambda = true;
+            comma = ",\n\t";
         }
         else if (code.is_python())
         {

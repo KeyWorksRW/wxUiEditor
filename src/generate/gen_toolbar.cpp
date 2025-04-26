@@ -309,6 +309,18 @@ void ToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxToolBarXmlHandler");
 }
 
+bool ToolBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx::Event qw(EVT_TOOL);");
+        set_imports.emplace("use Wx qw[:toolbar];");
+
+        return true;
+    }
+    return false;
+}
+
 //////////////////////////////////////////  ToolBarGenerator  //////////////////////////////////////////
 
 wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -508,6 +520,7 @@ bool ToolBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_i
 {
     if (language == GEN_LANG_PERL)
     {
+        set_imports.emplace("use Wx::Event qw(EVT_TOOL);");
         set_imports.emplace("use Wx qw[:toolbar];");
         return true;
     }

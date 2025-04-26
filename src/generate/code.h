@@ -537,6 +537,10 @@ public:
     // list.
     void AddPublicRubyMembers();
 
+    // This will expand a lamda function according to the current language.
+    // Note that it takes a copy of the lambda string since it needs to modify it.
+    Code& ExpandEventLambda(tt_string lambda);
+
 protected:
     void InsertLineBreak(size_t cur_pos);
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis

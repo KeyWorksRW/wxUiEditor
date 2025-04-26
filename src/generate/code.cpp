@@ -1824,3 +1824,52 @@ Code& Code::False()
 
     return *this;
 }
+
+Code& Code::ExpandEventLambda(tt_string lambda)
+{
+    lambda.LeftTrim();
+    lambda.Replace("@@", "\n", tt::REPLACE::all);
+    lambda.RightTrim();
+
+    if (is_cpp())
+    {
+        Indent(1);
+        Eol();
+        tt_string_vector lines(lambda, '\n');
+
+        for (auto& line: lines)
+        {
+            if (line.contains("}"))
+            {
+                Unindent(1);
+                if (back() == '\t')
+                {
+                    pop_back();
+                }
+                Str(line);
+            }
+            else if (line.contains("{"))
+            {
+                Str(line);
+                Indent();
+            }
+            else
+            {
+                Str(line);
+            }
+            Eol();
+        }
+        Unindent(1);
+        // The caller will be adding a comma, which should appear after the closing brace
+        while (back() == '\t')
+        {
+            pop_back();
+        }
+        while (back() == '\n')
+        {
+            pop_back();
+        }
+    }
+
+    return *this;
+}

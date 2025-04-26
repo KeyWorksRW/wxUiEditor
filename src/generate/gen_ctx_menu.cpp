@@ -117,7 +117,6 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
             if (generator->GenEvent(event_code, iter, code.node()->getParentName(code.get_language()).as_str());
                 event_code.size())
             {
-                event_code.GetCode().Replace("\t", "\t\t", true);
                 code.Eol(eol_if_needed).Str("ctx_menu.") += event_code.GetCode();
             }
         }

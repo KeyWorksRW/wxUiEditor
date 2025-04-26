@@ -208,7 +208,7 @@ set (file_list
 
     # Menus
 
-    generate/menu_widgets.cpp      # Menu generation classes
+    generate/menu_widgets.cpp      # MenuBar, MenuBarForm, PopupMenu, Separator
     generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
     generate/gen_mdi_menu.cpp      # Menu bar classes for an MDI frame
     generate/gen_menu.cpp          # Menu Generator

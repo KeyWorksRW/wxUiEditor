@@ -246,6 +246,13 @@ bool DialogFormGenerator::SettingsCode(Code& code)
             code.EndFunction();
         }
     }
+    else if (code.is_perl())
+    {
+        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(");
+        code.FormFunction("GetExtraStyle").Str(" | ").Add(prop_extra_style);
+        code.EndFunction();
+    }
+
     code.Eol(eol_if_needed).GenFontColourSettings();
 
     return true;
@@ -570,13 +577,26 @@ void DialogFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& ha
     }
 }
 
-bool DialogFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool DialogFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
         set_imports.emplace("use base qw[Wx::Dialog];");
         set_imports.emplace("use Wx qw[:dialog];");
         set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
+
+        if (node->as_string(prop_style).contains("wxMAXIMIZE_BOX") || node->as_string(prop_style).contains("wxCLOSE_BOX") ||
+            node->as_string(prop_style).contains("wxMINIMIZE_BOX"))
+        {
+            set_imports.emplace("use Wx qw[:frame];");
+        }
+
+        if (node->as_string(prop_style).contains("wxFULL_REPAINT_ON_RESIZE") ||
+            node->as_string(prop_style).contains("wxWANTS_CHARS"))
+        {
+            set_imports.emplace("use Wx qw[:window];");
+        }
+
         return true;
     }
 

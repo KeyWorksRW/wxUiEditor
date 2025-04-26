@@ -190,27 +190,37 @@ bool MenuBarBase::GetImports(Node* node, std::set<std::string>& set_imports, Gen
 {
     if (language == GEN_LANG_PERL)
     {
-        // REVIEW: [Randalphwa - 01-09-2025] Currently, wxEVT_UPDATE_UI cannot be imported from the
-        // Wx::Event module.
-        set_imports.emplace("use Wx::Event qw(EVT_MENU);");
+        bool update_ui_found = false;
 
-        tt_string constants;
         for (auto& menu: node->getChildNodePtrs())
         {
-            if (menu->hasValue(prop_stock_id) && menu->as_string(prop_stock_id) != "none")
+            if (update_ui_found)
+                break;
+            for (auto& menu_item: menu->getChildNodePtrs())
             {
-                if (constants.size())
+                if (update_ui_found)
+                    break;
+                for (auto& iter: menu_item->getMapEvents())
                 {
-                    constants += ' ';
+                    if (iter.second.get_value().size())
+                    {
+                        auto& event_name = iter.first;
+                        if (event_name == "wxEVT_UPDATE_UI")
+                        {
+                            update_ui_found = true;
+                            break;
+                        }
+                    }
                 }
-                constants << menu->as_string(prop_stock_id);
             }
         }
-        if (constants.size())
+        if (update_ui_found)
         {
-            constants.insert(0, "use Wx qw(");
-            constants += ");";
-            set_imports.emplace(constants);
+            set_imports.emplace("use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);");
+        }
+        else
+        {
+            set_imports.emplace("use Wx::Event qw(EVT_MENU);");
         }
 
         return true;

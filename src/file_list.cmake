@@ -254,6 +254,7 @@ set (file_list
     generate/gen_ribbon_page.cpp     # wxRibbonPage and wxRibbonPanel generators
     generate/gen_ribbon_tool.cpp     # wxRibbonToolBar generator
     generate/gen_toolbar.cpp         # wxToolBar generator
+    generate/gen_tools.cpp           # Generate tools for wxToolBar
 
     ############################# Importers ##############################
 

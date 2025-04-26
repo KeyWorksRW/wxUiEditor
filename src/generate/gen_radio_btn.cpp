@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRadioButton generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -172,4 +172,14 @@ void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, N
     {
         BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
     }
+}
+
+bool RadioButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw[:radiobutton];");
+        return true;
+    }
+    return false;
 }

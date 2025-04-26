@@ -14,7 +14,6 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_event.h"       // NodeEventInfo -- NodeEvent and NodeEventInfo classes
-#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 
@@ -75,6 +74,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
     m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
 #endif  // GENERATE_NEW_LANG_CODE
+
+    // Now that we've determined which languages are enabled, we can remove any pages
+    // for languages that are not used in this project.
 
     m_code_preference = Project.getCodePreference(event->getNode());
 
@@ -203,6 +205,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     auto form = event->getNode()->getForm();
     if (form)
     {
+        // For the panels that support lambdas, set the keywords for the scintilla control that
+        // will be used to edit the lambda function.
+
         if (m_is_cpp_enabled)
         {
             std::set<std::string> variables;
@@ -377,10 +382,8 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                     m_cpp_radio_use_lambda->SetValue(true);
                     m_cpp_lambda_box->GetStaticBox()->Enable(true);
 
-                    if (value.contains("this"))
-                        m_check_capture_this->SetValue(true);
-                    if (value.contains("& event)"))
-                        m_check_include_event->SetValue(true);
+                    m_check_capture_this->SetValue(value.contains("this"));
+                    m_check_include_event->SetValue(value.contains("& event)"));
 
                     if (auto pos = value.find('{'); tt::is_found(pos))
                     {

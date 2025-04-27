@@ -1,12 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStaticBoxSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+
+#include "gen_staticbox_sizer.h"
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
@@ -15,7 +17,6 @@
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
-#include "gen_staticbox_sizer.h"
 
 wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -51,7 +52,10 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
         {
             if (parent->isContainer())
             {
-                parent_name = parent->getNodeName(code.get_language());
+                // Code::NodeName() is the most accurate way to get the name that is
+                // correct for all languages.
+                Code name(parent, code.get_language());
+                parent_name = name.NodeName();
                 break;
             }
             else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||

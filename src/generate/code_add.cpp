@@ -452,7 +452,7 @@ void Code::AddPublicRubyMembers()
 
 Code& Code::AddType(tt_string_view text)
 {
-    if (is_cpp() || text.size() < 3)
+    if (is_cpp() || is_perl() || text.size() < 3)
     {
         CheckLineLength(text.size());
         *this += text;

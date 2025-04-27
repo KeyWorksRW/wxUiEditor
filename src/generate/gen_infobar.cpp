@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxInfoBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -59,8 +59,8 @@ bool InfoBarGenerator::ConstructionCode(Code& code)
 bool InfoBarGenerator::SettingsCode(Code& code)
 {
     code.NodeName().Function("SetShowHideEffects(");
-    code.Add(code.node()->as_constant(prop_show_effect, "info_"));
-    code.Comma().Add(code.node()->as_constant(prop_hide_effect, "info_"));
+    code.AddConstant(code.node()->as_constant(prop_show_effect, "info_"));
+    code.Comma().AddConstant(code.node()->as_constant(prop_hide_effect, "info_"));
     code.EndFunction();
 
     code.Eol().NodeName().Function("SetEffectDuration(").as_string(prop_duration).EndFunction();

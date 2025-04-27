@@ -154,14 +154,12 @@ int App::OnRun()
     parser.AddLongOption("gen_python", "generate python files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
     parser.AddLongOption("gen_rust", "generate Rust files and exit");
+    parser.AddLongOption("gen_xrc", "generate XRC files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
 
-    // [Randalphwa - 02-08-2023] This probably works, but will remain hidden until it is
-    // tested. That said, I'm doubtful that it has any actual value other than for testing -- I
-    // just don't see a reason for a user to want to use the command line to generate XRC
-    // files.
-    parser.AddLongSwitch("gen_xrc", "generate XRC files and exit", wxCMD_LINE_HIDDEN);
+    // Just a quick way to generate perl, python, and ruby
+    parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
 
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
@@ -256,6 +254,11 @@ int App::OnRun()
 #if GENERATE_NEW_LANG_CODE
             generate_type |= (GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA);
 #endif  // GENERATE_NEW_LANG_CODE
+        }
+
+        if (parser.Found("gen_quick", &filename))
+        {
+            generate_type = (GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
         }
 
         if (parser.Found("test_cpp", &filename))

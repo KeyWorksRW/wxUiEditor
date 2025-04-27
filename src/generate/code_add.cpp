@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <frozen/map.h>
 #include <frozen/set.h>
 
 #include "code.h"
@@ -356,6 +357,23 @@ Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
     return Add(m_node->as_constant(prop_name, short_name));
 }
 
+// clang-format off
+constexpr auto show_effect_map = frozen::make_map<std::string_view, std::string_view>({
+    { "wxSHOW_EFFECT_NONE", "0" },
+    { "wxSHOW_EFFECT_ROLL_TO_LEFT", "1" },
+    { "wxSHOW_EFFECT_ROLL_TO_RIGHT", "2" },
+    { "wxSHOW_EFFECT_ROLL_TO_TOP", "3" },
+    { "wxSHOW_EFFECT_ROLL_TO_BOTTOM", "4" },
+    { "wxSHOW_EFFECT_SLIDE_TO_LEFT", "5" },
+    { "wxSHOW_EFFECT_SLIDE_TO_RIGHT", "6" },
+    { "wxSHOW_EFFECT_SLIDE_TO_TOP", "7" },
+    { "wxSHOW_EFFECT_SLIDE_TO_BOTTOM", "8" },
+    { "wxSHOW_EFFECT_BLEND", "9" },
+    { "wxSHOW_EFFECT_EXPAND", "10" },
+    { "wxSHOW_EFFECT_MAX", "11" }
+});
+// clang-format on
+
 Code& Code::AddConstant(tt_string_view text)
 {
     if (is_cpp())
@@ -372,6 +390,17 @@ Code& Code::AddConstant(tt_string_view text)
         {
             tt_string new_value(text);
             new_value.Replace("wxBU_NOTEXT", "2");
+            CheckLineLength(new_value.size());
+            *this += new_value;
+        }
+        else if (text.contains("wxSHOW_EFFECT"))
+        {
+            tt_string new_value(text);
+            for (auto& iter: show_effect_map)
+            {
+                if (new_value.Replace(iter.first, iter.second))
+                    break;
+            }
             CheckLineLength(new_value.size());
             *this += new_value;
         }

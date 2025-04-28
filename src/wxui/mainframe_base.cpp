@@ -57,7 +57,9 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         wxImage::AddHandler(new wxPNGHandler);
 
     if (!wxFrame::Create(parent, id, title, pos, size, style, name))
+    {
         return false;
+    }
     if (pos != wxDefaultPosition || size != wxDefaultSize)
     {
         SetSize(FromDIP(pos).x, FromDIP(pos).y,

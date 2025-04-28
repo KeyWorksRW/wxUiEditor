@@ -21,7 +21,9 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 {
 
     if (!wxFrame::Create(parent, id, title, pos, size, style, name))
+    {
         return false;
+    }
     if (pos != wxDefaultPosition || size != wxDefaultSize)
     {
         SetSize(FromDIP(pos).x, FromDIP(pos).y,

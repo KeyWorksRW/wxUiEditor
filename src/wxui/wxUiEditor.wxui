@@ -7709,7 +7709,6 @@
         title="Node Information"
         base_file="..\internal\node_info"
         inserted_hdr_code="struct NodeMemory@@{@@    size_t size { 0 };@@    size_t children { 0 };@@};"
-        local_hdr_includes="node_classes.h"
         class_members="&quot;Node* m_node { nullptr };&quot;"
         class_methods="&quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;static void CalcNodeMemory(Node* node, NodeMemory&amp; node_memory);&quot; &quot;&quot;"
         derived_class_name="NodeInfo"

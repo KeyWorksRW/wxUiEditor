@@ -12,17 +12,17 @@
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 
-#include "xrcpreview.h"
-
 #include "../wxui/ui_images.h"
-#include "tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
+#include "xrcpreview.h"
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    {
         return false;
+    }
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -201,6 +201,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                      // Node class
 #include "preferences.h"               // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"           // ProjectHandler class
+#include "tt_view_vector.h"            // tt_string_vector -- Class for reading and writing line-oriented strings/files
 #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"                     // Utility functions that work with properties
 

@@ -14,8 +14,6 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 
-class Node;
-
 class NodeInfo : public wxDialog
 {
 public:

@@ -17,7 +17,9 @@ bool EditStringDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    {
         return false;
+    }
 
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 

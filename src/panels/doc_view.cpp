@@ -21,7 +21,9 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 {
 
     if (!wxPanel::Create(parent, id, pos, size, style, name))
+    {
         return false;
+    }
 
     m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 

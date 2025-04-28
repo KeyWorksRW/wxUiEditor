@@ -405,9 +405,6 @@ bool MenuItemGenerator::GetImports(Node* /* node */, std::set<std::string>& set_
 {
     if (language == GEN_LANG_PERL)
     {
-        // REVIEW: [Randalphwa - 01-09-2025] Currently, wxEVT_UPDATE_UI cannot be imported from the
-        // Wx::Event module.
-        set_imports.emplace("use Wx::Event qw(EVT_MENU);");
         set_imports.emplace("use Wx qw[:menu];");
         return true;
     }

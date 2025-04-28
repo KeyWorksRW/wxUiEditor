@@ -478,7 +478,7 @@ void GatherPerlUsages::ParseNodes(Node* node)
                 m_use_expands.emplace(iter);
             else if (iter.starts_with("use Wx::"))
                 m_use_packages.emplace(iter);
-            else if (iter.starts_with("use Wx"))
+            else if (iter.starts_with("use Wx "))
                 m_use_constants.emplace(iter);
             else
                 m_use_classes.emplace(iter);

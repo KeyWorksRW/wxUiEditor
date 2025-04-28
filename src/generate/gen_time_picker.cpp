@@ -1,19 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTimePickerCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/timectrl.h>  // Declaration of wxTimePickerCtrl class.
+
+#include "gen_time_picker.h"
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
-
-#include "gen_time_picker.h"
 
 wxObject* TimePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -32,6 +32,10 @@ bool TimePickerCtrlGenerator::ConstructionCode(Code& code)
     if (code.is_ruby())
     {
         code.Str("DateTime.now");
+    }
+    else if (code.is_perl())
+    {
+        code.Str("Wx::DateTime->new()");
     }
     else
     {
@@ -74,4 +78,14 @@ int TimePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 void TimePickerCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxTimeCtrlXmlHandler");
+}
+
+bool TimePickerCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx::DateTime;");
+        return true;
+    }
+    return false;
 }

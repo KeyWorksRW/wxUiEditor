@@ -1,19 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxButton generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/button.h>  // wxButtonBase class
+
+#include "gen_button.h"
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // Write code to Scintilla or file
-
-#include "gen_button.h"
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -148,8 +148,9 @@ bool ButtonGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    // If prop_markup is set, then the label will be set in SettingsCode()
-    if (code.hasValue(prop_label) && !code.IsTrue(prop_markup))
+    // If prop_markup is set, then the label will be set in SettingsCode() -- with the exception of
+    // wxPerl which doesn't support SetLabelMarkup
+    if (code.hasValue(prop_label) && (!code.IsTrue(prop_markup) || code.is_perl()))
     {
         code.QuotedString(prop_label);
     }
@@ -167,7 +168,14 @@ bool ButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_markup) && code.hasValue(prop_label))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetLabelMarkup(").QuotedString(prop_label).EndFunction();
+        if (!code.is_perl())
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetLabelMarkup(").QuotedString(prop_label).EndFunction();
+        }
+        else
+        {
+            code.AddComment("wxPerl does not support SetLabelMarkup", true);
+        }
     }
 
     if (code.IsTrue(prop_default))
@@ -266,4 +274,14 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
     if (node->hasValue(prop_validator_variable))
         set_src.insert("#include <wx/valgen.h>");
     return true;
+}
+
+bool ButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw[:button];");
+        return true;
+    }
+    return false;
 }

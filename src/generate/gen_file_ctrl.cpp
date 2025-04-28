@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFileCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/filectrl.h>  // Header for wxFileCtrlBase and other common functions used by
+
+#include "gen_file_ctrl.h"
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"    // Common XRC generating functions
@@ -13,8 +15,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "pugixml.hpp"        // xml read/write/create/process
 #include "utils.h"            // Utility functions that work with properties
-
-#include "gen_file_ctrl.h"
 
 using namespace code;
 
@@ -50,7 +50,12 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
     if (code.hasValue(prop_wildcard))
         code.QuotedString(prop_wildcard);
     else
-        code.AddType("wxFileSelectorDefaultWildcardStr");
+    {
+        if (code.is_perl())
+            code.Str("Wx::wxMSW() ? \"*.*\" : \"*\"");
+        else
+            code.AddType("wxFileSelectorDefaultWildcardStr");
+    }
 
     // Unlike most controls, wxFileCtrl expects the style to be specified *before* the
     // position and size.
@@ -140,4 +145,14 @@ int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void FileCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFileCtrlXmlHandler");
+}
+
+bool FileCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw[:filectrl];");
+        return true;
+    }
+    return false;
 }

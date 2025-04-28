@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <frozen/map.h>
 #include <frozen/set.h>
 
 #include "code.h"
@@ -66,8 +67,16 @@ Code& Code::Add(tt_string_view text)
     // this function.
     if (is_cpp() || is_perl() || is_rust() || text.size() < (sizeof("wx") - 1))
     {
-        CheckLineLength(text.size());
-        *this += text;
+        if (is_perl() && text == "wxEmptyString")
+        {
+            // wxPerl doesn't support wxEmptyString
+            *this += "\"\"";
+        }
+        else
+        {
+            CheckLineLength(text.size());
+            *this += text;
+        }
     }
     else
     {
@@ -348,12 +357,57 @@ Code& Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name)
     return Add(m_node->as_constant(prop_name, short_name));
 }
 
+// clang-format off
+constexpr auto show_effect_map = frozen::make_map<std::string_view, std::string_view>({
+    { "wxSHOW_EFFECT_NONE", "0" },
+    { "wxSHOW_EFFECT_ROLL_TO_LEFT", "1" },
+    { "wxSHOW_EFFECT_ROLL_TO_RIGHT", "2" },
+    { "wxSHOW_EFFECT_ROLL_TO_TOP", "3" },
+    { "wxSHOW_EFFECT_ROLL_TO_BOTTOM", "4" },
+    { "wxSHOW_EFFECT_SLIDE_TO_LEFT", "5" },
+    { "wxSHOW_EFFECT_SLIDE_TO_RIGHT", "6" },
+    { "wxSHOW_EFFECT_SLIDE_TO_TOP", "7" },
+    { "wxSHOW_EFFECT_SLIDE_TO_BOTTOM", "8" },
+    { "wxSHOW_EFFECT_BLEND", "9" },
+    { "wxSHOW_EFFECT_EXPAND", "10" },
+    { "wxSHOW_EFFECT_MAX", "11" }
+});
+// clang-format on
+
 Code& Code::AddConstant(tt_string_view text)
 {
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
         CheckLineLength(text.size());
         *this += text;
+        return *this;
+    }
+    else if (is_perl())
+    {
+        // In some cases, wxPerl doesn't supprt a constant, but if we use the numeric value instead,
+        // then it works fine.
+        if (text.contains("wxBU_NOTEXT"))
+        {
+            tt_string new_value(text);
+            new_value.Replace("wxBU_NOTEXT", "2");
+            CheckLineLength(new_value.size());
+            *this += new_value;
+        }
+        else if (text.contains("wxSHOW_EFFECT"))
+        {
+            tt_string new_value(text);
+            for (auto& iter: show_effect_map)
+            {
+                if (new_value.Replace(iter.first, iter.second))
+                    break;
+            }
+            CheckLineLength(new_value.size());
+            *this += new_value;
+        }
+        else
+        {
+            *this += text;
+        }
         return *this;
     }
     return Add(text);
@@ -398,7 +452,7 @@ void Code::AddPublicRubyMembers()
 
 Code& Code::AddType(tt_string_view text)
 {
-    if (is_cpp() || text.size() < 3)
+    if (is_cpp() || is_perl() || text.size() < 3)
     {
         CheckLineLength(text.size());
         *this += text;

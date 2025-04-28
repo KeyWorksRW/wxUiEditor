@@ -1,19 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFontPickerCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/fontpicker.h>
+
+#include "gen_font_picker.h"
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
-
-#include "gen_font_picker.h"
 
 wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -131,4 +131,16 @@ int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 void FontPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFontPickerCtrlXmlHandler");
+}
+
+bool FontPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw(wxFNTP_DEFAULT_STYLE wxFNTP_USE_TEXTCTRL wxFNTP_FONTDESC_AS_LABEL\n"
+                            "          wxFNTP_USEFONT_FOR_LABEL);");
+        set_imports.emplace("use Wx qw[:font];");
+        return true;
+    }
+    return false;
 }

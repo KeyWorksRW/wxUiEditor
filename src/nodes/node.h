@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Node class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +133,8 @@ public:
     bool isWidget() const noexcept { return isType(type_widget); }
     bool isWizard() const noexcept { return isType(type_wizard); }
     bool isMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }
+    // Returns true if node is a menu or submenu
+    bool isMenu() const noexcept { return (isType(type_menu) || isType(type_submenu)); }
     bool isToolBar() const noexcept
     {
         return (isType(type_toolbar) || isType(type_toolbar_form) || isType(type_aui_toolbar_form) ||

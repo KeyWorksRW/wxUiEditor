@@ -870,6 +870,21 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
+    // This will insert the node using an Undo command labeled Paste + clipboard string name.
+    //
+    // It's a lambda because it can be called within a nested conditional -- this avoids code
+    // duplication.
+    auto create_undo_event = [&](NodeSharedPtr created_node)
+    {
+        tt_string undo_str("Paste ");
+        undo_str << m_clipboard->declName();
+
+        auto pos = parent->findInsertionPos(m_selected_node);
+        PushUndoAction(std::make_shared<InsertNodeAction>(created_node.get(), parent, undo_str, pos));
+        FireCreatedEvent(created_node);
+        SelectNode(created_node, evt_flags::fire_event | evt_flags::force_selection);
+    };
+
     auto new_node = NodeCreation.makeCopy(m_clipboard.get(), parent);
 
     // This makes it possible to switch from a normal child toolbar to a form toolbar and vice versa.
@@ -917,6 +932,63 @@ void MainFrame::PasteNode(Node* parent)
     if (!parent->isChildAllowed(new_node))
     {
         auto grandparent = parent->getParent();
+
+        if (new_node->isGen(gen_wxMenuItem))
+        {
+            if (parent->isToolBar() || grandparent->isToolBar())
+            {
+                if (!parent->isToolBar())
+                    parent = grandparent;
+                auto tool_generator =
+                    (parent->isType(type_toolbar) || parent->isType(type_toolbar_form)) ? gen_tool : gen_auitool;
+                auto tool_node = NodeCreation.createNode(tool_generator, parent);
+                ASSERT(tool_node.second == Node::valid_node);
+                // REVIEW: [Randalphwa - 04-28-2025] Not being able to create a tool node with a
+                // valid toolbar parent is extremely unlikely. Simply returning prevents a crash,
+                // but tells the user nothing...
+                if (tool_node.second != Node::valid_node)
+                    return;
+
+                for (const auto& iter: new_node->getNodeDeclaration()->GetPropInfoMap())
+                {
+                    // Walk through all the properties in the menu item and copy any of them that
+                    // exist in the tool node.
+                    if (tool_node.first->hasProp(iter.second->get_name()))
+                    {
+                        tool_node.first->set_value(iter.second->get_name(),
+                                                   new_node->getPropPtr(iter.second->get_name())->get_value());
+                    }
+                }
+                create_undo_event(tool_node.first);
+                return;
+            }
+        }
+        else if (new_node->isGen(gen_tool) || new_node->isGen(gen_auitool))
+        {
+            if (parent->isMenu() || grandparent->isMenu())
+            {
+                if (!parent->isMenu())
+                    parent = grandparent;
+                auto menu_node = NodeCreation.createNode(gen_wxMenuItem, parent);
+                ASSERT(menu_node.second == Node::valid_node);
+                if (menu_node.second != Node::valid_node)
+                    return;
+
+                for (const auto& iter: new_node->getNodeDeclaration()->GetPropInfoMap())
+                {
+                    // Walk through all the properties in the menu item and copy any of them that
+                    // exist in the tool node.
+                    if (menu_node.first->hasProp(iter.second->get_name()))
+                    {
+                        menu_node.first->set_value(iter.second->get_name(),
+                                                   new_node->getPropPtr(iter.second->get_name())->get_value());
+                    }
+                }
+                create_undo_event(menu_node.first);
+                return;
+            }
+        }
+
         if (!grandparent || !grandparent->isChildAllowed(new_node))
         {
             wxMessageBox(tt_string() << "You cannot paste " << new_node->declName() << " into " << parent->declName());
@@ -932,13 +1004,7 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
-    tt_string undo_str("paste ");
-    undo_str << m_clipboard->declName();
-
-    auto pos = parent->findInsertionPos(m_selected_node);
-    PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-    FireCreatedEvent(new_node);
-    SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+    create_undo_event(new_node);
 }
 
 void MainFrame::DuplicateNode(Node* node)

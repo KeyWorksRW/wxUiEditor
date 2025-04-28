@@ -1,20 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFilePickerCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/filepicker.h>  // wxFilePickerCtrl, wxDirPickerCtrl base header
 
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "pugixml.hpp"        // xml read/write/create/process
-#include "utils.h"            // Utility functions that work with properties
-
 #include "gen_file_picker.h"
+
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "pugixml.hpp"      // xml read/write/create/process
+#include "utils.h"          // Utility functions that work with properties
 
 wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -66,7 +65,11 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddType("wxFileSelectorPromptStr");
+        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support wxFileSelectorPromptStr
+        if (code.is_perl())
+            code.QuotedString(tt_string_view("Select a file"));
+        else
+            code.AddType("wxFileSelectorPromptStr");
     }
 
     code.Comma();
@@ -76,7 +79,11 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddType("wxFileSelectorDefaultWildcardStr");
+        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support wxFileSelectorDefaultWildcardStr
+        if (code.is_perl())
+            code.Str("wxFileSelectorDefaultWildcardStr->new()");
+        else
+            code.AddType("wxFileSelectorDefaultWildcardStr");
     }
 
     code.PosSizeFlags(code::allow_scaling, true, "wxFLP_DEFAULT_STYLE");
@@ -147,4 +154,17 @@ int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 void FilePickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFilePickerCtrlXmlHandler");
+}
+
+bool FilePickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw(wxFLP_DEFAULT_STYLE wxFLP_USE_TEXTCTRL wxFLP_OPEN wxFLP_SAVE\n"
+                            "          wxFLP_OVERWRITE_PROMPT wxFLP_FILE_MUST_EXIST wxFLP_CHANGE_DIR\n"
+                            "          wxFLP_SMALL);");
+
+        return true;
+    }
+    return false;
 }

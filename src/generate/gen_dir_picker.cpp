@@ -1,19 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDirPickerCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/filepicker.h>  // wxFilePickerCtrl, wxDirPickerCtrl base header
+
+#include "gen_dir_picker.h"
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
-
-#include "gen_dir_picker.h"
 
 wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -58,6 +58,8 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
     {
         if (code.is_ruby())
             code.Str("Wx::DIR_SELECTOR_PROMPT_STR");
+        else if (code.is_perl())
+            code.QuotedString(tt_string_view("Select a directory"));
         else
             code.Add("wxDirSelectorPromptStr");
     }
@@ -116,4 +118,16 @@ int DirPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void DirPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxDirPickerCtrlXmlHandler");
+}
+
+bool DirPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw(wxDIRP_DEFAULT_STYLE wxDIRP_USE_TEXTCTRL wxDIRP_DIR_MUST_EXIST\n"
+                            "          wxDIRP_CHANGE_DIR wxDIRP_SMALL);");
+
+        return true;
+    }
+    return false;
 }

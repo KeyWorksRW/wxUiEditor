@@ -17,7 +17,6 @@
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
-
 wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer =
@@ -80,12 +79,25 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name = "@" + parent_name;
         }
     }
-    code.AddAuto().NodeName().CreateClass().Add(prop_orientation).Comma().Str(parent_name);
-
-    if (auto& label = node->as_string(prop_label); label.size())
+    code.AddAuto().NodeName().CreateClass();
+    if (code.is_perl())
     {
-        code.Comma().QuotedString(label);
+        code.Str("Wx::StaticBox->new(").Str(parent_name).Str(", wxID_ANY");
+        if (auto& label = node->as_string(prop_label); label.size())
+        {
+            code.Comma().QuotedString(label);
+        }
+        code.Str(")").Comma().Add(prop_orientation);
     }
+    else
+    {
+        code.Add(prop_orientation).Comma().Str(parent_name);
+        if (auto& label = node->as_string(prop_label); label.size())
+        {
+            code.Comma().QuotedString(label);
+        }
+    }
+
     code.EndFunction();
 
     if (code.hasValue(prop_minimum_size))

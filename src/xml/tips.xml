@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tip name="Load Last Project">
+    <content>
+        <html>
+            <body>
+                <p>You can automatically load the last project you worked on every time you start <b>wxUiEditor</b>. To
+                    enable this feature, got to the <b>File</b> menu, choose <b>Preferences</b> and check "Always load
+                    last project".</p>
+            </body>
+        </html>
+    </content>
+</tip>
+
+<tip name="Menu Item Copy to Tool">
+    <content>
+        <html>
+            <body>
+                <p>You can easily create a tool in a toolbar with the same ID and event handler as a menu item. Simply
+                    select the menu item and press Ctrl+C, then select the toolbar and press Ctrl+V.</p>
+            </body>
+        </html>
+    </content>
+</tip>
+
+<tip name="Switching Projects">
+    <content>
+        <html>
+            <body>
+                <p>Ctrl+D will display a list of your recent projects, allowing you to quickly switch between them
+                    without needing to go to the <b>File</b> menu.</p>
+            </body>
+        </html>
+    </content>
+</tip>

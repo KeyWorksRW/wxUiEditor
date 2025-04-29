@@ -919,6 +919,10 @@ namespace GenEnum
         gen_wxWizardPageSimple,
         gen_wxWrapSizer,
 
+        gen_wxDocParentFrame,
+        gen_wxDocMDIParentFrame,
+        gen_wxAuiMDIParentFrame,
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_name_array_size,
         gen_unknown = gen_name_array_size,

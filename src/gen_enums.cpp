@@ -866,6 +866,10 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWizardPageSimple, "wxWizardPageSimple" },
     { gen_wxWrapSizer, "wxWrapSizer" },
 
+    { gen_wxDocParentFrame, "wxDocParentFrame" },
+    { gen_wxDocMDIParentFrame, "wxDocMDIParentFrame" },
+    { gen_wxAuiMDIParentFrame, "wxAuiMDIParentFrame" },
+
 };
 std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
 

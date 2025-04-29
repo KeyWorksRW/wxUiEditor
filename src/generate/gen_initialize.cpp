@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize all generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +108,10 @@
 #include "gen_ribbon_gallery.h"  // RibbonGalleryGenerator -- wxRibbonGallery generator
 #include "gen_ribbon_page.h"     // RibbonPageGenerator -- wxRibbonPage and wxRibbonPanel generators
 #include "gen_ribbon_tool.h"     // RibbonToolBarGenerator -- wxRibbonButtonBar generator
+
+#include "gen_aui_mdi_frame.h"     // AuiMdiFrameGenerator -- wxFrame generator
+#include "gen_doc_mdi_frame.h"     // DocParentFrameGenerator -- wxDocParentFrame generator
+#include "gen_doc_parent_frame.h"  // DocParentFrameGenerator -- wxDocParentFrame generator
 
 #include "gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
 #include "gen_mdi_menu.h"      // Menu bar classes for an MDI frame
@@ -281,6 +285,10 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_TextSizer, TextSizerGenerator)
 
     SET_GENERATOR(gen_CustomControl, CustomControl)
+
+    SET_GENERATOR(gen_wxDocParentFrame, DocParentFrameGenerator)
+    SET_GENERATOR(gen_wxDocMDIParentFrame, DocMdiParentFrameGenerator)
+    SET_GENERATOR(gen_wxAuiMDIParentFrame, AuiMdiFrameGenerator)
 
     SET_GENERATOR(gen_DocViewApp, DocViewAppGenerator)
     SET_GENERATOR(gen_DocumentTextCtrl, TextDocumentGenerator)

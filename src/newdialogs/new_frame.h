@@ -10,6 +10,7 @@
 #pragma once
 
 #include <wx/checkbox.h>
+#include <wx/choice.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -55,6 +56,7 @@ private:
     wxCheckBox* m_checkBox_menu;
     wxCheckBox* m_checkBox_statusbar;
     wxCheckBox* m_checkBox_toolbar;
+    wxChoice* m_choiceFrameType;
     wxInfoBar* m_infoBar;
     wxTextCtrl* m_classname;
 

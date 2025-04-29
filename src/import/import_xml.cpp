@@ -856,7 +856,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_centered:
-                if (node->isGen(gen_wxDialog) || node->isGen(gen_wxFrame))
+                if (node->isGen(gen_wxDialog) || node->isType(type_frame_form))
                 {
                     if (!xml_obj.text().as_bool())
                         node->set_value(prop_center, "no");

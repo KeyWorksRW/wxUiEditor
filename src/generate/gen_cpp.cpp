@@ -1243,7 +1243,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
         m_source->writeLine(code);
         m_source->Indent();
 
-        if (m_form_node->isGen(gen_wxFrame) || m_form_node->isGen(gen_wxDialog) ||
+        if (m_form_node->isType(type_frame_form) || m_form_node->isGen(gen_wxDialog) ||
             m_form_node->isGen(gen_wxPropertySheetDialog) || m_form_node->isGen(gen_wxWizard))
         {
             // Write code to m_source that will load any image handlers needed by the form's class
@@ -1268,7 +1268,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
         m_source->Indent();
     }
 
-    if (!m_form_node->isGen(gen_wxWizard) && !m_form_node->isGen(gen_wxFrame))
+    if (!m_form_node->isGen(gen_wxWizard) && !m_form_node->isType(type_frame_form))
     {
         // Write code to m_source that will load any image handlers needed by the form's class
         GenerateCppHandlers();
@@ -1341,7 +1341,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
             m_source->writeLine();
         }
     }
-    if (m_form_node->isGen(gen_wxDialog) || m_form_node->isGen(gen_wxFrame) || m_form_node->isGen(gen_PanelForm) ||
+    if (m_form_node->isGen(gen_wxDialog) || m_form_node->isType(type_frame_form) || m_form_node->isGen(gen_PanelForm) ||
         m_form_node->isGen(gen_DocViewApp) || m_form_node->isGen(gen_wxPropertySheetDialog))
     {
         m_source->writeLine("\nreturn true;");

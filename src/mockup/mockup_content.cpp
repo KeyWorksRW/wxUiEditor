@@ -125,7 +125,7 @@ void MockupContent::CreateAllGenerators()
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);
         }
-        else if (form->isGen(gen_wxFrame))
+        else if (form->isType(type_frame_form))
         {
             // In a frame window, a menu, toolbar and statusbar can appear anywhere, but they need to be created in our
             // Mockup window in a specific order to match what the real window will look like.

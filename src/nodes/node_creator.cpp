@@ -148,7 +148,7 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
     // Check for widgets which can ONLY have a frame for a parent.
     if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_toolbar))
     {
-        if (parent->isType(type_form) && !parent->isGen(gen_wxFrame))
+        if (parent->isType(type_form) && !parent->isType(type_frame_form))
         {
             return { NodeSharedPtr(), Node::parent_not_wxFrame };  // -1 indicates failure
         }

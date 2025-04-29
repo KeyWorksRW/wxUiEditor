@@ -551,7 +551,7 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
         if (evt_flags->getParent()->isSizer())
         {
             auto grandparent = evt_flags->getParent()->getParent();
-            if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
+            if (grandparent->isType(type_frame_form) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
                 GetPropInfoBar()->ShowMessage(
                     "For the toolbar to be owned by the frame window, it should be placed directly under the frame, "

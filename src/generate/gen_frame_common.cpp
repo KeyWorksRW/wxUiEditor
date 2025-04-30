@@ -188,7 +188,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
 
 bool FrameCommon::SettingsCode(Code& code, int frame_type)
 {
-    #if GENERATE_NEW_LANG_CODE
+#if GENERATE_NEW_LANG_CODE
     if (code.is_lua())
     {
         code.ResetIndent();
@@ -363,9 +363,16 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     code.Eol().NodeName().Str("(");
     if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
     {
-        code.Str("wxDocManager *manager").Comma();
+        // Since manager has to be supplied, parent can default to nullptr
+        code.Str("wxDocManager *manager, wxWindow* parent = nullptr");
     }
-    code.Str("wxWindow* parent, wxWindowID id = ").as_string(prop_id);
+    else
+    {
+        // If this is the first parameter, then we can't use nullptr as the default because then
+        // wxFrame() could be the empty ctor, or the one that calls Create().
+        code.Str("wxWindow* parent");
+    }
+    code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
     auto& title = node->as_string(prop_title);
     if (code.hasValue(prop_title))

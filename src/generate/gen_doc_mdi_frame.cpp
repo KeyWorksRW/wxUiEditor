@@ -36,7 +36,7 @@ bool DocMdiParentFrameGenerator::AfterChildrenCode(Code& code)
 
 bool DocMdiParentFrameGenerator::HeaderCode(Code& code)
 {
-    return FrameCommon::HeaderCode(code);
+    return FrameCommon::HeaderCode(code, FrameCommon::frame_mdi_doc);
 }
 
 bool DocMdiParentFrameGenerator::BaseClassNameCode(Code& code)
@@ -47,7 +47,7 @@ bool DocMdiParentFrameGenerator::BaseClassNameCode(Code& code)
 bool DocMdiParentFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                                                GenLang /* language */)
 {
-    InsertGeneratorInclude(node, "#include <wx/docview.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/docmdi.h>", set_src, set_hdr);
 
     return true;
 }

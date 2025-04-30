@@ -37,7 +37,7 @@ bool AuiMdiFrameGenerator::AfterChildrenCode(Code& code)
 
 bool AuiMdiFrameGenerator::HeaderCode(Code& code)
 {
-    return FrameCommon::HeaderCode(code, FrameCommon::frame_normal);
+    return FrameCommon::HeaderCode(code, FrameCommon::frame_aui);
 }
 
 bool AuiMdiFrameGenerator::BaseClassNameCode(Code& code)

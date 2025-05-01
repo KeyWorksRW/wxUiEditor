@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 - New Add menu provides an alternative to the main toolbar for adding widgets to your project.
 - By default, all Position and Size properties are scaled when your generated code is run under Windows with a high DPI setting.
+- The dialog that creates a Frame window will now ask you if you want to create a wxFrame, wxDocParentFrame, wxDocChildFrame, wxDocMDIParentFrame, wxDocMDIChildFrame, wxAuiMDIParentFrame, or wxAuiMDIChildFrame type window.
 - You can now change the initial size of Art images instead of using their default size.
 - File menu now has a Reload Project command to reload the current project file from disk.
 - Dialogs now support the variant property

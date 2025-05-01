@@ -226,6 +226,8 @@ The Unsupported lists below are for controls that the language port doesn't supp
 - wxSpinCtrlDouble
 - wxWebView
 - wxCommandLinkButton
+- wxDocParentFrame
+- wxDocMDIParentFrame
 
 - wxDataViewListCtrl
 - wxDataViewCtrl

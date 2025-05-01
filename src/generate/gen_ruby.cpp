@@ -238,7 +238,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
     }
 
-    if (m_form_node->isGen(gen_wxFrame) && m_form_node->as_bool(prop_import_all_dialogs))
+    if (m_form_node->isType(type_frame_form) && m_form_node->as_bool(prop_import_all_dialogs))
     {
         for (auto& form: forms)
         {

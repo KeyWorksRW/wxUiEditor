@@ -42,14 +42,32 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* class_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "Frame &Type:");
     class_sizer->Add(staticText, wxSizerFlags().Center().Border(wxALL));
+
+    m_choiceFrameType = new wxChoice(this, wxID_ANY);
+    m_choiceFrameType->Append("wxFrame");
+    m_choiceFrameType->Append("wxDocParentFrame");
+    m_choiceFrameType->Append("wxDocChildFrame");
+    m_choiceFrameType->Append("wxDocMDIParentFrame");
+    m_choiceFrameType->Append("wxDocMDIChildFrame");
+    m_choiceFrameType->Append("wxAuiMDIParentFrame");
+    m_choiceFrameType->Append("wxAuiMDIChildFrame");
+    m_choiceFrameType->SetStringSelection("wxFrame");
+    class_sizer->Add(m_choiceFrameType, wxSizerFlags().Border(wxALL));
+
+    box_sizer->Add(class_sizer, wxSizerFlags().Expand().Border(wxALL));
+
+    auto* class_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* staticText2 = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    class_sizer2->Add(staticText2, wxSizerFlags().Center().Border(wxALL));
 
     m_classname = new wxTextCtrl(this, wxID_ANY, "MyFrameBase");
     m_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
-    class_sizer->Add(m_classname, wxSizerFlags(1).Border(wxALL));
+    class_sizer2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
-    box_sizer->Add(class_sizer, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer->Add(class_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
     m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, "Main Frame Window");
     m_checkBox_mainframe->SetValidator(wxGenericValidator(&m_has_mainframe));
@@ -98,6 +116,8 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         SetSize(FromDIP(size));
         Layout();
     }
+    m_choiceFrameType->SetFocus();
+
     Centre(wxBOTH);
 
     // Event handlers
@@ -128,7 +148,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog for creating a new project wxFrame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -159,7 +179,24 @@ void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
 
 void NewFrame::createNode()
 {
-    auto form_node = NodeCreation.createNode(gen_wxFrame, nullptr).first;
+    auto frame_type = m_choiceFrameType->GetStringSelection();
+    auto generator = gen_wxFrame;
+    if (frame_type == "wxFrame")
+        generator = gen_wxFrame;
+    else if (frame_type == "wxDocParentFrame")
+        generator = gen_wxDocChildFrame;
+    else if (frame_type == "wxDocChildFrame")
+        generator = gen_wxDocChildFrame;
+    else if (frame_type == "wxDocMDIParentFrame")
+        generator = gen_wxDocMDIParentFrame;
+    else if (frame_type == "wxDocMDIChildFrame")
+        generator = gen_wxDocMDIChildFrame;
+    else if (frame_type == "wxAuiMDIParentFrame")
+        generator = gen_wxAuiMDIParentFrame;
+    else if (frame_type == "wxAuiMDIChildFrame")
+        generator = gen_wxAuiMDIChildFrame;
+
+    auto form_node = NodeCreation.createNode(generator, nullptr).first;
     ASSERT(form_node);
 
     if (m_has_mainframe)

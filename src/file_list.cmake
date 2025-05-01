@@ -206,6 +206,11 @@ set (file_list
     generate/gen_propsheet_dlg.cpp  # wxPropertySheetDialog generator
     generate/gen_wizard.cpp         # wxWizard generator
 
+    generate/gen_doc_parent_frame.cpp   # wxDocParentFrame generator
+    generate/gen_doc_mdi_frame.cpp      # wxDocMdiParentFrame generator
+    generate/gen_aui_mdi_frame.cpp      # wxAuiMDIParentFrame generator
+    generate/gen_frame_common.cpp       # wxDocParent common generator functions
+
     # Menus
 
     generate/menu_widgets.cpp      # MenuBar, MenuBarForm, PopupMenu, Separator

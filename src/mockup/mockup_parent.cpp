@@ -15,6 +15,7 @@
 
 */
 
+#include "gen_enums.h"
 #if defined(_WIN32)
     #include <wx/msw/uxtheme.h>
 #endif  // _WIN32
@@ -161,7 +162,7 @@ void MockupParent::CreateContent()
     {
         m_panelContent->SetBackgroundColour(m_form->as_wxColour(prop_background_colour));
     }
-    else if (m_form->isGen(gen_wxFrame))
+    else if (m_form->isType(GenEnum::type_frame_form))
     {
         m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
     }
@@ -179,7 +180,7 @@ void MockupParent::CreateContent()
 #endif
     }
 
-    if (m_form->isGen(gen_wxFrame) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard) ||
+    if (m_form->isType(type_frame_form) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard) ||
         m_form->isGen(gen_wxPropertySheetDialog))
     {
         m_text_title->SetLabel(m_form->as_wxString(prop_title));

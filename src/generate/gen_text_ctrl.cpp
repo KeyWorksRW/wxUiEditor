@@ -120,7 +120,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     {
         auto form = code.node()->getForm();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isGen(gen_wxFrame))
+        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
         {
             code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
         }

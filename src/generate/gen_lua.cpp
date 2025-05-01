@@ -86,7 +86,7 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
     m_header->Clear();
     m_source->Clear();
 
-    if (m_form_node->isGen(gen_wxFrame))
+    if (m_form_node->isType(type_frame_form))
     {
         code += txt_lua_frame_app;
         if (m_form_node->hasValue(prop_class_name))

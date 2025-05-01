@@ -771,7 +771,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_toolStretchable, "toolStretchable" },
     { gen_wxActivityIndicator, "wxActivityIndicator" },
     { gen_wxAnimationCtrl, "wxAnimationCtrl" },
-    { gen_wxAuiMDIChildFrame, "wxAuiMDIChildFrame" },
     { gen_wxAuiNotebook, "wxAuiNotebook" },
     { gen_wxAuiToolBar, "wxAuiToolBar" },
     { gen_wxBannerWindow, "wxBannerWindow" },
@@ -865,6 +864,15 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWizard, "wxWizard" },
     { gen_wxWizardPageSimple, "wxWizardPageSimple" },
     { gen_wxWrapSizer, "wxWrapSizer" },
+
+    { gen_wxDocParentFrame, "wxDocParentFrame" },
+    { gen_wxDocChildFrame, "wxDocChildFrame" },
+
+    { gen_wxDocMDIParentFrame, "wxDocMDIParentFrame" },
+    { gen_wxDocMDIChildFrame, "wxDocMDIChildFrame" },
+
+    { gen_wxAuiMDIParentFrame, "wxAuiMDIParentFrame" },
+    { gen_wxAuiMDIChildFrame, "wxAuiMDIChildFrame" },
 
 };
 std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;

@@ -782,12 +782,26 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         {
             class_name = "tool_bar_tool_base";
         }
+        else if (class_name == "docparentframe")
+        {
+            class_name = "doc_parent_frame";
+        }
+        else if (class_name == "docmdiparentframe")
+        {
+            class_name = "doc_m_d_i_parent_frame";
+        }
+        else if (class_name == "auimdiparentframe")
+        {
+            class_name = "aui_m_d_i_parent_frame";
+        }
         else
         {
             for (const auto& [key, value]: prefix_pair)
             {
                 if (!class_name.starts_with(key))
+                {
                     class_name.Replace(key, value);
+                }
             }
         }
 

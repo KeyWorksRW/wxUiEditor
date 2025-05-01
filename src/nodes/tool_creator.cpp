@@ -114,7 +114,7 @@ static void SetUniqueRibbonToolID(Node* node)
 
 bool Node::createToolNode(GenName name, int pos)
 {
-    if (isGen(gen_wxFrame))
+    if (isType(type_frame_form))
     {
         if (name == gen_MenuBar)
         {

@@ -136,6 +136,73 @@
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
 
+    <gen class="wxDocChildFrame" image="wxFrame" type="frame_form">
+        <inherits class="Language Settings"/>
+        <inherits class="XRC Settings"/>
+        <inherits class="wxTopLevelWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="wxWindow">
+            <hide name="platforms"/>
+        </inherits>
+        <property name="class_name" type="string"
+            help="The name of the base class.">MyDocChildFrameBase</property>
+        <property name="title" type="string_escapes"
+            help="The text to display on the frame's title bar."/>
+        <property name="persist" type="bool">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxDEFAULT_FRAME_STYLE"
+                help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN"/>
+			<option
+                name="wxCAPTION"
+                help="Puts a caption on the frame."/>
+			<option name="wxCLOSE_BOX"
+                help="Displays a close box on the frame."/>
+			<option name="wxFRAME_TOOL_WINDOW"
+                help="Causes a frame with a small titlebar to be created; the frame does not appear in the taskbar under Windows or GTK+."/>
+			<option
+                name="wxFRAME_NO_TASKBAR"
+                help="Creates an otherwise normal frame but it does not appear in the taskbar under Windows or GTK+ (note that it will minimize to the desktop window under Windows which may seem strange to the users and thus it might be better to use this style only without wxMINIMIZE_BOX style). In wxGTK, the flag is respected only if GTK+ is at least version 2.2 and the window manager supports _NET_WM_STATE_SKIP_TASKBAR hint. Has no effect under other platforms."/>
+			<option
+                name="wxFRAME_FLOAT_ON_PARENT"
+                help="The frame will always be on top of its parent (unlike wxSTAY_ON_TOP). A frame created with this style must have a non-NULL parent."/>
+			<option
+                name="wxFRAME_SHAPED"
+                help="Windows with this style are allowed to have their shape changed with the SetShape method."/>
+			<option
+                name="wxICONIZE"
+                help="Display the frame iconized (minimized). Windows only."/>
+			<option name="wxMAXIMIZE"
+                help="Displays the frame maximized. Windows only."/>
+			<option name="wxMAXIMIZE_BOX"
+                help="Displays a maximize box on the frame."/>
+			<option name="wxMINIMIZE"
+                help="Identical to wxICONIZE. Windows only."/>
+			<option name="wxMINIMIZE_BOX"
+                help="Displays a minimize box on the frame."/>
+			<option name="wxRESIZE_BORDER"
+                help="Displays a resizeable border around the window."/>
+			<option name="wxSTAY_ON_TOP"
+                help="Stay on top of all other windows, see also wxFRAME_FLOAT_ON_PARENT."/>
+			<option name="wxSYSTEM_MENU"
+                help="Displays a system menu."/> wxDEFAULT_FRAME_STYLE </property>
+        <property name="extra_style" type="bitlist">
+            <option name="wxFRAME_EX_CONTEXTHELP"
+                help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. You cannot use this style together with wxMAXIMIZE_BOX or wxMINIMIZE_BOX."/>
+            <option name="wxFRAME_EX_METAL"
+                help="On Mac OS X, frames with this style will be shown with a metallic look."/>
+        </property>
+        <property name="center" type="option"
+            help="Centers the window on the desktop in the chosen direction.">
+            <option name="no"/>
+			<option name="wxHORIZONTAL"/>
+			<option name="wxVERTICAL"/>
+			<option name="wxBOTH"/> wxBOTH </property>
+        <property name="icon" type="image"
+            help="Specifies the image to display in the title bar of the frame."/>
+        <property name="cpp_conditional" type="string_code_single"
+            help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
+    </gen>
+
     <gen class="wxDocMDIParentFrame" image="wxFrame" type="frame_form">
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>
@@ -203,6 +270,73 @@
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
 
+    <gen class="wxDocMDIChildFrame" image="wxFrame" type="frame_form">
+        <inherits class="Language Settings"/>
+        <inherits class="XRC Settings"/>
+        <inherits class="wxTopLevelWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="wxWindow">
+            <hide name="platforms"/>
+        </inherits>
+        <property name="class_name" type="string"
+            help="The name of the base class.">MyDocMDIChildFrameBase</property>
+        <property name="title" type="string_escapes"
+            help="The text to display on the frame's title bar."/>
+        <property name="persist" type="bool">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxDEFAULT_FRAME_STYLE"
+                help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN"/>
+			<option
+                name="wxCAPTION"
+                help="Puts a caption on the frame."/>
+			<option name="wxCLOSE_BOX"
+                help="Displays a close box on the frame."/>
+			<option name="wxFRAME_TOOL_WINDOW"
+                help="Causes a frame with a small titlebar to be created; the frame does not appear in the taskbar under Windows or GTK+."/>
+			<option
+                name="wxFRAME_NO_TASKBAR"
+                help="Creates an otherwise normal frame but it does not appear in the taskbar under Windows or GTK+ (note that it will minimize to the desktop window under Windows which may seem strange to the users and thus it might be better to use this style only without wxMINIMIZE_BOX style). In wxGTK, the flag is respected only if GTK+ is at least version 2.2 and the window manager supports _NET_WM_STATE_SKIP_TASKBAR hint. Has no effect under other platforms."/>
+			<option
+                name="wxFRAME_FLOAT_ON_PARENT"
+                help="The frame will always be on top of its parent (unlike wxSTAY_ON_TOP). A frame created with this style must have a non-NULL parent."/>
+			<option
+                name="wxFRAME_SHAPED"
+                help="Windows with this style are allowed to have their shape changed with the SetShape method."/>
+			<option
+                name="wxICONIZE"
+                help="Display the frame iconized (minimized). Windows only."/>
+			<option name="wxMAXIMIZE"
+                help="Displays the frame maximized. Windows only."/>
+			<option name="wxMAXIMIZE_BOX"
+                help="Displays a maximize box on the frame."/>
+			<option name="wxMINIMIZE"
+                help="Identical to wxICONIZE. Windows only."/>
+			<option name="wxMINIMIZE_BOX"
+                help="Displays a minimize box on the frame."/>
+			<option name="wxRESIZE_BORDER"
+                help="Displays a resizeable border around the window."/>
+			<option name="wxSTAY_ON_TOP"
+                help="Stay on top of all other windows, see also wxFRAME_FLOAT_ON_PARENT."/>
+			<option name="wxSYSTEM_MENU"
+                help="Displays a system menu."/> wxDEFAULT_FRAME_STYLE </property>
+        <property name="extra_style" type="bitlist">
+            <option name="wxFRAME_EX_CONTEXTHELP"
+                help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. You cannot use this style together with wxMAXIMIZE_BOX or wxMINIMIZE_BOX."/>
+            <option name="wxFRAME_EX_METAL"
+                help="On Mac OS X, frames with this style will be shown with a metallic look."/>
+        </property>
+        <property name="center" type="option"
+            help="Centers the window on the desktop in the chosen direction.">
+            <option name="no"/>
+			<option name="wxHORIZONTAL"/>
+			<option name="wxVERTICAL"/>
+			<option name="wxBOTH"/> wxBOTH </property>
+        <property name="icon" type="image"
+            help="Specifies the image to display in the title bar of the frame."/>
+        <property name="cpp_conditional" type="string_code_single"
+            help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
+    </gen>
+
     <gen class="wxAuiMDIParentFrame" image="wxFrame" type="frame_form">
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>
@@ -213,6 +347,73 @@
         </inherits>
         <property name="class_name" type="string"
             help="The name of the base class.">MyAuiMDIParentBase</property>
+        <property name="title" type="string_escapes"
+            help="The text to display on the frame's title bar."/>
+        <property name="persist" type="bool">0</property>
+        <property name="style" type="bitlist">
+            <option name="wxDEFAULT_FRAME_STYLE"
+                help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN"/>
+			<option
+                name="wxCAPTION"
+                help="Puts a caption on the frame."/>
+			<option name="wxCLOSE_BOX"
+                help="Displays a close box on the frame."/>
+			<option name="wxFRAME_TOOL_WINDOW"
+                help="Causes a frame with a small titlebar to be created; the frame does not appear in the taskbar under Windows or GTK+."/>
+			<option
+                name="wxFRAME_NO_TASKBAR"
+                help="Creates an otherwise normal frame but it does not appear in the taskbar under Windows or GTK+ (note that it will minimize to the desktop window under Windows which may seem strange to the users and thus it might be better to use this style only without wxMINIMIZE_BOX style). In wxGTK, the flag is respected only if GTK+ is at least version 2.2 and the window manager supports _NET_WM_STATE_SKIP_TASKBAR hint. Has no effect under other platforms."/>
+			<option
+                name="wxFRAME_FLOAT_ON_PARENT"
+                help="The frame will always be on top of its parent (unlike wxSTAY_ON_TOP). A frame created with this style must have a non-NULL parent."/>
+			<option
+                name="wxFRAME_SHAPED"
+                help="Windows with this style are allowed to have their shape changed with the SetShape method."/>
+			<option
+                name="wxICONIZE"
+                help="Display the frame iconized (minimized). Windows only."/>
+			<option name="wxMAXIMIZE"
+                help="Displays the frame maximized. Windows only."/>
+			<option name="wxMAXIMIZE_BOX"
+                help="Displays a maximize box on the frame."/>
+			<option name="wxMINIMIZE"
+                help="Identical to wxICONIZE. Windows only."/>
+			<option name="wxMINIMIZE_BOX"
+                help="Displays a minimize box on the frame."/>
+			<option name="wxRESIZE_BORDER"
+                help="Displays a resizeable border around the window."/>
+			<option name="wxSTAY_ON_TOP"
+                help="Stay on top of all other windows, see also wxFRAME_FLOAT_ON_PARENT."/>
+			<option name="wxSYSTEM_MENU"
+                help="Displays a system menu."/> wxDEFAULT_FRAME_STYLE </property>
+        <property name="extra_style" type="bitlist">
+            <option name="wxFRAME_EX_CONTEXTHELP"
+                help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. You cannot use this style together with wxMAXIMIZE_BOX or wxMINIMIZE_BOX."/>
+            <option name="wxFRAME_EX_METAL"
+                help="On Mac OS X, frames with this style will be shown with a metallic look."/>
+        </property>
+        <property name="center" type="option"
+            help="Centers the window on the desktop in the chosen direction.">
+            <option name="no"/>
+			<option name="wxHORIZONTAL"/>
+			<option name="wxVERTICAL"/>
+			<option name="wxBOTH"/> wxBOTH </property>
+        <property name="icon" type="image"
+            help="Specifies the image to display in the title bar of the frame."/>
+        <property name="cpp_conditional" type="string_code_single"
+            help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
+    </gen>
+
+    <gen class="wxAuiMDIChildFrame" image="wxFrame" type="frame_form">
+        <inherits class="Language Settings"/>
+        <inherits class="XRC Settings"/>
+        <inherits class="wxTopLevelWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="wxWindow">
+            <hide name="platforms"/>
+        </inherits>
+        <property name="class_name" type="string"
+            help="The name of the base class.">MyAuiMdiChildFrameBase</property>
         <property name="title" type="string_escapes"
             help="The text to display on the frame's title bar."/>
         <property name="persist" type="bool">0</property>

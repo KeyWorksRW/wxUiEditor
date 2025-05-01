@@ -824,7 +824,6 @@ namespace GenEnum
         gen_toolStretchable,
         gen_wxActivityIndicator,
         gen_wxAnimationCtrl,
-        gen_wxAuiMDIChildFrame,
         gen_wxAuiNotebook,
         gen_wxAuiToolBar,
         gen_wxBannerWindow,
@@ -920,8 +919,13 @@ namespace GenEnum
         gen_wxWrapSizer,
 
         gen_wxDocParentFrame,
+        gen_wxDocChildFrame,
+
         gen_wxDocMDIParentFrame,
+        gen_wxDocMDIChildFrame,
+
         gen_wxAuiMDIParentFrame,
+        gen_wxAuiMDIChildFrame,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_name_array_size,

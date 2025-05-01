@@ -45,7 +45,7 @@ bool DocMdiParentFrameGenerator::BaseClassNameCode(Code& code)
 }
 
 bool DocMdiParentFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                               GenLang /* language */)
+                                             GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/docmdi.h>", set_src, set_hdr);
 
@@ -58,6 +58,54 @@ bool DocMdiParentFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event,
 }
 
 bool DocMdiParentFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+    }
+    return false;
+}
+
+/////////////////////////////// DocMDIChildFrame //////////////////////////////////////
+
+bool DocMDIChildFrame::ConstructionCode(Code& code)
+{
+    return FrameCommon::ConstructionCode(code, FrameCommon::frame_mdi_child);
+}
+
+bool DocMDIChildFrame::SettingsCode(Code& code)
+{
+    return FrameCommon::SettingsCode(code, FrameCommon::frame_mdi_child);
+}
+
+bool DocMDIChildFrame::AfterChildrenCode(Code& code)
+{
+    return FrameCommon::AfterChildrenCode(code, FrameCommon::frame_mdi_child);
+}
+
+bool DocMDIChildFrame::HeaderCode(Code& code)
+{
+    return FrameCommon::HeaderCode(code, FrameCommon::frame_mdi_child);
+}
+
+bool DocMDIChildFrame::BaseClassNameCode(Code& code)
+{
+    return FrameCommon::BaseClassNameCode(code);
+}
+
+bool DocMDIChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   GenLang /* language */)
+{
+    InsertGeneratorInclude(node, "#include <wx/docmdi.h>", set_src, set_hdr);
+
+    return true;
+}
+
+bool DocMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    return FrameCommon::AllowPropertyChange(event, prop, node);
+}
+
+bool DocMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

@@ -5415,7 +5415,7 @@
               alignment="wxALIGN_CENTER_VERTICAL" />
             <node
               class="wxChoice"
-              contents="&quot;wxFrame&quot; &quot;wxDocParentFrame&quot; &quot;wxDocMDIParentFrame&quot; &quot;wxAuiMDIParentFrame&quot;"
+              contents="&quot;wxFrame&quot; &quot;wxDocParentFrame&quot; &quot;wxDocChildFrame&quot; &quot;wxDocMDIParentFrame&quot; &quot;wxDocMDIChildFrame&quot; &quot;wxAuiMDIParentFrame&quot; &quot;wxAuiMDIChildFrame&quot; &quot;&quot;"
               focus="1"
               selection_string="wxFrame"
               var_name="m_choiceFrameType" />

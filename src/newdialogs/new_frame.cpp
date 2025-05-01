@@ -48,8 +48,11 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_choiceFrameType = new wxChoice(this, wxID_ANY);
     m_choiceFrameType->Append("wxFrame");
     m_choiceFrameType->Append("wxDocParentFrame");
+    m_choiceFrameType->Append("wxDocChildFrame");
     m_choiceFrameType->Append("wxDocMDIParentFrame");
+    m_choiceFrameType->Append("wxDocMDIChildFrame");
     m_choiceFrameType->Append("wxAuiMDIParentFrame");
+    m_choiceFrameType->Append("wxAuiMDIChildFrame");
     m_choiceFrameType->SetStringSelection("wxFrame");
     class_sizer->Add(m_choiceFrameType, wxSizerFlags().Border(wxALL));
 
@@ -181,11 +184,17 @@ void NewFrame::createNode()
     if (frame_type == "wxFrame")
         generator = gen_wxFrame;
     else if (frame_type == "wxDocParentFrame")
-        generator = gen_wxDocParentFrame;
+        generator = gen_wxDocChildFrame;
+    else if (frame_type == "wxDocChildFrame")
+        generator = gen_wxDocChildFrame;
     else if (frame_type == "wxDocMDIParentFrame")
         generator = gen_wxDocMDIParentFrame;
+    else if (frame_type == "wxDocMDIChildFrame")
+        generator = gen_wxDocMDIChildFrame;
     else if (frame_type == "wxAuiMDIParentFrame")
         generator = gen_wxAuiMDIParentFrame;
+    else if (frame_type == "wxAuiMDIChildFrame")
+        generator = gen_wxAuiMDIChildFrame;
 
     auto form_node = NodeCreation.createNode(generator, nullptr).first;
     ASSERT(form_node);

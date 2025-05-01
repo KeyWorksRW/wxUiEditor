@@ -66,3 +66,52 @@ bool AuiMdiFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /
 
     return false;
 }
+
+/////////////////////////////// AuiMDIChildFrame //////////////////////////////////////
+
+bool AuiMDIChildFrame::ConstructionCode(Code& code)
+{
+    return FrameCommon::ConstructionCode(code, FrameCommon::frame_aui_child);
+}
+
+bool AuiMDIChildFrame::SettingsCode(Code& code)
+{
+    return FrameCommon::SettingsCode(code, FrameCommon::frame_aui_child);
+}
+
+bool AuiMDIChildFrame::AfterChildrenCode(Code& code)
+{
+    return FrameCommon::AfterChildrenCode(code, FrameCommon::frame_aui_child);
+}
+
+bool AuiMDIChildFrame::HeaderCode(Code& code)
+{
+    return FrameCommon::HeaderCode(code, FrameCommon::frame_aui_child);
+}
+
+bool AuiMDIChildFrame::BaseClassNameCode(Code& code)
+{
+    return FrameCommon::BaseClassNameCode(code);
+}
+
+bool AuiMDIChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                                   GenLang /* language */)
+{
+    InsertGeneratorInclude(node, "#include <wx/aui/tabmdi.h>", set_src, set_hdr);
+
+    return true;
+}
+
+bool AuiMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    return FrameCommon::AllowPropertyChange(event, prop, node);
+}
+
+bool AuiMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+    }
+
+    return false;
+}

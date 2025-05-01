@@ -12,11 +12,15 @@ class Node;
 
 namespace FrameCommon
 {
-    enum {
+    enum
+    {
         frame_normal,
         frame_sdi_doc,
+        frame_sdi_child,
         frame_mdi_doc,
+        frame_mdi_child,
         frame_aui,
+        frame_aui_child,
     };
 
     bool ConstructionCode(Code& code, int frame_type = frame_normal);

@@ -20,11 +20,22 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
     if (code.is_cpp())
     {
         code.Str("bool ").as_string(prop_class_name).Str("::Create(");
+
+        // Note that with the exception of wxAui, all the MDI type windows require a wxFrame as the
+        // parent, not a wxWindow.
         if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
         {
-            code.Str("wxDocManager *manager").Comma();
+            code.Str("wxDocManager* manager, wxFrame* parent").Comma();
         }
-        code += "wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
+        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+        {
+            code.Str("wxDocManager* manager, wxView* view, wxFrame* parent").Comma();
+        }
+        else
+        {
+            code.Str("wxWindow* parent").Comma();
+        }
+        code += "wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
                 "long style, const wxString &name)";
         code.OpenBrace();
 
@@ -41,7 +52,11 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Eol().Str("my ($class");
         if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
         {
-            code.Str("$doc_manager").Comma();
+            code.Str("$manager").Comma();
+        }
+        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+        {
+            code.Str("$manager, $view").Comma();
         }
         code.Comma().Str("$parent, $id, $title, $pos, $size, $style, $name) = @_;");
         code.Eol() += "$parent = undef unless defined $parent;";
@@ -71,6 +86,10 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
         {
             code.Str("manager").Comma();
+        }
+        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+        {
+            code.Str("manager, view").Comma();
         }
         code.Str("parent, id=").as_string(prop_id);
         code.Indent(3);
@@ -247,6 +266,10 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
         {
             code.Str("manager").Comma();
         }
+        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+        {
+            code.Str("manager, view").Comma();
+        }
         code += "parent, id, title, pos, size, style, name))";
         code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
     }
@@ -364,7 +387,17 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
     {
         // Since manager has to be supplied, parent can default to nullptr
-        code.Str("wxDocManager *manager, wxWindow* parent = nullptr");
+        code.Str("wxDocManager* manager, wxFrame* parent = nullptr");
+    }
+    else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+    {
+        // Since manager has to be supplied, parent can default to nullptr
+        code.Str("wxDocManager* manager, wxView* view, wxFrame* parent");
+    }
+    else if (frame_type == frame_aui_child)
+    {
+        // Since manager has to be supplied, parent can default to nullptr
+        code.Str("wxAuiMDIParentFrame* manager");
     }
     else
     {
@@ -437,14 +470,25 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     {
         code.Str("manager").Comma();
     }
+    else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+    {
+        code.Str("manager, view").Comma();
+    }
     code.Str("parent, id, title, pos, size, style, name);").CloseBrace();
 
     code.Eol().Str("bool Create(");
     if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
     {
-        code.Str("wxDocManager *manager").Comma();
+        code.Str("wxDocManager* manager, wxFrame* parent = nullptr");
     }
-    code.Str("wxWindow *parent");
+    else if (frame_type == frame_sdi_child || frame_type == frame_mdi_doc)
+    {
+        code.Str("wxDocManager* manager, wxView* view, wxFrame* parent");
+    }
+    else
+    {
+        code.Str("wxWindow* parent");
+    }
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
     code.Comma().Str("const wxPoint& pos = ");

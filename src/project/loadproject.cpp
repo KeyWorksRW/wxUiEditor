@@ -10,7 +10,6 @@
 #include <wx/utils.h>     // Miscellaneous utilities
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "dlg_msgs.h"         // wxMessageDialog dialogs
 #include "gen_enums.h"        // Enumerations for generators
 #include "image_handler.h"    // ProjectImage class
 #include "mainframe.h"        // MainFrame -- Main window frame

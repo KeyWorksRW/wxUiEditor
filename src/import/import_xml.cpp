@@ -10,7 +10,6 @@
 #include "import_xml.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
-#include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "gen_enums.h"       // Enumerations for generators
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class

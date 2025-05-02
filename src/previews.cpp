@@ -1,9 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top level Preview functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include "previews.h"
+#include "gen_enums.h"
 
 #if __has_include(<format>)
     #include <format>
@@ -41,6 +44,7 @@
 // Defined in mockup/mockup_preview.cpp
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
                           wxWindow* form_window);
+
 void PreviewXrc(Node* form_node);
 void Preview(Node* form_node);
 
@@ -193,20 +197,6 @@ void Preview(Node* form_node)
 
 void PreviewXrc(Node* form_node)
 {
-    auto* xrc_resource = wxXmlResource::Get();
-
-    if (!g_isXrcResourceInitalized)
-    {
-        g_isXrcResourceInitalized = true;
-
-        xrc_resource->InitAllHandlers();
-        xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
-        xrc_resource->AddHandler(new wxAuiXmlHandler);
-        xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
-        xrc_resource->AddHandler(new wxRibbonXmlHandler);
-        xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
-    }
-
     // Our directory is probably already set correctly, but this will make certain that it is.
     tt_cwd save_cwd(true);
     Project.ChangeDir();
@@ -223,13 +213,52 @@ void PreviewXrc(Node* form_node)
                      wxICON_INFORMATION);
     }
 
+    auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
+
+    // Restore the original style if it was temporarily changed.
+    if (form_node->as_string(prop_style) != style)
+        form_node->set_value(prop_style, style);
+
+    PreviewXrc(doc_str, form_node->getGenName(), form_node);
+}
+
+void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node)
+{
+    auto* xrc_resource = wxXmlResource::Get();
+
+    if (!g_isXrcResourceInitalized)
+    {
+        g_isXrcResourceInitalized = true;
+
+        xrc_resource->InitAllHandlers();
+        xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
+        xrc_resource->AddHandler(new wxAuiXmlHandler);
+        xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
+        xrc_resource->AddHandler(new wxRibbonXmlHandler);
+        xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
+    }
+
     // This needs to be outside of the try block so that xrc_resource->Unload(res_name) can
     // be called after the catch block.
     wxString res_name("wxuiPreview");
 
     try
     {
-        auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
+        pugi::xml_document doc;
+        if (auto result = doc.load_string(doc_str); !result)
+        {
+#if __has_include(<format>)
+            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                                          result.description(), result.line, result.column, result.offset);
+#else
+            wxString msg;
+            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
+                       result.column, result.offset);
+#endif
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            return;
+        }
+
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxXmlParseError err_details;
         auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
@@ -262,7 +291,9 @@ void PreviewXrc(Node* form_node)
         tt_cwd cwd(true);
         wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
 
-        switch (form_node->getGenName())
+        wxString form_class_name = form_node ? form_node->as_string(GenEnum::prop_class_name).c_str() : txt_dlg_name;
+
+        switch (gen_name)
         {
             case gen_wxDialog:
             case gen_PanelForm:
@@ -270,10 +301,7 @@ void PreviewXrc(Node* form_node)
             case gen_RibbonBar:
             case gen_ToolBar:
                 {
-                    wxString dlg_name =
-                        form_node->isGen(gen_wxDialog) ? form_node->as_wxString(prop_class_name) : wxString(txt_dlg_name);
-
-                    if (auto* dlg = xrc_resource->LoadDialog(wxGetMainFrame(), dlg_name); dlg)
+                    if (auto* dlg = xrc_resource->LoadDialog(wxGetMainFrame(), form_class_name); dlg)
                     {
                         wxGetMainFrame()->setPreviewDlgPtr(dlg);  // so event handlers can access it
                         dlg->Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, wxGetMainFrame());
@@ -284,14 +312,13 @@ void PreviewXrc(Node* form_node)
                     }
                     else
                     {
-                        wxMessageBox(tt_string("Could not load ") << form_node->as_string(prop_class_name) << " resource.",
-                                     "XRC Preview");
+                        wxMessageBox(wxString("Could not load ") << form_class_name << " resource.", "XRC Preview");
                     }
                 }
                 break;
 
             case gen_wxFrame:
-                if (auto* frame = xrc_resource->LoadFrame(wxGetMainFrame(), form_node->as_wxString(prop_class_name)); frame)
+                if (auto* frame = xrc_resource->LoadFrame(wxGetMainFrame(), form_class_name); frame)
                 {
                     wxGetMainFrame()->setPreviewWinPtr(frame);
                     frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, wxGetMainFrame());
@@ -302,12 +329,16 @@ void PreviewXrc(Node* form_node)
                 }
                 else
                 {
-                    wxMessageBox(tt_string("Could not load ") << form_node->as_string(prop_class_name) << " resource.",
-                                 "XRC Preview");
+                    wxMessageBox(wxString("Could not load ") << form_class_name << " resource.", "XRC Preview");
                 }
                 break;
 
             case gen_wxWizard:
+                if (!form_node)
+                {
+                    wxMessageBox("A wizard requires a form_node to preview it.", "XRC Preview");
+                    return;
+                }
                 if (auto* object = xrc_resource->LoadObject(NULL, form_node->as_string(prop_class_name), "wxWizard"); object)
                 {
                     auto* wizard = wxStaticCast(object, wxWizard);
@@ -339,10 +370,6 @@ void PreviewXrc(Node* form_node)
         MSG_ERROR(err.what());
         dlgGenInternalError(err, "XRC code", "XRC Preview");
     }
-
-    // Restore the original style if it was temporarily changed.
-    if (form_node->as_string(prop_style) != style)
-        form_node->set_value(prop_style, style);
 
     xrc_resource->Unload(res_name);
 }

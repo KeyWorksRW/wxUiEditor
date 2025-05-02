@@ -212,8 +212,9 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     xrc_resource->Unload(res_name);
 }
 
-void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
 {
+    // Verify that the XML in the Scintilla control ia valid by parsing it with PugiXML.
     auto xrc_text = m_scintilla->GetText();
     pugi::xml_document doc;
     {
@@ -222,7 +223,8 @@ void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))
         auto result = doc.load_string(xrc_text.utf8_string());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
+            wxMessageBox("Error parsing XML document: " + tt_string(result.description()), "XML Verification Test",
+                         wxOK | wxICON_ERROR);
             return;
         }
     }
@@ -230,25 +232,11 @@ void XrcPreview::OnImport(wxCommandEvent& WXUNUSED(event))
     auto root = doc.first_child();
     if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
-        wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
+        wxMessageBox("Invalid XML -- no resource object", "XML Verification Test", wxOK | wxICON_ERROR);
         return;
     }
 
-    g_pMsgLogging->ShowLogger();
-    wxYield();
-
-    MSG_INFO("--- Importing XRC document ---");
-
-    WxSmith doc_import;
-
-    // If this is an actual form rather than the project, then there will only be one child
-    // object, which is the form.
-    for (auto& iter: root.children())
-    {
-        auto new_node = doc_import.CreateXrcNode(iter, nullptr);
-    }
-
-    MSG_INFO("--- Import completed ---");
+    wxMessageBox("XML in Contents can be parsed.", "XRC Verification Test", wxOK | wxICON_NONE);
 }
 
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))

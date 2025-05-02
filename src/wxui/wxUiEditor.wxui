@@ -7840,11 +7840,11 @@
                 wxEVT_BUTTON="OnPreview" />
               <node
                 class="wxButton"
-                label="&amp;Import"
+                label="&amp;Verify"
                 var_name="m_btn_import"
                 bitmap="SVG;import.svg;[16,16]"
                 tooltip="Verify that the current contents can be imported"
-                wxEVT_BUTTON="OnImport" />
+                wxEVT_BUTTON="OnVerify" />
               <node
                 class="wxButton"
                 label="&amp;Export..."
@@ -8393,6 +8393,11 @@
           class="wxBoxSizer"
           orientation="wxVERTICAL"
           var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;List of XRC previewable forms:"
+            var_name="static_text" />
           <node
             class="wxListBox"
             minimum_size="200,175"

@@ -55,7 +55,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btn_preview->SetToolTip("Use wxXmlResource to load and display the contents");
     box_sizer_2->Add(m_btn_preview, wxSizerFlags().Border(wxALL));
 
-    m_btn_import = new wxButton(this, wxID_ANY, "&Import");
+    m_btn_import = new wxButton(this, wxID_ANY, "&Verify");
         m_btn_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
     m_btn_import->SetToolTip("Verify that the current contents can be imported");
     box_sizer_2->Add(m_btn_import, wxSizerFlags().Border(wxALL));
@@ -153,8 +153,8 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     btn3->Bind(wxEVT_BUTTON, &XrcPreview::OnDuplicate, this);
     m_btn__export->Bind(wxEVT_BUTTON, &XrcPreview::OnExport, this);
     btn_3->Bind(wxEVT_BUTTON, &XrcPreview::OnGenerate, this);
-    m_btn_import->Bind(wxEVT_BUTTON, &XrcPreview::OnImport, this);
     m_btn_preview->Bind(wxEVT_BUTTON, &XrcPreview::OnPreview, this);
+    m_btn_import->Bind(wxEVT_BUTTON, &XrcPreview::OnVerify, this);
     Bind(wxEVT_INIT_DIALOG, &XrcPreview::OnInit, this);
     m_searchCtrl->Bind(wxEVT_SEARCHCTRL_SEARCH_BTN, &XrcPreview::OnSearch, this);
 
@@ -178,10 +178,6 @@ void XrcPreview::OnGenerate(
 {
     event.Skip();
 }
-void XrcPreview::OnImport(
-{
-    event.Skip();
-}
 void XrcPreview::OnInit(
 {
     event.Skip();
@@ -191,6 +187,10 @@ void XrcPreview::OnPreview(
     event.Skip();
 }
 void XrcPreview::OnSearch(
+{
+    event.Skip();
+}
+void XrcPreview::OnVerify(
 {
     event.Skip();
 }

@@ -43,10 +43,10 @@ protected:
     void OnDuplicate(wxCommandEvent& event);
     void OnExport(wxCommandEvent& event);
     void OnGenerate(wxCommandEvent& event);
-    void OnImport(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnPreview(wxCommandEvent& event);
     void OnSearch(wxCommandEvent& event);
+    void OnVerify(wxCommandEvent& event);
 
     // Class member variables
 

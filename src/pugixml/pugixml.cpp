@@ -2336,6 +2336,8 @@ xml_parse_result make_parse_result(xml_parse_status status, ptrdiff_t offset = 0
     xml_parse_result result;
     result.status = status;
     result.offset = offset;
+    result.column = 0;
+    result.line = 0;
 
     return result;
 }

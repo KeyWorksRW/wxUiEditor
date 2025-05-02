@@ -9,6 +9,7 @@
 
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 
 #include "xrc_list_dlg.h"
 
@@ -21,6 +22,9 @@ bool XrcListDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     }
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
+
+    auto* static_text = new wxStaticText(this, wxID_ANY, "&List of XRC previewable forms:");
+    dlg_sizer->Add(static_text, wxSizerFlags().Border(wxALL));
 
     m_listbox = new wxListBox(this, wxID_ANY);
     m_listbox->SetMinSize(FromDIP(wxSize(200, 175)));
@@ -68,7 +72,7 @@ bool XrcListDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Test XRC
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -82,11 +86,25 @@ void XrcListDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     auto idx_cur_sel = 0;
     for (auto& form: forms)
     {
-        if (form->isGen(gen_wxDialog))
+        // THis list should be sychronized with the list of forms in previews.cpp (MainFrame::OnPreviewXrc)
+        switch (form->getGenName())
         {
-            auto index = m_listbox->Append(form->as_string(prop_class_name), static_cast<void*>(form));
-            if (m_form == wxGetMainFrame()->getSelectedNode())
-                idx_cur_sel = index;
+            case gen_wxDialog:
+            case gen_PanelForm:
+            case gen_wxFrame:
+            case gen_wxWizard:
+            case gen_MenuBar:
+            case gen_RibbonBar:
+            case gen_ToolBar:
+                {
+                    auto index = m_listbox->Append(form->as_string(prop_class_name), static_cast<void*>(form));
+                    if (m_form == wxGetMainFrame()->getSelectedNode())
+                        idx_cur_sel = index;
+                }
+                break;
+
+            default:
+                continue;  // Skip any other types of forms
         }
     }
 

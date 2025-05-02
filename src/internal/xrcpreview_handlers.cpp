@@ -26,7 +26,7 @@
 
 #include "../import/import_wxsmith.h"  // Import a wxSmith file
 #include "gen_xrc.h"                   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "internal/msg_logging.h"      // MsgLogging -- Message logging class
+#include "import_panel.h"              // ImportPanel -- Panel to display original imported file
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
 #include "preferences.h"               // Prefs -- Set/Get wxUiEditor preferences
@@ -87,24 +87,40 @@ void XrcPreview::OnClear(wxCommandEvent& WXUNUSED(event))
 
 void XrcPreview::OnGenerate(wxCommandEvent& WXUNUSED(event))
 {
-    XrcListDlg dlg(this);
-    if (dlg.ShowModal() != wxID_OK)
-        return;
+    m_form_node = wxGetMainFrame()->getSelectedNode();
+    if (!m_form_node->isForm())
+    {
+        XrcListDlg dlg(this);
+        if (dlg.ShowModal() != wxID_OK)
+            return;
 
-    auto form = dlg.get_form();
+        m_form_node = dlg.get_form();
+    }
 
     if (!form)
+    if (!m_form_node)
     {
         wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
         return;
     }
 
-    if (!form->isForm())
+    if (!m_form_node->isForm())
     {
-        form = form->getForm();
+        m_form_node = m_form_node->getForm();
     }
 
-    auto doc_str = GenerateXrcStr(form, form->isGen(gen_PanelForm) ? xrc::previewing : 0);
+    Generate();
+}
+
+void XrcPreview::Generate(Node* form_node)
+{
+    if (!form_node)
+    {
+        form_node = m_form_node;
+        ASSERT_MSG(form_node, "Generate() called without a form_node and m_form_node is nullptr");
+    }
+
+    auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
@@ -115,17 +131,17 @@ void XrcPreview::OnGenerate(wxCommandEvent& WXUNUSED(event))
 
     std::string search("name=\"");
 
-    if (form->hasProp(prop_id) && form->as_string(prop_id) != "wxID_ANY")
+    if (form_node->hasProp(prop_id) && form_node->as_string(prop_id) != "wxID_ANY")
     {
-        search = form->as_string(prop_id);
+        search = form_node->as_string(prop_id);
     }
-    else if (form->hasValue(prop_var_name))
+    else if (form_node->hasValue(prop_var_name))
     {
-        search = form->as_string(prop_var_name);
+        search = form_node->as_string(prop_var_name);
     }
     else
     {
-        search = form->as_string(prop_class_name);
+        search = form_node->as_string(prop_class_name);
     }
 
     m_contents->SetLabelText("Contents: " + search);

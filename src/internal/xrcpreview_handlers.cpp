@@ -7,10 +7,6 @@
 
 #include "xrcpreview.h"
 
-#if __has_include(<format>)
-    #include <format>
-#endif
-
 #include <wx/filedlg.h>     // wxFileDialog base header
 #include <wx/mstream.h>     // Memory stream classes
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
@@ -30,6 +26,7 @@
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
 #include "preferences.h"               // Prefs -- Set/Get wxUiEditor preferences
+#include "previews.h"                  // Top level Preview functions
 #include "project_handler.h"           // ProjectHandler class
 #include "tt_view_vector.h"            // tt_string_vector -- Class for reading and writing line-oriented strings/files
 #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
@@ -97,7 +94,6 @@ void XrcPreview::OnGenerate(wxCommandEvent& WXUNUSED(event))
         m_form_node = dlg.get_form();
     }
 
-    if (!form)
     if (!m_form_node)
     {
         wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
@@ -158,81 +154,13 @@ void XrcPreview::Generate(Node* form_node)
     m_scintilla->ScrollToLine(line);
 }
 
-extern bool g_isXrcResourceInitalized;
-
 void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
 {
-    auto xrc_text = m_scintilla->GetText();
-    wxString dlg_name;
-    auto pos = xrc_text.Find("name=\"");
-    if (!tt::is_found(pos))
-    {
-        wxMessageBox("Could not locate the dialog's name.", "XRC Dialog Preview");
-        return;
-    }
-    pos += (sizeof("name=\"") - 1);
-    while (pos < (to_int) xrc_text.size() && xrc_text[pos] != '"')
-    {
-        dlg_name << xrc_text[pos++];
-    }
-
-    wxMemoryInputStream stream(xrc_text.data(), xrc_text.size());
-    wxXmlParseError err_details;
-    auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
-    if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
-    {
-#if __has_include(<format>)
-        std::string msg =
-            std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
-                        err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset);
-#else
-        wxString msg;
-        msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", err_details.message, err_details.line,
-                   err_details.column, err_details.offset);
-#endif
-        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
-        return;
-    }
-    if (!xmlDoc->IsOk())
-    {
-        wxMessageBox("Invalid XRC -- wxXmlDocument can't parse it.", "XRC Dialog Preview");
-        return;
-    }
-
-    auto xrc_resource = wxXmlResource::Get();
-    if (!g_isXrcResourceInitalized)
-    {
-        g_isXrcResourceInitalized = true;
-
-        xrc_resource->InitAllHandlers();
-        xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
-        xrc_resource->AddHandler(new wxAuiXmlHandler);
-        xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
-        xrc_resource->AddHandler(new wxRibbonXmlHandler);
-        xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
-    }
-
-    wxString res_name("wxuiDlgPreview");
-
-    if (!xrc_resource->LoadDocument(xmlDoc.release(), res_name))
-    {
-        wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Dialog Preview");
-        return;
-    }
-
-    tt_cwd cwd(true);
-    wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
-
-    wxDialog dlg;
-    if (xrc_resource->LoadDialog(&dlg, this, dlg_name))
-    {
-        dlg.ShowModal();
-    }
-    else
-    {
-        wxMessageBox(wxString("Could not load ") << dlg_name << " resource.", "XRC Dialog Preview");
-    }
-    xrc_resource->Unload(res_name);
+    std::string doc_str;
+    doc_str.reserve(m_scintilla->GetTextLength() + 1);
+    auto len = m_scintilla->GetTextLength() + 1;
+    m_scintilla->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) doc_str.data());
+    PreviewXrc(doc_str, m_form_node->getGenName(), m_form_node);
 }
 
 void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
@@ -329,6 +257,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
     }
 }
 
+void XrcPreview::OnCompare(wxCommandEvent& WXUNUSED(event)) {}
 void XrcPreview::OnSearch(wxCommandEvent& event)
 {
     m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());

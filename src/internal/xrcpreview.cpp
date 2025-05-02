@@ -65,6 +65,10 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btn__export->SetToolTip("Load current contents into XML, then Export to a file of your choice");
     box_sizer_2->Add(m_btn__export, wxSizerFlags().Border(wxALL));
 
+    m_btnCompare = new wxButton(this, wxID_ANY, "Co&mpare...");
+    m_btnCompare->SetToolTip("Only valid if an XRC was imported. Compares original and generated.");
+    box_sizer_2->Add(m_btnCompare, wxSizerFlags().Border(wxALL));
+
     auto* btn3 = new wxButton(this, wxID_ANY, "&Duplicate");
         btn3->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_ADD_BOOKMARK, wxART_MENU));
     btn3->SetToolTip("Load current contents into XML, then Export to a file of your choice");
@@ -150,6 +154,7 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     // Event handlers
     btn_2->Bind(wxEVT_BUTTON, &XrcPreview::OnClear, this);
+    m_btnCompare->Bind(wxEVT_BUTTON, &XrcPreview::OnCompare, this);
     btn3->Bind(wxEVT_BUTTON, &XrcPreview::OnDuplicate, this);
     m_btn__export->Bind(wxEVT_BUTTON, &XrcPreview::OnExport, this);
     btn_3->Bind(wxEVT_BUTTON, &XrcPreview::OnGenerate, this);
@@ -163,6 +168,10 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 /*
 void XrcPreview::OnClear(
+{
+    event.Skip();
+}
+void XrcPreview::OnCompare(
 {
     event.Skip();
 }

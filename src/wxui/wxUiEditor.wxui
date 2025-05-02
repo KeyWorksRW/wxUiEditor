@@ -7785,6 +7785,9 @@
         title="Test XRC"
         minimum_size="1200,1250"
         base_file="..\internal\xrcpreview"
+        header_preamble="class Node;"
+        class_members="&quot;Node* m_form_node;&quot;"
+        class_methods="&quot;void Generate(Node* form_node = nullptr);&quot;"
         derived_class_name="XrcPreview"
         derived_file="xrcpreview"
         use_derived_class="0"
@@ -7852,6 +7855,12 @@
                 bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"
                 tooltip="Load current contents into XML, then Export to a file of your choice"
                 wxEVT_BUTTON="OnExport" />
+              <node
+                class="wxButton"
+                label="Co&amp;mpare..."
+                var_name="m_btnCompare"
+                tooltip="Only valid if an XRC was imported. Compares original and generated."
+                wxEVT_BUTTON="OnCompare" />
               <node
                 class="wxButton"
                 class_access="none"

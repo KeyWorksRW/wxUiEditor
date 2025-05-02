@@ -42,7 +42,7 @@ public:
     {
         Create(parent, id, title, pos, size, style, name);
     }
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
+    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxSize(1000, 1000), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL,
         const wxString &name = wxFrameNameStr);
 

@@ -156,26 +156,31 @@ void XrcPreview::Generate(Node* form_node)
 
 void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
 {
-    std::string doc_str;
-    doc_str.reserve(m_scintilla->GetTextLength() + 1);
-    auto len = m_scintilla->GetTextLength() + 1;
-    m_scintilla->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) doc_str.data());
-    PreviewXrc(doc_str, m_form_node->getGenName(), m_form_node);
+    auto xrc_text = m_scintilla->GetText().utf8_string();
+    PreviewXrc(xrc_text, m_form_node->getGenName(), nullptr);
 }
 
 void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
 {
-    // Verify that the XML in the Scintilla control ia valid by parsing it with PugiXML.
-    auto xrc_text = m_scintilla->GetText();
     pugi::xml_document doc;
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto result = doc.load_string(xrc_text.utf8_string());
-        if (!result)
+
+        // Verify that the XML in the Scintilla control ia valid by parsing it with PugiXML.
+        auto xrc_text = m_scintilla->GetText().utf8_string();
+        if (auto result = doc.load_string(xrc_text); !result)
         {
-            wxMessageBox("Error parsing XML document: " + tt_string(result.description()), "XML Verification Test",
-                         wxOK | wxICON_ERROR);
+#if __has_include(<format>)
+            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                                          result.description(), result.line, result.column, result.offset);
+#else
+            wxString msg;
+            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
+                       result.column, result.offset);
+#endif
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+
             return;
         }
     }
@@ -200,13 +205,23 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
     {
         tt_string filename = dialog.GetPath().utf8_string();
 
-        std::string buf;
-        buf.reserve(m_scintilla->GetTextLength() + 1);
-        auto len = m_scintilla->GetTextLength() + 1;
-        m_scintilla->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) buf.data());
+        auto xrc_text = m_scintilla->GetText().utf8_string();
 
         pugi::xml_document doc;
-        doc.load_string(buf.c_str());
+        if (auto result = doc.load_string(xrc_text); !result)
+        {
+#if __has_include(<format>)
+            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                                          result.description(), result.line, result.column, result.offset);
+#else
+            wxString msg;
+            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
+                       result.column, result.offset);
+#endif
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+
+            return;
+        }
 
         if (!doc.save_file(filename))
         {
@@ -217,15 +232,23 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 
 void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
 {
-    auto xrc_text = m_scintilla->GetText();
     pugi::xml_document doc;
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto result = doc.load_string(xrc_text.utf8_string());
-        if (!result)
+        auto xrc_text = m_scintilla->GetText().utf8_string();
+        if (auto result = doc.load_string(xrc_text); !result)
         {
-            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
+#if __has_include(<format>)
+            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                                          result.description(), result.line, result.column, result.offset);
+#else
+            wxString msg;
+            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
+                       result.column, result.offset);
+#endif
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+
             return;
         }
     }

@@ -242,26 +242,29 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
     // be called after the catch block.
     wxString res_name("wxuiPreview");
 
+    pugi::xml_document doc;
+    if (auto result = doc.load_string(doc_str); !result)
+    {
+#if __has_include(<format>)
+        std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                                      result.description(), result.line, result.column, result.offset);
+#else
+        wxString msg;
+        msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
+                   result.column, result.offset);
+#endif
+        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+        return;
+    }
+
     try
     {
-        pugi::xml_document doc;
-        if (auto result = doc.load_string(doc_str); !result)
-        {
-#if __has_include(<format>)
-            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                                          result.description(), result.line, result.column, result.offset);
-#else
-            wxString msg;
-            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
-                       result.column, result.offset);
-#endif
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
-            return;
-        }
-
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxXmlParseError err_details;
         auto xmlDoc = std::make_unique<wxXmlDocument>(wxXmlDocument());
+
+        // At this point, there really shouldn't be any errors since pugi::xml has already parsed
+        // the XML string and would would have exited this function if there were any errors.
         if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
         {
 #if __has_include(<format>)
@@ -276,15 +279,10 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
             return;
         }
-        if (!xmlDoc->IsOk())
-        {
-            wxMessageBox("Invalid XRC file generated -- it cannot be loaded.", "XRC Preview");
-            return;
-        }
 
         if (!xrc_resource->LoadDocument(xmlDoc.release(), res_name))
         {
-            wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Preview");
+            wxMessageBox("wxXmlResource could not parse the XRC data.", "XRC Preview");
             return;
         }
 

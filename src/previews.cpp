@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "previews.h"
-#include "gen_enums.h"
 
 #if __has_include(<format>)
     #include <format>
@@ -29,8 +28,9 @@
 #include "../tools/preview_settings.h"  // PreviewSettings
 #include "../ui/xrccompare.h"           // C++/XRC UI Comparison dialog
 
-#include "dlg_msgs.h"           // wxMessageDialog dialogs
-#include "gen_common.h"         // GeneratorLibrary -- Generator classes
+#include "dlg_msgs.h"    // wxMessageDialog dialogs
+#include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "gen_enums.h"
 #include "generate/gen_xrc.h"   // Generate XRC file
 #include "mainapp.h"            // App -- Main application class
 #include "mainframe.h"          // MainFrame -- Main window frame
@@ -44,9 +44,6 @@
 // Defined in mockup/mockup_preview.cpp
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
                           wxWindow* form_window);
-
-void PreviewXrc(Node* form_node);
-void Preview(Node* form_node);
 
 bool g_isXrcResourceInitalized { false };
 

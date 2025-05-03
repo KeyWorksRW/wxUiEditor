@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <format>
+
 #include "dlg_msgs.h"
 
 //////////////// Import Project Dialogs ////////////////////////
@@ -18,12 +20,7 @@ void dlgCannotParse(const pugi::xml_parse_result& result, const std::string& fil
 
 void dlgInvalidProject(const std::string& filename, std::string_view project_type, std::string_view caption)
 {
-#ifdef __cpp_lib_format
     std::string msg = std::format("The file\n    \"{}\"\nis not a valid {} file.", filename, project_type);
-#else
-    tt_string msg;
-    msg << "The file\n    \"" << filename << "\"\nis not a valid " << project_type << " file.";
-#endif  // __cpp_lib_format
     wxMessageDialog dlg(nullptr, msg, wxString(caption), wxICON_ERROR | wxOK);
     dlg.ShowModal();
 }

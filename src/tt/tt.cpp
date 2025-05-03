@@ -1,12 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   tt namespace functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <filesystem>  // directory_entry
 #include <string>
+
+#include <format>
 
 #include "tt.h"
 
@@ -315,11 +317,7 @@ tt_string tt::itoa(int value, bool format)
     {
         return std::to_string(value);
     }
-#ifdef __cpp_lib_format
     return std::format(std::locale(""), "{:L}", value);
-#else
-    return std::to_string(value);
-#endif
 }
 
 tt_string tt::itoa(size_t value, bool format)
@@ -328,11 +326,7 @@ tt_string tt::itoa(size_t value, bool format)
     {
         return std::to_string(value);
     }
-#ifdef __cpp_lib_format
     return std::format(std::locale(""), "{:L}", value);
-#else
-    return std::to_string(value);
-#endif
 }
 
 std::string_view tt::find_extension(std::string_view str)

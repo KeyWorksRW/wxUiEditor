@@ -539,12 +539,7 @@ void ConvertImageDlg::ImageInXpmOut()
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-    #ifdef __cpp_lib_format
-                std::format(std::locale(""), "Original size: {:L} -- XPM size: {:L}", m_orginal_size, output_size)
-    #else
-                tt_string() << "Original size:" << m_orginal_size << " -- XPM size: " << output_size
-    #endif
-            );
+                std::format(std::locale(""), "Original size: {:L} -- XPM size: {:L}", m_orginal_size, output_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();

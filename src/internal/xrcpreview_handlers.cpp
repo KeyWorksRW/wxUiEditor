@@ -7,6 +7,8 @@
 
 #include "xrcpreview.h"
 
+#include <format>
+
 #include <wx/filedlg.h>     // wxFileDialog base header
 #include <wx/mstream.h>     // Memory stream classes
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
@@ -172,14 +174,8 @@ void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
         auto xrc_text = m_scintilla->GetText().utf8_string();
         if (auto result = doc.load_string(xrc_text); !result)
         {
-#if __has_include(<format>)
             std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                                           result.description(), result.line, result.column, result.offset);
-#else
-            wxString msg;
-            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
-                       result.column, result.offset);
-#endif
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
 
             return;
@@ -211,14 +207,8 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
         pugi::xml_document doc;
         if (auto result = doc.load_string(xrc_text); !result)
         {
-#if __has_include(<format>)
             std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                                           result.description(), result.line, result.column, result.offset);
-#else
-            wxString msg;
-            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
-                       result.column, result.offset);
-#endif
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
 
             return;
@@ -240,14 +230,8 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
         auto xrc_text = m_scintilla->GetText().utf8_string();
         if (auto result = doc.load_string(xrc_text); !result)
         {
-#if __has_include(<format>)
             std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                                           result.description(), result.line, result.column, result.offset);
-#else
-            wxString msg;
-            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
-                       result.column, result.offset);
-#endif
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
 
             return;

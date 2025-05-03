@@ -5,10 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if __has_include(<format>)
-    #include <format>
-#endif
-
 #include "data_handler.h"
 
 #include <wx/utils.h>  // For wxBusyCursor
@@ -29,8 +25,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utility functions
 #include "write_code.h"       // Write code to Scintilla or file
-
-#include "../generate/gen_data_list.h"  // DataGenerator -- Data List generator
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
 bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t compressed_size);

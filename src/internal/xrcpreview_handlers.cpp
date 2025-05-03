@@ -31,6 +31,7 @@
 #include "tt_view_vector.h"            // tt_string_vector -- Class for reading and writing line-oriented strings/files
 #include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"                     // Utility functions that work with properties
+#include "xrccompare.h"                // C++/XRC UI Comparison dialog
 
 #include "pugixml.hpp"
 
@@ -72,7 +73,7 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     if (wxGetApp().isTestingMenuEnabled())
     {
         const auto& import_file = wxGetFrame().getImportPanel()->GetImportFile();
-        if (tt_string(import_file.extension()).MakeLower() != "xrc")
+        if (tt_string(import_file.extension()).MakeLower() != ".xrc")
             m_btnCompare->Disable();
     }
 }
@@ -280,7 +281,28 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void XrcPreview::OnCompare(wxCommandEvent& WXUNUSED(event)) {}
+void XrcPreview::OnCompare(wxCommandEvent& WXUNUSED(event))
+{
+    if (!m_form_node->isGen(gen_wxDialog) && !m_form_node->isGen(gen_PanelForm))
+    {
+        wxMessageBox("You can only compare dialogs and panels", "Compare");
+        return;
+    }
+
+    tt_cwd cwd(true);
+    wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
+
+    XrcCompare dlg_compare;
+    if (!dlg_compare.DoCreate(wxGetMainFrame(), m_form_node, true))
+    {
+        wxMessageBox("Unable to create the XrcCompare dialog box!", "Compare");
+        return;
+    }
+
+    dlg_compare.ShowModal();
+    return;
+}
+
 void XrcPreview::OnSearch(wxCommandEvent& event)
 {
     m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());

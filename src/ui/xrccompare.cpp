@@ -7,11 +7,7 @@
 
 // clang-format off
 
-#include <wx/colour.h>
-#include <wx/font.h>
-#include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
 
 #include "xrccompare.h"
 
@@ -27,14 +23,14 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* staticText = new wxStaticText(this, wxID_ANY, "C++ Generated");
+    m_staticTextLeft = new wxStaticText(this, wxID_ANY, "C++ Generated");
     {
         wxFontInfo font_info(9);
         font_info.Underlined();
-        staticText->SetFont(wxFont(font_info));
+        m_staticTextLeft->SetFont(wxFont(font_info));
     }
-    staticText->SetForegroundColour(wxColour("#FF0000"));
-    box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
+    m_staticTextLeft->SetForegroundColour(wxColour("#FF0000"));
+    box_sizer->Add(m_staticTextLeft, wxSizerFlags().Border(wxALL));
 
     m_grid_bag_sizer->Add(box_sizer, wxGBPosition(0, 0), wxGBSpan(1, 1), wxTOP|wxRIGHT|wxLEFT, 5);
 
@@ -43,14 +39,14 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "XRC Generated");
+    m_staticTextRight = new wxStaticText(this, wxID_ANY, "XRC Generated");
     {
         wxFontInfo font_info(9);
         font_info.Underlined();
-        staticText_2->SetFont(wxFont(font_info));
+        m_staticTextRight->SetFont(wxFont(font_info));
     }
-    staticText_2->SetForegroundColour(wxColour("#008000"));
-    box_sizer_2->Add(staticText_2, wxSizerFlags().Border(wxALL));
+    m_staticTextRight->SetForegroundColour(wxColour("#008000"));
+    box_sizer_2->Add(m_staticTextRight, wxSizerFlags().Border(wxALL));
 
     m_grid_bag_sizer->Add(box_sizer_2, wxGBPosition(0, 2), wxGBSpan(1, 1), wxTOP|wxRIGHT|wxLEFT, 5);
 
@@ -97,6 +93,7 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include <wx/persist.h>           // common classes for persistence support
 #include <wx/persist/toplevel.h>  // persistence support for wxTLW
 #include <wx/stattext.h>          // wxStaticText base header
+#include <wx/stc/stc.h>           // A wxWidgets implementation of Scintilla.
 #include <wx/xml/xml.h>           // wxXmlDocument - XML parser & data holder class
 #include <wx/xrc/xmlres.h>        // XML resources
 
@@ -108,8 +105,9 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
+#include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
+#include "mainframe.h"                 // MainFrame -- Main window frame
+#include "node.h"                      // Node class
 
 // Defined in mockup_preview.cpp
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxSizer* parent_sizer, wxWindow* form_window);
@@ -125,13 +123,28 @@ XrcCompare::~XrcCompare()
         wxXmlResource::Get()->Unload(m_res_name);
 }
 
-bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
+bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import)
 {
-    if (!Create(parent, wxID_ANY, "Compare C++/XRC Generated UI", wxDefaultPosition, wxDefaultSize,
-                wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
-        return false;
+    m_compare_import = compare_import;
 
-        // Everything below up to the customization section is a direct copy of the XrcCompareBase::Create() function
+    std::string title = m_compare_import ? "Compare Import/Generated XRC" : "Compare C++/XRC Generated UI";
+    if (!Create(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
+    {
+        return false;
+    }
+
+    if (m_compare_import)
+    {
+        m_staticTextLeft->SetLabel("Imported XRC");
+        m_staticTextRight->SetLabel("Generated XRC");
+    }
+    else
+    {
+        m_staticTextLeft->SetLabel("C++ Generated");
+        m_staticTextRight->SetLabel("XRC Generated");
+    }
+
+    // Everything below up to the customization section is a direct copy of the XrcCompareBase::Create() function
 #if 0
     m_grid_bag_sizer = new wxGridBagSizer();
 
@@ -164,7 +177,15 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
     {
         case gen_PanelForm:
             {
-                CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
+                if (m_compare_import)
+                {
+                    if (!InitImport(form_node))
+                        return false;
+                }
+                else
+                {
+                    CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
+                }
 
                 if (!InitXrc(form_node))
                     return false;
@@ -189,8 +210,16 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
                     return false;
                 }
 
-                // The wxDialog generator will create a wxPanel as the mockup
-                CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
+                if (m_compare_import)
+                {
+                    if (!InitImport(form_node))
+                        return false;
+                }
+                else
+                {
+                    // The wxDialog generator will create a wxPanel as the mockup
+                    CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
+                }
 
                 // In theory, we should be able to start from the sizer and pass that to m_grid_bag_sizer. In practice, it
                 // causes wxWidgets to crash. I'm not sure why, but setting both the C++ and XRC generators to use wxPanel
@@ -199,6 +228,21 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
                 // GenerateXrcStr will return a wxPanel using the name txt_dlg_name ("_wxue_temp_dlg")
                 if (!InitXrc(form_node))
                     return false;
+
+                if (m_compare_import)
+                {
+                    if (auto object = xrc_resource->LoadObject(
+                            this, tt_string(form_node->as_string(prop_class_name)) << "_import", "wxPanel");
+                        object)
+                    {
+                        m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+                    }
+                    else
+                    {
+                        wxMessageBox("Could not load top level sizer", "Compare");
+                        return false;
+                    }
+                }
 
                 if (auto object = xrc_resource->LoadObject(this, txt_dlg_name, "wxPanel"); object)
                 {
@@ -231,6 +275,37 @@ bool XrcCompare::InitXrc(Node* form_node)
     size_t xrc_flags = (form_node->isGen(gen_wxDialog) ? xrc::previewing : 0);
     auto doc_str = GenerateXrcStr(form_node, xrc_flags);
     wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
+    auto xmlDoc = std::make_unique<wxXmlDocument>(stream);
+    if (!xmlDoc->IsOk())
+    {
+        wxMessageBox("Invalid XRC file generated -- it cannot be loaded.", "Compare");
+        return false;
+    }
+    if (!wxXmlResource::Get()->LoadDocument(xmlDoc.release(), m_res_name))
+    {
+        wxMessageBox("wxWidgets could not parse the XRC data.", "Compare");
+        return false;
+    }
+
+    return true;
+}
+
+bool XrcCompare::InitImport(Node* form_node)
+{
+    tt_string xrc_text = wxGetFrame().getImportPanel()->GetTextCtrl()->GetText().utf8_string();
+    if (form_node->getGenName() == gen_wxDialog)
+    {
+        // Because we need to place this within sizer, we switch the class to a wxPanel. We assume
+        // it will work in spite of having child attributes that only apply to wxDialog.
+        xrc_text.Replace("\"wxDialog", "\"wxPanel");  // Change the top level object to wxPanel
+    }
+
+    // We need to the change the name since it will be identical to the generated name
+    tt_string org_name("\"");
+    org_name << form_node->as_string(prop_class_name);
+    xrc_text.Replace(org_name, tt_string(org_name) << "_import");
+
+    wxMemoryInputStream stream(xrc_text.c_str(), xrc_text.size());
     auto xmlDoc = std::make_unique<wxXmlDocument>(stream);
     if (!xmlDoc->IsOk())
     {

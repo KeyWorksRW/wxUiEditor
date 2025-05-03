@@ -7216,9 +7216,8 @@
           borders="wxTOP|wxRIGHT|wxLEFT">
           <node
             class="wxStaticText"
-            class_access="none"
             label="C++ Generated"
-            var_name="staticText"
+            var_name="m_staticTextLeft"
             font="default family,9,,,underlined"
             foreground_colour="255,0,0" />
         </node>
@@ -7239,9 +7238,8 @@
           column="2">
           <node
             class="wxStaticText"
-            class_access="none"
             label="XRC Generated"
-            var_name="staticText_2"
+            var_name="m_staticTextRight"
             font="default family,9,,,underlined"
             foreground_colour="0,128,0"
             column="2" />

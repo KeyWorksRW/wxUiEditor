@@ -11,6 +11,7 @@
 // likely to notice the extra spacing that sometimes occurs.
 
 #include <filesystem>
+#include <format>
 
 #include <wx/artprov.h>  // wxArtProvider class
 #include <wx/mstream.h>  // Memory stream classes

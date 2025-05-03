@@ -9,7 +9,7 @@
 
 class Node;
 
-extern const char* txt_dlg_name; // "_wxue_temp_dlg"
+extern const char* txt_dlg_name;  // "_wxue_temp_dlg"
 
 void PreviewXrc(Node* form_node);
 

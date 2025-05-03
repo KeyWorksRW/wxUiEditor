@@ -29,7 +29,7 @@ You will need a C++20 compliant compiler to build **wxUiEditor**. To build using
     cmake --build build --config Release --target wxUiEditor
 ```
 
-For Unix builds, you currently need a minimum of gcc 11.4 to be able to compile the sources. After building, you can can change to the build/ directory and run `cpack -G DEB -C Release` or `cpack -G RPM -C Release` to create a Ubuntu or Fedora package.
+For Unix builds, you currently need a minimum of gcc 13.1 or clang 15 to be able to compile the sources. Note that unlike gcc, clang requires libc++17 to be installed (ships with Ubuntu 24.04). After building, you can can change to the build/ directory and run `cpack -G DEB -C Release` or `cpack -G RPM -C Release` to create a Ubuntu or Fedora package.
 
 See [Developer notes](docs/DEV_NOTES.md) if you want information about contributing to the project.
 

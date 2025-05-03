@@ -49,9 +49,7 @@ using namespace pugi;
 #include <stdlib.h>
 #include <string.h>
 
-#if __has_include(<format>)
-    #include <format>
-#endif
+#include <format>
 
 #include <cstring>
 #include <fstream>
@@ -6819,18 +6817,9 @@ namespace pugi
                 if (line_offset >= result.offset)
                 {
                     result.column = line_offset - result.offset;
-#if __has_include(<format>)
-                    // The advantage of std::format is that it will format the line number
-                    // with locale-specific separators
                     result.detailed_msg =
                         std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}",
                                     result.description(), result.line, result.column, result.offset);
-#else
-                    wxString msg;
-                    msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld", result.description(), result.line,
-                               result.column, result.offset);
-                    result.detailed_msg = msg.utf8_string();
-#endif
 
                     break;
                 }
@@ -6885,19 +6874,11 @@ namespace pugi
                     if (line_offset >= result.offset)
                     {
                         result.column = line_offset - result.offset;
-#if __has_include(<format>)
                         // The advantage of std::format is that it will format the line number
                         // with locale-specific separators
                         result.detailed_msg = std::format(
                             std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\nFile: {}\n",
                             result.description(), result.line, result.column, result.offset, path.c_str());
-#else
-                        wxString msg;
-                        msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\nFile: %s\n",
-                                   result.description(), result.line, result.column, result.offset, path.c_str());
-                        result.detailed_msg = msg.utf8_string();
-#endif
-
                         break;
                     }
                 }

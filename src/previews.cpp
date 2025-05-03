@@ -7,9 +7,7 @@
 
 #include "previews.h"
 
-#if __has_include(<format>)
-    #include <format>
-#endif
+#include <format>
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/mstream.h>      // Memory stream classes
@@ -224,14 +222,8 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
     pugi::xml_document doc;
     if (auto result = doc.load_string(doc_str.c_str()); !result)
     {
-#if __has_include(<format>)
         std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                                       result.description(), result.line, result.column, result.offset);
-#else
-        wxString msg;
-        msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", result.detailed_msg, result.line,
-                   result.column, result.offset);
-#endif
         wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
         return;
     }
@@ -264,15 +256,9 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
         // the XML string and would would have exited this function if there were any errors.
         if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
         {
-#if __has_include(<format>)
             std::string msg =
                 std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
                             err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset);
-#else
-            wxString msg;
-            msg.Format("Parsing error: %s at line: %d, column: %d, offset: %ld\n", err_details.message, err_details.line,
-                       err_details.column, err_details.offset);
-#endif
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
             return;
         }

@@ -7,6 +7,8 @@
 
 #include <frozen/map.h>
 
+#include <format>
+
 #include "import_xml.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
@@ -140,14 +142,8 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
 
     if (auto result = doc.load_file_string(file); !result)
     {
-#if __has_include(<format>)
         std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                                       result.description(), result.line, result.column, result.offset);
-#else
-        wxString msg;
-        msg.Format("Parsing error: %s\n Line: %d, Column: %d, Offset: %ld\n", result.detailed_msg, result.line,
-                   result.column, result.offset);
-#endif
         wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
         return {};
     }

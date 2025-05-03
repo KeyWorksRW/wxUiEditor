@@ -1,7 +1,7 @@
 set (file_list_dir ${CMAKE_CURRENT_LIST_DIR})
 
 # wxui/wxui_code.cmake
-# ../internal.cmake
+# ../in.cmake
 
 set (file_list
 
@@ -341,9 +341,12 @@ set (file_list
     internal/msgframe.cpp      # Stores messages
     internal/msg_logging.cpp   # Message logging class
     internal/import_panel.cpp  # Panel to display original imported file
-    internal/xrcpreview.cpp    # Test XRC
     internal/import_panel.cpp  # Panel to display original imported file
     tests/test_xrc_import.cpp  # XRC Import tests
+
+    internal/xrcpreview.cpp           # Generated XrcPreview Dialog code
+    internal/xrcpreview_handlers.cpp  # Handlers for XrcPreview Dialog class
+    internal/xrc_list_dlg.cpp
 
     # Tools
 

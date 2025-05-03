@@ -19,7 +19,6 @@
 #include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
 #include "base_generator.h"            // BaseGenerator -- Base widget generator class
 #include "gen_common.h"                // Common component functions
-#include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
 #include "utils.h"                     // Utility functions that work with properties
 

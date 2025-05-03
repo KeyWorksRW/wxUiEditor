@@ -9,10 +9,14 @@
 
 #pragma once
 
+#include <wx/colour.h>
 #include <wx/dialog.h>
+#include <wx/font.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
+#include <wx/settings.h>
 #include <wx/statline.h>
+#include <wx/stattext.h>
 
 class Node;
 
@@ -38,6 +42,8 @@ private:
 
     wxGridBagSizer* m_grid_bag_sizer;
     wxStaticLine* m_static_line;
+    wxStaticText* m_staticTextLeft;
+    wxStaticText* m_staticTextRight;
 
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -46,17 +52,24 @@ private:
 // if the code for this class is re-generated.
 //
 // ***********************************************
-    // ***********************************************
+
+// Following code edited manually
 
 public:
     ~XrcCompare();
 
-    bool DoCreate(wxWindow* parent, Node* node_form);
+    // Call this instead of Create() -- it will directly call Create() and do a bunch of
+    // other initialization related to turnig it into a comparison dialog.
+    //
+    // true for compare_import will compare against a currently imported XRC file.
+    bool DoCreate(wxWindow* parent, Node* node_form, bool compare_import = false);
 
 protected:
     bool InitXrc(Node* form_node);
+    bool InitImport(Node* form_node);
 
 private:
     wxString m_res_name;
     bool m_created { false };
+    bool m_compare_import { false };
 };

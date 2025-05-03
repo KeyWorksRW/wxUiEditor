@@ -21,6 +21,8 @@
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 
+class Node;
+
 class XrcPreview : public wxDialog
 {
 public:
@@ -35,21 +37,25 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
+    void Generate(Node* form_node = nullptr);
+
 protected:
 
     // Event handlers
 
     void OnClear(wxCommandEvent& event);
+    void OnCompare(wxCommandEvent& event);
     void OnDuplicate(wxCommandEvent& event);
     void OnExport(wxCommandEvent& event);
     void OnGenerate(wxCommandEvent& event);
-    void OnImport(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
     void OnPreview(wxCommandEvent& event);
     void OnSearch(wxCommandEvent& event);
+    void OnVerify(wxCommandEvent& event);
 
     // Class member variables
 
+    wxButton* m_btnCompare;
     wxButton* m_btn__export;
     wxButton* m_btn_import;
     wxButton* m_btn_preview;
@@ -58,6 +64,8 @@ protected:
     wxStaticText* m_contents;
     wxStaticText* m_staticText;
     wxStyledTextCtrl* m_scintilla;
+
+    Node* m_form_node;
 };
 
 // ************* End of generated code ***********

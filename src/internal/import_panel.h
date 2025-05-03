@@ -24,6 +24,7 @@ public:
     void Clear();
 
     void SetImportFile(const tt_string& file, int lexer = 5 /* wxSTC_LEX_XML */);
+    const tt_string& GetImportFile() const { return m_import_file; }
 
     void OnNodeSelected(Node* node);
 

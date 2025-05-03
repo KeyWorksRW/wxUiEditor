@@ -7216,9 +7216,8 @@
           borders="wxTOP|wxRIGHT|wxLEFT">
           <node
             class="wxStaticText"
-            class_access="none"
             label="C++ Generated"
-            var_name="staticText"
+            var_name="m_staticTextLeft"
             font="default family,9,,,underlined"
             foreground_colour="255,0,0" />
         </node>
@@ -7239,9 +7238,8 @@
           column="2">
           <node
             class="wxStaticText"
-            class_access="none"
             label="XRC Generated"
-            var_name="staticText_2"
+            var_name="m_staticTextRight"
             font="default family,9,,,underlined"
             foreground_colour="0,128,0"
             column="2" />
@@ -7785,6 +7783,9 @@
         title="Test XRC"
         minimum_size="1200,1250"
         base_file="..\internal\xrcpreview"
+        header_preamble="class Node;"
+        class_members="&quot;Node* m_form_node;&quot;"
+        class_methods="&quot;void Generate(Node* form_node = nullptr);&quot;"
         derived_class_name="XrcPreview"
         derived_file="xrcpreview"
         use_derived_class="0"
@@ -7840,11 +7841,11 @@
                 wxEVT_BUTTON="OnPreview" />
               <node
                 class="wxButton"
-                label="&amp;Import"
+                label="&amp;Verify"
                 var_name="m_btn_import"
                 bitmap="SVG;import.svg;[16,16]"
                 tooltip="Verify that the current contents can be imported"
-                wxEVT_BUTTON="OnImport" />
+                wxEVT_BUTTON="OnVerify" />
               <node
                 class="wxButton"
                 label="&amp;Export..."
@@ -7852,6 +7853,12 @@
                 bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"
                 tooltip="Load current contents into XML, then Export to a file of your choice"
                 wxEVT_BUTTON="OnExport" />
+              <node
+                class="wxButton"
+                label="Co&amp;mpare..."
+                var_name="m_btnCompare"
+                tooltip="Only valid if an XRC was imported. Compares original and generated."
+                wxEVT_BUTTON="OnCompare" />
               <node
                 class="wxButton"
                 class_access="none"
@@ -8393,6 +8400,11 @@
           class="wxBoxSizer"
           orientation="wxVERTICAL"
           var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;List of XRC previewable forms:"
+            var_name="static_text" />
           <node
             class="wxListBox"
             minimum_size="200,175"

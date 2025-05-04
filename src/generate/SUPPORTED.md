@@ -52,10 +52,10 @@ The following tables indicate whether or not code is being generated in a specif
 
 | Class                  | C++ | Perl | Python | Ruby | XRC | file                |
 | ---------------------- | --- | ---- | ------ | ---- | --- | ------------------- |
-| wxCollapsiblePane      | yes | ---  | yes    | yes  | yes | gen_collapsible.cpp |
+| wxCollapsiblePane      | yes | yes  | yes    | yes  | yes | gen_collapsible.cpp |
 | wxPanel                | yes | yes  | yes    | yes  | yes | gen_panel.cpp       |
-| wxSplitterWindow       | yes | ---  | yes    | yes  | yes | gen_split_win.cpp   |
-| wxScrolled\<wxPanel\>  | yes | ---  | yes    | yes  | --- | window_widgets.cpp  |
+| wxSplitterWindow       | yes | yes  | yes    | yes  | yes | gen_split_win.cpp   |
+| wxScrolled\<wxPanel\>  | yes | yes  | yes    | yes  | yes | window_widgets.cpp  |
 | wxScrolled\<wxWindow\> | yes | ---  | yes    | yes  | --- | window_widgets.cpp  |
 
 ### Forms

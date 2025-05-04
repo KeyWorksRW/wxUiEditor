@@ -242,3 +242,13 @@ void SplitterWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
 {
     handlers.emplace("wxSplitterWindowXmlHandler");
 }
+
+bool SplitterWindowGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use Wx qw[:splitterwindow];");
+    }
+
+    return false;
+}

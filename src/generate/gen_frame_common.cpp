@@ -77,11 +77,11 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
     {
         // https://docs.wxpython.org/wx.lib.docview.DocMDIParentFrame.html
         // https://docs.wxpython.org/wx.lib.docview.DocParentFrame.html
-        code.Add("class (").NodeName();
+        code.Add("class ").NodeName();
         if (frame_type == frame_aui)
             code.Str("wx.aui.AuiMDIParentFrame):\n");
         else
-            code.Class(code.node()->declName()).Str("):\n");
+            code.Str("(wx.Frame):\n");
         code.Eol().Tab().Add("def __init__(self, ");
         if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
         {
@@ -272,6 +272,29 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
         }
         code += "parent, id, title, pos, size, style, name))";
         code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
+    }
+    else if (code.is_python())
+    {
+        code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, size, style, name):");
+        code.Eol().Tab().Str("return\n");
+    }
+    else if (code.is_ruby())
+    {
+        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
+    }
+    else if (code.is_perl())
+    {
+        code.Eol(eol_if_needed) += "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+    }
+#if GENERATE_NEW_LANG_CODE
+    else if (code.is_lua())
+    {
+        // Lua doesn't check the result of creating the window
+    }
+#endif
+    else
+    {
+        return false;
     }
 
     if (isScalingEnabled(code.node(), prop_pos, code.get_language()) ||

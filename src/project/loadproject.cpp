@@ -136,7 +136,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
             return false;
         }
 
-        project = LoadProject(doc);
+        project = LoadProject(doc, allow_ui);
     }
 
     if (!project)
@@ -204,7 +204,7 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
             FAIL_MSG("Project does not have a \"node\" node.");
             throw std::runtime_error("Invalid project file");
         }
-        project = NodeCreation.createProjectNode(&node);
+        project = NodeCreation.createProjectNode(&node, allow_ui);
     }
     catch (const std::exception& err)
     {
@@ -338,8 +338,12 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                         return result;
                     };
 
-                    auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(convertToWxSize(iter.value()));
-                    prop->set_value(pixel_value);
+                    if (allow_ui)
+                    {
+                        auto pixel_value =
+                            wxGetMainFrame()->getWindow()->ConvertDialogToPixels(convertToWxSize(iter.value()));
+                        prop->set_value(pixel_value);
+                    }
                     Project.ForceProjectVersion(21);
                     continue;
                 }
@@ -607,7 +611,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
     for (auto child = xml_obj.child("node"); child; child = child.next_sibling("node"))
     {
-        createNodeFromXml(child, new_node.get());
+        createNodeFromXml(child, new_node.get(), false, allow_ui);
     }
 
     if (new_node->isGen(gen_wxGridBagSizer))

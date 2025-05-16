@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   DataHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,9 +22,10 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainframe.h"        // MainFrame -- Main window frame
+#include "preferences.h"
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Miscellaneous utility functions
-#include "write_code.h"       // Write code to Scintilla or file
+#include "utils.h"       // Miscellaneous utility functions
+#include "write_code.h"  // Write code to Scintilla or file
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
 bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t compressed_size);
@@ -275,6 +276,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 
     for (auto& iter_array: m_embedded_data)
     {
+        auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == tt::npos)
         {
@@ -294,7 +296,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
         }
         code.Eol();
 
-        code.Str("const unsigned char ").Str(iter_array.first);
+        code.Str("const unsigned char ").Str(var_name);
         code.Str("[").itoa(compressed_size).Str("] {");
         source->writeLine(code);
         code.clear();
@@ -331,6 +333,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 
     for (auto& iter_array: m_embedded_data)
     {
+        auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == tt::npos)
         {
@@ -339,17 +342,17 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 
         if (embed.array_size >> 32 > 0)
         {
-            code.Str("std::string get_").Str(iter_array.first) << "()\n{\n\t";
+            code.Str("std::string get_").Str(var_name) << "()\n{\n\t";
             // original size is in the high 32 bits
             code.Str("return std::string((const char*) get_data(");
-            code.Str(iter_array.first).Str(", sizeof(").Str(iter_array.first);
+            code.Str(var_name).Str(", sizeof(").Str(var_name);
             code << "), " << (embed.array_size >> 32) << ").get(), " << (embed.array_size >> 32) << ");";
         }
         else
         {
-            code.Str("std::pair<const unsigned char*, size_t> get_").Str(iter_array.first) << "()";
+            code.Str("std::pair<const unsigned char*, size_t> get_").Str(var_name) << "()";
             code.Eol().Str("{\n\t");
-            code.Str("return std::make_pair(").Str(iter_array.first).Str(", sizeof(").Str(iter_array.first);
+            code.Str("return std::make_pair(").Str(var_name).Str(", sizeof(").Str(var_name);
             code << "));";
         }
 
@@ -367,8 +370,15 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 void DataHandler::WriteImagePostHeader(WriteCode* header)
 {
     bool is_namespace_written = false;
+
+    std::vector<std::string> xml_function_list;
+    std::vector<std::string> xml_function_filename_list;
+    std::vector<std::string> data_function_list;
+    std::vector<std::string> data_function_filename_list;
+
     for (auto& iter_array: m_embedded_data)
     {
+        auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == tt::npos)
         {
@@ -385,17 +395,48 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         }
         if (embed.array_size >> 32 > 0)
         {
-            header->writeLine(tt_string("std::string get_") << iter_array.first << "();");
+            xml_function_list.emplace_back(tt_string("std::string get_") << var_name << "();");
+            xml_function_filename_list.emplace_back(embed.filename);
         }
         else
         {
-            header->writeLine(tt_string("std::pair<const unsigned char*, size_t> get_") << iter_array.first << "();");
+            data_function_list.emplace_back(tt_string("std::pair<const unsigned char*, size_t> get_") << var_name << "();");
+            data_function_filename_list.emplace_back(embed.filename);
         }
     }
-    header->writeLine();
+
+    // Lambda to write function declarations with aligned comments
+    auto write_function_list = [&](const std::vector<std::string>& func_list, const std::vector<std::string>& filename_list)
+    {
+        if (func_list.empty())
+            return;
+
+        size_t max_func_len = 0;
+        for (const auto& func: func_list)
+        {
+            if (func.size() > max_func_len)
+                max_func_len = func.size();
+        }
+        max_func_len += 2;  // Add two spaces before the comment
+
+        for (size_t i = 0; i < func_list.size(); ++i)
+        {
+            const auto& func = func_list[i];
+            const auto& filename = filename_list[i];
+            if (filename.size())
+            {
+                header->writeLine(std::format("{}{}// {}", func, std::string(max_func_len - func.size(), ' '), filename));
+            }
+        }
+        header->writeLine();
+    };
+
+    write_function_list(data_function_list, data_function_filename_list);
+    write_function_list(xml_function_list, xml_function_filename_list);
 
     for (auto& iter_array: m_embedded_data)
     {
+        auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == tt::npos)
         {
@@ -414,16 +455,16 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         {
             header->writeLine(tt_string("// ") << embed.filename);
         }
-        if (embed.array_size >> 32 > 0)
+        if (embed.array_size >> 32 > 0 && UserPrefs.is_AddComments())
         {
             header->writeLine(tt_string("extern const unsigned char ")
-                              << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // "
-                              << (embed.array_size >> 32));
+                              << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // Original size: "
+                              << std::format(std::locale(""), "{:L} bytes", (embed.array_size >> 32)));
         }
         else
         {
             header->writeLine(tt_string("extern const unsigned char ")
-                              << iter_array.first << '[' << (embed.array_size & 0xFFFFFFFF) << "];");
+                              << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "];");
         }
     }
 

@@ -63,6 +63,7 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
     bool use_generic_version =
         code.is_cpp() && (!code.IsTrue(prop_underlined) || code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
+
     code.AddAuto().NodeName().CreateClass(use_generic_version);
 
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);

@@ -271,7 +271,7 @@ public:
     // Equibalent to Add(node->as_constant(prop_name, "...")
     Code& AddConstant(GenEnum::PropName prop_name, tt_string_view short_name);
 
-    // If UserPrefs.is_AddComments() is true, then add the comment on it's own line.
+    // If Project.AddOptionalComments() is true, then add the comment on it's own line.
     // Set force to true to always add the comment.
     // The comment will be prefixed with "// " for C++ and "# " for Python and Ruby.
     // The comment will be followed by a newline.

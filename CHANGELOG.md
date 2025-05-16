@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 - All coordinates using dialog units will automatically be converted to physical pixels. For C++ using wxWidgets 3.2 or higher along with wxPython and wxRuby, FromDIP() will be called to scale the UI as needed on high DPI displays.
 - In most cases, you no longer need to select a sizer or container before adding a widget. wxUiEditor will now attempt to find an appropriate parent for what you want to add starting from your current selection.
+- "Additional Comments" removed from Preferences and instead a new "optional_comments" has been added to Project settings.
 - Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPthon code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
 - derived_class property in the wxWindows category has been changed to subclass to better reflect that the generated class derives from your specified class. The derived_class_name in the various language categories remain unchanged to indicate you derive your class from the generated class.
 - wxRuby3 generated code now supports persistence property (`Wx.persistent_register_and_restore`)

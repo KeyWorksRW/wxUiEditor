@@ -5,6 +5,7 @@
     class="Project"
     art_directory="../art_src"
     generate_languages="C++"
+    optional_comments="1"
     cpp_line_length="125"
     generate_cmake="1">
     <node
@@ -8475,12 +8476,6 @@
                   var_name="box_sizer3">
                   <node
                     class="wxCheckBox"
-                    label="Property Panel on Right"
-                    var_name="m_check_right_propgrid"
-                    tooltip="If checked, the Property panel will be moved to the right side"
-                    proportion="1" />
-                  <node
-                    class="wxCheckBox"
                     label="Always load last project"
                     var_name="m_check_load_last"
                     proportion="1" />
@@ -8498,11 +8493,6 @@
                     var_name="checkBox_wakatime"
                     validator_variable="m_isWakaTimeEnabled"
                     tooltip="If you have WakaTime installed, checking this will record time spent in the editor as &quot;designing&quot;. (See https://wakatime.com/about)" />
-                </node>
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="box_sizer4">
                   <node
                     class="wxCheckBox"
                     label="Default SVG bitmaps"
@@ -8510,41 +8500,45 @@
                     tooltip="If checked, new bitmaps will default to SVG files" />
                   <node
                     class="wxCheckBox"
-                    checked="1"
-                    label="Generate explanatory comments"
-                    var_name="m_check_prefer_comments"
-                    tooltip="When checked, explanatory comments will sometimes be added to the generated code." />
+                    label="Property Panel on Right"
+                    var_name="m_check_right_propgrid"
+                    tooltip="If checked, the Property panel will be moved to the right side"
+                    proportion="1" />
                 </node>
-              </node>
-              <node
-                class="wxBoxSizer"
-                var_name="box_sizer8">
                 <node
-                  class="wxStaticText"
-                  class_access="none"
-                  label="Tree &amp;Icon Size:"
-                  var_name="static_text4"
-                  tooltip="The size of the icons used in toolbars and tree controls"
-                  alignment="wxALIGN_CENTER_VERTICAL" />
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer4" />
                 <node
-                  class="wxChoice"
-                  contents="&quot;16&quot; &quot;18&quot; &quot;20&quot; &quot;22&quot; &quot;24&quot; &quot;26&quot; &quot;28&quot; &quot;30&quot; &quot;32&quot;"
-                  selection_string="18"
-                  var_name="m_choice_icon_size" />
-              </node>
-              <node
-                class="wxBoxSizer"
-                class_access="protected:"
-                var_name="m_box_code_font"
-                borders="wxBOTTOM|wxRIGHT|wxLEFT"
-                flags="wxEXPAND">
+                  class="wxBoxSizer"
+                  var_name="box_sizer8">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="Tree &amp;Icon Size:"
+                    var_name="static_text4"
+                    tooltip="The size of the icons used in toolbars and tree controls"
+                    alignment="wxALIGN_CENTER_VERTICAL" />
+                  <node
+                    class="wxChoice"
+                    contents="&quot;16&quot; &quot;18&quot; &quot;20&quot; &quot;22&quot; &quot;24&quot; &quot;26&quot; &quot;28&quot; &quot;30&quot; &quot;32&quot;"
+                    selection_string="18"
+                    var_name="m_choice_icon_size" />
+                </node>
                 <node
-                  class="wxCommandLinkButton"
-                  main_label="Font"
-                  note="Font for code panels"
-                  var_name="m_btn_font"
+                  class="wxBoxSizer"
+                  class_access="protected:"
+                  var_name="m_box_code_font"
                   borders="wxBOTTOM|wxRIGHT|wxLEFT"
-                  wxEVT_BUTTON="OnFontButton" />
+                  flags="wxEXPAND">
+                  <node
+                    class="wxCommandLinkButton"
+                    main_label="Font"
+                    note="Font for code panels"
+                    var_name="m_btn_font"
+                    borders="wxBOTTOM|wxRIGHT|wxLEFT"
+                    wxEVT_BUTTON="OnFontButton" />
+                </node>
               </node>
             </node>
           </node>

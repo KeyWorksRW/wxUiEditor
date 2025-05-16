@@ -19,46 +19,46 @@ namespace wxue_data
 
 namespace wxue_data
 {
-    std::string get_bars();
-    std::string get_boxes();
-    std::string get_buttons();
-    std::string get_containers();
-    std::string get_data_ctrls();
-    std::string get_forms();
-    std::string get_interfaces();
-    std::string get_mdi();
-    std::string get_pickers();
-    std::string get_project();
-    std::string get_sizers();
-    std::string get_text_ctrls();
-    std::string get_widgets();
+    std::string get_bars();        // ../xml/bars.xml
+    std::string get_boxes();       // ../xml/boxes.xml
+    std::string get_buttons();     // ../xml/buttons.xml
+    std::string get_containers();  // ../xml/containers.xml
+    std::string get_data_ctrls();  // ../xml/data_ctrls.xml
+    std::string get_forms();       // ../xml/forms.xml
+    std::string get_interfaces();  // ../xml/interfaces.xml
+    std::string get_mdi();         // ../xml/mdi.xml
+    std::string get_pickers();     // ../xml/pickers.xml
+    std::string get_project();     // ../xml/project.xml
+    std::string get_sizers();      // ../xml/sizers.xml
+    std::string get_text_ctrls();  // ../xml/text_ctrls.xml
+    std::string get_widgets();     // ../xml/widgets.xml
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6183]; // 39008
+    extern const unsigned char bars[6183];
     // ../xml/boxes.xml
-    extern const unsigned char boxes[2436]; // 14348
+    extern const unsigned char boxes[2436];
     // ../xml/buttons.xml
-    extern const unsigned char buttons[2712]; // 15282
+    extern const unsigned char buttons[2712];
     // ../xml/containers.xml
-    extern const unsigned char containers[5006]; // 27442
+    extern const unsigned char containers[5006];
     // ../xml/data_ctrls.xml
-    extern const unsigned char data_ctrls[8341]; // 47180
+    extern const unsigned char data_ctrls[8341];
     // ../xml/forms.xml
-    extern const unsigned char forms[6611]; // 55924
+    extern const unsigned char forms[6611];
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10552]; // 49582
+    extern const unsigned char interfaces[10552];
     // ../xml/mdi.xml
-    extern const unsigned char mdi[1768]; // 5581
+    extern const unsigned char mdi[1768];
     // ../xml/pickers.xml
-    extern const unsigned char pickers[2457]; // 10145
+    extern const unsigned char pickers[2457];
     // ../xml/project.xml
-    extern const unsigned char project[1576]; // 5691
+    extern const unsigned char project[1576];
     // ../xml/sizers.xml
-    extern const unsigned char sizers[2269]; // 12870
+    extern const unsigned char sizers[2269];
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[7107]; // 30396
+    extern const unsigned char text_ctrls[7107];
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6698]; // 28540
+    extern const unsigned char widgets[6698];
 }
 
 // ************* End of generated code ***********

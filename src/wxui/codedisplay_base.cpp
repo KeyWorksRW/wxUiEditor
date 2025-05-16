@@ -31,9 +31,14 @@ bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         m_scintilla->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
         m_scintilla->SetWrapVisualFlagsLocation(wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT);
         m_scintilla->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        // Sets text margin scaled appropriately for the current DPI on Windows,
+        // 5 on wxGTK or wxOSX
+
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginWidth(1, 0);
+        // Remove default margin
+
         m_scintilla->SetMarginWidth(0, 16);
         m_scintilla->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_scintilla->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);

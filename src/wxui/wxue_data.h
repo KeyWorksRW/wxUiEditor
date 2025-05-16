@@ -34,31 +34,31 @@ namespace wxue_data
     std::string get_widgets();     // ../xml/widgets.xml
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6183];
+    extern const unsigned char bars[6183]; // Original size: 39,008 bytes
     // ../xml/boxes.xml
-    extern const unsigned char boxes[2436];
+    extern const unsigned char boxes[2436]; // Original size: 14,348 bytes
     // ../xml/buttons.xml
-    extern const unsigned char buttons[2712];
+    extern const unsigned char buttons[2712]; // Original size: 15,282 bytes
     // ../xml/containers.xml
-    extern const unsigned char containers[5006];
+    extern const unsigned char containers[5006]; // Original size: 27,442 bytes
     // ../xml/data_ctrls.xml
-    extern const unsigned char data_ctrls[8341];
+    extern const unsigned char data_ctrls[8341]; // Original size: 47,180 bytes
     // ../xml/forms.xml
-    extern const unsigned char forms[6611];
+    extern const unsigned char forms[6611]; // Original size: 55,924 bytes
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10552];
+    extern const unsigned char interfaces[10552]; // Original size: 49,582 bytes
     // ../xml/mdi.xml
-    extern const unsigned char mdi[1768];
+    extern const unsigned char mdi[1768]; // Original size: 5,581 bytes
     // ../xml/pickers.xml
-    extern const unsigned char pickers[2457];
+    extern const unsigned char pickers[2457]; // Original size: 10,145 bytes
     // ../xml/project.xml
-    extern const unsigned char project[1576];
+    extern const unsigned char project[1576]; // Original size: 5,691 bytes
     // ../xml/sizers.xml
-    extern const unsigned char sizers[2269];
+    extern const unsigned char sizers[2269]; // Original size: 12,870 bytes
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[7107];
+    extern const unsigned char text_ctrls[7107]; // Original size: 30,396 bytes
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6698];
+    extern const unsigned char widgets[6698]; // Original size: 28,540 bytes
 }
 
 // ************* End of generated code ***********

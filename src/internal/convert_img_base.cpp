@@ -22,6 +22,8 @@
 bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
+    // Scaling of pos and size are handled after the dialog
+    // has been created and controls added.
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
     {
         return false;
@@ -214,10 +216,13 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     if (pos != wxDefaultPosition)
     {
+        // Now that the dialog is created, set the scaled position
         SetPosition(FromDIP(pos));
     }
     if (size == wxDefaultSize)
     {
+        // If default size let the sizer set the dialog's size
+        // so that it is large enough to fit it's child controls.
         SetSizerAndFit(parent_sizer);
     }
     else
@@ -225,6 +230,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
         SetSizer(parent_sizer);
         if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
         {
+            // Use the sizer to calculate the missing dimension
             Fit();
         }
         SetSize(FromDIP(size));

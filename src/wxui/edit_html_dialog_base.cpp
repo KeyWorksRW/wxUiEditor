@@ -17,6 +17,8 @@
 bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
+    // Scaling of pos and size are handled after the dialog
+    // has been created and controls added.
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
     {
         return false;
@@ -40,9 +42,14 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_scintilla->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_scintilla->SetAdditionalSelectionTyping(true);
         m_scintilla->SetAdditionalCaretsBlink(true);
+        // Sets text margin scaled appropriately for the current DPI on Windows,
+        // 5 on wxGTK or wxOSX
+
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginWidth(1, 0);
+        // Remove default margin
+
         m_scintilla->SetMarginWidth(0, 16);
         m_scintilla->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
         m_scintilla->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
@@ -65,10 +72,13 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
 
     if (pos != wxDefaultPosition)
     {
+        // Now that the dialog is created, set the scaled position
         SetPosition(FromDIP(pos));
     }
     if (size == wxDefaultSize)
     {
+        // If default size let the sizer set the dialog's size
+        // so that it is large enough to fit it's child controls.
         SetSizerAndFit(parent_sizer);
     }
     else
@@ -76,6 +86,7 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         SetSizer(parent_sizer);
         if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
         {
+            // Use the sizer to calculate the missing dimension
             Fit();
         }
         SetSize(FromDIP(size));

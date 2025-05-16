@@ -56,6 +56,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
+    // Don't scale pos and size until after the window has been created.
     if (!wxFrame::Create(parent, id, title, pos, size, style, name))
     {
         return false;

@@ -24,19 +24,24 @@
 
 // clang-format off
 
+using namespace wxue_data;
+
+// These functions are declared in the wxue_data namespace, and retrieve the XML data as a string.
+// The data is compressed, so each function will decompress the data before returning it. See
+// wxue_data.h for the original xml file that was converted into a compressed string by wxUiEditor.
 const static std::function<std::string()> functionArray[] = {
-    wxue_data::get_bars,
-    wxue_data::get_boxes,
-    wxue_data::get_buttons,
-    wxue_data::get_containers,
-    wxue_data::get_data_ctrls,
-    wxue_data::get_forms,
-    wxue_data::get_mdi,
-    wxue_data::get_pickers,
-    wxue_data::get_project,
-    wxue_data::get_sizers,
-    wxue_data::get_text_ctrls,
-    wxue_data::get_widgets,
+    get_bars,
+    get_boxes,
+    get_buttons,
+    get_containers,
+    get_data_ctrls,
+    get_forms,
+    get_mdi,
+    get_pickers,
+    get_project,
+    get_sizers,
+    get_text_ctrls,
+    get_widgets,
 };
 
 // var_names for these generators will default to "none" for class access

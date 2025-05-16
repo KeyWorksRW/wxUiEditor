@@ -345,6 +345,7 @@ namespace GenEnum
         prop_note,
         prop_null_text,
         prop_one_shot,
+        prop_optional_comments,
         prop_orientation,
         prop_outer_border,
         prop_output_file,

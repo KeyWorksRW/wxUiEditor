@@ -19,10 +19,9 @@
 
 #include <pugixml.hpp>
 
-#include "code.h"       // Code -- Helper class for generating code
-#include "gen_base.h"   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "preferences.h"
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utility functions
 #include "write_code.h"       // Write code to Scintilla or file
@@ -455,7 +454,7 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         {
             header->writeLine(tt_string("// ") << embed.filename);
         }
-        if (embed.array_size >> 32 > 0 && UserPrefs.is_AddComments())
+        if (embed.array_size >> 32 > 0 && Project.AddOptionalComments())
         {
             header->writeLine(tt_string("extern const unsigned char ")
                               << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // Original size: "

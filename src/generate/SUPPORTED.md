@@ -148,7 +148,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxGenericDirCtrl       | yes | ---     | partial | yes  | partial | gen_dir_ctrl.cpp      |
 | wxGrid                 | yes | ---     | yes     | yes  | no      | gen_grid.cpp          |
 | wxHtmlWindow           | yes | ---     | yes     | yes  | yes     | gen_html_window.cpp   |
-| wxHyperlinkCtrl        | yes | ---     | yes     | yes  | yes     | gen_hyperlink.cpp     |
+| wxHyperlinkCtrl        | yes | yes     | yes     | yes  | yes     | gen_hyperlink.cpp     |
 | wxListBox              | yes | ---     | yes     | yes  | yes     | gen_listbox.cpp       |
 | wxListView             | yes | ---     | yes     | yes  | partial | gen_listview.cpp      |
 | wxRadioBox             | yes | ---     | yes     | yes  | yes     | gen_prop_grid.cpp     |

@@ -7,11 +7,12 @@
 
 #include <wx/hyperlink.h>  // Hyperlink control
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_hyperlink.h"
 
@@ -63,6 +64,10 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
     bool use_generic_version =
         code.is_cpp() && (!code.IsTrue(prop_underlined) || code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
+    if (use_generic_version && Project.AddOptionalComments() && !code.IsTrue(prop_underlined))
+    {
+        code.AddComment(" wxGenericHyperlinkCtrl is used in order to remove the underline from the font.");
+    }
     code.AddAuto().NodeName().CreateClass(use_generic_version);
 
     code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
@@ -76,7 +81,7 @@ bool HyperlinkGenerator::SettingsCode(Code& code)
 {
     if (!code.IsTrue(prop_underlined) && !code.hasValue(prop_font))
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetFont(").Add("wxSystemSettings").ClassMethod("GetFont(");
+        code.Eol(eol_if_empty).NodeName().Function("SetFont(").Class("wxSystemSettings").ClassMethod("GetFont(");
         code.Add("wxSYS_DEFAULT_GUI_FONT)").EndFunction();
     }
 
@@ -179,6 +184,16 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxHyperlinkCtrlXmlHandler");
+}
+
+bool HyperlinkGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL && !node->as_bool(prop_underlined) && !node->hasValue(prop_font))
+    {
+        set_imports.emplace("use Wx qw[:systemsettings];");
+    }
+
+    return false;
 }
 
 bool HyperlinkGenerator::IsGeneric(Node* node)

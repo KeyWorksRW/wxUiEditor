@@ -10,9 +10,9 @@
 
 #include "code.h"
 
-#include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
-#include "utils.h"           // Miscellaneous utilities
+#include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "utils.h"            // Miscellaneous utilities
 
 // clang-format off
 
@@ -221,7 +221,7 @@ Code& Code::Add(tt_string_view text)
 
 Code& Code::AddComment(std::string_view comment, bool force)
 {
-    if (!UserPrefs.is_AddComments() && !force)
+    if (!Project.AddOptionalComments() && !force)
         return *this;
     Eol(eol_if_needed);
     switch (m_language)

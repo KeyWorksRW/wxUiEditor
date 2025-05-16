@@ -328,6 +328,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_note, "note" },
     { prop_null_text, "null_text" },
     { prop_one_shot, "one_shot" },
+    { prop_optional_comments, "optional_comments" },
     { prop_orientation, "orientation" },
     { prop_outer_border, "outer_border" },
     { prop_output_file, "output_file" },

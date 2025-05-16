@@ -53,7 +53,6 @@ public:
     void set_FullPathTitle(bool value) { m_fullpath_title = value; }
 
     bool is_AddComments() const { return m_add_comments; }
-    void set_AddComments(bool value) { m_add_comments = value; }
 
     bool is_SvgImages() const { return m_svg_images; }
     void set_SvgImages(bool value) { m_svg_images = value; }

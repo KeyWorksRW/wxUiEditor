@@ -126,6 +126,8 @@ public:
     // with older versions of wxUiEditor
     void UpdateOriginalProjectVersion() { m_OriginalProjectVersion = m_ProjectVersion; }
 
+    bool AddOptionalComments() const { return m_project_node->as_bool(prop_optional_comments); }
+
     // Call setProjectUpdated() if the project file's minimum version needs to be updated
     void setProjectUpdated() { m_isProject_updated = true; }
     // Call isProjectUpdated() to determine if the project file's minimum version needs to be updated

@@ -60,6 +60,8 @@
             help="Optional prefixes to apply before a custom id. These can be added in the ID Editor dialog."/>
         <property name="id_suffixes" type="stringlist_semi"
             help="Optional suffixes to apply after a custom id. These can be added in the ID Editor dialog."/>
+        <property name="optional_comments" type="bool"
+            help="Add some explanatory comments to the generated code.">0</property>
     </gen>
 
     <gen class="folder" image="folder" type="folder">

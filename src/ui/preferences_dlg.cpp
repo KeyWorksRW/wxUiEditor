@@ -66,10 +66,6 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* box_sizer3 = new wxBoxSizer(wxVERTICAL);
 
-    m_check_right_propgrid = new wxCheckBox(page_general, wxID_ANY, "Property Panel on Right");
-    m_check_right_propgrid->SetToolTip("If checked, the Property panel will be moved to the right side");
-    box_sizer3->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
-
     m_check_load_last = new wxCheckBox(page_general, wxID_ANY, "Always load last project");
     box_sizer3->Add(m_check_load_last, wxSizerFlags(1).Border(wxALL));
 
@@ -84,22 +80,19 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
     box_sizer3->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
 
+    m_check_svg_bitmaps = new wxCheckBox(page_general, wxID_ANY, "Default SVG bitmaps");
+    m_check_svg_bitmaps->SetToolTip("If checked, new bitmaps will default to SVG files");
+    box_sizer3->Add(m_check_svg_bitmaps, wxSizerFlags().Border(wxALL));
+
+    m_check_right_propgrid = new wxCheckBox(page_general, wxID_ANY, "Property Panel on Right");
+    m_check_right_propgrid->SetToolTip("If checked, the Property panel will be moved to the right side");
+    box_sizer3->Add(m_check_right_propgrid, wxSizerFlags(1).Border(wxALL));
+
     box_sizer2->Add(box_sizer3, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer4 = new wxBoxSizer(wxVERTICAL);
 
-    m_check_svg_bitmaps = new wxCheckBox(page_general, wxID_ANY, "Default SVG bitmaps");
-    m_check_svg_bitmaps->SetToolTip("If checked, new bitmaps will default to SVG files");
-    box_sizer4->Add(m_check_svg_bitmaps, wxSizerFlags().Border(wxALL));
-
-    m_check_prefer_comments = new wxCheckBox(page_general, wxID_ANY, "Generate explanatory comments");
-    m_check_prefer_comments->SetValue(true);
-    m_check_prefer_comments->SetToolTip("When checked, explanatory comments will sometimes be added to the generated code.");
-    box_sizer4->Add(m_check_prefer_comments, wxSizerFlags().Border(wxALL));
-
     box_sizer2->Add(box_sizer4, wxSizerFlags().Border(wxALL));
-
-    m_general_page_sizer->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer8 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -120,15 +113,17 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_choice_icon_size->SetStringSelection("18");
     box_sizer8->Add(m_choice_icon_size, wxSizerFlags().Border(wxALL));
 
-    m_general_page_sizer->Add(box_sizer8, wxSizerFlags().Border(wxALL));
+    box_sizer2->Add(box_sizer8, wxSizerFlags().Border(wxALL));
 
     m_box_code_font = new wxBoxSizer(wxHORIZONTAL);
 
     m_btn_font = new wxCommandLinkButton(page_general, wxID_ANY, "Font", "Font for code panels");
     m_box_code_font->Add(m_btn_font, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_general_page_sizer->Add(m_box_code_font,
+    box_sizer2->Add(m_box_code_font,
     wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+
+    m_general_page_sizer->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
     page_general->SetSizerAndFit(m_general_page_sizer);
 
     auto* page_cpp = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -494,7 +489,6 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
     m_check_high_contrast->SetValue(UserPrefs.is_HighContrast());
     m_check_fullpath->SetValue(UserPrefs.is_FullPathTitle());
-    m_check_prefer_comments->SetValue(UserPrefs.is_AddComments());
     m_check_svg_bitmaps->SetValue(UserPrefs.is_SvgImages());
 
     m_check_cpp_snake_case->SetValue(UserPrefs.is_CppSnakeCase());
@@ -603,7 +597,6 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON : Prefs::PENDING_DARK_MODE_OFF));
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
     UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
-    UserPrefs.set_AddComments(m_check_prefer_comments->GetValue());
     UserPrefs.set_SvgImages(m_check_svg_bitmaps->GetValue());
 
     UserPrefs.set_CppSnakeCase(m_check_cpp_snake_case->GetValue());

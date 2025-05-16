@@ -60,7 +60,6 @@ protected:
     wxCheckBox* m_check_fullpath;
     wxCheckBox* m_check_high_contrast;
     wxCheckBox* m_check_load_last;
-    wxCheckBox* m_check_prefer_comments;
     wxCheckBox* m_check_right_propgrid;
     wxCheckBox* m_check_svg_bitmaps;
     wxChoice* m_choice_cpp_version;

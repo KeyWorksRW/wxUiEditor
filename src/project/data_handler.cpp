@@ -19,13 +19,13 @@
 
 #include <pugixml.hpp>
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"        // MainFrame -- Main window frame
+#include "code.h"       // Code -- Helper class for generating code
+#include "gen_base.h"   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"  // MainFrame -- Main window frame
 #include "preferences.h"
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"       // Miscellaneous utility functions
-#include "write_code.h"  // Write code to Scintilla or file
+#include "utils.h"            // Miscellaneous utility functions
+#include "write_code.h"       // Write code to Scintilla or file
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
 bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t compressed_size);

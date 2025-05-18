@@ -154,35 +154,23 @@ set (wxCLib_sources
     3rdparty/pcre/src/pcre2_valid_utf.c
     3rdparty/pcre/src/pcre2_xclass.c
 
+    # plutovg
+    3rdparty/lunasvg/plutovg/source/plutovg-blend.c
+    3rdparty/lunasvg/plutovg/source/plutovg-canvas.c
+    3rdparty/lunasvg/plutovg/source/plutovg-font.c
+    3rdparty/lunasvg/plutovg/source/plutovg-matrix.c
+    3rdparty/lunasvg/plutovg/source/plutovg-paint.c
+    3rdparty/lunasvg/plutovg/source/plutovg-path.c
+    3rdparty/lunasvg/plutovg/source/plutovg-rasterize.c
+    3rdparty/lunasvg/plutovg/source/plutovg-surface.c
+    3rdparty/lunasvg/plutovg/source/plutovg-ft-math.c
+    3rdparty/lunasvg/plutovg/source/plutovg-ft-raster.c
+    3rdparty/lunasvg/plutovg/source/plutovg-ft-stroker.c
+
     # wx_wxexpat
     src/expat/expat/lib/xmlparse.c
     src/expat/expat/lib/xmlrole.c
     src/expat/expat/lib/xmltok.c
-
-    # plutovg used by lunasvg 3.x
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-blend.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-canvas.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-font.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-matrix.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-paint.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-path.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-rasterize.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-surface.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-ft-math.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-ft-raster.c
-    ../lib_sources/lunasvg/lunasvg_3/plutovg/source/plutovg-ft-stroker.c
-
-    # plutovg used by lunasvg
-    # Note that there is a non-official version of these as C++ code
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-blend.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-dash.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-math.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-raster.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-ft-stroker.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-geometry.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-paint.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg-rle.c
-    # 3rdparty/lunasvg/3rdparty/plutovg/plutovg.c
 
     # wxBase
     src/common/extended.c

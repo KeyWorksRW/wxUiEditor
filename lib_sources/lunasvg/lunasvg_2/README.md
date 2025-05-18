@@ -1,1 +1,0 @@
-This code is from lunasvg version 2.4.1, with plutovg code converted to C++ and the `lunasvg` namespace converted to `wxlunasvg`. Unlike lunasvg version 3, this version only requires C++11 to compile (version 3 requires C++17).

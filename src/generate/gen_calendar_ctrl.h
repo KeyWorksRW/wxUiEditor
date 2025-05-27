@@ -25,4 +25,6 @@ public:
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
     tt_string GetPythonURL(Node*) override { return "wx.adv.CalendarCtrl.html"; }
+
+    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

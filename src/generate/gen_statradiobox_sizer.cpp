@@ -128,7 +128,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     }
     if (parent_name.empty())
     {
-        parent_name.Str(code.is_cpp() ? "this" : "self");
+        parent_name.Str(code.is_cpp() ? "this" : code.is_perl() ? "$self" : "self");
     }
 
     if (code.is_cpp())

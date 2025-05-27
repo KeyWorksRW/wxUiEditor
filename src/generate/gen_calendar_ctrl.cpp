@@ -48,6 +48,10 @@ bool CalendarCtrlGenerator::ConstructionCode(Code& code)
     {
         code.Str("DateTime.now");
     }
+    else if (code.is_perl())
+    {
+        code.Str("Wx::DateTime->new()");
+    }
     else
     {
         code.Add("wxDefaultDateTime");
@@ -116,4 +120,15 @@ int CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 void CalendarCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxCalendarCtrlXmlHandler");
+}
+
+bool CalendarCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use base qw[Wx::Calendar];");
+        set_imports.emplace("use Wx qw[:calendar];");
+    }
+
+    return false;
 }

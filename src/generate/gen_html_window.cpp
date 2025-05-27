@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxHtmlWindow generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -133,8 +133,9 @@ bool HtmlWindowGenerator::GetImports(Node*, std::set<std::string>& set_imports, 
         set_imports.insert("require 'wx/html'");
         return true;
     }
-    else
+    else if (language == GEN_LANG_PERL)
     {
+        set_imports.emplace("use base qw[Wx::Html];");
     }
     return false;
 }

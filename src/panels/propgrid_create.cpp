@@ -584,24 +584,25 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 switch (prop->get_name())
                 {
                     case prop_base_file:
-                    case prop_derived_file:
-                    case prop_xrc_file:
+                    case prop_cmake_file:
                     case prop_combined_xrc_file:
+                    case prop_data_file:
+                    case prop_derived_file:
+                    case prop_folder_cmake_file:
                     case prop_folder_combined_xrc_file:
-                    case prop_perl_file:
-                    case prop_python_file:
-                    case prop_python_combined_file:
-                    case prop_ruby_file:
-                    case prop_ruby_combined_file:
-                    case prop_rust_file:
                     case prop_fortran_file:
                     case prop_haskell_file:
+                    case prop_initial_filename:
                     case prop_lua_file:
-                    case prop_cmake_file:
-                    case prop_folder_cmake_file:
-                    case prop_subclass_header:
                     case prop_output_file:
-                    case prop_data_file:
+                    case prop_perl_file:
+                    case prop_python_combined_file:
+                    case prop_python_file:
+                    case prop_ruby_combined_file:
+                    case prop_ruby_file:
+                    case prop_rust_file:
+                    case prop_subclass_header:
+                    case prop_xrc_file:
                         return new ttFileProperty(prop);
 
                     default:

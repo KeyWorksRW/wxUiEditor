@@ -199,6 +199,12 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             }
             break;
 
+        case prop_initial_filename:
+            root_path = Project.getProjectPath();
+            title = "Initial filename";
+            wildcard = "All Files|*.*";
+            break;
+
         default:
             FAIL_MSG(tt_string() << "Unknown property type: " << m_prop->declName().substr());
             break;

@@ -812,8 +812,9 @@ void BaseCodeGenerator::GenCppEventHandlers(EventVector& events)
             // the same event handler for multiple events.
             code_lines.emplace(set_code);
 
-            code.Str(set_code).Eol();
-            code.OpenBrace();
+            tt_string event_function = set_code;
+            code.Str(event_function) << event->getEventInfo()->get_event_class() << "& event)";
+            code.Eol().OpenBrace();
 #if defined(_DEBUG)
             auto& dbg_event_name = event->get_name();
             wxUnusedVar(dbg_event_name);

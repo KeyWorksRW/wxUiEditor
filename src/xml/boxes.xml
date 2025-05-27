@@ -232,8 +232,9 @@
         <property name="var_name" type="string">m_radioBox</property>
         <property name="label" type="string_escapes">My Radio Box</property>
         <property name="contents" type="stringlist"
-            help="Contents of the Radio Box. On Windows, the last character may be clipped unless you include a trailing space.">"Radio
-            Button "</property>
+            help="Contents of the Radio Box. On Windows, the last character may be clipped unless you include a trailing space.">
+            "Radio Button "
+        </property>
         <property name="selection" type="uint"
             help="Zero-based position of the selected button.">0</property>
         <property name="majorDimension" type="uint"

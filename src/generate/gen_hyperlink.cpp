@@ -63,8 +63,14 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
-    bool use_generic_version =
-        (code.is_cpp() || (code.is_ruby() && Project.getLangVersion(GEN_LANG_RUBY) >= 10505)) && (!code.IsTrue(prop_underlined) || code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
+    bool use_generic_version = false;
+    if (!code.IsTrue(prop_underlined) || code.node()->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
+        if (code.is_cpp() || (code.is_ruby() && Project.getLangVersion(GEN_LANG_RUBY) >= 10505))
+        {
+            use_generic_version = true;
+        }
+    }
     if (use_generic_version && Project.AddOptionalComments() && !code.IsTrue(prop_underlined))
     {
         code.AddComment(" wxGenericHyperlinkCtrl is used in order to remove the underline from the font.");

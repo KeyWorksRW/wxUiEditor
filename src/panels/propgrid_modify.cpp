@@ -17,6 +17,33 @@
 void PropGridPanel::modifyProperty(NodeProperty* prop, tt_string_view str)
 {
     m_isPropChangeSuspended = true;
+    if (prop->get_name() == prop_id)
+    {
+        tt_string id_string = str;
+        wxWindowID id = static_cast<wxWindowID>(NodeCreation.getConstantAsInt(id_string, -1));
+        if (wxIsStockID(id))
+        {
+            auto node = prop->getNode();
+            if (node->hasProp(prop_label))
+            {
+                auto prop_ptr = node->getPropPtr(prop_label);
+                if (prop_ptr->as_string() == prop_ptr->getDefaultValue())
+                {
+                    prop_ptr->set_value("");
+                    // Find prop_ptr as a value in m_property_map and clear it in the property grid
+                    for (const auto& [pg_property, value]: m_property_map)
+                    {
+                        if (value == prop_ptr)
+                        {
+                            m_prop_grid->SetPropertyValue(pg_property, "");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     if (auto* gen = prop->getNode()->getGenerator(); !gen || !gen->modifyProperty(prop, str))
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, str));

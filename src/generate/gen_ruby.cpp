@@ -169,6 +169,12 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
     m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
 
+    m_set_enum_ids.clear();
+    m_set_const_ids.clear();
+    // Do this early to give thrd_get_events and thrd_collect_img_headers a chance to run
+    // before we need to join (finish) them.
+    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
+
     if (m_form_node->isGen(gen_Images))
     {
         m_source->writeLine();
@@ -250,10 +256,6 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             }
         }
     }
-
-    m_set_enum_ids.clear();
-    m_set_const_ids.clear();
-    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     int id_value = wxID_HIGHEST;
     for (auto& iter: m_set_enum_ids)
@@ -349,6 +351,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                     }
                     svg_import_libs = true;
                 }
+
                 if (iter->form != m_ImagesForm)
                 {
                     // If the image isn't in the images file, then we need to add the base64 version
@@ -366,7 +369,8 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
                     m_NeedImageFunction = true;
                 }
             }
-        }
+        }  // end of for (auto& iter: m_embedded_images)
+
         if (m_NeedImageFunction)
         {
             if (images_file_imported)

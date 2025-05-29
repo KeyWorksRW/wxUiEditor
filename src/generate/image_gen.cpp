@@ -463,6 +463,16 @@ void BaseCodeGenerator::GenerateRubyImagesForm()
     m_source->writeLine();
 }
 
+void BaseCodeGenerator::GeneratePerlImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    {
+        return;
+    }
+
+    // TODO: [Randalphwa - 05-29-2025] Implement Perl image generation
+}
+
 // ******************************* Bundle Code Generation *******************************
 //
 // Call GenerateBundleParameter() to generate the code to create a wxBitmapBundle, or

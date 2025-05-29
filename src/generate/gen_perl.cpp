@@ -110,6 +110,15 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     Code code(m_form_node, GEN_LANG_PERL);
 
     m_embedded_images.clear();
+
+    bool base64_requirement_written = false;
+
+    // [Randalphwa - 05-29-2025] These two are used for SVG files which the
+    // current version of wxPerl does not support. I'm including them here
+    // anyway so that when/if wxPerl supports SVG files, the code will be ready.
+    bool stringio_requirement_written = false;
+    // bool zlib_requirement_written = false;
+
     SetImagesForm();
     std::set<std::string> img_include_set;
 
@@ -215,21 +224,106 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         m_source->writeLine();
     }
 
+    m_set_enum_ids.clear();
+    m_set_const_ids.clear();
+    // Do this early to give thrd_get_events and thrd_collect_img_headers a chance to run before we
+    // need to join (finish) them.
+    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
+
     m_source->writeLine();
     m_source->writeLine("use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
     m_source->writeLine("use strict;");
 
+    try
+    {
+        thrd_collect_img_headers.join();
+    }
+    catch (const std::system_error& err)
+    {
+#if defined(_DEBUG)
+        MSG_ERROR(err.what());
+#else
+        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error", wxICON_ERROR | wxOK);
+        dlg_error.ShowModal();
+#endif  // _DEBUG
+    }
+
     if (m_form_node->isGen(gen_Images))
     {
+        m_source->writeLine("use MIME::Base64;");
         thrd_get_events.join();
-        thrd_collect_img_headers.join();
-        // GeneratePerlImagesForm();
+        GeneratePerlImagesForm();
         return;
     }
 
-    m_set_enum_ids.clear();
-    m_set_const_ids.clear();
-    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
+    else if (m_embedded_images.size())
+    {
+        bool images_file_imported = false;
+        bool svg_import_libs = false;
+        for (auto& iter: m_embedded_images)
+        {
+            if (iter->form == m_ImagesForm)
+            {
+                if (!images_file_imported)
+                {
+                    tt_string import_name = iter->form->as_string(prop_perl_file).filename();
+                    import_name.remove_extension();
+                    code.Eol().Str("use ").Str(import_name) << "'";
+                    m_source->writeLine(code);
+                    code.clear();
+                    images_file_imported = true;
+                }
+                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+                {
+                    if (!svg_import_libs)
+                    {
+                        // TODO: [Randalphwa - 05-29-2025] Currently, wxPerl does not support SVG
+                        // files. We could take advantage of wxLunaSVG and convert the SVG files to
+                        // PNG -- in fact we could even generate multiple resolution PNG files.
+
+                        // svg_import_libs = true;
+                    }
+                }
+
+                if (iter->form != m_ImagesForm)
+                {
+                    // If the image isn't in the images file, then we need to add the base64 version
+                    // of the bitmap
+                    if (!base64_requirement_written)
+                    {
+                        m_source->writeLine("use MIME::Base64;");
+                        base64_requirement_written = true;
+                    }
+
+                    // At this point we know that some method is required, but until we have
+                    // processed all the images, we won't know if the images file is required. The
+                    // images file provides it's own function for loading images, so we can use that
+                    // if it's available.
+                    m_NeedImageFunction = true;
+                }
+            }
+        }  // end of for (auto& iter: m_embedded_images)
+
+        if (m_NeedImageFunction)
+        {
+            if (images_file_imported)
+            {
+                // The images file supplies the function we need
+                m_NeedImageFunction = false;
+            }
+            else
+            {
+                // REVIEW: [Randalphwa - 05-29-2025] This is just here as a placeholder in case we
+                // need to bring in another package for loading images.
+                if (!stringio_requirement_written)
+                {
+                    // No further check for this is needed
+                    // stringio_requirement_written = true;
+                    // m_source->writeLine("require 'stringio'");
+                }
+            }
+        }
+    }
 
     int id_value = wxID_HIGHEST;
     for (auto& iter: m_set_enum_ids)
@@ -248,14 +342,6 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
         {
             m_source->writeLine('$' + iter);
         }
-    }
-
-    thrd_collect_img_headers.join();
-    if (m_embedded_images.size())
-    {
-        m_source->writeLine();
-
-        // TODO: [Randalphwa - 07-13-2023] Need to figure out how to handle images in wxPerl.
     }
 
     auto generator = m_form_node->getNodeDeclaration()->getGenerator();

@@ -129,6 +129,9 @@ protected:
     // This method is in image_gen.cpp, and handles Ruby code generation
     void GenerateRubyImagesForm();  // declared in image_gen.cpp
 
+    // This method is in image_gen.cpp, and handles Perl code generation
+    void GeneratePerlImagesForm();  // declared in image_gen.cpp
+
     tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);

@@ -5,8 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include <set>
 #include <thread>
+
+#include "gen_cpp.h"
 
 #include "mainframe.h"
 
@@ -14,7 +17,6 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "data_handler.h"     // DataHandler class
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "gen_timer.h"        // TimerGenerator class
@@ -208,7 +210,7 @@ static void GenCppForm(GenData& gen_data, Node* form)
         return;
     }
 
-    BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS, form);
+    CppCodeGenerator codegen(form);
 
     path.replace_extension(header_ext);
     auto h_cw = std::make_unique<FileCodeWriter>(path);
@@ -218,7 +220,7 @@ static void GenCppForm(GenData& gen_data, Node* form)
     auto cpp_cw = std::make_unique<FileCodeWriter>(path);
     codegen.SetSrcWriteCode(cpp_cw.get());
 
-    codegen.GenerateCppClass();
+    codegen.GenerateClass();
 
     path.replace_extension(header_ext);
 
@@ -370,7 +372,7 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
         return results.updated_files.size() > 0;
 }
 
-void BaseCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent)
+void CppCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent)
 {
     // BUGBUG: [KeyWorks - 09-01-2021] tt_string_vector works fine with a string as the separator. So does
     // tt_view_vector which is what we should be using here.
@@ -408,7 +410,7 @@ void BaseCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vec
     }
 }
 
-void BaseCodeGenerator::GenCppImageFunctions()
+void CppCodeGenerator::GenCppImageFunctions()
 {
     // First, generate the header files needed
 
@@ -497,7 +499,7 @@ void BaseCodeGenerator::GenCppImageFunctions()
     }
 }
 
-void BaseCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
+void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
 {
     // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
     // as a forwarded class.
@@ -591,7 +593,9 @@ void BaseCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
     }
 }
 
-void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
+CppCodeGenerator::CppCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_CPLUSPLUS, form_node) {}
+
+void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS)
     if (m_form_node->isGen(gen_Data))
@@ -631,10 +635,10 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
 
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&CppCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&CppCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
-    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
+    std::thread thrd_need_img_func(&CppCodeGenerator::ParseImageProperties, this, m_form_node);
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
@@ -960,7 +964,7 @@ void BaseCodeGenerator::GenerateCppClass(PANEL_PAGE panel_type)
     }
 }
 
-void BaseCodeGenerator::GenerateCppClassHeader()
+void CppCodeGenerator::GenerateCppClassHeader()
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -1231,7 +1235,7 @@ void BaseCodeGenerator::GenerateCppClassHeader()
     }
 }
 
-void BaseCodeGenerator::GenerateCppClassConstructor()
+void CppCodeGenerator::GenerateCppClassConstructor()
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
     m_source->writeLine();
@@ -1393,7 +1397,7 @@ void BaseCodeGenerator::GenerateCppClassConstructor()
     }
 }
 
-void BaseCodeGenerator::GenerateCppHandlers()
+void CppCodeGenerator::GenerateCppHandlers()
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -1416,7 +1420,7 @@ void BaseCodeGenerator::GenerateCppHandlers()
     }
 }
 
-void BaseCodeGenerator::GenCppValidatorFunctions(Node* node)
+void CppCodeGenerator::GenCppValidatorFunctions(Node* node)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -1435,6 +1439,7 @@ void BaseCodeGenerator::GenCppValidatorFunctions(Node* node)
     }
 }
 
+// This is called in gen_base.cpp, so it cannot be part of the CppCodeGenerator class.
 void BaseCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Node* node, std::set<std::string>& code_lines)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
@@ -1530,7 +1535,7 @@ void BaseCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, No
 }
 
 // This should only be called to generate C++ code.
-void BaseCodeGenerator::GenCppEnumIds(Node* class_node)
+void CppCodeGenerator::GenCppEnumIds(Node* class_node)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -1590,7 +1595,7 @@ void BaseCodeGenerator::GenCppEnumIds(Node* class_node)
     }
 }
 
-void BaseCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
+void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
 

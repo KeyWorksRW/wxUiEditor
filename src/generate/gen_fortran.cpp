@@ -1,13 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Fortran code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <set>
 #include <thread>
 #include <unordered_set>
+
+#include "gen_fortran.h"
 
 #include "mainframe.h"
 
@@ -42,6 +44,13 @@ R"===(!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 )===";
 
 // clang-format on
+
+FortranCodeGenerator::FortranCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_FORTRAN, form_node) {}
+
+void FortranCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+{
+    BaseCodeGenerator::GenerateFortranClass(panel_type);
+}
 
 void BaseCodeGenerator::GenerateFortranClass(PANEL_PAGE panel_type)
 {

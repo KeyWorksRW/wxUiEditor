@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Lua code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,12 +9,13 @@
 #include <thread>
 #include <unordered_set>
 
+#include "gen_lua.h"
+
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
@@ -59,6 +60,13 @@ main()
 )===";
 
 // clang-format on
+
+LuaCodeGenerator::LuaCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_LUA, form_node) {}
+
+void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+{
+    BaseCodeGenerator::GenerateLuaClass(panel_type);
+}
 
 void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
 {

@@ -1,19 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Python code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include <wx/artprov.h>
 
 #include <set>
 #include <thread>
 
+#include "gen_python.h"
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
@@ -55,9 +57,9 @@ static void GatherImportModules(std::set<std::string>& imports, Node* node)
     }
 }
 
-// Equivalent to GenerateBaseClass in gen_base.cpp
+PythonCodeGenerator::PythonCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_PYTHON, form_node) {}
 
-void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
+void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_PYTHON);
 
@@ -66,8 +68,8 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     std::set<std::string> img_include_set;
     m_baseFullPath = MakePythonPath(m_form_node);
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&PythonCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&PythonCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.

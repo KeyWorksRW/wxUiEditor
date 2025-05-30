@@ -10,10 +10,11 @@
 #include <set>
 #include <thread>
 
+#include "gen_ruby.h"
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
@@ -96,9 +97,9 @@ static const std::vector<tt_string> disable_list = {
 // clang-format on
 #endif  // _DEBUG
 
-// Equivalent to GenerateBaseClass in gen_base.cpp
+RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUBY, form_node) {}
 
-void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
+void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_RUBY);
 
@@ -115,9 +116,9 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&RubyCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_need_img_func(&RubyCodeGenerator::ParseImageProperties, this, m_form_node);
+    std::thread thrd_collect_img_headers(&RubyCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Haskell code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,12 +9,13 @@
 #include <thread>
 #include <unordered_set>
 
+#include "gen_haskell.h"
+
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
@@ -42,6 +43,13 @@ R"===(-- -----------------------------------------------------------------------
 )===";
 
 // clang-format on
+
+HaskellCodeGenerator::HaskellCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_HASKELL, form_node) {}
+
+void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+{
+    BaseCodeGenerator::GenerateHaskellClass(panel_type);
+}
 
 void BaseCodeGenerator::GenerateHaskellClass(PANEL_PAGE panel_type)
 {

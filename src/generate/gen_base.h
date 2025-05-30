@@ -1,15 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#pragma once
 
 #include <set>
 
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
 #include "gen_enums.h"             // Enumerations for generators
-#include "gen_xrc.h"               // BaseXrcGenerator -- Generate XRC file
 #include "tt_string_vector.h"      // tt_string_vector -- Class for reading and writing line-oriented strings/files
 
 class Code;
@@ -53,20 +54,21 @@ class BaseCodeGenerator
 {
 public:
     BaseCodeGenerator(GenLang language, Node* form_node);
+    virtual ~BaseCodeGenerator() = default;
 
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
-    void GenerateCppClass(PANEL_PAGE panel_type = NOT_PANEL);
+    // All language generators must implement this method.
+    // virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) = 0;
+    virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) { m_panel_type = panel_type; };
+
+    // [Randalphwa - 05-29-2025] The source code for these exist, but
+    // they are not currently compiled, nor complete.
     void GenerateFortranClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateHaskellClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateLuaClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePerlClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePythonClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateRubyClass(PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateRustClass(PANEL_PAGE panel_type = NOT_PANEL);
-
-    // GenerateDerivedClass() is in gen_derived.cpp
 
     // Returns result::fail, result::exists, result::created, or result::ignored
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
@@ -78,9 +80,6 @@ public:
 
     auto GetHeaderWriter() { return m_header; }
     auto GetSrcWriter() { return m_source; }
-
-    // Write code to m_source that will load any image handlers needed by the form's class
-    void GenerateCppHandlers();
 
     PANEL_PAGE GetPanelType() { return m_panel_type; }
 
@@ -142,12 +141,6 @@ protected:
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void GenerateCppClassHeader();
-    void GenerateCppClassConstructor();
-
-    // Called from GenerateCppClassConstructor if node is a gen_Data
-    void GenerateDataClassConstructor(PANEL_PAGE panel_type);
-
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents();
     void GenCppEventHandlers(EventVector& events);
@@ -159,14 +152,8 @@ protected:
     // Generates all the code lines for validator_variables initialized in the header file
     void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);
 
-    // Recursive function for generating all get/set validator functions in the header file
-    void GenCppValidatorFunctions(Node* node);
-
     // Recursive function for generating all include files needed by any nodes in the form
     void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
-
-    // Generates an enum of all use-defined ids
-    void GenCppEnumIds(Node* class_node);
 
     // Determine if Header or Animation functions need to be generated, and whether the
     // wx/artprov.h is needed.
@@ -187,11 +174,6 @@ protected:
     void GenContextMenuHandler(Node* node_ctx_menu);
 
 protected:
-    void GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent);
-    // Generate any headers and functions needed for images in m_source
-    void GenCppImageFunctions();
-    // Writes the #include files to m_header
-    void GenInitHeaderFile(std::set<std::string>& hdr_includes);
     // Call this to set m_ImagesForm
     void SetImagesForm();
 
@@ -209,7 +191,7 @@ protected:
     // In C++ unindents, then adds a line with "}". Other languages just unindent.
     void EndBrace();
 
-private:
+protected:
     WriteCode* m_header;
     WriteCode* m_source;
 

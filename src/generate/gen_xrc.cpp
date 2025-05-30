@@ -23,7 +23,7 @@
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
-#include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_xrc.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 
 #include "../panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "../ui/xrccompare.h"          // C++/XRC UI Comparison dialog
@@ -244,6 +244,13 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     std::string indentation(xrc_flags & xrc::format_indent_with_spaces ? "  " : "\t");
     doc.save(xml_stream, indentation.c_str(), format_flags);
     return xml_stream.str();
+}
+
+XrcCodeGenerator::XrcCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_XRC, form_node) {}
+
+void XrcCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+{
+    BaseCodeGenerator::GenerateXrcClass(panel_type);
 }
 
 void BaseCodeGenerator::GenerateXrcClass(PANEL_PAGE panel_type)

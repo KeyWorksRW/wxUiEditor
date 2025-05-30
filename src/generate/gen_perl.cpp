@@ -10,10 +10,11 @@
 
 #include <frozen/map.h>
 
+#include "gen_perl.h"
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
@@ -105,7 +106,9 @@ const char* perl_begin_cmt_block = "=pod";
 // This *MUST* be written without any indendation
 const char* perl_end_cmt_block = "=cut";
 
-void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
+PerlCodeGenerator::PerlCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_PERL, form_node) {}
+
+void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_PERL);
 
@@ -122,8 +125,8 @@ void BaseCodeGenerator::GeneratePerlClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&PerlCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&PerlCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.

@@ -10,7 +10,6 @@
 #include "gen_common.h"
 
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
@@ -23,6 +22,13 @@
 #include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // WriteCode -- Write code to Scintilla or file
+
+#include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
+#include "gen_perl.h"    // PerlCodeGenerator class
+#include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
+#include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_rust.h"    // RustCodeGenerator -- Generate wxRust code
+#include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
 
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr)
@@ -1361,14 +1367,59 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
 #endif  // _DEBUG
         return false;
     }
-    BaseCodeGenerator codegen(language, form);
+
+    std::unique_ptr<class BaseCodeGenerator> code_generator;
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            code_generator = std::make_unique<CppCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_PYTHON:
+            code_generator = std::make_unique<PythonCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_RUBY:
+            code_generator = std::make_unique<RubyCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_PERL:
+            code_generator = std::make_unique<PerlCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_RUST:
+            code_generator = std::make_unique<RustCodeGenerator>(form);
+            break;
+
+#if GENERATE_NEW_LANG_CODE
+        case GEN_LANG_FORTRAN:
+            code_generator = std::make_unique<FortranCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_HASKELL:
+            code_generator = std::make_unique<HaskellCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_LUA:
+            code_generator = std::make_unique<LuaCodeGenerator>(form);
+            break;
+#endif
+
+        case GEN_LANG_XRC:
+            code_generator = std::make_unique<XrcCodeGenerator>(form);
+            break;
+
+        default:
+            code_generator = std::make_unique<BaseCodeGenerator>(language, form);
+            break;
+    }
 
     auto h_cw = std::make_unique<FileCodeWriter>(path);
     if (language == GEN_LANG_RUBY)
     {
         h_cw->SetTabToSpaces(2);
     }
-    codegen.SetHdrWriteCode(h_cw.get());
+    code_generator->SetHdrWriteCode(h_cw.get());
 
     path.replace_extension(GetLanguageExtension(language));
     auto cpp_cw = std::make_unique<FileCodeWriter>(path);
@@ -1376,42 +1427,50 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
     {
         cpp_cw->SetTabToSpaces(2);
     }
-    codegen.SetSrcWriteCode(cpp_cw.get());
+    code_generator->SetSrcWriteCode(cpp_cw.get());
 
     switch (language)
     {
+        case GEN_LANG_CPLUSPLUS:
+            code_generator->GenerateClass();
+            break;
+
         case GEN_LANG_PERL:
-            codegen.GeneratePerlClass();
+            code_generator->GenerateClass();
             break;
 
         case GEN_LANG_PYTHON:
-            codegen.GeneratePythonClass();
+            code_generator->GenerateClass();
             break;
 
         case GEN_LANG_RUBY:
-            codegen.GenerateRubyClass();
+            code_generator->GenerateClass();
             break;
 
         case GEN_LANG_RUST:
-            codegen.GenerateRustClass();
+            code_generator->GenerateRustClass();
             break;
 
 #if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
-            codegen.GenerateFortranClass();
+            code_generator->GenerateClass();
             break;
 
         case GEN_LANG_HASKELL:
-            codegen.GenerateHaskellClass();
+            code_generator->GenerateClass();
             break;
 
         case GEN_LANG_LUA:
-            codegen.GenerateLuaClass();
+            code_generator->GenerateClass();
             break;
 #endif  // GENERATE_NEW_LANG_CODE
 
+        case GEN_LANG_XRC:
+            code_generator->GenerateClass();
+            break;
+
         default:
-            ASSERT_MSG(false, "Unknown language specified for code generation!");
+            FAIL_MSG("Unknown panel type!")
             break;
     }
 
@@ -1420,7 +1479,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
         flags |= flag_test_only;
     auto retval = cpp_cw->WriteFile(language, flags, form);
 
-    if (auto warning_msgs = codegen.getWarnings(); warning_msgs.size())
+    if (auto warning_msgs = code_generator->getWarnings(); warning_msgs.size())
     {
         for (auto& iter: warning_msgs)
         {

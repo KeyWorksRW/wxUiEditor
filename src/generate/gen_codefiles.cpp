@@ -1,20 +1,24 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ Base code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainframe.h"
-
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Base class
 #include "gen_results.h"      // Code generation file writing functions
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "write_code.h"       // Write code to Scintilla or file
+
+#include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
+#include "gen_perl.h"    // PerlCodeGenerator class
+#include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
+#include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_rust.h"    // RustCodeGenerator -- Generate wxRust code
+#include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
 
 #include "pugixml.hpp"
+#include <memory>
 
 using namespace code;
 
@@ -278,32 +282,103 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 if (!has_base_file)
                     continue;
 
-                BaseCodeGenerator codegen(language, form);
+                std::unique_ptr<class BaseCodeGenerator> code_generator;
+                switch (language)
+                {
+                    case GEN_LANG_CPLUSPLUS:
+                        code_generator = std::make_unique<CppCodeGenerator>(form);
+                        break;
+
+                    case GEN_LANG_PYTHON:
+                        code_generator = std::make_unique<PythonCodeGenerator>(form);
+                        break;
+
+                    case GEN_LANG_RUBY:
+                        code_generator = std::make_unique<RubyCodeGenerator>(form);
+                        break;
+
+                    case GEN_LANG_PERL:
+                        code_generator = std::make_unique<PerlCodeGenerator>(form);
+                        break;
+
+                    case GEN_LANG_RUST:
+                        code_generator = std::make_unique<RustCodeGenerator>(form);
+                        break;
+
+#if GENERATE_NEW_LANG_CODE
+                    case GEN_LANG_FORTRAN:
+                        code_generator = std::make_unique<FortranCodeGenerator>(form);
+                        break;
+
+                    case GEN_LANG_HASKELL:
+                        code_generator = std::make_unique<HaskellCodeGenerator>(form);
+                        break;
+
+                    case GEN_LANG_LUA:
+                        code_generator = std::make_unique<LuaCodeGenerator>(form);
+                        break;
+#endif
+
+                    case GEN_LANG_XRC:
+                        code_generator = std::make_unique<XrcCodeGenerator>(form);
+                        break;
+
+                    default:
+                        code_generator = std::make_unique<BaseCodeGenerator>(language, form);
+                        break;
+                }
 
                 path.replace_extension(header_ext);
                 auto h_cw = std::make_unique<FileCodeWriter>(path);
-                codegen.SetHdrWriteCode(h_cw.get());
+                code_generator->SetHdrWriteCode(h_cw.get());
 
                 path.replace_extension(source_ext);
                 auto cpp_cw = std::make_unique<FileCodeWriter>(path);
-                codegen.SetSrcWriteCode(cpp_cw.get());
+                code_generator->SetSrcWriteCode(cpp_cw.get());
 
-                if (language == GEN_LANG_CPLUSPLUS)
+                switch (language)
                 {
-                    codegen.GenerateCppClass();
-                }
-                else if (language == GEN_LANG_PYTHON)
-                {
-                    codegen.GeneratePythonClass();
-                }
-                else if (language == GEN_LANG_RUBY)
-                {
-                    cpp_cw->SetTabToSpaces(2);
-                    codegen.GenerateRubyClass();
-                }
-                else if (language == GEN_LANG_PERL)
-                {
-                    codegen.GeneratePerlClass();
+                    case GEN_LANG_CPLUSPLUS:
+                        code_generator->GenerateClass();
+                        break;
+
+                    case GEN_LANG_PERL:
+                        code_generator->GenerateClass();
+                        break;
+
+                    case GEN_LANG_PYTHON:
+                        code_generator->GenerateClass();
+                        break;
+
+                    case GEN_LANG_RUBY:
+                        code_generator->GenerateClass();
+                        break;
+
+                    case GEN_LANG_RUST:
+                        code_generator->GenerateRustClass();
+                        break;
+
+#if GENERATE_NEW_LANG_CODE
+                    case GEN_LANG_FORTRAN:
+                        code_generator->GenerateClass();
+                        break;
+
+                    case GEN_LANG_HASKELL:
+                        code_generator->GenerateClass();
+                        break;
+
+                    case GEN_LANG_LUA:
+                        code_generator->GenerateClass();
+                        break;
+#endif  // GENERATE_NEW_LANG_CODE
+
+                    case GEN_LANG_XRC:
+                        code_generator->GenerateClass();
+                        break;
+
+                    default:
+                        FAIL_MSG("Unknown panel type!")
+                        break;
                 }
 
                 bool new_hdr = false;
@@ -328,32 +403,104 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         tmp_path.insert(0, "~wxue_");
                     }
 
-                    BaseCodeGenerator new_codegen(language, form);
+                    std::unique_ptr<class BaseCodeGenerator> new_code_generator;
+                    switch (language)
+                    {
+                        case GEN_LANG_CPLUSPLUS:
+                            new_code_generator = std::make_unique<CppCodeGenerator>(form);
+                            break;
+
+                        case GEN_LANG_PYTHON:
+                            new_code_generator = std::make_unique<PythonCodeGenerator>(form);
+                            break;
+
+                        case GEN_LANG_RUBY:
+                            new_code_generator = std::make_unique<RubyCodeGenerator>(form);
+                            break;
+
+                        case GEN_LANG_PERL:
+                            new_code_generator = std::make_unique<PerlCodeGenerator>(form);
+                            break;
+
+                        case GEN_LANG_RUST:
+                            new_code_generator = std::make_unique<RustCodeGenerator>(form);
+                            break;
+
+#if GENERATE_NEW_LANG_CODE
+                        case GEN_LANG_FORTRAN:
+                            new_code_generator = std::make_unique<FortranCodeGenerator>(form);
+                            break;
+
+                        case GEN_LANG_HASKELL:
+                            new_code_generator = std::make_unique<HaskellCodeGenerator>(form);
+                            break;
+
+                        case GEN_LANG_LUA:
+                            new_code_generator = std::make_unique<LuaCodeGenerator>(form);
+                            break;
+#endif
+
+                        case GEN_LANG_XRC:
+                            new_code_generator = std::make_unique<XrcCodeGenerator>(form);
+                            break;
+
+                        default:
+                            new_code_generator = std::make_unique<BaseCodeGenerator>(language, form);
+                            break;
+                    }
 
                     tmp_path.replace_extension(header_ext);
                     h_cw = std::make_unique<FileCodeWriter>(tmp_path);
-                    new_codegen.SetHdrWriteCode(h_cw.get());
+                    new_code_generator->SetHdrWriteCode(h_cw.get());
 
                     tmp_path.replace_extension(source_ext);
                     cpp_cw = std::make_unique<FileCodeWriter>(tmp_path);
-                    new_codegen.SetSrcWriteCode(cpp_cw.get());
+                    new_code_generator->SetSrcWriteCode(cpp_cw.get());
 
-                    if (language == GEN_LANG_CPLUSPLUS)
+                    switch (language)
                     {
-                        new_codegen.GenerateCppClass();
-                    }
-                    else if (language == GEN_LANG_PYTHON)
-                    {
-                        new_codegen.GeneratePythonClass();
-                    }
-                    else if (language == GEN_LANG_RUBY)
-                    {
-                        cpp_cw->SetTabToSpaces(2);
-                        new_codegen.GenerateRubyClass();
-                    }
-                    else if (language == GEN_LANG_PERL)
-                    {
-                        new_codegen.GeneratePerlClass();
+                        case GEN_LANG_CPLUSPLUS:
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        case GEN_LANG_PERL:
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        case GEN_LANG_PYTHON:
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        case GEN_LANG_RUBY:
+                            cpp_cw->SetTabToSpaces(2);
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        case GEN_LANG_RUST:
+                            new_code_generator->GenerateRustClass();
+                            break;
+
+#if GENERATE_NEW_LANG_CODE
+                        case GEN_LANG_FORTRAN:
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        case GEN_LANG_HASKELL:
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        case GEN_LANG_LUA:
+                            new_code_generator->GenerateClass();
+                            break;
+#endif  // GENERATE_NEW_LANG_CODE
+
+                        case GEN_LANG_XRC:
+                            new_code_generator->GenerateClass();
+                            break;
+
+                        default:
+                            FAIL_MSG("Unknown panel type!")
+                            break;
                     }
 
                     // WinMerge accepts an XML file the provides the left and right filenames

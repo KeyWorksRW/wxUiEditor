@@ -326,9 +326,6 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
             set_code << "fn " << handler << " {";
             if (code_lines.find(set_code) != code_lines.end())
                 continue;
-            set_code << "fn " << handler << " {";
-            if (code_lines.find(set_code) != code_lines.end())
-                continue;
 
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;

@@ -11,7 +11,6 @@
 
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
 #include "gen_enums.h"             // Enumerations for generators
-#include "tt_string_vector.h"      // tt_string_vector -- Class for reading and writing line-oriented strings/files
 
 class Code;
 class Node;
@@ -63,20 +62,12 @@ public:
     // virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) = 0;
     virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) { m_panel_type = panel_type; };
 
-    // [Randalphwa - 05-29-2025] The source code for these exist, but
-    // they are not currently compiled, nor complete.
-    void GenerateFortranClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateHaskellClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateLuaClass(PANEL_PAGE panel_type = NOT_PANEL);
-    void GenerateRustClass(PANEL_PAGE panel_type = NOT_PANEL);
-
-    // Returns result::fail, result::exists, result::created, or result::ignored
-    int GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-
-    // code for this is in gen_xrc.cpp
-    void GenerateXrcClass(PANEL_PAGE panel_type = NOT_PANEL);
-
-    void PreviewXrcClass(Node* form_node);
+    // CppCodeGenerator is the only derived class that implements this method.
+    virtual int GenerateDerivedClass(Node* /* project */, Node* /* form_node */, PANEL_PAGE panel_type = NOT_PANEL)
+    {
+        m_panel_type = panel_type;
+        return result::fail;
+    }
 
     auto GetHeaderWriter() { return m_header; }
     auto GetSrcWriter() { return m_source; }
@@ -122,15 +113,6 @@ protected:
     // This method is in gen_data_list.cpp, and handles both source and header code generation
     void GenerateDataForm();
 
-    // This method is in image_gen.cpp, and handles Python code generation
-    void GeneratePythonImagesForm();  // declared in image_gen.cpp
-
-    // This method is in image_gen.cpp, and handles Ruby code generation
-    void GenerateRubyImagesForm();  // declared in image_gen.cpp
-
-    // This method is in image_gen.cpp, and handles Perl code generation
-    void GeneratePerlImagesForm();  // declared in image_gen.cpp
-
     tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);
@@ -143,11 +125,6 @@ protected:
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
     void GenHdrEvents();
-    void GenCppEventHandlers(EventVector& events);
-    void GenPerlEventHandlers(EventVector& events);
-    void GenPythonEventHandlers(EventVector& events);
-    void GenRubyEventHandlers(EventVector& events);
-    void GenRustEventHandlers(EventVector& events);
 
     // Generates all the code lines for validator_variables initialized in the header file
     void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);

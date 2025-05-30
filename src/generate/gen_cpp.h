@@ -15,6 +15,9 @@ public:
     // All language generators must implement this method.
     void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
 
+    // Returns result::fail, result::exists, result::created, or result::ignored
+    int GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL) override;
+
 protected:
     void GenerateCppClassHeader();
     void GenerateCppClassConstructor();
@@ -36,4 +39,7 @@ protected:
 
     // Called from GenerateCppClassConstructor if node is a gen_Data
     void GenerateDataClassConstructor(PANEL_PAGE panel_type);
+
+    // This function simply generates unhandled event handlers in a multi-string comment.
+    void GenUnhandledEvents(EventVector& events);
 };

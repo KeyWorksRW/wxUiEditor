@@ -48,11 +48,6 @@ HaskellCodeGenerator::HaskellCodeGenerator(Node* form_node) : BaseCodeGenerator(
 
 void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
-    BaseCodeGenerator::GenerateHaskellClass(panel_type);
-}
-
-void BaseCodeGenerator::GenerateHaskellClass(PANEL_PAGE panel_type)
-{
     Code code(m_form_node, GEN_LANG_HASKELL);
 
     m_embedded_images.clear();

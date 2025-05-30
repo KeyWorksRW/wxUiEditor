@@ -415,7 +415,7 @@ void BasePanel::GenerateBaseClass()
             break;
 
         case GEN_LANG_RUST:
-            code_generator->GenerateRustClass(panel_page);
+            code_generator->GenerateClass(panel_page);
             break;
 
 #if GENERATE_NEW_LANG_CODE

@@ -11,24 +11,24 @@
 
 #include "gen_rust.h"
 
-#include "mainframe.h"
-
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
-#include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
-#include "pugixml.hpp"
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
 using namespace code;
 using namespace GenEnum;
+
+extern const char* cpp_rust_end_cmt_line;  // "// ************* End of generated code"
 
 // clang-format off
 
@@ -48,19 +48,14 @@ RustCodeGenerator::RustCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LA
 
 void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
-    BaseCodeGenerator::GenerateRustClass(panel_type);
-}
-
-void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
-{
     Code code(m_form_node, GEN_LANG_RUST);
 
     m_embedded_images.clear();
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&RustCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&RustCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
@@ -226,7 +221,7 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        // GenRustEventHandlers(events);
+        // GenUnhandledEvents(events);
     }
     else
     {
@@ -258,6 +253,174 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
                   return (a->array_name.compare(b->array_name) < 0);
               });
 #endif
+}
+
+void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_RUST);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetRustValue(a->get_value()) < EventHandlerDlg::GetRustValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".rs";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(cpp_rust_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto handler = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("fn "))
+                {
+                    code_lines.emplace(handler);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetRustValue(event->get_value());
+            // Ignore lambda's
+            if (handler.starts_with("[rust:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "fn " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "fn " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str(
+                "// Unimplemented Event handler functions\n// Copy any listed and paste them below the comment block, or "
+                "to your inherited class.");
+            code.Eol().Str("/*").Eol();
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them below the comment block, or "
+                 "to your inherited class.");
+        code.Eol().Str("/*").Eol();
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetRustValue(event->get_value());
+            // Ignore lambda's
+            if (handler.empty() || handler.starts_with("[rust:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "fn " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
+
+            code.Str(set_code).Eol();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            code.OpenBrace();
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wxID_CLOSE);").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wxID_YES);").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wxID_NO);").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("event.Skip();").Eol().Eol();
+            }
+            code.CloseBrace();
+        }
+    }
+
+    // Write the unimplemented event handlers to the source file without the
+    // comment block to make it easier for the user to cut and paste and/or add
+    // them to an inherited class.
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!is_all_events_implemented)
+    {
+        code.Eol(eol_if_needed).Str("/*").Eol().Eol();
+        m_source->writeLine(code);
+        m_source->writeLine("*/");
+    }
 }
 
 tt_string MakeRustPath(Node* node)

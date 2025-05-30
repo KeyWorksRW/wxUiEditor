@@ -28,7 +28,11 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
+
 using namespace code;
+
+extern const char* cpp_rust_end_cmt_line;  // "// ************* End of generated code"
 
 extern std::map<wxBitmapType, std::string> g_map_handlers;
 extern std::map<wxBitmapType, std::string> g_map_types;
@@ -1333,7 +1337,7 @@ void CppCodeGenerator::GenerateCppClassConstructor()
             {
                 m_source->writeLine();
                 m_source->ResetIndent();
-                GenCppEventHandlers(m_events);
+                GenUnhandledEvents(m_events);
                 m_source->Indent();
             }
         }
@@ -1436,6 +1440,187 @@ void CppCodeGenerator::GenCppValidatorFunctions(Node* node)
     for (const auto& child: node->getChildNodePtrs())
     {
         GenCppValidatorFunctions(child.get());
+    }
+}
+
+void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
+    if (events.empty() || m_form_node->as_bool(prop_use_derived_class))
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetCppValue(a->get_value()) < EventHandlerDlg::GetCppValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool found_user_handlers = false;
+
+    // In Debug mode, always compare to see if the event handler has been implemented
+#if !defined(_DEBUG)
+    if (m_panel_type == NOT_PANEL)
+#endif  // _DEBUG
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
+
+        if (has_base_file && path.extension().empty())
+        {
+            if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+            {
+                path += extProp;
+            }
+            else
+            {
+                path += ".cpp";
+            }
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(cpp_rust_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto handler = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("void "))
+                {
+                    code_lines.emplace(handler);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        // Determine whether the user has implemented all of the event handlers in this module
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetCppValue(event->get_value());
+            // Ignore lambda's
+            if (handler.starts_with("["))
+                continue;
+
+            tt_string set_code;
+            set_code << "void " << m_form_node->getNodeName() << "::" << handler;
+            for (auto& iter: code_lines)
+            {
+                if (iter.starts_with(set_code))
+                {
+                    // This event handler has already been created by the user
+                    set_code.clear();
+                    break;
+                }
+            }
+            if (set_code.empty())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str("// Unimplemented Event handler functions\n// Copy any of the following and paste them below the "
+                     "comment block, or "
+                     "to your inherited class.");
+            code.Eol().Str("\n/*").Eol();
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("// Unimplemented Event handler functions\n// Copy any of the following and paste them below the comment "
+                 "block, or "
+                 "to your inherited class.");
+        code.Eol().Str("\n/*").Eol();
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetCppValue(event->get_value());
+            // Ignore lambda's
+            if (handler.empty() || handler.starts_with("["))
+                continue;
+
+            // The user's declaration will typically include the event parameter, often
+            tt_string set_code;
+            set_code << "void " << m_form_node->getNodeName() << "::" << handler << '(';
+            for (auto& iter: code_lines)
+            {
+                if (iter.starts_with(set_code))
+                {
+                    // This event handler has already been created by the user
+                    set_code.clear();
+                    break;
+                }
+            }
+            if (set_code.empty())
+                continue;
+
+            // Add it to our set of handled events in case the user specified
+            // the same event handler for multiple events.
+            code_lines.emplace(set_code);
+
+            tt_string event_function = set_code;
+            code.Str(event_function) << event->getEventInfo()->get_event_class() << "& event)";
+            code.Eol().OpenBrace();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Str("EndModal(wxID_CLOSE);").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Str("EndModal(wxID_YES);").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Str("EndModal(wxID_NO);").Eol().Eol();
+            }
+            else
+            {
+                code.Str("event.Skip();").Eol().Eol();
+            }
+            code.CloseBrace().Eol();
+        }
+    }
+
+    if (!is_all_events_implemented)
+    {
+        m_source->writeLine(code);
+        m_source->writeLine("\n*/");
     }
 }
 

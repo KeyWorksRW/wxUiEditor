@@ -1448,7 +1448,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             break;
 
         case GEN_LANG_RUST:
-            code_generator->GenerateRustClass();
+            code_generator->GenerateClass();
             break;
 
 #if GENERATE_NEW_LANG_CODE

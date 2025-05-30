@@ -49,11 +49,6 @@ FortranCodeGenerator::FortranCodeGenerator(Node* form_node) : BaseCodeGenerator(
 
 void FortranCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
-    BaseCodeGenerator::GenerateFortranClass(panel_type);
-}
-
-void BaseCodeGenerator::GenerateFortranClass(PANEL_PAGE panel_type)
-{
     Code code(m_form_node, GEN_LANG_FORTRAN);
 
     m_embedded_images.clear();

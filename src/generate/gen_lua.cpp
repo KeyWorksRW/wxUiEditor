@@ -65,19 +65,14 @@ LuaCodeGenerator::LuaCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG
 
 void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
-    BaseCodeGenerator::GenerateLuaClass(panel_type);
-}
-
-void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
-{
     Code code(m_form_node, GEN_LANG_LUA);
 
     m_embedded_images.clear();
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&LuaCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&LuaCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.

@@ -15,4 +15,9 @@ public:
     // All language generators must implement this method.
     void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
 
+protected:
+    // This function simply generates unhandled event handlers in a multi-string comment.
+    void GenUnhandledEvents(EventVector& events);
+
+    void GenerateImagesForm();
 };

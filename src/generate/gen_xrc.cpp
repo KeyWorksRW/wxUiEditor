@@ -250,11 +250,6 @@ XrcCodeGenerator::XrcCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG
 
 void XrcCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
-    BaseCodeGenerator::GenerateXrcClass(panel_type);
-}
-
-void BaseCodeGenerator::GenerateXrcClass(PANEL_PAGE panel_type)
-{
     m_panel_type = panel_type;
 
     m_header->Clear();

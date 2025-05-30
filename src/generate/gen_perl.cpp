@@ -20,8 +20,11 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
 using namespace code;
 using namespace GenEnum;
@@ -53,6 +56,8 @@ $app->MainLoop;
 )===";
 
 // clang-format on
+
+extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 
 // extern constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>;
 
@@ -188,44 +193,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     m_source->writeLine();
 
-    GatherPerlUsages usages(m_form_node);
-
-    if (usages.use_classes().size())
-    {
-        m_source->writeLine();
-        for (const auto& import: usages.use_classes())
-        {
-            m_source->writeLine(import);
-        }
-        m_source->writeLine();
-    }
-
-    if (usages.use_classes().size())
-    {
-        for (auto& iter: usages.use_packages())
-        {
-            m_source->writeLine(iter);
-        }
-        m_source->writeLine();
-    }
-
-    if (usages.use_expands().size())
-    {
-        for (auto& iter: usages.use_expands())
-        {
-            m_source->writeLine(iter);
-        }
-        m_source->writeLine();
-    }
-
-    if (usages.use_constants().size())
-    {
-        for (auto& iter: usages.use_constants())
-        {
-            m_source->writeLine(iter);
-        }
-        m_source->writeLine();
-    }
+    WriteUsageStatements();
 
     m_set_enum_ids.clear();
     m_set_const_ids.clear();
@@ -255,7 +223,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         m_source->writeLine("use MIME::Base64;");
         thrd_get_events.join();
-        GeneratePerlImagesForm();
+        GenerateImagesForm();
         return;
     }
 
@@ -425,7 +393,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenPerlEventHandlers(m_events);
+        GenUnhandledEvents(m_events);
     }
     else
     {
@@ -464,6 +432,227 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
                   return (a->array_name.compare(b->array_name) < 0);
               });
 #endif
+}
+
+void PerlCodeGenerator::WriteUsageStatements()
+{
+    GatherPerlUsages usages(m_form_node);
+
+    if (usages.use_classes().size())
+    {
+        m_source->writeLine();
+        for (const auto& import: usages.use_classes())
+        {
+            m_source->writeLine(import);
+        }
+        m_source->writeLine();
+    }
+
+    if (usages.use_classes().size())
+    {
+        for (auto& iter: usages.use_packages())
+        {
+            m_source->writeLine(iter);
+        }
+        m_source->writeLine();
+    }
+
+    if (usages.use_expands().size())
+    {
+        for (auto& iter: usages.use_expands())
+        {
+            m_source->writeLine(iter);
+        }
+        m_source->writeLine();
+    }
+
+    if (usages.use_constants().size())
+    {
+        for (auto& iter: usages.use_constants())
+        {
+            m_source->writeLine(iter);
+        }
+        m_source->writeLine();
+    }
+}
+
+void PerlCodeGenerator::GenerateImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    {
+        return;
+    }
+
+    // TODO: [Randalphwa - 05-29-2025] Implement Perl image generation
+}
+
+// This function simply generates unhandled event handlers in a multi-string comment.
+
+void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_PERL);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetPerlValue(a->get_value()) < EventHandlerDlg::GetPerlValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".pl";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto handler = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("sub "))
+                {
+                    code_lines.emplace(handler);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
+            // Ignore lambda's
+            if (handler.starts_with("[perl:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "sub " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "sub " << handler << " {";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                     "to your inherited class.");
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
+            // Ignore lambda's
+            if (handler.empty() || handler.starts_with("[perl:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "sub " << handler << " {";
+
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
+
+            code.Str(set_code).Eol();
+            code.Tab().Str("my ($self, $event) = @_;").Eol();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("$self->EndModal(wxID_CLOSE);").Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("$self->EndModal(wxID_YES);").Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("$self->EndModal(wxID_NO);").Eol();
+            }
+            else
+            {
+                code.Tab().Str("$event->Skip();").Eol();
+            }
+            code.Str("}").Eol();
+        }
+    }
+
+    // Write the unimplemented event handlers to the source file without the
+    // comment block to make it easier for the user to cut and paste and/or add
+    // them to an inherited class.
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!is_all_events_implemented)
+    {
+        m_source->ResetIndent();
+        m_source->writeLine(perl_begin_cmt_block);
+        m_source->Indent();
+        m_source->writeLine(code);
+        m_source->Unindent();
+        m_source->writeLine(perl_end_cmt_block);
+        m_source->Indent();
+    }
 }
 
 tt_string MakePerlPath(Node* node)

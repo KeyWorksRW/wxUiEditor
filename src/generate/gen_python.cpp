@@ -26,6 +26,8 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
+
 using namespace code;
 using namespace GenEnum;
 
@@ -42,6 +44,8 @@ R"===(##########################################################################
 )===";
 
 // clang-format on
+
+extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 
 const char* python_triple_quote = "\"\"\"";
 
@@ -120,7 +124,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #endif  // _DEBUG
         }
 
-        GeneratePythonImagesForm();
+        GenerateImagesForm();
         return;
     }
 
@@ -400,7 +404,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenPythonEventHandlers(m_events);
+        GenUnhandledEvents(m_events);
     }
 
     if (m_form_node->isGen(gen_wxWizard))
@@ -423,6 +427,228 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
               {
                   return (a->imgs[0].array_name.compare(b->imgs[0].array_name) < 0);
               });
+}
+
+void PythonCodeGenerator::GenerateImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    {
+        return;
+    }
+
+    m_source->writeLine();
+    m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+
+    Code code(m_form_node, GEN_LANG_PYTHON);
+
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form != m_form_node)
+            continue;
+
+        if (iter_array->imgs[0].filename.size())
+        {
+            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
+        }
+        code.Eol().Str(iter_array->imgs[0].array_name);
+        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
+        {
+            code.Str(" = (");
+        }
+        else
+        {
+            code.Str(" = PyEmbeddedImage(");
+        }
+
+        m_source->writeLine(code);
+        code.clear();
+        auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
+                                     GEN_LANG_PYTHON);
+        if (encoded.size())
+        {
+            encoded.back() += ")";
+            m_source->writeLine(encoded);
+        }
+    }
+
+    m_source->writeLine();
+}
+
+void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_PYTHON);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetPythonValue(a->get_value()) < EventHandlerDlg::GetPythonValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool inherited_class = m_form_node->hasValue(prop_python_inherit_name);
+    if (!inherited_class)
+    {
+        m_header->Indent();
+    }
+    else
+    {
+        m_header->Unindent();
+        m_header->writeLine();
+    }
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PYTHON);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".py";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto def = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("def "))
+                {
+                    code_lines.emplace(def);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        for (auto& event: events)
+        {
+            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+            // Ignore lambda's
+            if (python_handler.starts_with("[python:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "def " << python_handler << "(self, _):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "def " << python_handler << "(self, event):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                     "to your inherited class.");
+            code.Eol().Str(python_triple_quote).Eol();
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Eol().Str(python_triple_quote).Eol();
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+            // Ignore lambda's
+            if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "def " << python_handler << "(self, _):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code.Replace("_)", "event)");
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
+
+            code.Str(set_code).Eol();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("event.Skip()").Eol().Eol();
+            }
+        }
+    }
+
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!inherited_class)
+    {
+        m_header->Unindent();
+    }
+
+    if (!is_all_events_implemented)
+    {
+        code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
+        m_source->writeLine(code);
+    }
 }
 
 bool PythonBitmapList(Code& code, GenEnum::PropName prop)

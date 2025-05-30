@@ -71,7 +71,7 @@ void GenInhertedClass(GenResults& results)
             continue;
         }
 
-        BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS, form);
+        CppCodeGenerator codegen(form);
 
         path.replace_extension(header_ext);
         auto h_cw = std::make_unique<FileCodeWriter>(path);
@@ -355,7 +355,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         break;
 
                     case GEN_LANG_RUST:
-                        code_generator->GenerateRustClass();
+                        code_generator->GenerateClass();
                         break;
 
 #if GENERATE_NEW_LANG_CODE
@@ -477,7 +477,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                             break;
 
                         case GEN_LANG_RUST:
-                            new_code_generator->GenerateRustClass();
+                            new_code_generator->GenerateClass();
                             break;
 
 #if GENERATE_NEW_LANG_CODE

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "gen_base.h"  // BaseCodeGenerator
+
 class Node;
 
 #include "gen_results.h"  // Code generation file writing functions
@@ -61,4 +63,13 @@ private:
     pugi::xml_document m_doc;
     pugi::xml_node m_root { nullptr };
     size_t m_xrc_flags = 0;
+};
+
+class XrcCodeGenerator : public BaseCodeGenerator
+{
+public:
+    XrcCodeGenerator(Node* form_node);
+
+    // All language generators must implement this method.
+    void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
 };

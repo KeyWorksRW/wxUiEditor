@@ -1,19 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Python code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include <wx/artprov.h>
 
 #include <set>
 #include <thread>
 
+#include "gen_python.h"
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
@@ -23,6 +25,8 @@
 #include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
 using namespace code;
 using namespace GenEnum;
@@ -41,6 +45,8 @@ R"===(##########################################################################
 
 // clang-format on
 
+extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+
 const char* python_triple_quote = "\"\"\"";
 
 static void GatherImportModules(std::set<std::string>& imports, Node* node)
@@ -55,9 +61,9 @@ static void GatherImportModules(std::set<std::string>& imports, Node* node)
     }
 }
 
-// Equivalent to GenerateBaseClass in gen_base.cpp
+PythonCodeGenerator::PythonCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_PYTHON, form_node) {}
 
-void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
+void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_PYTHON);
 
@@ -66,8 +72,8 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
     std::set<std::string> img_include_set;
     m_baseFullPath = MakePythonPath(m_form_node);
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&PythonCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&PythonCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
@@ -118,7 +124,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
 #endif  // _DEBUG
         }
 
-        GeneratePythonImagesForm();
+        GenerateImagesForm();
         return;
     }
 
@@ -202,77 +208,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
 
     if (m_embedded_images.size())
     {
-        m_source->writeLine();
-
-        // First see if we need to import the gen_Images List
-        bool images_file_imported = false;
-        bool svg_import_libs = false;
-        for (auto& iter: m_embedded_images)
-        {
-            if (iter->form == m_ImagesForm)
-            {
-                if (!images_file_imported)
-                {
-                    tt_string import_name = iter->form->as_string(prop_python_file).filename();
-                    import_name.remove_extension();
-                    code.Str("import ").Str(import_name);
-                    m_source->writeLine(code);
-                    code.clear();
-                    images_file_imported = true;
-                }
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    m_source->writeLine("import zlib");
-                    m_source->writeLine("import base64");
-                    svg_import_libs = true;
-                }
-            }
-            else if (!svg_import_libs)
-            {
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    m_source->writeLine("import zlib");
-                    m_source->writeLine("import base64");
-                    svg_import_libs = true;
-                }
-            }
-        }
-
-        // Now write any embedded images that are declared in a different form
-        bool blank_line_seen = false;
-        for (auto& iter: m_embedded_images)
-        {
-            if (iter->form != m_ImagesForm && iter->form != m_form_node)
-            {
-                if (!blank_line_seen)
-                {
-                    m_source->writeLine();
-                    blank_line_seen = true;
-                }
-                code.Str("from ").Str(iter->form->as_string(prop_python_file).filename()).Str(" import ");
-                code.Str(iter->imgs[0].array_name);
-                m_source->writeLine(code);
-                code.clear();
-            }
-        }
-
-        // Now write any embedded images that aren't declared in the gen_Images List
-        for (auto& iter: m_embedded_images)
-        {
-            // Only write the images that aren't declared in any gen_Images List. Note that
-            // this *WILL* result in duplicate images being written to different forms.
-            if (iter->form == m_form_node)
-            {
-                // This will be true if an image was declared in a different form
-                if (blank_line_seen)
-                {
-                    m_source->writeLine();
-                }
-                m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
-                WriteImageConstruction(code);
-                break;
-            }
-        }
+        WriteImageImportStatements(code);
     }
 
     m_source->writeLine();
@@ -398,7 +334,7 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenPythonEventHandlers(m_events);
+        GenUnhandledEvents(m_events);
     }
 
     if (m_form_node->isGen(gen_wxWizard))
@@ -421,6 +357,308 @@ void BaseCodeGenerator::GeneratePythonClass(PANEL_PAGE panel_type)
               {
                   return (a->imgs[0].array_name.compare(b->imgs[0].array_name) < 0);
               });
+}
+
+void PythonCodeGenerator::GenerateImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    {
+        return;
+    }
+
+    m_source->writeLine();
+    m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+
+    Code code(m_form_node, GEN_LANG_PYTHON);
+
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form != m_form_node)
+            continue;
+
+        if (iter_array->imgs[0].filename.size())
+        {
+            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
+        }
+        code.Eol().Str(iter_array->imgs[0].array_name);
+        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
+        {
+            code.Str(" = (");
+        }
+        else
+        {
+            code.Str(" = PyEmbeddedImage(");
+        }
+
+        m_source->writeLine(code);
+        code.clear();
+        auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
+                                     GEN_LANG_PYTHON);
+        if (encoded.size())
+        {
+            encoded.back() += ")";
+            m_source->writeLine(encoded);
+        }
+    }
+
+    m_source->writeLine();
+}
+
+void PythonCodeGenerator::WriteImageImportStatements(Code& code)
+{
+    ASSERT_MSG(m_embedded_images.size(), "CheckMimeBase64Requirement() should only be called if there are embedded images");
+    if (m_embedded_images.empty())
+    {
+        return;
+    }
+    m_source->writeLine();
+
+    // First see if we need to import the gen_Images List
+    bool images_file_imported = false;
+    bool svg_import_libs = false;
+    for (auto& iter: m_embedded_images)
+    {
+        if (iter->form == m_ImagesForm)
+        {
+            if (!images_file_imported)
+            {
+                tt_string import_name = iter->form->as_string(prop_python_file).filename();
+                import_name.remove_extension();
+                code.Str("import ").Str(import_name);
+                m_source->writeLine(code);
+                code.clear();
+                images_file_imported = true;
+            }
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                m_source->writeLine("import zlib");
+                m_source->writeLine("import base64");
+                svg_import_libs = true;
+            }
+        }
+        else if (!svg_import_libs)
+        {
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                m_source->writeLine("import zlib");
+                m_source->writeLine("import base64");
+                svg_import_libs = true;
+            }
+        }
+    }
+
+    // Now write any embedded images that are declared in a different form
+    bool blank_line_seen = false;
+    for (auto& iter: m_embedded_images)
+    {
+        if (iter->form != m_ImagesForm && iter->form != m_form_node)
+        {
+            if (!blank_line_seen)
+            {
+                m_source->writeLine();
+                blank_line_seen = true;
+            }
+            code.Str("from ").Str(iter->form->as_string(prop_python_file).filename()).Str(" import ");
+            code.Str(iter->imgs[0].array_name);
+            m_source->writeLine(code);
+            code.clear();
+        }
+    }
+
+    // Now write any embedded images that aren't declared in the gen_Images List
+    for (auto& iter: m_embedded_images)
+    {
+        // Only write the images that aren't declared in any gen_Images List. Note that
+        // this *WILL* result in duplicate images being written to different forms.
+        if (iter->form == m_form_node)
+        {
+            // This will be true if an image was declared in a different form
+            if (blank_line_seen)
+            {
+                m_source->writeLine();
+            }
+            m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
+            WriteImageConstruction(code);
+            break;
+        }
+    }
+}
+
+void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_PYTHON);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetPythonValue(a->get_value()) < EventHandlerDlg::GetPythonValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool inherited_class = m_form_node->hasValue(prop_python_inherit_name);
+    if (!inherited_class)
+    {
+        m_header->Indent();
+    }
+    else
+    {
+        m_header->Unindent();
+        m_header->writeLine();
+    }
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PYTHON);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".py";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto def = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("def "))
+                {
+                    code_lines.emplace(def);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    bool is_all_events_implemented = true;
+    if (found_user_handlers)
+    {
+        for (auto& event: events)
+        {
+            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+            // Ignore lambda's
+            if (python_handler.starts_with("[python:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "def " << python_handler << "(self, _):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code << "def " << python_handler << "(self, event):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+
+            // At least one event wasn't implemented, so stop looking for more
+            is_all_events_implemented = false;
+
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                     "to your inherited class.");
+            code.Eol().Str(python_triple_quote).Eol();
+            break;
+        }
+        if (is_all_events_implemented)
+        {
+            // If the user has defined all the event handlers, then we don't need to output anything else.
+            return;
+        }
+    }
+    else
+    {
+        // The user hasn't defined their own event handlers in this module
+        is_all_events_implemented = false;
+
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Eol().Str(python_triple_quote).Eol();
+    }
+    m_source->writeLine(code);
+
+    code.clear();
+    if (!is_all_events_implemented)
+    {
+        for (auto& event: events)
+        {
+            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+            // Ignore lambda's
+            if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
+                continue;
+
+            tt_string set_code;
+            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+            // an unused parameter.
+            set_code << "def " << python_handler << "(self, _):";
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            set_code.Replace("_)", "event)");
+            if (code_lines.find(set_code) != code_lines.end())
+                continue;
+            code_lines.emplace(set_code);
+
+            code.Str(set_code).Eol();
+#if defined(_DEBUG)
+            auto& dbg_event_name = event->get_name();
+            wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+            if (event->get_name() == "CloseButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
+            }
+            else if (event->get_name() == "YesButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
+            }
+            else if (event->get_name() == "NoButtonClicked")
+            {
+                code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
+            }
+            else
+            {
+                code.Tab().Str("event.Skip()").Eol().Eol();
+            }
+        }
+    }
+
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(code);
+
+    if (!inherited_class)
+    {
+        m_header->Unindent();
+    }
+
+    if (!is_all_events_implemented)
+    {
+        code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
+        m_source->writeLine(code);
+    }
 }
 
 bool PythonBitmapList(Code& code, GenEnum::PropName prop)

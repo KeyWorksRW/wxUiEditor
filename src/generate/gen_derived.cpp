@@ -24,7 +24,7 @@
 
 #include <thread>
 
-#include "gen_base.h"
+#include "gen_cpp.h"
 
 #include "code.h"              // Code -- Helper class for generating code
 #include "eventhandler_dlg.h"  // EventHandlerDlg static functions
@@ -56,7 +56,7 @@ static constexpr const char* lst_close_type_button[] = {
 
 // clang-format on
 
-int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE panel_type)
+int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE panel_type)
 {
     m_form_node = form;
     m_is_derived_class = m_form_node->as_bool(prop_use_derived_class);
@@ -113,7 +113,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     // Caution! Don't return until thrd_get_events.join(); is called.
 
     EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
+    std::thread thrd_get_events(&CppCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
 
     tt_string baseFile;
     if (auto& file = m_form_node->as_string(prop_base_file); file.size())

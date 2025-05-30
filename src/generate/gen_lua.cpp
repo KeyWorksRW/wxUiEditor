@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Lua code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,12 +9,13 @@
 #include <thread>
 #include <unordered_set>
 
+#include "gen_lua.h"
+
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
@@ -60,7 +61,9 @@ main()
 
 // clang-format on
 
-void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
+LuaCodeGenerator::LuaCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_LUA, form_node) {}
+
+void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_LUA);
 
@@ -68,8 +71,8 @@ void BaseCodeGenerator::GenerateLuaClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&LuaCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_collect_img_headers(&LuaCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.

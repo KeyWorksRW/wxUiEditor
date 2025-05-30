@@ -1,10 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code code generation panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/stc/stc.h>      // A wxWidgets implementation of Scintilla.  This class is the
@@ -14,11 +15,17 @@
 
 #include "code_display.h"     // CodeDisplay -- CodeDisplay class
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
-#include "gen_base.h"         // Generate Base class
 #include "gen_xrc.h"          // BaseXrcGenerator -- Generate XRC file
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+
+#include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
+#include "gen_perl.h"    // PerlCodeGenerator class
+#include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
+#include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_rust.h"    // RustCodeGenerator -- Generate wxRust code
+#include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
 
 // These are used everywhere we use scintilla to edit C++ code. It is also used to verify valid
 // var_name values.
@@ -328,63 +335,109 @@ void BasePanel::GenerateBaseClass()
         }
     }
 
-    BaseCodeGenerator codegen(m_panel_type, m_cur_form);
-
-    m_cppPanel->Clear();
-    codegen.SetSrcWriteCode(m_cppPanel);
-
-    m_hPanel->Clear();
-    codegen.SetHdrWriteCode(m_hPanel);
-
+    std::unique_ptr<class BaseCodeGenerator> code_generator;
     switch (m_panel_type)
     {
         case GEN_LANG_CPLUSPLUS:
-            codegen.GenerateCppClass(panel_page);
-
-            m_derived_src_panel->Clear();
-            codegen.SetSrcWriteCode(m_derived_src_panel);
-            m_derived_hdr_panel->Clear();
-            codegen.SetHdrWriteCode(m_derived_hdr_panel);
-
-            codegen.GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
-            break;
-
-        case GEN_LANG_PERL:
-            codegen.GeneratePerlClass(panel_page);
+            code_generator = std::make_unique<CppCodeGenerator>(m_cur_form);
             break;
 
         case GEN_LANG_PYTHON:
-            codegen.GeneratePythonClass(panel_page);
+            code_generator = std::make_unique<PythonCodeGenerator>(m_cur_form);
             break;
 
         case GEN_LANG_RUBY:
-            codegen.GenerateRubyClass(panel_page);
+            code_generator = std::make_unique<RubyCodeGenerator>(m_cur_form);
+            break;
+
+        case GEN_LANG_PERL:
+            code_generator = std::make_unique<PerlCodeGenerator>(m_cur_form);
             break;
 
         case GEN_LANG_RUST:
-            codegen.GenerateRustClass(panel_page);
-            break;
-
-        case GEN_LANG_XRC:
-            codegen.GenerateXrcClass(panel_page);
+            code_generator = std::make_unique<RustCodeGenerator>(m_cur_form);
             break;
 
 #if GENERATE_NEW_LANG_CODE
         case GEN_LANG_FORTRAN:
-            codegen.GenerateFortranClass(panel_page);
+            code_generator = std::make_unique<FortranCodeGenerator>(m_cur_form);
             break;
 
         case GEN_LANG_HASKELL:
-            codegen.GenerateHaskellClass(panel_page);
+            code_generator = std::make_unique<HaskellCodeGenerator>(m_cur_form);
             break;
 
         case GEN_LANG_LUA:
-            codegen.GenerateLuaClass(panel_page);
+            code_generator = std::make_unique<LuaCodeGenerator>(m_cur_form);
+            break;
+#endif
+
+        case GEN_LANG_XRC:
+            code_generator = std::make_unique<XrcCodeGenerator>(m_cur_form);
+            break;
+
+        default:
+            FAIL_MSG(tt_string() << "Unknown panel type: " << m_panel_type);
+            break;
+    }
+
+    // BaseCodeGenerator codegen(m_panel_type, m_cur_form);
+
+    m_cppPanel->Clear();
+    code_generator->SetSrcWriteCode(m_cppPanel);
+
+    m_hPanel->Clear();
+    code_generator->SetHdrWriteCode(m_hPanel);
+
+    switch (m_panel_type)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            code_generator->GenerateClass(panel_page);
+
+            m_derived_src_panel->Clear();
+            code_generator->SetSrcWriteCode(m_derived_src_panel);
+            m_derived_hdr_panel->Clear();
+            code_generator->SetHdrWriteCode(m_derived_hdr_panel);
+
+            code_generator->GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_PERL:
+            code_generator->GenerateClass(panel_page);
+            break;
+
+        case GEN_LANG_PYTHON:
+            code_generator->GenerateClass(panel_page);
+            break;
+
+        case GEN_LANG_RUBY:
+            code_generator->GenerateClass(panel_page);
+            break;
+
+        case GEN_LANG_RUST:
+            code_generator->GenerateClass(panel_page);
+            break;
+
+#if GENERATE_NEW_LANG_CODE
+        case GEN_LANG_FORTRAN:
+            code_generator->GenerateClass(panel_page);
+            break;
+
+        case GEN_LANG_HASKELL:
+            code_generator->GenerateClass(panel_page);
+            break;
+
+        case GEN_LANG_LUA:
+            code_generator->GenerateClass(panel_page);
             break;
 #endif  // GENERATE_NEW_LANG_CODE
 
+        case GEN_LANG_XRC:
+            code_generator->GenerateClass(panel_page);
+            break;
+
         default:
-            FAIL_MSG("Unknown panel type!")
+            FAIL_MSG("Unknown language!");
             break;
     }
 

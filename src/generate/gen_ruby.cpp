@@ -10,18 +10,22 @@
 #include <set>
 #include <thread>
 
+#include "gen_ruby.h"
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
 using namespace code;
 using namespace GenEnum;
@@ -78,6 +82,8 @@ end
 
 // clang-format on
 
+extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+
 // This *must* be written on a line by itself with *no* indentation.
 const char* ruby_begin_cmt_block = "=begin";
 
@@ -96,17 +102,13 @@ static const std::vector<tt_string> disable_list = {
 // clang-format on
 #endif  // _DEBUG
 
-// Equivalent to GenerateBaseClass in gen_base.cpp
+RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUBY, form_node) {}
 
-void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
+void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_RUBY);
 
     m_embedded_images.clear();
-
-    bool base64_requirement_written = false;
-    bool stringio_requirement_written = false;
-    bool zlib_requirement_written = false;
 
     m_NeedAnimationFunction = false;
     m_NeedImageFunction = false;
@@ -115,9 +117,9 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
-    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, m_form_node);
-    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
+    std::thread thrd_get_events(&RubyCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_need_img_func(&RubyCodeGenerator::ParseImageProperties, this, m_form_node);
+    std::thread thrd_collect_img_headers(&RubyCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
@@ -198,7 +200,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         }
 
         thrd_need_img_func.join();
-        GenerateRubyImagesForm();
+        GenerateImagesForm();
         return;
     }
 
@@ -292,101 +294,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
 
     if (m_embedded_images.size())
     {
-        m_source->writeLine();
-
-        // First see if we need to import the gen_Images List
-        bool images_file_imported = false;
-        bool svg_import_libs = false;
-        for (auto& iter: m_embedded_images)
-        {
-            if (iter->form == m_ImagesForm)
-            {
-                if (!images_file_imported)
-                {
-                    tt_string import_name = iter->form->as_string(prop_ruby_file).filename();
-                    import_name.remove_extension();
-                    code.Str("require_relative '").Str(import_name) << "'";
-                    m_source->writeLine(code);
-                    code.clear();
-                    images_file_imported = true;
-                }
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    if (!zlib_requirement_written)
-                    {
-                        zlib_requirement_written = true;
-                        m_source->writeLine("require 'zlib'");
-                    }
-                    if (!base64_requirement_written)
-                    {
-                        base64_requirement_written = true;
-                        m_source->writeLine("require 'base64'");
-                    }
-                    if (!stringio_requirement_written)
-                    {
-                        stringio_requirement_written = true;
-                        m_source->writeLine("require 'stringio'");
-                    }
-                    svg_import_libs = true;
-                }
-            }
-            else if (!svg_import_libs)
-            {
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    if (!zlib_requirement_written)
-                    {
-                        zlib_requirement_written = true;
-                        m_source->writeLine("require 'zlib'");
-                    }
-                    if (!base64_requirement_written)
-                    {
-                        base64_requirement_written = true;
-                        m_source->writeLine("require 'base64'");
-                    }
-                    if (!stringio_requirement_written)
-                    {
-                        stringio_requirement_written = true;
-                        m_source->writeLine("require 'stringio'");
-                    }
-                    svg_import_libs = true;
-                }
-
-                if (iter->form != m_ImagesForm)
-                {
-                    // If the image isn't in the images file, then we need to add the base64 version
-                    // of the bitmap
-                    if (!base64_requirement_written)
-                    {
-                        base64_requirement_written = true;
-                        m_source->writeLine("require 'base64'");
-                    }
-
-                    // At this point we know that some method is required, but until we have
-                    // processed all the images, we won't know if the images file is required.
-                    // The images file provides it's own function for loading images, so we can
-                    // use that if it's available.
-                    m_NeedImageFunction = true;
-                }
-            }
-        }  // end of for (auto& iter: m_embedded_images)
-
-        if (m_NeedImageFunction)
-        {
-            if (images_file_imported)
-                // The images file supplies the function we need
-                m_NeedImageFunction = false;
-            else
-            {
-                // We have to provide our own method, and that requires this library
-                if (!stringio_requirement_written)
-                {
-                    // No further check for this is needed
-                    // stringio_requirement_written = true;
-                    m_source->writeLine("require 'stringio'");
-                }
-            }
-        }
+        WriteImageRequireStatements(code);
     }
 
     m_source->writeLine();
@@ -524,7 +432,7 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
         m_source->writeLine();
         m_source->Indent();
-        GenRubyEventHandlers(m_events);
+        GenUnhandledEvents(m_events);
     }
     else
     {
@@ -595,6 +503,284 @@ void BaseCodeGenerator::GenerateRubyClass(PANEL_PAGE panel_type)
             m_source->writeLine();
         }
     }
+}
+
+void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
+{
+    ASSERT_MSG(m_embedded_images.size(), "CheckMimeBase64Requirement() should only be called if there are embedded images");
+    if (m_embedded_images.empty())
+    {
+        return;
+    }
+    m_source->writeLine();
+
+    // First see if we need to import the gen_Images List
+    bool images_file_imported = false;
+    bool svg_import_libs = false;
+    for (auto& iter: m_embedded_images)
+    {
+        if (iter->form == m_ImagesForm)
+        {
+            if (!images_file_imported)
+            {
+                tt_string import_name = iter->form->as_string(prop_ruby_file).filename();
+                import_name.remove_extension();
+                code.Str("require_relative '").Str(import_name) << "'";
+                m_source->writeLine(code);
+                code.clear();
+                images_file_imported = true;
+            }
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                if (!m_zlib_requirement_written)
+                {
+                    m_zlib_requirement_written = true;
+                    m_source->writeLine("require 'zlib'");
+                }
+                if (!m_base64_requirement_written)
+                {
+                    m_base64_requirement_written = true;
+                    m_source->writeLine("require 'base64'");
+                }
+                if (!m_stringio_requirement_written)
+                {
+                    m_stringio_requirement_written = true;
+                    m_source->writeLine("require 'stringio'");
+                }
+                svg_import_libs = true;
+            }
+        }
+        else if (!svg_import_libs)
+        {
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                if (!m_zlib_requirement_written)
+                {
+                    m_zlib_requirement_written = true;
+                    m_source->writeLine("require 'zlib'");
+                }
+                if (!m_base64_requirement_written)
+                {
+                    m_base64_requirement_written = true;
+                    m_source->writeLine("require 'base64'");
+                }
+                if (!m_stringio_requirement_written)
+                {
+                    m_stringio_requirement_written = true;
+                    m_source->writeLine("require 'stringio'");
+                }
+                svg_import_libs = true;
+            }
+
+            if (iter->form != m_ImagesForm)
+            {
+                // If the image isn't in the images file, then we need to add the base64 version
+                // of the bitmap
+                if (!m_base64_requirement_written)
+                {
+                    m_base64_requirement_written = true;
+                    m_source->writeLine("require 'base64'");
+                }
+
+                // At this point we know that some method is required, but until we have
+                // processed all the images, we won't know if the images file is required.
+                // The images file provides it's own function for loading images, so we can
+                // use that if it's available.
+                m_NeedImageFunction = true;
+            }
+        }
+    }  // end of for (auto& iter: m_embedded_images)
+
+    if (m_NeedImageFunction)
+    {
+        if (images_file_imported)
+            // The images file supplies the function we need
+            m_NeedImageFunction = false;
+        else
+        {
+            // We have to provide our own method, and that requires this library
+            if (!m_stringio_requirement_written)
+            {
+                // No further check for this is needed
+                // m_stringio_requirement_written = true;
+                m_source->writeLine("require 'stringio'");
+            }
+        }
+    }
+}
+
+void RubyCodeGenerator::GenerateImagesForm()
+{
+    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    {
+        return;
+    }
+
+    m_source->writeLine(txt_ruby_get_bundle, indent::auto_keep_whitespace);
+
+    Code code(m_form_node, GEN_LANG_RUBY);
+
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form != m_form_node)
+            continue;
+
+        if (iter_array->imgs[0].filename.size())
+        {
+            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
+        }
+        code.Eol().Str("$").Str(iter_array->imgs[0].array_name);
+        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
+        {
+            code.Str(" = (");
+        }
+        else
+        {
+            code.Str(" = Base64.decode64(");
+        }
+        m_source->writeLine(code);
+        code.clear();
+        auto encoded =
+            base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+        if (encoded.size())
+        {
+            // Remove the trailing '+' character
+            encoded.back().pop_back();
+            // and the now trailing space
+            encoded.back().pop_back();
+            encoded.back() += ")";
+            m_source->writeLine(encoded);
+        }
+    }
+
+    m_source->writeLine();
+}
+
+void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
+{
+    ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
+    if (events.empty())
+    {
+        return;
+    }
+
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::unordered_set<std::string> code_lines;
+
+    Code code(m_form_node, GEN_LANG_RUBY);
+    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    {
+        return (EventHandlerDlg::GetRubyValue(a->get_value()) < EventHandlerDlg::GetRubyValue(b->get_value()));
+    };
+
+    // Sort events by function name
+    std::sort(events.begin(), events.end(), sort_event_handlers);
+
+    bool inherited_class = m_form_node->hasValue(prop_ruby_inherit_name);
+    if (!inherited_class)
+    {
+        m_header->Indent();
+    }
+    else
+    {
+        m_header->Unindent();
+        m_header->writeLine();
+    }
+
+    bool found_user_handlers = false;
+    if (m_panel_type == NOT_PANEL)
+    {
+        tt_view_vector org_file;
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_RUBY);
+
+        if (has_base_file && path.extension().empty())
+        {
+            path += ".rb";
+        }
+
+        // If the user has defined any event handlers, add them to the code_lines set so we
+        // don't generate them again.
+        if (has_base_file && org_file.ReadFile(path))
+        {
+            size_t line_index;
+            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            {
+                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+                {
+                    break;
+                }
+            }
+            for (++line_index; line_index < org_file.size(); ++line_index)
+            {
+                auto def = org_file[line_index].view_nonspace();
+                if (org_file[line_index].view_nonspace().starts_with("def "))
+                {
+                    code_lines.emplace(def);
+                    found_user_handlers = true;
+                }
+            }
+        }
+    }
+
+    if (found_user_handlers)
+    {
+        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+                 "to your inherited class.");
+        code.Eol().Eol();
+    }
+    else
+    {
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Eol().Eol();
+    }
+
+    Code undefined_handlers(m_form_node, GEN_LANG_RUBY);
+    for (auto& event: events)
+    {
+        auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
+        // Ignore lambda's
+        if (ruby_handler.empty() || ruby_handler.starts_with("[ruby:lambda]"))
+            continue;
+
+        tt_string set_code;
+        set_code << "def " << ruby_handler << "(event)";
+        if (code_lines.find(set_code) != code_lines.end())
+            continue;
+        code_lines.emplace(set_code);
+
+        undefined_handlers.Str(set_code).Eol();
+        if (event->get_name() == "CloseButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_CLOSE)");
+        }
+        else if (event->get_name() == "YesButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_YES)");
+        }
+        else if (event->get_name() == "NoButtonClicked")
+        {
+            undefined_handlers.Tab().Str("end_modal(Wx::ID_NO)");
+        }
+        else
+        {
+            undefined_handlers.Tab().Str("event.skip");
+        }
+        undefined_handlers.Eol().Unindent();
+        undefined_handlers.Str("end").Eol();
+    }
+
+    if (undefined_handlers.size())
+    {
+        m_source->writeLine(code, indent::none);
+        m_source->writeLine(ruby_begin_cmt_block, indent::none);
+        m_source->writeLine(undefined_handlers);
+        m_source->writeLine("end", indent::none);
+        m_source->writeLine(ruby_end_cmt_block, indent::none);
+
+        m_header->writeLine("# Event handler functions");
+        m_header->writeLine(undefined_handlers);
+    }
+    m_header->Unindent();
 }
 
 tt_string MakeRubyPath(Node* node)

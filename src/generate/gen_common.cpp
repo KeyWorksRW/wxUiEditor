@@ -1410,7 +1410,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             break;
 
         default:
-            code_generator = std::make_unique<BaseCodeGenerator>(language, form);
+            FAIL_MSG("Unknown language!")
             break;
     }
 
@@ -1470,7 +1470,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             break;
 
         default:
-            FAIL_MSG("Unknown panel type!")
+            FAIL_MSG("Unknown language!")
             break;
     }
 

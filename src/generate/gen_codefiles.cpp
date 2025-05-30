@@ -324,7 +324,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         break;
 
                     default:
-                        code_generator = std::make_unique<BaseCodeGenerator>(language, form);
+                        FAIL_MSG(tt_string() << "Unknown language: " << language);
                         break;
                 }
 
@@ -445,7 +445,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                             break;
 
                         default:
-                            new_code_generator = std::make_unique<BaseCodeGenerator>(language, form);
+                            FAIL_MSG(tt_string() << "Unknown language: " << language);
                             break;
                     }
 

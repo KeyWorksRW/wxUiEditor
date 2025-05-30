@@ -54,8 +54,7 @@ public:
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
     // All language generators must implement this method.
-    // virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) = 0;
-    virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) { m_panel_type = panel_type; };
+    virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
     virtual int GenerateDerivedClass(Node* /* project */, Node* /* form_node */, PANEL_PAGE panel_type = NOT_PANEL)

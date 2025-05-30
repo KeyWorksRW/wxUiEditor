@@ -377,7 +377,7 @@ void BasePanel::GenerateBaseClass()
             break;
 
         default:
-            code_generator = std::make_unique<BaseCodeGenerator>(m_panel_type, m_cur_form);
+            FAIL_MSG(tt_string() << "Unknown panel type: " << m_panel_type);
             break;
     }
 
@@ -437,7 +437,7 @@ void BasePanel::GenerateBaseClass()
             break;
 
         default:
-            FAIL_MSG("Unknown panel type!")
+            FAIL_MSG("Unknown language!");
             break;
     }
 

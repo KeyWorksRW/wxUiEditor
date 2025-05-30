@@ -14,5 +14,4 @@ public:
 
     // All language generators must implement this method.
     void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
-
 };

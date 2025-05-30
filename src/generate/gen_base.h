@@ -75,7 +75,6 @@ public:
     auto getWarnings() { return m_warnings; }
 
 protected:
-
     // Generate code for embedded images not defined in the gen_Images
     // node.
     //

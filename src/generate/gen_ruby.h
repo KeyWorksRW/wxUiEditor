@@ -20,4 +20,11 @@ protected:
     void GenUnhandledEvents(EventVector& events);
 
     void GenerateImagesForm();
+
+    void WriteImageRequireStatements(Code& code);
+
+private:
+    bool m_base64_requirement_written { false };
+    bool m_stringio_requirement_written { false };
+    bool m_zlib_requirement_written { false };
 };

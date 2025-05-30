@@ -20,4 +20,6 @@ protected:
     void GenUnhandledEvents(EventVector& events);
 
     void GenerateImagesForm();
+
+    void WriteImageImportStatements(Code& code);
 };

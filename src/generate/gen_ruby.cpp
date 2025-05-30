@@ -110,10 +110,6 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     m_embedded_images.clear();
 
-    bool base64_requirement_written = false;
-    bool stringio_requirement_written = false;
-    bool zlib_requirement_written = false;
-
     m_NeedAnimationFunction = false;
     m_NeedImageFunction = false;
     m_NeedSVGFunction = false;
@@ -298,101 +294,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     if (m_embedded_images.size())
     {
-        m_source->writeLine();
-
-        // First see if we need to import the gen_Images List
-        bool images_file_imported = false;
-        bool svg_import_libs = false;
-        for (auto& iter: m_embedded_images)
-        {
-            if (iter->form == m_ImagesForm)
-            {
-                if (!images_file_imported)
-                {
-                    tt_string import_name = iter->form->as_string(prop_ruby_file).filename();
-                    import_name.remove_extension();
-                    code.Str("require_relative '").Str(import_name) << "'";
-                    m_source->writeLine(code);
-                    code.clear();
-                    images_file_imported = true;
-                }
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    if (!zlib_requirement_written)
-                    {
-                        zlib_requirement_written = true;
-                        m_source->writeLine("require 'zlib'");
-                    }
-                    if (!base64_requirement_written)
-                    {
-                        base64_requirement_written = true;
-                        m_source->writeLine("require 'base64'");
-                    }
-                    if (!stringio_requirement_written)
-                    {
-                        stringio_requirement_written = true;
-                        m_source->writeLine("require 'stringio'");
-                    }
-                    svg_import_libs = true;
-                }
-            }
-            else if (!svg_import_libs)
-            {
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    if (!zlib_requirement_written)
-                    {
-                        zlib_requirement_written = true;
-                        m_source->writeLine("require 'zlib'");
-                    }
-                    if (!base64_requirement_written)
-                    {
-                        base64_requirement_written = true;
-                        m_source->writeLine("require 'base64'");
-                    }
-                    if (!stringio_requirement_written)
-                    {
-                        stringio_requirement_written = true;
-                        m_source->writeLine("require 'stringio'");
-                    }
-                    svg_import_libs = true;
-                }
-
-                if (iter->form != m_ImagesForm)
-                {
-                    // If the image isn't in the images file, then we need to add the base64 version
-                    // of the bitmap
-                    if (!base64_requirement_written)
-                    {
-                        base64_requirement_written = true;
-                        m_source->writeLine("require 'base64'");
-                    }
-
-                    // At this point we know that some method is required, but until we have
-                    // processed all the images, we won't know if the images file is required.
-                    // The images file provides it's own function for loading images, so we can
-                    // use that if it's available.
-                    m_NeedImageFunction = true;
-                }
-            }
-        }  // end of for (auto& iter: m_embedded_images)
-
-        if (m_NeedImageFunction)
-        {
-            if (images_file_imported)
-                // The images file supplies the function we need
-                m_NeedImageFunction = false;
-            else
-            {
-                // We have to provide our own method, and that requires this library
-                if (!stringio_requirement_written)
-                {
-                    // No further check for this is needed
-                    // stringio_requirement_written = true;
-                    m_source->writeLine("require 'stringio'");
-                }
-            }
-        }
+        WriteImageRequireStatements(code);
     }
 
     m_source->writeLine();
@@ -599,6 +501,110 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             m_source->writeLine("# rubocop:enable all");
 #endif  // _DEBUG
             m_source->writeLine();
+        }
+    }
+}
+
+void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
+{
+    ASSERT_MSG(m_embedded_images.size(), "CheckMimeBase64Requirement() should only be called if there are embedded images");
+    if (m_embedded_images.empty())
+    {
+        return;
+    }
+    m_source->writeLine();
+
+    // First see if we need to import the gen_Images List
+    bool images_file_imported = false;
+    bool svg_import_libs = false;
+    for (auto& iter: m_embedded_images)
+    {
+        if (iter->form == m_ImagesForm)
+        {
+            if (!images_file_imported)
+            {
+                tt_string import_name = iter->form->as_string(prop_ruby_file).filename();
+                import_name.remove_extension();
+                code.Str("require_relative '").Str(import_name) << "'";
+                m_source->writeLine(code);
+                code.clear();
+                images_file_imported = true;
+            }
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                if (!m_zlib_requirement_written)
+                {
+                    m_zlib_requirement_written = true;
+                    m_source->writeLine("require 'zlib'");
+                }
+                if (!m_base64_requirement_written)
+                {
+                    m_base64_requirement_written = true;
+                    m_source->writeLine("require 'base64'");
+                }
+                if (!m_stringio_requirement_written)
+                {
+                    m_stringio_requirement_written = true;
+                    m_source->writeLine("require 'stringio'");
+                }
+                svg_import_libs = true;
+            }
+        }
+        else if (!svg_import_libs)
+        {
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                if (!m_zlib_requirement_written)
+                {
+                    m_zlib_requirement_written = true;
+                    m_source->writeLine("require 'zlib'");
+                }
+                if (!m_base64_requirement_written)
+                {
+                    m_base64_requirement_written = true;
+                    m_source->writeLine("require 'base64'");
+                }
+                if (!m_stringio_requirement_written)
+                {
+                    m_stringio_requirement_written = true;
+                    m_source->writeLine("require 'stringio'");
+                }
+                svg_import_libs = true;
+            }
+
+            if (iter->form != m_ImagesForm)
+            {
+                // If the image isn't in the images file, then we need to add the base64 version
+                // of the bitmap
+                if (!m_base64_requirement_written)
+                {
+                    m_base64_requirement_written = true;
+                    m_source->writeLine("require 'base64'");
+                }
+
+                // At this point we know that some method is required, but until we have
+                // processed all the images, we won't know if the images file is required.
+                // The images file provides it's own function for loading images, so we can
+                // use that if it's available.
+                m_NeedImageFunction = true;
+            }
+        }
+    }  // end of for (auto& iter: m_embedded_images)
+
+    if (m_NeedImageFunction)
+    {
+        if (images_file_imported)
+            // The images file supplies the function we need
+            m_NeedImageFunction = false;
+        else
+        {
+            // We have to provide our own method, and that requires this library
+            if (!m_stringio_requirement_written)
+            {
+                // No further check for this is needed
+                // m_stringio_requirement_written = true;
+                m_source->writeLine("require 'stringio'");
+            }
         }
     }
 }

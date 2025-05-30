@@ -21,40 +21,6 @@
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
 
-// Generate extern references to images used in the current form that are defined in the
-// gen_Images node. These are written before the class constructor.
-void BaseCodeGenerator::WriteImagePreConstruction(Code& code)
-{
-    ASSERT_MSG(code.is_cpp(), "This function is only used for C++ code generation");
-    code.clear();
-
-    bool is_namespace_written = false;
-    for (auto iter_array: m_embedded_images)
-    {
-        // If the image is in ImagesForm then it's header file will be included which already
-        // has the extern declarations.
-        if (iter_array->form == Project.getImagesForm())
-            continue;
-
-        if (!is_namespace_written)
-        {
-            is_namespace_written = true;
-            code.Str("namespace wxue_img").OpenBrace();
-        }
-        code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->imgs[0].array_name);
-        code.Str("[").itoa((to_size_t) (iter_array->imgs[0].array_size & 0xFFFFFFFF)).Str("];");
-        if (iter_array->imgs[0].filename.size())
-        {
-            code.Str("  // ").Str(iter_array->imgs[0].filename);
-        }
-    }
-
-    if (is_namespace_written)
-    {
-        code.CloseBrace().Eol();
-    }
-}
-
 // Generate code after the construcor for embedded images not defined in the gen_Images node.
 void BaseCodeGenerator::WriteImageConstruction(Code& code)
 {
@@ -189,42 +155,6 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     if (code.size())
     {
         m_source->writeLine(code);
-    }
-}
-
-void BaseCodeGenerator::WriteImagePostHeader()
-{
-    auto images_form = Project.getImagesForm();
-    if (!images_form)
-        return;
-
-    bool is_namespace_written = false;
-    for (auto iter_array: m_embedded_images)
-    {
-        if (iter_array->form == images_form)
-            continue;
-
-        if (!is_namespace_written)
-        {
-            m_header->writeLine();
-            m_header->writeLine("namespace wxue_img\n{");
-
-            m_header->Indent();
-            is_namespace_written = true;
-        }
-        if (iter_array->imgs[0].filename.size())
-        {
-            m_header->writeLine(tt_string("// ") << iter_array->imgs[0].filename);
-        }
-        m_header->writeLine(tt_string("extern const unsigned char ")
-                            << iter_array->imgs[0].array_name << '['
-                            << (to_size_t) (iter_array->imgs[0].array_size & 0xFFFFFFFF) << "];");
-    }
-
-    if (is_namespace_written)
-    {
-        m_header->Unindent();
-        m_header->writeLine("}\n");
     }
 }
 

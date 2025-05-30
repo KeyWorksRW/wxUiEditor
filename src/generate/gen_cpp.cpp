@@ -1625,7 +1625,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
 }
 
 // This is called in gen_base.cpp, so it cannot be part of the CppCodeGenerator class.
-void BaseCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Node* node, std::set<std::string>& code_lines)
+void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Node* node, std::set<std::string>& code_lines)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -1780,6 +1780,155 @@ void CppCodeGenerator::GenCppEnumIds(Node* class_node)
     }
 }
 
+void CppCodeGenerator::GenHdrEvents()
+{
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
+    if (m_events.size() || m_ctx_menu_events.size())
+    {
+        std::set<tt_string> code_lines;
+
+        for (auto& event: m_events)
+        {
+            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
+            // Ignore lambda's and functions in another class
+            if (event_code.contains("[") || event_code.contains("::"))
+                continue;
+
+            tt_string code;
+
+            // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method
+            // of the base class and is not virtual.
+
+            if (event->getNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+            {
+                bool has_handler = false;
+
+                for (const auto& child: event->getNode()->getChildNodePtrs())
+                {
+                    if (child->isGen(gen_wxContextMenuEvent))
+                    {
+                        has_handler = true;
+                        break;
+                    }
+                }
+
+                if (has_handler)
+                {
+                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
+                    code_lines.insert(code);
+                    continue;
+                }
+            }
+            if (m_form_node->as_bool(prop_use_derived_class))
+            {
+                code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
+                     << "& event) { event.Skip(); }";
+            }
+            else
+            {
+                code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
+            }
+            code_lines.insert(code);
+        }
+
+        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_ctx_menu_events should only
+        // contain menu items events.
+
+        for (const auto& event: m_ctx_menu_events)
+        {
+            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
+            // Ignore lambda's and functions in another class
+            if (event_code.contains("[") || event_code.contains("::"))
+                continue;
+
+            tt_string code;
+
+            if (m_form_node->as_bool(prop_use_derived_class))
+            {
+                code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
+                     << "& event) { event.Skip(); }";
+            }
+            else
+            {
+                code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
+            }
+
+            code_lines.insert(code);
+        }
+
+        if (code_lines.size())
+        {
+            m_header->writeLine();
+            if (m_form_node->as_bool(prop_use_derived_class))
+            {
+                m_header->writeLine("// Virtual event handlers -- override them in your derived class");
+                m_header->writeLine();
+            }
+            else
+            {
+                m_header->writeLine("// Event handlers");
+                m_header->writeLine();
+            }
+            for (auto& iter: code_lines)
+            {
+                m_header->writeLine(iter.subview());
+            }
+        }
+    }
+
+    if (m_map_conditional_events.size())
+    {
+        auto sort_events_by_handler = [](NodeEvent* a, NodeEvent* b)
+        {
+            return (a->get_value() < b->get_value());
+        };
+
+        if (m_events.empty() && m_ctx_menu_events.empty())
+        {
+            m_header->writeLine();
+            if (m_form_node->as_bool(prop_use_derived_class))
+            {
+                m_header->writeLine("// Virtual event handlers -- override them in your derived class");
+            }
+            else
+            {
+                m_header->writeLine("// Event handlers");
+            }
+        }
+
+        for (auto& iter: m_map_conditional_events)
+        {
+            auto& events = iter.second;
+            std::sort(events.begin(), events.end(), sort_events_by_handler);
+            Code code(nullptr, GEN_LANG_CPLUSPLUS);
+            BeginPlatformCode(code, iter.first);
+            code.Eol();
+            for (auto& event: events)
+            {
+                auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
+                // Ignore lambda's and functions in another class
+                if (event_code.contains("[") || event_code.contains("::"))
+                    continue;
+
+                if (m_form_node->as_bool(prop_use_derived_class))
+                {
+                    code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
+                         << "& event) { event.Skip(); }";
+                }
+                else
+                {
+                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
+                }
+                code.Eol();
+            }
+            code << "#endif  // limited to specific platforms";
+            code.Eol();
+            m_header->writeLine(code);
+        }
+    }
+}
+
 void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
 {
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
@@ -1874,4 +2023,497 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
 
     m_source->writeLine();
     GenerateDataForm();
+}
+
+// clang-format off
+
+inline constexpr const auto txt_get_data_function = R"===(
+    // Convert compressed data string into a char array
+    std::unique_ptr<unsigned char[]> get_data(const unsigned char* data,
+        size_t size_data, size_t size_data_uncompressed)
+    {
+        auto str = std::unique_ptr<unsigned char[]>(new unsigned char[size_data_uncompressed]);
+        wxMemoryInputStream stream_in(data, size_data);
+        wxZlibInputStream zlib_strm(stream_in);
+        zlib_strm.Read(str.get(), size_data_uncompressed);
+        return str;
+    };
+)===";
+
+// clang-format on
+
+void CppCodeGenerator::GenerateDataForm()
+{
+    ASSERT_MSG(m_form_node, "Attempting to generate Data List when no form was located.");
+
+    if (!m_form_node->getChildCount())
+    {
+        return;
+    }
+    if (m_panel_type != HDR_PANEL)
+    {
+        m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
+        m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+
+        m_source->writeLine();
+        m_source->writeLine("namespace wxue_data\n{");
+        m_source->Indent();
+        m_source->SetLastLineBlank();
+
+        tt_string_vector function;
+        function.ReadString(txt_get_data_function);
+        for (auto& iter: function)
+        {
+            m_source->writeLine(iter, indent::none);
+        }
+
+        Code code(m_form_node, m_language);
+
+        ProjectData.WriteDataConstruction(code, m_source);
+
+        m_source->Unindent();
+        m_source->writeLine("}\n");
+    }
+
+    /////////////// Header code ///////////////
+
+    if (m_panel_type != CPP_PANEL)
+    {
+        m_header->writeLine();
+        m_header->writeLine("#include <memory>  // for std::make_unique", indent::none);
+
+        if (ProjectData.NeedsUtilityHeader())
+        {
+            m_header->writeLine("#include <utility>  // for std::pair", indent::none);
+        }
+
+        m_header->writeLine();
+        m_header->writeLine("namespace wxue_data\n{");
+        m_header->Indent();
+        m_header->SetLastLineBlank();
+        m_header->writeLine("std::unique_ptr<unsigned char[]> get_data(const unsigned char* data, size_t size_data, size_t "
+                            "size_data_uncompressed);");
+
+        m_header->writeLine();
+
+        m_header->Unindent();
+        m_header->writeLine("}\n");
+    }
+    ProjectData.WriteImagePostHeader(m_header);
+}
+
+void CppCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::string>& code_lines)
+{
+    GenCppValVarsBase(node->getNodeDeclaration(), node, code_lines);
+
+    for (const auto& child: node->getChildNodePtrs())
+    {
+        CollectValidatorVariables(child.get(), code_lines);
+    }
+}
+
+void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines)
+{
+    if (auto prop = node->getPropPtr(prop_class_access); prop)
+    {
+        if (prop->as_string() != "none")
+        {
+            if ((perm == Permission::Public && prop->as_string() == "public:") ||
+                (perm == Permission::Protected && prop->as_string() == "protected:"))
+            {
+                auto code = GetDeclaration(node);
+
+                auto ChangeClass = [&](const std::string& generic_class)
+                {
+                    if (auto pos = code.find('*'); pos != std::string::npos)
+                    {
+                        code = generic_class + code.substr(pos);
+                    }
+                };
+
+                if (node->isGen(gen_wxAnimationCtrl))
+                {
+                    if ((node->hasValue(prop_animation) &&
+                         node->as_string(prop_animation).contains(".ani", tt::CASE::either)) ||
+                        node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        // The generic version is required to display .ANI files on wxGTK.
+                        ChangeClass("wxGenericAnimationCtrl");
+                    }
+                }
+                else if (node->isGen(gen_wxHyperlinkCtrl))
+                {
+                    if (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        // If the underlined property is false, we need to use the generic version.
+                        ChangeClass("wxGenericHyperlinkCtrl");
+                    }
+                }
+                else if (node->isGen(gen_wxStaticBitmap))
+                {
+                    if (node->as_string(prop_scale_mode) != "None" ||
+                        node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        // If we are using a scale mode, we must use wxGenericStaticBitmap.
+                        ChangeClass("wxGenericStaticBitmap");
+                    }
+                }
+                else if (node->isGen(gen_wxStaticText))
+                {
+                    if (node->as_string(prop_subclass).starts_with("wxGeneric") ||
+                        (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0))
+                    {
+                        // If we are using markup or the wrap is <= 0, we must use wxGenericStaticText.
+                        ChangeClass("wxGenericStaticText");
+                    }
+                }
+                else if (node->isGen(gen_wxCalendarCtrl))
+                {
+                    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        ChangeClass("wxGenericCalendarCtrl");
+                    }
+                }
+                else if (node->isGen(gen_wxTreeCtrl))
+                {
+                    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+                    {
+                        ChangeClass("wxGenericTreeCtrl");
+                    }
+                }
+
+                else if (node->isGen(gen_wxTimer))
+                {
+                    // Remove the pointer, wxTimer needs to be a class.
+                    code.Replace("*", "");
+                }
+
+                if (code.empty() && node->isGen(gen_auitool))
+                {
+                    code += "wxAuiToolBarItem* " + node->as_string(prop_var_name) + ';';
+                }
+
+                if (code.size())
+                {
+                    if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+                    {
+                        if (perm == Permission::Public)
+                        {
+                            if (!m_map_public_members.contains(node->as_string(prop_platforms)))
+                            {
+                                m_map_public_members[node->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_public_members[node->as_string(prop_platforms)].insert(code);
+                        }
+                        else
+                        {
+                            if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                            {
+                                m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_protected[node->as_string(prop_platforms)].insert(code);
+                        }
+                    }
+                    // If node_container is non-null, it means the current node is within a container that
+                    // has a conditional.
+                    else if (auto node_container = node->getPlatformContainer(); node_container)
+                    {
+                        if (perm == Permission::Public)
+                        {
+                            if (!m_map_public_members.contains(node_container->as_string(prop_platforms)))
+                            {
+                                m_map_public_members[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_public_members[node_container->as_string(prop_platforms)].insert(code);
+                        }
+                        else
+                        {
+                            if (!m_map_protected.contains(node_container->as_string(prop_platforms)))
+                            {
+                                m_map_protected[node_container->as_string(prop_platforms)] = std::set<tt_string>();
+                            }
+                            m_map_protected[node_container->as_string(prop_platforms)].insert(code);
+                        }
+                    }
+                    else
+                    {
+                        code_lines.insert(code);
+                    }
+                }
+            }
+        }
+    }
+
+    if (perm == Permission::Protected)
+    {
+        // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
+        if (node->hasValue(prop_checkbox_var_name) || node->hasValue(prop_radiobtn_var_name))
+        {
+            auto code = GetDeclaration(node);
+            if (code.size())
+            {
+                if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+                {
+                    if (!m_map_protected.contains(node->as_string(prop_platforms)))
+                    {
+                        m_map_protected[node->as_string(prop_platforms)] = std::set<tt_string>();
+                    }
+                    m_map_protected[node->as_string(prop_platforms)].insert(code);
+                }
+                else
+                {
+                    code_lines.insert(code);
+                }
+            }
+        }
+    }
+
+    for (const auto& child: node->getChildNodePtrs())
+    {
+        CollectMemberVariables(child.get(), perm, code_lines);
+    }
+
+    return;
+}
+
+void CppCodeGenerator::CollectIncludes(Node* form, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    ASSERT_MSG(form->isForm(), "Only forms should be passed to CollectIncludes()");
+    if (form->isGen(gen_Images) || form->isGen(gen_Data))
+    {
+        return;
+    }
+
+    GatherGeneratorIncludes(form, set_src, set_hdr);
+
+    // If an include is going to be generated in the header file, then don't also generate it
+    // in the src file.
+    for (auto& iter: set_hdr)
+    {
+        if (auto pos = set_src.find(iter); pos != set_src.end())
+        {
+            set_src.erase(pos);
+        }
+    }
+}
+
+// Generate extern references to images used in the current form that are defined in the
+// gen_Images node. These are written before the class constructor.
+void CppCodeGenerator::WriteImagePreConstruction(Code& code)
+{
+    ASSERT_MSG(code.is_cpp(), "This function is only used for C++ code generation");
+    code.clear();
+
+    bool is_namespace_written = false;
+    for (auto iter_array: m_embedded_images)
+    {
+        // If the image is in ImagesForm then it's header file will be included which already
+        // has the extern declarations.
+        if (iter_array->form == Project.getImagesForm())
+            continue;
+
+        if (!is_namespace_written)
+        {
+            is_namespace_written = true;
+            code.Str("namespace wxue_img").OpenBrace();
+        }
+        code.Eol(eol_if_needed).Str("extern const unsigned char ").Str(iter_array->imgs[0].array_name);
+        code.Str("[").itoa((to_size_t) (iter_array->imgs[0].array_size & 0xFFFFFFFF)).Str("];");
+        if (iter_array->imgs[0].filename.size())
+        {
+            code.Str("  // ").Str(iter_array->imgs[0].filename);
+        }
+    }
+
+    if (is_namespace_written)
+    {
+        code.CloseBrace().Eol();
+    }
+}
+
+void CppCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    ASSERT_MSG(!node->isNonWidget(), "Non-widget nodes should not be passed to GatherGeneratorIncludes()");
+
+    bool isAddToSrc = false;
+
+    // If the component is set for local access only, then add the header file to the source
+    // set. Once all processing is done, if this header was also used by a component with
+    // non-local access, then it will be removed from the source set.
+    if (node->isPropValue(prop_class_access, "none"))
+        isAddToSrc = true;
+
+    auto generator = node->getNodeDeclaration()->getGenerator();
+    ASSERT(generator);
+    if (!generator)
+        return;
+
+    generator->GetIncludes(node, set_src, set_hdr, m_language);
+
+    if (node->hasValue(prop_subclass_header))
+    {
+        tt_string header("#include \"");
+        header << node->as_string(prop_subclass_header) << '"';
+        if (node->isForm())
+        {
+            set_hdr.insert(header);
+        }
+        else
+        {
+            set_src.insert(header);
+        }
+    }
+
+    if (!node->isForm() && node->hasValue(prop_subclass) && !node->isPropValue(prop_class_access, "none"))
+    {
+        set_hdr.insert(tt_string() << "class " << node->as_string(prop_subclass) << ';');
+    }
+
+    // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes contain properties for
+    // font, color, and bitmaps. If the property is used, then we add a matching header file.
+
+    for (auto& iter: node->getPropsVector())
+    {
+        if (iter.hasValue())
+        {
+            if (iter.type() == type_wxFont)
+            {
+                if (isAddToSrc)
+                {
+                    set_src.insert("#include <wx/font.h>");
+                }
+                else
+                {
+                    set_hdr.insert("#include <wx/font.h>");
+                }
+            }
+            else if (iter.type() == type_wxColour)
+            {
+                if (isAddToSrc)
+                {
+                    set_src.insert("#include <wx/colour.h>");
+                    set_src.insert("#include <wx/settings.h>");  // This is needed for the system colours
+                }
+                else
+                {
+                    set_hdr.insert("#include <wx/colour.h>");
+                    set_hdr.insert("#include <wx/settings.h>");  // This is needed for the system colours
+                }
+            }
+            else if (iter.type() == type_image)
+            {
+                if (m_ImagesForm && m_include_images_statement.size() &&
+                    (iter.as_string().starts_with("Embed") || iter.as_string().starts_with("SVG")))
+                {
+                    set_src.insert(m_include_images_statement);
+                }
+
+                if (iter.as_string().starts_with("Art"))
+                {
+                    m_NeedArtProviderHeader = true;
+                }
+
+                if (auto function_name = ProjectImages.GetBundleFuncName(iter.as_string()); function_name.size())
+                {
+                    continue;
+                }
+
+                // The problem at this point is that we don't know how the bitmap will be used. It could be just a
+                // wxBitmap, or it could be handed to a wxImage for sizing, or it might be handed to
+                // wxWindow->SetIcon(). We play it safe and supply all three header files.
+
+                if (isAddToSrc)
+                {
+                    set_src.insert("#include <wx/bitmap.h>");
+                    set_src.insert("#include <wx/icon.h>");
+                    set_src.insert("#include <wx/image.h>");
+                }
+                else
+                {
+                    set_hdr.insert("#include <wx/bitmap.h>");
+                    set_hdr.insert("#include <wx/icon.h>");
+                    set_hdr.insert("#include <wx/image.h>");
+                }
+            }
+        }
+    }
+
+    // Now parse all the children
+    for (const auto& child: node->getChildNodePtrs())
+    {
+        GatherGeneratorIncludes(child.get(), set_src, set_hdr);
+    }
+}
+
+void CppCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
+{
+    tt_string convert(node->as_string(prop));
+    convert.Replace("@@", "\n", tt::REPLACE::all);
+    tt_string_vector lines(convert, '\n', tt::TRIM::right);
+    bool initial_bracket = false;
+    for (auto& code: lines)
+    {
+        if (code.contains("}") && !code.contains("{"))
+        {
+            m_header->Unindent();
+        }
+        else if (!initial_bracket && code.contains("["))
+        {
+            initial_bracket = true;
+            m_header->Indent();
+        }
+
+        if (code.is_sameas("public:") || code.is_sameas("protected:") || code.is_sameas("private:"))
+        {
+            m_header->Unindent();
+            m_header->writeLine(code, indent::auto_no_whitespace);
+            m_header->Indent();
+        }
+        else
+        {
+            m_header->writeLine(code, indent::auto_no_whitespace);
+        }
+
+        if (code.contains("{") && !code.contains("}"))
+        {
+            m_header->Indent();
+        }
+    }
+    m_header->writeLine();
+}
+
+void CppCodeGenerator::WriteImagePostHeader()
+{
+    auto images_form = Project.getImagesForm();
+    if (!images_form)
+        return;
+
+    bool is_namespace_written = false;
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form == images_form)
+            continue;
+
+        if (!is_namespace_written)
+        {
+            m_header->writeLine();
+            m_header->writeLine("namespace wxue_img\n{");
+
+            m_header->Indent();
+            is_namespace_written = true;
+        }
+        if (iter_array->imgs[0].filename.size())
+        {
+            m_header->writeLine(tt_string("// ") << iter_array->imgs[0].filename);
+        }
+        m_header->writeLine(tt_string("extern const unsigned char ")
+                            << iter_array->imgs[0].array_name << '['
+                            << (to_size_t) (iter_array->imgs[0].array_size & 0xFFFFFFFF) << "];");
+    }
+
+    if (is_namespace_written)
+    {
+        m_header->Unindent();
+        m_header->writeLine("}\n");
+    }
 }

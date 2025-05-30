@@ -411,7 +411,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                 }
                 else  // this is a lambda
                 {
-                    if (!is_cpp())
+                    if (!code.is_cpp())
                     {
                         m_source->writeLine("# You can only use C++ lambda functions as an event handler C++ code.");
                     }
@@ -473,7 +473,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                     }
                     else  // this is a lambda
                     {
-                        if (!is_cpp())
+                        if (!code.is_cpp())
                         {
                             m_source->writeLine("# You can only use C++ lambda functions as an event handler C++ code.");
                         }
@@ -512,154 +512,5 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 
         EndPlatformCode();
         m_source->writeLine();
-    }
-}
-
-void BaseCodeGenerator::GenHdrEvents()
-{
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
-
-    if (m_events.size() || m_ctx_menu_events.size())
-    {
-        std::set<tt_string> code_lines;
-
-        for (auto& event: m_events)
-        {
-            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
-            // Ignore lambda's and functions in another class
-            if (event_code.contains("[") || event_code.contains("::"))
-                continue;
-
-            tt_string code;
-
-            // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method
-            // of the base class and is not virtual.
-
-            if (event->getNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
-            {
-                bool has_handler = false;
-
-                for (const auto& child: event->getNode()->getChildNodePtrs())
-                {
-                    if (child->isGen(gen_wxContextMenuEvent))
-                    {
-                        has_handler = true;
-                        break;
-                    }
-                }
-
-                if (has_handler)
-                {
-                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
-                    code_lines.insert(code);
-                    continue;
-                }
-            }
-            if (m_form_node->as_bool(prop_use_derived_class))
-            {
-                code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
-                     << "& event) { event.Skip(); }";
-            }
-            else
-            {
-                code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
-            }
-            code_lines.insert(code);
-        }
-
-        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_ctx_menu_events should only
-        // contain menu items events.
-
-        for (const auto& event: m_ctx_menu_events)
-        {
-            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
-            // Ignore lambda's and functions in another class
-            if (event_code.contains("[") || event_code.contains("::"))
-                continue;
-
-            tt_string code;
-
-            if (m_form_node->as_bool(prop_use_derived_class))
-            {
-                code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
-                     << "& event) { event.Skip(); }";
-            }
-            else
-            {
-                code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
-            }
-
-            code_lines.insert(code);
-        }
-
-        if (code_lines.size())
-        {
-            m_header->writeLine();
-            if (m_form_node->as_bool(prop_use_derived_class))
-            {
-                m_header->writeLine("// Virtual event handlers -- override them in your derived class");
-                m_header->writeLine();
-            }
-            else
-            {
-                m_header->writeLine("// Event handlers");
-                m_header->writeLine();
-            }
-            for (auto& iter: code_lines)
-            {
-                m_header->writeLine(iter.subview());
-            }
-        }
-    }
-
-    if (m_map_conditional_events.size())
-    {
-        auto sort_events_by_handler = [](NodeEvent* a, NodeEvent* b)
-        {
-            return (a->get_value() < b->get_value());
-        };
-
-        if (m_events.empty() && m_ctx_menu_events.empty())
-        {
-            m_header->writeLine();
-            if (m_form_node->as_bool(prop_use_derived_class))
-            {
-                m_header->writeLine("// Virtual event handlers -- override them in your derived class");
-            }
-            else
-            {
-                m_header->writeLine("// Event handlers");
-            }
-        }
-
-        for (auto& iter: m_map_conditional_events)
-        {
-            auto& events = iter.second;
-            std::sort(events.begin(), events.end(), sort_events_by_handler);
-            Code code(nullptr, GEN_LANG_CPLUSPLUS);
-            BeginPlatformCode(code, iter.first);
-            code.Eol();
-            for (auto& event: events)
-            {
-                auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
-                // Ignore lambda's and functions in another class
-                if (event_code.contains("[") || event_code.contains("::"))
-                    continue;
-
-                if (m_form_node->as_bool(prop_use_derived_class))
-                {
-                    code << "virtual void " << event_code << "(" << event->getEventInfo()->get_event_class()
-                         << "& event) { event.Skip(); }";
-                }
-                else
-                {
-                    code << "void " << event_code << "(" << event->getEventInfo()->get_event_class() << "& event);";
-                }
-                code.Eol();
-            }
-            code << "#endif  // limited to specific platforms";
-            code.Eol();
-            m_header->writeLine(code);
-        }
     }
 }

@@ -267,26 +267,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
 }
 
-const char* BaseCodeGenerator::LangPtr() const
-{
-    switch (m_language)
-    {
-        case GEN_LANG_CPLUSPLUS:
-        case GEN_LANG_PERL:
-            return "->";
-
-        case GEN_LANG_PYTHON:
-            return ".";
-
-        default:
-            FAIL_MSG("Unsupported language!")
-            return "";
-    }
-}
-
-#if defined(__WINDOWS__)
-#endif
-
 void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms)
 {
     if (platforms.contains("Windows"))
@@ -678,7 +658,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         {
             if (node->getForm()->isGen(gen_wxDialog) && node->as_bool(prop_static_line))
             {
-                if (is_cpp())
+                if (code.is_cpp())
                 {
                     code.ParentName().Function("Add(CreateSeparatedSizer(").NodeName() << "), ";
                 }
@@ -713,7 +693,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         }
         else
         {
-            if (need_closing_brace && is_cpp())
+            if (need_closing_brace && code.is_cpp())
             {
                 code << "\t";
             }
@@ -736,7 +716,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
                 flags << '0';
 
             code.Add(flags).Comma().BorderSize().EndFunction();
-            if (is_cpp())
+            if (code.is_cpp())
                 code.Replace(", 0, 0);", ");");
             else
                 code.Replace(", 0, 0)", ")");

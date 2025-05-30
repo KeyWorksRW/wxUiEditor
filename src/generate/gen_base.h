@@ -22,11 +22,6 @@ class wxWindow;
 
 struct EmbeddedImage;
 
-namespace pugi
-{
-    class xml_node;
-}
-
 // The NodeEvent class is used to store event information specific to what the user has
 // requsted (node containing the event, name of the event handler) along with a pointer to
 // the fixed event information.
@@ -74,19 +69,12 @@ public:
 
     PANEL_PAGE GetPanelType() { return m_panel_type; }
 
-    bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
-
     static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids);
 
     // Retrieve a list of any warnings the generators have created
     auto getWarnings() { return m_warnings; }
 
 protected:
-    // Generate extern references to images used in the current form that are defined in the
-    // gen_Images node.
-    //
-    // This will call code.clear() before writing any code.
-    void WriteImagePreConstruction(Code& code);  // declared in image_gen.cpp
 
     // Generate code for embedded images not defined in the gen_Images
     // node.
@@ -94,12 +82,7 @@ protected:
     // This will call code.clear() before writing any code.
     void WriteImageConstruction(Code& code);  // declared in image_gen.cpp
 
-    // Generate extern statements after the header definition for embedded images not defined
-    // in the gen_Images node.
-    void WriteImagePostHeader();  // declared in image_gen.cpp
-
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
-    void WritePropHdrCode(Node* node, GenEnum::PropName prop);
     void AddPersistCode(Node* node);
     enum Permission
     {
@@ -110,27 +93,14 @@ protected:
     // This method is in gen_images.cpp, and handles both source and header code generation
     void GenerateImagesForm();
 
-    // This method is in gen_data_list.cpp, and handles both source and header code generation
-    void GenerateDataForm();
-
     tt_string GetDeclaration(Node* node);
 
     void CollectEventHandlers(Node* node, EventVector& events);
 
     // m_language and m_form_node must be set first. This will add to m_embedded_images
     void CollectImageHeaders(Node* node, std::set<std::string>& embedset);
-    void CollectIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
-    void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
-    void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
-    void GenHdrEvents();
-
-    // Generates all the code lines for validator_variables initialized in the header file
-    void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);
-
-    // Recursive function for generating all include files needed by any nodes in the form
-    void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
 
     // Determine if Header or Animation functions need to be generated, and whether the
     // wx/artprov.h is needed.
@@ -154,7 +124,6 @@ protected:
     // Call this to set m_ImagesForm
     void SetImagesForm();
 
-    const char* LangPtr() const;
     void BeginPlatformCode(Code& code, const tt_string& platforms);
     void EndPlatformCode();
     bool GenAfterChildren(Node* node, bool need_closing_brace);

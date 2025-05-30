@@ -42,4 +42,33 @@ protected:
 
     // This function simply generates unhandled event handlers in a multi-string comment.
     void GenUnhandledEvents(EventVector& events);
+
+    void GenHdrEvents();
+
+    // Handles both source and header code generation
+    void GenerateDataForm();
+
+    void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
+
+    void CollectIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
+
+    // Recursive function for generating all include files needed by any nodes in the form
+    void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
+
+    // Generates all the code lines for validator_variables initialized in the header file
+    void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);
+
+    void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
+
+    // Generate extern statements after the header definition for embedded images not defined
+    // in the gen_Images node.
+    void WriteImagePostHeader();  // declared in image_gen.cpp
+
+    // Generate extern references to images used in the current form that are defined in the
+    // gen_Images node.
+    //
+    // This will call code.clear() before writing any code.
+    void WriteImagePreConstruction(Code& code);  // declared in image_gen.cpp
+
+    void WritePropHdrCode(Node* node, GenEnum::PropName prop);
 };

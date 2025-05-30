@@ -69,42 +69,6 @@ constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::str
 
 });
 
-// Collects classes and constants that get output as "use Wx qw(...), use Wx::Class qw(...),
-// etc."
-
-// This will gather sorted collections that can bring in subsets of wxWidgets constants, classes,
-// and packages. These get written out near the top of the generated code for each form.
-class GatherPerlUsages
-{
-public:
-    GatherPerlUsages(Node* form_node);
-
-    std::set<std::string>& use_classes() { return m_use_classes; }
-    std::set<std::string>& use_constants() { return m_use_constants; }
-    std::set<std::string>& use_expands() { return m_use_expands; }
-    std::set<std::string>& use_packages() { return m_use_packages; }
-
-protected:
-    void ParseNodes(Node* node);
-
-private:
-    std::set<std::string> m_art_ids;
-    std::set<std::string> m_use_classes;
-    std::set<std::string> m_use_constants;
-    std::set<std::string> m_use_expands;  // for use Wx qw[:...];
-    std::set<std::string> m_use_packages;
-};
-
-bool HasPerlMapConstant(std::string_view value)
-{
-    for (auto& iter: map_perl_constants)
-    {
-        if (tt::contains(iter.second, value))
-            return true;
-    }
-    return false;
-}
-
 // This *MUST* be written without any indendation
 const char* perl_begin_cmt_block = "=pod";
 
@@ -118,14 +82,6 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     Code code(m_form_node, GEN_LANG_PERL);
 
     m_embedded_images.clear();
-
-    bool base64_requirement_written = false;
-
-    // [Randalphwa - 05-29-2025] These two are used for SVG files which the
-    // current version of wxPerl does not support. I'm including them here
-    // anyway so that when/if wxPerl supports SVG files, the code will be ready.
-    bool stringio_requirement_written = false;
-    // bool zlib_requirement_written = false;
 
     SetImagesForm();
     std::set<std::string> img_include_set;
@@ -229,71 +185,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     else if (m_embedded_images.size())
     {
-        bool images_file_imported = false;
-        bool svg_import_libs = false;
-        for (auto& iter: m_embedded_images)
-        {
-            if (iter->form == m_ImagesForm)
-            {
-                if (!images_file_imported)
-                {
-                    tt_string import_name = iter->form->as_string(prop_perl_file).filename();
-                    import_name.remove_extension();
-                    code.Eol().Str("use ").Str(import_name) << "'";
-                    m_source->writeLine(code);
-                    code.clear();
-                    images_file_imported = true;
-                }
-                if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
-                {
-                    if (!svg_import_libs)
-                    {
-                        // TODO: [Randalphwa - 05-29-2025] Currently, wxPerl does not support SVG
-                        // files. We could take advantage of wxLunaSVG and convert the SVG files to
-                        // PNG -- in fact we could even generate multiple resolution PNG files.
-
-                        // svg_import_libs = true;
-                    }
-                }
-
-                if (iter->form != m_ImagesForm)
-                {
-                    // If the image isn't in the images file, then we need to add the base64 version
-                    // of the bitmap
-                    if (!base64_requirement_written)
-                    {
-                        m_source->writeLine("use MIME::Base64;");
-                        base64_requirement_written = true;
-                    }
-
-                    // At this point we know that some method is required, but until we have
-                    // processed all the images, we won't know if the images file is required. The
-                    // images file provides it's own function for loading images, so we can use that
-                    // if it's available.
-                    m_NeedImageFunction = true;
-                }
-            }
-        }  // end of for (auto& iter: m_embedded_images)
-
-        if (m_NeedImageFunction)
-        {
-            if (images_file_imported)
-            {
-                // The images file supplies the function we need
-                m_NeedImageFunction = false;
-            }
-            else
-            {
-                // REVIEW: [Randalphwa - 05-29-2025] This is just here as a placeholder in case we
-                // need to bring in another package for loading images.
-                if (!stringio_requirement_written)
-                {
-                    // No further check for this is needed
-                    // stringio_requirement_written = true;
-                    // m_source->writeLine("require 'stringio'");
-                }
-            }
-        }
+        CheckMimeBase64Requirement(code);
     }
 
     int id_value = wxID_HIGHEST;
@@ -436,39 +328,37 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
 void PerlCodeGenerator::WriteUsageStatements()
 {
-    GatherPerlUsages usages(m_form_node);
-
-    if (usages.use_classes().size())
+    if (m_use_classes.size())
     {
         m_source->writeLine();
-        for (const auto& import: usages.use_classes())
+        for (const auto& import: m_use_classes)
         {
             m_source->writeLine(import);
         }
         m_source->writeLine();
     }
 
-    if (usages.use_classes().size())
+    if (m_use_classes.size())
     {
-        for (auto& iter: usages.use_packages())
+        for (auto& iter: m_use_packages)
         {
             m_source->writeLine(iter);
         }
         m_source->writeLine();
     }
 
-    if (usages.use_expands().size())
+    if (m_use_expands.size())
     {
-        for (auto& iter: usages.use_expands())
+        for (auto& iter: m_use_expands)
         {
             m_source->writeLine(iter);
         }
         m_source->writeLine();
     }
 
-    if (usages.use_constants().size())
+    if (m_use_constants.size())
     {
-        for (auto& iter: usages.use_constants())
+        for (auto& iter: m_use_constants)
         {
             m_source->writeLine(iter);
         }
@@ -655,24 +545,85 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
     }
 }
 
-tt_string MakePerlPath(Node* node)
+void PerlCodeGenerator::CheckMimeBase64Requirement(Code& code)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_PERL);
+    ASSERT_MSG(m_embedded_images.size(), "CheckMimeBase64Requirement() should only be called if there are embedded images");
+    if (m_embedded_images.empty())
+    {
+        return;
+    }
+    bool images_file_imported = false;
+    bool svg_import_libs = false;
+    for (auto& iter: m_embedded_images)
+    {
+        if (iter->form == m_ImagesForm)
+        {
+            if (!images_file_imported)
+            {
+                tt_string import_name = iter->form->as_string(prop_perl_file).filename();
+                import_name.remove_extension();
+                code.Eol().Str("use ").Str(import_name) << "'";
+                m_source->writeLine(code);
+                code.clear();
+                images_file_imported = true;
+            }
+            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            {
+                if (!svg_import_libs)
+                {
+                    // TODO: [Randalphwa - 05-29-2025] Currently, wxPerl does not support SVG
+                    // files. We could take advantage of wxLunaSVG and convert the SVG files to
+                    // PNG -- in fact we could even generate multiple resolution PNG files.
 
-    if (path.empty())
-        path = "./";
-    else if (has_base_file)
-        path.remove_filename();
-    return path;
+                    // svg_import_libs = true;
+                }
+            }
+
+            if (iter->form != m_ImagesForm)
+            {
+                // If the image isn't in the images file, then we need to add the base64 version
+                // of the bitmap
+                if (!m_base64_requirement_written)
+                {
+                    m_source->writeLine("use MIME::Base64;");
+                    m_base64_requirement_written = true;
+                }
+
+                // At this point we know that some method is required, but until we have
+                // processed all the images, we won't know if the images file is required. The
+                // images file provides it's own function for loading images, so we can use that
+                // if it's available.
+                m_NeedImageFunction = true;
+            }
+        }
+    }  // end of for (auto& iter: m_embedded_images)
+
+    if (m_NeedImageFunction)
+    {
+        if (images_file_imported)
+        {
+            // The images file supplies the function we need
+            m_NeedImageFunction = false;
+        }
+        else
+        {
+            // REVIEW: [Randalphwa - 05-29-2025] This is just here as a placeholder in case we
+            // need to bring in another package for loading images.
+            if (!m_stringio_requirement_written)
+            {
+                // No further check for this is needed
+                // stringio_requirement_written = true;
+                // m_source->writeLine("require 'stringio'");
+            }
+        }
+    }
 }
 
-GatherPerlUsages::GatherPerlUsages(Node* form_node)
+void PerlCodeGenerator::InitializeUsageStatements()
 {
-    // This brings in all wxID_ constants, which is probably more than we need, but ensures they
-    // are all available.
     m_use_expands.emplace("use Wx qw[:id];");
 
-    ParseNodes(form_node);
+    ParseNodesForUsage(m_form_node);
 
     if (m_art_ids.size())
     {
@@ -703,7 +654,7 @@ GatherPerlUsages::GatherPerlUsages(Node* form_node)
     }
 }
 
-void GatherPerlUsages::ParseNodes(Node* node)
+void PerlCodeGenerator::ParseNodesForUsage(Node* node)
 {
     if (node->isSizer())
     {
@@ -712,7 +663,7 @@ void GatherPerlUsages::ParseNodes(Node* node)
         // Now recurse through any children and their children
         for (auto& child: node->getChildNodePtrs())
         {
-            ParseNodes(child.get());
+            ParseNodesForUsage(child.get());
         }
         return;
     }
@@ -776,6 +727,27 @@ void GatherPerlUsages::ParseNodes(Node* node)
     // Now recurse through any children and their children
     for (auto& child: node->getChildNodePtrs())
     {
-        ParseNodes(child.get());
+        ParseNodesForUsage(child.get());
     }
+}
+
+tt_string MakePerlPath(Node* node)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_PERL);
+
+    if (path.empty())
+        path = "./";
+    else if (has_base_file)
+        path.remove_filename();
+    return path;
+}
+
+bool HasPerlMapConstant(std::string_view value)
+{
+    for (auto& iter: map_perl_constants)
+    {
+        if (tt::contains(iter.second, value))
+            return true;
+    }
+    return false;
 }

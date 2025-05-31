@@ -15,6 +15,7 @@
 #include <wx/xml/xml.h>   // wxXmlDocument - XML parser & data holder class
 #include <wx/zstream.h>   // zlib stream classes
 
+#include <format>
 #include <fstream>
 
 #include <pugixml.hpp>

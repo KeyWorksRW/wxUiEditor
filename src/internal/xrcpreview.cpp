@@ -176,39 +176,39 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // Copy any of the following and paste them below the comment block, or to your inherited class.
 
 /*
-void XrcPreview::OnClear(
+void XrcPreview::OnClear(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnCompare(
+void XrcPreview::OnCompare(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnDuplicate(
+void XrcPreview::OnDuplicate(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnExport(
+void XrcPreview::OnExport(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnGenerate(
+void XrcPreview::OnGenerate(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnInit(
+void XrcPreview::OnInit(wxInitDialogEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnPreview(
+void XrcPreview::OnPreview(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnSearch(
+void XrcPreview::OnSearch(wxCommandEvent& event)
 {
     event.Skip();
 }
-void XrcPreview::OnVerify(
+void XrcPreview::OnVerify(wxCommandEvent& event)
 {
     event.Skip();
 }

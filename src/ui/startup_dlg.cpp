@@ -101,6 +101,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* bmp_2 = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR));
     box_sizer_4->Add(bmp_2, wxSizerFlags().Border(wxALL));
 
+    //  wxGenericHyperlinkCtrl is used in order to remove the underline from the font.
     auto* hyperlink_2 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Open...", wxEmptyString);
     hyperlink_2->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     box_sizer_4->Add(hyperlink_2, wxSizerFlags().Center().Border(wxALL));
@@ -112,6 +113,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_import_svg(24, 24));
     box_sizer_3->Add(bmp, wxSizerFlags().Border(wxALL));
 
+    //  wxGenericHyperlinkCtrl is used in order to remove the underline from the font.
     auto* hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Import...", wxEmptyString);
     hyperlink->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     box_sizer_3->Add(hyperlink, wxSizerFlags().Center().Border(wxALL));
@@ -123,6 +125,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_new_project_svg(24, 24));
     box_sizer_5->Add(bmp_3, wxSizerFlags().Border(wxALL));
 
+    //  wxGenericHyperlinkCtrl is used in order to remove the underline from the font.
     auto* hyperlink_3 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "New", wxEmptyString);
     hyperlink_3->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     box_sizer_5->Add(hyperlink_3, wxSizerFlags().Center().Border(wxALL));

@@ -67,6 +67,7 @@
             help="Specifies the image to display in the title bar of the frame."/>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
+        <event name="wxEVT_MENU_HIGHLIGHT" class="wxMenuEvent"/>
     </gen>
 
     <gen class="wxDocParentFrame" image="wxFrame" type="frame_form">

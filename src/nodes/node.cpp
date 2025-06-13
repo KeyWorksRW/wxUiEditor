@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains user-modifiable node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -168,14 +168,12 @@ Node* Node::getForm() noexcept
         return this;
     }
 
-    auto parent = getParent();
-    while (parent)
+    for (auto parent = getParent(); parent; parent = parent->getParent())
     {
         if (parent->isForm())
         {
             return parent;
         }
-        parent = parent->getParent();
     }
 
     return nullptr;
@@ -183,14 +181,12 @@ Node* Node::getForm() noexcept
 
 Node* Node::getFolder() noexcept
 {
-    auto parent = getParent();
-    while (parent)
+    for (auto parent = getParent(); parent; parent = parent->getParent())
     {
         if (parent->isGen(gen_folder) || parent->isGen(gen_data_folder))
         {
             return parent;
         }
-        parent = parent->getParent();
     }
 
     return nullptr;
@@ -941,13 +937,17 @@ tt_string Node::getUniqueName(const tt_string& proposed_name, PropName prop_name
     }
     else if (isGen(gen_propGridItem) || isGen(gen_propGridCategory))
     {
-        auto parent = getParent();
-        if (parent->isGen(gen_propGridPage))
+        if (auto parent = getParent(); parent)
         {
-            parent = parent->getParent();
+            if (parent->isGen(gen_propGridPage))
+            {
+                parent = parent->getParent();
+            }
+            if (parent)
+            {
+                parent->collectUniqueNames(name_set, this, prop_name);
+            }
         }
-
-        parent->collectUniqueNames(name_set, this, prop_name);
     }
     else
     {
@@ -1140,13 +1140,18 @@ void Node::fixDuplicateNodeNames(Node* form)
     if (isGen(gen_propGridItem) || isGen(gen_propGridCategory))
     {
         name_set.clear();
-        auto parent = getParent();
-        if (parent->isGen(gen_propGridPage))
+        if (auto parent = getParent(); parent)
         {
-            parent = parent->getParent();
-        }
+            if (parent && parent->isGen(gen_propGridPage))
+            {
+                parent = parent->getParent();
+            }
 
-        parent->collectUniqueNames(name_set, this, prop_label);
+            if (parent)
+            {
+                parent->collectUniqueNames(name_set, this, prop_label);
+            }
+        }
 
         tt_string org_name(as_string(prop_label));
         auto result = getUniqueName(org_name, prop_label);
@@ -1390,14 +1395,15 @@ tt_string_view Node::getValidatorType() const
 
 Node* Node::getPlatformContainer()
 {
-    auto parent = getParent();
-    do
+    if (auto parent = getParent(); parent)
     {
-        if (parent->hasProp(prop_platforms) && parent->as_string(prop_platforms) != "Windows|Unix|Mac")
-            return parent;
-        parent = parent->getParent();
-    } while (parent && !parent->isGen(gen_Project));
-
+        do
+        {
+            if (parent->hasProp(prop_platforms) && parent->as_string(prop_platforms) != "Windows|Unix|Mac")
+                return parent;
+            parent = parent->getParent();
+        } while (parent && !parent->isGen(gen_Project));
+    }
     return nullptr;
 }
 

@@ -114,6 +114,10 @@ bool BitmapList(Code& code, const GenEnum::PropName prop);
 // location.
 tt_string MakePerlPath(Node* node);
 
+// If returned string is non-empty, it will contain
+// use "Wx::Event qw(events);"
+tt_string GatherPerlNodeEvents(Node* node);
+
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
 // Returns true if a list was created. List name will be called "bitmaps".

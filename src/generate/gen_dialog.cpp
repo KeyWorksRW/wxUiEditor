@@ -589,6 +589,11 @@ bool DialogFormGenerator::GetImports(Node* node, std::set<std::string>& set_impo
             set_imports.emplace("use Wx qw[:window];");
         }
 
+        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
+        {
+            set_imports.emplace(qw_events);
+        }
+
         return true;
     }
 

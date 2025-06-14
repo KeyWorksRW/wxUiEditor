@@ -139,13 +139,19 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool FrameFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
         set_imports.emplace("use base qw[Wx::Frame];");
         set_imports.emplace("use Wx qw[:frame];");
         set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
+
+        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
+        {
+            set_imports.emplace(qw_events);
+        }
+
         return true;
     }
 

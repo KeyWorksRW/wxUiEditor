@@ -1635,3 +1635,29 @@ void OnGenerateLanguage(GenLang language)
 
     wxMessageBox(msg, tt_string() << GenLangToString(language) << " Code Generation", wxOK | wxICON_INFORMATION);
 }
+
+tt_string GatherPerlNodeEvents(Node* node)
+{
+    tt_string qw_events;
+    for (auto& iter: node->getMapEvents())
+    {
+        // Only add the event if a handler was specified
+        if (iter.second.get_value().size())
+        {
+            auto event_name = iter.first;
+            // remove "wx" prefix
+            event_name.erase(0, 2);
+            if (event_name == "EVT_CLOSE_WINDOW")
+                event_name = "EVT_CLOSE";
+            qw_events << event_name << ' ';
+        }
+    }
+    if (qw_events.size())
+    {
+        qw_events.RightTrim();
+        qw_events.insert(0, "use Wx::Event qw(");
+        qw_events << ");";
+    }
+
+    return qw_events;
+}

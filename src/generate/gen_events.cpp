@@ -159,6 +159,15 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             event_name = "wxEVT_BUTTON";
         }
+        else if (event_name == "wxEVT_CLOSE_WINDOW")
+        {
+            if (code.is_python() || code.is_ruby() || code.is_perl())
+            {
+                // wxPerl, wxPython, and wxRuby use EVT_CLOSE instead of EVT_CLOSE_WINDOW
+                event_name = "wxEVT_CLOSE";
+            }
+        }
+
         if (code.is_cpp() || code.is_python())
         {
             handler.Add(event_name);
@@ -171,7 +180,14 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             // remove "wx" prefix
             event_name.erase(0, 2);
-            handler.Str(event_name).Str("($self, ").NodeName().Str("->GetId(), $self->can('") << event_code << "'));";
+            if (event_name == "EVT_CLOSE")
+            {
+                handler.Str(event_name).Str("($self, $self->can('") << event_code << "'));";
+            }
+            else
+            {
+                handler.Str(event_name).Str("($self, ").NodeName().Str("->GetId(), $self->can('") << event_code << "'));";
+            }
         }
         else if (code.is_ruby())
         {
@@ -328,6 +344,10 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                 code.Comma() << result->second;
             }
         }
+        else if (code.is_perl())
+        {
+            code << handler;
+        }
     }
     else
     {
@@ -336,7 +356,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.NodeName(event->getNode()).Function("Bind(") << handler.GetCode();
             code.EndFunction();
         }
-        else if (code.is_ruby())
+        else if (code.is_ruby() || code.is_perl())
         {
             code << handler;
         }

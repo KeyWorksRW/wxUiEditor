@@ -149,6 +149,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     m_source->writeLine();
 
+    InitializeUsageStatements();
     WriteUsageStatements();
 
     m_set_enum_ids.clear();

@@ -31,4 +31,5 @@ namespace FrameCommon
     bool BaseClassNameCode(Code& code);
     bool AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node);
 
+    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language);
 }  // namespace FrameCommon

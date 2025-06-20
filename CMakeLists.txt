@@ -114,6 +114,12 @@ if (MSVC)
     if (NOT BUILD_SHARED_LIBS)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
+
+    # Enable AddressSanitizer in Debug builds
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(/fsanitize=address)
+        add_link_options(/fsanitize=address)
+    endif()
 else()
     # Use the package PkgConfig to detect GTK+ headers/library files
     find_package(PkgConfig REQUIRED)

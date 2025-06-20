@@ -36,13 +36,13 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 
     m_toolBar->AddSeparator();
     m_toolBar->AddTool(ID_CPLUS, "C++",
-        wxue_img::bundle_cpp_logo_svg(FromDIP(16), FromDIP(16)), wxEmptyString, wxITEM_RADIO);
+        wxue_img::bundle_cpp_logo_svg(16, 16), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->AddTool(ID_PYTHON, "Python",
-        wxue_img::bundle_python_logo_only_svg(FromDIP(16), FromDIP(16)), wxEmptyString, wxITEM_RADIO);
+        wxue_img::bundle_python_logo_only_svg(16, 16), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->AddTool(ID_RUBY, "Ruby",
-        wxue_img::bundle_ruby_logo_svg(FromDIP(16), FromDIP(16)), wxEmptyString, wxITEM_RADIO);
+        wxue_img::bundle_ruby_logo_svg(16, 16), wxEmptyString, wxITEM_RADIO);
 
     m_toolBar->Realize();
     m_parent_sizer->Add(m_toolBar, wxSizerFlags().Expand().Border(wxALL));

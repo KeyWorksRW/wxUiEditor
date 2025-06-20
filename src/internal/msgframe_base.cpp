@@ -67,14 +67,14 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     m_tool_bar = CreateToolBar();
     m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString,
-        wxue_img::bundle_saveas_svg(FromDIP(24), FromDIP(24)));
+        wxue_img::bundle_saveas_svg(24, 24));
 
     m_tool_bar->AddSeparator();
     auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString,
-        wxue_img::bundle_clear_svg(FromDIP(24), FromDIP(24)));
+        wxue_img::bundle_clear_svg(24, 24));
 
     m_tool_bar->AddTool(id_hide, wxEmptyString,
-        wxue_img::bundle_hide_svg(FromDIP(24), FromDIP(24)));
+        wxue_img::bundle_hide_svg(24, 24));
 
     m_tool_bar->Realize();
 

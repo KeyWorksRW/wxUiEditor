@@ -294,11 +294,17 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         {
             // The function name includes the size, but we need to replace the size with a DIP version.
             function_name.erase_from("(");
-            code.Eol().Tab().Str(function_name).Str("(FromDIP(").itoa(svg_size.x).Str("), FromDIP(").itoa(svg_size.y);
-            code += "))";
+            code.Eol().Tab().Str(function_name);
             if (get_bitmap)
             {
+                code.Str("(FromDIP(").itoa(svg_size.x).Str("), FromDIP(").itoa(svg_size.y) += "))";
                 code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+            }
+            else
+            {
+                // For SVG files, just provide the default size, and wxWidgets will scale it before
+                // converting it to a bitmap for rendering.
+                code.Str("(").itoa(svg_size.x).Str(", ").itoa(svg_size.y) += ")";
             }
             return;
         }
@@ -324,7 +330,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         }
         else
         {
-            code.Add("FromDIP(wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            code.Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
         }
         return;
     }

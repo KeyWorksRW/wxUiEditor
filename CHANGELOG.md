@@ -43,6 +43,7 @@ All notable changes to this project will be documented in this file.
 - Fixed inconsistent generation of wxScrolledWindow versus wxScrolled<wxPanel> -- wxScrolledWindow is now always used.
 - XRC combine_all_forms will now generates a single XRC file containing all forms
 - wxTreebook correctly utilizes images in nested books -- fixed for all generated languages
+- Code generation for SVG images no longer scale the image twice
 
 ## [Released (1.2.1)]
 

@@ -74,20 +74,20 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_DifferentProject, "Different Project...",
-        wxue_img::bundle_wxUiEditor_svg(FromDIP(24), FromDIP(24)), "Different Project... (Ctrl+D)");
+        wxue_img::bundle_wxUiEditor_svg(24, 24), "Different Project... (Ctrl+D)");
 
     m_toolbar->AddTool(wxID_SAVE, "Save",
-        wxueBundleSVG(wxue_img::save_svg, 1064, 2928, FromDIP(wxSize(24, 24))), "Save current project");
+        wxueBundleSVG(wxue_img::save_svg, 1064, 2928, wxSize(24, 24)), "Save current project");
 
     m_toolbar->AddTool(id_GenerateCode, "Generate...",
-        wxue_img::bundle_generate_svg(FromDIP(24), FromDIP(24)), "Generate code...");
+        wxue_img::bundle_generate_svg(24, 24), "Generate code...");
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_UNDO, wxEmptyString,
-        wxue_img::bundle_undo_svg(FromDIP(24), FromDIP(24)), "Undo");
+        wxue_img::bundle_undo_svg(24, 24), "Undo");
 
     m_toolbar->AddTool(wxID_REDO, wxEmptyString,
-        wxue_img::bundle_redo_svg(FromDIP(24), FromDIP(24)), "Redo");
+        wxue_img::bundle_redo_svg(24, 24), "Redo");
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR), "Cut");
@@ -101,52 +101,50 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_AlignLeft, wxEmptyString,
-        wxue_img::bundle_alignleft_svg(FromDIP(24), FromDIP(24)), "Align left", wxITEM_CHECK);
+        wxue_img::bundle_alignleft_svg(24, 24), "Align left", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString,
-        wxue_img::bundle_aligncenter_svg(FromDIP(24), FromDIP(24)), "Center horizontally", wxITEM_CHECK);
+        wxue_img::bundle_aligncenter_svg(24, 24), "Center horizontally", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_AlignRight, wxEmptyString,
-        wxue_img::bundle_alignright_svg(FromDIP(24), FromDIP(24)), "Align right", wxITEM_CHECK);
+        wxue_img::bundle_alignright_svg(24, 24), "Align right", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_AlignTop, wxEmptyString,
-        wxue_img::bundle_aligntop_svg(FromDIP(24), FromDIP(24)), "Align top", wxITEM_CHECK);
+        wxue_img::bundle_aligntop_svg(24, 24), "Align top", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString,
-        wxue_img::bundle_alignvertcenter_svg(FromDIP(24), FromDIP(24)), "Center vertically", wxITEM_CHECK);
+        wxue_img::bundle_alignvertcenter_svg(24, 24), "Center vertically", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_AlignBottom, wxEmptyString,
-        wxue_img::bundle_alignbottom_svg(FromDIP(24), FromDIP(24)), "Align bottom", wxITEM_CHECK);
+        wxue_img::bundle_alignbottom_svg(24, 24), "Align bottom", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_BorderLeft, wxEmptyString,
-        wxue_img::bundle_left_svg(FromDIP(24), FromDIP(24)), "Left border", wxITEM_CHECK);
+        wxue_img::bundle_left_svg(24, 24), "Left border", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_BorderRight, wxEmptyString,
-        wxue_img::bundle_right_svg(FromDIP(24), FromDIP(24)), "Right border", wxITEM_CHECK);
+        wxue_img::bundle_right_svg(24, 24), "Right border", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_BorderTop, wxEmptyString,
-        wxue_img::bundle_top_svg(FromDIP(24), FromDIP(24)), "Top border", wxITEM_CHECK);
+        wxue_img::bundle_top_svg(24, 24), "Top border", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_BorderBottom, wxEmptyString,
-        wxue_img::bundle_bottom_svg(FromDIP(24), FromDIP(24)), "Bottom border", wxITEM_CHECK);
+        wxue_img::bundle_bottom_svg(24, 24), "Bottom border", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_Expand, wxEmptyString,
-        wxueBundleSVG(wxue_img::expand_svg, 648, 1215, FromDIP(wxSize(24, 24))), "Expand to fill the space", wxITEM_CHECK);
+        wxueBundleSVG(wxue_img::expand_svg, 648, 1215, wxSize(24, 24)), "Expand to fill the space", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(id_ShowHidden, wxEmptyString,
-        wxueBundleSVG(wxue_img::hidden_svg, 1993, 5117, FromDIP(wxSize(24, 24))), "Show hidden controls in Mockup panel",
-        wxITEM_CHECK);
+        wxueBundleSVG(wxue_img::hidden_svg, 1993, 5117, wxSize(24, 24)), "Show hidden controls in Mockup panel", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_Magnify, wxEmptyString,
-        wxueBundleSVG(wxue_img::magnify_svg, 4117, 13046, FromDIP(wxSize(24, 24))), "Magnify the size of the Mockup window",
-        wxITEM_CHECK);
+        wxueBundleSVG(wxue_img::magnify_svg, 4117, 13046, wxSize(24, 24)), "Magnify the size of the Mockup window", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_PreviewForm, "Preview Form...",
-        wxue_img::bundle_xrc_preview_svg(FromDIP(24), FromDIP(24)), "Preview form using XRC and/or C++", wxITEM_CHECK);
+        wxue_img::bundle_xrc_preview_svg(24, 24), "Preview form using XRC and/or C++", wxITEM_CHECK);
 
     m_toolbar->Realize();
     m_mainframe_sizer->Add(m_toolbar, wxSizerFlags().Expand());

@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "gen_enums.h"
 #include "node.h"
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
@@ -61,10 +62,10 @@ static void PostProcessPanel(Node* panel_node)
     }
 }
 
-static void SetUniqueRibbonToolID(Node* node)
+void SetUniqueRibbonToolID(Node* node)
 {
     auto* bar_parent = node->getParent();
-    while (bar_parent && !bar_parent->isGen(gen_wxRibbonBar))
+    while (bar_parent && (!bar_parent->isGen(gen_wxRibbonBar) && !bar_parent->isGen(GenEnum::gen_RibbonBar)))
     {
         bar_parent = bar_parent->getParent();
     }

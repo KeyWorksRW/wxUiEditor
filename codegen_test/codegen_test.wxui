@@ -2359,5 +2359,76 @@
           flags="wxEXPAND" />
       </node>
     </node>
+    <node
+      class="folder"
+      label="Special Forms">
+      <node
+        class="ToolBar"
+        base_file="form_toolbar">
+        <node
+          class="tool"
+          bitmap="SVG;face-smile.svg;[24,24]"
+          label="" />
+      </node>
+      <node
+        class="AuiToolBar"
+        base_file="form_aui_toolbar">
+        <node
+          class="auitool"
+          bitmap="SVG;face-smile.svg;[24,24]"
+          label="" />
+      </node>
+      <node
+        class="RibbonBar"
+        class_name="RibbonBarTool"
+        base_file="form_ribbonbar_tool"
+        derived_class_name="RibbonBarToolDerived"
+        derived_file="ribbonbartool_derived">
+        <node
+          class="wxRibbonPage"
+          label="Page 1">
+          <node
+            class="wxRibbonPanel"
+            label="Page 1, panel 1">
+            <node
+              class="wxRibbonToolBar">
+              <node
+                class="ribbonTool"
+                bitmap="SVG;face-smile.svg;[24,24]"
+                id="tool1" />
+            </node>
+          </node>
+        </node>
+      </node>
+      <node
+        class="RibbonBar"
+        class_name="RibbonBarGallery"
+        base_file="form_ribbonbar_gallery">
+        <node
+          class="wxRibbonPage"
+          label="Page 1">
+          <node
+            class="wxRibbonPanel"
+            label="Page 1, panel 1">
+            <node
+              class="wxRibbonGallery">
+              <node
+                class="ribbonGalleryItem"
+                bitmap="SVG;art/face-smile.svg;[24,24]" />
+            </node>
+          </node>
+        </node>
+      </node>
+      <node
+        class="MenuBar"
+        base_file="form_menubar">
+        <node
+          class="wxMenu">
+          <node
+            class="wxMenuItem"
+            bitmap="SVG;face-smile.svg;[24,24]" />
+        </node>
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

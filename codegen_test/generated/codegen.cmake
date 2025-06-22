@@ -13,6 +13,11 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/wizard.cpp
 
     # Base classes
+    ${CMAKE_CURRENT_LIST_DIR}/form_aui_toolbar.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/form_menubar.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/form_ribbonbar_gallery.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/form_ribbonbar_tool.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/form_toolbar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/maintestdialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tools_dlg.cpp

@@ -1192,6 +1192,8 @@ static constexpr GenType s_GenParentTypes[] = {
     type_notebook,
     type_panel,
     type_propgridpage,
+    type_ribbonbar,
+    type_ribbonbar_form,
     type_ribbonpanel,
     type_simplebook,
     type_splitter,

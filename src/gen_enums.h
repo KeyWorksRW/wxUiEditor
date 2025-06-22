@@ -790,7 +790,7 @@ namespace GenEnum
         gen_PanelForm,
         gen_PopupMenu,
         gen_Project,
-        gen_RibbonBar,
+        gen_RibbonBar,  // form version of wxRibbonBar
         gen_StaticCheckboxBoxSizer,
         gen_StaticRadioBtnBoxSizer,
         gen_TextSizer,

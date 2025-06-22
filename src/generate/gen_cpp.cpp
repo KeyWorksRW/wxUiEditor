@@ -433,12 +433,16 @@ void CppCodeGenerator::GenCppImageFunctions()
     }
     else if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction)
     {
-        m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+        m_source->writeLine();
+        if (m_NeedSVGFunction)
+            m_source->writeLine("#include <wx/bmpbndl.h>  // wxBitmapBundle class", indent::none);
+        m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
     }
 
     if (m_NeedSVGFunction)
     {
         m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+
         m_source->writeLine();
         m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
     }

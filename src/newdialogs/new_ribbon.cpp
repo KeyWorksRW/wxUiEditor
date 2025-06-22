@@ -128,7 +128,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog for creating a new wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +140,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "project_handler.h"         // ProjectHandler class
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"                   // Miscellaneous utilities
 
 void NewRibbon::OnInit(wxInitDialogEvent& event)
 {
@@ -191,6 +192,7 @@ void NewRibbon::createNode()
             ribbon_panel->adoptChild(tool_bar);
             auto tool = NodeCreation.createNode(gen_ribbonTool, tool_bar.get()).first;
             tool_bar->adoptChild(tool);
+            SetUniqueRibbonToolID(tool.get());
         }
         else if (m_panel_type == "Button")
         {

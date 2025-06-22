@@ -32,7 +32,7 @@ wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 bool RibbonPageGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    code.CreateClass().ParentName().Comma().as_string(prop_id);
+    code.CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_label);
     if (code.hasValue(prop_bitmap))
     {

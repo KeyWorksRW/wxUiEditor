@@ -310,7 +310,7 @@ bool MenuBarFormGenerator::ConstructionCode(Code& code)
 
 bool MenuBarFormGenerator::HeaderCode(Code& code)
 {
-    code.NodeName().Str("long style = ").Style().EndFunction();
+    code.NodeName().Str("(long style = ").Style().EndFunction();
 
     return true;
 }

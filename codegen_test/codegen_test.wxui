@@ -180,8 +180,7 @@
       derived_class_name="TestDialogDerived"
       derived_file="testdialog_derived"
       python_file="tools_dlg"
-      ruby_file="tools_dlg"
-      wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]">
+      ruby_file="tools_dlg">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL">
@@ -193,8 +192,7 @@
             bitmap="SVG;../src/art_src/left.svg;[24,24]"
             class_access="protected:"
             label=""
-            var_name="tool_svg"
-            wxEVT_TOOL="OnTool" />
+            var_name="tool_svg" />
           <node
             class="tool"
             bitmap="Art;wxART_CUT|wxART_TOOLBAR"
@@ -279,7 +277,7 @@
                   id="rbn_tool_art" />
                 <node
                   class="ribbonTool"
-                  bitmap="XPM;art/english.xpm"
+                  bitmap="XPM;english.xpm"
                   id="rbn_xpm" />
                 <node
                   class="ribbonTool"
@@ -2296,16 +2294,13 @@
       use_derived_class="0"
       insert_python_code="# What hath God wrought?"
       python_file="test_dlg"
-      ruby_file="test_dlg"
-      wxEVT_INIT_DIALOG="OnInit[python:on_init][ruby:on_init]"
-      wxEVT_CONTEXT_MENU="OnContextMenu">
+      ruby_file="test_dlg">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
         flags="wxEXPAND">
         <node
           class="wxPanel"
-          var_name="m_pPDector"
           window_style="wxTAB_TRAVERSAL">
           <node
             class="wxBoxSizer"
@@ -2317,6 +2312,7 @@
               subclass_params="&quot;test&quot;" />
             <node
               class="wxAnimationCtrl"
+              animation="Embed;art/clr_hourglass.gif"
               subclass="wxGeneric" />
             <node
               class="wxBoxSizer"
@@ -2330,7 +2326,7 @@
                 subclass="wxGeneric" />
               <node
                 class="wxBoxSizer"
-                var_name="m_pBatterySizer"
+                var_name="box_sizer4"
                 proportion="2">
                 <node
                   class="wxStaticBitmap"

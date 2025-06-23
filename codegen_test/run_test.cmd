@@ -55,3 +55,15 @@ for %f in (*.pl) do (
     perl -c "%f" >> ..\results.log 2>&1
 )
 cd ..
+
+REM Check if first or second parameter is "code"
+REM Open results.log in VS Code has been specified.
+set "RUN_CODE="
+if /i "%1"=="code" set "RUN_CODE=1"
+if /i "%2"=="code" set "RUN_CODE=1"
+
+if defined RUN_CODE (
+    cd ..\src
+    cmd /c code ..\codegen_test\results.log
+    cd ..\codegen_test
+)

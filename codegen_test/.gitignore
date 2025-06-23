@@ -1,3 +1,7 @@
 generated/
+perl/
+python/
+ruby/
+rust/
 
 codegen.cmake

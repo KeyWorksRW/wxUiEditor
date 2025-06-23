@@ -266,6 +266,7 @@ int App::OnRun()
         else if (parser.Found("gen_coverage", &filename))
         {
             generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
+            m_is_coverage_testing = true;
         }
 
         if (parser.Found("test_cpp", &filename))

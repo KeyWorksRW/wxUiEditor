@@ -36,6 +36,12 @@ public:
 
     bool isPjtMemberPrefix() const;
 
+    // Returns true if command line option --gen_coverage is specified. The assumption is
+    // that after code generation, syntax checks will be performed on all languages, and some
+    // warning messages need not be generated (such as language not supporting a widget
+    // type).
+    bool isCoverageTesting() const noexcept { return m_is_coverage_testing; }
+
     void ShowMsgWindow();
     bool AutoMsgWindow() const;
 
@@ -88,7 +94,8 @@ private:
     // bool m_isProject_updated { false };
     bool m_TestingMenuEnabled { false };
     bool m_is_testing_switch { false };
-    bool m_is_generating { false };  // true if generating code from the command line
+    bool m_is_generating { false };        // true if generating code from the command line
+    bool m_is_coverage_testing { false };  // true if generating code for test coverage (--gen_coverage)
 
 #if (DARK_MODE)
     bool m_isDarkMode { true };

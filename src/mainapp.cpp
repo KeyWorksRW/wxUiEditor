@@ -161,6 +161,10 @@ int App::OnRun()
     // Just a quick way to generate perl, python, and ruby
     parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
 
+    // Primarily used for codegen_test/ but could be used for other coverage testing as well.
+    parser.AddLongOption("gen_coverage", "generate all language types for test coverage", wxCMD_LINE_VAL_STRING,
+                         wxCMD_LINE_HIDDEN);
+
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 
@@ -255,10 +259,13 @@ int App::OnRun()
             generate_type |= (GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA);
 #endif  // GENERATE_NEW_LANG_CODE
         }
-
-        if (parser.Found("gen_quick", &filename))
+        else if (parser.Found("gen_quick", &filename))
         {
             generate_type = (GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
+        }
+        else if (parser.Found("gen_coverage", &filename))
+        {
+            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
         }
 
         if (parser.Found("test_cpp", &filename))
@@ -414,7 +421,7 @@ int App::OnRun()
             // mechanism and write any special messages that code generation caused (warnings,
             // errors, timing, etc.) to a log file.
 
-            auto lambda = [&](GenLang language)
+            auto GenCode = [&](GenLang language)
             {
                 if (generate_type & language)
                 {
@@ -424,16 +431,16 @@ int App::OnRun()
                 }
             };
 
-            lambda(GEN_LANG_CPLUSPLUS);
-            lambda(GEN_LANG_PERL);
-            lambda(GEN_LANG_PYTHON);
-            lambda(GEN_LANG_RUBY);
-            lambda(GEN_LANG_RUST);
-            lambda(GEN_LANG_XRC);
+            GenCode(GEN_LANG_CPLUSPLUS);
+            GenCode(GEN_LANG_PERL);
+            GenCode(GEN_LANG_PYTHON);
+            GenCode(GEN_LANG_RUBY);
+            GenCode(GEN_LANG_RUST);
+            GenCode(GEN_LANG_XRC);
 #if GENERATE_NEW_LANG_CODE
-            lambda(GEN_LANG_FORTRAN);
-            lambda(GEN_LANG_HASKELL);
-            lambda(GEN_LANG_LUA);
+            GenCode(GEN_LANG_FORTRAN);
+            GenCode(GEN_LANG_HASKELL);
+            GenCode(GEN_LANG_LUA);
 #endif
 
             auto& log_msg = log.emplace_back();

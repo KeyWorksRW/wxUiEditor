@@ -4,10 +4,14 @@
   <node
     class="Project"
     art_directory="art"
+    generate_languages="C++|Perl|Python|Ruby"
     base_directory="generated"
     cmake_file="generated/codegen.cmake"
     cpp_line_length="125"
-    generate_cmake="1">
+    generate_cmake="1"
+    perl_output_folder="perl/"
+    python_output_folder="python/"
+    ruby_output_folder="ruby/">
     <node
       class="wxFrame"
       class_name="MainFrameBase"
@@ -172,7 +176,7 @@
       class_name="ToolBarsDialog"
       title="Test Dialog"
       minimum_size="400,-1"
-      base_file="tools_dlg.cpp"
+      base_file="tools_dlg"
       derived_class_name="TestDialogDerived"
       derived_file="testdialog_derived"
       python_file="tools_dlg"
@@ -235,19 +239,25 @@
             var_name="aui_toolart" />
           <node
             class="auitool"
+            bitmap="XPM;english.xpm"
+            label=""
+            var_name="tool_xpm2" />
+          <node
+            class="auitool"
             bitmap="Embed;redo.png"
             label=""
-            var_name="aui_tool2" />
+            var_name="single_bitmap2" />
           <node
             class="auitool"
             bitmap="Embed;wxPython.png"
             label=""
-            var_name="aui_tool3" />
+            var_name="three_bitmaps2" />
           <node
             class="auitool"
             bitmap="Embed;fontPicker.png"
             label=""
-            var_name="aui_tool_list" />
+            var_comment="5 bitmaps in bundle"
+            var_name="five_bitmaps2" />
         </node>
         <node
           class="wxRibbonBar">
@@ -269,20 +279,20 @@
                   id="rbn_tool_art" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;undo.png"
-                  id="rbn_tool1" />
+                  bitmap="XPM;art/english.xpm"
+                  id="rbn_xpm" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;redo.png"
-                  id="rbn_tool2" />
+                  id="rbn_single_bitmap" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;wxPython.png"
-                  id="rbn_tool3" />
+                  id="rbn_three_bitmaps" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;fontPicker.png"
-                  id="rbn_tool_list" />
+                  id="rbn_five_bitmaps" />
               </node>
             </node>
             <node
@@ -987,7 +997,9 @@
       derived_class_name="PopupWin"
       derived_file="../ui/popupwin"
       use_derived_class="0"
-      python_file="popupwin">
+      python_file="popupwin"
+      ruby_file="popupwin"
+      perl_file="popupwin">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -2414,7 +2426,7 @@
               class="wxRibbonGallery">
               <node
                 class="ribbonGalleryItem"
-                bitmap="SVG;art/face-smile.svg;[24,24]" />
+                bitmap="SVG;face-smile.svg;[24,24]" />
             </node>
           </node>
         </node>

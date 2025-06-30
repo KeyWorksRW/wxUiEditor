@@ -701,6 +701,7 @@ static void GenerateXpmBitmap(Code& code, const tt_string_vector& parts, bool /*
         name.backslashestoforward();
 
         code.Str("wx.Bitmap(");
+        code.CheckLineLength(name.size() + 2);
         code.QuotedString(name);
         code.Comma().Str("wx.BITMAP_TYPE_XPM)");
     }
@@ -717,6 +718,7 @@ static void GenerateXpmBitmap(Code& code, const tt_string_vector& parts, bool /*
         name.backslashestoforward();
 
         code.Str("Wx::Bitmap.new(");
+        code.CheckLineLength(name.size() + 2);
         code.QuotedString(name);
         code.Comma().Str("Wx::BITMAP_TYPE_XPM)");
     }

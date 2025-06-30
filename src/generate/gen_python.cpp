@@ -461,7 +461,8 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
             if (iter->form->as_string(prop_python_file).filename().empty())
             {
                 code.AddComment(tt_string("No filename specified for ")
-                                << iter->form->getFormName() << " which contains " << iter->imgs[0].array_name, true);
+                                    << iter->form->getFormName() << " which contains " << iter->imgs[0].array_name,
+                                true);
                 code += "# ";
             }
             code.Str("from ").Str(iter->form->as_string(prop_python_file).filename()).Str(" import ");

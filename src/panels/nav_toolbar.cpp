@@ -19,6 +19,7 @@
 #include "mainframe.h"
 #include "project_handler.h"
 
+#include <wx/bmpbndl.h>  // wxBitmapBundle class
 #include <wx/mstream.h>  // memory stream classes
 #include <wx/zstream.h>  // zlib stream classes
 

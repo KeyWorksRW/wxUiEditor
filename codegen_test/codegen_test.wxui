@@ -1021,6 +1021,8 @@
       derived_class_name="CommonCtrls"
       derived_file="../ui/commonctrls"
       use_derived_class="0"
+      python_file="common_ctrls"
+      ruby_file="common_ctrls"
       wxEVT_INIT_DIALOG="OnInit"
       wxEVT_CONTEXT_MENU="OnContextMenu">
       <node
@@ -1280,6 +1282,7 @@
             settings_code="{@@    const int ID_PLAY { 100 };@@    const int ID_STOP { 101 };@@    m_split_button->GetMenu().Append(ID_PLAY, &quot;Play&quot;);@@    m_split_button->GetMenu().Append(ID_STOP, &quot;Stop&quot;);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        }, ID_PLAY);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Stop();@@            m_checkPlayAnimation->SetValue(false);@@        }, ID_STOP);@@@@    m_split_button->Bind(wxEVT_BUTTON,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        } );@@}"
             var_comment="control with button + menu"
             var_name="m_split_button"
+            disable_language="wxPerl|wxPython|wxRuby"
             border_size="10"
             column="3"
             row="4" />

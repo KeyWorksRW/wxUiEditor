@@ -205,6 +205,7 @@ namespace GenEnum
         prop_dialog_units,
         prop_digits,
         prop_direction,
+        prop_disable_language,
         prop_disable_rubo_cop,
         prop_disabled,
         prop_disabled_bmp,

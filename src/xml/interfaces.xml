@@ -891,6 +891,15 @@
 				help="Create this control when running on Unix."/>
 			<option name="Mac"
 				help="Create this control when running on Mac."/> Windows|Unix|Mac </property>
+		<property name="disable_language" type="bitlist">
+			<option name="C++"
+				help="Disable C++ code for this control (ignored if project doesn't generate C++ code)."/>
+			<option name="wxPerl"
+				help="Disable wxPerl code for this control (ignored if project doesn't generate wxPerl code)."/>
+			<option name="wxPython"
+				help="Disable wxPython code for this control (ignored if project doesn't generate wxPython code)."/>
+			<option name="wxRuby"
+				help="Disable wxRuby code for this control (ignored if project doesn't generate wxRuby code)."/></property>
 	</gen>
 
 	<gen class="wxMdiWindow" type="interface">

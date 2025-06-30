@@ -33,6 +33,18 @@ GenType aftercode_types[] = {
 
 void BaseCodeGenerator::GenConstruction(Node* node)
 {
+    if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
+    {
+        if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+            return;
+        else if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+            return;
+        else if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+            return;
+        else if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+            return;
+    }
+
     auto type = node->getGenType();
     auto declaration = node->getNodeDeclaration();
     auto generator = declaration->getGenerator();
@@ -569,6 +581,19 @@ void BaseCodeGenerator::GenSettings(Node* node, bool within_brace)
 bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
     auto generator = node->getGenerator();
+
+    if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
+    {
+        if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+            return false;
+        else if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+            return false;
+        else if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+            return false;
+        else if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+            return false;
+    }
+
     Code gen_code(node, m_language);
     if (generator->AfterChildrenCode(gen_code))
     {

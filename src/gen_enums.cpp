@@ -188,6 +188,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_dialog_units, "dialog_units" },
     { prop_digits, "digits" },
     { prop_direction, "direction" },
+    { prop_disable_language, "disable_language" },
     { prop_disable_rubo_cop, "disable_rubo_cop" },
     { prop_disabled, "disabled" },
     { prop_disabled_bmp, "disabled_bmp" },

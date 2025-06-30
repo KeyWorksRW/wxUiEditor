@@ -291,6 +291,7 @@ std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node,
     switch (language)
     {
         case GEN_LANG_PYTHON:
+            if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
                 if (auto form = node->getForm(); form && form->hasValue(prop_class_name))

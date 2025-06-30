@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDataView component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +10,7 @@
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node class
 #include "utils.h"          // Utility functions that work with properties
 
@@ -178,6 +179,7 @@ std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
     switch (language)
     {
         case GEN_LANG_RUBY:
+            if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
                 if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
@@ -317,6 +319,7 @@ std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang langua
     switch (language)
     {
         case GEN_LANG_RUBY:
+            if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
                 if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
@@ -371,6 +374,7 @@ std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang langua
     switch (language)
     {
         case GEN_LANG_RUBY:
+            if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
                 if (auto form = node->getForm(); form && form->hasValue(prop_class_name))

@@ -17,7 +17,6 @@ wxWidgetsConfig.cmake
 *.btm
 *.chm
 *.cmakein
-*.cmd
 *.com
 *.db
 *.dll

@@ -688,6 +688,23 @@ static void GenerateXpmBitmap(Code& code, const tt_string_vector& parts, bool /*
         name.remove_extension();
         code << name << "_xpm)";
     }
+    else if (code.is_perl())
+    {
+        auto path = MakePerlPath(code.node());
+        name.make_absolute();
+        if (!name.file_exists())
+        {
+            name = Project.ArtDirectory();
+            name.append_filename(parts[IndexImage].filename());
+        }
+        name.make_relative(path);
+        name.backslashestoforward();
+
+        code.Str("Wx::Bitmap->new(");
+        code.CheckLineLength(name.size() + 3);
+        code.QuotedString(name);
+        code.Comma().Str("wxBITMAP_TYPE_XPM)");
+    }
     else if (code.is_python())
     {
         auto path = MakePythonPath(code.node());

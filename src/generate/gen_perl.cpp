@@ -675,9 +675,16 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
         m_use_expands.emplace("use Wx qw[:window];");
     }
 
-    if (node->hasValue(prop_bitmap) && node->as_string(prop_bitmap).contains("wxART_"))
+    if (node->hasValue(prop_bitmap))
     {
-        m_use_packages.emplace("use Wx::ArtProvider qw[:artid :clientid];");
+        if (node->as_string(prop_bitmap).contains("wxART_"))
+        {
+            m_use_packages.emplace("use Wx::ArtProvider qw[:artid :clientid];");
+        }
+        else if (node->as_string(prop_bitmap).starts_with("XPM"))
+        {
+            m_use_expands.emplace("use Wx qw[:image];");
+        }
     }
 
     if (node->hasValue(prop_font))

@@ -17,7 +17,9 @@
       class_name="MainFrameBase"
       base_file="generated/mainframe_base"
       derived_class_name="MainFrame"
-      derived_file="mainframe">
+      derived_file="mainframe"
+      python_file="mainframe"
+      ruby_file="mainframe">
       <node
         class="wxToolBar">
         <node

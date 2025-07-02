@@ -3,6 +3,7 @@
 if not exist python mkdir python
 if not exist ruby mkdir ruby
 if not exist perl mkdir perl
+if not exist build mkdir build
 
 setlocal
 

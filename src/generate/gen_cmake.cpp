@@ -11,6 +11,7 @@
 #include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
 int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results, int flag)
+int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 {
     if (parent_node->isGen(gen_folder) && !parent_node->hasValue(prop_folder_cmake_file))
     {

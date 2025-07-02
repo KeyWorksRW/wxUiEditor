@@ -317,7 +317,7 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
         {
             if (iter->isGen(gen_folder) && iter->hasValue(prop_folder_cmake_file))
             {
-                auto result = WriteCMakeFile(iter.get(), results.updated_files, results.msgs, is_testing);
+                auto result = WriteCMakeFile(iter.get(), results, is_testing);
                 if (result == result::created || result == result::needs_writing)
                 {
                     ++results.file_count;
@@ -330,7 +330,7 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
         }
         if (Project.hasValue(prop_cmake_file))
         {
-            auto result = WriteCMakeFile(Project.getProjectNode(), results.updated_files, results.msgs, is_testing);
+            auto result = WriteCMakeFile(Project.getProjectNode(), results, is_testing);
             if (result == result::created || result == result::needs_writing)
             {
                 ++results.file_count;

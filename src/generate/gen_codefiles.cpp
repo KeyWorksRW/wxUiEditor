@@ -245,10 +245,9 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 }
 
                 // We need to tweak the call to WriteCMakeFile() to get it to write to our temporary .cmake file.
-                std::vector<tt_string> updated_files;
-                std::vector<tt_string> dummy;
-                updated_files.emplace_back(tmp_path);
-                WriteCMakeFile(Project.getProjectNode(), updated_files, dummy, 2);
+                GenResults tmp_results;
+                tmp_results.updated_files.emplace_back(tmp_path);
+                WriteCMakeFile(Project.getProjectNode(), tmp_results, 2);
 
                 auto paths = root.append_child("paths");
 

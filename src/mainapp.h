@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ class ProjectSettings;
 struct EmbeddedImage;
 struct ImageBundle;
 
-constexpr const auto ImportProjectVersion = 13;
+[[maybe_unused]] constexpr const auto ImportProjectVersion = 13;
 
 class App : public wxApp
 {
@@ -67,6 +67,9 @@ public:
     bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
     void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
 
+    // Returns true if --verbose is specified on the command line.
+    bool isVerboseCodeGen() const noexcept { return m_is_verbose_codegen; }
+
     bool isGenerating() const noexcept { return m_is_generating; }
 
 protected:
@@ -78,6 +81,9 @@ protected:
 
     int OnRun() override;
     int OnExit() override;
+
+    // Returns a positive value if command-line only code generation was requested and handled.
+    int Generate(wxCmdLineParser& parser, bool& is_project_loaded);
 
 private:
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
@@ -95,6 +101,7 @@ private:
     bool m_TestingMenuEnabled { false };
     bool m_is_testing_switch { false };
     bool m_is_generating { false };        // true if generating code from the command line
+    bool m_is_verbose_codegen { false };   // true if verbose code generation is enabled (--verbose)
     bool m_is_coverage_testing { false };  // true if generating code for test coverage (--gen_coverage)
 
 #if (DARK_MODE)

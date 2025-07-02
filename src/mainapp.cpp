@@ -168,6 +168,8 @@ int App::OnRun()
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 
+    parser.AddLongSwitch("verbose", "verbose log file", wxCMD_LINE_HIDDEN);
+
     parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_python", "generate Python code and exit", wxCMD_LINE_HIDDEN);
@@ -202,8 +204,248 @@ int App::OnRun()
         wxSetAssertHandler(ttAssertionHandler);
     }
 
+    // A positive return value means code generation was for command-line only
+    if (auto result = Generate(parser, is_project_loaded); result >= 0)
+    {
+        return result;
+    }
+
+    if (!m_frame)  // nothing passed on the command line, so frame not created yet
+    {
+        m_frame = new MainFrame();
+    }
+
+    if (!is_project_loaded)
+    {
+        if (auto result = parser.FoundSwitch("load_last");
+            result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
+        {
+            auto& file_history = m_frame->getFileHistory();
+            tt_string file = file_history.GetHistoryFile(0).utf8_string();
+            if (!file.file_exists())
+            {
+                file_history.RemoveFileFromHistory(0);
+                wxMessageBox(tt_string("Last project file does not exist: ") << file, "Missing Project File",
+                             wxOK | wxICON_ERROR);
+            }
+            else
+            {
+                is_project_loaded = Project.LoadProject(file);
+            }
+        }
+    }
+
+    if (!is_project_loaded)
+    {
+        StartupDlg start_dlg(nullptr);
+        if (auto result = start_dlg.ShowModal(); result == wxID_OK)
+        {
+            switch (start_dlg.GetCommandType())
+            {
+                case StartupDlg::START_MRU:
+                    if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui", tt::CASE::either) &&
+                        !start_dlg.GetProjectFile().extension().is_sameas(".wxue", tt::CASE::either))
+                    {
+                        is_project_loaded = Project.ImportProject(start_dlg.GetProjectFile());
+                    }
+                    else
+                    {
+                        is_project_loaded = Project.LoadProject(start_dlg.GetProjectFile());
+                    }
+                    break;
+
+                case StartupDlg::START_EMPTY:
+                    is_project_loaded = Project.NewProject(true);
+                    break;
+
+                case StartupDlg::START_CONVERT:
+                    is_project_loaded = Project.NewProject(false);
+                    break;
+
+                case StartupDlg::START_OPEN:
+                    {
+                        // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
+                        // would actually make sense to process it since we can combine all of those resources into our
+                        // single project file.
+
+                        wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
+                                            "wxUiEditor Project File (*.wxui)|*.wxui"
+                                            "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                                            "|DialogBlocks Project File (*.fjd)|*.fjd"
+                                            "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                            "|wxGlade File (*.wxg)|*.wxg"
+                                            "|wxSmith File (*.wxs)|*.wxs"
+                                            "|XRC File (*.xrc)|*.xrc"
+                                            "|Windows Resource File (*.rc)|*.rc||",
+                                            wxFD_OPEN);
+
+                        if (dialog.ShowModal() == wxID_OK)
+                        {
+                            tt_string filename = dialog.GetPath().utf8_string();
+                            if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
+                                !filename.extension().is_sameas(".wxue", tt::CASE::either))
+                            {
+                                is_project_loaded = Project.ImportProject(filename);
+                            }
+                            else
+                            {
+                                is_project_loaded = Project.LoadProject(dialog.GetPath());
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    if (is_project_loaded)
+    {
+        m_frame->Show();
+        SetTopWindow(m_frame);
+
+#if defined(_DEBUG)
+        // if (AutoMsgWindow())
+        // ShowMsgWindow();
+#endif  // _DEBUG
+
+        return wxApp::OnRun();
+    }
+    else
+    {
+        m_frame->Close();
+        return 1;
+    }
+}
+
+int App::OnExit()
+{
+    return wxApp::OnExit();
+}
+
+bool App::isFireCreationMsgs() const
+{
+    return (UserPrefs.GetDebugFlags() & Prefs::PREFS_CREATION_MSG);
+}
+
+bool App::isPjtMemberPrefix() const
+{
+    return (UserPrefs.GetProjectFlags() & Prefs::PREFS_PJT_MEMBER_PREFIX);
+}
+
+bool App::AutoMsgWindow() const
+{
+    return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
+}
+
+#if defined(_WIN32) && defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
+
+    #include <wx/stackwalk.h>
+
+class StackLogger : public wxStackWalker
+{
+public:
+    auto& GetCalls() { return m_calls; }
+
+protected:
+    void OnStackFrame(const wxStackFrame& frame) override
+    {
+        if (frame.HasSourceLocation())
+        {
+            tt_string source;
+            source << frame.GetFileName().utf8_string() << ':' << (to_int) frame.GetLine();
+
+            wxString params;
+            if (auto paramCount = frame.GetParamCount(); paramCount > 0)
+            {
+                params << "(";
+
+                for (size_t i = 0; i < paramCount; ++i)
+                {
+                    wxString type, name, value;
+                    if (frame.GetParam(i, &type, &name, &value))
+                    {
+                        params << type << " " << name << " = " << value << ", ";
+                    }
+                }
+
+                params << ")";
+            }
+
+            if (params.size() > 100)
+                params = "(...)";
+
+            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string()
+                                   << params.utf8_string() << ' ' << source;
+        }
+        else
+        {
+            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string();
+        }
+    }
+
+    std::vector<tt_string> m_calls;
+};
+
+#endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
+
+#if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
+
+void App::OnFatalException()
+{
+    #if defined(_DEBUG) && defined(wxUSE_STACKWALKER)
+
+    StackLogger logger;
+    logger.WalkFromException();
+    for (auto& iter: logger.GetCalls())
+    {
+        // We're only interested in our own source code, so ignore the rest.
+        if (!iter.contains("wxUiEditor"))
+            continue;
+
+        wxLogDebug(iter.c_str());
+    }
+
+    // We now have the relevant call stack displayed in the debugger, so break into it.
+    wxTrap();
+
+    #endif  // _DEBUG
+
+    // Let the user know something terrible happened.
+    wxMessageBox("A fatal exception has occured!", txtVersion);
+}
+
+#endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
+
+void App::ShowMsgWindow()
+{
+    g_pMsgLogging->ShowLogger();
+}
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+void App::DbgCurrentTest(wxCommandEvent&)
+{
+    #if 0
+    // Enable this to verify that address sanitizer is working. It will throw an exception when when
+    // the function tries to return. Note that both the MSVC compiler and clangd will complain about
+    // this obvious bug, but it's a simple way to verify that the address sanitizer is working.
+    int x[100];
+    x[100] = 5;
+    #endif
+
+    wxASSERT_MSG(false, "assert in MsgLogging");
+}
+
+#endif
+
+int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
+{
     if (parser.GetParamCount() || parser.GetArguments().size())
     {
+        if (parser.FoundSwitch("verbose") == wxCMD_SWITCH_ON)
+        {
+            m_is_verbose_codegen = true;
+        }
+
         wxString filename;
         if (parser.GetParamCount())
         {
@@ -454,230 +696,5 @@ int App::OnRun()
             return 0;
         }
     }
-
-    if (!m_frame)  // nothing passed on the command line, so frame not created yet
-    {
-        m_frame = new MainFrame();
-    }
-
-    if (!is_project_loaded)
-    {
-        if (auto result = parser.FoundSwitch("load_last");
-            result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
-        {
-            auto& file_history = m_frame->getFileHistory();
-            tt_string file = file_history.GetHistoryFile(0).utf8_string();
-            if (!file.file_exists())
-            {
-                file_history.RemoveFileFromHistory(0);
-                wxMessageBox(tt_string("Last project file does not exist: ") << file, "Missing Project File",
-                             wxOK | wxICON_ERROR);
-            }
-            else
-            {
-                is_project_loaded = Project.LoadProject(file);
-            }
-        }
-    }
-
-    if (!is_project_loaded)
-    {
-        StartupDlg start_dlg(nullptr);
-        if (auto result = start_dlg.ShowModal(); result == wxID_OK)
-        {
-            switch (start_dlg.GetCommandType())
-            {
-                case StartupDlg::START_MRU:
-                    if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui", tt::CASE::either) &&
-                        !start_dlg.GetProjectFile().extension().is_sameas(".wxue", tt::CASE::either))
-                    {
-                        is_project_loaded = Project.ImportProject(start_dlg.GetProjectFile());
-                    }
-                    else
-                    {
-                        is_project_loaded = Project.LoadProject(start_dlg.GetProjectFile());
-                    }
-                    break;
-
-                case StartupDlg::START_EMPTY:
-                    is_project_loaded = Project.NewProject(true);
-                    break;
-
-                case StartupDlg::START_CONVERT:
-                    is_project_loaded = Project.NewProject(false);
-                    break;
-
-                case StartupDlg::START_OPEN:
-                    {
-                        // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
-                        // would actually make sense to process it since we can combine all of those resources into our
-                        // single project file.
-
-                        wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
-                                            "wxUiEditor Project File (*.wxui)|*.wxui"
-                                            "|wxCrafter Project File (*.wxcp)|*.wxcp"
-                                            "|DialogBlocks Project File (*.fjd)|*.fjd"
-                                            "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                            "|wxGlade File (*.wxg)|*.wxg"
-                                            "|wxSmith File (*.wxs)|*.wxs"
-                                            "|XRC File (*.xrc)|*.xrc"
-                                            "|Windows Resource File (*.rc)|*.rc||",
-                                            wxFD_OPEN);
-
-                        if (dialog.ShowModal() == wxID_OK)
-                        {
-                            tt_string filename = dialog.GetPath().utf8_string();
-                            if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
-                                !filename.extension().is_sameas(".wxue", tt::CASE::either))
-                            {
-                                is_project_loaded = Project.ImportProject(filename);
-                            }
-                            else
-                            {
-                                is_project_loaded = Project.LoadProject(dialog.GetPath());
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
-    }
-
-    if (is_project_loaded)
-    {
-        m_frame->Show();
-        SetTopWindow(m_frame);
-
-#if defined(_DEBUG)
-        // if (AutoMsgWindow())
-        // ShowMsgWindow();
-#endif  // _DEBUG
-
-        return wxApp::OnRun();
-    }
-    else
-    {
-        m_frame->Close();
-        return 1;
-    }
+    return -1;
 }
-
-int App::OnExit()
-{
-    return wxApp::OnExit();
-}
-
-bool App::isFireCreationMsgs() const
-{
-    return (UserPrefs.GetDebugFlags() & Prefs::PREFS_CREATION_MSG);
-}
-
-bool App::isPjtMemberPrefix() const
-{
-    return (UserPrefs.GetProjectFlags() & Prefs::PREFS_PJT_MEMBER_PREFIX);
-}
-
-bool App::AutoMsgWindow() const
-{
-    return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
-}
-
-#if defined(_WIN32) && defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
-
-    #include <wx/stackwalk.h>
-
-class StackLogger : public wxStackWalker
-{
-public:
-    auto& GetCalls() { return m_calls; }
-
-protected:
-    void OnStackFrame(const wxStackFrame& frame) override
-    {
-        if (frame.HasSourceLocation())
-        {
-            tt_string source;
-            source << frame.GetFileName().utf8_string() << ':' << (to_int) frame.GetLine();
-
-            wxString params;
-            if (auto paramCount = frame.GetParamCount(); paramCount > 0)
-            {
-                params << "(";
-
-                for (size_t i = 0; i < paramCount; ++i)
-                {
-                    wxString type, name, value;
-                    if (frame.GetParam(i, &type, &name, &value))
-                    {
-                        params << type << " " << name << " = " << value << ", ";
-                    }
-                }
-
-                params << ")";
-            }
-
-            if (params.size() > 100)
-                params = "(...)";
-
-            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string()
-                                   << params.utf8_string() << ' ' << source;
-        }
-        else
-        {
-            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string();
-        }
-    }
-
-    std::vector<tt_string> m_calls;
-};
-
-#endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
-
-#if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
-
-void App::OnFatalException()
-{
-    #if defined(_DEBUG) && defined(wxUSE_STACKWALKER)
-
-    StackLogger logger;
-    logger.WalkFromException();
-    for (auto& iter: logger.GetCalls())
-    {
-        // We're only interested in our own source code, so ignore the rest.
-        if (!iter.contains("wxUiEditor"))
-            continue;
-
-        wxLogDebug(iter.c_str());
-    }
-
-    // We now have the relevant call stack displayed in the debugger, so break into it.
-    wxTrap();
-
-    #endif  // _DEBUG
-
-    // Let the user know something terrible happened.
-    wxMessageBox("A fatal exception has occured!", txtVersion);
-}
-
-#endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
-
-void App::ShowMsgWindow()
-{
-    g_pMsgLogging->ShowLogger();
-}
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-void App::DbgCurrentTest(wxCommandEvent&)
-{
-    #if 0
-    // Enable this to verify that address sanitizer is working. It will throw an exception when when
-    // the function tries to return. Note that both the MSVC compiler and clangd will complain about
-    // this obvious bug, but it's a simple way to verify that the address sanitizer is working.
-    int x[100];
-    x[100] = 5;
-    #endif
-
-    wxASSERT_MSG(false, "assert in MsgLogging");
-}
-
-#endif

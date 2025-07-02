@@ -1,16 +1,26 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Auto-generate a .cmake file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_results.h"      // Code generation file writing functions
+#include "mainapp.h"          // MainApp class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
 
-int WriteCMakeFile(Node* parent_node, std::vector<tt_string>& updated_files, std::vector<tt_string>& results, int flag)
+namespace  {
+    enum CMakeWriteFlag
+    {
+        CMAKE_WRITE_NORMAL = 0,      // Normal write operation
+        CMAKE_WRITE_CHECK_ONLY = 1,  // Only check if file needs writing
+        CMAKE_WRITE_TEMP_FILE = 2    // Write to a temporary file
+    };
+}
+
 int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 {
     if (parent_node->isGen(gen_folder) && !parent_node->hasValue(prop_folder_cmake_file))
@@ -27,10 +37,10 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     // need to tread that directory as the root of the file.
 
     tt_string cmake_file;
-    if (flag == 2)
+    if (flag == CMAKE_WRITE_TEMP_FILE)
     {
-        ASSERT(updated_files.size());
-        cmake_file = updated_files[0];
+        ASSERT(results.updated_files.size());
+        cmake_file = results.updated_files[0];
     }
     else if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_file))
     {
@@ -225,8 +235,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         out.emplace_back(")");
     }
 
-    // flag == 2 if a temporary file is being written
-    if (flag == 2)
+    if (flag == CMAKE_WRITE_TEMP_FILE)
     {
         return out.WriteFile(cmake_file) ? result::created : result::fail;
     }
@@ -242,18 +251,18 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         return result::exists;
     }
 
-    if (flag == 1)
+    if (flag == CMAKE_WRITE_CHECK_ONLY)
     {
-        updated_files.emplace_back(cmake_file);
+        results.updated_files.emplace_back(cmake_file);
         return result::needs_writing;
     }
 
     if (!out.WriteFile(cmake_file))
     {
-        results.emplace_back() << "Cannot create or write to the file " << cmake_file << '\n';
+        results.msgs.emplace_back() << "Cannot create or write to the file " << cmake_file << '\n';
         return result::fail;
     }
 
-    updated_files.emplace_back(cmake_file);
+    results.updated_files.emplace_back(cmake_file);
     return result::created;
 }

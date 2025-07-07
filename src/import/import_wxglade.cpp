@@ -11,7 +11,7 @@
 #include "dlg_msgs.h"        // wxMessageDialog dialogs
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 WxGlade::WxGlade() {}
@@ -56,8 +56,9 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
         m_language = GEN_LANG_CPLUSPLUS;
     }
 
-    // Using a try block means that if at any point it becomes obvious the project file is invalid and we cannot recover,
-    // then we can throw an error and give a standard response about an invalid file.
+    // Using a try block means that if at any point it becomes obvious the project file is invalid
+    // and we cannot recover, then we can throw an error and give a standard response about an
+    // invalid file.
 
     try
     {
@@ -96,15 +97,18 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
                         switch (m_language)
                         {
                             case GEN_LANG_CPLUSPLUS:
-                                new_node->set_value(prop_base_file, new_node->as_string(prop_class_name));
+                                new_node->set_value(prop_base_file,
+                                                    new_node->as_string(prop_class_name));
                                 break;
 
                             case GEN_LANG_PYTHON:
-                                new_node->set_value(prop_python_file, new_node->as_string(prop_class_name));
+                                new_node->set_value(prop_python_file,
+                                                    new_node->as_string(prop_class_name));
                                 break;
 
                             case GEN_LANG_XRC:
-                                new_node->set_value(prop_xrc_file, new_node->as_string(prop_class_name));
+                                new_node->set_value(prop_xrc_file,
+                                                    new_node->as_string(prop_class_name));
                                 break;
                         }
                     }
@@ -125,7 +129,8 @@ bool WxGlade::Import(const tt_string& filename, bool write_doc)
 
         if (!m_project->getChildCount())
         {
-            wxMessageBox(filename.make_wxString() << " does not contain any top level forms.", "Import");
+            wxMessageBox(filename.make_wxString() << " does not contain any top level forms.",
+                         "Import");
             return false;
         }
 
@@ -204,7 +209,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
         if (getGenName == gen_unknown)
         {
-            // TODO: [KeyWorks - 08-10-2021] wxGlade supports wxMDIChildFrame using a base name of "EditMDIChildFrame"
+            // TODO: [KeyWorks - 08-10-2021] wxGlade supports wxMDIChildFrame using a base name of
+            // "EditMDIChildFrame"
 
             // This appears to be a placeholder to reserve a spot. We just ignore it.
             if (object_name == "sizerslot")
@@ -253,7 +259,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             if (!xml_obj.attribute("name").empty())
             {
-                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view()); tab != m_notebook_tabs.end())
+                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
+                    tab != m_notebook_tabs.end())
                 {
                     new_node->set_value(prop_label, tab->second);
                 }
@@ -301,7 +308,8 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                 }
             }
         }
-        MSG_INFO(tt_string() << "Unable to create " << map_GenNames[getGenName] << " as a child of " << parent->declName());
+        MSG_INFO(tt_string() << "Unable to create " << map_GenNames[getGenName] << " as a child of "
+                             << parent->declName());
         return NodeSharedPtr();
     }
 
@@ -506,8 +514,8 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "extracode_post")
     {
-        // wxGlade adds this after the class is constructed, but before any Bind functions are called.
-        // Currently, wxUiEditor doesn't support this, so just ignore it.
+        // wxGlade adds this after the class is constructed, but before any Bind functions are
+        // called. Currently, wxUiEditor doesn't support this, so just ignore it.
 
         return true;
     }
@@ -599,9 +607,11 @@ bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     return false;
 }
 
-// Called by ImportXML -- return true if the property is processed. Use this when the property conversion
-// is different in wxGlade then for other XML projects for the type of node being processed.
-bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent, GenEnum::PropName wxue_prop)
+// Called by ImportXML -- return true if the property is processed. Use this when the property
+// conversion is different in wxGlade then for other XML projects for the type of node being
+// processed.
+bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent,
+                                   GenEnum::PropName wxue_prop)
 {
     if (node->isGen(gen_sizeritem))
     {
@@ -659,7 +669,9 @@ void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
             auto id = item.child("id");
 
             auto new_item =
-                NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, menu_node.get())
+                NodeCreation
+                    .createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem,
+                                menu_node.get())
                     .first;
             menu_node->adoptChild(new_item);
 
@@ -719,7 +731,10 @@ void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
     {
         auto id = tool.child("id");
 
-        auto new_tool = NodeCreation.createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, parent).first;
+        auto new_tool =
+            NodeCreation
+                .createNode(id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem, parent)
+                .first;
         parent->adoptChild(new_tool);
         for (auto& iter: tool.children())
         {

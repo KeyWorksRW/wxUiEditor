@@ -71,28 +71,32 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
 
     if (m_node->isGen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
     {
-        // For a drop-down style, the resource file sets the height of the drop-down portion, but for figuring out layout of
-        // the control, we need the non-drop height. We can't actually get that, so we take a reasonable guess.
+        // For a drop-down style, the resource file sets the height of the drop-down portion, but
+        // for figuring out layout of the control, we need the non-drop height. We can't actually
+        // get that, so we take a reasonable guess.
 
         duRect.SetHeight(12);
     }
 
     if (m_node->isGen(gen_wxListBox))
     {
-        m_node->set_value(prop_minimum_size, tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
+        m_node->set_value(prop_minimum_size,
+                          tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
     }
 
     /*
 
-        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using
-        "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will end up being wrong when displayed by
-        wxWidgets because wxWidgets follows the Windows 10 guidelines which normally uses a 9pt font.
+        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are
+       going to be using "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will
+       end up being wrong when displayed by wxWidgets because wxWidgets follows the Windows 10
+       guidelines which normally uses a 9pt font.
 
         The following code converts dialog coordinates into pixels assuming a 9pt font.
 
-        For the most part, these values are simply used to determine which sizer to place the control in. However, it will
-        change things like the wrapping width of a wxStaticText -- our wxWidgets version will be larger than the original if
-        the dialog used an 8pt font, smaller if it used a 10pt font.
+        For the most part, these values are simply used to determine which sizer to place the
+       control in. However, it will change things like the wrapping width of a wxStaticText -- our
+       wxWidgets version will be larger than the original if the dialog used an 8pt font, smaller if
+       it used a 10pt font.
 
     */
 
@@ -228,7 +232,8 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
                 actual_label << label.substr(0, begin_anchor) << view_url;
                 m_node->set_value(prop_label, actual_label);
             }
-            // Also valid just as the above <a href= -- only difference is how many prefix chars to remove
+            // Also valid just as the above <a href= -- only difference is how many prefix chars to
+            // remove
             else if (view_url.is_sameprefix("<a ref=\"", tt::CASE::either))
             {
                 view_url.remove_prefix(8);
@@ -257,7 +262,8 @@ tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
 {
     ASSERT(line.at(0) == '"');
 
-    // We can't use str.AssignSubString() because in a resource file, quotes are escaped simply by doubling them.
+    // We can't use str.AssignSubString() because in a resource file, quotes are escaped simply by
+    // doubling them.
 
     size_t idx;
     for (idx = 1; idx < line.size(); ++idx)

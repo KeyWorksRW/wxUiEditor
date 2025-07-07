@@ -25,13 +25,15 @@ wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_string(prop_subclass).starts_with("wxGeneric") ||
         (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0))
     {
-        widget = new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
-                                         DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                         DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                         GetStyleInt(node));
     }
     else
     {
-        widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
-                                  DlgSize(node, prop_size), GetStyleInt(node));
+        widget =
+            new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                             DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
     }
 
     if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)
@@ -50,11 +52,13 @@ wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
     ASSERT(widget)
-    // Getting a nullptr for widget should never happen, but sometimes does, and things blow up if we try to use it
-    if (widget && (prop->isProp(prop_wrap) || prop->isProp(prop_label) || prop->isProp(prop_markup)))
+    // Getting a nullptr for widget should never happen, but sometimes does, and things blow up if
+    // we try to use it
+    if (widget &&
+        (prop->isProp(prop_wrap) || prop->isProp(prop_label) || prop->isProp(prop_markup)))
     {
-        // If the text was wrapped previously, then it already has \n characters inserted in it, so we need to restore
-        // it to it's original state before wrapping again.
+        // If the text was wrapped previously, then it already has \n characters inserted in it, so
+        // we need to restore it to it's original state before wrapping again.
 
         auto ctrl = wxStaticCast(widget, wxStaticTextBase);
         if (node->as_bool(prop_markup))
@@ -77,8 +81,9 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
     // Neither wxPython or wxRuby3 support wxGenericStaticText
     if (code.is_cpp())
     {
-        bool use_generic_version = (code.node()->as_string(prop_subclass).starts_with("wxGeneric") ||
-                                    (code.node()->as_bool(prop_markup) && code.node()->as_int(prop_wrap) <= 0));
+        bool use_generic_version =
+            (code.node()->as_string(prop_subclass).starts_with("wxGeneric") ||
+             (code.node()->as_bool(prop_markup) && code.node()->as_int(prop_wrap) <= 0));
         code.CreateClass(use_generic_version);
     }
     else
@@ -133,7 +138,8 @@ bool StaticTextGenerator::SettingsCode(Code& code)
 
 int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticText");
@@ -159,7 +165,8 @@ int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     {
         if (node->as_bool(prop_markup))
         {
-            item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" markup cannot be be set in the XRC file. ");
         }
 
         GenXrcComments(node, item);
@@ -173,8 +180,8 @@ void StaticTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxStaticTextXmlHandler");
 }
 
-bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/stattext.h>", set_src, set_hdr);
     if (node->as_string(prop_subclass).starts_with("wxGeneric") ||

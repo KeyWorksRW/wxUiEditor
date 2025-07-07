@@ -27,139 +27,141 @@ struct ImageMap
     size_t size_data;
 };
 
-const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>> map_svg_functions = {
-    { "CustomControl", bundle_CustomControl_svg },
-    { "auitoolbar", bundle_auitoolbar_svg },
-    { "bitmap", bundle_bitmap_svg },
-    { "bitmap_toggle_button", bundle_bitmap_toggle_button_svg },
-    { "bmp_combo_box", bundle_bmp_combo_box_svg },
-    { "book_page", bundle_book_page_svg },
-    { "calendar", bundle_calendar_svg },
-    { "check3state", bundle_check3state_svg },
-    { "close_btn", bundle_close_btn_svg },
-    { "colourPickerIcon", bundle_colourPickerIcon_svg },
-    { "ctx_help_btn", bundle_ctx_help_btn_svg },
-    { "data_list", bundle_data_list_svg },
-    { "dataview_ctrl", bundle_dataview_ctrl_svg },
-    { "dataviewlist_column", bundle_dataview_column_svg },
-    { "dataviewlist_ctrl", bundle_dataviewlist_ctrl_svg },
-    { "dataviewtree_ctrl", bundle_dataviewtree_ctrl_svg },
-    { "datepicker", bundle_datepicker_svg },
-    { "dirPicker", bundle_dirPicker_svg },
-    { "doc_mdi_parent_frame", bundle_doc_mdi_parent_frame_svg },
-    { "duplicate", bundle_duplicate_svg },
-    { "filePicker", bundle_filePicker_svg },
-    { "flex_grid_sizer", bundle_flex_grid_sizer_svg },
-    { "folder", bundle_folder_svg },
-    { "fontPicker", bundle_fontPicker_svg },
-    { "gauge", bundle_gauge_svg },
-    { "genericdir_ctrl", bundle_genericdir_ctrl_svg },
-    { "grid", bundle_grid_svg },
-    { "grid_bag_sizer", bundle_grid_bag_sizer_svg },
-    { "grid_sizer", bundle_grid_sizer_svg },
-    { "htmlwin", bundle_htmlwin_svg },
-    { "hyperlink_ctrl", bundle_hyperlink_ctrl_svg },
-    { "images", bundle_images_svg },
-    { "infobar", bundle_infobar_svg },
-    { "menu", bundle_menu_svg },
-    { "menuitem", bundle_menuitem_svg },
-    { "notebook", bundle_notebook_svg },
-    { "notebook_aui", bundle_notebook_aui_svg },
-    { "notebook_choice", bundle_notebook_choice_svg },
-    { "notebook_list", bundle_notebook_list_svg },
-    { "pagectrl", bundle_pagectrl_svg },
-    { "popup_transient", bundle_popup_transient_svg },
-    { "popup_window", bundle_popup_window_svg },
-    { "project", bundle_project_svg },
-    { "prop_sheet_dlg", bundle_prop_sheet_dlg_svg },
-    { "propgrid_cat", bundle_propgrid_cat_svg },
-    { "radio_box", bundle_radio_box_svg },
-    { "ribbon_bar", bundle_ribbon_bar_svg },
-    { "ribbon_button", bundle_ribbon_button_svg },
-    { "ribbon_buttonbar", bundle_ribbon_buttonbar_svg },
-    { "ribbon_gallery", bundle_ribbon_gallery_svg },
-    { "ribbon_gallery_item", bundle_ribbon_gallery_item_svg },
-    { "ribbon_page", bundle_ribbon_page_svg },
-    { "ribbon_panel", bundle_ribbon_panel_svg },
-    { "ribbon_separator", bundle_ribbon_separator_svg },
-    { "richtextctrl", bundle_richtextctrl_svg },
-    { "scintilla", bundle_scintilla_svg },
-    { "scrollbar", bundle_scrollbar_svg },
-    { "search", bundle_search_svg },
-    { "separator", bundle_separator_svg },
-    { "sizer", bundle_sizer_svg },
-    { "sizer_horizontal", bundle_sizer_horizontal_svg },
-    { "slider", bundle_slider_svg },
-    { "spacer", bundle_spacer_svg },
-    { "spin_ctrl", bundle_spin_ctrl_svg },
-    { "spin_ctrl_double", bundle_spin_ctrl_double_svg },
-    { "spinbtn", bundle_spinbtn_svg },
-    { "static_line", bundle_static_line_svg },
-    { "statusbar", bundle_statusbar_svg },
-    { "stddialogbuttonsizer", bundle_stddialogbuttonsizer_svg },
-    { "submenu", bundle_submenu_svg },
-    { "svg", bundle_svg_svg },
-    { "text_file", bundle_text_file_svg },
-    { "text_sizer", bundle_text_sizer_svg },
-    { "timepicker", bundle_timepicker_svg },
-    { "toggle_button", bundle_toggle_button_svg },
-    { "tool", bundle_tool_svg },
-    { "toolStretchable", bundle_toolStretchable_svg },
-    { "tool_dropdown", bundle_tool_dropdown_svg },
-    { "toolseparator", bundle_toolseparator_svg },
-    { "toolspacer", bundle_toolspacer_svg },
-    { "tree_ctrl", bundle_tree_ctrl_svg },
-    { "treelistctrl", bundle_treelistctrl_svg },
-    { "treelistctrlcolumn", bundle_treelistctrlcolumn_svg },
-    { "unknown", bundle_unknown_svg },
-    { "webview", bundle_webview_svg },
-    { "wrap_sizer", bundle_wrap_sizer_svg },
-    { "wxActivityIndicator", bundle_wxactivityIndicator_svg },
-    { "wxAnimation", bundle_wxAnimation_svg },
-    { "wxBannerWindow", bundle_wxBannerWindow_svg },
-    { "wxButton", bundle_wxButton_svg },
-    { "wxCheckBox", bundle_wxCheckBox_svg },
-    { "wxCheckListBox", bundle_wxCheckListBox_svg },
-    { "wxChoice", bundle_wxChoice_svg },
-    { "wxCollapsiblePane", bundle_wxCollapsiblePane_svg },
-    { "wxComboBox", bundle_wxComboBox_svg },
-    { "wxCommandLinkButton", bundle_wxCommandLinkButton_svg },
-    { "wxDialog", bundle_wxDialog_svg },
-    { "wxEditListBox", bundle_wxEditListBox_svg },
-    { "wxFileCtrl", bundle_wxFileCtrl_svg },
-    { "wxFrame", bundle_wxFrame_svg },
-    { "wxListBox", bundle_wxListBox_svg },
-    { "wxListView", bundle_wxListView_svg },
-    { "wxMenuBar", bundle_wxMenuBar_svg },
-    { "wxPanel", bundle_wxPanel_svg },
-    { "wxRadioButton", bundle_wxRadioButton_svg },
-    { "wxRearrangeCtrl", bundle_wxRearrangeCtrl_svg },
-    { "wxScrolledWindow", bundle_wxScrolledWindow_svg },
-    { "wxSimpleHtmlListBox", bundle_wxSimpleHtmlListBox_svg },
-    { "wxSimplebook", bundle_wxSimplebook_svg },
-    { "wxSplitterWindow", bundle_wxSplitterWindow_svg },
-    { "wxStaticBoxSizer", bundle_wxStaticBoxSizer_svg },
-    { "wxStaticCheckBoxSizer", bundle_wxStaticCheckBoxSizer_svg },
-    { "wxStaticRadioBtnSizer", bundle_wxStaticRadioBtnSizer_svg },
-    { "wxStaticText", bundle_wxStaticText_svg },
-    { "wxTextCtrl", bundle_wxTextCtrl_svg },
-    { "wxTimer", bundle_wxTimer_svg },
-    { "wxToolBar", bundle_wxToolBar_svg },
-    { "wxToolbook", bundle_wxToolbook_svg },
-    { "wxTreebook", bundle_wxTreebook_svg },
-    { "wxWizard", bundle_wxWizard_svg },
-    { "wxWizardPageSimple", bundle_wxWizardPageSimple_svg },
-    { "propgriditem", bundle_propgriditem_svg },
-    { "propgridpage", bundle_propgridpage_svg },
-    { "wxPropertyGrid", bundle_wxPropertyGrid_svg },
-    { "wxPropertyGridManager", bundle_wxPropertyGrid_svg },
-    { "xml_file", bundle_xml_file_svg },
+const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>>
+    map_svg_functions = {
+        { "CustomControl", bundle_CustomControl_svg },
+        { "auitoolbar", bundle_auitoolbar_svg },
+        { "bitmap", bundle_bitmap_svg },
+        { "bitmap_toggle_button", bundle_bitmap_toggle_button_svg },
+        { "bmp_combo_box", bundle_bmp_combo_box_svg },
+        { "book_page", bundle_book_page_svg },
+        { "calendar", bundle_calendar_svg },
+        { "check3state", bundle_check3state_svg },
+        { "close_btn", bundle_close_btn_svg },
+        { "colourPickerIcon", bundle_colourPickerIcon_svg },
+        { "ctx_help_btn", bundle_ctx_help_btn_svg },
+        { "data_list", bundle_data_list_svg },
+        { "dataview_ctrl", bundle_dataview_ctrl_svg },
+        { "dataviewlist_column", bundle_dataview_column_svg },
+        { "dataviewlist_ctrl", bundle_dataviewlist_ctrl_svg },
+        { "dataviewtree_ctrl", bundle_dataviewtree_ctrl_svg },
+        { "datepicker", bundle_datepicker_svg },
+        { "dirPicker", bundle_dirPicker_svg },
+        { "doc_mdi_parent_frame", bundle_doc_mdi_parent_frame_svg },
+        { "duplicate", bundle_duplicate_svg },
+        { "filePicker", bundle_filePicker_svg },
+        { "flex_grid_sizer", bundle_flex_grid_sizer_svg },
+        { "folder", bundle_folder_svg },
+        { "fontPicker", bundle_fontPicker_svg },
+        { "gauge", bundle_gauge_svg },
+        { "genericdir_ctrl", bundle_genericdir_ctrl_svg },
+        { "grid", bundle_grid_svg },
+        { "grid_bag_sizer", bundle_grid_bag_sizer_svg },
+        { "grid_sizer", bundle_grid_sizer_svg },
+        { "htmlwin", bundle_htmlwin_svg },
+        { "hyperlink_ctrl", bundle_hyperlink_ctrl_svg },
+        { "images", bundle_images_svg },
+        { "infobar", bundle_infobar_svg },
+        { "menu", bundle_menu_svg },
+        { "menuitem", bundle_menuitem_svg },
+        { "notebook", bundle_notebook_svg },
+        { "notebook_aui", bundle_notebook_aui_svg },
+        { "notebook_choice", bundle_notebook_choice_svg },
+        { "notebook_list", bundle_notebook_list_svg },
+        { "pagectrl", bundle_pagectrl_svg },
+        { "popup_transient", bundle_popup_transient_svg },
+        { "popup_window", bundle_popup_window_svg },
+        { "project", bundle_project_svg },
+        { "prop_sheet_dlg", bundle_prop_sheet_dlg_svg },
+        { "propgrid_cat", bundle_propgrid_cat_svg },
+        { "radio_box", bundle_radio_box_svg },
+        { "ribbon_bar", bundle_ribbon_bar_svg },
+        { "ribbon_button", bundle_ribbon_button_svg },
+        { "ribbon_buttonbar", bundle_ribbon_buttonbar_svg },
+        { "ribbon_gallery", bundle_ribbon_gallery_svg },
+        { "ribbon_gallery_item", bundle_ribbon_gallery_item_svg },
+        { "ribbon_page", bundle_ribbon_page_svg },
+        { "ribbon_panel", bundle_ribbon_panel_svg },
+        { "ribbon_separator", bundle_ribbon_separator_svg },
+        { "richtextctrl", bundle_richtextctrl_svg },
+        { "scintilla", bundle_scintilla_svg },
+        { "scrollbar", bundle_scrollbar_svg },
+        { "search", bundle_search_svg },
+        { "separator", bundle_separator_svg },
+        { "sizer", bundle_sizer_svg },
+        { "sizer_horizontal", bundle_sizer_horizontal_svg },
+        { "slider", bundle_slider_svg },
+        { "spacer", bundle_spacer_svg },
+        { "spin_ctrl", bundle_spin_ctrl_svg },
+        { "spin_ctrl_double", bundle_spin_ctrl_double_svg },
+        { "spinbtn", bundle_spinbtn_svg },
+        { "static_line", bundle_static_line_svg },
+        { "statusbar", bundle_statusbar_svg },
+        { "stddialogbuttonsizer", bundle_stddialogbuttonsizer_svg },
+        { "submenu", bundle_submenu_svg },
+        { "svg", bundle_svg_svg },
+        { "text_file", bundle_text_file_svg },
+        { "text_sizer", bundle_text_sizer_svg },
+        { "timepicker", bundle_timepicker_svg },
+        { "toggle_button", bundle_toggle_button_svg },
+        { "tool", bundle_tool_svg },
+        { "toolStretchable", bundle_toolStretchable_svg },
+        { "tool_dropdown", bundle_tool_dropdown_svg },
+        { "toolseparator", bundle_toolseparator_svg },
+        { "toolspacer", bundle_toolspacer_svg },
+        { "tree_ctrl", bundle_tree_ctrl_svg },
+        { "treelistctrl", bundle_treelistctrl_svg },
+        { "treelistctrlcolumn", bundle_treelistctrlcolumn_svg },
+        { "unknown", bundle_unknown_svg },
+        { "webview", bundle_webview_svg },
+        { "wrap_sizer", bundle_wrap_sizer_svg },
+        { "wxActivityIndicator", bundle_wxactivityIndicator_svg },
+        { "wxAnimation", bundle_wxAnimation_svg },
+        { "wxBannerWindow", bundle_wxBannerWindow_svg },
+        { "wxButton", bundle_wxButton_svg },
+        { "wxCheckBox", bundle_wxCheckBox_svg },
+        { "wxCheckListBox", bundle_wxCheckListBox_svg },
+        { "wxChoice", bundle_wxChoice_svg },
+        { "wxCollapsiblePane", bundle_wxCollapsiblePane_svg },
+        { "wxComboBox", bundle_wxComboBox_svg },
+        { "wxCommandLinkButton", bundle_wxCommandLinkButton_svg },
+        { "wxDialog", bundle_wxDialog_svg },
+        { "wxEditListBox", bundle_wxEditListBox_svg },
+        { "wxFileCtrl", bundle_wxFileCtrl_svg },
+        { "wxFrame", bundle_wxFrame_svg },
+        { "wxListBox", bundle_wxListBox_svg },
+        { "wxListView", bundle_wxListView_svg },
+        { "wxMenuBar", bundle_wxMenuBar_svg },
+        { "wxPanel", bundle_wxPanel_svg },
+        { "wxRadioButton", bundle_wxRadioButton_svg },
+        { "wxRearrangeCtrl", bundle_wxRearrangeCtrl_svg },
+        { "wxScrolledWindow", bundle_wxScrolledWindow_svg },
+        { "wxSimpleHtmlListBox", bundle_wxSimpleHtmlListBox_svg },
+        { "wxSimplebook", bundle_wxSimplebook_svg },
+        { "wxSplitterWindow", bundle_wxSplitterWindow_svg },
+        { "wxStaticBoxSizer", bundle_wxStaticBoxSizer_svg },
+        { "wxStaticCheckBoxSizer", bundle_wxStaticCheckBoxSizer_svg },
+        { "wxStaticRadioBtnSizer", bundle_wxStaticRadioBtnSizer_svg },
+        { "wxStaticText", bundle_wxStaticText_svg },
+        { "wxTextCtrl", bundle_wxTextCtrl_svg },
+        { "wxTimer", bundle_wxTimer_svg },
+        { "wxToolBar", bundle_wxToolBar_svg },
+        { "wxToolbook", bundle_wxToolbook_svg },
+        { "wxTreebook", bundle_wxTreebook_svg },
+        { "wxWizard", bundle_wxWizard_svg },
+        { "wxWizardPageSimple", bundle_wxWizardPageSimple_svg },
+        { "propgriditem", bundle_propgriditem_svg },
+        { "propgridpage", bundle_propgridpage_svg },
+        { "wxPropertyGrid", bundle_wxPropertyGrid_svg },
+        { "wxPropertyGridManager", bundle_wxPropertyGrid_svg },
+        { "xml_file", bundle_xml_file_svg },
 
-    { "unknown", bundle_unknown_svg },
-};
+        { "unknown", bundle_unknown_svg },
+    };
 
-// Images that may be accessed more than once (typically for popup menus) should be at the front for fastest access. The rest
-// are typically only loaded during application startup, and never accessed again.
+// Images that may be accessed more than once (typically for popup menus) should be at the front for
+// fastest access. The rest are typically only loaded during application startup, and never accessed
+// again.
 
 static const ImageMap png_headers[] = {
 
@@ -217,8 +219,8 @@ wxIcon GetIconImage(tt_string_view name)
     return icon;
 }
 
-// [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will be called during project
-// loading, and there could be dozens of calls to the same problem file(s).
+// [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will
+// be called during project loading, and there could be dozens of calls to the same problem file(s).
 
 wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_string* p_mime_type)
 {
@@ -243,7 +245,8 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
         return image;
     }
 
-    // Turn this into a null-terminated string. We don't care what's at the end, because it won't be a number.
+    // Turn this into a null-terminated string. We don't care what's at the end, because it won't be
+    // a number.
     in_buf[in_buf.size() - 1] = 0;
 
     size_t image_buffer_size = 0;
@@ -266,8 +269,9 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
 
     if (!image_buffer_size)
     {
-        // wxFormBuilder doesn't add the size of the image in brackets so we have to parse it without storing the
-        // results in order to calculate the size, then parse it again to actually store the data in an image buffer.
+        // wxFormBuilder doesn't add the size of the image in brackets so we have to parse it
+        // without storing the results in order to calculate the size, then parse it again to
+        // actually store the data in an image buffer.
         isUiditorFile = false;
 
         auto save_ptr = buf_ptr;
@@ -282,7 +286,8 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
                 if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
                     buf_ptr += 2;
 
-                // Now step over the digit, then fall through and step over the first character following the digit
+                // Now step over the digit, then fall through and step over the first character
+                // following the digit
                 do
                 {
                     ++buf_ptr;
@@ -291,7 +296,8 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
                 if (!*buf_ptr)
                 {
                     FAIL_MSG(tt_string() << filename << " doesn't contain a closing brace");
-                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace").make_wxString());
+                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace")
+                                     .make_wxString());
                     return image;
                 }
             }
@@ -301,9 +307,10 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
         buf_ptr = save_ptr;
     }
 
-    // We don't have a reliable way of identifying either wxFormBuilder or wxUiEditor generated graphics header files, so we
-    // start by making certain the image buffer is at least a possible size. It might still be wrong, but we'll fail to find
-    // a handler to load it, so that should be a sufficient way of trying to load some random  header file.
+    // We don't have a reliable way of identifying either wxFormBuilder or wxUiEditor generated
+    // graphics header files, so we start by making certain the image buffer is at least a possible
+    // size. It might still be wrong, but we'll fail to find a handler to load it, so that should be
+    // a sufficient way of trying to load some random  header file.
 
     if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
     {
@@ -330,7 +337,10 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
 
                 if (++actual_size > image_buffer_size)
                 {
-                    MSG_ERROR(tt_string() << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(
+                        tt_string()
+                        << filename
+                        << " actual image size is larger that the size specified in brackets");
                     return image;
                 }
             }
@@ -377,7 +387,10 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
 
                 if (++actual_size > image_buffer_size)
                 {
-                    MSG_ERROR(tt_string() << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(
+                        tt_string()
+                        << filename
+                        << " actual image size is larger that the size specified in brackets");
                     return image;
                 }
             }
@@ -415,7 +428,8 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
     wxMemoryInputStream stream(data, size_data);
     wxImage image;
 
-    // Images are almost always in PNG format, so check that first. If it fails, then let wxWidgets figure out the format.
+    // Images are almost always in PNG format, so check that first. If it fails, then let wxWidgets
+    // figure out the format.
 
     auto handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
     if (handler && handler->CanRead(stream) && handler->LoadFile(&image, stream))
@@ -448,7 +462,8 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
         return animation.IsOk();
     }
 
-    // Turn this into a null-terminated string. We don't care what's at the end, because it won't be a number.
+    // Turn this into a null-terminated string. We don't care what's at the end, because it won't be
+    // a number.
     in_buf[in_buf.size() - 1] = 0;
 
     size_t image_buffer_size = 0;
@@ -471,8 +486,9 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
 
     if (!image_buffer_size)
     {
-        // wxFormBuilder doesn't add the size of the animation in brackets so we have to parse it without storing the
-        // results in order to calculate the size, then parse it again to actually store the data in an animation buffer.
+        // wxFormBuilder doesn't add the size of the animation in brackets so we have to parse it
+        // without storing the results in order to calculate the size, then parse it again to
+        // actually store the data in an animation buffer.
         isUiditorFile = false;
 
         auto save_ptr = buf_ptr;
@@ -487,7 +503,8 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
                 if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
                     buf_ptr += 2;
 
-                // Now step over the digit, then fall through and step over the first character following the digit
+                // Now step over the digit, then fall through and step over the first character
+                // following the digit
                 do
                 {
                     ++buf_ptr;
@@ -496,7 +513,8 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
                 if (!*buf_ptr)
                 {
                     FAIL_MSG(tt_string() << filename << " doesn't contain a closing brace");
-                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace").make_wxString());
+                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace")
+                                     .make_wxString());
                     return animation.IsOk();
                 }
             }
@@ -506,9 +524,10 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
         buf_ptr = save_ptr;
     }
 
-    // We don't have a reliable way of identifying either wxFormBuilder or wxUiEditor generated graphics header files, so we
-    // start by making certain the image buffer is at least a possible size. It might still be wrong, but we'll fail to find
-    // a handler to load it, so that should be a sufficient way of trying to load some random  header file.
+    // We don't have a reliable way of identifying either wxFormBuilder or wxUiEditor generated
+    // graphics header files, so we start by making certain the image buffer is at least a possible
+    // size. It might still be wrong, but we'll fail to find a handler to load it, so that should be
+    // a sufficient way of trying to load some random  header file.
 
     if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
     {
@@ -535,7 +554,10 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
 
                 if (++actual_size > image_buffer_size)
                 {
-                    MSG_ERROR(tt_string() << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(
+                        tt_string()
+                        << filename
+                        << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
                 }
             }
@@ -582,7 +604,10 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
 
                 if (++actual_size > image_buffer_size)
                 {
-                    MSG_ERROR(tt_string() << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(
+                        tt_string()
+                        << filename
+                        << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
                 }
             }

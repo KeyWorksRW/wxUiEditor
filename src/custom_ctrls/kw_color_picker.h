@@ -45,14 +45,16 @@ public:
     kwColourPickerCtrl() {}
     kwColourPickerCtrl(wxWindow* parent, wxWindowID id, const wxColour& col = *wxBLACK,
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-                       long style = wxCLRP_DEFAULT_STYLE, const wxValidator& validator = wxDefaultValidator,
+                       long style = wxCLRP_DEFAULT_STYLE,
+                       const wxValidator& validator = wxDefaultValidator,
                        const wxString& name = wxASCII_STR(wxColourPickerCtrlNameStr))
     {
         Create(parent, id, col, pos, size, style, validator, name);
     }
 
-    bool Create(wxWindow* parent, wxWindowID id, const wxColour& col = *wxBLACK, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = wxCLRP_DEFAULT_STYLE,
+    bool Create(wxWindow* parent, wxWindowID id, const wxColour& col = *wxBLACK,
+                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+                long style = wxCLRP_DEFAULT_STYLE,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxASCII_STR(wxColourPickerCtrlNameStr));
 
@@ -73,7 +75,10 @@ protected:
     void UpdatePickerFromTextCtrl() override;
     void UpdateTextCtrlFromPicker() override;
 
-    long GetPickerStyle(long style) const override { return (style & (wxCLRP_SHOW_LABEL | wxCLRP_SHOW_ALPHA)); }
+    long GetPickerStyle(long style) const override
+    {
+        return (style & (wxCLRP_SHOW_LABEL | wxCLRP_SHOW_ALPHA));
+    }
 };
 
 // This is a CSS_name/hex_string map of all the CSS colors.

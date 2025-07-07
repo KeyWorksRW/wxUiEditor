@@ -10,16 +10,14 @@
 
 #include "pg_animation.h"
 
-#include "node.h"  // Node -- Node class
-
 #include "img_props.h"        // Handles property grid image properties
 #include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Animation, wxPGProperty);
 
-PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProperty* prop) : wxPGProperty(label, wxPG_LABEL)
+PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProperty* prop) :
+    wxPGProperty(label, wxPG_LABEL)
 {
     m_img_props.node_property = prop;
     m_img_props.SetAnimationType();
@@ -47,14 +45,15 @@ void PropertyGrid_Animation::RefreshChildren()
         if (m_img_props.type == "Embed")
         {
             Item(IndexImage)
-                ->SetHelpString(
-                    "Specifies the original animation image which will be embedded into a generated class source "
-                    "file as an unsigned char array.");
+                ->SetHelpString("Specifies the original animation image which will be embedded "
+                                "into a generated class source "
+                                "file as an unsigned char array.");
         }
         else
         {
             Item(IndexImage)
-                ->SetHelpString("Specifies an external file containing the animation image as an unsigned char array.");
+                ->SetHelpString("Specifies an external file containing the animation image as an "
+                                "unsigned char array.");
         }
     }
 
@@ -66,7 +65,8 @@ void PropertyGrid_Animation::RefreshChildren()
             art_dir = "./";
         wxDir dir;
         wxArrayString array_files;
-        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif", wxDIR_FILES);
+        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif",
+                        wxDIR_FILES);
         if (m_img_props.type == "Embed")
             dir.GetAllFiles(art_dir, &array_files, "*.ani");
         for (auto& iter: array_files)
@@ -82,7 +82,8 @@ void PropertyGrid_Animation::RefreshChildren()
     Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
 }
 
-wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
+wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIndex,
+                                               wxVariant& childValue) const
 {
     wxString value = thisValue;
 

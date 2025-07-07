@@ -7,17 +7,14 @@
 
 #include "font_prop_dlg.h"  // auto-generated: wxui/fontpropdlg_base.h and wxui/fontpropdlg_base.cpp
 
-#include "../nodes/node.h"        // Node class
-#include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
-#include "../utils/font_prop.h"   // FontProperty class
-
 FontPropDlg::FontPropDlg(wxWindow* parent, NodeProperty* prop) : FontPropDlgBase(parent)
 {
     m_value = prop->as_wxString();
     Initialize();
 }
 
-FontPropDlg::FontPropDlg(wxWindow* parent, const wxString& font_description) : FontPropDlgBase(parent)
+FontPropDlg::FontPropDlg(wxWindow* parent, const wxString& font_description) :
+    FontPropDlgBase(parent)
 {
     m_value = font_description;
     Initialize();
@@ -183,7 +180,8 @@ void FontPropDlg::OnEditPointSize(wxCommandEvent& event)
     {
         return;
     }
-    if (auto digit = std::atof(event.GetString().ToStdString().c_str()); digit >= -1.0 && digit <= 72.0)
+    if (auto digit = std::atof(event.GetString().ToStdString().c_str());
+        digit >= -1.0 && digit <= 72.0)
     {
         auto control = wxDynamicCast(event.GetEventObject(), wxSpinCtrlDouble);
         control->SetValue(digit);
@@ -195,26 +193,32 @@ void FontPropDlg::UpdateFontInfo()
 {
     if (m_radioSystem->GetValue())
     {
-        m_system_font.SymbolicSize(
-            font_symbol_pairs.GetValue((const char*) m_comboSymbolSize->GetStringSelection().mb_str()));
-        m_system_font.Style(font_style_pairs.GetValue((const char*) m_comboSystemStyles->GetStringSelection().mb_str()));
-        m_system_font.Weight(font_weight_pairs.GetValue((const char*) m_comboSystemWeight->GetStringSelection().mb_str()));
+        m_system_font.SymbolicSize(font_symbol_pairs.GetValue(
+            (const char*) m_comboSymbolSize->GetStringSelection().mb_str()));
+        m_system_font.Style(font_style_pairs.GetValue(
+            (const char*) m_comboSystemStyles->GetStringSelection().mb_str()));
+        m_system_font.Weight(font_weight_pairs.GetValue(
+            (const char*) m_comboSystemWeight->GetStringSelection().mb_str()));
         m_system_font.Underlined(m_checkSystemUnderlined->GetValue());
         m_system_font.Strikethrough(m_checkSystemStrikeThrough->GetValue());
     }
     else
     {
-        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
+        m_custom_font.Family(
+            font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
         if (m_spinCustomPointSize->GetValue() <= 0.0)
         {
-            m_custom_font.PointSize(wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
+            m_custom_font.PointSize(
+                wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
         }
         else
         {
             m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
         }
-        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
-        m_custom_font.Weight(font_weight_pairs.GetValue((const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
+        m_custom_font.Style(font_style_pairs.GetValue(
+            (const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
+        m_custom_font.Weight(font_weight_pairs.GetValue(
+            (const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
         m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
         auto facename = m_comboFacenames->GetStringSelection();
@@ -242,10 +246,12 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
     if (m_radioSystem->GetValue())
     {
         m_system_font.setDefGuiFont(true);
-        m_system_font.SymbolicSize(
-            font_symbol_pairs.GetValue((const char*) m_comboSymbolSize->GetStringSelection().mb_str()));
-        m_system_font.Style(font_style_pairs.GetValue((const char*) m_comboSystemStyles->GetStringSelection().mb_str()));
-        m_system_font.Weight(font_weight_pairs.GetValue((const char*) m_comboSystemWeight->GetStringSelection().mb_str()));
+        m_system_font.SymbolicSize(font_symbol_pairs.GetValue(
+            (const char*) m_comboSymbolSize->GetStringSelection().mb_str()));
+        m_system_font.Style(font_style_pairs.GetValue(
+            (const char*) m_comboSystemStyles->GetStringSelection().mb_str()));
+        m_system_font.Weight(font_weight_pairs.GetValue(
+            (const char*) m_comboSystemWeight->GetStringSelection().mb_str()));
         m_system_font.Underlined(m_checkSystemUnderlined->GetValue());
         m_system_font.Strikethrough(m_checkSystemStrikeThrough->GetValue());
         m_value = m_system_font.as_wxString();
@@ -254,13 +260,16 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
     else
     {
         m_custom_font.setDefGuiFont(false);
-        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
+        m_custom_font.Family(
+            font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
         if (m_spinCustomPointSize->GetValue() <= 0.0)
             m_custom_font.PointSize(-1.0);
         else
             m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
-        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
-        m_custom_font.Weight(font_weight_pairs.GetValue((const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
+        m_custom_font.Style(font_style_pairs.GetValue(
+            (const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
+        m_custom_font.Weight(font_weight_pairs.GetValue(
+            (const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
         m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
         auto facename = m_comboFacenames->GetStringSelection();

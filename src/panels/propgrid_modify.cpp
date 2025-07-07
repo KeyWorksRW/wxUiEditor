@@ -11,8 +11,8 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
 void PropGridPanel::modifyProperty(NodeProperty* prop, tt_string_view str)
 {
@@ -127,7 +127,8 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
 {
-    // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom property formatted it
+    // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom
+    // property formatted it
     tt_string value = m_prop_grid->GetPropertyValue(grid_prop).GetString().utf8_string();
     tt_string_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
     // If the image field is empty, then the entire property needs to be cleared
@@ -162,7 +163,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         }
     }
 
-    if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") || value.starts_with("XPM"))
+    if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") ||
+        value.starts_with("XPM"))
     {
         modifyProperty(node_prop, value);
         return;  // Don't do anything else for animations, art providers or XPMs
@@ -240,7 +242,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
             auto new_embedded = NodeCreation.createNode(gen_embedded_image, image_list_node).first;
             new_embedded->set_value(prop_bitmap, value);
-            auto insert_action = std::make_shared<InsertNodeAction>(new_embedded.get(), image_list_node, tt_empty_cstr, pos);
+            auto insert_action = std::make_shared<InsertNodeAction>(
+                new_embedded.get(), image_list_node, tt_empty_cstr, pos);
             insert_action->AllowSelectEvent(false);
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
@@ -263,7 +266,8 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 {
     if (node_prop->isProp(prop_data_file))
     {
-        tt_string newValue = grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
+        tt_string newValue =
+            grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
         auto result = Project.GetOutputPath(node_prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
         auto path = result.first;
         if (result.second)  // true if the the base filename was returned
@@ -276,11 +280,13 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 
     tt_string newValue = grid_prop->GetValueAsString().utf8_string();
 
-    // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the value if
-    // it's a different grid_prop
-    if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_perl_file) && !node_prop->isProp(prop_python_file) &&
-        !node_prop->isProp(prop_ruby_file) && !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_fortran_file) &&
-        !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) && !node_prop->isProp(prop_rust_file))
+    // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the
+    // value if it's a different grid_prop
+    if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_perl_file) &&
+        !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
+        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_fortran_file) &&
+        !node_prop->isProp(prop_haskell_file) && !node_prop->isProp(prop_lua_file) &&
+        !node_prop->isProp(prop_rust_file))
     {
         if (newValue.size())
         {

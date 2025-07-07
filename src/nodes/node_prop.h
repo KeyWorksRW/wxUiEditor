@@ -39,7 +39,8 @@ struct NODEPROP_RADIOBOX_ITEM
 struct NODEPROP_BMP_COMBO_ITEM
 {
     tt_string label;
-    tt_string bitmap;  // assumes embedded, svg only if .svg file extension, and svg will default to 16x16
+    // assumes embedded, svg only if .svg file extension, and svg will default to 16x16
+    tt_string bitmap;
 };
 
 class NodeProperty
@@ -63,14 +64,26 @@ public:
     tt_string convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& fields) const;
     tt_string convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& fields) const;
 
-    void set_value(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) { m_value = convert_statusbar_fields(fields); }
-    void set_value(std::vector<NODEPROP_CHECKLIST_ITEM>& items) { m_value = convert_checklist_items(items); }
-    void set_value(std::vector<NODEPROP_RADIOBOX_ITEM>& items) { m_value = convert_radiobox_items(items); }
-    void set_value(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) { m_value = convert_bmp_combo_items(items); }
+    void set_value(std::vector<NODEPROP_STATUSBAR_FIELD>& fields)
+    {
+        m_value = convert_statusbar_fields(fields);
+    }
+    void set_value(std::vector<NODEPROP_CHECKLIST_ITEM>& items)
+    {
+        m_value = convert_checklist_items(items);
+    }
+    void set_value(std::vector<NODEPROP_RADIOBOX_ITEM>& items)
+    {
+        m_value = convert_radiobox_items(items);
+    }
+    void set_value(std::vector<NODEPROP_BMP_COMBO_ITEM>& items)
+    {
+        m_value = convert_bmp_combo_items(items);
+    }
 
-    // By returnung a vector instead of the string, the way the property string gets formatted is entirely up to
-    // NodeProperty. This allows, for example, to use '|' as a separator instead of ',' when there is text which contains a
-    // comma.
+    // By returnung a vector instead of the string, the way the property string gets formatted is
+    // entirely up to NodeProperty. This allows, for example, to use '|' as a separator instead of
+    // ',' when there is text which contains a comma.
 
     std::vector<NODEPROP_STATUSBAR_FIELD> as_statusbar_fields() const;
     std::vector<NODEPROP_CHECKLIST_ITEM> as_checklist_items() const;

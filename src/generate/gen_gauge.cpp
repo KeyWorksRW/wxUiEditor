@@ -18,8 +18,9 @@
 
 wxObject* GaugeGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_range), DlgPoint(node, prop_pos),
-                              DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_range),
+                    DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetValue(node->as_int(prop_position));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -54,8 +55,8 @@ bool GaugeGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                 GenLang /* language */)
+bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                 std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -65,7 +66,8 @@ bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std
 
 int GaugeGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxGauge");
@@ -89,7 +91,8 @@ void GaugeGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& h
     handlers.emplace("wxGauge");
 }
 
-bool GaugeGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool GaugeGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

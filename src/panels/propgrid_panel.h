@@ -59,13 +59,15 @@ protected:
     // needed.
     void OnPostPropChange(CustomEvent& event);
 
-    void CreatePropCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
-    void CreateEventCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
+    void CreatePropCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info,
+                            PropNameSet& prop_set);
+    void CreateEventCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info,
+                             EventSet& event_set);
     void CreateLayoutCategory(Node* node);
 
     void AddEvents(tt_string_view name, Node* node, NodeCategory& category, EventSet& event_set);
-    void AddProperties(tt_string_view name, Node* node, NodeCategory& category, PropNameSet& prop_set,
-                       bool is_child_cat = false);
+    void AddProperties(tt_string_view name, Node* node, NodeCategory& category,
+                       PropNameSet& prop_set, bool is_child_cat = false);
 
     void ReplaceDerivedName(const tt_string& formName, NodeProperty* propType);
     void ReplaceDerivedFile(const tt_string& formName, NodeProperty* propType);

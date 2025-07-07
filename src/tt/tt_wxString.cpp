@@ -8,7 +8,6 @@
 #include <wx/filename.h>
 
 #include <cstring>
-#include <cwctype>
 #include <filesystem>
 
 #include "tt.h"
@@ -143,10 +142,11 @@ void tt_wxString::erase_from_wx(const wxString& sub)
     }
 }
 
-size_t tt_wxString::replace_view(std::string_view oldtext, std::string_view newtext, bool replace_all)
+size_t tt_wxString::replace_view(std::string_view oldtext, std::string_view newtext,
+                                 bool replace_all)
 {
-    return Replace(wxString::FromUTF8(oldtext.data(), oldtext.size()), wxString::FromUTF8(newtext.data(), newtext.size()),
-                   replace_all);
+    return Replace(wxString::FromUTF8(oldtext.data(), oldtext.size()),
+                   wxString::FromUTF8(newtext.data(), newtext.size()), replace_all);
 }
 
 tt_wxString& tt_wxString::replace_extension(std::string_view newExtension)
@@ -252,11 +252,13 @@ tt_wxString& tt_wxString::replace_filename(std::string_view newFilename)
     auto pos = find_last_of('/');
 
 #if defined(_WIN32)
-    // Windows filenames can contain both forward and back slashes, so check for a backslash as well.
+    // Windows filenames can contain both forward and back slashes, so check for a backslash as
+    // well.
     auto back = find_last_of('\\');
     if (back != npos)
     {
-        // If there is no forward slash, or the backslash appears after the forward slash, then use it's position.
+        // If there is no forward slash, or the backslash appears after the forward slash, then use
+        // it's position.
         if (pos == npos || back > pos)
             pos = back;
     }
@@ -289,11 +291,13 @@ tt_wxString& tt_wxString::replace_filename_wx(const wxString& newFilename)
     auto pos = find_last_of('/');
 
 #if defined(_WIN32)
-    // Windows filenames can contain both forward and back slashes, so check for a backslash as well.
+    // Windows filenames can contain both forward and back slashes, so check for a backslash as
+    // well.
     auto back = find_last_of('\\');
     if (back != npos)
     {
-        // If there is no forward slash, or the backslash appears after the forward slash, then use it's position.
+        // If there is no forward slash, or the backslash appears after the forward slash, then use
+        // it's position.
         if (pos == npos || back > pos)
             pos = back;
     }

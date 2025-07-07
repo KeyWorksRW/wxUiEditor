@@ -15,7 +15,7 @@
 #include "node_prop.h"  // NodeProperty class
 #include "utils.h"      // Utility functions that work with properties
 
-#include "../custom_ctrls/colour_rect_ctrl.h"  // ColourRectCtrl -- Control that displays a solid color
+#include "../custom_ctrls/colour_rect_ctrl.h"  // Control that displays a solid color
 #include "../custom_ctrls/kw_color_picker.h"   // Modified version of wxColourPickerCtrl
 
 #include "wxui/colourprop_base.h"  // auto-generated: wxui/colourprop_base.h wxui/colourprop_base.cpp
@@ -37,8 +37,8 @@ void EditColourProperty::OnCustomPaint(wxDC& dc, const wxRect& rect, wxPGPaintDa
     }
 }
 
-// We declare the class here so that propgrid_panel doesn't have a dependency on colourprop_base.h and all the header files
-// that pulls in.
+// We declare the class here so that propgrid_panel doesn't have a dependency on colourprop_base.h
+// and all the header files that pulls in.
 
 class EditColourDialog : public ColourPropBase
 {
@@ -62,7 +62,8 @@ private:
     wxColour m_background;
 };
 
-bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
+bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
+                                           wxPGProperty* WXUNUSED(property))
 {
     EditColourDialog dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)
@@ -111,8 +112,8 @@ wxString EditColourDialog::GetResults()
 {
     wxString result;
 
-    // The property string needs to be empty for the default value, 3 comma-separated numbers if it's a custom colour, and a
-    // wxSYS_COLOUR_... string if it's a system colour.
+    // The property string needs to be empty for the default value, 3 comma-separated numbers if
+    // it's a custom colour, and a wxSYS_COLOUR_... string if it's a system colour.
 
     if (!m_radio_default->GetValue())
     {

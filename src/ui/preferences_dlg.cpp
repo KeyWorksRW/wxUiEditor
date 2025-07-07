@@ -574,16 +574,20 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     if (m_check_fullpath->GetValue() != UserPrefs.is_FullPathTitle())
         is_fullpath_changed = true;
 
-    if (m_choice_cpp_version->GetStringSelection().ToStdString() != UserPrefs.get_CppWidgetsVersion())
+    if (m_choice_cpp_version->GetStringSelection().ToStdString() !=
+        UserPrefs.get_CppWidgetsVersion())
     {
         UserPrefs.set_CppWidgetsVersion(m_choice_cpp_version->GetStringSelection().ToStdString());
-        Project.getProjectNode()->modifyProperty(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+        Project.getProjectNode()->modifyProperty(prop_wxWidgets_version,
+                                                 UserPrefs.get_CppWidgetsVersion());
     }
 
-    if (m_choice_python_version->GetStringSelection().ToStdString() != UserPrefs.get_PythonVersion())
+    if (m_choice_python_version->GetStringSelection().ToStdString() !=
+        UserPrefs.get_PythonVersion())
     {
         UserPrefs.set_PythonVersion(m_choice_python_version->GetStringSelection().ToStdString());
-        Project.getProjectNode()->modifyProperty(prop_wxPython_version, UserPrefs.get_PythonVersion());
+        Project.getProjectNode()->modifyProperty(prop_wxPython_version,
+                                                 UserPrefs.get_PythonVersion());
     }
 
     if (m_choice_ruby_version->GetStringSelection().ToStdString() != UserPrefs.get_RubyVersion())
@@ -592,9 +596,9 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
         Project.getProjectNode()->modifyProperty(prop_wxRuby_version, UserPrefs.get_RubyVersion());
     }
 
-    UserPrefs.set_DarkModePending(
-        Prefs::PENDING_DARK_MODE_ENABLE |
-        (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON : Prefs::PENDING_DARK_MODE_OFF));
+    UserPrefs.set_DarkModePending(Prefs::PENDING_DARK_MODE_ENABLE |
+                                  (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON :
+                                                                   Prefs::PENDING_DARK_MODE_OFF));
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
     UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
     UserPrefs.set_SvgImages(m_check_svg_bitmaps->GetValue());

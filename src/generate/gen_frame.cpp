@@ -61,7 +61,8 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (node->hasValue(prop_center))
     {
-        if (node->as_string(prop_center) == "wxVERTICAL" || node->as_string(prop_center) == "wxHORIZONTAL" ||
+        if (node->as_string(prop_center) == "wxVERTICAL" ||
+            node->as_string(prop_center) == "wxHORIZONTAL" ||
             node->as_string(prop_center) == "wxBOTH")
         {
             object.append_child("centered").text().set(1);
@@ -98,7 +99,8 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
         if (node->as_string(prop_center) == "wxVERTICAL")
         {
             object.append_child(pugi::node_comment)
-                .set_value((" For centering, you cannot set only one direction in the XRC file (set wxBOTH instead)."));
+                .set_value((" For centering, you cannot set only one direction in the XRC file "
+                            "(set wxBOTH instead)."));
         }
 
         if (node->as_string(prop_style).contains("wxWANTS_CHARS"))
@@ -109,7 +111,8 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
         if (node->as_bool(prop_persist))
         {
-            object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
+            object.append_child(pugi::node_comment)
+                .set_value(" persist is not supported in the XRC file. ");
         }
     }
 
@@ -126,20 +129,22 @@ void FrameFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
     }
 }
 
-bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/frame.h>", set_src, set_hdr);
 
     return true;
 }
 
-bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                             Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
+                                    GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

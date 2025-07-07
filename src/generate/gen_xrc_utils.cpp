@@ -18,29 +18,27 @@
 const char* g_xrc_keywords =
 
     "accel align animation art-provider "
-    "base best_size bg bitmap bitmap-bg bitmap-minwidth bitmap-placement bitmap-small bitmap2 bitmapposition bitmapsize border borders "
-        "bottom bottom_dockable border buttons buttonsize "
-    "caption caption_visible cellpos cellspan center center_pane centered centre centre_pane checkable checked class close_button col cols "
-        "collapsed content current "
-    "data default defaultdirectory defaultfilename defaultfilter defaultfolder default_pane default_size depth digitis dimension "
-        "disabled direction disabled-bitmap dock dock_fixed dontattachtoframe dropdown "
-    "effectduration empty_cellsize enabled expanded exstyle extra-accels "
-    "fields filter flag flexibledirection float floatable floating_size fg focus focused font "
-    "gradient-end gradient-start gravity gripper growablecols growablerows "
+    "base best_size bg bitmap bitmap-bg bitmap-minwidth bitmap-placement bitmap-small bitmap2 "
+    "bitmapposition bitmapsize border borders bottom bottom_dockable border buttons buttonsize "
+    "caption caption_visible cellpos cellspan center center_pane centered centre centre_pane "
+    "checkable checked class close_button col cols collapsed content current "
+    "data default defaultdirectory defaultfilename defaultfilter defaultfolder default_pane "
+    "default_size depth digitis dimension disabled direction disabled-bitmap dock dock_fixed "
+    "dontattachtoframe dropdown effectduration empty_cellsize enabled expanded "
+    "exstyle extra-accels fields filter flag flexibledirection float floatable floating_size "
+    "fg focus focused font gradient-end gradient-start gravity gripper growablecols growablerows "
     "help helptext hgap hidden hideeffect hint horizontal htmlcode hybrid "
     "icon inc image image-small imagelist imagelist-small inactive-bitmap item "
     "label layer left left_dockable linesize longhelp "
-    "margins markup max max_size maximize_button maxlength message min minsize min_size minimize_button movable "
-    "name nonflexiblegrowmode null-text "
+    "margins markup max max_size maximize_button maxlength message min minsize min_size "
+    "minimize_button movable name nonflexiblegrowmode null-text "
     "object object_ref option orient orientation "
     "packing pagesize pane_border perspective pin_button pos pressed proportion "
     "radio range ratio resizable resource right right_dockable row rows "
-    "sashpos scrollrate selected selection selmax selmin separation showeffect size small-bitmap small-disabled-bitmap state stock_client "
-        "stock_id style styles "
-    "text textcolour thumb thumbsize tick tickfreq title toggle toolbar_pane tooltip top top_dockable "
-    "url "
-    "value variant vertical vgap "
-    "width widths wildcard windowlabel wrap wrapmode"
+    "sashpos scrollrate selected selection selmax selmin separation showeffect size small-bitmap "
+    "small-disabled-bitmap state stock_client stock_id style styles "
+    "text textcolour thumb thumbsize tick tickfreq title toggle toolbar_pane tooltip top "
+    "top_dockable url value variant vertical vgap width widths wildcard windowlabel wrap wrapmode"
 
     ;
 
@@ -117,7 +115,8 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
 {
     if (node->hasValue(prop_maximum_size) && !(supported_flags & xrc::max_size_supported))
     {
-        object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
+        object.append_child(pugi::node_comment)
+            .set_value(" maximum size cannot be be set in the XRC file. ");
     }
 }
 
@@ -274,13 +273,17 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
     if (node->hasValue(prop_background_colour))
     {
-        object.append_child("bg").text().set(
-            node->as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+        object.append_child("bg").text().set(node->as_wxColour(prop_background_colour)
+                                                 .GetAsString(wxC2S_HTML_SYNTAX)
+                                                 .ToUTF8()
+                                                 .data());
     }
     if (node->hasValue(prop_foreground_colour))
     {
-        object.append_child("fg").text().set(
-            node->as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+        object.append_child("fg").text().set(node->as_wxColour(prop_foreground_colour)
+                                                 .GetAsString(wxC2S_HTML_SYNTAX)
+                                                 .ToUTF8()
+                                                 .data());
     }
     if (node->as_bool(prop_disabled))
     {
@@ -337,13 +340,15 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             if (parts[IndexType].is_sameas("Art"))
             {
                 tt_string_vector art_parts(parts[IndexArtID], '|');
-                auto bmp = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
+                auto bmp =
+                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
                 bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
             }
             else if (parts[IndexType].is_sameas("SVG"))
             {
-                auto svg_object = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
+                auto svg_object =
+                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
 
                 // Optionally replace the directory portion with the xrc art directory.
                 if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
@@ -357,7 +362,8 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                     svg_object.text().set(parts[IndexImage]);
                 }
                 auto size = GetSizeInfo(parts[IndexSize]);
-                svg_object.append_attribute("default_size").set_value(tt_string() << size.x << ',' << size.y);
+                svg_object.append_attribute("default_size")
+                    .set_value(tt_string() << size.x << ',' << size.y);
             }
             else
             {
@@ -383,7 +389,9 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                             names << file;
                         }
                     }
-                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name).text().set(names);
+                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name)
+                        .text()
+                        .set(names);
                 }
             }
         }
@@ -414,7 +422,8 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
         object.append_attribute("name").set_value(node->as_string(prop_var_name));
         if (node->hasValue(prop_var_comment) && Project.as_bool(prop_xrc_add_var_comments))
         {
-            object.append_child(pugi::node_comment).set_value(node->as_string(prop_var_comment).c_str());
+            object.append_child(pugi::node_comment)
+                .set_value(node->as_string(prop_var_comment).c_str());
         }
     }
     else
@@ -423,7 +432,8 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
 
 pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
 {
-    if (node->getParent() && (node->getParent()->isSizer() || node->getParent()->isGen(gen_wxStaticBox)))
+    if (node->getParent() &&
+        (node->getParent()->isSizer() || node->getParent()->isGen(gen_wxStaticBox)))
     {
         GenXrcSizerItem(node, object);
         return object.append_child("object");

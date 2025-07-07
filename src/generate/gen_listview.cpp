@@ -38,7 +38,8 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
                 info.SetId(++row_id);
                 auto index = widget->InsertItem(info);
                 tt_string_vector columns(row, ';', tt::TRIM::both);
-                for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
+                for (size_t column = 0; column < columns.size() && column < headers.size();
+                     ++column)
                 {
                     widget->SetItem(index, (to_int) column, columns[column].make_wxString());
                 }
@@ -55,9 +56,9 @@ bool ListViewGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().Add(prop_id);
 
-    // Note that the default style is not specified, so that it will always be generated. That makes the generated code
-    // easier to understand since you know exactly which type of list view is being created instead of having to know what
-    // the default is.
+    // Note that the default style is not specified, so that it will always be generated. That makes
+    // the generated code easier to understand since you know exactly which type of list view is
+    // being created instead of having to know what the default is.
     code.PosSizeFlags(code::allow_scaling, true);
 
     return true;
@@ -75,7 +76,11 @@ bool ListViewGenerator::SettingsCode(Code& code)
         auto headers = code.node()->as_ArrayString(prop_column_labels);
         for (auto& iter: headers)
         {
-            code.Eol(eol_if_needed).NodeName().Function("AppendColumn(").QuotedString(iter).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("AppendColumn(")
+                .QuotedString(iter)
+                .EndFunction();
         }
 
         if (code.hasValue(prop_contents))
@@ -106,7 +111,8 @@ bool ListViewGenerator::SettingsCode(Code& code)
                     code.Eol().Str("idx = ");
                 code.NodeName().Function("InsertItem(info").EndFunction();
                 tt_string_vector columns(row, ';', tt::TRIM::both);
-                for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
+                for (size_t column = 0; column < columns.size() && column < headers.size();
+                     ++column)
                 {
                     code.Eol().NodeName().Function("SetItem(idx").Comma().itoa(column);
                     code.Comma().QuotedString(columns[column]).EndFunction();
@@ -119,8 +125,8 @@ bool ListViewGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/listctrl.h>", set_src, set_hdr);
     return true;
@@ -128,7 +134,8 @@ bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int ListViewGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     // XRC doesn't support wxListView

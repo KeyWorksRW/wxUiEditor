@@ -7,24 +7,24 @@
 
 #include <wx/infobar.h>           // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
-#include <wx/textctrl.h>          // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
+#include <wx/textctrl.h>  // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "pugixml.hpp"        // xml read/write/create/process
-#include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "pugixml.hpp"      // xml read/write/create/process
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_text_ctrl.h"
 
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
+                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
 #if defined(__WXGTK__)
     if (widget->IsSingleLine())
@@ -67,8 +67,9 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     {
         if (prop->hasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
-            wxGetFrame().ShowInfoBarMsg("When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
-                                        wxICON_INFORMATION);
+            wxGetFrame().ShowInfoBarMsg(
+                "When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
+                wxICON_INFORMATION);
         }
         else
         {
@@ -79,8 +80,9 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     {
         if (node->hasValue(prop_spellcheck) && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
-            wxGetFrame().ShowInfoBarMsg("When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
-                                        wxICON_INFORMATION);
+            wxGetFrame().ShowInfoBarMsg(
+                "When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
+                wxICON_INFORMATION);
         }
         else
         {
@@ -112,7 +114,11 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         }
         else
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetHint(")
+                .QuotedString(prop_hint)
+                .EndFunction();
         }
     }
 
@@ -134,24 +140,47 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
             if (code.is_cpp())
             {
                 code << "#if !defined(__WXGTK__)";
-                code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.Eol()
+                    .Tab()
+                    .NodeName()
+                    .Function("SetMaxLength(")
+                    .as_string(prop_maxlength)
+                    .EndFunction()
+                    .Eol();
                 code.GetCode() += "#endif";
             }
             else if (code.is_perl())
             {
                 code.Str("if (Wx::wxVERSION_STRING() !~ /GTK/)").OpenBrace();
-                code.Eol(eol_if_needed).NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.Eol(eol_if_needed)
+                    .NodeName()
+                    .Function("SetMaxLength(")
+                    .as_string(prop_maxlength)
+                    .EndFunction()
+                    .Eol();
                 code.CloseBrace();
             }
             else if (code.is_python())
             {
                 code.Add("if wx.Platform != \'__WXGTK__\':");
-                code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.Eol()
+                    .Tab()
+                    .NodeName()
+                    .Function("SetMaxLength(")
+                    .as_string(prop_maxlength)
+                    .EndFunction()
+                    .Eol();
             }
             else if (code.is_ruby())
             {
                 code.Add("if Wx::PLATFORM == 'WXGTK'");
-                code.Eol().Tab().NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code.Eol()
+                    .Tab()
+                    .NodeName()
+                    .Function("SetMaxLength(")
+                    .as_string(prop_maxlength)
+                    .EndFunction()
+                    .Eol();
                 code.Str("end");
             }
         }
@@ -185,7 +214,8 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            code.Eol(eol_if_needed).NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
+            code.Eol(eol_if_needed).NodeName()
+                << "->EnableProofCheck(wxTextProofOptions::Default()";
             if (code.PropContains(prop_spellcheck, "grammar"))
                 code << ".GrammarCheck()";
             code.EndFunction();
@@ -196,7 +226,9 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         }
         else if (code.is_python())
         {
-            code.Eol(eol_if_needed).Str("# wxPython 4.2.0 does not support wxTextProofOptions").Eol();
+            code.Eol(eol_if_needed)
+                .Str("# wxPython 4.2.0 does not support wxTextProofOptions")
+                .Eol();
         }
         else if (code.is_ruby())
         {
@@ -217,7 +249,8 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
+                                          NodeProperty* changed_prop)
 {
     if (changed_prop->isProp(prop_spellcheck))
     {
@@ -242,8 +275,8 @@ void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, Node
     }
 }
 
-bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);
 
@@ -268,7 +301,8 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTextCtrl");
@@ -293,11 +327,13 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     {
         if (node->hasValue(prop_auto_complete))
         {
-            item.append_child(pugi::node_comment).set_value(" auto complete cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" auto complete cannot be be set in the XRC file. ");
         }
         if (node->hasValue(prop_spellcheck))
         {
-            item.append_child(pugi::node_comment).set_value(" spell check cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" spell check cannot be be set in the XRC file. ");
         }
         GenXrcComments(node, item);
     }
@@ -310,7 +346,8 @@ void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxActivityIndicatorXmlHandler");
 }
 
-bool TextCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool TextCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                   GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

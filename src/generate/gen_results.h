@@ -28,7 +28,8 @@ struct GenResults
     void EndClock()
     {
         auto end_time = std::chrono::steady_clock::now();
-        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+        elapsed =
+            std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
         tt_string msg;
         msg << "Elapsed time: " << elapsed << " milliseconds";
         msgs.emplace_back(msg);
@@ -63,4 +64,5 @@ void GenInhertedClass(GenResults& results);
 // ../generate/gen_xrc.cpp
 bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
 
-void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, GenLang language = GEN_LANG_CPLUSPLUS);
+void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root,
+                      GenLang language = GEN_LANG_CPLUSPLUS);

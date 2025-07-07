@@ -23,7 +23,9 @@ public:
     ~ttFileProperty() = default;
 
     void OnSetValue() override;
-    wxString ValueToString(wxVariant& value, wxPGPropValFormatFlags flags = wxPGPropValFormatFlags::Null) const override;
+    wxString
+        ValueToString(wxVariant& value,
+                      wxPGPropValFormatFlags flags = wxPGPropValFormatFlags::Null) const override;
     bool StringToValue(wxVariant& variant, const wxString& text,
                        wxPGPropValFormatFlags flags = wxPGPropValFormatFlags::Null) const override;
 

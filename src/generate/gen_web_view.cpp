@@ -13,7 +13,6 @@
 #include "gen_xrc_utils.h"    // Common XRC generating functions
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "pugixml.hpp"        // xml read/write/create/process
 #include "utils.h"            // Utility functions that work with properties
 
 #include "gen_web_view.h"
@@ -27,19 +26,22 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
             msg += "wxRuby3";
         else
             msg += "XRC";
-        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg.make_wxString(), wxDefaultPosition,
-                                        wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                        msg.make_wxString(), wxDefaultPosition, wxDefaultSize,
+                                        wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
 #if defined(WIN32)
     auto widget =
-        wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url), DlgPoint(node, prop_pos),
-                       DlgSize(node, prop_size), wxWebViewBackendDefault, GetStyleInt(node));
+        wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
+                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), wxWebViewBackendDefault,
+                       GetStyleInt(node));
 #else
     auto* widget =
-        new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxWebView mockup currently only available for Windows",
-                         wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
+                         "wxWebView mockup currently only available for Windows", wxDefaultPosition,
+                         wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
     widget->Wrap(DlgPoint(150));
 #endif
 
@@ -77,8 +79,8 @@ void WebViewGenerator::GenEvent(Code& code, NodeEvent* event, const std::string&
     }
 }
 
-bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/webview.h>", set_src, set_hdr);
     return true;

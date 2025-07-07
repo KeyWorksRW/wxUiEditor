@@ -968,14 +968,16 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     {
         menu_item = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU));
-        menu_item = sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
+        menu_item =
+            sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_MENU));
     }
     AppendSubMenu(sub_menu, "Move");
 
     if (node->isGen(gen_folder) || node->isGen(gen_sub_folder) || node->isGen(gen_data_folder))
     {
-        // Folders can only move up, down, left or right. No other move operations can be done on a folder.
+        // Folders can only move up, down, left or right. No other move operations can be done on a
+        // folder.
         return;
     }
 
@@ -1208,8 +1210,10 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
     auto parent = node->getParent();
     if (!parent)
     {
-        // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
-        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
+        // If this actually happens, then we silently do nothing leaving the user no idea of why it
+        // didn't work
+        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user "
+                 "know why.")
         return;
     }
 
@@ -1225,16 +1229,19 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
 
     if (!parent)
     {
-        // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
-        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
+        // If this actually happens, then we silently do nothing leaving the user no idea of why it
+        // didn't work
+        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user "
+                 "know why.")
         return;
     }
 
     if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
         widget = "sub_folder";
 
-    // Avoid the temptation to set new_parent to the raw pointer so that .get() doesn't have to be called below. Doing so
-    // will result in the reference count being decremented before we are done hooking it up, and you end up crashing.
+    // Avoid the temptation to set new_parent to the raw pointer so that .get() doesn't have to be
+    // called below. Doing so will result in the reference count being decremented before we are
+    // done hooking it up, and you end up crashing.
 
     auto new_parent = NodeCreation.createNode(widget, parent).first;
     if (new_parent)
@@ -1247,7 +1254,8 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
             undo_string << "sizer";
         if (!parent->isGen(gen_wxGridBagSizer))
         {
-            wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_parent.get(), parent, undo_string, childPos));
+            wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_parent.get(), parent,
+                                                                           undo_string, childPos));
         }
         else
         {
@@ -1260,15 +1268,17 @@ void NavPopupMenu::CreateSizerParent(Node* node, tt_string_view widget)
             new_parent->set_value(prop_colspan, new_child->as_string(prop_colspan));
             new_parent->set_value(prop_rowspan, new_child->as_string(prop_rowspan));
             // wxGetFrame().FireDeletedEvent(new_child);
-            wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_parent.get(), parent, (to_int) childPos));
+            wxGetFrame().PushUndoAction(
+                std::make_shared<AppendGridBagAction>(new_parent.get(), parent, (to_int) childPos));
             wxGetFrame().SelectNode(new_child, evt_flags::fire_event | evt_flags::force_selection);
             wxGetFrame().Thaw();
             return;
         }
 
-        // InsertNodeAction does not fire the creation event since that's usually handled by the caller as needed. We
-        // don't want to fire an event because we don't want the Mockup or Code panels to update until we have changed
-        // the parent. However we *do* need to let the navigation panel know that a new node has been added.
+        // InsertNodeAction does not fire the creation event since that's usually handled by the
+        // caller as needed. We don't want to fire an event because we don't want the Mockup or Code
+        // panels to update until we have changed the parent. However we *do* need to let the
+        // navigation panel know that a new node has been added.
 
         wxGetFrame().getNavigationPanel()->InsertNode(new_parent.get());
 
@@ -1300,7 +1310,8 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
 
     bool is_aui_toolbar =
         (node->getGenName() == gen_wxAuiToolBar || node->getGenName() == gen_AuiToolBar ||
-         node->getParent()->getGenName() == gen_wxAuiToolBar || node->getParent()->getGenName() == gen_AuiToolBar);
+         node->getParent()->getGenName() == gen_wxAuiToolBar ||
+         node->getParent()->getGenName() == gen_AuiToolBar);
 
     menu_item = sub_menu->Append(MenuADD_TOOL, "Tool (normal, check, radio)");
     menu_item->SetBitmap(GetInternalImage("tool"));

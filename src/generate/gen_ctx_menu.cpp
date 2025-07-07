@@ -73,7 +73,8 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
     if (code.is_cpp())
     {
         code.Add("wxMenu ctx_menu").Str(code.is_cpp() ? ";" : "");
-        code.Eol().Str("auto* p_ctx_menu = &ctx_menu;  // convenience variable for the auto-generated code");
+        code.Eol().Str(
+            "auto* p_ctx_menu = &ctx_menu;  // convenience variable for the auto-generated code");
     }
     else
     {
@@ -114,7 +115,8 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
         if (auto generator = iter->getNode()->getNodeDeclaration()->getGenerator(); generator)
         {
             Code event_code(iter->getNode(), code.m_language);
-            if (generator->GenEvent(event_code, iter, code.node()->getParentName(code.get_language()).as_str());
+            if (generator->GenEvent(event_code, iter,
+                                    code.node()->getParentName(code.get_language()).as_str());
                 event_code.size())
             {
                 code.Eol(eol_if_needed).Str("ctx_menu.") += event_code.GetCode();

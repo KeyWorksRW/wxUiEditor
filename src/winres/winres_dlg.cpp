@@ -80,8 +80,8 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
         else if (line.starts_with("FONT"))
         {
             line.moveto_nextword();
-            // TODO: [KeyWorks - 10-18-2020] This needs to be ignored for all "standard" fonts, but might be critical
-            // for fonts used for non-English dialogs.
+            // TODO: [KeyWorks - 10-18-2020] This needs to be ignored for all "standard" fonts, but
+            // might be critical for fonts used for non-English dialogs.
         }
         else if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
@@ -91,7 +91,8 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
         }
     }
 
-    // TODO: [KeyWorks - 10-18-2020] The last step will be to figure what to use for the base and derived filenames.
+    // TODO: [KeyWorks - 10-18-2020] The last step will be to figure what to use for the base and
+    // derived filenames.
 }
 
 void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
@@ -122,8 +123,8 @@ void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
     if (original_styles.contains("DS_MODALFRAME"))
     {
         m_form_node->set_value(prop_style, "wxDEFAULT_DIALOG_STYLE");
-        // It's common for dialogs to duplicate the styles that DS_MODALFRAME add, so we remove them here to
-        // avoid adding them later.
+        // It's common for dialogs to duplicate the styles that DS_MODALFRAME add, so we remove them
+        // here to avoid adding them later.
         original_styles.Replace("WS_CAPTION", "");
         original_styles.Replace("WS_SYSMENU", "");
         original_styles.Replace("WS_POPUP", "");
@@ -149,10 +150,11 @@ void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
         AppendStyle(prop_style, "wxMINIMIZE_BOX");
     }
 
-    if (original_styles.find("WS_THICKFRAME") != tt::npos || original_styles.find("WS_SIZEBOX") != tt::npos)
+    if (original_styles.find("WS_THICKFRAME") != tt::npos ||
+        original_styles.find("WS_SIZEBOX") != tt::npos)
     {
-        // In spite of what the documentation states (as of 3.1.6) there is no wxTHICK_FRAME. The closest would be
-        // wxBORDER_THEME.
+        // In spite of what the documentation states (as of 3.1.6) there is no wxTHICK_FRAME. The
+        // closest would be wxBORDER_THEME.
 
         // wxDialog interface (forms.xml) doesn't support this
         // AppendStyle(prop_style, "wxBORDER_THEME");
@@ -201,15 +203,18 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
         {
             m_ctrls.pop_back();
         }
-        else if (control.getNode()->isGen(gen_wxSpinCtrl) && control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
+        else if (control.getNode()->isGen(gen_wxSpinCtrl) &&
+                 control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
         {
-            // A spin control can specifify that the previous control should be considered a "buddy" that responds to changes
-            // in the spin control. In wxWidgets, a spin control already includes an edit control, so we delete the previous
-            // edit control and use it's id for the spin control.
+            // A spin control can specifify that the previous control should be considered a "buddy"
+            // that responds to changes in the spin control. In wxWidgets, a spin control already
+            // includes an edit control, so we delete the previous edit control and use it's id for
+            // the spin control.
             auto cur_pos = m_ctrls.size() - 1;
             if (cur_pos > 0 && m_ctrls[cur_pos - 1].getNode()->isGen(gen_wxTextCtrl))
             {
-                control.getNode()->set_value(prop_id, m_ctrls[cur_pos - 1].getNode()->as_string(prop_id));
+                control.getNode()->set_value(prop_id,
+                                             m_ctrls[cur_pos - 1].getNode()->as_string(prop_id));
                 m_ctrls.erase(m_ctrls.begin() + (cur_pos - 1));
             }
         }

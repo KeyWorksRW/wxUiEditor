@@ -5,10 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// There are several controls in this dialog that are hidden or displayed based on user interaction. Because of that, there
-// are times when just calling Layout() is insufficient -- so to play it safe, whenever the dialog's size may need to be
-// changed, both Fit() and Layout() are called. That's still not 100% accurate, but it's close enough that the user isn't
-// likely to notice the extra spacing that sometimes occurs.
+// There are several controls in this dialog that are hidden or displayed based on user interaction.
+// Because of that, there are times when just calling Layout() is insufficient -- so to play it
+// safe, whenever the dialog's size may need to be changed, both Fit() and Layout() are called.
+// That's still not 100% accurate, but it's close enough that the user isn't likely to notice the
+// extra spacing that sometimes occurs.
 
 #include <filesystem>
 #include <format>
@@ -54,12 +55,13 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 
     #if defined(_WIN32)
 
-    // Windows auto-complete only works with backslashes even though forward slashes work fine for opening directories and
-    // files, and the directory name *must* end with a backslash.
+    // Windows auto-complete only works with backslashes even though forward slashes work fine for
+    // opening directories and files, and the directory name *must* end with a backslash.
     dir.addtrailingslash();
     dir.forwardslashestoback();
 
-    // By setting the path, the user can start typing and immediately get a drop-down list of matchning filenames.
+    // By setting the path, the user can start typing and immediately get a drop-down list of
+    // matchning filenames.
     m_fileOriginal->SetPath(dir.make_wxString());
     #endif  // _WIN32
 
@@ -111,8 +113,9 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         return;
 
     #if !defined(_WIN32)
-    // Don't do this on Windows! If the full path is specified, the user can press CTRL+BACKSPACE to remove extension or
-    // filename and then continue to use auto-complete. If a relative path is specified, then auto-complete stops working.
+    // Don't do this on Windows! If the full path is specified, the user can press CTRL+BACKSPACE to
+    // remove extension or filename and then continue to use auto-complete. If a relative path is
+    // specified, then auto-complete stops working.
 
     file.make_relative(m_cwd);
     file.backslashestoforward();
@@ -141,12 +144,14 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         {
             isImageLoaded = true;
 
-            // Note that we allow header to header conversion. That makes converting wxFormBuilder headers, and changing
-            // conversion options.
+            // Note that we allow header to header conversion. That makes converting wxFormBuilder
+            // headers, and changing conversion options.
         }
         else
         {
-            wxMessageBox(wxString() << "Unrecognized file format in " << m_fileOriginal->GetTextCtrlValue(), "Header Image");
+            wxMessageBox(wxString() << "Unrecognized file format in "
+                                    << m_fileOriginal->GetTextCtrlValue(),
+                         "Header Image");
             m_fileOriginal->SetPath(wxEmptyString);
         }
     }
@@ -155,8 +160,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     {
         m_mime_type.clear();
 
-        // We need to know what the original file type is because if we convert it to a header, then some file formats can be
-        // converted to PNG before saving.
+        // We need to know what the original file type is because if we convert it to a header, then
+        // some file formats can be converted to PNG before saving.
 
         wxFFileInputStream stream(m_fileOriginal->GetTextCtrlValue());
         if (stream.IsOk())
@@ -179,7 +184,9 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                     }
                     else
                     {
-                        wxMessageBox(wxString() << "Unable to read " << m_fileOriginal->GetTextCtrlValue(), "Input Image");
+                        wxMessageBox(wxString()
+                                         << "Unable to read " << m_fileOriginal->GetTextCtrlValue(),
+                                     "Input Image");
                         break;
                     }
                 }
@@ -188,7 +195,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         if (!isImageLoaded)
         {
-            wxMessageBox(wxString() << "The file format in " << m_fileOriginal->GetTextCtrlValue() << " is unsupported",
+            wxMessageBox(wxString() << "The file format in " << m_fileOriginal->GetTextCtrlValue()
+                                    << " is unsupported",
                          "Input Image");
             m_fileOriginal->SetPath(wxEmptyString);
         }
@@ -233,7 +241,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         if (m_xpmImage.HasMask())
         {
-            wxColor clr = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
+            wxColor clr = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(),
+                            m_xpmImage.GetMaskBlue() };
             auto name = wxTheColourDatabase->FindName(clr);
             if (name.empty())
             {
@@ -251,8 +260,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                 }
             }
 
-            m_staticXpmRGB->SetLabelText(
-                wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
+            m_staticXpmRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) clr.Red(),
+                                                           (int) clr.Green(), (int) clr.Blue()));
         }
         else
         {
@@ -262,7 +271,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         if (m_hdrImage.HasMask())
         {
-            wxColor clr = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(), m_hdrImage.GetMaskBlue() };
+            wxColor clr = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(),
+                            m_hdrImage.GetMaskBlue() };
             auto name = wxTheColourDatabase->FindName(clr);
             if (name.empty())
             {
@@ -280,8 +290,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                 }
             }
 
-            m_staticHdrRGB->SetLabelText(
-                wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
+            m_staticHdrRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) clr.Red(),
+                                                           (int) clr.Green(), (int) clr.Blue()));
         }
         else
         {
@@ -346,8 +356,8 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
             m_btnConvert->Enable();
     }
 
-    // Various static text controls and the static bitmap for the current image may be shown or hidden based on whether
-    // the image got loaded or not, so we simply resize the entire dialog.
+    // Various static text controls and the static bitmap for the current image may be shown or
+    // hidden based on whether the image got loaded or not, so we simply resize the entire dialog.
 
     Fit();
     Layout();
@@ -362,7 +372,8 @@ void ConvertImageDlg::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
     else
     {
         auto rgb = GetXpmTransparencyColor();  // this will set the mask in m_xpmImage
-        m_staticXpmRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
+        m_staticXpmRGB->SetLabelText(
+            wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
     }
 
     m_bmpOriginal->SetBitmap(m_xpmImage);
@@ -381,7 +392,8 @@ void ConvertImageDlg::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
     else
     {
         auto rgb = GetHdrTransparencyColor();  // this will set the mask in m_hdrImage
-        m_staticHdrRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
+        m_staticHdrRGB->SetLabelText(
+            wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
     }
 
     m_bmpOriginal->SetBitmap(m_hdrImage);
@@ -485,8 +497,9 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     if (out_name.empty())
     {
-        m_staticSize->SetLabelText(tt_string() << "Original size: " << std::to_string(m_orginal_size)
-                                               << " -- Output size if saved: " << std::to_string(buf_size));
+        m_staticSize->SetLabelText(tt_string()
+                                   << "Original size: " << std::to_string(m_orginal_size)
+                                   << " -- Output size if saved: " << std::to_string(buf_size));
         m_staticSize->Show();
     }
     else
@@ -495,8 +508,9 @@ void ConvertImageDlg::ImgageInHeaderOut()
         {
             m_staticSave->SetLabelText(out_name.make_wxString() << " saved.");
             m_staticSave->Show();
-            m_staticSize->SetLabelText(tt_string() << "Original size: " << std::to_string(m_orginal_size)
-                                                   << " -- Output size: " << std::to_string(buf_size));
+            m_staticSize->SetLabelText(tt_string()
+                                       << "Original size: " << std::to_string(m_orginal_size)
+                                       << " -- Output size: " << std::to_string(buf_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -536,11 +550,13 @@ void ConvertImageDlg::ImageInXpmOut()
 
         if (m_xpmImage.SaveFile(out_name, wxBITMAP_TYPE_XPM))
         {
-            size_t output_size = std::filesystem::file_size(std::filesystem::path(out_name.c_str()));
+            size_t output_size =
+                std::filesystem::file_size(std::filesystem::path(out_name.c_str()));
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
-            m_staticSize->SetLabelText(
-                std::format(std::locale(""), "Original size: {:L} -- XPM size: {:L}", m_orginal_size, output_size));
+            m_staticSize->SetLabelText(std::format(std::locale(""),
+                                                   "Original size: {:L} -- XPM size: {:L}",
+                                                   m_orginal_size, output_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -687,7 +703,8 @@ void ConvertImageDlg::OnConvertAlpha(wxCommandEvent& event)
 
         if (m_xpmImage.HasMask())
         {
-            wxColor clr = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
+            wxColor clr = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(),
+                            m_xpmImage.GetMaskBlue() };
             auto name = wxTheColourDatabase->FindName(clr);
             if (name.empty())
             {
@@ -703,8 +720,8 @@ void ConvertImageDlg::OnConvertAlpha(wxCommandEvent& event)
 
             if (!m_ForceXpmMask->GetValue())
             {
-                m_staticXpmRGB->SetLabelText(
-                    wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
+                m_staticXpmRGB->SetLabelText(wxString().Format(
+                    "%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
 
                 m_bmpOriginal->SetBitmap(IsHeaderPage() ? m_hdrImage : m_xpmImage);
                 Fit();
@@ -741,8 +758,9 @@ void ConvertImageDlg::OnForceXpmMask(wxCommandEvent& event)
         tt_string transparency = m_comboXpmMask->GetStringSelection();
         if (transparency == "none")
         {
-            // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is being forced, check the
-            // four corner pixels, and if any of them are Magenta then set the mask to Magenta.
+            // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is
+            // being forced, check the four corner pixels, and if any of them are Magenta then set
+            // the mask to Magenta.
 
             for (;;)
             {
@@ -771,7 +789,8 @@ void ConvertImageDlg::OnForceXpmMask(wxCommandEvent& event)
                 }
 
                 // check upper right
-                pBits = m_xpmImage.GetData() + (((m_xpmImage.GetHeight()) * (m_xpmImage.GetWidth()) * 3) - 3);
+                pBits = m_xpmImage.GetData() +
+                        (((m_xpmImage.GetHeight()) * (m_xpmImage.GetWidth()) * 3) - 3);
                 if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
                 {
                     m_comboXpmMask->SetStringSelection("Magenta");
@@ -806,8 +825,9 @@ void ConvertImageDlg::OnForceHdrMask(wxCommandEvent& event)
         tt_string transparency = m_comboHdrMask->GetStringSelection();
         if (transparency == "none")
         {
-            // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is being forced, check the
-            // four corner pixels, and if any of them are Magenta then set the mask to Magenta.
+            // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is
+            // being forced, check the four corner pixels, and if any of them are Magenta then set
+            // the mask to Magenta.
 
             for (;;)
             {
@@ -836,7 +856,8 @@ void ConvertImageDlg::OnForceHdrMask(wxCommandEvent& event)
                 }
 
                 // check upper right
-                pBits = m_hdrImage.GetData() + (((m_hdrImage.GetHeight()) * (m_hdrImage.GetWidth()) * 3) - 3);
+                pBits = m_hdrImage.GetData() +
+                        (((m_hdrImage.GetHeight()) * (m_hdrImage.GetWidth()) * 3) - 3);
                 if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
                 {
                     m_comboHdrMask->SetStringSelection("Magenta");
@@ -888,8 +909,8 @@ void ConvertImageDlg::SetOutputBitmap()
     wxBusyCursor wait;
     wxImage image;
 
-    // if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") ||
-    // out_file.has_extension(".hxx"))
+    // if (out_file.has_extension(".h") || out_file.has_extension(".hpp") ||
+    // out_file.has_extension(".hh") || out_file.has_extension(".hxx"))
     if (out_file.has_extension(".h_img"))
     {
         image = GetHeaderImage(out_file);

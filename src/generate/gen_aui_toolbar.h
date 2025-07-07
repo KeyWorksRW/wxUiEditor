@@ -15,7 +15,8 @@ class AuiToolBarFormGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* /* node */, bool /* is_preview */) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* /* node */,
+                       bool /* is_preview */) override;
 
     bool ConstructionCode(Code& code) override;
     bool SettingsCode(Code&) override;
@@ -41,7 +42,8 @@ class AuiToolBarGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* /* node */, bool /* is_preview */) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* /* node */,
+                       bool /* is_preview */) override;
 
     bool ConstructionCode(Code& code) override;
     bool SettingsCode(Code&) override;
@@ -63,8 +65,8 @@ class AuiToolGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code& code) override;
-    bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */,
-                     GenLang /* language */) override;
+    bool GetIncludes(Node*, std::set<std::string>& /* set_src */,
+                     std::set<std::string>& /* set_hdr */, GenLang /* language */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     int GetRequiredVersion(Node* /*node*/) override;

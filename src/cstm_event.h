@@ -18,16 +18,27 @@ class CustomEvent : public wxEvent
 {
 public:
     CustomEvent(wxEventType commandType, Node* node) : wxEvent(0, commandType), m_node(node) {}
-    CustomEvent(wxEventType commandType, NodeProperty* property) : wxEvent(0, commandType), m_property(property) {}
-    CustomEvent(wxEventType commandType, NodeEvent* event) : wxEvent(0, commandType), m_event(event) {}
-    CustomEvent(wxEventType commandType, UndoAction* undo_cmd) : wxEvent(0, commandType), m_undo_cmd(undo_cmd) {}
+    CustomEvent(wxEventType commandType, NodeProperty* property) :
+        wxEvent(0, commandType), m_property(property)
+    {
+    }
+    CustomEvent(wxEventType commandType, NodeEvent* event) : wxEvent(0, commandType), m_event(event)
+    {
+    }
+    CustomEvent(wxEventType commandType, UndoAction* undo_cmd) :
+        wxEvent(0, commandType), m_undo_cmd(undo_cmd)
+    {
+    }
 
     Node* getNode();
     NodeProperty* GetNodeProperty() { return m_property; }
     NodeEvent* GetEventNode() { return m_event; }
     UndoAction* GetUndoCmd() { return m_undo_cmd; }
 
-    wxEvent* Clone() const override { return new CustomEvent(*this); }  // required to instantiate wxEvent class
+    wxEvent* Clone() const override
+    {
+        return new CustomEvent(*this);
+    }  // required to instantiate wxEvent class
 
 private:
     Node* m_node { nullptr };

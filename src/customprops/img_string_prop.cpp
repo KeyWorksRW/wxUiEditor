@@ -12,9 +12,7 @@
 #include "img_string_prop.h"
 
 #include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
-#include "node.h"             // Node -- Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
 
 bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {
@@ -46,12 +44,13 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         }
         else
         {
-            pattern =
-                "Bitmap files|*.png;*.bmp;*.ico;*.xpm|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
+            pattern = "Bitmap "
+                      "files|*.png;*.bmp;*.ico;*.xpm|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|"
+                      "*.bmp|Icon|*.ico||";
         }
 
-        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString, pattern,
-                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString,
+                         pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
             wxFileName file(dlg.GetPath());
@@ -84,8 +83,8 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
             pattern = "XPM files (*.xpm)|*.xpm";
         }
 
-        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString, pattern,
-                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString,
+                         pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
             tt_string name = dlg.GetPath().utf8_string();

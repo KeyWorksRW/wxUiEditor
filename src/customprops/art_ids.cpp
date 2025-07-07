@@ -5,7 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// This file is designed to be #included into proppanel.cpp, so it doesn't have the normal precompiled header.
+// This file is designed to be #included into proppanel.cpp, so it doesn't have the normal
+// precompiled header.
 
 #include <set>
 

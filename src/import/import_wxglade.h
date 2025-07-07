@@ -18,10 +18,11 @@ public:
 
     bool Import(const tt_string& filename, bool write_doc = true) override;
 
-    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */) override;
+    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                               Node* /* parent */) override;
 
-    bool HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */,
-                              GenEnum::PropName /* wxue_prop */) override;
+    bool HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                              Node* /* parent */, GenEnum::PropName /* wxue_prop */) override;
 
 protected:
     NodeSharedPtr CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);

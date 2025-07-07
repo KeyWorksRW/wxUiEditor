@@ -170,7 +170,8 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
         }
     }
     m_webview->SetPage("<html><title>Select Node</title>"
-                       "<body>The selected node does not have any specific documentation for this language.</body></html>",
+                       "<body>The selected node does not have any specific documentation for this "
+                       "language.</body></html>",
                        wxEmptyString);
 #endif
 }
@@ -195,7 +196,8 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
         }
     }
     m_webview->SetPage("<html><title>Select Node</title>"
-                       "<body>The selected node does not have any specific documentation for this language.</body></html>",
+                       "<body>The selected node does not have any specific documentation for this "
+                       "language.</body></html>",
                        wxEmptyString);
 #endif
 }
@@ -220,7 +222,8 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
         }
     }
     m_webview->SetPage("<html><title>Select Node</title>"
-                       "<body>The selected node does not have any specific documentation for this language.</body></html>",
+                       "<body>The selected node does not have any specific documentation for this "
+                       "language.</body></html>",
                        wxEmptyString);
 #endif
 }

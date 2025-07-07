@@ -7,7 +7,8 @@
 
 #include <unordered_map>
 
-#include "eventhandler_dlg.h"  // auto-generated: wxui/eventhandler_dlg_base.h and wxui/eventhandler_dlg_base.cpp
+// auto-generated: wxui/eventhandler_dlg_base.h and wxui/eventhandler_dlg_base.cpp
+#include "eventhandler_dlg.h"
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "lambdas.h"          // Functions for formatting and storage of lamda events
@@ -46,7 +47,8 @@ constexpr int EVENT_PAGE_HASKELL = 6;
 constexpr int EVENT_PAGE_LUA = 7;
 #endif
 
-EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
+EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
+    EventHandlerDlgBase(parent), m_event(event)
 {
     // Page numbers can be reduced if the language before it was removed
     m_perl_page = EVENT_PAGE_PERL;
@@ -67,9 +69,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
     m_is_rust_enabled = (m_gen_languages & GEN_LANG_RUST);
 
+#if GENERATE_NEW_LANG_CODE
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
-#if GENERATE_NEW_LANG_CODE
     m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
     m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
     m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
@@ -184,10 +186,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
         SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
     }
 
+#if GENERATE_NEW_LANG_CODE
     // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
     // here in case they do get supported in the future.
 
-#if GENERATE_NEW_LANG_CODE
     if (m_is_fortran_enabled)
     {
         SetStcColors(m_fortran_stc_lambda, GEN_LANG_FORTRAN);
@@ -251,8 +253,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
                 if (!iter->declName().starts_with("wx"))
                     continue;
-                else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
-                         iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                else if (iter->declName().is_sameas("wxContextMenuEvent") ||
+                         iter->declName() == "wxTreeCtrlBase" ||
+                         iter->declName().starts_with("wxRuby") ||
+                         iter->declName().starts_with("wxPython"))
                     continue;
                 wxRuby_keywords << ' ' << iter->declName().subview(2);
             }
@@ -264,9 +268,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
             m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
         }
 
+#if GENERATE_NEW_LANG_CODE
         // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
         // are here in case they do get supported in the future.
-#if GENERATE_NEW_LANG_CODE
 
         if (m_is_fortran_enabled)
         {
@@ -297,10 +301,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     else if (m_code_preference == GEN_LANG_RUST)
         m_notebook->SetSelection(m_rust_page);
 
-        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-        // here in case they do get supported in the future.
-
 #if GENERATE_NEW_LANG_CODE
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
+    // are here in case they do get supported in the future.
     else if (m_code_preference == GEN_LANG_FORTRAN)
         m_notebook->SetSelection(m_fortran_page);
     else if (m_code_preference == GEN_LANG_HASKELL)
@@ -323,7 +326,8 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
     if (m_value.empty())
     {
-        if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+        if (auto default_name = s_EventNames.find(m_event->get_name());
+            default_name != s_EventNames.end())
         {
             m_value = default_name->second;
         }
@@ -354,7 +358,8 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         if (m_is_ruby_enabled)
         {
             // RuboCop recommends snake_case for Ruby functions, so we convert the default
-            m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+            m_ruby_text_function->SetValue(
+                ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
             m_ruby_radio_use_function->SetValue(true);
             m_ruby_lambda_box->GetStaticBox()->Enable(false);
         }
@@ -445,7 +450,8 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                     // replace it if possible.
                     if (value == "OnEvent")
                     {
-                        if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+                        if (auto default_name = s_EventNames.find(m_event->get_name());
+                            default_name != s_EventNames.end())
                         {
                             value = default_name->second;
                         }
@@ -528,7 +534,8 @@ void EventHandlerDlg::OnUseCppFunction(wxCommandEvent& WXUNUSED(event))
 
         if (value.empty() || value.contains("["))
         {
-            if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+            if (auto default_name = s_EventNames.find(m_event->get_name());
+                default_name != s_EventNames.end())
             {
                 value = default_name->second;
             }
@@ -555,7 +562,8 @@ void EventHandlerDlg::OnUsePythonFunction(wxCommandEvent& WXUNUSED(event))
 
         if (value.empty() || value.contains("["))
         {
-            if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+            if (auto default_name = s_EventNames.find(m_event->get_name());
+                default_name != s_EventNames.end())
             {
                 value = default_name->second;
             }
@@ -581,7 +589,8 @@ void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& WXUNUSED(event))
 
         if (value.empty() || value.contains("["))
         {
-            if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+            if (auto default_name = s_EventNames.find(m_event->get_name());
+                default_name != s_EventNames.end())
             {
                 value = default_name->second;
             }
@@ -607,7 +616,8 @@ void EventHandlerDlg::OnUseRustFunction(wxCommandEvent& WXUNUSED(event))
 
         if (value.empty() || value.contains("["))
         {
-            if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+            if (auto default_name = s_EventNames.find(m_event->get_name());
+                default_name != s_EventNames.end())
             {
                 value = default_name->second;
             }
@@ -745,9 +755,9 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
         m_rust_text_function->SetValue("none");
 
-        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-        // here in case they do get supported in the future.
 #if GENERATE_NEW_LANG_CODE
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
+    // are here in case they do get supported in the future.
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue("none");
     else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
@@ -760,7 +770,8 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
 void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
 {
     tt_string value;
-    if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+    if (auto default_name = s_EventNames.find(m_event->get_name());
+        default_name != s_EventNames.end())
     {
         value = default_name->second;
     }
@@ -780,9 +791,9 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
         m_rust_text_function->SetValue(value);
 
-        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-        // here in case they do get supported in the future.
 #if GENERATE_NEW_LANG_CODE
+    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
+    // are here in case they do get supported in the future.
     else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
         m_fortran_text_function->SetValue(value);
     else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
@@ -812,7 +823,8 @@ void EventHandlerDlg::FormatBindText()
         if (m_cpp_radio_use_function->GetValue())
         {
             auto value = m_cpp_text_function->GetValue().utf8_string();
-            handler << m_event->get_name() << ", &" << m_event->getNode()->getFormName() << "::" << value += ", this";
+            handler << m_event->get_name() << ", &" << m_event->getNode()->getFormName()
+                    << "::" << value += ", this";
         }
         else
         {
@@ -1056,7 +1068,8 @@ void EventHandlerDlg::Update_m_value()
     {
         if (m_perl_radio_use_function->GetValue())
         {
-            if (!m_is_cpp_enabled && !m_is_python_enabled && !m_is_ruby_enabled && !m_is_rust_enabled)
+            if (!m_is_cpp_enabled && !m_is_python_enabled && !m_is_ruby_enabled &&
+                !m_is_rust_enabled)
                 perl_value = m_perl_text_function->GetValue().utf8_string();
             else
                 perl_value << "[perl:" << m_perl_text_function->GetValue().utf8_string() << "]";
@@ -1067,7 +1080,8 @@ void EventHandlerDlg::Update_m_value()
     {
         if (m_rust_radio_use_function->GetValue())
         {
-            if (!m_is_cpp_enabled && !m_is_perl_enabled && !m_is_python_enabled && !m_is_ruby_enabled)
+            if (!m_is_cpp_enabled && !m_is_perl_enabled && !m_is_python_enabled &&
+                !m_is_ruby_enabled)
                 rust_value = m_rust_text_function->GetValue().utf8_string();
             else
                 rust_value << "[rust:" << m_rust_text_function->GetValue().utf8_string() << "]";

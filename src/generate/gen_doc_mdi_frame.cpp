@@ -44,20 +44,23 @@ bool DocMdiParentFrameGenerator::BaseClassNameCode(Code& code)
     return FrameCommon::BaseClassNameCode(code);
 }
 
-bool DocMdiParentFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                             GenLang /* language */)
+bool DocMdiParentFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                             std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/docmdi.h>", set_src, set_hdr);
 
     return true;
 }
 
-bool DocMdiParentFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool DocMdiParentFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                                     Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool DocMdiParentFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+bool DocMdiParentFrameGenerator::GetImports(Node* /* node */,
+                                            std::set<std::string>& /* set_imports */,
+                                            GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
@@ -92,20 +95,22 @@ bool DocMDIChildFrame::BaseClassNameCode(Code& code)
     return FrameCommon::BaseClassNameCode(code);
 }
 
-bool DocMDIChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool DocMDIChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/docmdi.h>", set_src, set_hdr);
 
     return true;
 }
 
-bool DocMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool DocMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                           Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool DocMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+bool DocMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
+                                  GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

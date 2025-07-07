@@ -17,11 +17,13 @@
 
 wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_int(prop_html_borders) >= 0)
-        widget->SetBorders(wxStaticCast(parent, wxWindow)->FromDIP(node->as_int(prop_html_borders)));
+        widget->SetBorders(
+            wxStaticCast(parent, wxWindow)->FromDIP(node->as_int(prop_html_borders)));
 
     if (node->hasValue(prop_html_content))
     {
@@ -42,7 +44,8 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 #else
     else if (node->hasValue(prop_html_url))
     {
-        widget->SetPage(tt_string("Contents of<br>    ") << node->as_string(prop_html_url) << "<br>will be displayed here.");
+        widget->SetPage(tt_string("Contents of<br>    ")
+                        << node->as_string(prop_html_url) << "<br>will be displayed here.");
     }
 #endif
     else
@@ -77,11 +80,19 @@ bool HtmlWindowGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_html_content))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetPage(").QuotedString(prop_html_content).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetPage(")
+            .QuotedString(prop_html_content)
+            .EndFunction();
     }
     else if (code.hasValue(prop_html_url))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetPage(").QuotedString(prop_html_url).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetPage(")
+            .QuotedString(prop_html_url)
+            .EndFunction();
     }
 
     return true;
@@ -89,7 +100,8 @@ bool HtmlWindowGenerator::SettingsCode(Code& code)
 
 int HtmlWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxHtmlWindow");
@@ -115,8 +127,8 @@ void HtmlWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxHtmlWindowXmlHandler");
 }
 
-bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/html/htmlwin.h>", set_src, set_hdr);
     if (node->hasValue(prop_html_url))

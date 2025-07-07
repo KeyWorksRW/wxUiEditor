@@ -20,8 +20,8 @@
 
 wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                              GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                              DlgSize(node, prop_size), GetStyleInt(node));
     if (!node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
@@ -65,10 +65,12 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Indent(3);
         code.Comma().Add("pos=").Pos(prop_pos, code::force_scaling);
         code.Comma().Add("size=").WxSize(prop_size, code::force_scaling);
-        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
+                                     4);
         code.Add("style=").Style().Comma();
-        size_t name_len =
-            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+        size_t name_len = code.hasValue(prop_window_name) ?
+                              code.node()->as_string(prop_window_name).size() :
+                              sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.hasValue(prop_window_name))
@@ -142,8 +144,9 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     else if (code.is_ruby())
     {
         code.Eol(eol_if_needed).Str("super(parent, id, pos, size, style, name)");
-        // REVIEW: [Randalphwa - 07-17-2023] The following doesn't work with an error that Wx::Panel.create doesn't exist.
-        // code.Eol(eol_if_needed).Str("return false unless Wx::Panel.create(parent, id, pos, size, style, name)");
+        // REVIEW: [Randalphwa - 07-17-2023] The following doesn't work with an error that
+        // Wx::Panel.create doesn't exist. code.Eol(eol_if_needed).Str("return false unless
+        // Wx::Panel.create(parent, id, pos, size, style, name)");
     }
     else
     {
@@ -182,17 +185,26 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
     {
         if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetMinSize(")
+                .WxSize(prop_minimum_size, code::force_scaling)
+                .EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetMaxSize(")
+                .WxSize(prop_maximum_size, code::force_scaling)
+                .EndFunction();
         }
 
         // Note that without a sizer, we cannot calculate a default dimension
         if (size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetSize(")
+                .WxSize(prop_size, code::force_scaling)
+                .EndFunction();
         }
 
         return true;
@@ -206,11 +218,17 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
     {
         if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetMinSize(")
+                .WxSize(prop_minimum_size, code::force_scaling)
+                .EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetMaxSize(")
+                .WxSize(prop_maximum_size, code::force_scaling)
+                .EndFunction();
         }
 
         if (form->as_wxSize(prop_size) != wxDefaultSize)
@@ -225,7 +243,9 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
             {
                 Code code_temp = code;
                 code_temp.clear();
-                code_temp.FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code_temp.FormFunction("SetSize(")
+                    .WxSize(prop_size, code::force_scaling)
+                    .EndFunction();
                 auto comment_column = code_temp.size() + 2;
 
                 code_temp = code;
@@ -239,7 +259,10 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
                 else
                     code += "// calculate height";
 
-                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code.Eol()
+                    .FormFunction("SetSize(")
+                    .WxSize(prop_size, code::force_scaling)
+                    .EndFunction();
                 code.Str("  // set specified and calculated size dimensions");
 
                 code_temp = code;
@@ -251,7 +274,10 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
             }
             else
             {
-                code.Eol().FormFunction("SetSize(").WxSize(prop_size, code::force_scaling).EndFunction();
+                code.Eol()
+                    .FormFunction("SetSize(")
+                    .WxSize(prop_size, code::force_scaling)
+                    .EndFunction();
                 code.Eol().FormFunction("Layout(").EndFunction();
             }
         }
@@ -418,8 +444,8 @@ void PanelFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxPanelXmlHandler");
 }
 
-bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
 

@@ -151,8 +151,8 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
 
         else if (!m_bDestroyed)
         {
-            // Only add the message if the window was already displayed. Otherwise, it will have already added the
-            // message from g_log_msgs.
+            // Only add the message if the window was already displayed. Otherwise, it will have
+            // already added the message from g_log_msgs.
             m_msgFrame->AddWarningMsg(str.view_stepover());
         }
     }
@@ -318,8 +318,9 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
         case wxLOG_Progress:
         case wxLOG_User:
-            // just ignore those: passing them to the base class would result in asserts from DoLogText() because
-            // DoLogTextAtLevel() would call it as it doesn't know how to handle these levels otherwise
+            // just ignore those: passing them to the base class would result in asserts from
+            // DoLogText() because DoLogTextAtLevel() would call it as it doesn't know how to handle
+            // these levels otherwise
             break;
     }
 }

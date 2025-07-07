@@ -18,8 +18,9 @@
 
 wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ChoicebookGenerator::OnPageChanged, this);
@@ -37,13 +38,14 @@ void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 bool ChoicebookGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(code::allow_scaling, false, "wxCHB_DEFAULT");
+    code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags(code::allow_scaling, false,
+                                                                   "wxCHB_DEFAULT");
 
     return true;
 }
 
-bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/choicebk.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))
@@ -58,7 +60,8 @@ bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxChoicebook");

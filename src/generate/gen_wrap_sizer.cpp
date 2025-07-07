@@ -29,7 +29,8 @@ wxObject* WrapSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                       bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
     {
@@ -45,8 +46,9 @@ bool WrapSizerGenerator::ConstructionCode(Code& code)
     {
         if (code.is_perl())
         {
-            // REVIEW: [Randalphwa - 04-22-2025] wxPerl only contains the wxEXTEND_LAST_ON_EACH_LINE and is
-            // missing the other two. We generate numerical values so the the functionality is at lest there.
+            // REVIEW: [Randalphwa - 04-22-2025] wxPerl only contains the wxEXTEND_LAST_ON_EACH_LINE
+            // and is missing the other two. We generate numerical values so the the functionality
+            // is at lest there.
             int flags = 0;
             auto& wrap_flag_string = code.node()->as_string(prop_wrap_flags);
             if (wrap_flag_string.contains("wxWRAPSIZER_DEFAULT_FLAGS"))
@@ -113,8 +115,8 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/wrapsizer.h>", set_src, set_hdr);
     return true;
@@ -152,9 +154,9 @@ int WrapSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
     else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
     {
-        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
-        // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
-        // create for most forms.
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
+        // a problem for forms which often can specify their own minimum size. The workaround is to
+        // set the minimum size of the parent sizer that we create for most forms.
 
         item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
     }

@@ -102,8 +102,10 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         {
             bool more_than_pointsize =
                 ((fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default") ||
-                 fontprop.GetFamily() != wxFONTFAMILY_DEFAULT || fontprop.GetStyle() != wxFONTSTYLE_NORMAL ||
-                 fontprop.GetWeight() != wxFONTWEIGHT_NORMAL || fontprop.IsUnderlined() || fontprop.IsStrikethrough());
+                 fontprop.GetFamily() != wxFONTFAMILY_DEFAULT ||
+                 fontprop.GetStyle() != wxFONTSTYLE_NORMAL ||
+                 fontprop.GetWeight() != wxFONTWEIGHT_NORMAL || fontprop.IsUnderlined() ||
+                 fontprop.IsStrikethrough());
 
             const auto point_size = fontprop.GetFractionalPointSize();
             if (is_cpp())
@@ -124,7 +126,8 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             if (point_size != static_cast<int>(point_size))  // is there a fractional value?
             {
                 std::array<char, 10> float_str;
-                if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                if (auto [ptr, ec] = std::to_chars(float_str.data(),
+                                                   float_str.data() + float_str.size(), point_size);
                     ec == std::errc())
                 {
                     Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
@@ -134,7 +137,10 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             {
                 if (point_size <= 0)
                 {
-                    Class("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
+                    Class("wxSystemSettings")
+                        .ClassMethod("GetFont(")
+                        .Add("wxSYS_DEFAULT_GUI_FONT")
+                        .Str(")");
                     VariableMethod("GetPointSize()").EndFunction();
                     if (!is_cpp() && more_than_pointsize)
                     {
@@ -158,8 +164,8 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
 
 #if defined(_WIN32)
-            // REVIEW: [Randalphwa - 04-18-2025] Currently, wxPerl does support wxFontInfo, but leave this code
-            // in case it is added later.
+            // REVIEW: [Randalphwa - 04-18-2025] Currently, wxPerl does support wxFontInfo, but
+            // leave this code in case it is added later.
             if (is_perl())
             {
                 if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
@@ -182,14 +188,18 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             else
             {
                 if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                    VariableMethod("FaceName(").QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
+                    VariableMethod("FaceName(")
+                        .QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
                 if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-                    VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
+                    VariableMethod("Family(").Add(
+                        font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
                 if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-                    VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
+                    VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) +=
+                        ")";
                 if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
                 {
-                    VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+                    VariableMethod("Weight(").Add(
+                        font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
                 }
                 if (fontprop.IsUnderlined())
                     VariableMethod("Underlined()");
@@ -225,14 +235,21 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
                 }
                 else
                 {
-                    FormFunction("GetBookCtrl()").Function(font_function).Str("$font").EndFunction();
+                    FormFunction("GetBookCtrl()")
+                        .Function(font_function)
+                        .Str("$font")
+                        .EndFunction();
                 }
             }
             else
             {
                 if (!is_perl())
                 {
-                    FormFunction(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
+                    FormFunction(font_function)
+                        .Object("wxFont")
+                        .VarName("font_info", false)
+                        .Str(")")
+                        .EndFunction();
                 }
                 else
                 {
@@ -244,7 +261,12 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         {
             if (!is_perl())
             {
-                NodeName().Function(font_function).Object("wxFont").VarName("font_info", false).Str(")").EndFunction();
+                NodeName()
+                    .Function(font_function)
+                    .Object("wxFont")
+                    .VarName("font_info", false)
+                    .Str(")")
+                    .EndFunction();
             }
             else
             {
@@ -298,7 +320,8 @@ void Code::GenFontColourSettings()
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_foreground_colour);
-                Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                Object("wxColour")
+                    .QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
             }
         }
         EndFunction();
@@ -343,19 +366,22 @@ void Code::GenFontColourSettings()
                 if (is_lua())
                 {
                     // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
-                    Class("wxColour(").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                    Class("wxColour(")
+                        .QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
                 }
                 else
 #endif
                 {
-                    Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                    Object("wxColour")
+                        .QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
                 }
             }
         }
 
         EndFunction();
 
-        // For background color, set both the background of the dialog and the background of the book control
+        // For background color, set both the background of the dialog and the background of the
+        // book control
         if (m_node->isGen(gen_wxPropertySheetDialog))
         {
             FormFunction("GetBookCtrl()").Function("SetBackgroundColour(");
@@ -380,7 +406,8 @@ void Code::GenFontColourSettings()
                 {
                     // This handles older project versions, and hand-edited project files
                     const auto colour = m_node->as_wxColour(prop_background_colour);
-                    Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
+                    Object("wxColour")
+                        .QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
                 }
             }
 
@@ -393,7 +420,8 @@ Code& Code::GenSizerFlags()
 {
     if (is_perl())
     {
-        // Perl doesn't have a wxSizerFlags() function, so we have to use the old wxSizer::Add() function.
+        // Perl doesn't have a wxSizerFlags() function, so we have to use the old wxSizer::Add()
+        // function.
         Add(m_node->as_string(prop_proportion)).Comma();
 
         tt_string prop_combined_flags;
@@ -452,13 +480,15 @@ Code& Code::GenSizerFlags()
     if (auto& prop = m_node->as_string(prop_alignment); prop.size())
     {
         if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
-            (m_node->getParent()->isGen(gen_wxGridSizer) || m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
+            (m_node->getParent()->isGen(gen_wxGridSizer) ||
+             m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
              m_node->getParent()->isGen(gen_wxGridBagSizer)))
         {
             SizerFlagsFunction("CenterHorizontal") += ')';
         }
         else if (prop.contains("wxALIGN_CENTER_VERTICAL") &&
-                 (m_node->getParent()->isGen(gen_wxGridSizer) || m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
+                 (m_node->getParent()->isGen(gen_wxGridSizer) ||
+                  m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
                   m_node->getParent()->isGen(gen_wxGridBagSizer)))
 
         {

@@ -9,11 +9,8 @@
 
 #include "custom_param_prop.h"
 
-#include "../nodes/node.h"       // Node class
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "mainframe.h"           // MainFrame -- Main window frame
-
-#include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.h wxui/editstringdialog_base.cpp
 
 EditParamProperty::EditParamProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
@@ -38,8 +35,9 @@ void EditParamsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
     }
 
-    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent of the longest line
-    // including an additional space at the end solves the problem, at least running on Windows 11.
+    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent
+    // of the longest line including an additional space at the end solves the problem, at least
+    // running on Windows 11.
     auto col_width = m_grid->GetTextExtent("my_special_parameter_name_here ");
     m_grid->SetDefaultColSize(col_width.GetWidth(), true);
 
@@ -147,7 +145,8 @@ void EditParamsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool EditParamsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool EditParamsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                           wxPGProperty* WXUNUSED(property))
 {
     EditParamsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

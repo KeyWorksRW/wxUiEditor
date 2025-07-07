@@ -24,7 +24,8 @@ void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
         m_max_row = gb.GetMaxRow();
         m_spin_row->SetValue(m_max_row + 1);
     }
-    else if (auto cur_node = wxGetFrame().getSelectedNode(); cur_node && !cur_node->isGen(gen_Project))
+    else if (auto cur_node = wxGetFrame().getSelectedNode();
+             cur_node && !cur_node->isGen(gen_Project))
     {
         if (cur_node->isGen(gen_wxGridBagSizer))
         {
@@ -147,8 +148,8 @@ int GridBagItem::GetNewColumn(int row)
     {
         if (m_gbsizer->getChild(child_idx)->as_int(prop_row) == row)
         {
-            auto column =
-                m_gbsizer->getChild(child_idx)->as_int(prop_column) + m_gbsizer->getChild(child_idx)->as_int(prop_colspan);
+            auto column = m_gbsizer->getChild(child_idx)->as_int(prop_column) +
+                          m_gbsizer->getChild(child_idx)->as_int(prop_colspan);
             if (column > new_column)
                 new_column = column;
         }

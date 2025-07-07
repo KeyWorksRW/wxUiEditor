@@ -162,7 +162,8 @@ Node* FindNodeByClassName(Node* node_start, const std::string& classname)
         if (child_form->isGen(gen_Images) || child_form->isGen(gen_Data))
             continue;
 
-        if (child_form->hasValue(prop_class_name) && child_form->as_string(prop_class_name) == classname)
+        if (child_form->hasValue(prop_class_name) &&
+            child_form->as_string(prop_class_name) == classname)
             return child_form.get();
 
         if (child_form->isGen(gen_folder) || child_form->isGen(gen_sub_folder))
@@ -229,7 +230,8 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
         }
         else if (dlg.isSearchVarnames())
         {
-            auto node = FindNodeByProp(dlg.GetForm(), prop_var_name, dlg.GetNameChoice(), FindNodeByProp);
+            auto node =
+                FindNodeByProp(dlg.GetForm(), prop_var_name, dlg.GetNameChoice(), FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -242,7 +244,8 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
         }
         else if (dlg.isSearchLabels())
         {
-            auto node = FindNodeByProp(dlg.GetForm(), prop_label, dlg.GetNameChoice(), FindNodeByProp);
+            auto node =
+                FindNodeByProp(dlg.GetForm(), prop_label, dlg.GetNameChoice(), FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -367,7 +370,8 @@ void NodeSearchDlg::FindLabels(Node* node)
     if (node->isGen(gen_Images) || node->isGen(gen_Data))
         return;
 
-    if (node->hasProp(prop_label) && node->hasValue(prop_label) && !node->isGen(gen_folder) && !node->isGen(gen_sub_folder))
+    if (node->hasProp(prop_label) && node->hasValue(prop_label) && !node->isGen(gen_folder) &&
+        !node->isGen(gen_sub_folder))
     {
         if (!m_map_found.contains(node->as_string(prop_label)))
         {
@@ -414,7 +418,8 @@ void NodeSearchDlg::OnGenerators(wxCommandEvent& WXUNUSED(event))
 
     if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
-        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) ||
+            cur_sel->isGen(gen_sub_folder))
         {
             for (auto& child: cur_sel->getChildNodePtrs())
             {
@@ -440,7 +445,8 @@ void NodeSearchDlg::OnVariables(wxCommandEvent& WXUNUSED(event))
 
     if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
-        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) ||
+            cur_sel->isGen(gen_sub_folder))
         {
             for (auto& child: cur_sel->getChildNodePtrs())
             {
@@ -466,7 +472,8 @@ void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
 
     if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
-        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) ||
+            cur_sel->isGen(gen_sub_folder))
         {
             for (auto& child: cur_sel->getChildNodePtrs())
             {
@@ -537,7 +544,8 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
 
     if (auto cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
     {
-        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) || cur_sel->isGen(gen_sub_folder))
+        if (cur_sel->isGen(gen_Project) || cur_sel->isGen(gen_folder) ||
+            cur_sel->isGen(gen_sub_folder))
         {
             for (auto& child: cur_sel->getChildNodePtrs())
             {
@@ -572,7 +580,8 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
         m_name = m_listbox->GetStringSelection().ToStdString();
         if (m_listbox_forms->GetCount() > 0)
         {
-            if (auto class_name = m_listbox_forms->GetStringSelection().ToStdString(); class_name.size())
+            if (auto class_name = m_listbox_forms->GetStringSelection().ToStdString();
+                class_name.size())
             {
                 m_form = FindNodeByClassName(Project.getProjectNode(), class_name);
             }

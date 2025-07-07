@@ -15,9 +15,13 @@
 class ImageDialogAdapter : public wxPGEditorDialogAdapter
 {
 public:
-    ImageDialogAdapter(ImageProperties& img_props) : wxPGEditorDialogAdapter(), m_img_props(img_props) {}
+    ImageDialogAdapter(ImageProperties& img_props) :
+        wxPGEditorDialogAdapter(), m_img_props(img_props)
+    {
+    }
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                      wxPGProperty* WXUNUSED(property)) override;
 
 private:
     ImageProperties& m_img_props;
@@ -35,7 +39,10 @@ public:
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new ImageDialogAdapter(m_img_props); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override
+    {
+        return new ImageDialogAdapter(m_img_props);
+    }
 
 private:
     ImageProperties& m_img_props;

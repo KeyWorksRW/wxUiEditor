@@ -105,10 +105,12 @@ void resCtrl::ParseButtonStyles(tt_string_view line)
     else
     {
         if (line.contains("BS_RIGHT"))
-            // Note that for this to work, the parent sizer must be vertically aligned with the wxEXPAND flag set.
+            // Note that for this to work, the parent sizer must be vertically aligned with the
+            // wxEXPAND flag set.
             m_node->set_value(prop_alignment, "wxALIGN_RIGHT");
 
-        // Bottom and top won't have any effect, and left is the default, so ignore the other styles.
+        // Bottom and top won't have any effect, and left is the default, so ignore the other
+        // styles.
     }
 
     if (line.contains("WS_EX_STATICEDGE"))
@@ -189,8 +191,8 @@ void resCtrl::AddSpecialStyles(tt_string_view line)
 
     /*
 
-     REVIEW: [KeyWorks - 10-24-2019] As far as I can tell, version 3.1 and earlier of wxWidgets does not support
-     the following Windows styles:
+     REVIEW: [KeyWorks - 10-24-2019] As far as I can tell, version 3.1 and earlier of wxWidgets does
+     not support the following Windows styles:
 
         ES_AUTOHSCROLL
         ES_AUTOVSCROLL
@@ -225,7 +227,8 @@ void resCtrl::AddSpecialStyles(tt_string_view line)
         AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOW");
     }
 
-    if (line.contains("SS_BLACKRECT") || line.contains("SS_GRAYRECT") || line.contains("SS_WHITERECT"))
+    if (line.contains("SS_BLACKRECT") || line.contains("SS_GRAYRECT") ||
+        line.contains("SS_WHITERECT"))
     {
         // These styles are rectagles with no border
         AppendStyle(prop_window_style, "wxBORDER_NONE");

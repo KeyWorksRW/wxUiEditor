@@ -33,8 +33,9 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
         if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
             style_value |= wxALIGN_RIGHT;
 
-        m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                    wxDefaultPosition, wxDefaultSize, style_value);
+        m_checkbox =
+            new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                           wxDefaultPosition, wxDefaultSize, style_value);
         if (node->as_bool(prop_checked))
             m_checkbox->SetValue(true);
 
@@ -63,8 +64,8 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     return sizer;
 }
 
-void StaticCheckboxBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
-                                                    bool /* is_preview */)
+void StaticCheckboxBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
+                                                    Node* node, bool /* is_preview */)
 {
     if (node->as_bool(prop_hidden))
     {
@@ -73,7 +74,8 @@ void StaticCheckboxBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow
     }
 }
 
-bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node, NodeProperty* prop)
+bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node,
+                                                       NodeProperty* prop)
 {
     if (prop->isProp(prop_tooltip))
     {
@@ -89,7 +91,12 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         code.as_string(prop_checkbox_var_name) << " = new wxCheckBox(";
-        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName()
+            .Comma()
+            .as_string(prop_id)
+            .Comma()
+            .QuotedString(prop_label)
+            .EndFunction();
 
         auto cur_size = code.size();
         if (GenValidatorSettings(code); code.size() > cur_size)
@@ -101,7 +108,12 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     else if (code.is_ruby())
     {
         code.VarName(code.node()->as_string(prop_checkbox_var_name)) << " = Wx::CheckBox.new(";
-        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName()
+            .Comma()
+            .as_string(prop_id)
+            .Comma()
+            .QuotedString(prop_label)
+            .EndFunction();
         code.Eol();
     }
     else if (code.is_python())
@@ -122,7 +134,8 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name.NodeName(parent);
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
+            else if (parent->isGen(gen_wxStaticBoxSizer) ||
+                     parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
                 // The () isn't added because Python and Ruby don't use it. C++ adds it in its
@@ -142,13 +155,17 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     {
         if (parent_name.ends_with("GetStaticBox"))
             parent_name += "()";
-        code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
+        code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name
+                        << ", wxID_ANY";
         code.Comma();
         code.as_string(prop_checkbox_var_name).Str("), ").as_string(prop_orientation).EndFunction();
     }
     else if (code.is_ruby())
     {
-        code.NodeName().Assign("wxStaticBoxSizer").Str("(").CreateClass(false, "wxStaticBox", false);
+        code.NodeName()
+            .Assign("wxStaticBoxSizer")
+            .Str("(")
+            .CreateClass(false, "wxStaticBox", false);
         code.Str(parent_name)
             .Comma()
             .Add("wxID_ANY")
@@ -159,7 +176,11 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
+        code.NodeName()
+            .CreateClass(false, "wxStaticBoxSizer")
+            .as_string(prop_orientation)
+            .Comma()
+            .Str(parent_name);
         if (code.hasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);
@@ -179,7 +200,11 @@ bool StaticCheckboxBoxSizerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_disabled))
     {
-        code.Eol(eol_if_needed).NodeName().Function("GetStaticBox()->Enable(").False().EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("GetStaticBox()->Enable(")
+            .False()
+            .EndFunction();
     }
 
     if (code.hasValue(prop_tooltip) && code.is_cpp())
@@ -228,7 +253,8 @@ bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                                  std::set<std::string>& set_hdr,
                                                   GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
@@ -245,7 +271,8 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxStaticBoxSizer()
 
-int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                                  size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
@@ -281,7 +308,8 @@ int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     return result;
 }
 
-void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */,
+                                                       std::set<std::string>& handlers)
 {
     handlers.emplace("wxSizerXmlHandler");
 }

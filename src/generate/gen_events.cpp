@@ -18,9 +18,8 @@
 #include "base_generator.h"                   // BaseGenerator -- Base widget generator class
 #include "code.h"                             // Code -- Helper class for generating code
 #include "file_codewriter.h"                  // FileCodeWriter -- Classs to write code to disk
-#include "lambdas.h"                          // Functions for formatting and storage of lamda events
-#include "project_handler.h"                  // ProjectHandler class
-#include "tt_view_vector.h"                   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "lambdas.h"         // Functions for formatting and storage of lamda events
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
 using namespace code;
 
@@ -32,7 +31,8 @@ extern const char* python_triple_quote;            // "\"\"\"";
 extern const char* ruby_begin_cmt_block;           // "=begin";
 extern const char* ruby_end_cmt_block;             // "=end";
 
-/////////////////////////////////////////// Default generator event code ///////////////////////////////////////////
+/////////////////////////////////////////// Default generator event code
+//////////////////////////////////////////////
 
 constexpr auto prop_sheet_events =
     frozen::make_map<std::string_view, std::string_view>({ { "OKButtonClicked", "wxID_OK" },
@@ -186,7 +186,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else
             {
-                handler.Str(event_name).Str("($self, ").NodeName().Str("->GetId(), $self->can('") << event_code << "'));";
+                handler.Str(event_name).Str("($self, ").NodeName().Str("->GetId(), $self->can('")
+                    << event_code << "'));";
             }
         }
         else if (code.is_ruby())
@@ -218,13 +219,19 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else if (event->getNode()->isGen(gen_StaticCheckboxBoxSizer))
             {
-                code.Str(event_name).Str("(").VarName(event->getNode()->as_string(prop_checkbox_var_name)).Str(".get_id, :")
+                code.Str(event_name)
+                        .Str("(")
+                        .VarName(event->getNode()->as_string(prop_checkbox_var_name))
+                        .Str(".get_id, :")
                     << event_code << ')';
                 return;
             }
             else if (event->getNode()->isGen(gen_StaticRadioBtnBoxSizer))
             {
-                code.Str(event_name).Str("(").VarName(event->getNode()->as_string(prop_radiobtn_var_name)).Str(".get_id, :")
+                code.Str(event_name)
+                        .Str("(")
+                        .VarName(event->getNode()->as_string(prop_radiobtn_var_name))
+                        .Str(".get_id, :")
                     << event_code << ')';
                 return;
             }
@@ -286,7 +293,10 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
             else
             {
-                code.AddIfPython("id=").NodeName(event->getNode()).Function("GetId()").EndFunction();
+                code.AddIfPython("id=")
+                    .NodeName(event->getNode())
+                    .Function("GetId()")
+                    .EndFunction();
             }
         }
         else
@@ -300,7 +310,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.Add("self.");
         if (!event->getNode()->hasValue(prop_id))
         {
-            code.AddComment("**WARNING** -- tool id not specified, event handler may never be called.", true);
+            code.AddComment(
+                "**WARNING** -- tool id not specified, event handler may never be called.", true);
             if (code.is_cpp() || code.is_python())
             {
                 code << "Bind(" << handler.GetCode() << comma;
@@ -330,7 +341,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.AddIfPython("self.");
             code << "Bind(" << handler.GetCode();
-            if (auto result = prop_sheet_events.find(event->get_name()); result != prop_sheet_events.end())
+            if (auto result = prop_sheet_events.find(event->get_name());
+                result != prop_sheet_events.end())
             {
                 code.Comma() << result->second;
             }
@@ -339,7 +351,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         else if (code.is_ruby())
         {
             code << handler;
-            if (auto result = prop_sheet_events.find(event->get_name()); result != prop_sheet_events.end())
+            if (auto result = prop_sheet_events.find(event->get_name());
+                result != prop_sheet_events.end())
             {
                 code.Comma() << result->second;
             }
@@ -400,7 +413,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
             {
                 // If the property id's are the same, then sort by the node's var_name
                 if (a->getNode()->as_string(prop_id) == b->getNode()->as_string(prop_id))
-                    return (a->getNode()->as_string(prop_var_name) < b->getNode()->as_string(prop_var_name));
+                    return (a->getNode()->as_string(prop_var_name) <
+                            b->getNode()->as_string(prop_var_name));
                 else
                     return (a->getNode()->as_string(prop_id) < b->getNode()->as_string(prop_id));
             }
@@ -433,7 +447,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                 {
                     if (!code.is_cpp())
                     {
-                        m_source->writeLine("# You can only use C++ lambda functions as an event handler C++ code.");
+                        m_source->writeLine("# You can only use C++ lambda functions as an event "
+                                            "handler C++ code.");
                     }
                     else
                     {
@@ -495,7 +510,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                     {
                         if (!code.is_cpp())
                         {
-                            m_source->writeLine("# You can only use C++ lambda functions as an event handler C++ code.");
+                            m_source->writeLine("# You can only use C++ lambda functions as an "
+                                                "event handler C++ code.");
                         }
                         else
                         {

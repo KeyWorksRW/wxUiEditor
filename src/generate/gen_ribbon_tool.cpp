@@ -19,7 +19,8 @@
 
 wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size));
+    auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos),
+                                      DlgSize(node, prop_size));
     if (node->as_int(prop_min_rows) != 1 || node->as_string(prop_max_rows) != "-1")
     {
         auto min_rows = node->as_int(prop_min_rows);
@@ -32,7 +33,8 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                           bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonToolBar);
 
@@ -51,7 +53,8 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
             else
                 bmp = GetInternalImage("default");
 
-            btn_bar->AddTool(wxID_ANY, bmp, child->as_wxString(prop_help), (wxRibbonButtonKind) child->as_int(prop_kind));
+            btn_bar->AddTool(wxID_ANY, bmp, child->as_wxString(prop_help),
+                             (wxRibbonButtonKind) child->as_int(prop_kind));
         }
     }
     btn_bar->Realize();
@@ -82,16 +85,18 @@ bool RibbonToolBarGenerator::SettingsCode(Code& code)
 bool RibbonToolBarGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */,
                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
-    // Normally we'd use the access property to determin if the header should be in the source or header file. However,
-    // the two events used by this component are also in this header file and the tools themselves are fairly useless
-    // without processing the events, so we just add the header file to the header generated file.
+    // Normally we'd use the access property to determin if the header should be in the source or
+    // header file. However, the two events used by this component are also in this header file and
+    // the tools themselves are fairly useless without processing the events, so we just add the
+    // header file to the header generated file.
 
     set_hdr.insert("#include <wx/ribbon/toolbar.h>");
 
     return true;
 }
 
-int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */,
+                                         size_t /* xrc_flags */)
 {
     return BaseGenerator::xrc_not_supported;
 }
@@ -115,7 +120,8 @@ std::optional<tt_string> RibbonToolBarGenerator::GetWarning(Node* node, GenLang 
     }
 }
 
-//////////////////////////////////////////  RibbonToolGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  RibbonToolGenerator
+/////////////////////////////////////////////
 
 bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
@@ -125,12 +131,18 @@ bool RibbonToolGenerator::ConstructionCode(Code& code)
     tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
     GenerateBundleParameter(code, parts, true);
 
-    code.Comma().CheckLineLength(sizeof("wxEmptyString")).QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
+    code.Comma()
+        .CheckLineLength(sizeof("wxEmptyString"))
+        .QuotedString(prop_help)
+        .Comma()
+        .Add(prop_kind)
+        .EndFunction();
 
     return true;
 }
 
-int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */,
+                                      size_t /* xrc_flags */)
 {
     return BaseGenerator::xrc_not_supported;
 }

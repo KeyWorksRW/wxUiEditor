@@ -40,7 +40,7 @@
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
@@ -71,7 +71,8 @@ constexpr const size_t StatusPanels = 3;
 using namespace wxue_img;
 using namespace GenEnum;
 
-// Comment out the following line to change the UI back to the way it was in 1.1.2 and all earlier versions.
+// Comment out the following line to change the UI back to the way it was in 1.1.2 and all earlier
+// versions.
 #define NEW_LAYOUT 1
 
 enum
@@ -115,7 +116,8 @@ enum
 
 const char* txtEmptyProject = "Empty Project";
 
-MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_ImportHistory(9, START_IMPORT_FILE_IDS)
+MainFrame::MainFrame() :
+    MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_ImportHistory(9, START_IMPORT_FILE_IDS)
 {
     m_dpi_menu_size = FromDIP(wxSize(16, 16));
     m_dpi_toolbar_size = FromDIP(wxSize(16, 16));
@@ -148,12 +150,13 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
 
     auto config = wxConfig::Get();
 
-    // Normally, wxPersistentRegisterAndRestore(this, "MainFrame"); could be called to save/restore the size and position.
-    // That works fine on Windows 10, but on Windows 11, a user can maximize the height of a window by dragging the frame to
-    // the bottom of the screen. This does not generate the normal size event, and therefore the main windows doesn't save or
-    // restore the correct size and position. It's worth noting that even Windows apps like Notepad don't handle this
-    // correctly either. However, by retrieving the dimensions when the app is closed, the exact size and position can be
-    // saved and restored without relying on event messages.
+    // Normally, wxPersistentRegisterAndRestore(this, "MainFrame"); could be called to save/restore
+    // the size and position. That works fine on Windows 10, but on Windows 11, a user can maximize
+    // the height of a window by dragging the frame to the bottom of the screen. This does not
+    // generate the normal size event, and therefore the main windows doesn't save or restore the
+    // correct size and position. It's worth noting that even Windows apps like Notepad don't handle
+    // this correctly either. However, by retrieving the dimensions when the app is closed, the
+    // exact size and position can be saved and restored without relying on event messages.
 
 #if defined(_DEBUG)
     config->SetPath("/debug_mainframe");
@@ -194,29 +197,37 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
     {
         auto menuTesting = new wxMenu;
 
-        menuTesting->Append(id_CodeDiffDlg, "Compare Code &Generation...",
-                            "Dialog showing what class have changed, and optional viewing in WinMerge");
-        menuTesting->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
+        menuTesting->Append(
+            id_CodeDiffDlg, "Compare Code &Generation...",
+            "Dialog showing what class have changed, and optional viewing in WinMerge");
+        menuTesting->Append(id_FindWidget, "&Find Widget...",
+                            "Search for a widget starting with the current selected node");
         menuTesting->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
-        menuTesting->Append(id_UndoInfo, "Undo &Stack Information...", "Show undo/redo stack memory usage");
+        menuTesting->Append(id_UndoInfo, "Undo &Stack Information...",
+                            "Show undo/redo stack memory usage");
         menuTesting->AppendSeparator();
-        menuTesting->Append(id_GeneratePython, "&Generate Python", "Generate all python files from current project.");
-        menuTesting->Append(id_GenerateRuby, "&Generate Ruby", "Generate all ruby files from current project.");
+        menuTesting->Append(id_GeneratePython, "&Generate Python",
+                            "Generate all python files from current project.");
+        menuTesting->Append(id_GenerateRuby, "&Generate Ruby",
+                            "Generate all ruby files from current project.");
 
         auto* submenu_xrc = new wxMenu();
         wxMenuItem* item;
-        item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...", "Dialog with multiple XRC tests");
+        item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...",
+                                   "Dialog with multiple XRC tests");
         item->SetBitmap(bundle_xrc_tests_svg(16, 16));
-        item =
-            submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import", "Export the current form, then verify importing it");
+        item = submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import",
+                                   "Export the current form, then verify importing it");
         item->SetBitmap(bundle_import_svg(16, 16));
         submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
                             "Duplicate the current form via Export and Import XRC");
         menuTesting->AppendSubMenu(submenu_xrc, "&XRC");
 
         menuTesting->AppendSeparator();
-        menuTesting->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
-        auto menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch", "Toggle test switch", wxITEM_CHECK);
+        menuTesting->Append(id_ShowLogger, "Show &Log Window",
+                            "Show window containing debug messages");
+        auto menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch", "Toggle test switch",
+                                            wxITEM_CHECK);
         menuItem->Check(wxGetApp().isTestingSwitch());
         Bind(
             wxEVT_MENU,
@@ -225,12 +236,16 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
                 if (wxGetApp().isTestingSwitch())
                 {
                     wxGetApp().setTestingSwitch(false);
-                    wxStaticCast(event.GetEventObject(), wxMenu)->FindItem(id_TestSwitch)->Check(false);
+                    wxStaticCast(event.GetEventObject(), wxMenu)
+                        ->FindItem(id_TestSwitch)
+                        ->Check(false);
                 }
                 else
                 {
                     wxGetApp().setTestingSwitch(true);
-                    wxStaticCast(event.GetEventObject(), wxMenu)->FindItem(id_TestSwitch)->Check(true);
+                    wxStaticCast(event.GetEventObject(), wxMenu)
+                        ->FindItem(id_TestSwitch)
+                        ->Check(true);
                 }
             },
             id_TestSwitch);
@@ -248,7 +263,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
         m_ImportHistory.AddFilesToMenu();
         config->SetPath("/");
 
-        Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, START_IMPORT_FILE_IDS, START_IMPORT_FILE_IDS + 9);
+        Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, START_IMPORT_FILE_IDS,
+             START_IMPORT_FILE_IDS + 9);
     }
 
 #if defined(_DEBUG)
@@ -257,7 +273,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
     // We want these available in internal Release builds
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
+    menuInternal->Append(id_DebugPreferences, "Test &Settings...",
+                         "Settings to use in testing builds");
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     menuInternal->AppendSeparator();
@@ -269,7 +286,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN), m_Import
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_xrc_tests_svg(24, 24), "Dialog with multiple XRC tests");
+        m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_xrc_tests_svg(24, 24),
+                           "Dialog with multiple XRC tests");
     }
 
     // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
@@ -582,7 +600,8 @@ MainFrame::~MainFrame()
     delete m_findDialog;
 }
 
-wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size);
+wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg,
+                             wxSize def_size);
 
 #if defined(_DEBUG)
     #include "internal/debugsettings.h"
@@ -665,7 +684,8 @@ bool MainFrame::SaveWarning()
 
 wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 {
-    m_notebook = new wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
+    m_notebook =
+        new wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiSimpleTabArt());
 
     m_mockupPanel = new MockupParent(m_notebook, this);
@@ -691,9 +711,9 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
 void MainFrame::CreateSplitters()
 {
-    // The main splitter contains the navigation tree control and it's toolbar on the left. On the right is a panel
-    // containing the Ribbon toolbar at the top, and a splitter window containing the property grid and notebook with
-    // mockup and code windows below it.
+    // The main splitter contains the navigation tree control and it's toolbar on the left. On the
+    // right is a panel containing the Ribbon toolbar at the top, and a splitter window containing
+    // the property grid and notebook with mockup and code windows below it.
 
     m_panel_right->SetWindowStyle(wxBORDER_RAISED);
 
@@ -710,7 +730,8 @@ void MainFrame::CreateSplitters()
     m_info_bar = new wxInfoBar(m_panel_right);
     m_right_panel_sizer->Add(m_info_bar, wxSizerFlags().Expand());
 
-    m_SecondarySplitter = new wxSplitterWindow(m_panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_SecondarySplitter = new wxSplitterWindow(m_panel_right, wxID_ANY, wxDefaultPosition,
+                                               wxDefaultSize, wxSP_LIVE_UPDATE);
     m_right_panel_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());
 
     m_property_panel = new PropGridPanel(m_SecondarySplitter, this);
@@ -731,8 +752,8 @@ void MainFrame::CreateSplitters()
     m_MainSplitter->UpdateSize();
     m_MainSplitter->SetMinimumPaneSize(2);
 
-    // Set to zero because we don't need this to change relative size when the main window is resized. Fixes issue
-    // #90
+    // Set to zero because we don't need this to change relative size when the main window is
+    // resized. Fixes issue #90
     m_SecondarySplitter->SetSashGravity(0);
     m_SecondarySplitter->SetMinimumPaneSize(2);
 
@@ -807,8 +828,8 @@ void MainFrame::CopyNode(Node* node)
             auto clip_node = doc.append_child("node");
             int project_version = minRequiredVer;
             m_clipboard->addNodeToDoc(clip_node, project_version);
-            // REVIEW: [Randalphwa - 08-24-2022] project_version is ignored, assuming that the same version of
-            // wxClipboard will be used to paste the clipboard node.
+            // REVIEW: [Randalphwa - 08-24-2022] project_version is ignored, assuming that the same
+            // version of wxClipboard will be used to paste the clipboard node.
             auto* u8_data = new wxUtf8DataObject();
             std::stringstream strm;
             doc.save(strm, "", pugi::format_raw);
@@ -880,15 +901,16 @@ void MainFrame::PasteNode(Node* parent)
         undo_str << m_clipboard->declName();
 
         auto pos = parent->findInsertionPos(m_selected_node);
-        PushUndoAction(std::make_shared<InsertNodeAction>(created_node.get(), parent, undo_str, pos));
+        PushUndoAction(
+            std::make_shared<InsertNodeAction>(created_node.get(), parent, undo_str, pos));
         FireCreatedEvent(created_node);
         SelectNode(created_node, evt_flags::fire_event | evt_flags::force_selection);
     };
 
     auto new_node = NodeCreation.makeCopy(m_clipboard.get(), parent);
 
-    // This makes it possible to switch from a normal child toolbar to a form toolbar and vice versa.
-    // Both wxToolBar and wxAuiToolbar are supported
+    // This makes it possible to switch from a normal child toolbar to a form toolbar and vice
+    // versa. Both wxToolBar and wxAuiToolbar are supported
     if ((parent->isGen(gen_ToolBar) && new_node->isGen(gen_wxToolBar)) ||
         (parent->isGen(gen_AuiToolBar) && new_node->isGen(gen_wxAuiToolBar)) ||
         (parent->isGen(gen_wxToolBar) && new_node->isGen(gen_ToolBar)) ||
@@ -898,7 +920,8 @@ void MainFrame::PasteNode(Node* parent)
 
         for (auto& child_node: new_node->getChildNodePtrs())
         {
-            auto insert_action = std::make_shared<InsertNodeAction>(child_node.get(), parent, "paste");
+            auto insert_action =
+                std::make_shared<InsertNodeAction>(child_node.get(), parent, "paste");
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
         }
@@ -916,9 +939,11 @@ void MainFrame::PasteNode(Node* parent)
 
         for (auto& child_node: new_node->getChildNodePtrs())
         {
-            // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node type
+            // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node
+            // type
             auto new_child = NodeCreation.makeCopy(child_node.get(), parent);
-            auto insert_action = std::make_shared<InsertNodeAction>(new_child, parent->getSharedPtr(), "paste");
+            auto insert_action =
+                std::make_shared<InsertNodeAction>(new_child, parent->getSharedPtr(), "paste");
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
         }
@@ -940,7 +965,9 @@ void MainFrame::PasteNode(Node* parent)
                 if (!parent->isToolBar())
                     parent = grandparent;
                 auto tool_generator =
-                    (parent->isType(type_toolbar) || parent->isType(type_toolbar_form)) ? gen_tool : gen_auitool;
+                    (parent->isType(type_toolbar) || parent->isType(type_toolbar_form)) ?
+                        gen_tool :
+                        gen_auitool;
                 auto tool_node = NodeCreation.createNode(tool_generator, parent);
                 ASSERT(tool_node.second == Node::valid_node);
                 // REVIEW: [Randalphwa - 04-28-2025] Not being able to create a tool node with a
@@ -955,8 +982,9 @@ void MainFrame::PasteNode(Node* parent)
                     // exist in the tool node.
                     if (tool_node.first->hasProp(iter.second->get_name()))
                     {
-                        tool_node.first->set_value(iter.second->get_name(),
-                                                   new_node->getPropPtr(iter.second->get_name())->get_value());
+                        tool_node.first->set_value(
+                            iter.second->get_name(),
+                            new_node->getPropPtr(iter.second->get_name())->get_value());
                     }
                 }
                 create_undo_event(tool_node.first);
@@ -980,8 +1008,9 @@ void MainFrame::PasteNode(Node* parent)
                     // exist in the tool node.
                     if (menu_node.first->hasProp(iter.second->get_name()))
                     {
-                        menu_node.first->set_value(iter.second->get_name(),
-                                                   new_node->getPropPtr(iter.second->get_name())->get_value());
+                        menu_node.first->set_value(
+                            iter.second->get_name(),
+                            new_node->getPropPtr(iter.second->get_name())->get_value());
                     }
                 }
                 create_undo_event(menu_node.first);
@@ -991,7 +1020,8 @@ void MainFrame::PasteNode(Node* parent)
 
         if (!grandparent || !grandparent->isChildAllowed(new_node))
         {
-            wxMessageBox(tt_string() << "You cannot paste " << new_node->declName() << " into " << parent->declName());
+            wxMessageBox(tt_string() << "You cannot paste " << new_node->declName() << " into "
+                                     << parent->declName());
             return;
         }
         parent = grandparent;
@@ -1078,7 +1108,8 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     if (!propFlag)
         return;
 
-    auto value = ClearMultiplePropFlags("wxALL|wxTOP|wxBOTTOM|wxRIGHT|wxLEFT", propFlag->as_string());
+    auto value =
+        ClearMultiplePropFlags("wxALL|wxTOP|wxBOTTOM|wxRIGHT|wxLEFT", propFlag->as_string());
 
     auto intVal = propFlag->as_int();
     intVal ^= border;
@@ -1129,15 +1160,18 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
 
     tt_string value;
 
-    // First we delete the flags from the previous configuration, in order to avoid alignment conflicts.
+    // First we delete the flags from the previous configuration, in order to avoid alignment
+    // conflicts.
 
     if (vertical)
     {
-        value = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", propFlag->as_string());
+        value = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL",
+                                       propFlag->as_string());
     }
     else
     {
-        value = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", propFlag->as_string());
+        value = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL",
+                                       propFlag->as_string());
     }
 
     const char* alignStr;
@@ -1169,7 +1203,8 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
 
 bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orient)
 {
-    if (!m_selected_node || !m_selected_node->getParent() || !m_selected_node->getParent()->isSizer())
+    if (!m_selected_node || !m_selected_node->getParent() ||
+        !m_selected_node->getParent()->isSizer())
     {
         return false;
     }
@@ -1245,14 +1280,17 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                     wxWindowUpdateLocker freeze(this);
                     auto grandparent = parent->getParent();
                     int pos = (to_int) grandparent->getChildPosition(parent) + 1;
-                    PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->getParent(), pos));
+                    PushUndoAction(
+                        std::make_shared<ChangeParentAction>(node, parent->getParent(), pos));
                 }
                 return true;
             }
 
             if (auto grandparent = parent->getParent(); grandparent)
             {
-                if (auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(), grandparent); valid_parent)
+                if (auto valid_parent =
+                        NodeCreation.isValidCreateParent(node->getGenName(), grandparent);
+                    valid_parent)
                 {
                     if (!check_only)
                     {
@@ -1260,7 +1298,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                         int pos = -1;
                         if (grandparent == valid_parent)
                             pos = (to_int) grandparent->getChildPosition(parent) + 1;
-                        PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent, pos));
+                        PushUndoAction(
+                            std::make_shared<ChangeParentAction>(node, grandparent, pos));
                     }
                     return true;
                 }
@@ -1268,8 +1307,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             return false;
 
         case MoveDirection::Right:
-            if (node->isGen(gen_folder) || node->isGen(gen_sub_folder) || node->isGen(gen_data_folder) ||
-                node->isGen(gen_Images) || node->isGen(gen_Data))
+            if (node->isGen(gen_folder) || node->isGen(gen_sub_folder) ||
+                node->isGen(gen_data_folder) || node->isGen(gen_Images) || node->isGen(gen_Data))
             {
                 return false;
             }
@@ -1281,8 +1320,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                     auto* new_parent = parent->getChild(pos);
                     if (new_parent->isForm())
                     {
-                        ASSERT_MSG(check_only, tt_string()
-                                                   << "MoveDirection::Right called even though check would have failed.");
+                        ASSERT_MSG(check_only, tt_string() << "MoveDirection::Right called even "
+                                                              "though check would have failed.");
                         return false;
                     }
                     else if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
@@ -1302,8 +1341,9 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                     {
                         if (pos == 0)
                         {
-                            ASSERT_MSG(check_only,
-                                       tt_string() << "MoveDirection::Right called even though check would have failed.");
+                            ASSERT_MSG(check_only, tt_string()
+                                                       << "MoveDirection::Right called even though "
+                                                          "check would have failed.");
                             return false;
                         }
                     }
@@ -1319,7 +1359,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                 }
 
                 auto possible_parent = parent->getChild(pos);
-                if (auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(), possible_parent, false);
+                if (auto valid_parent = NodeCreation.isValidCreateParent(node->getGenName(),
+                                                                         possible_parent, false);
                     valid_parent)
                 {
                     if (!check_only)
@@ -1363,7 +1404,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 void MainFrame::RemoveNode(Node* node, bool isCutMode)
 {
     ASSERT_MSG(!node->isType(type_project), "Don't call RemoveNode to remove the entire project.");
-    ASSERT_MSG(node->getParent(), "The node being removed has no parent -- that should be impossible.");
+    ASSERT_MSG(node->getParent(),
+               "The node being removed has no parent -- that should be impossible.");
 
     auto parent = node->getParent();
     if (!parent)

@@ -20,7 +20,7 @@
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 #include "import_frmbldr_maps.cpp"  // set_ignore_flags and map_evt_pair
@@ -49,8 +49,9 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
         }
     }
 
-    // Using a try block means that if at any point it becomes obvious the formbuilder file is invalid and we cannot recover,
-    // then we can throw an error and give a standard response about an invalid file.
+    // Using a try block means that if at any point it becomes obvious the formbuilder file is
+    // invalid and we cannot recover, then we can throw an error and give a standard response about
+    // an invalid file.
 
     try
     {
@@ -100,12 +101,14 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
         {
             if (!xml_prop.text().empty())
             {
-                // In wxUE, a lot of properties are specific to the form. For example, it's perfectly fine to
-                // connect to events using Bind for a Dialog and a table macro for a Frame.
+                // In wxUE, a lot of properties are specific to the form. For example, it's
+                // perfectly fine to connect to events using Bind for a Dialog and a table macro for
+                // a Frame.
 
                 if (prop_name.as_view() == "internationalize")
                 {
-                    new_node->getPropPtr(prop_internationalize)->set_value(xml_prop.text().as_bool() ? "1" : "0");
+                    new_node->getPropPtr(prop_internationalize)
+                        ->set_value(xml_prop.text().as_bool() ? "1" : "0");
                 }
                 else if (prop_name.as_view() == "help_provider")
                 {
@@ -149,7 +152,8 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 }
                 else if (prop_name.as_view() == "namespace" && xml_prop.text().as_view().size())
                 {
-                    ConvertNameSpaceProp(new_node->getPropPtr(prop_name_space), xml_prop.text().as_view());
+                    ConvertNameSpaceProp(new_node->getPropPtr(prop_name_space),
+                                         xml_prop.text().as_view());
                 }
                 else if (prop_name.as_view() == "code_generation")
                 {
@@ -166,8 +170,8 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                     else if (tt::contains(xml_prop.text().as_view(), "XRC"))
                         m_language |= GEN_LANG_XRC;
 
-                    // wxFormBuilder also generates Rust code, but wxUiEditor currently doesn't support that since
-                    // wxPHP is not being actively maintained.
+                    // wxFormBuilder also generates Rust code, but wxUiEditor currently doesn't
+                    // support that since wxPHP is not being actively maintained.
                 }
             }
         }
@@ -267,16 +271,16 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         msg << class_name;
         if (parent)
         {
-            // We can't use the class name because that won't necessarily be the wxWidgets class name. E.g., PanelForm might
-            // be the class name, but what we want to display to the user is wxPanel. GetHelpText() will give us something
-            // that makes sense to the user.
+            // We can't use the class name because that won't necessarily be the wxWidgets class
+            // name. E.g., PanelForm might be the class name, but what we want to display to the
+            // user is wxPanel. GetHelpText() will give us something that makes sense to the user.
 
             auto name = parent->getGenerator()->GetHelpText(parent);
             if (name.size() && name != "wxWidgets")
             {
 #if defined(_DEBUG)
-                // Currently, Debug builds also include the filename that gets passed to the browser if Help is requested.
-                // That's not useful in a message box, so we remove it.
+                // Currently, Debug builds also include the filename that gets passed to the browser
+                // if Help is requested. That's not useful in a message box, so we remove it.
 
                 name.erase_from('(');
 #endif  // _DEBUG
@@ -291,8 +295,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     if (getGenName == gen_ribbonButton || getGenName == gen_ribbonTool)
     {
-        // wxFormBuilder uses a control for each type (8 total controls). wxUiEditor only uses 2 controls, and instead
-        // uses prop_kind to specify the type of button to use.
+        // wxFormBuilder uses a control for each type (8 total controls). wxUiEditor only uses 2
+        // controls, and instead uses prop_kind to specify the type of button to use.
 
         if (class_name.contains("Dropdown"))
         {
@@ -308,7 +312,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    for (auto xml_prop = xml_obj.child("property"); xml_prop; xml_prop = xml_prop.next_sibling("property"))
+    for (auto xml_prop = xml_obj.child("property"); xml_prop;
+         xml_prop = xml_prop.next_sibling("property"))
     {
         if (auto prop_name = xml_prop.attribute("name").as_view(); prop_name.size())
         {
@@ -389,8 +394,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 }
                 else if (wxue_prop == prop_window_style)
                 {
-                    // wxFormBuilder uses older style names from wxWidgets 2.x. Rename them to the 3.x names, and remove
-                    // the ones that are no longer used.
+                    // wxFormBuilder uses older style names from wxWidgets 2.x. Rename them to
+                    // the 3.x names, and remove the ones that are no longer used.
                     auto value = xml_prop.text().as_cstr();
                     if (value.contains("wxSIMPLE_BORDER"))
                         value.Replace("wxSIMPLE_BORDER", "wxBORDER_SIMPLE");
@@ -500,8 +505,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 continue;
             }
 
-            // If the property actually has a value, then we need to see if we can convert it. We ignore unknown
-            // properties that don't have a value.
+            // If the property actually has a value, then we need to see if we can convert it. We
+            // ignore unknown properties that don't have a value.
             if (auto value = xml_prop.text().as_view(); value.size())
             {
                 ProcessPropValue(xml_prop, prop_name, class_name, newobject.get(), parent);
@@ -517,8 +522,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             newobject->set_value(prop_rows, 0);
     }
 
-    // wxFormBuilder allows the users to create settings that will generate an assert if compiled on a debug version of
-    // wxWidgets. We fix some of the more common invalid settings here.
+    // wxFormBuilder allows the users to create settings that will generate an assert if compiled on
+    // a debug version of wxWidgets. We fix some of the more common invalid settings here.
 
     if (newobject->hasValue(prop_flags) && newobject->as_string(prop_flags).contains("wxEXPAND"))
     {
@@ -534,20 +539,24 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
         {
             auto currentValue = newobject->as_string(prop_alignment);
-            if (currentValue.size() && (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
-                                        currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
+            if (currentValue.size() &&
+                (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
+                 currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
             {
-                auto fixed = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
+                auto fixed = ClearMultiplePropFlags(
+                    "wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
                 newobject->set_value(prop_alignment, fixed);
             }
         }
         else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
         {
             auto currentValue = newobject->as_string(prop_alignment);
-            if (currentValue.size() && (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
-                                        currentValue.contains("wxALIGN_CENTER_VERTICAL")))
+            if (currentValue.size() &&
+                (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
+                 currentValue.contains("wxALIGN_CENTER_VERTICAL")))
             {
-                auto fixed = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
+                auto fixed = ClearMultiplePropFlags(
+                    "wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
                 newobject->set_value(prop_alignment, fixed);
             }
         }
@@ -556,7 +565,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
-        if (auto event_name = xml_event.attribute("name").as_view(); event_name.size() && xml_event.text().as_view().size())
+        if (auto event_name = xml_event.attribute("name").as_view();
+            event_name.size() && xml_event.text().as_view().size())
         {
             if (auto result = map_evt_pair.find(event_name); result != map_evt_pair.end())
             {
@@ -566,16 +576,18 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             }
             else
             {
-                // There is nothing in the wxWidgets source code that actually generates wxEVT_HIBERNATE that I can find as
-                // of wxWidgets 3.1.3. It was removed in wxFormBuilder (but I couldn't find a reason as to why).
-                // Documentation states it's part of WinCE which we don't support.
+                // There is nothing in the wxWidgets source code that actually generates
+                // wxEVT_HIBERNATE that I can find as of wxWidgets 3.1.3. It was removed in
+                // wxFormBuilder (but I couldn't find a reason as to why). Documentation states it's
+                // part of WinCE which we don't support.
                 if (event_name == "OnHibernate")
                 {
                     xml_event = xml_event.next_sibling("event");
                     continue;
                 }
 
-                // REVIEW: [KeyWorks - 10-28-2020] We don't support this, but we could convert it if it's actually used.
+                // REVIEW: [KeyWorks - 10-28-2020] We don't support this, but we could convert it if
+                // it's actually used.
                 else if (event_name == "OnMouseEvents")
                 {
                     xml_event = xml_event.next_sibling("event");
@@ -586,8 +598,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 {
                     if (parent && parent->getForm())
                     {
-                        MSG_INFO(tt_string() << "Event " << event_name
-                                             << " not supported. Form: " << parent->getForm()->as_string(prop_class_name));
+                        MSG_INFO(tt_string() << "Event " << event_name << " not supported. Form: "
+                                             << parent->getForm()->as_string(prop_class_name));
                     }
                     else
                     {
@@ -628,10 +640,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
         if (newobject->isGen(gen_wxStdDialogButtonSizer) && parent)
         {
-            // wxFormBuilder isn't able to add a sizer using CreateSeparatedSizer(), so the user has to add a static line
-            // above wxStdDialogButtonSizer. The problem with that approach is that if the program is compiled for MAC then
-            // there should *not* be a line above the standard buttons. We fix that be removing the static line -- wxUE
-            // defaults to adding the line via CreateSeparatedSizer().
+            // wxFormBuilder isn't able to add a sizer using CreateSeparatedSizer(), so the user has
+            // to add a static line above wxStdDialogButtonSizer. The problem with that approach is
+            // that if the program is compiled for MAC then there should *not* be a line above the
+            // standard buttons. We fix that be removing the static line -- wxUE defaults to adding
+            // the line via CreateSeparatedSizer().
 
             auto pos = parent->getChildPosition(newobject.get());
             if (pos > 0)
@@ -691,8 +704,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     return newobject;
 }
 
-void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name, tt_string_view class_name,
-                                   Node* newobject, Node* parent)
+void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name,
+                                   tt_string_view class_name, Node* newobject, Node* parent)
 {
     if (set_ignore_flags.contains(prop_name))
     {
@@ -706,8 +719,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         return;
     }
 
-    // validator_type is only valid in wxTextValidator, where it let's the user choose between wxTextValidator and
-    // wxGenericValidator
+    // validator_type is only valid in wxTextValidator, where it let's the user choose between
+    // wxTextValidator and wxGenericValidator
     else if (prop_name == "validator_type")
     {
         // wxUiEditor automatically switches validator type based on the data type used, so we
@@ -727,7 +740,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         return;
     }
 
-    // This is most likely a Dialog class -- we don't support wxAUI in that class. We silently ignore it...
+    // This is most likely a Dialog class -- we don't support wxAUI in that class. We silently
+    // ignore it...
     else if (prop_name == "aui_managed" || prop_name == "aui_manager_style")
     {
         return;
@@ -770,7 +784,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
 
     else if (prop_name == "enabled")
     {
-        // Form builder will apply enabled to things like a ribbon tool which cannot be enabled/disabled
+        // Form builder will apply enabled to things like a ribbon tool which cannot be
+        // enabled/disabled
         auto disabled = newobject->getPropPtr(prop_disabled);
         if (disabled)
             disabled->set_value(xml_prop.text().as_bool() ? 0 : 1);
@@ -836,8 +851,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             prop_value = "wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES";
         prop->set_value(prop_value);
     }
-    else if (prop_name == "selection" &&
-             (class_name == "wxComboBox" || class_name == "wxChoice" || class_name == "wxBitmapComboBox"))
+    else if (prop_name == "selection" && (class_name == "wxComboBox" || class_name == "wxChoice" ||
+                                          class_name == "wxBitmapComboBox"))
     {
         newobject->getPropPtr(prop_selection_int)->set_value(xml_prop.text().as_view());
     }
@@ -943,10 +958,12 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         {
             if (prop_name == "hidden" && newobject->isGen(gen_ribbonTool))
                 return;
-            else if (prop_name == "bitmapsize" && (newobject->isGen(gen_wxToolBar) || newobject->isGen(gen_wxAuiToolBar)))
+            else if (prop_name == "bitmapsize" &&
+                     (newobject->isGen(gen_wxToolBar) || newobject->isGen(gen_wxAuiToolBar)))
             {
-                // wxFormBuilder uses this to call SetToolBitmapSize. However, this is *NOT* recommended since it forces
-                // scaling on high DPI systems, ignoring any use of wxBitmapBundle to property handle scaling.
+                // wxFormBuilder uses this to call SetToolBitmapSize. However, this is *NOT*
+                // recommended since it forces scaling on high DPI systems, ignoring any use of
+                // wxBitmapBundle to property handle scaling.
                 return;
             }
             else if (xml_prop.text().as_view() == "wxWS_EX_VALIDATE_RECURSIVELY")
@@ -957,13 +974,15 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
                 if (parent && parent->getForm())
                 {
                     MSG_INFO(tt_string("Unsupported ")
-                             << prop_name << "(" << xml_prop.text().as_view() << ") property in " << class_name
+                             << prop_name << "(" << xml_prop.text().as_view() << ") property in "
+                             << class_name
                              << ". Form: " << parent->getForm()->as_string(prop_class_name));
                 }
                 else
                 {
                     MSG_INFO(tt_string("Unsupported ")
-                             << prop_name << "(" << xml_prop.text().as_view() << ") property in " << class_name);
+                             << prop_name << "(" << xml_prop.text().as_view() << ") property in "
+                             << class_name);
                 }
             }
         }
@@ -1009,7 +1028,8 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
             prop->set_value(bitmap);
         }
     }
-    else if (org_value.contains("Load From Art") && xml_prop.text().as_view() != "Load From Art Provider; ;")
+    else if (org_value.contains("Load From Art") &&
+             xml_prop.text().as_view() != "Load From Art Provider; ;")
     {
         tt_string value = xml_prop.text().as_str();
         value.Replace("Load From Art Provider; ", "Art;", false, tt::CASE::either);

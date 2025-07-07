@@ -1,1 +1,5 @@
 ./src/import/rapidjson
+./src/pugixml
+./src/pugixml
+./src/tests
+./src/art_src

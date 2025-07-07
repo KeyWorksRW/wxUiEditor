@@ -260,7 +260,8 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             if (results.updated_files.size() == 1)
                 results.msgs.emplace_back("1 file was updated");
             else
-                results.msgs.emplace_back() << results.updated_files.size() << " files were updated";
+                results.msgs.emplace_back()
+                    << results.updated_files.size() << " files were updated";
 
             for (auto& iter: results.msgs)
             {

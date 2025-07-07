@@ -72,8 +72,8 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
         auto actual_object = object.child("object");
         if (node->isGen(gen_wxCollapsiblePane))
         {
-            // XRC wants a panewindow object as the sole child of wxCollapsiblePane, and all node children
-            // must be added as children of this panewindow.
+            // XRC wants a panewindow object as the sole child of wxCollapsiblePane, and all node
+            // children must be added as children of this panewindow.
 
             actual_object = actual_object.append_child("object");
             actual_object.append_attribute("class").set_value("panewindow");
@@ -81,10 +81,11 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 
         for (const auto& child: node->getChildNodePtrs())
         {
-            // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC needing
-            // a sizeritem as the immediate parent of a widget node. The exception is wxTreebook -- while
-            // our nodes have BookPages as children of BookPages, XRC expects all BookPages to be children
-            // of the wxTreebook with a depth parameter indicating if it is a sub-page or not.
+            // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC
+            // needing a sizeritem as the immediate parent of a widget node. The exception is
+            // wxTreebook -- while our nodes have BookPages as children of BookPages, XRC expects
+            // all BookPages to be children of the wxTreebook with a depth parameter indicating if
+            // it is a sub-page or not.
 
             if (child->isGen(gen_BookPage) && child->getParent()->isGen(gen_BookPage))
             {
@@ -134,8 +135,9 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 object.remove_child(child_object);
-                // REVIEW: [Randalphwa - 09-02-2022] In most cases, we can simply skip over the unsupported node. If not, we
-                // need to special-case it rather than just breaking out of the loop.
+                // REVIEW: [Randalphwa - 09-02-2022] In most cases, we can simply skip over the
+                // unsupported node. If not, we need to special-case it rather than just breaking
+                // out of the loop.
             }
         }
         return result;
@@ -179,7 +181,8 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
     root.append_attribute("version") = "2.5.3.0";
 
-    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
+    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) ||
+        node_start->isGen(gen_ToolBar))
     {
         if (auto temp_form = NodeCreation.createNode(gen_PanelForm, nullptr).first; temp_form)
         {
@@ -275,7 +278,8 @@ void XrcCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         if (m_form_node != Project.getProjectNode())
         {
-            m_header->writeLine(tt_string("Resource name is ") << m_form_node->as_string(prop_class_name));
+            m_header->writeLine(tt_string("Resource name is ")
+                                << m_form_node->as_string(prop_class_name));
             m_header->writeLine();
         }
         m_header->writeLine("Required handlers:");
@@ -311,7 +315,8 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
         wxMessageBox("You must select a form before you can generate code.", "Code Generation");
         return;
     }
-    else if (form->isGen(gen_Images) || form->isGen(gen_Data) || form->isGen(gen_wxPopupTransientWindow))
+    else if (form->isGen(gen_Images) || form->isGen(gen_Data) ||
+             form->isGen(gen_wxPopupTransientWindow))
     {
         wxMessageBox("You cannot generate an XRC file for this type of form.", "Code Generation");
         return;
@@ -323,7 +328,8 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
     auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
     if (path.empty())
     {
-        wxMessageBox("No XRC filename specified for " + form->as_string(prop_class_name), "Code Generation");
+        wxMessageBox("No XRC filename specified for " + form->as_string(prop_class_name),
+                     "Code Generation");
         return;
     }
     if (path.extension().empty())
@@ -492,9 +498,10 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_strin
             if (path.empty())
             {
                 // If the form type is supported, warn the user about not having an XRC file for it.
-                if (!form->isGen(gen_Images) && !form->isGen(gen_Data) && !form->isGen(gen_wxPopupTransientWindow))
-                    results.msgs.emplace_back()
-                        << "No XRC filename specified for " << form->as_string(prop_class_name) << '\n';
+                if (!form->isGen(gen_Images) && !form->isGen(gen_Data) &&
+                    !form->isGen(gen_wxPopupTransientWindow))
+                    results.msgs.emplace_back() << "No XRC filename specified for "
+                                                << form->as_string(prop_class_name) << '\n';
                 continue;
             }
             if (path.extension().empty())
@@ -506,11 +513,13 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_strin
 
             if (path.file_exists())
             {
-                // Compare the new document with the existing file, and only write it if it has changed
+                // Compare the new document with the existing file, and only write it if it has
+                // changed
                 wxFile file_original(path.make_wxString(), wxFile::read_write);
                 if (file_original.IsOpened())
                 {
-                    // Check to see if the file would be changed. If not, we don't need to update it.
+                    // Check to see if the file would be changed. If not, we don't need to update
+                    // it.
                     std::ostringstream xml_stream;
                     m_doc.save(xml_stream, getIndentationString().c_str());
                     auto new_str = xml_stream.str();
@@ -541,13 +550,16 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_strin
                         file_original.Close();
                         if (!file_original.Create(path.make_wxString(), true))
                         {
-                            results.msgs.emplace_back() << "Cannot create the file " << path << '\n';
+                            results.msgs.emplace_back()
+                                << "Cannot create the file " << path << '\n';
                         }
                         else
                         {
-                            if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
+                            if (file_original.Write(new_str.c_str(), new_str.length()) !=
+                                new_str.length())
                             {
-                                results.msgs.emplace_back() << "Cannot write to the file " << path << '\n';
+                                results.msgs.emplace_back()
+                                    << "Cannot write to the file " << path << '\n';
                             }
                             else
                             {
@@ -565,7 +577,8 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_strin
             {
                 if (!m_doc.save_file(path))
                 {
-                    results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                    results.msgs.emplace_back()
+                        << "Cannot create or write to the file " << path << '\n';
                 }
                 else
                 {
@@ -638,7 +651,8 @@ void XrcGenerator::AddNode(Node* node_start)
         m_root.append_attribute("version") = "2.5.3.0";
     }
 
-    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
+    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) ||
+        node_start->isGen(gen_ToolBar))
     {
         if (auto temp_form = NodeCreation.createNode(gen_PanelForm, nullptr).first; temp_form)
         {

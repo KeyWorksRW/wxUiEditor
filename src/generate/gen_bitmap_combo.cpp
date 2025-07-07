@@ -17,8 +17,9 @@
 
 wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
+    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                       node->as_wxString(prop_value), DlgPoint(node, prop_pos),
+                                       DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
@@ -74,12 +75,14 @@ bool BitmapComboBoxGenerator::ConstructionCode(Code& code)
         code.Comma().Pos().Comma().CheckLineLength().WxSize();
         if (code.is_cpp())
         {
-            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") +
+                                         code.node()->as_string(prop_style).size());
             code << "0, nullptr";
         }
         else
         {
-            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
+            code.Comma().CheckLineLength(sizeof("[], ") +
+                                         code.node()->as_string(prop_style).size());
             code.Add("[]");
         }
         code.Comma().Style().EndFunction();
@@ -150,7 +153,11 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
             int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("SetSelection(")
+                    .as_string(prop_selection_int)
+                    .EndFunction();
             }
         }
     }
@@ -158,8 +165,8 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -172,7 +179,8 @@ bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int BitmapComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBitmapComboBox");

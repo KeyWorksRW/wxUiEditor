@@ -134,9 +134,9 @@ public:
         m_undo.clear();
     }
 
-    // When undo is called, the command is popped and pushed onto the redo stack. So to get at the last undo command, you
-    // have to get the last item in the redo stack. Redo works just the opposite, pushing it's command to the last of the
-    // undo stack.
+    // When undo is called, the command is popped and pushed onto the redo stack. So to get at the
+    // last undo command, you have to get the last item in the redo stack. Redo works just the
+    // opposite, pushing it's command to the last of the undo stack.
 
     bool wasUndoEventGenerated() { return m_redo.back()->wasUndoEventGenerated(); }
     bool wasRedoEventGenerated() { return m_undo.back()->wasRedoEventGenerated(); }

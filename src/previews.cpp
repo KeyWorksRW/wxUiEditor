@@ -40,8 +40,8 @@
 #include "utils.h"              // Utility functions that work with properties
 
 // Defined in mockup/mockup_preview.cpp
-void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
-                          wxWindow* form_window);
+void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
+                          wxSizer* parent_sizer, wxWindow* form_window);
 
 bool g_isXrcResourceInitalized { false };
 
@@ -198,14 +198,16 @@ void PreviewXrc(Node* form_node)
 
     tt_string style = form_node->as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
-        (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
+        (style.empty() ||
+         (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
         tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
         form_node->set_value(prop_style, modified_style);
-        wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "XRC Preview",
-                     wxICON_INFORMATION);
+        wxMessageBox(
+            "Caption and Close box temporarily added so that you can close the preview dialog.",
+            "XRC Preview", wxICON_INFORMATION);
     }
 
     auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
@@ -222,9 +224,11 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
     pugi::xml_document doc;
     if (auto result = doc.load_string(doc_str.c_str()); !result)
     {
-        std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                                      result.description(), result.line, result.column, result.offset);
-        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+        std::string msg =
+            std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                        result.description(), result.line, result.column, result.offset);
+        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR)
+            .ShowModal();
         return;
     }
 
@@ -256,10 +260,13 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
         // the XML string and would would have exited this function if there were any errors.
         if (auto result = xmlDoc->Load(stream, wxXMLDOC_NONE, &err_details); !result)
         {
-            std::string msg =
-                std::format(std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
-                            err_details.message.ToStdString(), err_details.line, err_details.column, err_details.offset);
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            std::string msg = std::format(
+                std::locale(""), "Parsing error: {} at line: {}, column: {}, offset: {:L}\n",
+                err_details.message.ToStdString(), err_details.line, err_details.column,
+                err_details.offset);
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
             return;
         }
 
@@ -272,7 +279,8 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
         tt_cwd cwd(true);
         wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
 
-        wxString form_class_name = form_node ? form_node->as_string(GenEnum::prop_class_name).c_str() : txt_dlg_name;
+        wxString form_class_name =
+            form_node ? form_node->as_string(GenEnum::prop_class_name).c_str() : txt_dlg_name;
 
         switch (gen_name)
         {
@@ -282,7 +290,8 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
             case gen_RibbonBar:
             case gen_ToolBar:
                 {
-                    if (auto* dlg = xrc_resource->LoadDialog(wxGetMainFrame(), form_class_name); dlg)
+                    if (auto* dlg = xrc_resource->LoadDialog(wxGetMainFrame(), form_class_name);
+                        dlg)
                     {
                         wxGetMainFrame()->setPreviewDlgPtr(dlg);  // so event handlers can access it
                         dlg->Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, wxGetMainFrame());
@@ -293,7 +302,8 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                     }
                     else
                     {
-                        wxMessageBox(wxString("Could not load ") << form_class_name << " resource.", "XRC Preview");
+                        wxMessageBox(wxString("Could not load ") << form_class_name << " resource.",
+                                     "XRC Preview");
                     }
                 }
                 break;
@@ -302,7 +312,8 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                 if (auto* frame = xrc_resource->LoadFrame(wxGetMainFrame(), form_class_name); frame)
                 {
                     wxGetMainFrame()->setPreviewWinPtr(frame);
-                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, wxGetMainFrame());
+                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose,
+                                wxGetMainFrame());
                     frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, wxGetMainFrame());
                     frame->Centre(wxBOTH);
                     frame->Show();
@@ -310,7 +321,8 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                 }
                 else
                 {
-                    wxMessageBox(wxString("Could not load ") << form_class_name << " resource.", "XRC Preview");
+                    wxMessageBox(wxString("Could not load ") << form_class_name << " resource.",
+                                 "XRC Preview");
                 }
                 break;
 
@@ -320,23 +332,28 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                     wxMessageBox("A wizard requires a form_node to preview it.", "XRC Preview");
                     return;
                 }
-                if (auto* object = xrc_resource->LoadObject(NULL, form_node->as_string(prop_class_name), "wxWizard"); object)
+                if (auto* object = xrc_resource->LoadObject(
+                        NULL, form_node->as_string(prop_class_name), "wxWizard");
+                    object)
                 {
                     auto* wizard = wxStaticCast(object, wxWizard);
                     if (form_node->getChildCount())
                     {
-                        auto first_page = wizard->FindWindow(form_node->getChild(0)->as_wxString(prop_var_name));
+                        auto first_page =
+                            wizard->FindWindow(form_node->getChild(0)->as_wxString(prop_var_name));
                         wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
                         wizard->Destroy();
                     }
                     else
                     {
-                        wxMessageBox("You can't run a wizard that doesn't have any pages.", "XRC Preview");
+                        wxMessageBox("You can't run a wizard that doesn't have any pages.",
+                                     "XRC Preview");
                     }
                 }
                 else
                 {
-                    wxMessageBox(tt_string("Could not load ") << form_node->as_string(prop_class_name) << " resource.",
+                    wxMessageBox(tt_string("Could not load ")
+                                     << form_node->as_string(prop_class_name) << " resource.",
                                  "XRC Preview");
                 }
                 break;
@@ -368,14 +385,16 @@ void MainFrame::PreviewCpp(Node* form_node)
 
     tt_string style = form_node->as_string(prop_style);
     if (form_node->isGen(gen_wxDialog) &&
-        (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
+        (style.empty() ||
+         (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
         tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
         form_node->set_value(prop_style, modified_style);
-        wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "C++ Preview",
-                     wxICON_INFORMATION);
+        wxMessageBox(
+            "Caption and Close box temporarily added so that you can close the preview dialog.",
+            "C++ Preview", wxICON_INFORMATION);
     }
 
     try
@@ -385,8 +404,8 @@ void MainFrame::PreviewCpp(Node* form_node)
             case gen_PanelForm:
                 {
                     wxDialog dlg;
-                    if (!dlg.Create(wxGetMainFrame(), wxID_ANY, "C++ Preview", wxDefaultPosition, wxDefaultSize,
-                                    wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
+                    if (!dlg.Create(wxGetMainFrame(), wxID_ANY, "C++ Preview", wxDefaultPosition,
+                                    wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
                     {
                         wxMessageBox("Unable to create preview dialog", "C++ Preview");
                         return;
@@ -409,7 +428,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                 {
                     wxDialog dlg;
                     if (!dlg.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title),
-                                    DlgPoint(form_node, prop_pos), DlgSize(form_node, prop_size), GetStyleInt(form_node)))
+                                    DlgPoint(form_node, prop_pos), DlgSize(form_node, prop_size),
+                                    GetStyleInt(form_node)))
                     {
                         wxMessageBox("Unable to create dialog", "C++ Preview");
                         return;
@@ -417,12 +437,13 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_extra_style))
                     {
                         int ex_style = 0;
-                        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
-                        // std::string to pass to it
+                        // Can't use multiview because getConstantAsInt() searches an unordered_map
+                        // which requires a std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
-                            // Friendly names will have already been converted, so normal lookup works fine.
+                            // Friendly names will have already been converted, so normal lookup
+                            // works fine.
                             ex_style |= NodeCreation.getConstantAsInt(iter);
                         }
 
@@ -457,8 +478,9 @@ void MainFrame::PreviewCpp(Node* form_node)
 
             case gen_wxFrame:
                 if (auto* frame =
-                        new wxFrame(nullptr, wxID_ANY, form_node->as_string(prop_title), DlgPoint(form_node, prop_pos),
-                                    DlgSize(form_node, prop_size), GetStyleInt(form_node));
+                        new wxFrame(nullptr, wxID_ANY, form_node->as_string(prop_title),
+                                    DlgPoint(form_node, prop_pos), DlgSize(form_node, prop_size),
+                                    GetStyleInt(form_node));
                     frame)
                 {
                     for (auto& iter: form_node->getChildNodePtrs())
@@ -468,7 +490,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                     // CreateMockupChildren(form_node->getChild(0), frame, frame, nullptr, frame);
 
                     wxGetMainFrame()->setPreviewWinPtr(frame);
-                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, wxGetMainFrame());
+                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose,
+                                wxGetMainFrame());
                     frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, wxGetMainFrame());
                     frame->Centre(wxBOTH);
                     frame->Show();
@@ -482,14 +505,16 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_bitmap))
                     {
                         auto bundle = form_node->as_wxBitmapBundle(prop_bitmap);
-                        if (!wizard.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title), bundle,
+                        if (!wizard.Create(wxGetMainFrame(), wxID_ANY,
+                                           form_node->as_string(prop_title), bundle,
                                            DlgPoint(form_node, prop_pos), GetStyleInt(form_node)))
                         {
                             wxMessageBox("Unable to create wizard", "C++ Preview");
                             return;
                         }
                     }
-                    else if (!wizard.Create(wxGetMainFrame(), wxID_ANY, form_node->as_string(prop_title), wxNullBitmap,
+                    else if (!wizard.Create(wxGetMainFrame(), wxID_ANY,
+                                            form_node->as_string(prop_title), wxNullBitmap,
                                             DlgPoint(form_node, prop_pos), GetStyleInt(form_node)))
                     {
                         wxMessageBox("Unable to create wizard", "C++ Preview");
@@ -499,12 +524,13 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_extra_style))
                     {
                         int ex_style = 0;
-                        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
-                        // std::string to pass to it
+                        // Can't use multiview because getConstantAsInt() searches an unordered_map
+                        // which requires a std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
-                            // Friendly names will have already been converted, so normal lookup works fine.
+                            // Friendly names will have already been converted, so normal lookup
+                            // works fine.
                             ex_style |= NodeCreation.getConstantAsInt(iter);
                         }
                         wizard.SetExtraStyle(ex_style);
@@ -515,12 +541,13 @@ void MainFrame::PreviewCpp(Node* form_node)
                     if (form_node->hasValue(prop_bmp_placement))
                     {
                         int placement = 0;
-                        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
-                        // std::string to pass to it
+                        // Can't use multiview because getConstantAsInt() searches an unordered_map
+                        // which requires a std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_bmp_placement), '|');
                         for (auto& iter: mstr)
                         {
-                            // Friendly names will have already been converted, so normal lookup works fine.
+                            // Friendly names will have already been converted, so normal lookup
+                            // works fine.
                             placement |= NodeCreation.getConstantAsInt(iter);
                         }
                         wizard.SetBitmapPlacement(placement);
@@ -528,7 +555,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                         if (form_node->as_int(prop_bmp_min_width) > 0)
                             wizard.SetMinimumBitmapWidth(form_node->as_int(prop_bmp_min_width));
                         if (form_node->hasValue(prop_bmp_background_colour))
-                            wizard.SetBitmapBackgroundColour(form_node->as_wxColour(prop_bmp_background_colour));
+                            wizard.SetBitmapBackgroundColour(
+                                form_node->as_wxColour(prop_bmp_background_colour));
                     }
 
                     std::vector<wxWizardPageSimple*> pages;
@@ -545,7 +573,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                             wiz_page->Create(&wizard);
 
                         if (page->getChildCount())
-                            CreateMockupChildren(page->getChild(0), wiz_page, nullptr, nullptr, &wizard);
+                            CreateMockupChildren(page->getChild(0), wiz_page, nullptr, nullptr,
+                                                 &wizard);
                     }
 
                     for (size_t idx = 0; idx < pages.size(); ++idx)

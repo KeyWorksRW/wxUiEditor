@@ -20,16 +20,16 @@
 #include "node.h"             // Node -- Node class
 #include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler singleton class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
 
 using namespace GenEnum;
 
 NodeProperty::NodeProperty(PropDeclaration* info, Node* node) : m_declaration(info), m_node(node) {}
 
-// The advantage of placing the one-line calls to PropDeclaration (m_declaration) here is that it reduces the header-file
-// dependency for other modeuls that need NodeProperty, and it allows for changes to PropDeclaration that don't require
-// recompiling every module that included prop_decl.h.
+// The advantage of placing the one-line calls to PropDeclaration (m_declaration) here is that it
+// reduces the header-file dependency for other modeuls that need NodeProperty, and it allows for
+// changes to PropDeclaration that don't require recompiling every module that included prop_decl.h.
 
 bool NodeProperty::isDefaultValue() const
 {
@@ -107,14 +107,16 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                 {
                     tt_string name;
                     name << prefix << m_value;
-                    if (auto result = g_friend_constant.find(name); result != g_friend_constant.end())
+                    if (auto result = g_friend_constant.find(name);
+                        result != g_friend_constant.end())
                     {
                         return NodeCreation.getConstantAsInt(result->second, 0);
                     }
                 }
                 else
                 {
-                    if (auto result = g_friend_constant.find(m_value); result != g_friend_constant.end())
+                    if (auto result = g_friend_constant.find(m_value);
+                        result != g_friend_constant.end())
                     {
                         return NodeCreation.getConstantAsInt(result->second, 0);
                     }
@@ -138,7 +140,8 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                         {
                             iter.insert(0, prefix);
                         }
-                        if (auto result = g_friend_constant.find(iter); result != g_friend_constant.end())
+                        if (auto result = g_friend_constant.find(iter);
+                            result != g_friend_constant.end())
                         {
                             value |= NodeCreation.getConstantAsInt(result->second);
                         }
@@ -169,7 +172,8 @@ const tt_string& NodeProperty::as_constant(std::string_view prefix)
                 {
                     m_constant.clear();
                     m_constant << prefix << m_value;
-                    if (auto result = g_friend_constant.find(m_constant); result != g_friend_constant.end())
+                    if (auto result = g_friend_constant.find(m_constant);
+                        result != g_friend_constant.end())
                     {
                         m_constant = result->second;
                     }
@@ -180,7 +184,8 @@ const tt_string& NodeProperty::as_constant(std::string_view prefix)
                 }
                 else
                 {
-                    if (auto result = g_friend_constant.find(m_value); result != g_friend_constant.end())
+                    if (auto result = g_friend_constant.find(m_value);
+                        result != g_friend_constant.end())
                     {
                         m_constant = result->second;
                     }
@@ -212,7 +217,8 @@ const tt_string& NodeProperty::as_constant(std::string_view prefix)
                         {
                             iter.insert(0, prefix);
                         }
-                        if (auto result = g_friend_constant.find(iter); result != g_friend_constant.end())
+                        if (auto result = g_friend_constant.find(iter);
+                            result != g_friend_constant.end())
                         {
                             if (m_constant.size())
                             {
@@ -397,7 +403,8 @@ std::vector<tt_string> NodeProperty::as_vector() const
     auto pos = parse.ExtractSubString(value);
     array.emplace_back(parse);
 
-    for (value = tt::stepover(value.data() + pos); value.size(); value = tt::stepover(value.data() + pos))
+    for (value = tt::stepover(value.data() + pos); value.size();
+         value = tt::stepover(value.data() + pos))
     {
         pos = parse.ExtractSubString(value);
         array.emplace_back(parse);
@@ -445,7 +452,8 @@ wxArrayString NodeProperty::as_wxArrayString() const
 
     if (m_value.size())
     {
-        if (m_value[0] == '"' && !(type() == type_stringlist_semi && Project.getOriginalProjectVersion() >= 18))
+        if (m_value[0] == '"' &&
+            !(type() == type_stringlist_semi && Project.getOriginalProjectVersion() >= 18))
         {
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
@@ -477,7 +485,8 @@ double NodeProperty::as_float() const
 void NodeProperty::set_value(double value)
 {
     std::array<char, 20> str;
-    if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), value); ec == std::errc())
+    if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), value);
+        ec == std::errc())
     {
         m_value.assign(str.data(), ptr);
     }
@@ -511,10 +520,11 @@ void NodeProperty::set_value(const wxString& value)
     m_value << value.utf8_string();
 }
 
-// All but one of the std::vector properties contain text which could have commas in it, so we need to use a '|' character as
-// the separator.
+// All but one of the std::vector properties contain text which could have commas in it, so we need
+// to use a '|' character as the separator.
 
-tt_string NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
+tt_string
+    NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
 {
     tt_string result;
     for (auto& field: fields)
@@ -548,8 +558,10 @@ tt_string NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITE
         if (result.size())
             result << ';';
         result << item.label;
-        if (item.enabled.atoi() != 1 || item.show.atoi() != 1 || item.tooltip.size() || item.helptext.size())
-            result << '|' << item.enabled << '|' << item.show << '|' << item.tooltip << '|' << item.helptext;
+        if (item.enabled.atoi() != 1 || item.show.atoi() != 1 || item.tooltip.size() ||
+            item.helptext.size())
+            result << '|' << item.enabled << '|' << item.show << '|' << item.tooltip << '|'
+                   << item.helptext;
     }
     return result;
 }

@@ -14,7 +14,7 @@
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
 #include "mainapp.h"         // App -- App class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
 
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
@@ -186,7 +186,8 @@ void ImportDlg::OnOK(wxCommandEvent& event)
 
 void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 {
-    wxDirDialog dlg(this, "Choose directory", wxEmptyString, wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    wxDirDialog dlg(this, "Choose directory", wxEmptyString,
+                    wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
     dlg.SetPath(m_static_cwd->GetLabel());
     if (dlg.ShowModal() != wxID_OK)
         return;
@@ -435,11 +436,12 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
 
                 auto type = line.view_stepover();
 
-                // If there is a DESIGNINFO section, there may be a DIALOG specified for APSTUDIO to used -- however that
-                // dialog may not actually exist. So instead, we look for a trailing space which should indicate the
-                // statement is followed by dimensions.
+                // If there is a DESIGNINFO section, there may be a DIALOG specified for APSTUDIO to
+                // used -- however that dialog may not actually exist. So instead, we look for a
+                // trailing space which should indicate the statement is followed by dimensions.
 
-                if (type.starts_with("DIALOG ") || type.starts_with("DIALOGEX ") || type.starts_with("MENU"))
+                if (type.starts_with("DIALOG ") || type.starts_with("DIALOGEX ") ||
+                    type.starts_with("MENU"))
                 {
                     found = true;
                     break;

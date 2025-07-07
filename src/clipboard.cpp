@@ -24,7 +24,8 @@ bool isClipboardDataAvailable()
         return true;
     else if (wxTheClipboard->IsSupported(wxDataFormat("wxSmith XML")))
         return true;
-    else if (wxTheClipboard->IsSupported(wxDataFormat("DataObject")) && wxTheClipboard->IsSupported(wxDF_TEXT))
+    else if (wxTheClipboard->IsSupported(wxDataFormat("DataObject")) &&
+             wxTheClipboard->IsSupported(wxDF_TEXT))
         return true;
 
     return false;
@@ -37,9 +38,9 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
     {
         if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
         {
-            // Start by getting the stored hash number and comparing it with our internal clipboard hash number. If they are
-            // the same, then assume nothing has changed and avoid the memory allocation and parsing and simply use the
-            // internal clipboard.
+            // Start by getting the stored hash number and comparing it with our internal clipboard
+            // hash number. If they are the same, then assume nothing has changed and avoid the
+            // memory allocation and parsing and simply use the internal clipboard.
 
             wxUEDataObject data;
             wxTheClipboard->GetData(data);
@@ -52,8 +53,9 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
 
         if (wxTheClipboard->IsSupported(wxDF_TEXT))
         {
-            // We can't use wxTextDataObject on Windows because it will convert the text to UNICODE using the current locale.
-            // The text we are retrieving is UTF8 and we don't need wxString to convert it to UTF16 since we use is directly.
+            // We can't use wxTextDataObject on Windows because it will convert the text to UNICODE
+            // using the current locale. The text we are retrieving is UTF8 and we don't need
+            // wxString to convert it to UTF16 since we use is directly.
 
             wxUtf8DataObject data;
             wxTheClipboard->GetData(data);
@@ -79,7 +81,8 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
             auto new_node = fb.CreateFbpNode(root, nullptr);
             if (fb.GetErrors().size() && warn_if_problems)
             {
-                tt_string errMsg("Not everything from the wxFormBuilder object could be converted:\n\n");
+                tt_string errMsg(
+                    "Not everything from the wxFormBuilder object could be converted:\n\n");
                 for (auto& iter: fb.GetErrors())
                 {
                     errMsg << iter << '\n';
@@ -116,8 +119,8 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
 
 bool wxUtf8DataObject::SetData(size_t len, const void* buf)
 {
-    // We should never even come close to this amount. It's much more likely that a length this size is an attempt by malware
-    // to crash any program attempting to paste clipboard data.
+    // We should never even come close to this amount. It's much more likely that a length this size
+    // is an attempt by malware to crash any program attempting to paste clipboard data.
     if (len > (1024 * 1024 * 1024))
         return false;
 

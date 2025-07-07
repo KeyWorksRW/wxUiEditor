@@ -33,13 +33,13 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         ASSERT(grandparent && grandparent->isGen(gen_wxTreebook));
 
         auto grand_window = getMockup()->GetMockupContent()->Get_wxObject(grandparent);
-        widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                             DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY,
+                             DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
     }
     else
     {
-        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                             GetStyleInt(node));
+        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                             DlgSize(node, prop_size), GetStyleInt(node));
     }
 
     if (node_parent->isGen(gen_BookPage))
@@ -53,8 +53,8 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         auto tree = wxDynamicCast(parent, wxTreebook);
         ASSERT(tree);
 
-        // To find an image previously added to the treebook's image list, we need to iterate through treebooks's pages and
-        // sub-pages until we find the matching node.
+        // To find an image previously added to the treebook's image list, we need to iterate
+        // through treebooks's pages and sub-pages until we find the matching node.
 
         if (node->hasValue(prop_bitmap) && isBookDisplayImages(node))
         {
@@ -88,7 +88,8 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
-        if (node->hasValue(prop_bitmap) && (node_parent->as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
+        if (node->hasValue(prop_bitmap) &&
+            (node_parent->as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
         {
             int idx_image = -1;
             bool is_image_found { false };
@@ -219,7 +220,12 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         // not needed.
         code.Replace(", wxID_ANY)", ")");
 
-        code.Eol().NodeName(treebook).Function("AddSubPage(").NodeName().Comma().QuotedString(prop_label);
+        code.Eol()
+            .NodeName(treebook)
+            .Function("AddSubPage(")
+            .NodeName()
+            .Comma()
+            .QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))
@@ -266,14 +272,19 @@ bool BookPageGenerator::ConstructionCode(Code& code)
             code.Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
         }
         else
-            code.Eol().ParentName().Function("AddPage(").NodeName().Comma().QuotedString(prop_label);
+            code.Eol()
+                .ParentName()
+                .Function("AddPage(")
+                .NodeName()
+                .Comma()
+                .QuotedString(prop_label);
 
         // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))
             code.Comma().True();
 
-        if (node->hasValue(prop_bitmap) &&
-            (node->getParent()->as_bool(prop_display_images) || node->getParent()->isGen(gen_wxToolbook)))
+        if (node->hasValue(prop_bitmap) && (node->getParent()->as_bool(prop_display_images) ||
+                                            node->getParent()->isGen(gen_wxToolbook)))
         {
             auto node_parent = node->getParent();
             int idx_image = -1;
@@ -310,8 +321,8 @@ bool BookPageGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
     return true;
@@ -342,7 +353,8 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     else if (node->getParent()->isGen(gen_wxPropertySheetDialog))
         page_type = "propertysheetpage";
     else
-        FAIL_MSG("BookPageGenerator needs to know what to call the pages to pass to the XRC handler.")
+        FAIL_MSG(
+            "BookPageGenerator needs to know what to call the pages to pass to the XRC handler.")
 
     GenXrcObjectAttributes(node, item, page_type);
     // if (depth > 0)
@@ -373,7 +385,8 @@ void BookPageGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxBookCtrlXmlHandlerBase");
 }
 
-bool BookPageGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool BookPageGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                   GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

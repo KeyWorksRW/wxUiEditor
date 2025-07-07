@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <set>
-
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "undo_cmds.h"
@@ -20,8 +18,6 @@
 #include "project_handler.h"      // ProjectHandler class
 #include "utils.h"                // Utility functions that work with properties
 
-#include "generate/gen_images_list.h"  // Needed for GatherImages() declaration
-
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
 InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos)
@@ -29,12 +25,14 @@ InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& un
     Init(node->getSharedPtr(), parent->getSharedPtr(), undo_str, pos);
 }
 
-InsertNodeAction::InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos)
+InsertNodeAction::InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent,
+                                   tt_string_view undo_str, int pos)
 {
     Init(node, parent, undo_str, pos);
 }
 
-void InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos)
+void InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent,
+                            tt_string_view undo_str, int pos)
 {
     m_old_selected = wxGetFrame().getSelectedNodePtr();
     m_node = node;
@@ -52,7 +50,8 @@ void InsertNodeAction::Change()
 {
     m_node->setParent(m_parent);
 
-    ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer), "Only use AppendGridBagAction to add items to a wxGridBagSizer!");
+    ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer),
+               "Only use AppendGridBagAction to add items to a wxGridBagSizer!");
 
     if (m_pos == -1 && m_parent->isSizer() && m_parent->getChildCount() > 0 &&
         m_parent->getChildPtr(m_parent->getChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
@@ -70,8 +69,8 @@ void InsertNodeAction::Change()
 
     if (m_fix_duplicate_names)
     {
-        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that any
-        // name changes to other nodes cannot be undone.
+        // This needs to be done only once, even if the insertion is reverted and then changed
+        // again. The reason is that any name changes to other nodes cannot be undone.
 
         m_node->fixDuplicateNodeNames();
         m_fix_duplicate_names = false;
@@ -82,8 +81,8 @@ void InsertNodeAction::Change()
         wxGetFrame().FireCreatedEvent(m_node.get());
     }
 
-    // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
-    // node set correctly.
+    // Probably not necessary, but with both parameters set to false, this simply ensures the
+    // mainframe has it's selection node set correctly.
     if (isAllowedSelectEvent())
         wxGetFrame().SelectNode(m_node.get(), evt_flags::no_event);
 }
@@ -107,7 +106,8 @@ RemoveNodeAction::RemoveNodeAction(Node* node, const tt_string& undo_str, bool A
     Init(node->getSharedPtr(), undo_str, AddToClipboard);
 }
 
-RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str, bool AddToClipboard)
+RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str,
+                                   bool AddToClipboard)
 {
     Init(node, undo_str, AddToClipboard);
 }
@@ -137,7 +137,8 @@ void RemoveNodeAction::Change()
 
     if (m_parent->getChildCount())
     {
-        auto pos = (m_old_pos < m_parent->getChildCount() ? m_old_pos : m_parent->getChildCount() - 1);
+        auto pos =
+            (m_old_pos < m_parent->getChildCount() ? m_old_pos : m_parent->getChildCount() - 1);
         if (isAllowedSelectEvent())
             wxGetFrame().SelectNode(m_parent->getChild(pos));
     }
@@ -160,7 +161,8 @@ void RemoveNodeAction::Revert()
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, tt_string_view value) : m_property(prop)
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, tt_string_view value) :
+    m_property(prop)
 {
     m_undo_string << "change " << prop->declName();
 
@@ -194,7 +196,8 @@ void ModifyPropertyAction::Revert()
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
-ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events) : UndoAction(undo_string)
+ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events) :
+    UndoAction(undo_string)
 {
     m_fire_events = fire_events;
     m_RedoEventGenerated = true;
@@ -252,7 +255,8 @@ size_t ModifyProperties::GetMemorySize()
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) : m_event(event), m_change_value(value)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) :
+    m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
 
@@ -442,7 +446,8 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
     if (old_node->hasValue(prop_validator_variable))
     {
         new_node->set_value(prop_validator_variable, old_node->as_string(prop_validator_variable));
-        new_node->set_value(prop_validator_data_type, old_node->as_string(prop_validator_data_type));
+        new_node->set_value(prop_validator_data_type,
+                            old_node->as_string(prop_validator_data_type));
     }
 
     if (old_node->isGen(gen_wxComboBox) && new_node->isGen(gen_wxChoice))
@@ -529,7 +534,8 @@ ChangeParentAction::ChangeParentAction(Node* node, Node* parent, int pos)
     Init(node->getSharedPtr(), parent->getSharedPtr(), pos);
 }
 
-ChangeParentAction::ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent, int pos)
+ChangeParentAction::ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent,
+                                       int pos)
 {
     Init(node, parent, pos);
 }
@@ -579,7 +585,8 @@ void ChangeParentAction::Change()
         else
             result = m_change_parent->addChild(m_node);
         ASSERT_MSG(result, tt_string("Unable to change parent of ")
-                               << m_node->getNodeName() << " to " << m_change_parent->getNodeName());
+                               << m_node->getNodeName() << " to "
+                               << m_change_parent->getNodeName());
         if (result)
         {
             m_node->setParent(m_change_parent);
@@ -643,8 +650,8 @@ void AppendGridBagAction::Change()
 
     if (m_fix_duplicate_names)
     {
-        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that
-        // any name changes to other nodes cannot be undone.
+        // This needs to be done only once, even if the insertion is reverted and then changed
+        // again. The reason is that any name changes to other nodes cannot be undone.
 
         m_node->fixDuplicateNodeNames();
         m_fix_duplicate_names = false;
@@ -667,7 +674,8 @@ void AppendGridBagAction::Revert()
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
 
-GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) : UndoAction(undo_str.c_str())
+GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) :
+    UndoAction(undo_str.c_str())
 {
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;

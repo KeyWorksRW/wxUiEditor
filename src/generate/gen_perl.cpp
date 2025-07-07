@@ -21,7 +21,7 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -110,7 +110,9 @@ const char* perl_begin_cmt_block = "=pod";
 // This *MUST* be written without any indendation
 const char* perl_end_cmt_block = "=cut";
 
-PerlCodeGenerator::PerlCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_PERL, form_node) {}
+PerlCodeGenerator::PerlCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_PERL, form_node)
+{
+}
 
 void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
@@ -121,7 +123,8 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&PerlCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_get_events(&PerlCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(m_events));
     std::thread thrd_need_img_func(&PerlCodeGenerator::ParseImageProperties, this, m_form_node);
     std::thread thrd_collect_img_headers(&PerlCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
@@ -161,8 +164,8 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #else
     if (m_panel_type != NOT_PANEL)
     {
-        m_source->writeLine(
-            "-- The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+        m_source->writeLine("-- The following comment block is only displayed in a _DEBUG build, "
+                            "or when written to a file.\n\n");
     }
 #endif  // _DEBUG
     {
@@ -195,7 +198,8 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     m_source->writeLine();
-    m_source->writeLine("use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
+    m_source->writeLine(
+        "use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
     m_source->writeLine("use strict;");
 
     try
@@ -207,7 +211,8 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #if defined(_DEBUG)
         MSG_ERROR(err.what());
 #else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error", wxICON_ERROR | wxOK);
+        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
+                                  wxICON_ERROR | wxOK);
         dlg_error.ShowModal();
 #endif  // _DEBUG
     }
@@ -455,13 +460,15 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
         return;
     }
 
-    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate
+    // each function once.
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_PERL);
     auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
     {
-        return (EventHandlerDlg::GetPerlValue(a->get_value()) < EventHandlerDlg::GetPerlValue(b->get_value()));
+        return (EventHandlerDlg::GetPerlValue(a->get_value()) <
+                EventHandlerDlg::GetPerlValue(b->get_value()));
     };
 
     // Sort events by function name
@@ -525,13 +532,15 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
 
-            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them "
+                     "below the comment block, or "
                      "to your inherited class.");
             break;
         }
         if (is_all_events_implemented)
         {
-            // If the user has defined all the event handlers, then we don't need to output anything else.
+            // If the user has defined all the event handlers, then we don't need to output anything
+            // else.
             return;
         }
     }
@@ -540,7 +549,8 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
         // The user hasn't defined their own event handlers in this module
         is_all_events_implemented = false;
 
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your "
+                 "inherited class.");
     }
     m_source->writeLine(code);
 
@@ -616,7 +626,8 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
 
 void PerlCodeGenerator::CheckMimeBase64Requirement(Code& code)
 {
-    ASSERT_MSG(m_embedded_images.size(), "CheckMimeBase64Requirement() should only be called if there are embedded images");
+    ASSERT_MSG(m_embedded_images.size(),
+               "CheckMimeBase64Requirement() should only be called if there are embedded images");
     if (m_embedded_images.empty())
     {
         return;
@@ -761,7 +772,8 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
         FontProperty fontprop(node->getPropPtr(prop_font));
         if (fontprop.isDefGuiFont())
         {
-            // If the font is a default GUI font, then we need to include the wxDefaultGuiFont constant.
+            // If the font is a default GUI font, then we need to include the wxDefaultGuiFont
+            // constant.
             m_use_expands.emplace("use Wx qw[:systemsettings];");
         }
     }
@@ -834,7 +846,8 @@ bool PerlBitmapList(Code& code, GenEnum::PropName prop)
     ASSERT_MSG(description.size(), "PerlBitmapList called with empty description");
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-    if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
+    if (parts[IndexImage].empty() || parts[IndexType].contains("Art") ||
+        parts[IndexType].contains("SVG"))
     {
         return false;
     }

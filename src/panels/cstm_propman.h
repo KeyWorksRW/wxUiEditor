@@ -5,8 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// In order to use a custom wxPropertyGrid, you have to create a class derived from wxPropertyGridManager and override the
-// CreatePropertyGrid method.
+// In order to use a custom wxPropertyGrid, you have to create a class derived from
+// wxPropertyGridManager and override the CreatePropertyGrid method.
 
 #pragma once
 

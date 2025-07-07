@@ -128,7 +128,8 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 
     // The auto&& CalcMemory and forced return type is so that we can recursively call this
     // lambda function.
-    auto CalcMemory = [&node_memory](const NodeSharedPtr node, long ref_count, auto&& CalcMemory) -> void
+    auto CalcMemory = [&node_memory](const NodeSharedPtr node, long ref_count,
+                                     auto&& CalcMemory) -> void
     {
         ++node_memory.children;
         if (node.use_count() <= ref_count)
@@ -150,7 +151,8 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 
     // This will iterate through the vector of actions, adding up the memory size (and possible
     // number of node children) for each action in the vector.
-    auto ParseActions = [&](const std::vector<UndoActionPtr>& actions, wxStaticText* ptxt_items, wxStaticText* ptxt_memory)
+    auto ParseActions = [&](const std::vector<UndoActionPtr>& actions, wxStaticText* ptxt_items,
+                            wxStaticText* ptxt_memory)
     {
         node_memory.size = 0;
         node_memory.children = 0;
@@ -166,8 +168,8 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 }
                 else
                 {
-                    // Assume that each child will have a shared ptr to the parent which will increase
-                    // it's reference count by 1.
+                    // Assume that each child will have a shared ptr to the parent which will
+                    // increase it's reference count by 1.
                     long add_ref_count = static_cast<long>(old_node->getChildCount());
 
                     CalcMemory(old_node, add_ref_count + 3, CalcMemory);
@@ -177,8 +179,8 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
             else if (const auto& node = iter->getNode(); node)
             {
                 // An orphaned node will have an additional 2 reference counts at this point. 1 for
-                // iter->getNode() in the function that called us, and one for passing the parameter to
-                // this function. An additional ref count is added by calling CalcMemory.
+                // iter->getNode() in the function that called us, and one for passing the parameter
+                // to this function. An additional ref count is added by calling CalcMemory.
                 CalcMemory(node, 3, CalcMemory);
                 node_memory.size += iter->GetMemorySize();
             }
@@ -193,8 +195,9 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 
         if (node_memory.size > 0)
         {
-            auto txt_totals = std::format(std::locale(""), "{:L} ({:L} node{})", node_memory.size, node_memory.children,
-                                          node_memory.children == 1 ? "" : "s");
+            auto txt_totals =
+                std::format(std::locale(""), "{:L} ({:L} node{})", node_memory.size,
+                            node_memory.children, node_memory.children == 1 ? "" : "s");
             ptxt_memory->SetLabel(txt_totals);
         }
         else

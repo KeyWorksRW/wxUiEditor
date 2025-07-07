@@ -7,8 +7,6 @@
 
 #include "import_winres.h"
 
-#include "mainapp.h"       // App -- App class
-#include "mainframe.h"     // Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 
@@ -66,8 +64,8 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
         m_OutDirectory.assignCwd();
     }
 
-    // First step though the file to find all #includes. Local header files get stored to an array to add to forms.
-    // #included resource files get added to the end of file.
+    // First step though the file to find all #includes. Local header files get stored to an array
+    // to add to forms. #included resource files get added to the end of file.
 
     for (auto& iter: file)
     {
@@ -108,9 +106,10 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
         m_codepage = 1252;
     }
 
-    // Resource statements often continue onto the next line. Processing a statement is more straightforward if
-    // everything needed is on a single line, so we combine those lines here. Note that this will make error messages
-    // about parsing problems not be accurate in terms of the line number.
+    // Resource statements often continue onto the next line. Processing a statement is more
+    // straightforward if everything needed is on a single line, so we combine those lines here.
+    // Note that this will make error messages about parsing problems not be accurate in terms of
+    // the line number.
 
     for (size_t idx = 0; idx < file.size() - 1; ++idx)
     {
@@ -165,7 +164,8 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
 
     try
     {
-        // String tables need to be processed first because we need the id in case it's used as the help string for a menu.
+        // String tables need to be processed first because we need the id in case it's used as the
+        // help string for a menu.
         m_curline = file.FindLineContaining("STRINGTABLE");
         if (tt::is_found(m_curline))
         {
@@ -205,11 +205,13 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                         {
                             auto line = file[m_curline].subview();
                             start = line.find_nonspace();
-                            if (line.empty() || line[start] == '/')  // Ignore blank lines and comments.
+                            if (line.empty() ||
+                                line[start] == '/')  // Ignore blank lines and comments.
                                 continue;
                             if (line[start] == '#')
                             {
-                                if (auto tmp = line.subview(line.find_nonspace() + 1); tmp.starts_with("endif"))
+                                if (auto tmp = line.subview(line.find_nonspace() + 1);
+                                    tmp.starts_with("endif"))
                                 {
                                     break;
                                 }
@@ -219,12 +221,13 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                     }
                     else
                     {
-                        // This is a custom #ifdef and since we're not a compiler, we have no way of knowing whether the
-                        // definition being checked is true or not. All we can do is assume the #ifdef is true and parse
-                        // until either a #else of #endif.
+                        // This is a custom #ifdef and since we're not a compiler, we have no way of
+                        // knowing whether the definition being checked is true or not. All we can
+                        // do is assume the #ifdef is true and parse until either a #else of #endif.
 
                         file.RemoveLine(m_curline);
-                        for (auto erase_position = m_curline; erase_position < file.size(); ++erase_position)
+                        for (auto erase_position = m_curline; erase_position < file.size();
+                             ++erase_position)
                         {
                             curline = file[erase_position].view_nonspace();
                             if (curline.starts_with("#else"))
@@ -244,9 +247,11 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                                 file.RemoveLine(erase_position);
 
                                 while (file[erase_position - 1].size() &&
-                                       (file[erase_position - 1].back() == ',' || file[erase_position - 1].back() == '|'))
+                                       (file[erase_position - 1].back() == ',' ||
+                                        file[erase_position - 1].back() == '|'))
                                 {
-                                    file[erase_position - 1] << file[erase_position].view_nonspace();
+                                    file[erase_position - 1]
+                                        << file[erase_position].view_nonspace();
                                     file[erase_position - 1].trim();
                                     file.RemoveLine(erase_position);
                                 }
@@ -270,7 +275,8 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                 if (forms.size())
                 {
                     auto pos_end = curline.find(' ');
-                    if (auto result = std::find(forms.begin(), forms.end(), curline.substr(0, pos_end));
+                    if (auto result =
+                            std::find(forms.begin(), forms.end(), curline.substr(0, pos_end));
                         result == forms.end())
                     {
                         // dialog id wasn't in the list, so ignore it
@@ -288,7 +294,8 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                 if (forms.size())
                 {
                     auto pos_end = curline.find(' ');
-                    if (auto result = std::find(forms.begin(), forms.end(), curline.substr(0, pos_end));
+                    if (auto result =
+                            std::find(forms.begin(), forms.end(), curline.substr(0, pos_end));
                         result == forms.end())
                     {
                         // menu id wasn't in the list, so ignore it
@@ -307,8 +314,8 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << tt::itoa(m_curline << 1)
-                                  << "\n\n"
+        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line "
+                                  << tt::itoa(m_curline << 1) << "\n\n"
                                   << e.what())
                          .make_wxString(),
                      "RC Parser");
@@ -352,7 +359,8 @@ void WinResource::ParseDialog(tt_string_vector& file)
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line "
+                                  << m_curline + 1 << "\n\n"
                                   << e.what())
                          .make_wxString(),
                      "RC Parser");
@@ -379,7 +387,8 @@ void WinResource::ParseMenu(tt_string_vector& file)
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+        wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line "
+                                  << m_curline + 1 << "\n\n"
                                   << e.what())
                          .make_wxString(),
                      "RC Parser");
@@ -503,7 +512,8 @@ tt_string WinResource::ConvertCodePageString(std::string_view str)
     std::wstring result;
     auto out_size = (str.size() * sizeof(wchar_t)) + sizeof(wchar_t);
     result.reserve(out_size);
-    auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), (to_int) str.size(), result.data(), (to_int) out_size);
+    auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), (to_int) str.size(),
+                                           result.data(), (to_int) out_size);
     return tt::utf16to8(std::wstring_view(result.c_str(), count_chars));
 #else
     return tt_string(str);

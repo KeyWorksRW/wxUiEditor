@@ -13,7 +13,8 @@ class TreeListCtrlGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
+                       bool /* is_preview */) override;
 
     bool ConstructionCode(Code&) override;
 

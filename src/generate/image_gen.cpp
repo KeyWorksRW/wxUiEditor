@@ -103,8 +103,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
-                                         GEN_LANG_PYTHON);
+            auto encoded =
+                base64_encode(iter_array->imgs[0].array_data.get(),
+                              iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
             if (encoded.size())
             {
                 encoded.back() += ")";
@@ -132,8 +133,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded = base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF,
-                                         GEN_LANG_RUBY);
+            auto encoded =
+                base64_encode(iter_array->imgs[0].array_data.get(),
+                              iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
             if (encoded.size())
             {
                 // Remove the trailing '+' character
@@ -177,7 +179,8 @@ std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
 // clang-format on
 
-std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size, GenLang language)
+std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size,
+                                       GenLang language)
 {
     size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
     if (language == GEN_LANG_RUBY)
@@ -188,11 +191,12 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
     size_t line_length = Project.as_size_t(prop) - tab_quote_prefix;
 
-    const std::array<char, 64> base64_chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                                                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                                                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-                                                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                                                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/' };
+    const std::array<char, 64> base64_chars = {
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+        'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+    };
 
     std::vector<std::string> result;
 
@@ -292,7 +296,8 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     {
         if (auto function_name = ProjectImages.GetBundleFuncName(parts); function_name.size())
         {
-            // The function name includes the size, but we need to replace the size with a DIP version.
+            // The function name includes the size, but we need to replace the size with a DIP
+            // version.
             function_name.erase_from("(");
             code.Eol().Tab().Str(function_name);
             if (get_bitmap)
@@ -321,11 +326,16 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     if (code.is_cpp())
     {
         tt_string name = "wxue_img::" + embed->imgs[0].array_name;
-        code.Eol() << "\twxueBundleSVG(" << name << ", " << (to_size_t) (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
+        code.Eol() << "\twxueBundleSVG(" << name << ", "
+                   << (to_size_t) (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
         code.itoa((to_size_t) (embed->imgs[0].array_size >> 32)).Comma();
         if (get_bitmap)
         {
-            code.FormFunction("FromDIP(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
+            code.FormFunction("FromDIP(")
+                .Add("wxSize(")
+                .itoa(svg_size.x)
+                .Comma()
+                .itoa(svg_size.y) += ")))";
             code.Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
         }
         else
@@ -348,14 +358,16 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         {
             svg_name = embed->imgs[0].array_name;
         }
-        code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
+        code.insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(")
+                           << svg_name << "))\n");
         code.Eol() += "\twx.BitmapBundle.FromSVG(_svg_string_";
     }
     else if (code.is_ruby())
     {
         tt_string svg_name;
         svg_name = "$" + embed->imgs[0].array_name;
-        code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
+        code.insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
+                           << svg_name << "))\n");
         code += "Wx::BitmapBundle.from_svg(_svg_string_";
         code.Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
     }
@@ -364,7 +376,8 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     {
         if (!code.is_ruby())
         {
-            code.Comma().CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+            code.Comma().CheckLineLength(
+                sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
             code.FormFunction("FromDIP(").Add("wxSize(");
             code.itoa(svg_size.x).Comma().itoa(svg_size.y) += ")))";
         }
@@ -416,7 +429,8 @@ static void GenerateARTBundle(Code& code, const tt_string_vector& parts, bool ge
         code.Add(art_id);
     }
 
-    // Note that current documentation states that the client is required, but the header file says otherwise
+    // Note that current documentation states that the client is required, but the header file says
+    // otherwise
     if (art_client.size())
     {
         code.Comma();
@@ -480,13 +494,16 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         code.Str("wxue_get_bundle(").Str("$").Str(embed->imgs[0].array_name);
         if (bundle->lst_filenames.size() > 1)
         {
-            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
+                embed2)
             {
                 code.Comma().Str("$").Str(embed2->imgs[0].array_name);
             }
             if (bundle->lst_filenames.size() > 2)
             {
-                if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
+                if (EmbeddedImage* embed3 =
+                        ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
+                    embed3)
                 {
                     code.Comma().Str("$").Str(embed3->imgs[0].array_name);
                 }
@@ -498,9 +515,10 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         {
             code.Str(".get_bitmap(").Eol().Tab(2).Str("Wx::Size.new(");
             code << ("from_dip(") << embed->size.x << "), from_dip(" << embed->size.y << ")))";
-            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be rescaled
-            // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it. However, the
-            // only embedded images we support are bundles, so this probably isn't practical.
+            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be
+            // rescaled using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it.
+            // However, the only embedded images we support are bundles, so this probably isn't
+            // practical.
         }
         return;
     }
@@ -510,13 +528,16 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         code.Str("wxue_get_bundle(").Str("$").Str(embed->imgs[0].array_name);
         if (bundle->lst_filenames.size() > 1)
         {
-            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
+                embed2)
             {
                 code.Comma().Str("$").Str(embed2->imgs[0].array_name);
             }
             if (bundle->lst_filenames.size() > 2)
             {
-                if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
+                if (EmbeddedImage* embed3 =
+                        ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
+                    embed3)
                 {
                     code.Comma().Str("$").Str(embed3->imgs[0].array_name);
                 }
@@ -528,9 +549,10 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         {
             code.Str(".get_bitmap(").Eol().Tab(2).Str("wxSize.new(");
             code << ("from_dip(") << embed->size.x << "), from_dip(" << embed->size.y << ")))";
-            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be rescaled
-            // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it. However, the
-            // only embedded images we support are bundles, so this probably isn't practical.
+            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be
+            // rescaled using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it.
+            // However, the only embedded images we support are bundles, so this probably isn't
+            // practical.
         }
     }
 
@@ -557,7 +579,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
 
         code << name << ", sizeof(" << name << "))";
         code << ".Rescale(";
-        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y << "), wxIMAGE_QUALITY_BILINEAR)";
+        code.Eol() << "\tFromDIP(" << embed->size.x << "), FromDIP(" << embed->size.y
+                   << "), wxIMAGE_QUALITY_BILINEAR)";
     }
     else if (bundle->lst_filenames.size() == 1)
     {
@@ -580,7 +603,10 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             if (get_bitmap)
             {
                 code.Str(".Rescale(").Eol().Tab();
-                code.FormFunction("FromDIP(").itoa(embed->size.x).Str("), ").FormFunction("FromDIP(");
+                code.FormFunction("FromDIP(")
+                    .itoa(embed->size.x)
+                    .Str("), ")
+                    .FormFunction("FromDIP(");
                 code.itoa(embed->size.y) << "), wx.IMAGE_QUALITY_BILINEAR))";
             }
         }
@@ -612,7 +638,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             code += ".Bitmap";
             if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
-                code.Comma().CheckLineLength(embed2->imgs[0].array_name.size() + sizeof(".Bitmap)"));
+                code.Comma().CheckLineLength(embed2->imgs[0].array_name.size() +
+                                             sizeof(".Bitmap)"));
                 code.AddPythonImageName(embed2);
                 code += ".Bitmap";
             }
@@ -622,9 +649,15 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             }
             if (get_bitmap)
             {
-                code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+                code.CheckLineLength(
+                    sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
                 code.Str(").GetBitmap(").Add("wxSize(");
-                code.Eol().Tab().FormFunction("FromDIP(").itoa(embed->size.x).Str("), ").FormFunction("FromDIP(");
+                code.Eol()
+                    .Tab()
+                    .FormFunction("FromDIP(")
+                    .itoa(embed->size.x)
+                    .Str("), ")
+                    .FormFunction("FromDIP(");
                 code.itoa(embed->size.y) << "))";
             }
             code << ')';
@@ -651,7 +684,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
                         name_img = "wxue_img::" + embed_img->imgs[0].array_name;
                     }
                 }
-                code.Eol().Str("bitmaps.push_back(wxueImage(") << name_img << ", sizeof(" << name_img << ")));";
+                code.Eol().Str("bitmaps.push_back(wxueImage(")
+                    << name_img << ", sizeof(" << name_img << ")));";
             }
             code.Eol();
             code.Str("return wxBitmapBundle::FromBitmaps(bitmaps);");
@@ -697,9 +731,13 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             code += " ])";
             if (get_bitmap)
             {
-                code.CheckLineLength(sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
+                code.CheckLineLength(
+                    sizeof("FromDIP(wx::Size.new(32, 32))).GetBitmap(wxDefaultSize)"));
                 code.Str(".GetBitmap(").Add("wxSize(");
-                code.FormFunction("FromDIP(").itoa(embed->size.x).Str("), ").FormFunction("FromDIP(");
+                code.FormFunction("FromDIP(")
+                    .itoa(embed->size.x)
+                    .Str("), ")
+                    .FormFunction("FromDIP(");
                 code.itoa(embed->size.y) << ")))";
             }
         }
@@ -708,7 +746,8 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
 
 static void GenerateXpmBitmap(Code& code, const tt_string_vector& parts, bool /* get_bitmap */)
 {
-    // We only marginally support XPM files -- we only allow a single file, and we don't attempt to scale it.
+    // We only marginally support XPM files -- we only allow a single file, and we don't attempt to
+    // scale it.
 
     tt_string name(parts[IndexImage].filename());
     if (code.is_cpp())

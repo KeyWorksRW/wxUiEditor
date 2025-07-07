@@ -20,7 +20,8 @@
 wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer =
-        new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow), node->as_wxString(prop_label));
+        new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow),
+                             node->as_wxString(prop_label));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -57,7 +58,8 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name = name.NodeName();
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
+            else if (parent->isGen(gen_wxStaticBoxSizer) ||
+                     parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
                 parent_name = parent->getNodeName(code.get_language());
@@ -154,8 +156,8 @@ bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
@@ -166,7 +168,8 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxStaticBoxSizer()
 
-int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                          size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;

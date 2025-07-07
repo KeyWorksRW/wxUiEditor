@@ -146,7 +146,8 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     {
         if (auto node = wxGetFrame().getSelectedNode(); node)
         {
-            if (node->isType(type_tool) || node->isType(type_ribbontool) || node->isType(type_aui_tool))
+            if (node->isType(type_tool) || node->isType(type_ribbontool) ||
+                node->isType(type_aui_tool))
             {
                 m_client = "wxART_TOOLBAR";
             }
@@ -187,7 +188,8 @@ void ArtBrowserDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
             {
                 m_canvas->SetSize(bmp.GetWidth(), bmp.GetHeight());
                 m_canvas->SetBitmap(bmp);
-                m_text->SetLabel(wxString().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
+                m_text->SetLabel(
+                    wxString().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
                 Layout();
             }
             Refresh();
@@ -199,7 +201,8 @@ void ArtBrowserDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
 void ArtBrowserDialog::ChangeClient()
 {
-    // Save the current selection before all items are deleted. Restore the selection after the new items have been added.
+    // Save the current selection before all items are deleted. Restore the selection after the new
+    // items have been added.
     auto sel = m_list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (sel < 0)
         sel = 0;
@@ -210,7 +213,8 @@ void ArtBrowserDialog::ChangeClient()
     wxVector<wxBitmapBundle> bitmap_bundles;
     for (auto& iter: set_art_ids)
     {
-        if (auto bundle = wxArtProvider::GetBitmapBundle(iter, wxART_MAKE_CLIENT_ID_FROM_STR(m_client), wxSize(16, 16));
+        if (auto bundle = wxArtProvider::GetBitmapBundle(
+                iter, wxART_MAKE_CLIENT_ID_FROM_STR(m_client), wxSize(16, 16));
             bundle.IsOk())
         {
             bitmap_bundles.push_back(bundle);

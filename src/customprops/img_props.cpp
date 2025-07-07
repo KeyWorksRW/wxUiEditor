@@ -9,7 +9,7 @@
 
 #include "image_handler.h"   // ImageHandler class
 #include "img_props.h"       // ImageProperties
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 void ImageProperties::InitValues(tt_string_view value)
@@ -42,7 +42,8 @@ void ImageProperties::InitValues(tt_string_view value)
             {
                 tt_view_vector art_str(mstr[IndexArtID], '|', tt::TRIM::both);
                 wxString art_id = art_str[0].make_wxString();
-                auto bmp = wxArtProvider::GetBitmap(art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                auto bmp = wxArtProvider::GetBitmap(
+                    art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
                 if (bmp.IsOk())
                 {
                     m_size = bmp.GetSize();

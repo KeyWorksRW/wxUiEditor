@@ -8,9 +8,7 @@
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/string.h>    // wxString class
 
-#include <cstdarg>  // for va_list
 #include <cstring>
-#include <sstream>  // for std::stringstream
 
 #include "tt_string.h"
 
@@ -114,11 +112,12 @@ tt_string& tt_string::trim(tt::TRIM where)
             erase(len + 1, length() - len);
     }
 
-    // If trim(right) was called above, the string may now be empty -- front() fails on an empty string
+    // If trim(right) was called above, the string may now be empty -- front() fails on an empty
+    // string
     if (!empty() && (where == tt::TRIM::left || where == tt::TRIM::both))
     {
-        // Assume that most strings won't start with whitespace, so return as quickly as possible if that is the
-        // case.
+        // Assume that most strings won't start with whitespace, so return as quickly as possible if
+        // that is the case.
         if (!tt::is_whitespace(front()))
             return *this;
 
@@ -158,8 +157,8 @@ tt_string_view tt_string::view_substr(size_t offset, char chBegin, char chEnd) c
         auto start = offset;
         while (offset < size() && at(offset) != chEnd)
         {
-            // REVIEW: [KeyWorks - 01-26-2020] '\"' is also valid for the C compiler, though the slash
-            // is unnecessary. Should we support it?
+            // REVIEW: [KeyWorks - 01-26-2020] '\"' is also valid for the C compiler, though the
+            // slash is unnecessary. Should we support it?
 
             // only check quotes -- a slash is valid before other character pairs.
             if (at(offset) == '\\' && (chBegin == '"' || chBegin == '\'') && offset + 1 < size() &&
@@ -176,8 +175,8 @@ tt_string_view tt_string::view_substr(size_t offset, char chBegin, char chEnd) c
     }
     else
     {
-        // if the string didn't start with chBegin, just copy the string. Note that offset may have changed if
-        // chBegin was not whitespace and at(offset) was whitespace.
+        // if the string didn't start with chBegin, just copy the string. Note that offset may have
+        // changed if chBegin was not whitespace and at(offset) was whitespace.
 
         return subview(offset);
     }
@@ -210,13 +209,14 @@ size_t tt_string::AssignSubString(std::string_view src, char chBegin, char chEnd
         auto start = pos;
         while (pos < src.length() && src[pos] != chEnd)
         {
-            // REVIEW: [KeyWorks - 01-26-2020] '\"' is also valid for the C compiler, though the slash
-            // is unnecessary. Should we support it?
+            // REVIEW: [KeyWorks - 01-26-2020] '\"' is also valid for the C compiler, though the
+            // slash is unnecessary. Should we support it?
 
             // only check quotes and backslashes -- a slash is ignored before other character pairs.
             if (src[pos] == '\\' && pos + 1 < src.length())
             {
-                if (src[pos + 1] == '\\' || ((chBegin == '"' || chBegin == '\'') && src[pos + 1] == chEnd))
+                if (src[pos + 1] == '\\' ||
+                    ((chBegin == '"' || chBegin == '\'') && src[pos + 1] == chEnd))
                 {
                     // step over an escaped quote if the string to fetch is within a quote
                     pos += 2;
@@ -238,8 +238,8 @@ size_t tt_string::AssignSubString(std::string_view src, char chBegin, char chEnd
 
 /**
  * @param str -- the string to extract from
- * @param start -- the offset into the string to begin extraction from -- this should either be to leading
- *                 whitespace, or to the character that marks the beginning of the sub string.
+ * @param start -- the offset into the string to begin extraction from -- this should either be to
+ * leading whitespace, or to the character that marks the beginning of the sub string.
  * @return The offset to the character that terminated extraction, or **npos** if a terminating
  *         character could not be found.
  */
@@ -282,7 +282,8 @@ size_t tt_string::ExtractSubString(std::string_view src, size_t start)
     for (++pos; pos < src.length(); ++pos)
     {
         // only check quotes -- a slash is valid before other character pairs.
-        if (src[pos] == '\\' && (chBegin == '"' || chBegin == '\'') && pos + 1 < src.length() && (src[pos + 1] == chEnd))
+        if (src[pos] == '\\' && (chBegin == '"' || chBegin == '\'') && pos + 1 < src.length() &&
+            (src[pos + 1] == chEnd))
         {
             // step over an escaped quote if the string to fetch is within a quote
             ++pos;
@@ -308,7 +309,8 @@ size_t tt_string::ExtractSubString(std::string_view src, size_t start)
  * @param CaseSensitive -- indicates whether or not to use a case-insensitive search
  * @return Number of replacements made
  */
-size_t tt_string::Replace(std::string_view oldtext, std::string_view newtext, bool replace_all, tt::CASE checkcase)
+size_t tt_string::Replace(std::string_view oldtext, std::string_view newtext, bool replace_all,
+                          tt::CASE checkcase)
 {
     if (oldtext.empty())
         return false;
@@ -382,7 +384,8 @@ size_t tt_string::locate(std::string_view str, size_t posStart, tt::CASE checkca
                 {
                     if (pos + posSub >= length())
                         return npos;
-                    if (std::tolower(at(pos + posSub), utf8locale) != std::tolower(str.at(posSub), utf8locale))
+                    if (std::tolower(at(pos + posSub), utf8locale) !=
+                        std::tolower(str.at(posSub), utf8locale))
                         break;
                 }
                 if (posSub >= str.length())
@@ -517,11 +520,13 @@ tt_string_view tt_string::filename() const noexcept
     auto pos = find_last_of('/');
 
 #ifdef _WIN32
-    // Windows filenames can contain both forward and back slashes, so check for a backslash as well.
+    // Windows filenames can contain both forward and back slashes, so check for a backslash as
+    // well.
     auto back = find_last_of('\\');
     if (back != npos)
     {
-        // If there is no forward slash, or the backslash appears after the forward slash, then use it's position.
+        // If there is no forward slash, or the backslash appears after the forward slash, then use
+        // it's position.
         if (pos == npos || back > pos)
             pos = back;
     }
@@ -544,11 +549,13 @@ size_t tt_string::find_filename() const noexcept
     auto pos = find_last_of('/');
 
 #ifdef _WIN32
-    // Windows filenames can contain both forward and back slashes, so check for a backslash as well.
+    // Windows filenames can contain both forward and back slashes, so check for a backslash as
+    // well.
     auto back = find_last_of('\\');
     if (back != npos)
     {
-        // If there is no forward slash, or the backslash appears after the forward slash, then use it's position.
+        // If there is no forward slash, or the backslash appears after the forward slash, then use
+        // it's position.
         if (pos == npos || back > pos)
             pos = back;
     }
@@ -574,11 +581,13 @@ tt_string& tt_string::replace_filename(std::string_view newFilename)
     auto pos = find_last_of('/');
 
 #ifdef _WIN32
-    // Windows filenames can contain both forward and back slashes, so check for a backslash as well.
+    // Windows filenames can contain both forward and back slashes, so check for a backslash as
+    // well.
     auto back = find_last_of('\\');
     if (back != npos)
     {
-        // If there is no forward slash, or the backslash appears after the forward slash, then use it's position.
+        // If there is no forward slash, or the backslash appears after the forward slash, then use
+        // it's position.
         if (pos == npos || back > pos)
             pos = back;
     }

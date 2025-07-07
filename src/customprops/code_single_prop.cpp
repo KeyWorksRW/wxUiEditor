@@ -48,7 +48,8 @@ public:
         {
             if (m_node->isPropValue(prop_class_access, "none"))
                 static_text << "auto ";
-            static_text << m_node->as_string(prop_var_name) << " = new " << m_node->as_string(prop_class_name);
+            static_text << m_node->as_string(prop_var_name) << " = new "
+                        << m_node->as_string(prop_class_name);
             static_text << m_textCtrl->GetValue().utf8_string() << ';';
         }
         m_static_hdr_text->SetLabel(static_text.make_wxString());
@@ -59,7 +60,8 @@ private:
     NodeProperty* m_prop;
 };
 
-bool EditCodeSingleDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
+bool EditCodeSingleDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
+                                               wxPGProperty* WXUNUSED(property))
 {
     EditCodeSingleDialog dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

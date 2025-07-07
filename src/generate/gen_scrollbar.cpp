@@ -17,11 +17,12 @@
 
 wxObject* ScrollBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                  DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                        DlgSize(node, prop_size), GetStyleInt(node));
 
-    widget->SetScrollbar(node->as_int(prop_position), node->as_int(prop_thumbsize), node->as_int(prop_range),
-                         node->as_int(prop_pagesize));
+    widget->SetScrollbar(node->as_int(prop_position), node->as_int(prop_thumbsize),
+                         node->as_int(prop_range), node->as_int(prop_pagesize));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -38,14 +39,19 @@ bool ScrollBarGenerator::ConstructionCode(Code& code)
 
 bool ScrollBarGenerator::SettingsCode(Code& code)
 {
-    code.NodeName().Function("SetScrollbar(").as_string(prop_position).Comma().as_string(prop_thumbsize);
+    code.NodeName()
+        .Function("SetScrollbar(")
+        .as_string(prop_position)
+        .Comma()
+        .as_string(prop_thumbsize);
     code.Comma().as_string(prop_range).Comma().as_string(prop_pagesize).EndFunction();
     return true;
 }
 
 int ScrollBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxScrollBar");
@@ -71,8 +77,8 @@ void ScrollBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxScrollBarXmlHandler");
 }
 
-bool ScrollBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool ScrollBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolbar.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))

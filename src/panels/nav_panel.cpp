@@ -26,7 +26,7 @@
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 
@@ -67,10 +67,12 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
 {
     SetWindowStyle(wxBORDER_RAISED);
 
-    m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
+    m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                 wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
 
     int index = 0;
-    wxSize gen_image_size = parent->FromDIP(wxSize(UserPrefs.get_IconSize(), UserPrefs.get_IconSize()));
+    wxSize gen_image_size =
+        parent->FromDIP(wxSize(UserPrefs.get_IconSize(), UserPrefs.get_IconSize()));
 
     wxVector<wxBitmapBundle> bundles;
     for (auto iter: NodeCreation.getNodeDeclarationArray())
@@ -201,7 +203,8 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.getProjectNode()), GetImageIndex(Project.getProjectNode()), -1);
+    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.getProjectNode()),
+                                     GetImageIndex(Project.getProjectNode()), -1);
     m_node_tree_map[Project.getProjectNode()] = root;
     m_tree_node_map[root] = Project.getProjectNode();
 
@@ -269,26 +272,29 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
 
         if (Project.getCodePreference() == GEN_LANG_PYTHON)
         {
-            if (std::find(unsupported_gen_python.begin(), unsupported_gen_python.end(), iter->second->getGenName()) !=
-                unsupported_gen_python.end())
+            if (std::find(unsupported_gen_python.begin(), unsupported_gen_python.end(),
+                          iter->second->getGenName()) != unsupported_gen_python.end())
             {
-                wxGetFrame().ShowInfoBarMsg("This control is not supported by wxPython.", wxICON_INFORMATION);
+                wxGetFrame().ShowInfoBarMsg("This control is not supported by wxPython.",
+                                            wxICON_INFORMATION);
             }
         }
         else if (Project.getCodePreference() == GEN_LANG_RUBY)
         {
-            if (std::find(unsupported_gen_ruby.begin(), unsupported_gen_ruby.end(), iter->second->getGenName()) !=
-                unsupported_gen_ruby.end())
+            if (std::find(unsupported_gen_ruby.begin(), unsupported_gen_ruby.end(),
+                          iter->second->getGenName()) != unsupported_gen_ruby.end())
             {
-                wxGetFrame().ShowInfoBarMsg("This control is not supported by wxRuby.", wxICON_INFORMATION);
+                wxGetFrame().ShowInfoBarMsg("This control is not supported by wxRuby.",
+                                            wxICON_INFORMATION);
             }
         }
         else if (Project.as_string(prop_code_preference) == "XRC")
         {
-            if (std::find(unsupported_gen_XRC.begin(), unsupported_gen_XRC.end(), iter->second->getGenName()) !=
-                unsupported_gen_XRC.end())
+            if (std::find(unsupported_gen_XRC.begin(), unsupported_gen_XRC.end(),
+                          iter->second->getGenName()) != unsupported_gen_XRC.end())
             {
-                wxGetFrame().ShowInfoBarMsg("This control is not supported by XRC.", wxICON_INFORMATION);
+                wxGetFrame().ShowInfoBarMsg("This control is not supported by XRC.",
+                                            wxICON_INFORMATION);
             }
         }
 
@@ -320,7 +326,8 @@ void NavigationPanel::OnBeginDrag(wxTreeEvent& event)
     if (node)
     {
         auto* parent = node->getParent();
-        if (node->isGen(gen_Images) || node->isGen(gen_Data) || parent->isGen(gen_Images) || parent->isGen(gen_Data))
+        if (node->isGen(gen_Images) || node->isGen(gen_Data) || parent->isGen(gen_Images) ||
+            parent->isGen(gen_Data))
         {
             event.Veto();
             return;
@@ -342,7 +349,8 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (item == itemSrc)
         {
-            if (wxMessageBox("Do you want to duplicate this item?", "Drop item onto itself", wxYES_NO) == wxYES)
+            if (wxMessageBox("Do you want to duplicate this item?", "Drop item onto itself",
+                             wxYES_NO) == wxYES)
             {
                 wxGetFrame().DuplicateNode(getNode(itemSrc));
                 ExpandAllNodes(wxGetFrame().getSelectedNode());
@@ -377,13 +385,14 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (dst_parent->isSizer())
         {
-            wxMessageBox(tt_string() << "You can't drop a " << node_src->declName() << " onto a sizer.");
+            wxMessageBox(tt_string()
+                         << "You can't drop a " << node_src->declName() << " onto a sizer.");
             return;
         }
         else if (dst_parent->isContainer())
         {
-            wxMessageBox(tt_string() << "You can't drop a " << node_src->declName() << " onto a " << dst_parent->declName()
-                                     << '.');
+            wxMessageBox(tt_string() << "You can't drop a " << node_src->declName() << " onto a "
+                                     << dst_parent->declName() << '.');
             return;
         }
         else if (dst_parent->isGen(gen_Project))
@@ -394,14 +403,16 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         dst_parent = dst_parent->getParent();
         if (!dst_parent)
         {
-            wxMessageBox(tt_string() << node_src->declName() << " can't be dropped onto this target.");
+            wxMessageBox(tt_string()
+                         << node_src->declName() << " can't be dropped onto this target.");
             return;
         }
     }
 
     if (dst_parent->isGen(gen_wxStdDialogButtonSizer))
     {
-        wxMessageBox(tt_string() << "You can't drop a " << node_src->declName() << " onto a wxStdDialogBtnSizer.");
+        wxMessageBox(tt_string() << "You can't drop a " << node_src->declName()
+                                 << " onto a wxStdDialogBtnSizer.");
         return;
     }
 
@@ -410,14 +421,15 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (src_parent == dst_parent)
         {
-            wxMessageBox("You cannot drag and drop an item within the same wxGridBagSizer. Use the Move commands instead.");
+            wxMessageBox("You cannot drag and drop an item within the same wxGridBagSizer. Use the "
+                         "Move commands instead.");
             return;
         }
     }
     else if (src_parent == dst_parent)
     {
-        m_pMainFrame->PushUndoAction(
-            std::make_shared<ChangePositionAction>(node_src, dst_parent->getChildPosition(node_dst)));
+        m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(
+            node_src, dst_parent->getChildPosition(node_dst)));
         return;
     }
 
@@ -447,8 +459,9 @@ void NavigationPanel::InsertNode(Node* node)
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent);
-    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->getChildPosition(node),
-                                            GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
+    auto new_item =
+        m_tree_ctrl->InsertItem(tree_parent, node_parent->getChildPosition(node),
+                                GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
     m_node_tree_map[node] = new_item;
     m_tree_node_map[new_item] = node;
 
@@ -457,7 +470,8 @@ void NavigationPanel::InsertNode(Node* node)
         AddAllChildren(node);
         ExpandAllNodes(node);
     }
-    else if (node->getParent() && (node->getParent()->isType(type_toolbar) || node->getParent()->isType(type_aui_toolbar)))
+    else if (node->getParent() && (node->getParent()->isType(type_toolbar) ||
+                                   node->getParent()->isType(type_aui_toolbar)))
     {
         // Insure that the toolbar is expanded when a new item is added to it
         ChangeExpansion(node->getParent(), false, true);
@@ -472,7 +486,8 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     for (const auto& iter_child: node_parent->getChildNodePtrs())
     {
         auto node = iter_child.get();
-        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
+        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).make_wxString(),
+                                                GetImageIndex(node), -1);
 
         m_node_tree_map[node] = new_item;
         m_tree_node_map[new_item] = node;
@@ -613,8 +628,9 @@ void NavigationPanel::DeleteNode(Node* node)
 
 void NavigationPanel::EraseAllMaps(Node* node)
 {
-    // If you delete a parent tree item it will automatically delete all children, but our maps won't reflect that. To keep
-    // the treeview control and our maps in sync, we need to delete children before we delete the actual item.
+    // If you delete a parent tree item it will automatically delete all children, but our maps
+    // won't reflect that. To keep the treeview control and our maps in sync, we need to delete
+    // children before we delete the actual item.
 
     for (const auto& child: node->getChildNodePtrs())
     {
@@ -637,12 +653,13 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     auto node = event.getNode();
     if (node->getParent() && node->getParent()->isGen(gen_wxGridBagSizer))
     {
-        wxGetFrame().setStatusText(tt_string()
-                                   << "Row: " << node->as_int(prop_row) << ", Column: " << node->as_int(prop_column));
+        wxGetFrame().setStatusText(tt_string() << "Row: " << node->as_int(prop_row)
+                                               << ", Column: " << node->as_int(prop_column));
     }
     else
     {
-        if (node->hasValue(prop_var_name) && !node->as_string(prop_class_access).starts_with("none"))
+        if (node->hasValue(prop_var_name) &&
+            !node->as_string(prop_class_access).starts_with("none"))
             wxGetFrame().setStatusText(node->as_string(prop_var_name));
         else
             wxGetFrame().setStatusText(tt_empty_cstr);
@@ -683,7 +700,8 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
         auto class_name = prop->getNode()->declName();
         if (class_name.contains("bookpage"))
         {
-            if (auto it = m_node_tree_map.find(prop->getNode()->getChild(0)); it != m_node_tree_map.end())
+            if (auto it = m_node_tree_map.find(prop->getNode()->getChild(0));
+                it != m_node_tree_map.end())
             {
                 UpdateDisplayName(it->second, it->first);
             }
@@ -764,7 +782,8 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
             break;
 
         case NavToolbar::id_NavCollExpand:
-            event.Enable((node->getParent() && node->getParent()->getChildCount() > 0) || node->getChildCount() > 0);
+            event.Enable((node->getParent() && node->getParent()->getChildCount() > 0) ||
+                         node->getChildCount() > 0);
             break;
     }
 }
@@ -781,7 +800,8 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
     InsertNode(undo_cmd->getNode());
     m_isSelChangeSuspended = false;
 
-    if (auto iter = m_node_tree_map.find(m_pMainFrame->getSelectedNode()); iter != m_node_tree_map.end())
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->getSelectedNode());
+        iter != m_node_tree_map.end())
     {
         m_tree_ctrl->EnsureVisible(iter->second);
         m_tree_ctrl->SelectItem(iter->second);
@@ -800,7 +820,8 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
     InsertNode(undo_cmd->getNode());
     m_isSelChangeSuspended = false;
 
-    if (auto iter = m_node_tree_map.find(m_pMainFrame->getSelectedNode()); iter != m_node_tree_map.end())
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->getSelectedNode());
+        iter != m_node_tree_map.end())
     {
         m_tree_ctrl->EnsureVisible(iter->second);
         m_tree_ctrl->SelectItem(iter->second);

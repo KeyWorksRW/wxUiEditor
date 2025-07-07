@@ -116,7 +116,8 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                      // Node class
 
 // Defined in mockup_preview.cpp
-void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxSizer* parent_sizer, wxWindow* form_window);
+void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxSizer* parent_sizer,
+                          wxWindow* form_window);
 
 // Defined in gen_xrc.cpp
 std::string GenerateXrcStr(Node* node_start, size_t xrc_flags);
@@ -133,8 +134,10 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
 {
     m_compare_import = compare_import;
 
-    std::string title = m_compare_import ? "Compare Import/Generated XRC" : "Compare C++/XRC Generated UI";
-    if (!Create(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
+    std::string title =
+        m_compare_import ? "Compare Import/Generated XRC" : "Compare C++/XRC Generated UI";
+    if (!Create(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
+                wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
     {
         return false;
     }
@@ -150,7 +153,8 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
         m_staticTextRight->SetLabel("XRC Generated");
     }
 
-    // Everything below up to the customization section is a direct copy of the XrcCompareBase::Create() function
+    // Everything below up to the customization section is a direct copy of the
+    // XrcCompareBase::Create() function
 #if 0
     m_grid_bag_sizer = new wxGridBagSizer();
 
@@ -196,9 +200,12 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                 if (!InitXrc(form_node))
                     return false;
 
-                if (auto object = xrc_resource->LoadObject(this, form_node->as_string(prop_class_name), "wxPanel"); object)
+                if (auto object = xrc_resource->LoadObject(
+                        this, form_node->as_string(prop_class_name), "wxPanel");
+                    object)
                 {
-                    m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
+                    m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2),
+                                          wxGBSpan(1, 1), wxALL, 5);
                 }
                 else
                 {
@@ -212,7 +219,8 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
             {
                 if (form_node->getChildCount() < 1)
                 {
-                    wxMessageBox("Only a dialog's children can be shown -- this dialog has none.", "Compare");
+                    wxMessageBox("Only a dialog's children can be shown -- this dialog has none.",
+                                 "Compare");
                     return false;
                 }
 
@@ -227,21 +235,24 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                     CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
                 }
 
-                // In theory, we should be able to start from the sizer and pass that to m_grid_bag_sizer. In practice, it
-                // causes wxWidgets to crash. I'm not sure why, but setting both the C++ and XRC generators to use wxPanel
-                // solves the problem.
+                // In theory, we should be able to start from the sizer and pass that to
+                // m_grid_bag_sizer. In practice, it causes wxWidgets to crash. I'm not sure why,
+                // but setting both the C++ and XRC generators to use wxPanel solves the problem.
 
-                // GenerateXrcStr will return a wxPanel using the name txt_dlg_name ("_wxue_temp_dlg")
+                // GenerateXrcStr will return a wxPanel using the name txt_dlg_name
+                // ("_wxue_temp_dlg")
                 if (!InitXrc(form_node))
                     return false;
 
                 if (m_compare_import)
                 {
                     if (auto object = xrc_resource->LoadObject(
-                            this, tt_string(form_node->as_string(prop_class_name)) << "_import", "wxPanel");
+                            this, tt_string(form_node->as_string(prop_class_name)) << "_import",
+                            "wxPanel");
                         object)
                     {
-                        m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+                        m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 0),
+                                              wxGBSpan(1, 1), wxALL, 5);
                     }
                     else
                     {
@@ -252,7 +263,8 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
 
                 if (auto object = xrc_resource->LoadObject(this, txt_dlg_name, "wxPanel"); object)
                 {
-                    m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
+                    m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2),
+                                          wxGBSpan(1, 1), wxALL, 5);
                 }
                 else
                 {

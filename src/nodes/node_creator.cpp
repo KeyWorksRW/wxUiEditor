@@ -89,8 +89,8 @@ size_t NodeCreator::countChildrenWithSameType(Node* parent, GenType type) const
         if (type == child->getGenType())
             ++count;
 
-        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
-        // sizer.
+        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one
+        // of them as the top level sizer.
 
         else if (type == type_sizer && child->getGenType() == type_gbsizer)
             ++count;
@@ -103,15 +103,19 @@ size_t NodeCreator::countChildrenWithSameType(Node* parent, GenType type) const
 
 /*
 
-    * This will return nullptr if the parent doesn't allow this child type, or the parent already has the maximum number of
-    * children allowed. E.g., containers can only have one child, splitters can only have two, and sizers can have an
+    * This will return nullptr if the parent doesn't allow this child type, or the parent already
+   has the maximum number of
+    * children allowed. E.g., containers can only have one child, splitters can only have two, and
+   sizers can have an
     * unlimited number.
 
 */
 
-// The parent parameter is used to determine if the parent allows this type of child, and if so how many of those
-// children are allowed. The second part of the pair is a Node:: error code (see enum in node.h).
-std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent, bool verify_language_support)
+// The parent parameter is used to determine if the parent allows this type of child, and if so how
+// many of those children are allowed. The second part of the pair is a Node:: error code (see enum
+// in node.h).
+std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent,
+                                                      bool verify_language_support)
 {
     NodeSharedPtr node;
     NodeDeclaration* node_decl;
@@ -128,9 +132,10 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
 
     if (!node_decl)
     {
-        // Unless the toolbar is a child of a wxAui frame window, there's little to no difference between a wxAuiToolBar and
-        // a wxToolBar. Checking it here allows us to automatically convert imported projects, and then if we ever do decide
-        // to support wxAuiToolBar, imports will immediately switch without having to touch the import code.
+        // Unless the toolbar is a child of a wxAui frame window, there's little to no difference
+        // between a wxAuiToolBar and a wxToolBar. Checking it here allows us to automatically
+        // convert imported projects, and then if we ever do decide to support wxAuiToolBar, imports
+        // will immediately switch without having to touch the import code.
 
         if (name == gen_wxAuiToolBar)
             node_decl = m_a_declarations[gen_wxToolBar];
@@ -146,7 +151,8 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
         return { newNode(node_decl), 0 };
 
     // Check for widgets which can ONLY have a frame for a parent.
-    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_toolbar))
+    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) ||
+        node_decl->isType(type_toolbar))
     {
         if (parent->isType(type_form) && !parent->isType(type_frame_form))
         {
@@ -202,7 +208,8 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
         }
         else if (parent->isGen(gen_wxSplitterWindow))
         {
-            // for splitters, we only care if the type is allowed, and if the splitter only has one child so far.
+            // for splitters, we only care if the type is allowed, and if the splitter only has one
+            // child so far.
             if (parent->getChildCount() < 2)
                 node = newNode(node_decl);
         }
@@ -217,8 +224,9 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
     }
     else
     {
-        // The parent doesn't allow this child type. Since node is empty at this point, we simply fall through and return
-        // it. It's the caller's responsibility to try to find a proper parent.
+        // The parent doesn't allow this child type. Since node is empty at this point, we simply
+        // fall through and return it. It's the caller's responsibility to try to find a proper
+        // parent.
     }
 
     if (verify_language_support && node)
@@ -228,8 +236,8 @@ std::pair<NodeSharedPtr, int> NodeCreator::createNode(GenName name, Node* parent
             auto result = gen->isLanguageVersionSupported(Project.getCodePreference());
             if (!result.first)
             {
-                if (wxMessageBox(result.second + ". Create anyway?", "Unsupported widget", wxYES_NO | wxICON_QUESTION) ==
-                    wxNO)
+                if (wxMessageBox(result.second + ". Create anyway?", "Unsupported widget",
+                                 wxYES_NO | wxICON_QUESTION) == wxNO)
                 {
                     // Because node only has a sigle reference, it will be deleted when it goes out
                     // of scope via this return.
@@ -261,9 +269,10 @@ Node* NodeCreator::isValidCreateParent(GenName name, Node* parent, bool use_recu
 
     if (!node_decl)
     {
-        // Unless the toolbar is a child of a wxAui frame window, there's little to no difference between a wxAuiToolBar and
-        // a wxToolBar. Checking it here allows us to automatically convert imported projects, and then if we ever do decide
-        // to support wxAuiToolBar, imports will immediately switch without having to touch the import code.
+        // Unless the toolbar is a child of a wxAui frame window, there's little to no difference
+        // between a wxAuiToolBar and a wxToolBar. Checking it here allows us to automatically
+        // convert imported projects, and then if we ever do decide to support wxAuiToolBar, imports
+        // will immediately switch without having to touch the import code.
 
         if (name == gen_wxAuiToolBar)
             node_decl = m_a_declarations[gen_wxToolBar];
@@ -272,7 +281,8 @@ Node* NodeCreator::isValidCreateParent(GenName name, Node* parent, bool use_recu
     }
 
     // Check for widgets which can ONLY have a frame for a parent.
-    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_toolbar))
+    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) ||
+        node_decl->isType(type_toolbar))
     {
         if (!parent->isType(type_frame_form))
         {
@@ -323,7 +333,8 @@ Node* NodeCreator::isValidCreateParent(GenName name, Node* parent, bool use_recu
         }
         else if (parent->isGen(gen_wxSplitterWindow))
         {
-            // for splitters, we only care if the type is allowed, and if the splitter only has one child so far.
+            // for splitters, we only care if the type is allowed, and if the splitter only has one
+            // child so far.
             if (parent->getChildCount() < 2)
                 return parent;
         }
@@ -348,7 +359,8 @@ Node* NodeCreator::isValidCreateParent(GenName name, Node* parent, bool use_recu
 }
 
 // Called when the GenName isn't availalble
-std::pair<NodeSharedPtr, int> NodeCreator::createNode(tt_string_view name, Node* parent, bool verify_language_support)
+std::pair<NodeSharedPtr, int> NodeCreator::createNode(tt_string_view name, Node* parent,
+                                                      bool verify_language_support)
 {
     if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
     {
@@ -367,9 +379,11 @@ NodeSharedPtr NodeCreator::makeCopy(Node* node, Node* parent)
     // Sometimes we need to copy a similar node to a new node using the parent as the guide.
     if (parent)
     {
-        if (node->isGen(gen_tool) && (parent->isGen(gen_wxAuiToolBar) || parent->isGen(gen_AuiToolBar)))
+        if (node->isGen(gen_tool) &&
+            (parent->isGen(gen_wxAuiToolBar) || parent->isGen(gen_AuiToolBar)))
             copyObj = newNode(gen_auitool);
-        else if (node->isGen(gen_auitool) && (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar)))
+        else if (node->isGen(gen_auitool) &&
+                 (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar)))
             copyObj = newNode(gen_tool);
     }
 
@@ -390,16 +404,16 @@ NodeSharedPtr NodeCreator::makeCopy(Node* node, Node* parent)
 
     copyObj->copyEventsFrom(node);
 
-    // It will be rare, but sometimes a user may want to copy a form such as FormPanel and paste it into a sizer or a
-    // book. In that case, we need to create the non-form version of the control.
+    // It will be rare, but sometimes a user may want to copy a form such as FormPanel and paste it
+    // into a sizer or a book. In that case, we need to create the non-form version of the control.
     if (parent && !parent->isGen(gen_Project) && node->isForm())
     {
         NodeSharedPtr child_object;
         if (node->isGen(gen_ToolBar))
         {
             child_object = createNode(gen_wxToolBar, parent).first;
-            // REVIEW: [Randalphwa - 10-06-2022] This will fail if the parent is a wxFrame and it already has a toolbar.
-            // Should we let the user know?
+            // REVIEW: [Randalphwa - 10-06-2022] This will fail if the parent is a wxFrame and it
+            // already has a toolbar. Should we let the user know?
         }
         else if (node->isGen(gen_MenuBar))
         {
@@ -411,8 +425,8 @@ NodeSharedPtr NodeCreator::makeCopy(Node* node, Node* parent)
         }
         else if (node->isGen(gen_PanelForm))
         {
-            if (parent->isType(type_choicebook) || parent->isType(type_listbook) || parent->isType(type_notebook) ||
-                parent->isType(type_simplebook))
+            if (parent->isType(type_choicebook) || parent->isType(type_listbook) ||
+                parent->isType(type_notebook) || parent->isType(type_simplebook))
             {
                 child_object = createNode(gen_BookPage, parent).first;
             }

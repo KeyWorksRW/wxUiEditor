@@ -140,7 +140,7 @@ bool NewWizard::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "project_handler.h"      // ProjectHandler class
-#include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
 void NewWizard::OnInit(wxInitDialogEvent& event)
 {
@@ -171,9 +171,10 @@ void NewWizard::createNode()
             static_text->set_value(prop_class_access, "none");
             static_text->set_value(prop_var_name, tt_string("static_text_") << count + 1);
             sizer->adoptChild(static_text);
-            static_text->set_value(prop_label, tt_string("Page #")
-                                                   << count + 1
-                                                   << " -- TODO: replace this control with something more useful...");
+            static_text->set_value(
+                prop_label, tt_string("Page #")
+                                << count + 1
+                                << " -- TODO: replace this control with something more useful...");
             static_text->set_value(prop_wrap, "200");
 
             page->adoptChild(sizer);
@@ -201,7 +202,8 @@ void NewWizard::createNode()
     wxGetFrame().SelectNode(parent_node);
 
     tt_string undo_str("New wxWizard");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
+    wxGetFrame().PushUndoAction(
+        std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().getNavigationPanel()->ChangeExpansion(new_node.get(), true, true);

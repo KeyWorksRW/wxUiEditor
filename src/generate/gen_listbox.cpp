@@ -18,8 +18,9 @@ using namespace code;
 
 wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                0, nullptr, node->as_int(prop_type) | GetStyleInt(node));
+    auto widget = new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                DlgSize(node, prop_size), 0, nullptr,
+                                node->as_int(prop_type) | GetStyleInt(node));
 
     if (node->hasValue(prop_contents))
     {
@@ -99,15 +100,19 @@ bool ListBoxGenerator::SettingsCode(Code& code)
             int sel = code.IntValue(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("SetSelection(")
+                    .as_string(prop_selection_int)
+                    .EndFunction();
             }
         }
     }
     return true;
 }
 
-bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/listbox.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -120,7 +125,8 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int ListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxListBox");

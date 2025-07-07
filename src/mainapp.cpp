@@ -49,24 +49,24 @@
 
 // If wxIMPLEMENT_APP is used, then std::cout and std::cerr will not work.
 
-// If wxIMPLEMENT_APP_CONSOLE is used, a console will be created if the app isn't being run from a console,
-// however std::cout and std::cerr will work.
+// If wxIMPLEMENT_APP_CONSOLE is used, a console will be created if the app isn't being run from a
+// console, however std::cout and std::cerr will work.
 
 wxIMPLEMENT_APP(App);
 // wxIMPLEMENT_APP_CONSOLE(App);
 
 #if defined(_WIN32) && defined(_DEBUG)
 
-// There are several classes that are created during initialization which are not explicitly deleted before the memory check,
-// so don't be surprised to see quite a few memory "leaks"
+// There are several classes that are created during initialization which are not explicitly deleted
+// before the memory check, so don't be surprised to see quite a few memory "leaks"
 
 // Uncomment the following to turn on a memory leak dump on exit.
 // #define USE_CRT_MEMORY_DUMP
 
 #endif  // _WIN32 && defined(_DEBUG)
 
-void ttAssertionHandler(const wxString& filename, int line, const wxString& function, const wxString& cond,
-                        const wxString& msg);
+void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
+                        const wxString& cond, const wxString& msg);
 
 tt_string tt_empty_cstr;
 
@@ -92,8 +92,8 @@ bool App::OnInit()
 
     #else
 
-    // If memory dump shows a leak, uncomment the following and use the memory dump number you want to check. Works with
-    // Visual Studio Debugger, does not work with Visual Studio Code debugger.
+    // If memory dump shows a leak, uncomment the following and use the memory dump number you want
+    // to check. Works with Visual Studio Debugger, does not work with Visual Studio Code debugger.
 
     // _CrtSetBreakAlloc(25045);
     #endif
@@ -101,8 +101,8 @@ bool App::OnInit()
 
     wxInitAllImageHandlers();
 
-    // The name is sort of a standard. More importantly, it is sometimes used as the mask in Windows bitmaps for toolbar
-    // images.
+    // The name is sort of a standard. More importantly, it is sometimes used as the mask in Windows
+    // bitmaps for toolbar images.
     wxTheColourDatabase->AddColour("Grey94", wxColour(240, 240, 240));
 
 #ifdef _MSC_VER
@@ -113,7 +113,8 @@ bool App::OnInit()
 
 #if defined(_WIN32)
     // Docs say we need this since our toolbar bitmaps >16 colors
-    wxSystemOptions::SetOption("msw.remap", 0);  // only remap background of toolbar bitmaps, not the actual content
+    wxSystemOptions::SetOption(
+        "msw.remap", 0);  // only remap background of toolbar bitmaps, not the actual content
 #endif
 
     // If we're just providing text-popups for help, then this is all we need.
@@ -159,11 +160,12 @@ int App::OnRun()
     parser.AddLongOption("gen_all", "generate all language files and exit");
 
     // Just a quick way to generate perl, python, and ruby
-    parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING,
+                         wxCMD_LINE_HIDDEN);
 
     // Primarily used for codegen_test/ but could be used for other coverage testing as well.
-    parser.AddLongOption("gen_coverage", "generate all language types for test coverage", wxCMD_LINE_VAL_STRING,
-                         wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("gen_coverage", "generate all language types for test coverage",
+                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
 
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
@@ -180,7 +182,8 @@ int App::OnRun()
 
     parser.AddLongSwitch("test_menu", "create test menu to the right of the Help menu",
                          wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
-    parser.AddLongSwitch("load_last", "Load last opened project", wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
+    parser.AddLongSwitch("load_last", "Load last opened project",
+                         wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
 
     parser.Parse();
 #if defined(INTERNAL_TESTING)
@@ -225,8 +228,8 @@ int App::OnRun()
             if (!file.file_exists())
             {
                 file_history.RemoveFileFromHistory(0);
-                wxMessageBox(tt_string("Last project file does not exist: ") << file, "Missing Project File",
-                             wxOK | wxICON_ERROR);
+                wxMessageBox(tt_string("Last project file does not exist: ") << file,
+                             "Missing Project File", wxOK | wxICON_ERROR);
             }
             else
             {
@@ -243,8 +246,10 @@ int App::OnRun()
             switch (start_dlg.GetCommandType())
             {
                 case StartupDlg::START_MRU:
-                    if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui", tt::CASE::either) &&
-                        !start_dlg.GetProjectFile().extension().is_sameas(".wxue", tt::CASE::either))
+                    if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui",
+                                                                          tt::CASE::either) &&
+                        !start_dlg.GetProjectFile().extension().is_sameas(".wxue",
+                                                                          tt::CASE::either))
                     {
                         is_project_loaded = Project.ImportProject(start_dlg.GetProjectFile());
                     }
@@ -264,11 +269,12 @@ int App::OnRun()
 
                 case StartupDlg::START_OPEN:
                     {
-                        // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
-                        // would actually make sense to process it since we can combine all of those resources into our
-                        // single project file.
+                        // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the
+                        // wxSmith resources -- so it would actually make sense to process it since
+                        // we can combine all of those resources into our single project file.
 
-                        wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
+                        wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString,
+                                            wxEmptyString,
                                             "wxUiEditor Project File (*.wxui)|*.wxui"
                                             "|wxCrafter Project File (*.wxcp)|*.wxcp"
                                             "|DialogBlocks Project File (*.fjd)|*.fjd"
@@ -337,7 +343,8 @@ bool App::AutoMsgWindow() const
     return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
 }
 
-#if defined(_WIN32) && defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
+#if defined(_WIN32) && defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && \
+    defined(wxUSE_STACKWALKER)
 
     #include <wx/stackwalk.h>
 
@@ -374,12 +381,14 @@ protected:
             if (params.size() > 100)
                 params = "(...)";
 
-            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string()
-                                   << params.utf8_string() << ' ' << source;
+            m_calls.emplace_back()
+                << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string()
+                << params.utf8_string() << ' ' << source;
         }
         else
         {
-            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string();
+            m_calls.emplace_back()
+                << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string();
         }
     }
 
@@ -496,7 +505,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 
         else if (parser.Found("gen_all", &filename))
         {
-            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_RUST);
+            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY |
+                             GEN_LANG_RUST);
 #if GENERATE_NEW_LANG_CODE
             generate_type |= (GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA);
 #endif  // GENERATE_NEW_LANG_CODE
@@ -560,7 +570,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             dir.Open("./");
             if (!dir.GetFirst(&filename, "*.wxui", wxDIR_FILES))
             {
-                wxMessageBox("No project file found in current directory. Filenane is required if switch is used.",
+                wxMessageBox("No project file found in current directory. Filenane is required if "
+                             "switch is used.",
                              "Command-line Switch Error", wxOK | wxICON_ERROR);
                 return 1;
             }
@@ -590,11 +601,13 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             if (!tt_filename.extension().is_sameas(".wxui", tt::CASE::either) &&
                 !tt_filename.extension().is_sameas(".wxue", tt::CASE::either))
             {
-                is_project_loaded = Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
+                is_project_loaded =
+                    Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
             }
             else
             {
-                is_project_loaded = Project.LoadProject(tt_filename, generate_type == GEN_LANG_NONE);
+                is_project_loaded =
+                    Project.LoadProject(tt_filename, generate_type == GEN_LANG_NONE);
             }
         }
         else
@@ -602,7 +615,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             if (generate_type != GEN_LANG_NONE)
             {
                 tt_string_vector log;
-                log.emplace_back(tt_string("Unable to find project file: ") << filename.utf8_string());
+                log.emplace_back(tt_string("Unable to find project file: ")
+                                 << filename.utf8_string());
                 log.WriteFile(log_file);
                 return 1;
             }
@@ -613,7 +627,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             if (!is_project_loaded)
             {
                 tt_string_vector log;
-                log.emplace_back(tt_string("Unable to load project file: ") << filename.utf8_string());
+                log.emplace_back(tt_string("Unable to load project file: ")
+                                 << filename.utf8_string());
                 log.WriteFile(log_file);
                 return 1;
             }
@@ -646,7 +661,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
                 else
                 {
                     auto& log_msg = log.emplace_back();
-                    log_msg << "All " << results.file_count << " generated " << language_type << " files are current";
+                    log_msg << "All " << results.file_count << " generated " << language_type
+                            << " files are current";
                 }
 
                 for (auto& iter: results.msgs)
@@ -688,7 +704,9 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 
             auto& log_msg = log.emplace_back();
             auto end_time = std::chrono::steady_clock::now();
-            size_t total_elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+            size_t total_elapsed_time =
+                std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time)
+                    .count();
 
             log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
             log.WriteFile(log_file);

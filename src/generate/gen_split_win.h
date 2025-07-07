@@ -13,7 +13,8 @@ class SplitterWindowGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
+                       bool /* is_preview */) override;
 
     bool ConstructionCode(Code& code) override;
     bool SettingsCode(Code&) override;

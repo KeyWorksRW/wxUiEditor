@@ -20,15 +20,16 @@
 
 wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0);
+    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos),
+                                      DlgSize(node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
 }
 
-void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                           bool /* is_preview */)
 {
     auto gallery = wxStaticCast(wxobject, wxRibbonGallery);
 
@@ -54,8 +55,8 @@ bool RibbonGalleryGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                         GenLang /* language */)
+bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/gallery.h>", set_src, set_hdr);
 
@@ -70,7 +71,7 @@ int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
     return BaseGenerator::xrc_updated;
 }
 
-//////////////////////////////////////////  RibbonGalleryItemGenerator  //////////////////////////////////////////
+/////////////////////////////////  RibbonGalleryItemGenerator ////////////////////////////////////
 
 bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
 {

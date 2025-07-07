@@ -339,7 +339,9 @@ private:
     bool m_dark_mode { false };
     bool m_high_constrast { false };
 
-    bool m_fullpath_title { false };  // If true, the full path to the project is displayed in the title bar
+    bool m_fullpath_title {
+        false
+    };  // If true, the full path to the project is displayed in the title bar
 
     bool m_svg_images { false };  // If true, SVG is the default image type
 

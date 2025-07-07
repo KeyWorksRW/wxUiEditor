@@ -156,7 +156,7 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "project_handler.h"      // ProjectHandler class
-#include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewDialog::OnInit(wxInitDialogEvent& event)
 {
@@ -200,14 +200,16 @@ void NewDialog::createNode()
             book_page->adoptChild(page_sizer);
             auto static_text = NodeCreation.createNode(gen_wxStaticText, page_sizer.get()).first;
             page_sizer->adoptChild(static_text);
-            static_text->set_value(prop_label, "TODO: replace this control with something more useful...");
+            static_text->set_value(prop_label,
+                                   "TODO: replace this control with something more useful...");
             static_text->set_value(prop_wrap, "200");
         }
     }
 
     if (m_has_std_btns)
     {
-        auto std_btn = NodeCreation.createNode(gen_wxStdDialogButtonSizer, parent_sizer.get()).first;
+        auto std_btn =
+            NodeCreation.createNode(gen_wxStdDialogButtonSizer, parent_sizer.get()).first;
         parent_sizer->adoptChild(std_btn);
 
         std_btn->set_value(prop_OK, "1");
@@ -236,7 +238,8 @@ void NewDialog::createNode()
     wxGetFrame().SelectNode(parent_node);
 
     tt_string undo_str("New wxDialog");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
+    wxGetFrame().PushUndoAction(
+        std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get(), true, true);

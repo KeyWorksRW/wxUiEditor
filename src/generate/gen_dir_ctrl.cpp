@@ -15,13 +15,12 @@
 
 #include "gen_dir_ctrl.h"
 
-//////////////////////////////////////////  GenericDirCtrlGenerator  //////////////////////////////////////////
-
 wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_defaultfolder),
-                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
-                                       node->as_wxString(prop_filter), node->as_int(prop_defaultfilter));
+    auto widget = new wxGenericDirCtrl(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_defaultfolder),
+        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
+        node->as_wxString(prop_filter), node->as_int(prop_defaultfilter));
 
     widget->ShowHidden(node->as_bool(prop_show_hidden));
 
@@ -38,7 +37,8 @@ bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
     else
         code.Add("wxDirDialogDefaultFolderStr");
 
-    if (!code.hasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 && !code.hasValue(prop_window_name))
+    if (!code.hasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 &&
+        !code.hasValue(prop_window_name))
     {
         code.PosSizeFlags(code::allow_scaling, false, "wxDIRCTRL_DEFAULT_STYLE");
     }
@@ -76,8 +76,8 @@ bool GenericDirCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dirctrl.h>", set_src, set_hdr);
     return true;
@@ -88,7 +88,8 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int GenericDirCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxGenericDirCtrl");

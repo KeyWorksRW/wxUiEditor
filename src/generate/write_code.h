@@ -57,8 +57,8 @@ public:
     // Write the code without adding a trailing \n.
     void write(tt_string_view code, bool auto_indent = true);
 
-    // Call this to prevent any further blank lines from being written until the next non-blank line is
-    // written
+    // Call this to prevent any further blank lines from being written until the next non-blank line
+    // is written
     void SetLastLineBlank() { m_IsLastLineBlank = true; }
 
     virtual void Clear() = 0;

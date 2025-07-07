@@ -27,8 +27,9 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
         prompt = wxDirSelectorPromptStr;
     }
 
-    auto widget = new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), prompt,
-                                      DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxDirPickerCtrl(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), prompt,
+        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -84,8 +85,8 @@ bool DirPickerGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/filepicker.h>", set_src, set_hdr);
     return true;
@@ -96,7 +97,8 @@ bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int DirPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDirPickerCtrl");
@@ -120,12 +122,14 @@ void DirPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxDirPickerCtrlXmlHandler");
 }
 
-bool DirPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool DirPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                    GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
-        set_imports.emplace("use Wx qw(wxDIRP_DEFAULT_STYLE wxDIRP_USE_TEXTCTRL wxDIRP_DIR_MUST_EXIST\n"
-                            "          wxDIRP_CHANGE_DIR wxDIRP_SMALL);");
+        set_imports.emplace(
+            "use Wx qw(wxDIRP_DEFAULT_STYLE wxDIRP_USE_TEXTCTRL wxDIRP_DIR_MUST_EXIST\n"
+            "          wxDIRP_CHANGE_DIR wxDIRP_SMALL);");
 
         return true;
     }

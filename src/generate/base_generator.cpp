@@ -41,7 +41,8 @@ void BaseGenerator::OnLeftClick(wxMouseEvent& event)
     event.Skip();
 }
 
-bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProperty* /* prop */, Node* node)
+bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProperty* /* prop */,
+                                          Node* node)
 {
     tt_string newValue = event->GetPropertyValue().GetString().utf8_string();
     if (newValue.empty())
@@ -90,7 +91,8 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
             return true;
         }
     }
-    else if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonButton) || node->isGen(gen_ribbonGalleryItem))
+    else if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonButton) ||
+             node->isGen(gen_ribbonGalleryItem))
     {
         form = node->getParent();
         while (form && !form->isGen(gen_RibbonBar) && !form->isGen(gen_wxRibbonBar))
@@ -109,7 +111,8 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
 
     auto rlambda = [&](Node* child, auto&& rlambda) -> void
     {
-        if (child != node && child->hasValue(prop_id) && !child->as_string(prop_id).is_sameprefix("wx"))
+        if (child != node && child->hasValue(prop_id) &&
+            !child->as_string(prop_id).is_sameprefix("wx"))
         {
             ids.emplace(child->getPropId());
         }
@@ -168,34 +171,40 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             return true;
 
         auto parent = node->getParent();
-        if (newValue == "wxALIGN_TOP" || newValue == "wxALIGN_BOTTOM" || newValue == "wxALIGN_CENTER_VERTICAL")
+        if (newValue == "wxALIGN_TOP" || newValue == "wxALIGN_BOTTOM" ||
+            newValue == "wxALIGN_CENTER_VERTICAL")
         {
-            if (parent && parent->isSizer() && parent->as_string(prop_orientation).contains("wxVERTICAL"))
+            if (parent && parent->isSizer() &&
+                parent->as_string(prop_orientation).contains("wxVERTICAL"))
             {
-                event->SetValidationFailureMessage(
-                    "You can't set vertical alignment when the parent sizer is oriented vertically.");
+                event->SetValidationFailureMessage("You can't set vertical alignment when the "
+                                                   "parent sizer is oriented vertically.");
                 event->Veto();
                 return false;
             }
             else if (node->as_string(prop_flags).contains("wxEXPAND"))
             {
-                event->SetValidationFailureMessage("You can't set vertical alignment if the wxEXPAND flag is set.");
+                event->SetValidationFailureMessage(
+                    "You can't set vertical alignment if the wxEXPAND flag is set.");
                 event->Veto();
                 return false;
             }
         }
-        else if (newValue == "wxALIGN_LEFT" || newValue == "wxALIGN_RIGHT" || newValue == "wxALIGN_CENTER_HORIZONTAL")
+        else if (newValue == "wxALIGN_LEFT" || newValue == "wxALIGN_RIGHT" ||
+                 newValue == "wxALIGN_CENTER_HORIZONTAL")
         {
-            if (parent && parent->isSizer() && parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
+            if (parent && parent->isSizer() &&
+                parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
             {
-                event->SetValidationFailureMessage(
-                    "You can't set horizontal alignment when the parent sizer is oriented horizontally.");
+                event->SetValidationFailureMessage("You can't set horizontal alignment when the "
+                                                   "parent sizer is oriented horizontally.");
                 event->Veto();
                 return false;
             }
             else if (node->as_string(prop_flags).contains("wxEXPAND"))
             {
-                event->SetValidationFailureMessage("You can't set horizontal alignment if the wxEXPAND flag is set.");
+                event->SetValidationFailureMessage(
+                    "You can't set horizontal alignment if the wxEXPAND flag is set.");
                 event->Veto();
                 return false;
             }
@@ -224,19 +233,21 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             {
                 auto& alignment = node->as_string(prop_alignment);
                 if (alignment.contains("wxALIGN_LEFT") || alignment.contains("wxALIGN_RIGHT") ||
-                    alignment.contains("wxALIGN_CENTER_HORIZONTAL") || alignment.contains("wxALIGN_TOP") ||
-                    alignment.contains("wxALIGN_BOTTOM") || alignment.contains("wxALIGN_CENTER_VERTICAL"))
+                    alignment.contains("wxALIGN_CENTER_HORIZONTAL") ||
+                    alignment.contains("wxALIGN_TOP") || alignment.contains("wxALIGN_BOTTOM") ||
+                    alignment.contains("wxALIGN_CENTER_VERTICAL"))
                 {
                     event->SetValidationFailureMessage(
-                        "You can't set the wxEXPAND flag if you have either horizontal or vertical alignment set.");
+                        "You can't set the wxEXPAND flag if you have either horizontal or vertical "
+                        "alignment set.");
                     event->Veto();
                     return false;
                 }
             }
         }
     }
-    else if (prop->isProp(prop_var_name) || prop->isProp(prop_validator_variable) || prop->isProp(prop_checkbox_var_name) ||
-             prop->isProp(prop_radiobtn_var_name))
+    else if (prop->isProp(prop_var_name) || prop->isProp(prop_validator_variable) ||
+             prop->isProp(prop_checkbox_var_name) || prop->isProp(prop_radiobtn_var_name))
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
@@ -246,7 +257,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         if (!isValidVarName(newValue, Project.getCodePreference()))
         {
-            event->SetValidationFailureMessage("The name you have specified is not a valid variable name.");
+            event->SetValidationFailureMessage(
+                "The name you have specified is not a valid variable name.");
             event->Veto();
             return false;
         }
@@ -259,7 +271,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             if (prop->isProp(prop_var_name))
             {
-                if (node->hasValue(prop_validator_variable) && newValue.is_sameas(node->as_string(prop_validator_variable)))
+                if (node->hasValue(prop_validator_variable) &&
+                    newValue.is_sameas(node->as_string(prop_validator_variable)))
                     is_duplicate = true;
                 else if (node->hasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
@@ -270,7 +283,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
             else if (prop->isProp(prop_validator_variable))
             {
-                if (node->hasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
+                if (node->hasValue(prop_var_name) &&
+                    newValue.is_sameas(node->as_string(prop_var_name)))
                     is_duplicate = true;
                 else if (node->hasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
@@ -281,7 +295,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
             else if (prop->isProp(prop_checkbox_var_name))
             {
-                if (node->hasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
+                if (node->hasValue(prop_var_name) &&
+                    newValue.is_sameas(node->as_string(prop_var_name)))
                     is_duplicate = true;
                 else if (node->hasValue(prop_validator_variable) &&
                          newValue.is_sameas(node->as_string(prop_validator_variable)))
@@ -292,7 +307,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
             else if (prop->isProp(prop_radiobtn_var_name))
             {
-                if (node->hasValue(prop_var_name) && newValue.is_sameas(node->as_string(prop_var_name)))
+                if (node->hasValue(prop_var_name) &&
+                    newValue.is_sameas(node->as_string(prop_var_name)))
                     is_duplicate = true;
                 else if (node->hasValue(prop_validator_variable) &&
                          newValue.is_sameas(node->as_string(prop_validator_variable)))
@@ -305,13 +321,14 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         if (is_duplicate)
         {
-            event->SetValidationFailureMessage("The name you have chosen is already in use by another variable.");
+            event->SetValidationFailureMessage(
+                "The name you have chosen is already in use by another variable.");
             event->Veto();
             return false;
         }
 
-        // If the event was previously veto'd, and the user corrected the name, then we have to set it here,
-        // otherwise it will revert back to the original name before the Veto.
+        // If the event was previously veto'd, and the user corrected the name, then we have to set
+        // it here, otherwise it will revert back to the original name before the Veto.
 
         event->GetProperty()->SetValueFromString(newValue);
     }
@@ -334,14 +351,15 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
             else if (iter->as_string(prop_class_name).is_sameas(newValue))
             {
-                event->SetValidationFailureMessage("The name you have chosen is already in use by another class.");
+                event->SetValidationFailureMessage(
+                    "The name you have chosen is already in use by another class.");
                 event->Veto();
                 return false;
             }
         }
     }
-    else if (prop->isProp(prop_label) &&
-             (prop->getNode()->isGen(gen_propGridItem) || prop->getNode()->isGen(gen_propGridCategory)))
+    else if (prop->isProp(prop_label) && (prop->getNode()->isGen(gen_propGridItem) ||
+                                          prop->getNode()->isGen(gen_propGridCategory)))
     {
         auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
@@ -350,7 +368,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         auto result = node->getUniqueName(final_name, prop_label);
         if (!newValue.is_sameas(result))
         {
-            event->SetValidationFailureMessage("This label is already in use by another PropertyGrid item.");
+            event->SetValidationFailureMessage(
+                "This label is already in use by another PropertyGrid item.");
             event->Veto();
             return false;
         }
@@ -365,13 +384,15 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             if (check_node != node)
             {
-                if (check_node->hasValue(prop_get_function) && check_node->as_string(prop_get_function) == newValue)
+                if (check_node->hasValue(prop_get_function) &&
+                    check_node->as_string(prop_get_function) == newValue)
                 {
                     event->SetValidationFailureMessage("This function name is already in use.");
                     event->Veto();
                     return false;
                 }
-                else if (check_node->hasValue(prop_set_function) && check_node->as_string(prop_set_function) == newValue)
+                else if (check_node->hasValue(prop_set_function) &&
+                         check_node->as_string(prop_set_function) == newValue)
                 {
                     event->SetValidationFailureMessage("This function name is already in use.");
                     event->Veto();
@@ -600,7 +621,8 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
                         pg_setting->Enable(changed_prop->as_string().empty() ||
                                            changed_prop->as_string().is_sameas("wxALIGN_CENTER"));
                     }
-                    else if (label == "wxALIGN_CENTER_HORIZONTAL" || label == "wxALIGN_CENTER_VERTICAL")
+                    else if (label == "wxALIGN_CENTER_HORIZONTAL" ||
+                             label == "wxALIGN_CENTER_VERTICAL")
                     {
                         pg_setting->Enable(!changed_prop->as_string().contains("wxALIGN_RIGHT") &&
                                            !changed_prop->as_string().contains("wxALIGN_LEFT") &&
@@ -691,15 +713,18 @@ std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
     if (prop->isProp(prop_derived_class_name) && !prop->hasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(
+            !prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_derived_file) && !prop->hasValue())
     {
-        return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
+        return tt_string(
+            !prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     else if (prop->isProp(prop_python_xrc_file) && !prop->hasValue())
     {
-        return tt_string(!prop->getNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
+        return tt_string(
+            !prop->getNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
     else if (set_output_files.contains(prop->getPropDeclaration()->get_name()) && !prop->hasValue())
     {
@@ -936,7 +961,8 @@ int BaseGenerator::GetRequiredVersion(Node* node)
     return minRequiredVer;
 }
 
-std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenLang language, GenEnum::PropName prop)
+std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenLang language,
+                                                                GenEnum::PropName prop)
 {
     if (prop == prop_persist && node->as_bool(prop))
     {
@@ -967,8 +993,8 @@ std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenL
     return {};
 }
 
-PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help,
-                             std::string_view def_value)
+PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type,
+                             std::string_view help, std::string_view def_value)
 {
     auto& properties = declaration->GetPropInfoMap();
     auto prop_info = new PropDeclaration(prop_name, type, def_value, help);
@@ -1035,15 +1061,17 @@ void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_valu
     auto* prop_info = DeclAddProp(declaration, prop_class_access, type_option, {}, access);
     DeclAddOption(prop_info, "none", "Derived classes do not have access to this item.");
     DeclAddOption(prop_info, "protected:",
-                  "In C++, derived classes can access this item. For other languages, the variable is accessible by other "
+                  "In C++, derived classes can access this item. For other languages, the variable "
+                  "is accessible by other "
                   "classes and functions.");
     DeclAddOption(prop_info, "public:",
-                  "In C++, item is added as a public: class member. For other languages, the variable is accessible by "
+                  "In C++, item is added as a public: class member. For other languages, the "
+                  "variable is accessible by "
                   "other classes and functions.");
 }
 
-void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name, std::string_view event_class,
-                  std::string_view help)
+void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name,
+                  std::string_view event_class, std::string_view help)
 {
     declaration->GetCategory().addEvent(evt_name);
     declaration->GetEventInfoMap()[evt_name] = new NodeEventInfo(evt_name, event_class, help);

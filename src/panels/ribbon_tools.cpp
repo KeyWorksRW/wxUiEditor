@@ -21,9 +21,9 @@
 #include "../newdialogs/new_frame.h"      // NewFrame -- Dialog for creating a new project wxFrame
 #include "../newdialogs/new_mdi.h"        // NewMdiForm -- Dialog for creating a new MDI application
 #include "../newdialogs/new_panel.h"      // NewPanel -- Dialog for creating a new form panel
-#include "../newdialogs/new_propsheet.h"  // NewPropSheet -- Dialog for creating a new wxPropertySheetDialog
-#include "../newdialogs/new_ribbon.h"     // NewRibbon -- Dialog for creating a new wxRibbonBar
-#include "../newdialogs/new_wizard.h"     // NewWizard -- Dialog for creating a new wizard
+#include "../newdialogs/new_propsheet.h"  // Dialog for creating a new wxPropertySheetDialog
+#include "../newdialogs/new_ribbon.h"     // Dialog for creating a new wxRibbonBar
+#include "../newdialogs/new_wizard.h"     // Dialog for creating a new wizard
 
 #include "ribbon_ids.h"
 
@@ -139,15 +139,16 @@ bool CreateViaNewDlg(size_t id)
     return false;
 }
 
-// The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch
-// that to a default size here.
+// The base class specifies a larger size for the panel to make it easier to work with in the Mockup
+// window. We switch that to a default size here.
 RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent) {}
 
 void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {
     size_t id = event.GetId();
 
-    if (id == CreateNewRibbon && (!wxGetFrame().getSelectedNode() || wxGetFrame().getSelectedNode()->isGen(gen_Project)))
+    if (id == CreateNewRibbon &&
+        (!wxGetFrame().getSelectedNode() || wxGetFrame().getSelectedNode()->isGen(gen_Project)))
     {
         id = CreateNewFormRibbon;
     }
@@ -163,9 +164,11 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
             return;
     }
 
-    FAIL_MSG("This will only happen if the tool is a) not a dropdown, or b) doesn't have a valid id.");
+    FAIL_MSG(
+        "This will only happen if the tool is a) not a dropdown, or b) doesn't have a valid id.");
 
-    // For release build, we'll at least attempt to create it in case the help string specifies a widget.
+    // For release build, we'll at least attempt to create it in case the help string specifies a
+    // widget.
     auto name = event.GetBar()->GetToolHelpString(event.GetId());
     if (auto result = rmap_GenNames.find(name.utf8_string()); result != rmap_GenNames.end())
     {
@@ -190,7 +193,8 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
                 const auto* cur_sel = wxGetFrame().getSelectedNode();
                 if (!cur_sel || cur_sel->isGen(gen_Project))
                     return;
-                if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) || cur_sel->getParent()->isGen(gen_wxAuiToolBar)))
+                if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) ||
+                                cur_sel->getParent()->isGen(gen_wxAuiToolBar)))
                 {
                     MenuAuiBar popup_menu;
                     popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
@@ -211,7 +215,8 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
                 if (!cur_sel || cur_sel->isGen(gen_Project))
                     return;
                 if (cur_sel && (cur_sel->isGen(gen_wxToolBar) || cur_sel->isGen(gen_ToolBar) ||
-                                cur_sel->getParent()->isGen(gen_wxToolBar) || cur_sel->getParent()->isGen(gen_ToolBar)))
+                                cur_sel->getParent()->isGen(gen_wxToolBar) ||
+                                cur_sel->getParent()->isGen(gen_ToolBar)))
                 {
                     MenuBarTools popup_menu;
                     popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);

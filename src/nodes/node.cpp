@@ -10,16 +10,16 @@
 
 #include "node.h"
 
-#include "gridbag_item.h"     // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
-#include "mainframe.h"        // MainFrame -- Main window frame
+#include "gridbag_item.h"     // Dialog for inserting an item into a wxGridBagSizer node
+#include "mainframe.h"        // Main window frame
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
-#include "node_gridbag.h"     // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "node_gridbag.h"     // Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"            // WXDLLIMPEXP_BASE -- Miscellaneous utilities
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
+#include "utils.h"            // Miscellaneous utilities
 
 using namespace GenEnum;
 
@@ -279,8 +279,8 @@ bool Node::isChildAllowed(NodeDeclaration* child)
     if (isGen(gen_wxSplitterWindow))
         return (getChildCount() < 2);
 
-    // Because m_children contains shared_ptrs, we don't want to use an iteration loop which will get/release the shared
-    // ptr. Using an index into the vector lets us access the raw pointer.
+    // Because m_children contains shared_ptrs, we don't want to use an iteration loop which will
+    // get/release the shared ptr. Using an index into the vector lets us access the raw pointer.
 
     ptrdiff_t children = 0;
     for (size_t i = 0; i < m_children.size() && children <= max_children; ++i)
@@ -288,8 +288,8 @@ bool Node::isChildAllowed(NodeDeclaration* child)
         if (getChild(i)->getGenType() == child->getGenType())
             ++children;
 
-        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
-        // sizer.
+        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one
+        // of them as the top level sizer.
 
         else if (child->getGenType() == type_sizer && getChild(i)->getGenType() == type_gbsizer)
             ++children;
@@ -343,8 +343,8 @@ size_t Node::getChildPosition(Node* node)
         ++pos;
     }
 
-    // REVIEW: [Randalphwa - 06-13-2022] Actually, this is sometimes valid when using undo. What really should happen is
-    // that it should return int64_t so that -1 becomes a valid return.
+    // REVIEW: [Randalphwa - 06-13-2022] Actually, this is sometimes valid when using undo. What
+    // really should happen is that it should return int64_t so that -1 becomes a valid return.
 
     // FAIL_MSG("failed to find child node, returned position is invalid!")
     return (m_children.size() - 1);
@@ -476,7 +476,8 @@ const tt_string& Node::getPropDefaultValue(PropName name)
 {
     auto prop = getPropPtr(name);
 
-    ASSERT_MSG(prop, tt_string(getNodeName()) << " doesn't have the property " << map_PropNames[name]);
+    ASSERT_MSG(prop, tt_string(getNodeName())
+                         << " doesn't have the property " << map_PropNames[name]);
 
     if (prop)
         return prop->getDefaultValue();
@@ -596,7 +597,8 @@ wxSizerFlags Node::getSizerFlags() const
     {
         if (alignment.contains("wxALIGN_CENTER"))
         {
-            if (alignment.contains("wxALIGN_CENTER_VERTICAL") && alignment.contains("wxALIGN_CENTER_HORIZONTAL"))
+            if (alignment.contains("wxALIGN_CENTER_VERTICAL") &&
+                alignment.contains("wxALIGN_CENTER_HORIZONTAL"))
                 flags.Center();
             else if (alignment.contains("wxALIGN_CENTER_VERTICAL"))
                 flags.CenterVertical();
@@ -633,7 +635,8 @@ wxSizerFlags Node::getSizerFlags() const
     return flags;
 }
 
-std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_language_support, int pos)
+std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_language_support,
+                                                    int pos)
 {
     auto& frame = wxGetFrame();
 
@@ -651,7 +654,8 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
         new_node = NodeCreation.createNode(name, this).first;
         if ((isForm() || isContainer()) && getChildCount())
         {
-            if (getChild(0)->getGenType() == type_sizer || getChild(0)->getGenType() == type_gbsizer)
+            if (getChild(0)->getGenType() == type_sizer ||
+                getChild(0)->getGenType() == type_gbsizer)
             {
                 result = NodeCreation.createNode(name, getChild(0), verify_language_support);
                 if (!result.first || result.second < 0)
@@ -690,12 +694,12 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
 
 #if defined(_WIN32)
 
-        // In a Windows build, the default background colour of white doesn't match the normal background color of the parent
-        // so we set it to the more normal Windows colour.
+        // In a Windows build, the default background colour of white doesn't match the normal
+        // background color of the parent so we set it to the more normal Windows colour.
 
-        // REVIEW: [KeyWorks - 03-17-2021] Need to figure out a better way to do this which is cross platform. As it
-        // currently exists, if the Windows version of wxUiEditor is used, then ALL versions of the app the user creates will
-        // use this background color.
+        // REVIEW: [KeyWorks - 03-17-2021] Need to figure out a better way to do this which is cross
+        // platform. As it currently exists, if the Windows version of wxUiEditor is used, then ALL
+        // versions of the app the user creates will use this background color.
 
         if (name == gen_BookPage)
         {
@@ -714,11 +718,13 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
 
         tt_string undo_str;
         undo_str << "insert " << map_GenNames[name];
-        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
+        frame.PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     }
 
-    // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If creating the node failed,
-    // then assume the parent is wxRibbonToolBar and retry with "ribbonTool"
+    // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If
+    // creating the node failed, then assume the parent is wxRibbonToolBar and retry with
+    // "ribbonTool"
     else if (name == gen_ribbonButton)
     {
         result = NodeCreation.createNode(gen_ribbonTool, this);
@@ -728,14 +734,15 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
         }
         new_node = result.first;
         tt_string undo_str = "insert ribbon tool";
-        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
+        frame.PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
     }
     else
     {
-        // If we get here, then the current node cannot be a parent of the new node. We look at the current node's
-        // parent and see if it accepts the new node as a child. This deals with the case where the user selected a
-        // widget, and wants a new widget created right after the selected widget with both having the same parent
-        // (typically a sizer).
+        // If we get here, then the current node cannot be a parent of the new node. We look at the
+        // current node's parent and see if it accepts the new node as a child. This deals with the
+        // case where the user selected a widget, and wants a new widget created right after the
+        // selected widget with both having the same parent (typically a sizer).
 
         parent = getParent();
 
@@ -748,12 +755,14 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
             {
                 if (isGen(gen_wxSplitterWindow))
                 {
-                    wxMessageBox("You cannot add more than two windows to a splitter window.", "Cannot add control");
+                    wxMessageBox("You cannot add more than two windows to a splitter window.",
+                                 "Cannot add control");
                 }
                 else
                 {
-                    wxMessageBox(tt_string() << "You can only add " << (to_size_t) max_children << ' ' << map_GenNames[name]
-                                             << " as a child of " << declName());
+                    wxMessageBox(tt_string()
+                                 << "You can only add " << (to_size_t) max_children << ' '
+                                 << map_GenNames[name] << " as a child of " << declName());
                 }
 
                 return { nullptr, Node::invalid_child_count };
@@ -776,12 +785,14 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
                 auto insert_pos = parent->findInsertionPos(this);
                 tt_string undo_str;
                 undo_str << "insert " << map_GenNames[name];
-                frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, insert_pos));
+                frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent,
+                                                                        undo_str, insert_pos));
             }
         }
         else
         {
-            wxMessageBox(tt_string() << "You cannot add " << map_GenNames[name] << " as a child of " << declName());
+            wxMessageBox(tt_string() << "You cannot add " << map_GenNames[name] << " as a child of "
+                                     << declName());
             return { nullptr, Node::invalid_child };
         }
     }
@@ -801,7 +812,8 @@ std::pair<NodeSharedPtr, int> Node::createChildNode(GenName name, bool verify_la
         else
         {
             tt_string member_name = new_node->as_string(prop_var_name);
-            if (Project.getCodePreference(this) == GEN_LANG_RUBY || Project.getCodePreference(this) == GEN_LANG_PYTHON)
+            if (Project.getCodePreference(this) == GEN_LANG_RUBY ||
+                Project.getCodePreference(this) == GEN_LANG_PYTHON)
             {
                 member_name = ConvertToSnakeCase(member_name);
                 if (member_name != new_node->as_string(prop_var_name))
@@ -993,9 +1005,10 @@ static const PropName s_var_names[] = {
 
 bool Node::fixDuplicateName()
 {
-    if (isType(type_form) || isType(type_frame_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) ||
-        isType(type_toolbar_form) || isType(type_aui_toolbar_form) || isType(type_panel_form) || isType(type_wizard) ||
-        isType(type_popup_menu) || isType(type_project))
+    if (isType(type_form) || isType(type_frame_form) || isType(type_menubar_form) ||
+        isType(type_ribbonbar_form) || isType(type_toolbar_form) || isType(type_aui_toolbar_form) ||
+        isType(type_panel_form) || isType(type_wizard) || isType(type_popup_menu) ||
+        isType(type_project))
     {
         return false;
     }
@@ -1163,9 +1176,11 @@ void Node::fixDuplicateNodeNames(Node* form)
     }
 }
 
-void Node::collectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name)
+void Node::collectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
+                              PropName prop_name)
 {
-    if (!isForm() && cur_node != this && !isGen(gen_wxPropertyGrid) && !isGen(gen_wxPropertyGridManager))
+    if (!isForm() && cur_node != this && !isGen(gen_wxPropertyGrid) &&
+        !isGen(gen_wxPropertyGridManager))
     {
         if (prop_name == prop_var_name)
         {
@@ -1237,7 +1252,8 @@ size_t Node::getNodeSize() const
     return size;
 }
 
-// Create a hash of the node name and all property values of the node, and recursively call all children
+// Create a hash of the node name and all property values of the node, and recursively call all
+// children
 void Node::calcNodeHash(size_t& hash) const
 {
     // djb2 hash algorithm
@@ -1382,8 +1398,9 @@ tt_string_view Node::getValidatorType() const
         auto& data_type = as_string(prop_validator_data_type);
         if (data_type == "wxString")
             return "wxTextValidator";
-        else if (data_type == "int" || data_type == "short" || data_type == "long" || data_type == "long long" ||
-                 data_type == "unsigned int" || data_type == "unsigned short" || data_type == "unsigned long" ||
+        else if (data_type == "int" || data_type == "short" || data_type == "long" ||
+                 data_type == "long long" || data_type == "unsigned int" ||
+                 data_type == "unsigned short" || data_type == "unsigned long" ||
                  data_type == "unsigned long long")
             return "wxIntegerValidator";
         else if (data_type == "double" || data_type == "float")
@@ -1399,7 +1416,8 @@ Node* Node::getPlatformContainer()
     {
         do
         {
-            if (parent->hasProp(prop_platforms) && parent->as_string(prop_platforms) != "Windows|Unix|Mac")
+            if (parent->hasProp(prop_platforms) &&
+                parent->as_string(prop_platforms) != "Windows|Unix|Mac")
                 return parent;
             parent = parent->getParent();
         } while (parent && !parent->isGen(gen_Project));

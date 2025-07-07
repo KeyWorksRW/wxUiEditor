@@ -24,8 +24,10 @@ bool SpacerGenerator::ConstructionCode(Code& code)
         auto flags = node->getSizerFlags();
 
         code.Function("Add(").as_string(prop_width).Comma().as_string(prop_height);
-        code.Comma().Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) += ")";
-        code.Comma().Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) += ")";
+        code.Comma().Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) +=
+            ")";
+        code.Comma().Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) +=
+            ")";
         code.Comma().itoa(flags.GetFlags()).Comma().BorderSize();
         if (node->as_bool(prop_add_default_border))
         {
@@ -89,7 +91,8 @@ int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* 
     auto result = BaseGenerator::xrc_updated;
 
     item.append_attribute("class").set_value("spacer");
-    item.append_child("size").text().set(tt_string() << node->as_string(prop_width) << ',' << node->as_string(prop_height));
+    item.append_child("size").text().set(tt_string() << node->as_string(prop_width) << ','
+                                                     << node->as_string(prop_height));
     if (node->as_string(prop_proportion) != "0")
     {
         item.append_child("option").text().set(node->as_string(prop_proportion));

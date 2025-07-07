@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Class for reading and writing line-oriented strings/files
+// Purpose:   Read/Wwrite line-oriented strings/files
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2019-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -30,7 +30,8 @@ public:
     }
 
     // Use this when a character sequence (such as "/r/n") separates the substrings
-    tt_string_vector(std::string_view str, std::string_view separator, tt::TRIM trim = tt::TRIM::none)
+    tt_string_vector(std::string_view str, std::string_view separator,
+                     tt::TRIM trim = tt::TRIM::none)
     {
         SetString(str, separator, trim);
     }
@@ -70,7 +71,8 @@ public:
     void SetString(std::string_view str, char separator = ';', tt::TRIM trim = tt::TRIM::none);
 
     // Clears the current vector of parsed strings and creates a new vector
-    void SetString(std::string_view str, std::string_view separator, tt::TRIM trim = tt::TRIM::none);
+    void SetString(std::string_view str, std::string_view separator,
+                   tt::TRIM trim = tt::TRIM::none);
 
     // Writes each line to the file adding a '\n' to the end of the line.
     bool WriteFile(const std::string& filename) const;
@@ -81,10 +83,14 @@ public:
     // Searches every line to see if it contains the sub-string.
     //
     // startline is the zero-based offset to the line to start searching.
-    size_t FindLineContaining(std::string_view str, size_t startline = 0, tt::CASE checkcase = tt::CASE::exact) const;
+    size_t FindLineContaining(std::string_view str, size_t startline = 0,
+                              tt::CASE checkcase = tt::CASE::exact) const;
 
     // Finds the position of the first string identical to the specified string.
-    size_t find(std::string_view str, tt::CASE checkcase = tt::CASE::exact) const { return find(0, str, checkcase); }
+    size_t find(std::string_view str, tt::CASE checkcase = tt::CASE::exact) const
+    {
+        return find(0, str, checkcase);
+    }
 
     // Finds the position of the first string identical to the specified string.
     size_t find(size_t start, std::string_view str, tt::CASE checkcase = tt::CASE::exact) const;
@@ -96,7 +102,8 @@ public:
     }
 
     // Finds the position of the first string with specified prefix.
-    size_t findprefix(size_t start, std::string_view prefix, tt::CASE checkcase = tt::CASE::exact) const;
+    size_t findprefix(size_t start, std::string_view prefix,
+                      tt::CASE checkcase = tt::CASE::exact) const;
 
     // If a line is found that contains orgStr, it will be replaced by newStr and the
     // line position is returned. If no line is found, tt::npos is returned.

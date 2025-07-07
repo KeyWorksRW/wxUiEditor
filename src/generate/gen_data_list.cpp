@@ -10,7 +10,7 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-// Blank line added because wx/stattext.h must be included first
+// Blank line added because wx/stattext.h above must be included first
 #include <wx/generic/stattextg.h>  // wxGenericStaticText header
 
 #include "gen_data_list.h"
@@ -21,11 +21,6 @@
 #include "mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 #include "node.h"           // Node class
 #include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // Write code to Scintilla or file
-
-// using namespace wxue_data;
-
-//////////////////////////////////////////  ImagesGenerator  //////////////////////////////////////////
 
 // horizontal spacing between the cells in the grid sizer
 constexpr int horizontal_spacing = 5;
@@ -36,8 +31,8 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
     ProjectData.Initialize();
     auto* parent = wxStaticCast(wxobject, wxWindow);
     // sizer type needs to match "else if (form->isGen(gen_Data))" section of mockup_content.cpp
-    auto* flex_grid_sizer =
-        new wxFlexGridSizer(number_of_columns, static_cast<int>(node->getChildCount()), horizontal_spacing);
+    auto* flex_grid_sizer = new wxFlexGridSizer(
+        number_of_columns, static_cast<int>(node->getChildCount()), horizontal_spacing);
 
     auto cur_sel_node = wxGetFrame().getSelectedNode();
     if (cur_sel_node->isGen(gen_data_folder))
@@ -49,7 +44,8 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
 
         // wxGenericStaticText used so that at some point we can make the text red if the file
         // cannot be found.
-        auto* file_name = new wxGenericStaticText(parent, wxID_ANY, iter->as_string(prop_data_file));
+        auto* file_name =
+            new wxGenericStaticText(parent, wxID_ANY, iter->as_string(prop_data_file));
         flex_grid_sizer->Add(file_name, wxSizerFlags().Border(wxALL));
     }
 

@@ -52,17 +52,19 @@ public:
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    std::pair<NodeSharedPtr, int> createNode(GenName name, Node* parent, bool verify_language_support = false);
+    std::pair<NodeSharedPtr, int> createNode(GenName name, Node* parent,
+                                             bool verify_language_support = false);
 
     // Only creates the node if the parent allows it as a child. Returns the node and a
     // Node:: error code (see enum in node.h).
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    std::pair<NodeSharedPtr, int> createNode(tt_string_view name, Node* parent, bool verify_language_support = false);
+    std::pair<NodeSharedPtr, int> createNode(tt_string_view name, Node* parent,
+                                             bool verify_language_support = false);
 
-    NodeSharedPtr createNodeFromXml(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false,
-                                    bool allow_ui = true);
+    NodeSharedPtr createNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
+                                    bool check_for_duplicates = false, bool allow_ui = true);
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
     NodeSharedPtr createProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
@@ -71,11 +73,17 @@ public:
     NodeSharedPtr newNode(NodeDeclaration* node_info);
 
     // Creates an orphaned node.
-    NodeSharedPtr newNode(GenEnum::GenName getGenName) { return newNode(m_a_declarations[getGenName]); }
+    NodeSharedPtr newNode(GenEnum::GenName getGenName)
+    {
+        return newNode(m_a_declarations[getGenName]);
+    }
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
-    NodeDeclaration* get_declaration(GenEnum::GenName getGenName) { return m_a_declarations[getGenName]; }
+    NodeDeclaration* get_declaration(GenEnum::GenName getGenName)
+    {
+        return m_a_declarations[getGenName];
+    }
 
     NodeDeclaration* getNodeDeclaration(tt_string_view class_name);
 
@@ -92,7 +100,10 @@ public:
 
     void initGenerators();
 
-    bool isOldHostType(tt_string_view old_type) const { return m_setOldHostTypes.contains(old_type); }
+    bool isOldHostType(tt_string_view old_type) const
+    {
+        return m_setOldHostTypes.contains(old_type);
+    }
 
     // Returns valid parent if there is one, which may be different from the parent passed to
     // the function.
@@ -106,9 +117,13 @@ public:
 protected:
     // This must
     void parseGeneratorFile(const char* file);
-    void parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
+    void parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info,
+                         NodeCategory& category);
 
-    NodeType* getNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
+    NodeType* getNodeType(GenEnum::GenType type_name)
+    {
+        return &m_a_node_types[static_cast<size_t>(type_name)];
+    }
 
     void addAllConstants();
 

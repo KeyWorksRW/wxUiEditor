@@ -56,8 +56,8 @@ protected:
     tt_string GetDisplayName(Node* node) const;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
 
-    // Event handlers without parameters are called by lamda's, which means the function can also be called directly without
-    // needing an event.
+    // Event handlers without parameters are called by lamda's, which means the function can also be
+    // called directly without needing an event.
 
     void OnProjectUpdated();
 
@@ -84,9 +84,10 @@ protected:
 private:
     MainFrame* m_pMainFrame;
 
-    // wxTreeItemId is a class, so you can't use it as a key in a std::unordered map because you can't use the built-in
-    // hash algorithm. We don't need to sort the Node pointers using std::map but it avoids the overhead of hashing the
-    // pointer, so a std::unordered_map isn't likely to be significantly faster.
+    // wxTreeItemId is a class, so you can't use it as a key in a std::unordered map because you
+    // can't use the built-in hash algorithm. We don't need to sort the Node pointers using std::map
+    // but it avoids the overhead of hashing the pointer, so a std::unordered_map isn't likely to be
+    // significantly faster.
 
     std::map<Node*, wxTreeItemId> m_node_tree_map;
     std::map<wxTreeItemId, Node*> m_tree_node_map;

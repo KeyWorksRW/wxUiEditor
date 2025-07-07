@@ -7,7 +7,8 @@ constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
 
     "event_handler",  // all events are now declared as virtual
 
-    "drag_accept_files",  // wxUiEditor will turn on drag support if there is an event handler for it
+    "drag_accept_files",  // wxUiEditor will turn on drag support if there is an event handler for
+                          // it
 
     // The following are wxFormBuilder properties for wxAuiToolBar
 
@@ -15,7 +16,8 @@ constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
     "toolbar_label",
     "use_explicit_ids",
 
-    // The following are AUI properties. Unless AUI frame windows gets implemented, these will all be ignored
+    // The following are AUI properties. Unless AUI frame windows gets implemented, these will all
+    // be ignored
 
     "BottomDockable",
     "LeftDockable",
@@ -61,7 +63,8 @@ constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
     "use_enum",
 });
 
-// The left name is what wxFormBuilder calls the event, the right name is what wxUiEditor calls the event
+// The left name is what wxFormBuilder calls the event, the right name is what wxUiEditor calls the
+// event
 constexpr auto map_evt_pair = frozen::make_map<std::string_view, std::string_view>({
     { "OnActivate", "wxEVT_ACTIVATE" },
 

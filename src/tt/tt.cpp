@@ -390,7 +390,8 @@ void tt::backslashestoforward(wxString& str)
     }
 }
 
-bool tt::has_extension(std::filesystem::directory_entry name, std::string_view extension, CASE checkcase)
+bool tt::has_extension(std::filesystem::directory_entry name, std::string_view extension,
+                       CASE checkcase)
 {
     if (!name.is_directory())
     {
@@ -585,18 +586,20 @@ void tt::utf8to16(std::string_view str, std::wstring& dest)
 #endif
 
 #if (defined(_WIN32))
-HINSTANCE tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, INT nShow, HWND hwndParent)
+HINSTANCE tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir,
+                          INT nShow, HWND hwndParent)
 {
     #if !(wxUSE_UNICODE_UTF8)
     return ShellExecuteW(hwndParent, NULL, filename.c_str(), args.c_str(), dir.c_str(), nShow);
     #else
     return ShellExecuteW(hwndParent, NULL, tt::utf8to16(filename.utf8_string()).c_str(),
-                         tt::utf8to16(args.utf8_string()).c_str(), tt::utf8to16(dir.utf8_string()).c_str(), nShow);
+                         tt::utf8to16(args.utf8_string()).c_str(),
+                         tt::utf8to16(dir.utf8_string()).c_str(), nShow);
     #endif
 }
 #else
-int tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir, int /* nShow */,
-                    void* /* hwndParent */)
+int tt::ShellRun_wx(const wxString& filename, const wxString& args, const wxString& dir,
+                    int /* nShow */, void* /* hwndParent */)
 {
     // Run the command using the wxWidgets method for executing a file
     wxString cmd = filename + " " + args;

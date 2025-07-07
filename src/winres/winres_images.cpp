@@ -12,18 +12,18 @@
 
 static std::map<int, const char*> map_win_stock_cursors = {
 
-    { 32512, "IDC_ARROW" },        // Standard arrow cursor.
-    { 32513, "IDC_IBEAM" },        // I-beam cursor.
-    { 32514, "IDC_WAIT" },         // Hourglass cursor.
-    { 32515, "IDC_CROSS" },        // Crosshair cursor.
-    { 32516, "IDC_UPARROW" },      // Vertical arrow cursor.
-    { 32642, "IDC_SIZENWSE" },     // Double-pointed arrow cursor pointing northwest and southeast.
-    { 32643, "IDC_SIZENESW" },     // Double-pointed arrow cursor pointing northeast and southwest.
-    { 32644, "IDC_SIZEWE" },       // Double-pointed arrow cursor pointing west and east.
-    { 32645, "IDC_SIZENS" },       // Double-pointed arrow cursor pointing north and south.
-    { 32646, "IDC_SIZEALL" },      // Four-pointed arrow cursor pointing north, south, east, and west.
-    { 32648, "IDC_NO" },           // Slashed circle cursor.
-    { 32649, "IDC_HAND" },         // Hand cursor.
+    { 32512, "IDC_ARROW" },     // Standard arrow cursor.
+    { 32513, "IDC_IBEAM" },     // I-beam cursor.
+    { 32514, "IDC_WAIT" },      // Hourglass cursor.
+    { 32515, "IDC_CROSS" },     // Crosshair cursor.
+    { 32516, "IDC_UPARROW" },   // Vertical arrow cursor.
+    { 32642, "IDC_SIZENWSE" },  // Double-pointed arrow cursor pointing northwest and southeast.
+    { 32643, "IDC_SIZENESW" },  // Double-pointed arrow cursor pointing northeast and southwest.
+    { 32644, "IDC_SIZEWE" },    // Double-pointed arrow cursor pointing west and east.
+    { 32645, "IDC_SIZENS" },    // Double-pointed arrow cursor pointing north and south.
+    { 32646, "IDC_SIZEALL" },   // Four-pointed arrow cursor pointing north, south, east, and west.
+    { 32648, "IDC_NO" },        // Slashed circle cursor.
+    { 32649, "IDC_HAND" },      // Hand cursor.
     { 32650, "IDC_APPSTARTING" },  // Standard arrow and small hourglass cursor.
     { 32651, "IDC_HELP" },         // Arrow and question mark cursor.
 
@@ -78,11 +78,13 @@ void resCtrl::ParseIconControl(tt_string_view line)
 
         if (tt::is_digit(icon_name[0]))
         {
-            if (auto icon = map_win_stock_icons.find(tt::atoi(icon_name)); icon != map_win_stock_icons.end())
+            if (auto icon = map_win_stock_icons.find(tt::atoi(icon_name));
+                icon != map_win_stock_icons.end())
             {
                 icon_name = icon->second;
             }
-            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(icon_name)); cursor != map_win_stock_cursors.end())
+            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(icon_name));
+                     cursor != map_win_stock_cursors.end())
             {
                 icon_name = cursor->second;
             }
@@ -115,8 +117,8 @@ void resCtrl::ParseIconControl(tt_string_view line)
             tt_string prop;
             prop << "Embed;" << result.value() << ";[-1; -1]";
 
-            // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
-            // the code to be generated.
+            // Note that this sets up the filename to convert, but doesn't actually do the
+            // conversion -- that will require the code to be generated.
             m_node->set_value(prop_bitmap, prop);
         }
     }
@@ -150,11 +152,13 @@ void resCtrl::ParseImageControl(tt_string_view line)
 
         if (tt::is_digit(image_name[0]))
         {
-            if (auto icon = map_win_stock_icons.find(tt::atoi(image_name)); icon != map_win_stock_icons.end())
+            if (auto icon = map_win_stock_icons.find(tt::atoi(image_name));
+                icon != map_win_stock_icons.end())
             {
                 image_name = icon->second;
             }
-            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(image_name)); cursor != map_win_stock_cursors.end())
+            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(image_name));
+                     cursor != map_win_stock_cursors.end())
             {
                 image_name = cursor->second;
             }
@@ -187,9 +191,10 @@ void resCtrl::ParseImageControl(tt_string_view line)
             result = m_pWinResource->FindBitmap(image_name);
 
             /*
-                Visual Studio (as if version 16.09) won't necessarily use the correct name if and ICON and BITMAP resource
-                both have the same numerical value. The resource compiler will convert the id name to it's value, and get
-                the correct bitmap, but we don't have that capability.
+                Visual Studio (as if version 16.09) won't necessarily use the correct name if and
+               ICON and BITMAP resource both have the same numerical value. The resource compiler
+               will convert the id name to it's value, and get the correct bitmap, but we don't have
+               that capability.
 
             */
 
@@ -213,8 +218,8 @@ void resCtrl::ParseImageControl(tt_string_view line)
             tt_string prop;
             prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
 
-            // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
-            // the code to be generated.
+            // Note that this sets up the filename to convert, but doesn't actually do the
+            // conversion -- that will require the code to be generated.
             m_node->set_value(prop_bitmap, prop);
         }
     }

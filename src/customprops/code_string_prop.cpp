@@ -56,7 +56,8 @@ void EditCodeDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-bool EditCodeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool EditCodeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                         wxPGProperty* WXUNUSED(property))
 {
     EditCodeDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

@@ -45,8 +45,8 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
         {
             ++popups;
 
-            // If there is more than one POPUP or the text of the popup contains an accelerator, then assume this is a
-            // wxMenuBar.
+            // If there is more than one POPUP or the text of the popup contains an accelerator,
+            // then assume this is a wxMenuBar.
 
             if (popups > 1 || menu_line.contains("&"))
             {
@@ -56,7 +56,8 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
         }
     }
 
-    // If there was only one POPUP directive and it didn't contain an acclerator, then assume this is a popup menu
+    // If there was only one POPUP directive and it didn't contain an acclerator, then assume this
+    // is a popup menu
 
     if (popups <= 1)
         m_is_popup_menu = true;
@@ -121,7 +122,8 @@ void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
             parent = control.SetNodePtr(NodeCreation.newNode(gen_wxMenu));
             m_form_node->adoptChild(parent);
             line.moveto_nextword();
-            parent->set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
+            parent->set_value(prop_label,
+                              m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
     }
 }
@@ -157,7 +159,8 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
             sub_parent = control.SetNodePtr(NodeCreation.newNode(gen_submenu));
             parent->adoptChild(sub_parent);
             line.moveto_nextword();
-            sub_parent->set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
+            sub_parent->set_value(prop_label,
+                                  m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
         else if (line.starts_with("MENUITEM"))
         {
@@ -177,7 +180,8 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                 auto end = label.find("\\t");
                 if (tt::is_found(end))
                 {
-                    item->set_value(prop_label, m_pWinResource->ConvertCodePageString(label.substr(0, end)));
+                    item->set_value(prop_label,
+                                    m_pWinResource->ConvertCodePageString(label.substr(0, end)));
                     label.remove_prefix(end < label.size() ? end + 2 : end);
                     item->set_value(prop_shortcut, label);
                 }

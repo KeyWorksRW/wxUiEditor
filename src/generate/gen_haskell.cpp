@@ -44,7 +44,10 @@ R"===(-- -----------------------------------------------------------------------
 
 // clang-format on
 
-HaskellCodeGenerator::HaskellCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_HASKELL, form_node) {}
+HaskellCodeGenerator::HaskellCodeGenerator(Node* form_node) :
+    BaseCodeGenerator(GEN_LANG_HASKELL, form_node)
+{
+}
 
 void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
@@ -54,7 +57,8 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(m_events));
     std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
@@ -78,8 +82,8 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #else
     if (m_panel_type != NOT_PANEL)
     {
-        m_source->writeLine(
-            "-- The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+        m_source->writeLine("-- The following comment block is only displayed in a _DEBUG build, "
+                            "or when written to a file.\n\n");
     }
 #endif  // _DEBUG
     {

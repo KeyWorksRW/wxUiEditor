@@ -29,40 +29,45 @@
 
 // These are used everywhere we use scintilla to edit C++ code. It is also used to verify valid
 // var_name values.
-const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto"
-                                " bitand bitor bool break case catch char char8_t char16_t char32_t"
-                                " class compl concept const consteval constexpr constinit const_cast"
-                                " continue co_await co_return co_yield __declspec"
-                                " decltype default delete dllexport do double dynamic_cast else enum explicit"
-                                " export extern false float for friend goto if inline int interface long"
-                                " mutable namespace new noexcept not not_eq nullptr operator private or or_eq"
-                                " private protected public reflexpr register reinterpret_cast requires"
-                                " return short signed sizeof static static_assert static_cast"
-                                " struct switch synchronized template this thread_local throw true try typedef typeid"
-                                " typename union unsigned using virtual void volatile wchar_t"
-                                " while xor xor_eq";
+const char* g_u8_cpp_keywords =
+    "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto"
+    " bitand bitor bool break case catch char char8_t char16_t char32_t"
+    " class compl concept const consteval constexpr constinit const_cast"
+    " continue co_await co_return co_yield __declspec"
+    " decltype default delete dllexport do double dynamic_cast else enum explicit"
+    " export extern false float for friend goto if inline int interface long"
+    " mutable namespace new noexcept not not_eq nullptr operator private or or_eq"
+    " private protected public reflexpr register reinterpret_cast requires"
+    " return short signed sizeof static static_assert static_cast"
+    " struct switch synchronized template this thread_local throw true try typedef typeid"
+    " typename union unsigned using virtual void volatile wchar_t"
+    " while xor xor_eq";
 
-const char* g_python_keywords = "False None True and as assert async break class continue def del elif else except finally "
-                                "for from global if import in is lambda "
-                                "nonlocal not or pass raise return self try while with yield";
+const char* g_python_keywords =
+    "False None True and as assert async break class continue def del elif else except finally "
+    "for from global if import in is lambda "
+    "nonlocal not or pass raise return self try while with yield";
 
-const char* g_ruby_keywords = "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else"
-                              " elsif end ensure false for if in module next nil not or redo require rescue retry"
-                              " return self super then true undef unless until when while yield";
+const char* g_ruby_keywords =
+    "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else"
+    " elsif end ensure false for if in module next nil not or redo require rescue retry"
+    " return self super then true undef unless until when while yield";
 
-const char* g_perl_keywords = "do if else elsif unless while until for foreach last next pod cut redo continue "
-                              "qw sub return goto and or not xor "
-                              "unless use no package require my our local state ";
+const char* g_perl_keywords =
+    "do if else elsif unless while until for foreach last next pod cut redo continue "
+    "qw sub return goto and or not xor "
+    "unless use no package require my our local state ";
 
-const char* g_lua_keywords =
-    "and break do else elseif end false for function goto if in local nil not or repeat return then true until while";
+const char* g_lua_keywords = "and break do else elseif end false for function goto if in local nil "
+                             "not or repeat return then true until while";
 
 const char* g_rust_keywords =
-    "as break const continue crate do else enum extern false fn for if impl in let loop match mod move mut pub "
+    "as break const continue crate do else enum extern false fn for if impl in let loop match mod "
+    "move mut pub "
     "ref return self self mut static struct trait true type unsafe use where while";
 
-const char* g_haskell_keywords =
-    "case class data deriving do else if import in infix infixl infixr instance let module newtype of then type where";
+const char* g_haskell_keywords = "case class data deriving do else if import in infix infixl "
+                                 "infixr instance let module newtype of then type where";
 
 const char* g_fortran_keywords = "program module subroutine function if else end do select case";
 
@@ -74,8 +79,8 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    // Note that a lot of code assumes m_hPanel is valid. It is up to the language generator to generate inherited
-    // classes, or just generate generation information about the class.
+    // Note that a lot of code assumes m_hPanel is valid. It is up to the language generator to
+    // generate inherited classes, or just generate generation information about the class.
 
     if (m_panel_type == GEN_LANG_CPLUSPLUS)
     {
@@ -304,7 +309,8 @@ void BasePanel::GenerateBaseClass()
     if (!m_cur_form)
     {
         auto* cur_selection = wxGetFrame().getSelectedNode();
-        if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) && cur_selection->getChildCount() > 0)
+        if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) &&
+            cur_selection->getChildCount() > 0)
         {
             m_cur_form = cur_selection->getChild(0);
         }

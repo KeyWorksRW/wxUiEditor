@@ -20,12 +20,12 @@
 
 wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    // ALWAYS add wxCP_NO_TLW_RESIZE to the Mockup version, otherwise the entire wxUiEditor main window will be
-    // resized when the pane is collapsed or expanded.
+    // ALWAYS add wxCP_NO_TLW_RESIZE to the Mockup version, otherwise the entire wxUiEditor main
+    // window will be resized when the pane is collapsed or expanded.
 
-    auto widget =
-        new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                              DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node) | wxCP_NO_TLW_RESIZE);
+    auto widget = new wxCollapsiblePane(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node) | wxCP_NO_TLW_RESIZE);
 
     if (getMockup()->IsShowingHidden())
         widget->Collapse(false);
@@ -76,8 +76,8 @@ bool CollapsiblePaneGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                           GenLang /* language */)
+bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                           std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/collpane.h>", set_src, set_hdr);
     return true;
@@ -88,7 +88,8 @@ bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& se
 
 int CollapsiblePaneGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCollapsiblePane");

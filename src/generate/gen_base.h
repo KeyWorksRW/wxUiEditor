@@ -57,7 +57,8 @@ public:
     virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
-    virtual int GenerateDerivedClass(Node* /* project */, Node* /* form_node */, PANEL_PAGE panel_type = NOT_PANEL)
+    virtual int GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
+                                     PANEL_PAGE panel_type = NOT_PANEL)
     {
         m_panel_type = panel_type;
         return result::fail;
@@ -68,7 +69,8 @@ public:
 
     PANEL_PAGE GetPanelType() { return m_panel_type; }
 
-    static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids);
+    static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
+                           std::set<std::string>& set_const_ids);
 
     // Retrieve a list of any warnings the generators have created
     auto getWarnings() { return m_warnings; }

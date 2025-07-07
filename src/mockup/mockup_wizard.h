@@ -39,8 +39,9 @@ public:
     void SetSelection(size_t pageIndex);
     wxSize& GetLargetPageSize() { return m_largest_page; }
 
-    // MockupContent needs to call this after all children have been created in order to calculate the largest size needed to
-    // display all children, and to resize any bitmap if bmp_placement has been set.
+    // MockupContent needs to call this after all children have been created in order to calculate
+    // the largest size needed to display all children, and to resize any bitmap if bmp_placement
+    // has been set.
     void AllChildrenAdded();
 
 protected:

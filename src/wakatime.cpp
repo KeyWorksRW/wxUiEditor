@@ -11,7 +11,6 @@
 
 #include "wakatime.h"  // WakaTime
 
-#include "mainapp.h"          // App -- Main application class
 #include "preferences.h"      // PREFS -- Preferences
 #include "project_handler.h"  // ProjectHandler class
 
@@ -58,8 +57,8 @@ bool WakaTime::IsWakaTimeAvailable()
     waka_cli.append_filename("wakatime-cli");
 #endif  // _WIN32
 
-    // REVIEW: [KeyWorks - 10-13-2021] This needs verification on Unix! Without testing, I don't really know if this is where
-    // wakatime is placed.
+    // REVIEW: [KeyWorks - 10-13-2021] This needs verification on Unix! Without testing, I don't
+    // really know if this is where wakatime is placed.
 
     if (waka_cli.file_exists())
     {
@@ -72,11 +71,13 @@ bool WakaTime::IsWakaTimeAvailable()
 void WakaTime::SetWakaExePath()
 {
     auto result = wxFileName::GetHomeDir();
-    ASSERT_MSG(!result.IsEmpty(), "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
+    ASSERT_MSG(!result.IsEmpty(),
+               "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
 
     m_waka_cli = result.utf8_string();
     m_waka_cli.append_filename(".wakatime");
-    ASSERT_MSG(m_waka_cli.dir_exists(), "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
+    ASSERT_MSG(m_waka_cli.dir_exists(),
+               "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
     if (!m_waka_cli.dir_exists())
     {
         m_waka_cli.clear();
@@ -90,8 +91,8 @@ void WakaTime::SetWakaExePath()
     {
         m_waka_cli = win_cli;
 
-        // append_filename uses forward slashes, but that might be a problem when running the executable on Windows, so
-        // switch to backslash to be sure it works.
+        // append_filename uses forward slashes, but that might be a problem when running the
+        // executable on Windows, so switch to backslash to be sure it works.
         m_waka_cli.Replace("/", "\\", true);
 
         return;
@@ -106,8 +107,8 @@ void WakaTime::SetWakaExePath()
     m_waka_cli.append_filename("wakatime-cli");
 #endif  // _WIN32
 
-    // REVIEW: [KeyWorks - 10-13-2021] This needs verification on Unix! Without testing, I don't really know if this is where
-    // wakatime is placed.
+    // REVIEW: [KeyWorks - 10-13-2021] This needs verification on Unix! Without testing, I don't
+    // really know if this is where wakatime is placed.
 
     if (!m_waka_cli.file_exists())
     {
@@ -115,7 +116,8 @@ void WakaTime::SetWakaExePath()
     }
 }
 
-// Number of seconds before sending WakaTime a heartbeat. WakaTime docs recommend a two minute interval (120 seconds).
+// Number of seconds before sending WakaTime a heartbeat. WakaTime docs recommend a two minute
+// interval (120 seconds).
 
 constexpr const intmax_t waka_interval = 120;
 
@@ -134,11 +136,14 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
     auto result = time(nullptr);
     if (result != -1)
     {
-        if (FileSavedEvent || (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval)))
+        if (FileSavedEvent ||
+            (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval)))
         {
             m_last_heartbeat = static_cast<intmax_t>(result);
             tt_string cmd;
-            cmd << m_waka_cli << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
+            cmd << m_waka_cli
+                << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing "
+                   "--project ";
             tt_string name = Project.getProjectFile().filename();
             name.remove_extension();
             cmd << name;
@@ -161,9 +166,10 @@ void WakaTime::ResetHeartbeat()
 
         if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
         {
-            // If the user just switched away for a short period of time, we'll continue sending the heartbeats normally.
-            // However, if too much time has passed, then reset the heartbeat timer so that the user doesn't get credited for
-            // time spent with another app activated.
+            // If the user just switched away for a short period of time, we'll continue sending the
+            // heartbeats normally. However, if too much time has passed, then reset the heartbeat
+            // timer so that the user doesn't get credited for time spent with another app
+            // activated.
 
             m_last_heartbeat = static_cast<intmax_t>(result);
         }

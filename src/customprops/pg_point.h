@@ -26,9 +26,11 @@ public:
         type_BITMAP
     };
 
-    CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type = CustomPointProperty::type_size);
+    CustomPointProperty(const wxString& label, NodeProperty* prop,
+                        DataType type = CustomPointProperty::type_size);
 
-    wxVariant ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const override;
+    wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
+                           wxVariant& childValue) const override;
     void RefreshChildren() override;
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
@@ -47,10 +49,12 @@ private:
 class CustomBoolProperty : public wxBoolProperty
 {
 public:
-    CustomBoolProperty(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL, bool value = false) :
-        wxBoolProperty(label, name, value)
+    CustomBoolProperty(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL,
+                       bool value = false) : wxBoolProperty(label, name, value)
     {
     }
 
-    wxString ValueToString(wxVariant& value, wxPGPropValFormatFlags flags = wxPGPropValFormatFlags::Null) const override;
+    wxString
+        ValueToString(wxVariant& value,
+                      wxPGPropValFormatFlags flags = wxPGPropValFormatFlags::Null) const override;
 };

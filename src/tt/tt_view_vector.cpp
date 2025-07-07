@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Class for reading and writing line-oriented strings/files
+// Purpose:   read/write line-oriented strings/files
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2019-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -9,7 +9,7 @@
 
 #include "tt_view_vector.h"
 
-#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_string_vector.h"  // tt_string_vector -- read/write line-oriented strings/files
 
 void tt_view_vector::SetString(std::string_view str, char separator, tt::TRIM trim)
 {
@@ -20,7 +20,8 @@ void tt_view_vector::SetString(std::string_view str, char separator, tt::TRIM tr
     size_t start = 0;
     size_t end = str.find_first_of(separator);
 
-    // The last string will not have a separator, so end == tt::npos, but we still need to add that final string
+    // The last string will not have a separator, so end == tt::npos, but we still need to add that
+    // final string
     for (;;)
     {
         emplace_back(tt::emptystring);
@@ -84,7 +85,8 @@ void tt_view_vector::SetString(std::string_view str, std::string_view separator,
     size_t start = 0;
     size_t end = str.find_first_of(separator);
 
-    // The last string will not have a separator, so end == tt::npos, but we still need to add that final string
+    // The last string will not have a separator, so end == tt::npos, but we still need to add that
+    // final string
     for (;;)
     {
         emplace_back(tt::emptystring);
@@ -162,7 +164,8 @@ bool tt_view_vector::ReadFile(std::string_view filename)
             // The static cast to a const void* is an attempt to avoid the security warning.
 
             // auto utf8_buf = tt::utf16to8(reinterpret_cast<const wchar_t*>(m_buffer.c_str() + 2));
-            auto utf8_buf = tt::utf16to8(reinterpret_cast<const wchar_t*>(static_cast<const void*>((m_buffer.c_str() + 2))));
+            auto utf8_buf = tt::utf16to8(
+                reinterpret_cast<const wchar_t*>(static_cast<const void*>((m_buffer.c_str() + 2))));
             m_buffer.clear();
             m_buffer = std::move(utf8_buf);
             ParseLines(m_buffer);
@@ -283,7 +286,8 @@ void tt_view_vector::ParseBuffer()
     }
 }
 
-size_t tt_view_vector::FindLineContaining(std::string_view str, size_t start, tt::CASE checkcase) const
+size_t tt_view_vector::FindLineContaining(std::string_view str, size_t start,
+                                          tt::CASE checkcase) const
 {
     for (; start < size(); ++start)
     {

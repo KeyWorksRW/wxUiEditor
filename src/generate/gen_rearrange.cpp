@@ -12,7 +12,6 @@
 #include "gen_xrc_utils.h"    // Common XRC generating functions
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "pugixml.hpp"        // xml read/write/create/process
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
@@ -27,14 +26,16 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
             msg += "wxRuby3";
         else
             msg += "XRC";
-        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg.make_wxString(), wxDefaultPosition,
-                                        wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                        msg.make_wxString(), wxDefaultPosition, wxDefaultSize,
+                                        wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
     auto widget =
-        new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                            wxArrayInt(), wxArrayString(), node->as_int(prop_type) | GetStyleInt(node));
+        new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                            DlgSize(node, prop_size), wxArrayInt(), wxArrayString(),
+                            node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())
@@ -147,9 +148,17 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
                 code.Eol(eol_if_empty);
                 if (iter.checked == "1")
                     code += "item_position = ";
-                code.NodeName().Function("GetList()").Function("Append(").QuotedString(iter.label).EndFunction();
+                code.NodeName()
+                    .Function("GetList()")
+                    .Function("Append(")
+                    .QuotedString(iter.label)
+                    .EndFunction();
                 if (iter.checked == "1")
-                    code.Eol().NodeName().Function("GetList()").Function("Check(item_position").EndFunction();
+                    code.Eol()
+                        .NodeName()
+                        .Function("GetList()")
+                        .Function("Check(item_position")
+                        .EndFunction();
             }
             code.CloseBrace();
         }
@@ -186,8 +195,8 @@ int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)
     return BaseGenerator::GetRequiredVersion(node);
 }
 
-bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                         GenLang /* language */)
+bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/rearrangectrl.h>", set_src, set_hdr);
     return true;

@@ -84,7 +84,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (generator->ConstructionCode(gen_code))
     {
         // Don't add blank lines when adding tools to a toolbar, or creating menu items
-        if (gen_code.size() && gen_code[0] != '{' && type != type_aui_tool && type != type_tool && type != type_menuitem)
+        if (gen_code.size() && gen_code[0] != '{' && type != type_aui_tool && type != type_tool &&
+            type != type_menuitem)
         {
             m_source->writeLine();
         }
@@ -161,8 +162,14 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
         else
         {
-            gen_code.ParentName().Function("GetControlSizer").AddIfCpp("()").Function("Add(").NodeName().Comma();
-            gen_code.CheckLineLength(sizeof("wxSizerFlags().Expand().Border(wxALL));")).Add("wxSizerFlags");
+            gen_code.ParentName()
+                .Function("GetControlSizer")
+                .AddIfCpp("()")
+                .Function("Add(")
+                .NodeName()
+                .Comma();
+            gen_code.CheckLineLength(sizeof("wxSizerFlags().Expand().Border(wxALL));"))
+                .Add("wxSizerFlags");
             if (gen_code.is_ruby())
                 gen_code.Str(".new.expand.border(Wx::ALL)");
             else if (gen_code.is_cpp())
@@ -176,8 +183,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     if (node->isGen(gen_PageCtrl) && node->getChildCount())
     {
-        // type_page will have already constructed the code for the child. However, we still need to generate
-        // settings and process any grandchildren.
+        // type_page will have already constructed the code for the child. However, we still need to
+        // generate settings and process any grandchildren.
 
         auto page_child = node->getChild(0);
         if (page_child)
@@ -203,8 +210,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
             !parent->isGen(gen_wxPopupTransientWindow))
         {
-            // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-            // wxPanel.
+            // The parent node is not a sizer -- which is expected if this is the parent sizer
+            // underneath a form or wxPanel.
 
             gen_code.clear();
 
@@ -245,9 +252,14 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             gen_code.NodeName(node->getChild(0)).Comma().NodeName(node->getChild(1)).EndFunction();
 
-            if (auto sash_pos = node->getPropPtr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
+            if (auto sash_pos = node->getPropPtr(prop_sashpos)->as_int();
+                sash_pos != 0 && sash_pos != -1)
             {
-                gen_code.Eol().NodeName().Function("SetSashPosition(").Add(prop_sashpos).EndFunction();
+                gen_code.Eol()
+                    .NodeName()
+                    .Function("SetSashPosition(")
+                    .Add(prop_sashpos)
+                    .EndFunction();
             }
         }
         m_source->writeLine(gen_code);
@@ -597,8 +609,8 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
     Code gen_code(node, m_language);
     if (generator->AfterChildrenCode(gen_code))
     {
-        // If the node needs to write code after all children are constructed, then create the children first, then write
-        // the post-child code.
+        // If the node needs to write code after all children are constructed, then create the
+        // children first, then write the post-child code.
 
         for (const auto& child: node->getChildNodePtrs())
         {
@@ -619,8 +631,10 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
             if (parent->isGen(gen_wxGridBagSizer))
             {
-                gen_code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) << "), ";
-                gen_code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
+                gen_code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column)
+                    << "), ";
+                gen_code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan)
+                    << "), ";
 
                 if (node->hasValue(prop_borders))
                     gen_code.as_string(prop_borders);
@@ -689,19 +703,25 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
                 }
                 else if (code.is_ruby())
                 {
-                    code.ParentName().Function("Add(").Str(ConvertToSnakeCase("CreateSeparatedSizer(")).NodeName() << "), ";
+                    code.ParentName()
+                            .Function("Add(")
+                            .Str(ConvertToSnakeCase("CreateSeparatedSizer("))
+                            .NodeName()
+                        << "), ";
                 }
                 else if (code.is_python())
                 {
-                    code.ParentName().Function("Add(").Str("self.CreateSeparatedSizer(").NodeName() << "), ";
+                    code.ParentName().Function("Add(").Str("self.CreateSeparatedSizer(").NodeName()
+                        << "), ";
                 }
                 else if (code.is_perl())
                 {
-                    // wxPerl doesn't support CreateSeparatedSizer() so we have to add the line ourselves
+                    // wxPerl doesn't support CreateSeparatedSizer() so we have to add the line
+                    // ourselves
                     code << "unless (Wx::wxMAC())";
                     code.OpenBrace();
-                    code.Str(
-                        "my $stdBtn_line = Wx::StaticLine->new($self, wxID_ANY, wxDefaultPosition, Wx::Size->new(20, -1));");
+                    code.Str("my $stdBtn_line = Wx::StaticLine->new($self, wxID_ANY, "
+                             "wxDefaultPosition, Wx::Size->new(20, -1));");
                     code.Eol().ParentName().Function("Add(").Str("$stdBtn_line").Comma();
                     code.Str("0, wxEXPAND|wxALL").Comma().as_string(prop_border_size) << ");";
                     code.CloseBrace();
@@ -728,7 +748,8 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         if (node->getParent()->isGen(gen_wxGridBagSizer))
         {
             code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) << "), ";
-            code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
+            code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan)
+                << "), ";
             tt_string flags(node->as_string(prop_borders));
             if (node->as_string(prop_flags).size())
             {

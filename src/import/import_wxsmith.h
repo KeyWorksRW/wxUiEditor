@@ -21,5 +21,6 @@ public:
     // wxSmith only supports C++ code generation
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
 
-    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */) override;
+    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                               Node* /* parent */) override;
 };

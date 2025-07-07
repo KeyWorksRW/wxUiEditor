@@ -22,7 +22,8 @@ bool SubMenuGenerator::ConstructionCode(Code& code)
 
 bool SubMenuGenerator::AfterChildrenCode(Code& code)
 {
-    auto* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
+    auto* node =
+        code.node();  // This is just for code readability -- could just use code.node() everywhere
     tt_string submenu_item_name;
 
     if (node->hasValue(prop_bitmap))
@@ -37,11 +38,20 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
 
     if (node->getParent()->isGen(gen_PopupMenu))
     {
-        code.FormFunction("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+        code.FormFunction("AppendSubMenu(")
+            .NodeName()
+            .Comma()
+            .QuotedString(prop_label)
+            .EndFunction();
     }
     else
     {
-        code.ParentName().Function("AppendSubMenu(").NodeName().Comma().QuotedString(prop_label).EndFunction();
+        code.ParentName()
+            .Function("AppendSubMenu(")
+            .NodeName()
+            .Comma()
+            .QuotedString(prop_label)
+            .EndFunction();
     }
 
     if (node->hasValue(prop_bitmap))
@@ -50,9 +60,11 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_bitmap);
-            if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+            if (auto function_name = ProjectImages.GetBundleFuncName(description);
+                function_name.size())
             {
-                // We get here if there is an Image List that contains the function to retrieve this bundle.
+                // We get here if there is an Image List that contains the function to retrieve this
+                // bundle.
                 code.Str(submenu_item_name).Function("SetBitmap(");
                 code << function_name;
                 code.EndFunction();
@@ -74,7 +86,8 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
                 else  // bundle_code contains a vector
                 {
                     code += bundle_code;
-                    code.Str(submenu_item_name).Function("SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
+                    code.Str(submenu_item_name)
+                        .Function("SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
                 }
             }
         }
@@ -102,8 +115,8 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 

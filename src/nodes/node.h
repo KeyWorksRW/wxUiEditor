@@ -107,7 +107,10 @@ public:
 
     bool isChildAllowed(Node* child);
     bool isChildAllowed(NodeDeclaration* child);
-    bool isChildAllowed(const NodeSharedPtr& child) { return isChildAllowed(child->getNodeDeclaration()); }
+    bool isChildAllowed(const NodeSharedPtr& child)
+    {
+        return isChildAllowed(child->getNodeDeclaration());
+    }
 
     auto getGenType() const { return m_declaration->getGenType(); }
 
@@ -128,7 +131,10 @@ public:
     }
 
     // Returns true if the node is either a folder or subfolder
-    bool isFolder() const noexcept { return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_data_folder)); }
+    bool isFolder() const noexcept
+    {
+        return (isGen(gen_folder) || isGen(gen_sub_folder) || isGen(gen_data_folder));
+    }
 
     bool isWidget() const noexcept { return isType(type_widget); }
     bool isWizard() const noexcept { return isType(type_wizard); }
@@ -137,18 +143,22 @@ public:
     bool isMenu() const noexcept { return (isType(type_menu) || isType(type_submenu)); }
     bool isToolBar() const noexcept
     {
-        return (isType(type_toolbar) || isType(type_toolbar_form) || isType(type_aui_toolbar_form) ||
-                isType(type_aui_toolbar));
+        return (isType(type_toolbar) || isType(type_toolbar_form) ||
+                isType(type_aui_toolbar_form) || isType(type_aui_toolbar));
     }
     bool isStatusBar() const noexcept { return isType(type_statusbar); }
     bool isRibbonBar() const noexcept { return isType(type_ribbonbar); }
 
     bool isForm() const noexcept;
-    bool isFormParent() const noexcept { return (isGen(gen_Project) || isGen(gen_folder) || isGen(gen_sub_folder)); };
+    bool isFormParent() const noexcept
+    {
+        return (isGen(gen_Project) || isGen(gen_folder) || isGen(gen_sub_folder));
+    };
 
     bool isStaticBoxSizer() const noexcept
     {
-        return (isGen(gen_wxStaticBoxSizer) || isGen(gen_StaticCheckboxBoxSizer) || isGen(gen_StaticRadioBtnBoxSizer));
+        return (isGen(gen_wxStaticBoxSizer) || isGen(gen_StaticCheckboxBoxSizer) ||
+                isGen(gen_StaticRadioBtnBoxSizer));
     }
     bool isSpacer() const noexcept { return isGen(gen_spacer); }
 
@@ -207,7 +217,10 @@ public:
     bool hasValue(PropName name) const;
 
     // Returns true if the property exists
-    bool hasProp(PropName name) const { return (m_prop_indices.find(name) != m_prop_indices.end()); }
+    bool hasProp(PropName name) const
+    {
+        return (m_prop_indices.find(name) != m_prop_indices.end());
+    }
 
     // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler
     // will assume value is a bool if you call  isPropValue(propm, "string")
@@ -412,7 +425,8 @@ public:
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    std::pair<NodeSharedPtr, int> createChildNode(GenName name, bool verify_language_support = false, int pos = -1);
+    std::pair<NodeSharedPtr, int>
+        createChildNode(GenName name, bool verify_language_support = false, int pos = -1);
 
     // Gets the current selected node and uses that to call createChildNode().
     Node* createNode(GenName name);
@@ -450,10 +464,14 @@ public:
     // validator_variable properties in the current form
     //
     // If prop_name is != prop_var_name, only that property is collected.
-    void collectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node, PropName prop_name = prop_var_name);
+    void collectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
+                            PropName prop_name = prop_var_name);
 
     ptrdiff_t findInsertionPos(Node* child) const;
-    ptrdiff_t findInsertionPos(const NodeSharedPtr& child) const { return findInsertionPos(child.get()); }
+    ptrdiff_t findInsertionPos(const NodeSharedPtr& child) const
+    {
+        return findInsertionPos(child.get());
+    }
 
     // Currently only called in debug builds, but available for release builds should we need it
     size_t getNodeSize() const;
@@ -487,15 +505,16 @@ protected:
 private:
     NodeSharedPtr m_parent;
 
-    // Properties and events are added when the node is created, and then never changed for the life of the node --
-    // only the value of the property or event is changed.
+    // Properties and events are added when the node is created, and then never changed for the life
+    // of the node -- only the value of the property or event is changed.
 
-    // The vector makes it possible to iterate through the properties in the order they were created in the XML file. The
-    // map gives us a fast lookup into the vector.
+    // The vector makes it possible to iterate through the properties in the order they were created
+    // in the XML file. The map gives us a fast lookup into the vector.
     std::vector<NodeProperty> m_properties;
     std::map<PropName, size_t> m_prop_indices;
 
-    // using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;
+    // using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash,
+    // std::equal_to<>>;
     std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>> m_map_events;
 
     std::vector<NodeSharedPtr> m_children;

@@ -18,8 +18,8 @@
 
 wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer =
-        new wxGridSizer(node->as_int(prop_rows), node->as_int(prop_cols), node->as_int(prop_vgap), node->as_int(prop_hgap));
+    auto sizer = new wxGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
+                                 node->as_int(prop_vgap), node->as_int(prop_hgap));
 
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
@@ -32,7 +32,8 @@ wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                       bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
     {
@@ -50,7 +51,12 @@ bool GridSizerGenerator::ConstructionCode(Code& code)
         // other languages.
         code.as_string(prop_rows).Comma();
     }
-    code.as_string(prop_cols).Comma().as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
+    code.as_string(prop_cols)
+        .Comma()
+        .as_string(prop_vgap)
+        .Comma()
+        .as_string(prop_hgap)
+        .EndFunction();
 
     if (code.hasValue(prop_minimum_size))
     {
@@ -96,8 +102,8 @@ bool GridSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
@@ -137,9 +143,9 @@ int GridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
     else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
     {
-        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
-        // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
-        // create for most forms.
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
+        // a problem for forms which often can specify their own minimum size. The workaround is to
+        // set the minimum size of the parent sizer that we create for most forms.
 
         item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
     }

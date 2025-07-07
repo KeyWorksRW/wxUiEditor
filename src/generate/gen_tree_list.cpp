@@ -16,22 +16,25 @@
 
 wxObject* TreeListCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                           DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
 }
 
-void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
+void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                          bool /* is_preview */)
 {
     auto widget = wxStaticCast(wxobject, wxTreeListCtrl);
 
     for (const auto& iter: node->getChildNodePtrs())
     {
         widget->AppendColumn(iter->as_wxString(prop_label), iter->as_int(prop_width),
-                             static_cast<wxAlignment>(iter->as_int(prop_alignment)), iter->as_int(prop_flags));
+                             static_cast<wxAlignment>(iter->as_int(prop_alignment)),
+                             iter->as_int(prop_flags));
     }
 }
 
@@ -45,8 +48,8 @@ bool TreeListCtrlGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/treelist.h>", set_src, set_hdr);
     return true;
@@ -54,7 +57,8 @@ bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 void TreeListCtrlGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    if (code.get_language() == GEN_LANG_NONE || (code.get_language() & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (code.get_language() == GEN_LANG_NONE ||
+        (code.get_language() & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
     {
         BaseGenerator::GenEvent(code, event, class_name);
     }
@@ -87,10 +91,12 @@ std::pair<bool, tt_string> TreeListCtrlGenerator::isLanguageVersionSupported(Gen
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
+    return { false,
+             tt_string() << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
 }
 
-//////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  TreeListCtrlColumnGenerator
+/////////////////////////////////////////////
 
 bool TreeListCtrlColumnGenerator::ConstructionCode(Code& code)
 {

@@ -18,20 +18,20 @@
 
 #include "gen_calendar_ctrl.h"
 
-//////////////////////////////////////////  CalendarCtrlGenerator  //////////////////////////////////////////
-
 wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxCalendarCtrlBase* widget;
     if (node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
-        widget = new wxGenericCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
-                                           DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxGenericCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                           wxDefaultDateTime, DlgPoint(node, prop_pos),
+                                           DlgSize(node, prop_size), GetStyleInt(node));
     }
     else
     {
-        widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
-                                    DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
+                                    DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                    GetStyleInt(node));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -41,7 +41,8 @@ wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool CalendarCtrlGenerator::ConstructionCode(Code& code)
 {
-    bool use_generic_version = code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
+    bool use_generic_version =
+        code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
     code.AddAuto().NodeName().CreateClass(use_generic_version);
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.is_ruby())
@@ -75,12 +76,13 @@ bool CalendarCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     if (node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
-        InsertGeneratorInclude(node, "#include <wx/calctrl.h>\n#include <wx/generic/calctrlg.h>", set_src, set_hdr);
+        InsertGeneratorInclude(node, "#include <wx/calctrl.h>\n#include <wx/generic/calctrlg.h>",
+                               set_src, set_hdr);
     }
     else
     {
@@ -101,7 +103,8 @@ bool CalendarCtrlGenerator::GetPythonImports(Node*, std::set<std::string>& set_i
 
 int CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCalendarCtrl");
@@ -122,7 +125,8 @@ void CalendarCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxCalendarCtrlXmlHandler");
 }
 
-bool CalendarCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool CalendarCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                       GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

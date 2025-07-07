@@ -27,7 +27,8 @@ wxIcon GetIconImage(tt_string_view name);
 // Converts the ASCII header file into binary data and loads it as an image. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
-wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size = nullptr, tt_string* p_mime_type = nullptr);
+wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size = nullptr,
+                       tt_string* p_mime_type = nullptr);
 
 // Converts the ASCII header file into binary data and loads it as an animation. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
@@ -49,7 +50,8 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 // first tries to load the image via the PNG handler.
 wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
 
-extern const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>> map_svg_functions;
+extern const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>>
+    map_svg_functions;
 
 inline std::function<wxBitmapBundle(int width, int height)> GetSvgFunction(tt_string_view name)
 {

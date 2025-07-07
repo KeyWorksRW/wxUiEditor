@@ -36,8 +36,8 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
     m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
 
-    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not
-    // cross-platform. See issue #597.
+    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
+    // which is not cross-platform. See issue #597.
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
@@ -89,8 +89,8 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
     switch (lexer)
     {
         case wxSTC_LEX_XML:
-            // This uses the XRC keywords, which will generally be fine for XRC, wxSMith, and wxGlade. wxFormBuilder
-            // could probably use some extra keywords...
+            // This uses the XRC keywords, which will generally be fine for XRC, wxSMith, and
+            // wxGlade. wxFormBuilder could probably use some extra keywords...
 
             {
                 pugi::xml_document doc;
@@ -141,7 +141,8 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             break;
 
         case wxSTC_LEX_CPP:
-            // TODO: [Randalphwa - 06-17-2022] wxSTC_LEX_CPP is used for Windows Resource files, so RC keywords are needed...
+            // TODO: [Randalphwa - 06-17-2022] wxSTC_LEX_CPP is used for Windows Resource files, so
+            // RC keywords are needed...
 
             // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
             // m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
@@ -151,7 +152,8 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             break;
 
         case wxSTC_LEX_JSON:
-            // TODO: [Randalphwa - 06-17-2022] Keywords specific to wxCrafter would probably be useful....
+            // TODO: [Randalphwa - 06-17-2022] Keywords specific to wxCrafter would probably be
+            // useful....
 
             // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
             m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
@@ -204,8 +206,8 @@ void ImportPanel::OnFind(wxFindDialogEvent& event)
 
     if (result == wxSTC_INVALID_POSITION)
     {
-        wxMessageBox(wxString() << event.GetFindString() << " not found.", "Not Found", wxICON_ERROR,
-                     wxStaticCast(event.GetClientData(), wxWindow));
+        wxMessageBox(wxString() << event.GetFindString() << " not found.", "Not Found",
+                     wxICON_ERROR, wxStaticCast(event.GetClientData(), wxWindow));
     }
     else
     {

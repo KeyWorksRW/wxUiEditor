@@ -142,7 +142,7 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "project_handler.h"      // ProjectHandler class
-#include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
 void NewPanel::OnInit(wxInitDialogEvent& event)
 {
@@ -170,7 +170,8 @@ void NewPanel::createNode()
         new_node = NodeCreation.createNode(gen_wxPanel, wxGetFrame().getSelectedNode()).first;
         if (!new_node)
         {
-            wxMessageBox("You need to have a sizer selected before you can create a wxPanel.", "Create wxPanel");
+            wxMessageBox("You need to have a sizer selected before you can create a wxPanel.",
+                         "Create wxPanel");
             return;
         }
     }
@@ -217,7 +218,8 @@ void NewPanel::createNode()
         auto parent = wxGetFrame().getSelectedNode();
         auto pos = parent->findInsertionPos(parent);
         tt_string undo_str("New wxPanel");
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
+        wxGetFrame().PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     }
     else
     {
@@ -240,7 +242,8 @@ void NewPanel::createNode()
         wxGetFrame().SelectNode(parent_node);
 
         tt_string undo_str("New wxPanel");
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
+        wxGetFrame().PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     }
 
     wxGetFrame().FireCreatedEvent(new_node);

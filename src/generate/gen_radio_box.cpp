@@ -25,8 +25,9 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     auto widget =
-        new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label), DlgPoint(node, prop_pos),
-                       DlgSize(node, prop_size), choices, node->as_int(prop_majorDimension), GetStyleInt(node, "rb_"));
+        new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), choices,
+                       node->as_int(prop_majorDimension), GetStyleInt(node, "rb_"));
 
     if (int selection = node->as_int(prop_selection); (to_size_t) selection < choices.Count())
     {
@@ -123,8 +124,8 @@ bool RadioBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -138,7 +139,8 @@ bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRadioBox");
@@ -157,7 +159,9 @@ int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
         }
     }
 
-    GenXrcPreStylePosSize(node, item, (node->as_string(prop_style) == "columns") ? "wxRA_HORIZONTAL" : "wxRA_VERTICAL");
+    GenXrcPreStylePosSize(node, item,
+                          (node->as_string(prop_style) == "columns") ? "wxRA_HORIZONTAL" :
+                                                                       "wxRA_VERTICAL");
     GenXrcWindowSettings(node, item);
 
     if (xrc_flags & xrc::add_comments)

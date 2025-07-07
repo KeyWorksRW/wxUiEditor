@@ -168,13 +168,16 @@ const std::map<std::string, std::string, std::less<>> kw_css_colors = {
 
 // Provide our own Create() so as to default to the HTML colour syntax (#rrggbb) and to
 // bind to our own event handler that works with all CSS color names.
-bool kwColourPickerCtrl::Create(wxWindow* parent, wxWindowID id, const wxColour& color, const wxPoint& pos,
-                                const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+bool kwColourPickerCtrl::Create(wxWindow* parent, wxWindowID id, const wxColour& color,
+                                const wxPoint& pos, const wxSize& size, long style,
+                                const wxValidator& validator, const wxString& name)
 {
-    if (!wxPickerBase::CreateBase(parent, id, color.GetAsString(wxC2S_HTML_SYNTAX), pos, size, style, validator, name))
+    if (!wxPickerBase::CreateBase(parent, id, color.GetAsString(wxC2S_HTML_SYNTAX), pos, size,
+                                  style, validator, name))
         return false;
 
-    m_picker = new wxColourPickerWidget(this, wxID_ANY, color, wxDefaultPosition, wxDefaultSize, GetPickerStyle(style));
+    m_picker = new wxColourPickerWidget(this, wxID_ANY, color, wxDefaultPosition, wxDefaultSize,
+                                        GetPickerStyle(style));
 
     wxPickerBase::PostCreation();
 
@@ -246,7 +249,8 @@ wxColour kwColourPickerCtrl::GetColorFromString(const wxString& color_string)
 
         else color = wxSYS_COLOUR_BTNFACE;
     }
-    else if (color_string.starts_with('#') || color_string.starts_with("RGB") || color_string.starts_with("rgb"))
+    else if (color_string.starts_with('#') || color_string.starts_with("RGB") ||
+             color_string.starts_with("rgb"))
     {
         color.Set(color_string);
     }

@@ -17,8 +17,9 @@
 
 wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxEditableListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxEditableListBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                        node->as_wxString(prop_label), DlgPoint(node, prop_pos),
+                                        DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_contents))
     {
@@ -70,8 +71,8 @@ bool EditListBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/editlbox.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/listbase.h>", set_src, set_hdr);
@@ -83,7 +84,8 @@ bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int EditListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxEditableListBox");

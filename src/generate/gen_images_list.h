@@ -32,7 +32,8 @@ public:
 
 namespace img_list
 {
-    void GatherImages(Node* parent, std::set<std::string>& images, std::vector<std::string>& new_images);
+    void GatherImages(Node* parent, std::set<std::string>& images,
+                      std::vector<std::string>& new_images);
 
     // Ensure any Images List is in the first position and that all it's children are sorted.
     void UpdateImagesList(int ProjectVersion);

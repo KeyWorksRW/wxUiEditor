@@ -100,10 +100,16 @@ public:
     // Add attributes to object, and all properties
     //
     // Return an xrc_ enum (e.g. xrc_sizer_item_created)
-    virtual int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) { return xrc_not_supported; }
+    virtual int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+    {
+        return xrc_not_supported;
+    }
 
     // Called by Mockup after all children have been created
-    virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) {}
+    virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */,
+                               bool /* is_preview */)
+    {
+    }
 
     // Create an object to use in the Mockup panel (typically a sizer or widget).
     virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
@@ -125,8 +131,8 @@ public:
     // for Python custom controls, but all the generators need to be updated first.
 
     // Add any required include files to base source and/or header file.
-    virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */,
-                             GenLang /* language */)
+    virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */,
+                             std::set<std::string>& /* set_hdr */, GenLang /* language */)
     {
         return false;
     };
@@ -135,7 +141,10 @@ public:
     virtual bool GetPythonImports(Node*, std::set<std::string>& /* set_imports */);
 
     // Add any required libraries or symbols that need to be imported
-    virtual bool GetImports(Node*, std::set<std::string>& /* set_imports */, GenLang /* language */) { return false; }
+    virtual bool GetImports(Node*, std::set<std::string>& /* set_imports */, GenLang /* language */)
+    {
+        return false;
+    }
 
     // Return false if the entire Mockup contents should be recreated due to the property change
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }
@@ -146,7 +155,8 @@ public:
     // Called while processing an wxEVT_PG_CHANGING event.
     virtual bool AllowIdPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*);
 
-    // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation panel
+    // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation
+    // panel
     void OnLeftClick(wxMouseEvent& event);
 
     // Get the Help menu item text
@@ -177,7 +187,10 @@ public:
     // Called by MainFrame when the user modifies a property. Return false to let MainFrame
     // call PushUndoAction() to push a single prop change to the undo stack. Return true if
     // the generator handles pushing to the undo stack.
-    virtual bool modifyProperty(NodeProperty* /* prop */, tt_string_view /* value */) { return false; }
+    virtual bool modifyProperty(NodeProperty* /* prop */, tt_string_view /* value */)
+    {
+        return false;
+    }
 
     // Call this to use different help text then getPropDeclaration()->getDescription()
     virtual std::optional<tt_string> GetPropertyDescription(NodeProperty*) { return {}; }
@@ -201,7 +214,10 @@ public:
 
     // result.first == false indicates that the generator cannot construct the object using
     // the current language and version. result.second contains the error message.
-    virtual std::pair<bool, tt_string> isLanguageVersionSupported(GenLang /* language */) { return { true, {} }; }
+    virtual std::pair<bool, tt_string> isLanguageVersionSupported(GenLang /* language */)
+    {
+        return { true, {} };
+    }
 
     // result.has_value() == true indicates that the property is not supported using the
     // current language and version. Use result.value() to get the warning message. This will
@@ -210,12 +226,12 @@ public:
     virtual std::optional<tt_string> isLanguagePropSupported(Node*, GenLang, GenEnum::PropName);
 };
 
-PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type, std::string_view help = {},
-                             std::string_view def_value = {});
+PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type,
+                             std::string_view help = {}, std::string_view def_value = {});
 void DeclAddOption(PropDeclaration* prop_info, std::string_view name, std::string_view help = {});
 
 // This will add prop_var_name, prop_var_comment and prop_class_access
 void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_value);
 
-void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name, std::string_view event_class,
-                  std::string_view help);
+void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name,
+                  std::string_view event_class, std::string_view help);

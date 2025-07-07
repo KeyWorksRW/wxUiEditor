@@ -355,14 +355,18 @@ void MainFrame::UpdateLayoutTools()
     bool enableHorizontalTools = (orient != wxHORIZONTAL) && gotLayoutSettings;
     m_menuEdit->Enable(id_AlignLeft, enableHorizontalTools);
     m_toolbar->EnableTool(id_AlignLeft, enableHorizontalTools);
-    m_menuEdit->Check(id_AlignLeft, ((flag & (wxALIGN_RIGHT | wxALIGN_CENTER_HORIZONTAL)) == 0) && enableHorizontalTools);
+    m_menuEdit->Check(id_AlignLeft, ((flag & (wxALIGN_RIGHT | wxALIGN_CENTER_HORIZONTAL)) == 0) &&
+                                        enableHorizontalTools);
     m_toolbar->ToggleTool(id_AlignLeft,
-                          ((flag & (wxALIGN_RIGHT | wxALIGN_CENTER_HORIZONTAL)) == 0) && enableHorizontalTools);
+                          ((flag & (wxALIGN_RIGHT | wxALIGN_CENTER_HORIZONTAL)) == 0) &&
+                              enableHorizontalTools);
 
     m_menuEdit->Enable(id_AlignCenterHorizontal, enableHorizontalTools);
     m_toolbar->EnableTool(id_AlignCenterHorizontal, enableHorizontalTools);
-    m_menuEdit->Check(id_AlignCenterHorizontal, (flag & wxALIGN_CENTER_HORIZONTAL) && enableHorizontalTools);
-    m_toolbar->ToggleTool(id_AlignCenterHorizontal, (flag & wxALIGN_CENTER_HORIZONTAL) && enableHorizontalTools);
+    m_menuEdit->Check(id_AlignCenterHorizontal,
+                      (flag & wxALIGN_CENTER_HORIZONTAL) && enableHorizontalTools);
+    m_toolbar->ToggleTool(id_AlignCenterHorizontal,
+                          (flag & wxALIGN_CENTER_HORIZONTAL) && enableHorizontalTools);
 
     m_menuEdit->Enable(id_AlignRight, enableHorizontalTools);
     m_toolbar->EnableTool(id_AlignRight, enableHorizontalTools);
@@ -372,13 +376,17 @@ void MainFrame::UpdateLayoutTools()
     bool enableVerticalTools = (orient != wxVERTICAL) && gotLayoutSettings;
     m_menuEdit->Enable(id_AlignTop, enableVerticalTools);
     m_toolbar->EnableTool(id_AlignTop, enableVerticalTools);
-    m_menuEdit->Check(id_AlignTop, ((flag & (wxALIGN_BOTTOM | wxALIGN_CENTER_VERTICAL)) == 0) && enableVerticalTools);
-    m_toolbar->ToggleTool(id_AlignTop, ((flag & (wxALIGN_BOTTOM | wxALIGN_CENTER_VERTICAL)) == 0) && enableVerticalTools);
+    m_menuEdit->Check(id_AlignTop, ((flag & (wxALIGN_BOTTOM | wxALIGN_CENTER_VERTICAL)) == 0) &&
+                                       enableVerticalTools);
+    m_toolbar->ToggleTool(id_AlignTop, ((flag & (wxALIGN_BOTTOM | wxALIGN_CENTER_VERTICAL)) == 0) &&
+                                           enableVerticalTools);
 
     m_menuEdit->Enable(id_AlignCenterVertical, enableVerticalTools);
     m_toolbar->EnableTool(id_AlignCenterVertical, enableVerticalTools);
-    m_menuEdit->Check(id_AlignCenterVertical, (flag & wxALIGN_CENTER_VERTICAL) && enableVerticalTools);
-    m_toolbar->ToggleTool(id_AlignCenterVertical, (flag & wxALIGN_CENTER_VERTICAL) && enableVerticalTools);
+    m_menuEdit->Check(id_AlignCenterVertical,
+                      (flag & wxALIGN_CENTER_VERTICAL) && enableVerticalTools);
+    m_toolbar->ToggleTool(id_AlignCenterVertical,
+                          (flag & wxALIGN_CENTER_VERTICAL) && enableVerticalTools);
 
     m_menuEdit->Enable(id_AlignBottom, enableVerticalTools);
     m_toolbar->EnableTool(id_AlignBottom, enableVerticalTools);

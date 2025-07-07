@@ -60,7 +60,7 @@ using namespace pugi;
 #include <wx/file.h>    // For wxFile
 #include <wx/string.h>  // For wxString
 
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
 // For placement new
 // #include <new>

@@ -21,8 +21,9 @@
 
 wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
+    auto widget =
+        new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                      DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
 
     if (node->hasValue(prop_margins))
     {
@@ -40,7 +41,8 @@ wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
+void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                         bool is_preview)
 {
     auto toolbar = wxStaticCast(wxobject, wxToolBar);
     ASSERT(toolbar);
@@ -60,9 +62,9 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
             if (!bundle.IsOk())
                 bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap,
-                                          (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
-                                          wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle,
+                                          wxNullBitmap, (wxItemKind) childObj->as_int(prop_kind),
+                                          childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
@@ -70,7 +72,8 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
             if (!bundle.IsOk())
                 bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap, wxITEM_DROPDOWN,
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle,
+                                          wxNullBitmap, wxITEM_DROPDOWN,
                                           childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
@@ -121,10 +124,12 @@ bool ToolBarFormGenerator::ConstructionCode(Code& code)
         code.Indent(3);
         code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
-        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
+                                     4);
         code.Add("style=").Style().Comma();
-        size_t name_len =
-            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.ToolBarNameStr");
+        size_t name_len = code.hasValue(prop_window_name) ?
+                              code.node()->as_string(prop_window_name).size() :
+                              sizeof("wx.ToolBarNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.hasValue(prop_window_name))
@@ -154,7 +159,10 @@ bool ToolBarFormGenerator::SettingsCode(Code& code)
 
     if (!code.isPropValue(prop_separation, 5))
     {
-        code.Eol(eol_if_needed).FormFunction("SetToolSeparation(").Add(prop_separation).EndFunction();
+        code.Eol(eol_if_needed)
+            .FormFunction("SetToolSeparation(")
+            .Add(prop_separation)
+            .EndFunction();
     }
 
     if (code.hasValue(prop_margins))
@@ -255,12 +263,13 @@ void ToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::str
 {
     BaseGenerator::GenEvent(code, event, class_name);
 
-    // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
+    // Since this is the base class, we don't want to use the pointer that GenEventCode() would
+    // normally create
     code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
-bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
 
@@ -282,7 +291,8 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 
 int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolBar");
@@ -309,7 +319,8 @@ void ToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxToolBarXmlHandler");
 }
 
-bool ToolBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool ToolBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                      GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
@@ -321,12 +332,14 @@ bool ToolBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& s
     return false;
 }
 
-//////////////////////////////////////////  ToolBarGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  ToolBarGenerator
+/////////////////////////////////////////////
 
 wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
+    auto widget =
+        new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                      DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->hasValue(prop_margins))
     {
@@ -344,7 +357,8 @@ wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
+void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                     bool is_preview)
 {
     auto toolbar = wxStaticCast(wxobject, wxToolBar);
     ASSERT(toolbar);
@@ -364,8 +378,8 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
                 bundle = wxue_img::bundle_unknown_svg(16, 16);
 
             toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap,
-                             (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help), wxEmptyString,
-                             nullptr);
+                             (wxItemKind) childObj->as_int(prop_kind),
+                             childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
@@ -373,8 +387,9 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
             if (!bundle.IsOk())
                 bundle = wxue_img::bundle_unknown_svg(16, 16);
 
-            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap, wxITEM_DROPDOWN,
-                             childObj->as_wxString(prop_help), wxEmptyString, nullptr);
+            toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bundle, wxNullBitmap,
+                             wxITEM_DROPDOWN, childObj->as_wxString(prop_help), wxEmptyString,
+                             nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -443,7 +458,11 @@ bool ToolBarGenerator::SettingsCode(Code& code)
 {
     if (code.node()->as_int(prop_separation) != 5)
     {
-        code.Eol().NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
+        code.Eol()
+            .NodeName()
+            .Function("SetToolSeparation(")
+            .as_string(prop_separation)
+            .EndFunction();
     }
 
     if (code.hasValue(prop_margins))
@@ -466,8 +485,8 @@ bool ToolBarGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
 
@@ -489,7 +508,8 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
 
 int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolBar");
@@ -516,7 +536,8 @@ void ToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxToolBarXmlHandler");
 }
 
-bool ToolBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool ToolBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                  GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

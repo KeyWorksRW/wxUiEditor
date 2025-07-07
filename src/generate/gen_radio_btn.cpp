@@ -20,8 +20,9 @@
 
 wxObject* RadioButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                    DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                          DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
         widget->SetValue(true);
@@ -67,7 +68,8 @@ bool RadioButtonGenerator::SettingsCode(Code& code)
 
 int RadioButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRadioButton");
@@ -91,8 +93,8 @@ void RadioButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxRadioButtonXmlHandler");
 }
 
-bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobut.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -101,7 +103,8 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     return true;
 }
 
-bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                               Node* node)
 {
     if (prop->isProp(prop_style))
     {
@@ -122,21 +125,25 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
             if (pos > 0 && parent->getChild(pos - 1)->isGen(gen_wxRadioButton) &&
                 parent->getChild(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
-                wxGetFrame().ShowInfoBarMsg("The previous radio button is also set as the start of a group!",
-                                            wxICON_INFORMATION);
+                wxGetFrame().ShowInfoBarMsg(
+                    "The previous radio button is also set as the start of a group!",
+                    wxICON_INFORMATION);
                 m_info_warning = true;
             }
-            else if (pos + 1 < parent->getChildCount() && parent->getChild(pos + 1)->isGen(gen_wxRadioButton) &&
+            else if (pos + 1 < parent->getChildCount() &&
+                     parent->getChild(pos + 1)->isGen(gen_wxRadioButton) &&
                      parent->getChild(pos + 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
-                wxGetFrame().ShowInfoBarMsg("The next radio button is also set as the start of a group!",
-                                            wxICON_INFORMATION);
+                wxGetFrame().ShowInfoBarMsg(
+                    "The next radio button is also set as the start of a group!",
+                    wxICON_INFORMATION);
                 m_info_warning = true;
             }
         }
 
-        // Note that we allow this property change since we don't know which radio button the user will want to change (none
-        // if they plan on adding more radio buttons in between the two groups)
+        // Note that we allow this property change since we don't know which radio button the user
+        // will want to change (none if they plan on adding more radio buttons in between the two
+        // groups)
         return true;
     }
     else
@@ -145,7 +152,8 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
     }
 }
 
-void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
+                                             NodeProperty* changed_prop)
 {
     if (changed_prop->isProp(prop_style))
     {
@@ -174,7 +182,8 @@ void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, N
     }
 }
 
-bool RadioButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool RadioButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                      GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

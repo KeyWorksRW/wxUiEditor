@@ -137,14 +137,15 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         node_memory.size = 0;
         node_memory.children = 0;
         CalcNodeMemory(cur_sel, node_memory);
-        label = std::format(std::locale(""), "Memory: {:L} ({:L} node{})", node_memory.size, node_memory.children,
-                            node_memory.children == 1 ? "" : "s");
+        label = std::format(std::locale(""), "Memory: {:L} ({:L} node{})", node_memory.size,
+                            node_memory.children, node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
     }
 
     CalcNodeMemory(Project.getProjectNode(), node_memory);
 
-    label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size, node_memory.children);
+    label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size,
+                        node_memory.children);
     m_txt_project->SetLabel(label);
 
     auto clipboard = wxGetFrame().getClipboard();
@@ -153,7 +154,8 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         node_memory.size = 0;
         node_memory.children = 0;
         CalcNodeMemory(clipboard, node_memory);
-        label = std::format(std::locale(""), "Clipboard: {:L} ({:L} nodes)", node_memory.size, node_memory.children);
+        label = std::format(std::locale(""), "Clipboard: {:L} ({:L} nodes)", node_memory.size,
+                            node_memory.children);
         m_txt_clipboard->SetLabel(label);
     }
 

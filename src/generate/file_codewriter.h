@@ -25,11 +25,12 @@ namespace code
         write_error = -1,        // File could not be written
         write_cant_create = -2,  // File could not be created
         write_cant_read = -3,    // File can't be read, so no comparison can be made
-        write_no_folder = -3,    // Folder doesn't exist and flag_no_ui is set or user cancelled folder creation
-        write_current = 0,       // File is current, no update needed
-        write_success = 1,       // File written, user has not added edits
-        write_edited = 2,        // File written with user-edits
-        write_needed = 3,        // Returned if flag_test_only is set and file needs updating
+        write_no_folder =
+            -3,  // Folder doesn't exist and flag_no_ui is set or user cancelled folder creation
+        write_current = 0,  // File is current, no update needed
+        write_success = 1,  // File written, user has not added edits
+        write_edited = 2,   // File written with user-edits
+        write_needed = 3,   // Returned if flag_test_only is set and file needs updating
     };
 };  // namespace code
 
@@ -38,7 +39,8 @@ class Node;  // forward declaration
 class FileCodeWriter : public WriteCode
 {
 public:
-    FileCodeWriter(const wxString& file, size_t reserved_amount = 8 * 1024) : m_filename(file.utf8_string())
+    FileCodeWriter(const wxString& file, size_t reserved_amount = 8 * 1024) :
+        m_filename(file.utf8_string())
     {
         m_buffer.clear();
         m_buffer.reserve(reserved_amount);

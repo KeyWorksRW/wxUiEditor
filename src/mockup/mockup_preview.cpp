@@ -22,11 +22,11 @@
 #include "node.h"                      // Node class
 #include "utils.h"                     // Utility functions that work with properties
 
-// This function is almost identical to MockupContent::CreateChildren. However, the Mockup version assumes the top window is
-// a wxPanel, whereas this version assumes the top version is a form.
+// This function is almost identical to MockupContent::CreateChildren. However, the Mockup version
+// assumes the top window is a wxPanel, whereas this version assumes the top version is a form.
 
-void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
-                          wxWindow* form_window)
+void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
+                          wxSizer* parent_sizer, wxWindow* form_window)
 {
 #if defined(__WINDOWS__)
     if (node->hasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Windows"))
@@ -55,14 +55,16 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                 wxStaticCast(parent_object, wxGridBagSizer)
                     ->Add(node->as_int(prop_width), node->as_int(prop_height),
                           wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
-                          wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)), flags.GetFlags(),
+                          wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)),
+                          flags.GetFlags(),
                           parent->FromDIP(wxSize(node->as_int(prop_border_size), -1)).x);
             }
             else
             {
                 if (node->as_int(prop_proportion) != 0)
                 {
-                    wxStaticCast(parent_object, wxSizer)->AddStretchSpacer(node->as_int(prop_proportion));
+                    wxStaticCast(parent_object, wxSizer)
+                        ->AddStretchSpacer(node->as_int(prop_proportion));
                 }
                 else
                 {
@@ -93,13 +95,14 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
             parent_sizer->Add(new wxStaticLine(parent, wxID_ANY), wxSizerFlags().Border(0));
         }
 
-        // REVIEW: [KeyWorks - 06-09-2022] MockupContent::CreateChildren returns here because there is no form,
-        // whereas we need to continue processing children
+        // REVIEW: [KeyWorks - 06-09-2022] MockupContent::CreateChildren returns here because there
+        // is no form, whereas we need to continue processing children
 
         // BUGBUG: [Randalphwa - 09-09-2022] Er, why are we returning?
         return;
     }
-    else if (node->isSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
+    else if (node->isSizer() || node->isGen(gen_wxStdDialogButtonSizer) ||
+             node->isGen(gen_TextSizer))
     {
         if (node->isStaticBoxSizer())
         {
@@ -174,22 +177,24 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                     wxGBSpan span(node->as_int(prop_rowspan), node->as_int(prop_colspan));
 
                     if (created_window)
-                        sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+                        sizer->Add(created_window, position, span, sizer_flags.GetFlags(),
+                                   sizer_flags.GetBorderInPixels());
                     else
-                        sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+                        sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(),
+                                   sizer_flags.GetBorderInPixels());
                 }
                 else
                 {
                     auto sizer = wxStaticCast(parent_object, wxSizer);
                     if (created_window && !node->isStaticBoxSizer())
                     {
-                        sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
-                                   sizer_flags.GetBorderInPixels());
+                        sizer->Add(created_window, sizer_flags.GetProportion(),
+                                   sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
                     }
                     else
                     {
-                        sizer->Add(created_sizer, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
-                                   sizer_flags.GetBorderInPixels());
+                        sizer->Add(created_sizer, sizer_flags.GetProportion(),
+                                   sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
                     }
                 }
             }
@@ -216,7 +221,8 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         }
     }
 
-    else if ((created_sizer && wxDynamicCast(parent_object, wxWindow)) || (!parent_object && created_sizer))
+    else if ((created_sizer && wxDynamicCast(parent_object, wxWindow)) ||
+             (!parent_object && created_sizer))
     {
         parent->SetSizer(created_sizer);
         parent->Fit();

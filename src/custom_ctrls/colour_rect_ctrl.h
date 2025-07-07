@@ -17,8 +17,9 @@ namespace wxue_ctrl
     class ColourRectCtrl : public wxControl
     {
     public:
-        ColourRectCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxDefaultSize, long style = wxBORDER_SIMPLE);
+        ColourRectCtrl(wxWindow* parent, wxWindowID id = wxID_ANY,
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+                       long style = wxBORDER_SIMPLE);
 
         void SetColour(wxColour clr) { m_clr = clr; }
 

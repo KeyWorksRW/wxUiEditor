@@ -28,7 +28,8 @@ wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                      bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
     {
@@ -73,8 +74,8 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
     {
         code.Eol(eol_if_empty);
 
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
+        // The parent node is not a sizer -- which is expected if this is the parent sizer
+        // underneath a form or wxPanel.
 
         if (parent->isGen(gen_wxRibbonPanel))
         {
@@ -100,8 +101,8 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
@@ -138,9 +139,9 @@ int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /
     }
     else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
     {
-        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
-        // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
-        // create for most forms.
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
+        // a problem for forms which often can specify their own minimum size. The workaround is to
+        // set the minimum size of the parent sizer that we create for most forms.
 
         item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
     }

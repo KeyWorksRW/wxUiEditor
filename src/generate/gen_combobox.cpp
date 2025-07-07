@@ -19,8 +19,9 @@ using namespace code;
 
 wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
+    auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr,
+                                 GetStyleInt(node));
 
     if (node->hasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
         widget->SetHint(node->as_wxString(prop_hint));
@@ -43,8 +44,8 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
-    // Note that this event only gets fired of the drop-down button is clicked. Clicking in the edit area does not
-    // generate an event (or at least it doesn't on Windows 10).
+    // Note that this event only gets fired of the drop-down button is clicked. Clicking in the edit
+    // area does not generate an event (or at least it doesn't on Windows 10).
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -61,12 +62,14 @@ bool ComboBoxGenerator::ConstructionCode(Code& code)
         code.Comma().Pos().Comma().CheckLineLength().WxSize();
         if (code.is_cpp())
         {
-            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") +
+                                         code.node()->as_string(prop_style).size());
             code << "0, nullptr";
         }
         else
         {
-            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
+            code.Comma().CheckLineLength(sizeof("[], ") +
+                                         code.node()->as_string(prop_style).size());
             code.Add("[]");
         }
         code.Comma().Style().EndFunction();
@@ -137,7 +140,11 @@ bool ComboBoxGenerator::SettingsCode(Code& code)
             int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("SetSelection(")
+                    .as_string(prop_selection_int)
+                    .EndFunction();
             }
         }
     }
@@ -145,8 +152,8 @@ bool ComboBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/combobox.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -156,7 +163,8 @@ bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxComboBox");
@@ -199,7 +207,8 @@ void ComboBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxComboBoxXmlHandler");
 }
 
-bool ComboBoxGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool ComboBoxGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                   GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

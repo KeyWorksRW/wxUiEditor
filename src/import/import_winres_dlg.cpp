@@ -160,11 +160,12 @@ void ImportWinRes::ReadRcFile()
 
         auto type = iter.view_stepover();
 
-        // If there is a DESIGNINFO section, there may be a DIALOG specified for APSTUDIO to used -- however that dialog may
-        // not actually exist. So instead, we look for a trailing space which should indicate the statement is followed by
-        // dimensions.
+        // If there is a DESIGNINFO section, there may be a DIALOG specified for APSTUDIO to used --
+        // however that dialog may not actually exist. So instead, we look for a trailing space
+        // which should indicate the statement is followed by dimensions.
 
-        if (type.starts_with("DIALOG ") || type.starts_with("DIALOGEX ") || type.starts_with("MENU"))
+        if (type.starts_with("DIALOG ") || type.starts_with("DIALOGEX ") ||
+            type.starts_with("MENU"))
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);

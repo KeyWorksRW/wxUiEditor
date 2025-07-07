@@ -18,8 +18,9 @@
 
 wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                  DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                        DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -35,8 +36,8 @@ wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
-                                           bool /* is_preview */)
+void RibbonBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
+                                           Node* /* node */, bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
     btn_bar->Realize();
@@ -69,7 +70,8 @@ bool RibbonBarFormGenerator::ConstructionCode(Code& code)
         code.Indent(3);
         code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
-        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
+                                     4);
         code.Add("style=").Style();
         code.Str("):");
         code.Unindent();
@@ -158,17 +160,23 @@ bool RibbonBarFormGenerator::SettingsCode(Code& code)
     auto& theme = code.node()->as_string(prop_theme);
     if (theme.is_sameas("Default"))
     {
-        code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
+        code.FormFunction("SetArtProvider(")
+            .Str(code.is_cpp() ? "new " : "")
+            .Add("wxRibbonDefaultArtProvider");
         code.AddIfPython("()");
     }
     else if (theme.is_sameas("Generic"))
     {
-        code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
+        code.FormFunction("SetArtProvider(")
+            .Str(code.is_cpp() ? "new " : "")
+            .Add("wxRibbonAUIArtProvider");
         code.AddIfPython("()");
     }
     else if (theme.is_sameas("MSW"))
     {
-        code.FormFunction("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
+        code.FormFunction("SetArtProvider(")
+            .Str(code.is_cpp() ? "new " : "")
+            .Add("wxRibbonMSWArtProvider");
         code.AddIfPython("()");
     }
     code.EndFunction();
@@ -180,12 +188,13 @@ void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::s
 {
     BaseGenerator::GenEvent(code, event, class_name);
 
-    // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
+    // Since this is the base class, we don't want to use the pointer that GenEventCode() would
+    // normally create
     code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
-bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                         GenLang /* language */)
+bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/art.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/ribbon/bar.h>", set_src, set_hdr);
@@ -207,12 +216,14 @@ bool RibbonBarFormGenerator::GetImports(Node*, std::set<std::string>& set_import
     return false;
 }
 
-//////////////////////////////////////////  RibbonBarGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  RibbonBarGenerator
+/////////////////////////////////////////////
 
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                  DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                        DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -228,7 +239,8 @@ wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */)
+void RibbonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
+                                       bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
     btn_bar->Realize();
@@ -257,17 +269,29 @@ bool RibbonBarGenerator::SettingsCode(Code& code)
     auto& theme = code.node()->as_string(prop_theme);
     if (theme.is_sameas("Default"))
     {
-        code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonDefaultArtProvider");
+        code.Eol()
+            .NodeName()
+            .Function("SetArtProvider(")
+            .Str(code.is_cpp() ? "new " : "")
+            .Add("wxRibbonDefaultArtProvider");
         code.AddIfRuby(".new").AddIfPython("()");
     }
     else if (theme.is_sameas("Generic"))
     {
-        code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonAUIArtProvider");
+        code.Eol()
+            .NodeName()
+            .Function("SetArtProvider(")
+            .Str(code.is_cpp() ? "new " : "")
+            .Add("wxRibbonAUIArtProvider");
         code.AddIfRuby(".new").AddIfPython("()");
     }
     else if (theme.is_sameas("MSW"))
     {
-        code.Eol().NodeName().Function("SetArtProvider(").Str(code.is_cpp() ? "new " : "").Add("wxRibbonMSWArtProvider");
+        code.Eol()
+            .NodeName()
+            .Function("SetArtProvider(")
+            .Str(code.is_cpp() ? "new " : "")
+            .Add("wxRibbonMSWArtProvider");
         code.AddIfRuby(".new").AddIfPython("()");
     }
     code.EndFunction();
@@ -275,8 +299,8 @@ bool RibbonBarGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/art.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/ribbon/bar.h>", set_src, set_hdr);
@@ -291,7 +315,8 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonBar");

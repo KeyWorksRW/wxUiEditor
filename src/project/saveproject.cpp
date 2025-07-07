@@ -61,7 +61,8 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
             {
                 if (iter.isType(type_image) || iter.isType(type_animation))
                 {
-                    // Normalize using forward slashes, no spaces after ';' and no size info unless it is an SVG file
+                    // Normalize using forward slashes, no spaces after ';' and no size info unless
+                    // it is an SVG file
 
                     tt_string_vector parts(value, ';', tt::TRIM::both);
                     if (parts.size() < 2)
@@ -71,7 +72,8 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
                     parts[1].backslashestoforward();
                     description << ';' << parts[1];
 
-                    if (parts.size() > 2 && (parts[0].starts_with("SVG") || parts[0].starts_with("Art")))
+                    if (parts.size() > 2 &&
+                        (parts[0].starts_with("SVG") || parts[0].starts_with("Art")))
                     {
                         description << ';' << parts[2];
                     }

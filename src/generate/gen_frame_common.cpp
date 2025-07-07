@@ -41,7 +41,9 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
 
         if (code.hasValue(prop_extra_style))
         {
-            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
+            code.Eol(eol_if_needed)
+                .FormFunction("SetExtraStyle(GetExtraStyle() | ")
+                .Add(prop_extra_style);
             code.EndFunction();
         }
     }
@@ -95,10 +97,12 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Indent(3);
         code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size, code::no_scaling);
-        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
+                                     4);
         code.Add("style=").Style().Comma();
-        size_t name_len =
-            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.FrameNameStr");
+        size_t name_len = code.hasValue(prop_window_name) ?
+                              code.node()->as_string(prop_window_name).size() :
+                              sizeof("wx.FrameNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.hasValue(prop_window_name))
@@ -113,11 +117,14 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
     {
         if (frame_type == frame_sdi_doc)
         {
-            code.AddComment("wxDocParentFrame is not currently supported in wxRuby3. Generating a wxFrame instead.", true);
+            code.AddComment("wxDocParentFrame is not currently supported in wxRuby3. Generating a "
+                            "wxFrame instead.",
+                            true);
         }
         else if (frame_type == frame_mdi_doc)
         {
-            code.AddComment("wxDocMDIParentFrame is not currently supported in wxRuby3. Generating a wxFrame instead.",
+            code.AddComment("wxDocMDIParentFrame is not currently supported in wxRuby3. Generating "
+                            "a wxFrame instead.",
                             true);
         }
         code.Add("class ").NodeName();
@@ -140,12 +147,22 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         }
         code.Comma().Str("title = ").QuotedString(prop_title);
         // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
-        code.Comma().CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE")).Str("size = ").WxSize(prop_size);
-        code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
+        code.Comma()
+            .CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION"))
+            .Str("pos = ")
+            .Pos(prop_pos);
+        code.Comma()
+            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
+            .Str("size = ")
+            .WxSize(prop_size);
+        code.Comma()
+            .CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE"))
+            .Str("style = ")
+            .Style();
         if (code.hasValue(prop_window_name))
         {
-            code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() + 2);
+            code.Comma().CheckLineLength(sizeof("name = ") +
+                                         code.as_string(prop_window_name).size() + 2);
             code.Str("name = ").QuotedString(prop_window_name);
         }
 
@@ -167,17 +184,22 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Str("impl ").NodeName();
         code.OpenBrace();
         code.Str("fn new(");
-        code.Str(
-            "parent: &wx::Window, id: i32, title: &str, pos: wx::Point, size: wx::Size, style: i32, name: &str) -> Self");
+        code.Str("parent: &wx::Window, id: i32, title: &str, pos: wx::Point, size: wx::Size, "
+                 "style: i32, name: &str) -> Self");
         code.OpenBrace();
-        code.Str("let frame = wx::Frame::builder(parent, id, title, pos, size, style, name).build();").Eol();
+        code.Str("let frame = wx::Frame::builder(parent, id, title, pos, size, style, "
+                 "name).build();")
+            .Eol();
         return true;
     }
 #if GENERATE_NEW_LANG_CODE
     else if (code.is_lua())
     {
         code.Eol().NodeName().Str(" = {}\n");
-        code.Eol().Str("function ").NodeName().Str(":create(parent, id, title, pos, size, style, name)");
+        code.Eol()
+            .Str("function ")
+            .NodeName()
+            .Str(":create(parent, id, title, pos, size, style, name)");
         code.Indent();
         code.Eol().Str("parent = parent or wx.NULL");
         code.Eol().Str("id = id or ").as_string(prop_id);
@@ -275,7 +297,8 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     }
     else if (code.is_python())
     {
-        code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, pos, size, style, name):");
+        code.Eol(eol_if_needed)
+            .Str("if not self.Create(parent, id, title, pos, size, style, name):");
         code.Eol().Tab().Str("return\n");
     }
     else if (code.is_ruby())
@@ -284,7 +307,8 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     }
     else if (code.is_perl())
     {
-        code.Eol(eol_if_needed) += "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
+        code.Eol(eol_if_needed) +=
+            "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
     }
 #if GENERATE_NEW_LANG_CODE
     else if (code.is_lua())
@@ -315,7 +339,11 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
             code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
             code.Str("size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
             code.FormFunction("SetSize(");
-            code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
+            code.FormFunction("FromDIP(pos).x")
+                .Comma()
+                .FormFunction("FromDIP(pos).y")
+                .Comma()
+                .Eol();
             code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
             code.Add("wxSIZE_USE_EXISTING").EndFunction();
         }
@@ -327,11 +355,17 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     const auto max_size = frame->as_wxSize(prop_maximum_size);
     if (min_size != wxDefaultSize)
     {
-        code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+        code.Eol()
+            .FormFunction("SetMinSize(")
+            .WxSize(prop_minimum_size, code::force_scaling)
+            .EndFunction();
     }
     if (max_size != wxDefaultSize)
     {
-        code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+        code.Eol()
+            .FormFunction("SetMaxSize(")
+            .WxSize(prop_maximum_size, code::force_scaling)
+            .EndFunction();
     }
 
     if (code.hasValue(prop_window_extra_style))

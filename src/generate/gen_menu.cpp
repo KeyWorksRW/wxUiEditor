@@ -27,7 +27,8 @@ bool MenuGenerator::ConstructionCode(Code& code)
 
 bool MenuGenerator::AfterChildrenCode(Code& code)
 {
-    auto* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
+    auto* node =
+        code.node();  // This is just for code readability -- could just use code.node() everywhere
     auto parent_type = node->getParent()->getGenType();
     if (parent_type == type_menubar)
     {
@@ -36,7 +37,9 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         {
             // Call Function(..., false) so that Ruby will convert the function to snake-case
             if (code.is_perl())
-                code.Function("wxGetStockLabel(", false).Str(code.node()->as_string(prop_stock_id)).Str(")");
+                code.Function("wxGetStockLabel(", false)
+                    .Str(code.node()->as_string(prop_stock_id))
+                    .Str(")");
             else
                 code.Function("wxGetStockLabel(", false).Add(prop_stock_id).Str(")");
         }
@@ -59,8 +62,8 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
             return true;
         }
 
-        if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_panel_form ||
-            parent_type == type_wizard)
+        if (parent_type == type_form || parent_type == type_frame_form ||
+            parent_type == type_panel_form || parent_type == type_wizard)
         {
             code << "Bind(wxEVT_RIGHT_DOWN, &" << node->getParentName(code.get_language())
                  << "::" << node->getParentName(code.get_language()) << "OnContextMenu, this);";
@@ -68,7 +71,8 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         else
         {
             code.ValidParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
-                << node->getFormName() << "::" << node->getParentName(code.get_language()) << "OnContextMenu, this);";
+                << node->getFormName() << "::" << node->getParentName(code.get_language())
+                << "OnContextMenu, this);";
         }
     }
     code.Eol(eol_if_needed);
@@ -76,8 +80,8 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                GenLang /* language */)
+bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
@@ -123,8 +127,9 @@ bool MenuGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->addProperty(prop, value);
-            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_label),
-                                       wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(
+                prop->getNode()->getPropPtr(prop_label),
+                wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }

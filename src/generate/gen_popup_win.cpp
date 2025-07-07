@@ -129,7 +129,8 @@ int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_fl
 {
     if (xrc_flags & xrc::add_comments)
     {
-        object.append_child(pugi::node_comment).set_value(" wxPopupWindow is not supported by XRC. ");
+        object.append_child(pugi::node_comment)
+            .set_value(" wxPopupWindow is not supported by XRC. ");
     }
     return BaseGenerator::xrc_form_not_supported;
 }
@@ -138,7 +139,8 @@ int PopupTransientWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size
 {
     if (xrc_flags & xrc::add_comments)
     {
-        object.append_child(pugi::node_comment).set_value(" wxPopupTransientWindow is not supported by XRC. ");
+        object.append_child(pugi::node_comment)
+            .set_value(" wxPopupTransientWindow is not supported by XRC. ");
     }
     return BaseGenerator::xrc_form_not_supported;
 }
@@ -190,7 +192,8 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
     const auto min_size = form->as_wxSize(prop_minimum_size);
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
-    if (min_size == wxDefaultSize && max_size == wxDefaultSize && form->as_wxSize(prop_size) == wxDefaultSize)
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize &&
+        form->as_wxSize(prop_size) == wxDefaultSize)
     {
         // If is_scaling_enabled == false, then neither pos or size have high dpi scaling enabled
         code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
@@ -199,18 +202,27 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
     {
         if (min_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::allow_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetMinSize(")
+                .WxSize(prop_minimum_size, code::allow_scaling)
+                .EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol().FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::allow_scaling).EndFunction();
+            code.Eol()
+                .FormFunction("SetMaxSize(")
+                .WxSize(prop_maximum_size, code::allow_scaling)
+                .EndFunction();
         }
 
         // The default will be size == wxDefaultSize, in which case all we need to do is call
         // SetSizerAndFit(child_node)
         if (code.node()->as_wxSize(prop_size) == wxDefaultSize)
         {
-            code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction().CloseBrace(true, false);
+            code.FormFunction("SetSizerAndFit(")
+                .NodeName(child_node)
+                .EndFunction()
+                .CloseBrace(true, false);
         }
         else
         {
@@ -232,8 +244,9 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
                 code.Add("size = Wx::Size.new(").itoa(size.x).Add(", ").itoa(size.y).Add(")");
             }
 
-            // If size != wxDefaultSize, it's more complicated because either the width or the height might still
-            // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
+            // If size != wxDefaultSize, it's more complicated because either the width or the
+            // height might still be set to wxDefaultCoord. In that case, we need to call Fit() to
+            // calculate the missing dimension
 
             code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
             code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
@@ -295,8 +308,8 @@ bool PopupWinBaseGenerator::HeaderCode(Code& code)
     return true;
 }
 
-bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/popupwin.h>", set_src, set_hdr);
     return true;
@@ -304,11 +317,12 @@ bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 std::pair<bool, tt_string> PopupWinBaseGenerator::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY)))
+    if (language == GEN_LANG_NONE ||
+        (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY)))
         return { true, {} };
-    // TODO: [Randalphwa - 10-01-2024] At some point, other languages may have versions that support these,
-    // in which case call Project.getLangVersion()
+    // TODO: [Randalphwa - 10-01-2024] At some point, other languages may have versions that support
+    // these, in which case call Project.getLangVersion()
 
-    return { false,
-             tt_string() << "wxPopupWindow and wxPopupTransientWindow are not supported by " << GenLangToString(language) };
+    return { false, tt_string() << "wxPopupWindow and wxPopupTransientWindow are not supported by "
+                                << GenLangToString(language) };
 }

@@ -66,14 +66,16 @@ wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* pare
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_HELP));
     else if (node->as_bool(prop_ContextHelp))
         // sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP, "?"));
-        sizer->AddButton(new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP));
+        sizer->AddButton(
+            new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP));
 
     sizer->Realize();
 
     if (node->as_bool(prop_static_line))
     {
         auto topsizer = new wxBoxSizer(wxVERTICAL);
-        topsizer->Add(new wxStaticLine(wxDynamicCast(parent, wxWindow)), wxSizerFlags().Expand().DoubleBorder(wxBOTTOM));
+        topsizer->Add(new wxStaticLine(wxDynamicCast(parent, wxWindow)),
+                      wxSizerFlags().Expand().DoubleBorder(wxBOTTOM));
         topsizer->Add(sizer, wxSizerFlags().Expand());
         return topsizer;
     }
@@ -87,15 +89,18 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     Node* node = code.node();  // purely for convenience
 
-    // Unfortunately, the CreateStdDialogButtonSizer() code does not support a wxID_SAVE or wxID_CONTEXT_HELP button
-    // even though wxStdDialogButtonSizer does support it. Worse, CreateStdDialogButtonSizer() calls Realize() which
-    // means if you add a button afterwards, then it will not be positioned correctly. You can't call Realize() twice
-    // without hitting assertion errors in debug builds, and in release builds, the Save button is positioned
-    // incorrectly. Unfortunately that means we have to add the buttons one at a time if a Save button is specified.
+    // Unfortunately, the CreateStdDialogButtonSizer() code does not support a wxID_SAVE or
+    // wxID_CONTEXT_HELP button even though wxStdDialogButtonSizer does support it. Worse,
+    // CreateStdDialogButtonSizer() calls Realize() which means if you add a button afterwards, then
+    // it will not be positioned correctly. You can't call Realize() twice without hitting assertion
+    // errors in debug builds, and in release builds, the Save button is positioned incorrectly.
+    // Unfortunately that means we have to add the buttons one at a time if a Save button is
+    // specified.
 
     auto& def_btn_name = node->as_string(prop_default_button);
 
-    if (node->getForm()->isGen(gen_wxDialog) && (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
+    if (node->getForm()->isGen(gen_wxDialog) &&
+        (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
         code.NodeName().Assign().FormFunction("CreateStdDialogButtonSizer(");
 
@@ -132,9 +137,17 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
         code.Add(flags).EndFunction();
         if (def_btn_name == "Close" || def_btn_name == "Cancel")
-            code.Eol().NodeName().Function("GetCancelButton()").Function("SetDefault(").EndFunction();
+            code.Eol()
+                .NodeName()
+                .Function("GetCancelButton()")
+                .Function("SetDefault(")
+                .EndFunction();
         else if (def_btn_name == "Apply")
-            code.Eol().NodeName().Function("GetApplyButton()").Function("SetDefault(").EndFunction();
+            code.Eol()
+                .NodeName()
+                .Function("GetApplyButton()")
+                .Function("SetDefault(")
+                .EndFunction();
 
         return true;
     }
@@ -243,7 +256,8 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                                size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
@@ -252,8 +266,9 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     {
         // BUGBUG: [Randalphwa - 08-06-2023] This should be added with a platform directive
 
-        // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not on Mac. XRC doesn't
-        // support this, so we emulate it by adding the line. That's not correct on a Mac, though...
+        // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not
+        // on Mac. XRC doesn't support this, so we emulate it by adding the line. That's not correct
+        // on a Mac, though...
 
         if (node->as_bool(prop_static_line))
         {
@@ -406,12 +421,14 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     return result;
 }
 
-void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */,
+                                                     std::set<std::string>& handlers)
 {
     handlers.emplace("wxStdDialogButtonSizerXmlHandler");
 }
 
-void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
+void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
+                                             const std::string& class_name)
 {
     Code handler(event->getNode(), code.m_language);
     tt_string event_code;
@@ -450,14 +467,14 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
 #endif  // GENERATE_NEW_LANG_CODE
 
         default:
-            FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(code.m_language) << " (" << code.m_language
-                                 << ")");
+            FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(code.m_language)
+                                 << " (" << code.m_language << ")");
             event_code = EventHandlerDlg::GetCppValue(event->get_value());
             break;
     }
 
-    // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
-    // use a string for this to allow the lambda processing code to replace it.
+    // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on
+    // it's own line, so we use a string for this to allow the lambda processing code to replace it.
     std::string comma(", ");
     if (event_code.contains("["))
     {
@@ -487,7 +504,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
     }
 
     tt_string_view event_name =
-        (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
+        (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" :
+                                                                        "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
     if (code.is_ruby() && (event_name == "wxEVT_BUTTON" || event_name == "wxEVT_UPDATE_UI"))
@@ -502,7 +520,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
         code.Add("Bind(").Add(event_name) << comma << handler.GetCode() << comma;
     }
 
-    if (code.m_language == GEN_LANG_PERL || code.m_language == GEN_LANG_PYTHON || code.m_language == GEN_LANG_RUBY)
+    if (code.m_language == GEN_LANG_PERL || code.m_language == GEN_LANG_PYTHON ||
+        code.m_language == GEN_LANG_RUBY)
     {
         if (event->get_name().starts_with("OKButton"))
             code.NodeName(event->getNode()).Add("_ok");
@@ -556,7 +575,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event, const
     code.EndFunction();
 }
 
-bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                                std::set<std::string>& set_hdr,
                                                 GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
@@ -567,7 +587,8 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
     return true;
 }
 
-bool StdDialogButtonSizerGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool StdDialogButtonSizerGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
+                                               GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

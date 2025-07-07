@@ -29,7 +29,8 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     if (Project.as_string(prop_code_preference) != "Python" ||
         (Project.hasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
     {
-        m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label));
+        m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                       node->as_wxString(prop_label));
         if (node->as_bool(prop_checked))
             m_radiobtn->SetValue(true);
         if (node->hasValue(prop_tooltip))
@@ -57,8 +58,8 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     return sizer;
 }
 
-void StaticRadioBtnBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
-                                                    bool /* is_preview */)
+void StaticRadioBtnBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
+                                                    Node* node, bool /* is_preview */)
 {
     if (node->as_bool(prop_hidden))
     {
@@ -67,7 +68,8 @@ void StaticRadioBtnBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow
     }
 }
 
-bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node, NodeProperty* prop)
+bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node,
+                                                       NodeProperty* prop)
 {
     if (prop->isProp(prop_tooltip))
     {
@@ -96,12 +98,18 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     else if (code.is_ruby())
     {
         code.VarName(code.node()->as_string(prop_radiobtn_var_name)) << " = Wx::RadioButton.new(";
-        code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label).EndFunction();
+        code.ValidParentName()
+            .Comma()
+            .as_string(prop_id)
+            .Comma()
+            .QuotedString(prop_label)
+            .EndFunction();
         code.Eol();
     }
     else if (code.is_python())
     {
-        code.Str("# wxPython currently does not support a radio button as a static box label").Eol();
+        code.Str("# wxPython currently does not support a radio button as a static box label")
+            .Eol();
     }
 
     Code parent_name(code.node(), code.get_language());
@@ -115,7 +123,8 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name.NodeName(parent);
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
+            else if (parent->isGen(gen_wxStaticBoxSizer) ||
+                     parent->isGen(gen_StaticCheckboxBoxSizer) ||
                      parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
                 // The () isn't added because Python and Ruby don't use it. C++ adds it in its
@@ -135,20 +144,28 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     {
         if (parent_name.ends_with("GetStaticBox"))
             parent_name += "()";
-        code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY";
+        code.AddAuto().NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name
+                                  << ", wxID_ANY";
         code.Comma();
         code.as_string(prop_radiobtn_var_name).Str("), ").as_string(prop_orientation).EndFunction();
     }
     else if (code.is_ruby())
     {
-        code.NodeName().Assign("wxStaticBoxSizer").Str("(").CreateClass(false, "wxStaticBox", false);
+        code.NodeName()
+            .Assign("wxStaticBoxSizer")
+            .Str("(")
+            .CreateClass(false, "wxStaticBox", false);
         code.Str(parent_name).Comma().Add("wxID_ANY").Comma();
         code.VarName(code.node()->as_string(prop_radiobtn_var_name)).Str(")");
         code.Comma().Add(prop_orientation).EndFunction();
     }
     else
     {
-        code.NodeName().CreateClass(false, "wxStaticBoxSizer").as_string(prop_orientation).Comma().Str(parent_name);
+        code.NodeName()
+            .CreateClass(false, "wxStaticBoxSizer")
+            .as_string(prop_orientation)
+            .Comma()
+            .Str(parent_name);
         if (code.hasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);
@@ -216,7 +233,8 @@ bool StaticRadioBtnBoxSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                                  std::set<std::string>& set_hdr,
                                                   GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
@@ -233,7 +251,8 @@ bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxStaticBoxSizer()
 
-int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                                  size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
@@ -269,7 +288,8 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     return result;
 }
 
-void StaticRadioBtnBoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+void StaticRadioBtnBoxSizerGenerator::RequiredHandlers(Node* /* node */,
+                                                       std::set<std::string>& handlers)
 {
     handlers.emplace("wxSizerXmlHandler");
 }

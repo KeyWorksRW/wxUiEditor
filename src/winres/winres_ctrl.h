@@ -116,8 +116,8 @@ private:
 
     tt_string m_original_line;
 
-    // Caution -- wxRect is *NOT* the same as a Windows RECT structure. wxRect stores width and height, RECT stores right and
-    // bottom positions.
+    // Caution -- wxRect is *NOT* the same as a Windows RECT structure. wxRect stores width and
+    // height, RECT stores right and bottom positions.
 
     // These are in dialog coordinates
     wxRect m_du_rect { 0, 0, 0, 0 };

@@ -19,8 +19,9 @@
 
 wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetEffects((wxShowEffect) node->as_mockup(prop_show_effect, "info_"),
                        (wxShowEffect) node->as_mockup(prop_hide_effect, "info_"));
@@ -58,7 +59,8 @@ bool SimplebookGenerator::ConstructionCode(Code& code)
 
 bool SimplebookGenerator::SettingsCode(Code& code)
 {
-    if (!code.IsEqualTo(prop_show_effect, "no effects") || !code.IsEqualTo(prop_hide_effect, "no effects"))
+    if (!code.IsEqualTo(prop_show_effect, "no effects") ||
+        !code.IsEqualTo(prop_hide_effect, "no effects"))
     {
         Node* node = code.node();
         code.NodeName().Function("SetEffects(").Str(node->as_constant(prop_show_effect, "info_"));
@@ -72,8 +74,8 @@ bool SimplebookGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/simplebook.h>", set_src, set_hdr);
 
@@ -85,7 +87,8 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSimplebook");
@@ -95,8 +98,10 @@ int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (!node->isPropValue(prop_show_effect, "no effects") || !node->isPropValue(prop_show_effect, "no effects"))
-            item.append_child(pugi::node_comment).set_value("SetEffects() are not supported in XRC");
+        if (!node->isPropValue(prop_show_effect, "no effects") ||
+            !node->isPropValue(prop_show_effect, "no effects"))
+            item.append_child(pugi::node_comment)
+                .set_value("SetEffects() are not supported in XRC");
         GenXrcComments(node, item);
     }
 

@@ -16,7 +16,8 @@ public:
     void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
-    int GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL) override;
+    int GenerateDerivedClass(Node* project, Node* form_node,
+                             PANEL_PAGE panel_type = NOT_PANEL) override;
 
 protected:
     void GenerateCppClassHeader();
@@ -50,13 +51,16 @@ protected:
 
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void CollectIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
+    void CollectIncludes(Node* node, std::set<std::string>& set_src,
+                         std::set<std::string>& set_hdr);
 
     // Recursive function for generating all include files needed by any nodes in the form
-    void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
+    void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src,
+                                 std::set<std::string>& set_hdr);
 
     // Generates all the code lines for validator_variables initialized in the header file
-    void GenCppValVarsBase(const NodeDeclaration* info, Node* node, std::set<std::string>& code_lines);
+    void GenCppValVarsBase(const NodeDeclaration* info, Node* node,
+                           std::set<std::string>& code_lines);
 
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
 

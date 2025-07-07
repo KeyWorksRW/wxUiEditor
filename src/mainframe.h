@@ -99,7 +99,10 @@ public:
 
     ImportPanel* getImportPanel() { return m_imnportPanel; }
 
-    void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
+    void AddCustomEventHandler(wxEvtHandler* handler)
+    {
+        m_custom_event_handlers.push_back(handler);
+    }
     void RemoveCustomEventHandler(wxEvtHandler* handler);
 
     void FireChangeEventHandler(NodeEvent* event);
@@ -114,8 +117,8 @@ public:
     void FireMultiPropEvent(ModifyProperties* undo_cmd);
     void FireSelectedEvent(Node* node, size_t flags = evt_flags::fire_event);
 
-    // These are just here for convenience so you don't have to remember whether you have the raw pointer or the shared
-    // pointer.
+    // These are just here for convenience so you don't have to remember whether you have the raw
+    // pointer or the shared pointer.
 
     void FireCreatedEvent(NodeSharedPtr node) { FireCreatedEvent(node.get()); }
     void FireDeletedEvent(NodeSharedPtr node) { FireDeletedEvent(node.get()); }
@@ -152,7 +155,10 @@ public:
     // removed.
     bool SelectNode(Node* node, size_t flags = evt_flags::fire_event);
 
-    bool SelectNode(NodeSharedPtr node, size_t flags = evt_flags::fire_event) { return SelectNode(node.get(), flags); }
+    bool SelectNode(NodeSharedPtr node, size_t flags = evt_flags::fire_event)
+    {
+        return SelectNode(node.get(), flags);
+    }
 
     bool MoveNode(Node* node, MoveDirection where, bool check_only = false);
     bool MoveNode(MoveDirection where, bool check_only = false)
@@ -216,7 +222,8 @@ public:
     void DuplicateNode(Node* node);
 
     void setStatusText(const tt_string& txt, int pane = 1);
-    wxStatusBar* OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name) override;
+    wxStatusBar* OnCreateStatusBar(int number, long style, wxWindowID id,
+                                   const wxString& name) override;
 
     bool SaveWarning();
     void UpdateFrame();
@@ -342,8 +349,9 @@ protected:
 
     /*
 
-        It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime logging is only
-        updated once every two minutes. The exception is when a file is saved -- this will always notify wakatime.
+        It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime
+       logging is only updated once every two minutes. The exception is when a file is saved -- this
+       will always notify wakatime.
 
         The following functions call UpdateWakaTime() automatically:
 
@@ -389,11 +397,14 @@ private:
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };
 
-    // Currently the Tree and Property panels can only be on the left (see CreateSplitters function). However, we make
-    // these variables in the off chance that we add a function that creates a different layout for the splitters.
+    // Currently the Tree and Property panels can only be on the left (see CreateSplitters
+    // function). However, we make these variables in the off chance that we add a function that
+    // creates a different layout for the splitters.
 
-    int m_posPropGridStatusField { 0 };  // This field dynamically aligns underneat the PropertyGrid panel
-    int m_posRightStatusField { 1 };     // This field is variable length, so it can hold the most text
+    int m_posPropGridStatusField {
+        0
+    };  // This field dynamically aligns underneat the PropertyGrid panel
+    int m_posRightStatusField { 1 };  // This field is variable length, so it can hold the most text
 
     wxFindReplaceData m_findData;
     wxFindReplaceDialog* m_findDialog { nullptr };
@@ -415,7 +426,9 @@ private:
     std::vector<wxEvtHandler*> m_custom_event_handlers;
 
     UndoStack m_undo_stack;
-    size_t m_undo_stack_size { 0 };  // this gets used to determine if save should be enabled/disabled
+    size_t m_undo_stack_size {
+        0
+    };  // this gets used to determine if save should be enabled/disabled
 
     // This is the node selected in the navigation panel
     NodeSharedPtr m_selected_node { nullptr };

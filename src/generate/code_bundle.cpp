@@ -94,9 +94,11 @@ void Code::BundlePerl(const tt_string_vector& parts)
 
     auto path = MakePerlPath(node());
 
-    // TODO: [Randalphwa - 06-30-2025] wxPerl3 currently does not support SVG images, so we need to do something here...
+    // TODO: [Randalphwa - 06-30-2025] wxPerl3 currently does not support SVG images, so we need to
+    // do something here...
 
-    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+        bundle && bundle->lst_filenames.size())
     {
         tt_string name(bundle->lst_filenames[0]);
         name.make_absolute();
@@ -154,7 +156,8 @@ void Code::BundlePython(const tt_string_vector& parts)
 
         Add("wxArtProvider.GetBitmapBundle(").Add(art_id);
 
-        // Note that current documentation states that the client is required, but the header file says otherwise
+        // Note that current documentation states that the client is required, but the header file
+        // says otherwise
         if (art_client.size())
             Comma().Add(art_client);
 
@@ -177,7 +180,8 @@ void Code::BundlePython(const tt_string_vector& parts)
 
     auto path = MakePythonPath(node());
 
-    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+        bundle && bundle->lst_filenames.size())
     {
         tt_string name(bundle->lst_filenames[0]);
         name.make_absolute();
@@ -204,7 +208,8 @@ void Code::BundlePython(const tt_string_vector& parts)
             {
                 svg_name = embed->imgs[0].array_name;
             }
-            insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(") << svg_name << "))\n");
+            insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(")
+                          << svg_name << "))\n");
             *this += "wx.BitmapBundle.FromSVG(_svg_string_";
             wxSize svg_size { -1, -1 };
             if (parts[IndexSize].size())
@@ -256,9 +261,11 @@ void Code::BundlePython(const tt_string_vector& parts)
 
                     *this += ".Bitmap";
 
-                    if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+                    if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
+                        embed2)
                     {
-                        Comma().CheckLineLength(embed2->imgs[0].array_name.size() + sizeof(".Bitmap)"));
+                        Comma().CheckLineLength(embed2->imgs[0].array_name.size() +
+                                                sizeof(".Bitmap)"));
                         AddPythonImageName(embed2);
                         *this += ".Bitmap)";
                     }
@@ -277,7 +284,11 @@ void Code::BundlePython(const tt_string_vector& parts)
                 name2.backslashestoforward();
 
                 CheckLineLength(name.size() + name2.size() + 27);
-                Str("wx.Bitmap(").QuotedString(name).Str(", wx.Bitmap(").QuotedString(name2).Str("))");
+                Str("wx.Bitmap(")
+                    .QuotedString(name)
+                    .Str(", wx.Bitmap(")
+                    .QuotedString(name2)
+                    .Str("))");
             }
         }
         else
@@ -287,7 +298,8 @@ void Code::BundlePython(const tt_string_vector& parts)
             {
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]); embed)
+                    if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]);
+                        embed)
                     {
                         CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap"));
                         AddPythonImageName(embed);
@@ -350,7 +362,8 @@ void Code::BundleRuby(const tt_string_vector& parts)
 
         Str("Wx::ArtProvider.get_bitmap_bundle(").Add(art_id);
 
-        // Note that current documentation states that the client is required, but the header file says otherwise
+        // Note that current documentation states that the client is required, but the header file
+        // says otherwise
         if (art_client.size())
             Comma().Add(art_client);
 
@@ -370,7 +383,8 @@ void Code::BundleRuby(const tt_string_vector& parts)
         return;
     }
 
-    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+        bundle && bundle->lst_filenames.size())
     {
         if (parts[IndexType].contains("SVG"))
         {
@@ -387,7 +401,8 @@ void Code::BundleRuby(const tt_string_vector& parts)
             {
                 svg_name = "$" + embed->imgs[0].array_name;
             }
-            insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(") << svg_name << "))\n");
+            insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
+                          << svg_name << "))\n");
             *this += "Wx::BitmapBundle.from_svg(_svg_string_";
             wxSize svg_size { -1, -1 };
             if (parts[IndexSize].size())
@@ -410,7 +425,8 @@ void Code::BundleRuby(const tt_string_vector& parts)
             name.make_relative(path);
             name.backslashestoforward();
 
-            CheckLineLength(name.size() + sizeof("Wx::Bitmap.new()") + sizeof("wx.BITMAP_TYPE_XPM)"));
+            CheckLineLength(name.size() + sizeof("Wx::Bitmap.new()") +
+                            sizeof("wx.BITMAP_TYPE_XPM)"));
             Str("Wx::Bitmap.new(").QuotedString(name).Comma().Str("Wx::BITMAP_TYPE_XPM)");
         }
 
@@ -421,18 +437,24 @@ void Code::BundleRuby(const tt_string_vector& parts)
                 Add("wxNullBitmap");
                 return;
             }
-            if (const EmbeddedImage* embed1 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed1)
+            if (const EmbeddedImage* embed1 =
+                    ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                embed1)
             {
                 Str("wxue_get_bundle(").Str("$").Str(embed1->imgs[0].array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
-                    if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+                    if (EmbeddedImage* embed2 =
+                            ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
+                        embed2)
                     {
                         Comma().Str("$").Str(embed2->imgs[0].array_name);
                     }
                     if (bundle->lst_filenames.size() > 2)
                     {
-                        if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
+                        if (EmbeddedImage* embed3 =
+                                ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
+                            embed3)
                         {
                             Comma().Str("$").Str(embed3->imgs[0].array_name);
                         }
@@ -469,7 +491,11 @@ void Code::BundleRuby(const tt_string_vector& parts)
             name2.backslashestoforward();
 
             CheckLineLength(name.size() + name2.size() + 27);
-            Str("Wx::Bitmap(").QuotedString(name).Str(", Wx::Bitmap(").QuotedString(name2).Str("))");
+            Str("Wx::Bitmap(")
+                .QuotedString(name)
+                .Str(", Wx::Bitmap(")
+                .QuotedString(name2)
+                .Str("))");
         }
 
         else

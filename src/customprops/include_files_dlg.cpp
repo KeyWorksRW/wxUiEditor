@@ -126,8 +126,8 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 /////////////////////////////////////////////////////////////////////////////
 
 #include "sys_header_dlg.h"    // SysHeaderDlg class
-#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
-#include "tt_view_vector.h"    // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+#include "tt_view_vector.h"    // tt_view_vector -- Read/Write line-oriented strings/files
 
 void IncludeFilesDialog::Initialize(NodeProperty* prop)
 {
@@ -145,7 +145,8 @@ void IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn)
     int sel = m_listbox->GetSelection();
     m_btn_remove->Enable(sel != wxNOT_FOUND);
     m_btn_move_up->Enable(sel > 0);
-    m_btn_move_down->Enable(sel != wxNOT_FOUND && static_cast<unsigned int>(sel) < m_listbox->GetCount() - 1);
+    m_btn_move_down->Enable(sel != wxNOT_FOUND &&
+                            static_cast<unsigned int>(sel) < m_listbox->GetCount() - 1);
     m_btn_sort->Enable(m_listbox->GetCount() > 1);
     if (set_ok_btn)
         FindWindow(GetAffirmativeId())->Enable(m_listbox->GetCount() > 0);
@@ -255,8 +256,8 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
     }
 
     tt_cwd cwd(true);
-    wxFileDialog dialog(this, title.make_wxString(), path.make_wxString(), wxEmptyString, filter.make_wxString(),
-                        wxFD_OPEN | wxFD_CHANGE_DIR);
+    wxFileDialog dialog(this, title.make_wxString(), path.make_wxString(), wxEmptyString,
+                        filter.make_wxString(), wxFD_OPEN | wxFD_CHANGE_DIR);
     if (dialog.ShowModal() == wxID_OK)
     {
         tt_string filename = dialog.GetPath().utf8_string();
@@ -264,7 +265,8 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
         filename.backslashestoforward();
         if (filename == cur_file)
         {
-            wxMessageBox("You cannot add the current file to the list.", title.make_wxString(), wxOK, this);
+            wxMessageBox("You cannot add the current file to the list.", title.make_wxString(),
+                         wxOK, this);
             return;
         }
         m_listbox->Append(filename.make_wxString());

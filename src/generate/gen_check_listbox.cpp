@@ -20,8 +20,9 @@ using namespace code;
 
 wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), 0, nullptr, node->as_int(prop_type) | GetStyleInt(node));
+    auto widget = new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr,
+                                     node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())
@@ -104,7 +105,11 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
         {
             for (auto& iter: contents)
             {
-                code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter.label).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("Append(")
+                    .QuotedString(iter.label)
+                    .EndFunction();
             }
         }
         else
@@ -134,7 +139,11 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) contents.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("SetSelection(")
+                    .as_string(prop_selection_int)
+                    .EndFunction();
             }
         }
     }
@@ -151,8 +160,8 @@ int CheckListBoxGenerator::GetRequiredVersion(Node* node)
     return BaseGenerator::GetRequiredVersion(node);
 }
 
-bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checklst.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -165,7 +174,8 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCheckListBox");

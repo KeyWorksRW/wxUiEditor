@@ -24,13 +24,15 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (Project.getCodePreference() == GEN_LANG_RUBY)
     {
-        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxBannerWindow not available in wxRuby3",
-                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        auto* widget = new wxStaticText(
+            wxStaticCast(parent, wxWindow), wxID_ANY, "wxBannerWindow not available in wxRuby3",
+            wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
-    auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
-                                     (wxDirection) NodeCreation.getConstantAsInt(node->as_string(prop_direction)));
+    auto widget = new wxBannerWindow(
+        wxStaticCast(parent, wxWindow),
+        (wxDirection) NodeCreation.getConstantAsInt(node->as_string(prop_direction)));
 
     if (node->hasValue(prop_bitmap))
     {
@@ -39,7 +41,8 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 
     else if (node->hasValue(prop_start_colour) && node->hasValue(prop_end_colour))
     {
-        widget->SetGradient(node->as_wxColour(prop_start_colour), node->as_wxColour(prop_end_colour));
+        widget->SetGradient(node->as_wxColour(prop_start_colour),
+                            node->as_wxColour(prop_end_colour));
     }
 
     if (node->hasValue(prop_title) || node->hasValue(prop_message))
@@ -109,8 +112,8 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/bannerwindow.h>", set_src, set_hdr);
     return true;
@@ -124,7 +127,8 @@ bool BannerWindowGenerator::GetPythonImports(Node*, std::set<std::string>& set_i
 
 int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBannerWindow");
@@ -137,7 +141,10 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     {
         item.append_child("gradient-start")
             .text()
-            .set(node->as_wxColour(prop_start_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+            .set(node->as_wxColour(prop_start_colour)
+                     .GetAsString(wxC2S_HTML_SYNTAX)
+                     .ToUTF8()
+                     .data());
     }
     if (node->hasValue(prop_end_colour) && !node->hasValue(prop_bitmap))
     {

@@ -52,7 +52,8 @@ std::unordered_map<std::string, std::string> map_id_artid = {
 
 bool MenuItemGenerator::ConstructionCode(Code& code)
 {
-    Node* node = code.node();  // This is just for code readability -- could just use code.node() everywhere
+    Node* node =
+        code.node();  // This is just for code readability -- could just use code.node() everywhere
     code.AddAuto();
 
     if (node->getParent()->isGen(gen_PopupMenu))
@@ -119,7 +120,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             {
                 if (accel.size())
                 {
-                    code.Eol(eol_if_needed) << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
+                    code.Eol(eol_if_needed)
+                        << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
                     code.Eol().Tab().NodeName().Function("AddExtraAccel(entry").EndFunction();
                 }
             }
@@ -152,9 +154,11 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_bitmap);
-            if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+            if (auto function_name = ProjectImages.GetBundleFuncName(description);
+                function_name.size())
             {
-                // We get here if there is an Image List that contains the function to retrieve this bundle.
+                // We get here if there is an Image List that contains the function to retrieve this
+                // bundle.
                 code.NodeName().Function("SetBitmap(");
                 code << function_name;
                 code.EndFunction();
@@ -175,7 +179,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 else  // bundle_code contains a vector
                 {
                     code += bundle_code;
-                    code.Tab().NodeName().Function("SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
+                    code.Tab().NodeName().Function(
+                        "SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
                     code.CloseBrace();
                 }
             }
@@ -205,8 +210,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
         else if (code.is_rust())
         {
-            code.AddComment(
-                "wxRust does not currently support wxBitmapBundle, currently wxUE does not support non-bundle bitmaps");
+            code.AddComment("wxRust does not currently support wxBitmapBundle, currently wxUE does "
+                            "not support non-bundle bitmaps");
         }
         else
         {
@@ -220,9 +225,11 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             auto& description = node->as_string(prop_unchecked_bitmap);
-            if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+            if (auto function_name = ProjectImages.GetBundleFuncName(description);
+                function_name.size())
             {
-                // We get here if there is an Image List that contains the function to retrieve this bundle.
+                // We get here if there is an Image List that contains the function to retrieve this
+                // bundle.
                 code.NodeName().Function("SetBitmap(");
                 code << function_name << ", false";
                 code.EndFunction();
@@ -281,7 +288,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
     }
 
-    if ((node->as_string(prop_kind) == "wxITEM_CHECK" || node->as_string(prop_kind) == "wxITEM_RADIO") &&
+    if ((node->as_string(prop_kind) == "wxITEM_CHECK" ||
+         node->as_string(prop_kind) == "wxITEM_RADIO") &&
         code.IsTrue(prop_checked))
     {
         code.Eol(eol_if_empty).NodeName().Function("Check(").EndFunction();
@@ -290,8 +298,8 @@ bool MenuItemGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
     if (node->hasValue(prop_extra_accels))
@@ -304,7 +312,8 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuItem");
@@ -356,7 +365,8 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     return result;
 }
 
-void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
+                                          NodeProperty* changed_prop)
 {
     if (changed_prop->isProp(prop_stock_id))
     {
@@ -383,16 +393,18 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->addProperty(prop, value);
-            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_label),
-                                       wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
-            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_help),
-                                       wxGetStockHelpString(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(
+                prop->getNode()->getPropPtr(prop_label),
+                wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(
+                prop->getNode()->getPropPtr(prop_help),
+                wxGetStockHelpString(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
             undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_id), value);
 
             if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
             {
-                undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_bitmap), tt_string("Art;")
-                                                                                         << result->second << "|wxART_MENU");
+                undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_bitmap),
+                                           tt_string("Art;") << result->second << "|wxART_MENU");
             }
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
@@ -401,7 +413,8 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
     return false;
 }
 
-bool MenuItemGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool MenuItemGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                   GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

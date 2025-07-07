@@ -54,7 +54,9 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 #endif
         if (allow_ui)
         {
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
         }
         return false;
     }
@@ -79,7 +81,8 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         if (allow_ui)
         {
             if (wxMessageBox("wxUiEditor does not recognize this version of the data file.\n"
-                             "You may be able to load the file, but if you then save it you could lose data.\n\n"
+                             "You may be able to load the file, but if you then save it you could "
+                             "lose data.\n\n"
                              "Do you want to try to open it anyway?",
                              "Unrecognized Version", wxYES_NO) != wxYES)
             {
@@ -102,7 +105,8 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         {
             if (allow_ui)
             {
-                wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
+                wxMessageBox(wxString()
+                             << "The data file " << file << " is invalid and cannot be opened.");
             }
             return false;
         }
@@ -110,9 +114,12 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         {
             if (allow_ui)
             {
-                if (wxMessageBox(tt_string() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
-                                             << " is not supported.\n\nDo you want to attempt to load it anyway?",
-                                 "Unsupported Project Version", wxYES_NO) == wxNO)
+                if (wxMessageBox(
+                        tt_string()
+                            << "Project version " << m_ProjectVersion / 10 << '.'
+                            << m_ProjectVersion % 10
+                            << " is not supported.\n\nDo you want to attempt to load it anyway?",
+                        "Unsupported Project Version", wxYES_NO) == wxNO)
                 {
                     return false;
                 }
@@ -131,7 +138,8 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
         {
             if (allow_ui)
             {
-                wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
+                wxMessageBox(wxString()
+                             << "The data file " << file << " is invalid and cannot be opened.");
             }
             return false;
         }
@@ -145,7 +153,8 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
         if (allow_ui)
         {
-            wxMessageBox(wxString() << "The project file " << file << " is invalid and cannot be opened.");
+            wxMessageBox(wxString()
+                         << "The project file " << file << " is invalid and cannot be opened.");
         }
         return false;
     }
@@ -163,7 +172,8 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
     Project.setProjectFile(file);
     ProjectImages.CollectBundles();
 
-    // Imported projects start with an older version so that they pass through the old project fixups.
+    // Imported projects start with an older version so that they pass through the old project
+    // fixups.
     if (m_ProjectVersion == ImportProjectVersion)
     {
         m_ProjectVersion = minRequiredVer;
@@ -211,7 +221,8 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
         if (allow_ui)
         {
             MSG_ERROR(err.what());
-            wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
+            wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.",
+                         "Load Project");
         }
     }
 
@@ -246,7 +257,8 @@ static const auto lstStdButtonEvents = {
 
 #include "utils.h"  // for old style art indices
 
-NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates, bool allow_ui)
+NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* parent,
+                                             bool check_for_duplicates, bool allow_ui)
 {
     auto class_name = xml_obj.attribute("class").as_str();
     if (class_name.empty())
@@ -286,7 +298,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
             {
                 auto convert_quoted_array = [&]()
                 {
-                    // Convert old style wxCheckListBox contents in quotes to new style separated by semicolons
+                    // Convert old style wxCheckListBox contents in quotes to new style separated by
+                    // semicolons
                     std::vector<tt_string> items;
                     auto view = iter.as_sview().view_substr(0, '"', '"');
                     while (view.size() > 0)
@@ -340,8 +353,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
                     if (allow_ui)
                     {
-                        auto pixel_value =
-                            wxGetMainFrame()->getWindow()->ConvertDialogToPixels(convertToWxSize(iter.value()));
+                        auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(
+                            convertToWxSize(iter.value()));
                         prop->set_value(pixel_value);
                     }
                     Project.ForceProjectVersion(21);
@@ -351,7 +364,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // wxUiEditor 1.2.0 mistakenly added both prop_hidden and prop_hide_children.
                 // 1.2.1 removes the duplicate prop_hide_children, so this sets prop_hidden to
                 // true if prop_hide_children is true.
-                else if (prop->get_name() == prop_hide_children && new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
+                else if (prop->get_name() == prop_hide_children &&
+                         new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
                 {
                     new_node->set_value(prop_hidden, true);
                     prop->set_value(false);
@@ -362,18 +376,22 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 {
                     prop->set_value(iter.as_bool());
 
-                    // wxGTK is the only OS that uses a native wxAnimationCtrl, so setting generic has no actual effect
-                    // on other platforms. On wxGTK, you can't just switch to wxGenericAnimationCtrl, you have to also
-                    // retrieve wxAnimation from wxGenericAnimationCtrl -- if you don't, the app will crash. Since this
-                    // is only needed to display .ANI files on wxGTK, we remove the generic flag.
-                    if (prop->get_name() == prop_use_generic && new_node->isGen(gen_wxAnimationCtrl))
+                    // wxGTK is the only OS that uses a native wxAnimationCtrl, so setting generic
+                    // has no actual effect on other platforms. On wxGTK, you can't just switch to
+                    // wxGenericAnimationCtrl, you have to also retrieve wxAnimation from
+                    // wxGenericAnimationCtrl -- if you don't, the app will crash. Since this is
+                    // only needed to display .ANI files on wxGTK, we remove the generic flag.
+                    if (prop->get_name() == prop_use_generic &&
+                        new_node->isGen(gen_wxAnimationCtrl))
                     {
                         prop->set_value(false);
                     }
                 }
-                else if (prop->get_name() == prop_contents && Project.getOriginalProjectVersion() < 18)
+                else if (prop->get_name() == prop_contents &&
+                         Project.getOriginalProjectVersion() < 18)
                 {
-                    if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() && iter.as_sview()[0] == '"')
+                    if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() &&
+                        iter.as_sview()[0] == '"')
                     {
                         convert_quoted_array();
                     }
@@ -382,7 +400,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                         prop->set_value(iter.as_sview());
                     }
                 }
-                else if (prop->type() == type_stringlist_semi && Project.getOriginalProjectVersion() < 18)
+                else if (prop->type() == type_stringlist_semi &&
+                         Project.getOriginalProjectVersion() < 18)
                 {
                     if (iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
@@ -394,8 +413,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     }
                 }
 
-                // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to
-                // friendly name, and bit flag conflict resolution.
+                // Imported projects will be set as version ImportProjectVersion to get the fixups
+                // of constant to friendly name, and bit flag conflict resolution.
 
                 else if (Project.getProjectVersion() <= ImportProjectVersion)
                 {
@@ -409,7 +428,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                 {
                                     if (tt::is_sameas(friendly_pair.second, iter.value()))
                                     {
-                                        prop->set_value(friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
+                                        prop->set_value(friendly_pair.first.c_str() +
+                                                        friendly_pair.first.find('_') + 1);
                                         found = true;
                                         break;
                                     }
@@ -437,7 +457,8 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                                 new_value << '|';
                                             }
 
-                                            new_value << (friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
+                                            new_value << (friendly_pair.first.c_str() +
+                                                          friendly_pair.first.find('_') + 1);
                                             found = true;
                                             break;
                                         }
@@ -549,9 +570,9 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
             if (auto value = iter.value(); value.size())
             {
                 {
-                    // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2 project format prior
-                    // to it being released in beta. Once we make a full release, we should be able to safely remove all
-                    // of this.
+                    // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2
+                    // project format prior to it being released in beta. Once we make a full
+                    // release, we should be able to safely remove all of this.
 
                     if (tt::is_sameas(iter.name(), "converted_art"))
                     {
@@ -568,30 +589,37 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                         new_node->set_value(prop_use_derived_class, value);
                         continue;
                     }
-                    else if (tt::is_sameas(iter.name(), "choices") || tt::is_sameas(iter.name(), "strings"))
+                    else if (tt::is_sameas(iter.name(), "choices") ||
+                             tt::is_sameas(iter.name(), "strings"))
                     {
                         new_node->set_value(prop_contents, value);
                         continue;
                     }
                 }
 
-                // We get here if a property is specified that we don't recognize. While we can continue to load
-                // just fine, if the user attempts to save the project than the property will be lost.
+                // We get here if a property is specified that we don't recognize. While we can
+                // continue to load just fine, if the user attempts to save the project than the
+                // property will be lost.
 
-                // TODO: [KeyWorks - 06-03-2020] We need to store a list of unrecognized properties and display them to
-                // the user all at once after the project is completely loaded. We also need to flag the project file as
-                // unsaveable (only SaveAs can be used. See https://github.com/KeyWorksRW/wxUiEditor/issues/385 ).
+                // TODO: [KeyWorks - 06-03-2020] We need to store a list of unrecognized properties
+                // and display them to the user all at once after the project is completely loaded.
+                // We also need to flag the project file as unsaveable (only SaveAs can be used. See
+                // https://github.com/KeyWorksRW/wxUiEditor/issues/385 ).
 
                 if (allow_ui)
                 {
-                    MSG_WARNING(tt_string("Unrecognized property: ") << iter.name() << " in class: " << class_name);
+                    MSG_WARNING(tt_string("Unrecognized property: ")
+                                << iter.name() << " in class: " << class_name);
 
                     tt_string prop_name = iter.name();
                     tt_string prop_value = iter.value();
                     wxMessageBox(wxString().Format(
-                        "The property named \"%s\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
-                        "If your project file was just converted from an older version, then the conversion was not "
-                        "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"
+                        "The property named \"%s\" of class \"%s\" is not supported by this "
+                        "version of wxUiEditor.\n\n"
+                        "If your project file was just converted from an older version, then the "
+                        "conversion was not "
+                        "complete. Otherwise, this project is from a newer version of "
+                        "wxUiEditor.\n\n"
                         "The property's value is: %s\n\n"
                         "If you save this project, YOU WILL LOSE DATA",
                         prop_name.c_str(), class_name.c_str(), prop_value.c_str()));
@@ -678,7 +706,8 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (prop->type() == type_stringlist_semi && Project.getOriginalProjectVersion() < 18)
+                else if (prop->type() == type_stringlist_semi &&
+                         Project.getOriginalProjectVersion() < 18)
                 {
                     auto view = iter.as_sview();
                     if (view.size() > 0 && view[0] == '"')
@@ -790,16 +819,17 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path.make_wxString());
         }
 
-        // By having the importer create an XML document, we can pass it through NodeCreation.createNodeFromXml() which will
-        // fix bitflag conflicts, convert wxWidgets constants to friendly names, and handle old-project style
-        // conversions.
+        // By having the importer create an XML document, we can pass it through
+        // NodeCreation.createNodeFromXml() which will fix bitflag conflicts, convert wxWidgets
+        // constants to friendly names, and handle old-project style conversions.
 
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
         auto project = root.child("node");
         if (!project || project.attribute("class").as_view() != "Project")
         {
-            ASSERT_MSG(project, tt_string() << "Failed trying to load converted xml document: " << file);
+            ASSERT_MSG(project, tt_string()
+                                    << "Failed trying to load converted xml document: " << file);
 
             // TODO: [KeyWorks - 10-23-2020] Need to let the user know
             return false;
@@ -823,32 +853,40 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         {
             for (const auto& iter: project_node->getChildNodePtrs())
             {
-                // If importing from wxGlade, then either a combined file will be set, or the individual file for
-                // the language will be already set.
-                if (iter->hasValue(prop_base_file) && project_node->as_string(prop_code_preference) != "C++")
+                // If importing from wxGlade, then either a combined file will be set, or the
+                // individual file for the language will be already set.
+                if (iter->hasValue(prop_base_file) &&
+                    project_node->as_string(prop_code_preference) != "C++")
                 {
-                    if (project_node->as_string(prop_code_preference) == "Python" && !iter->hasValue(prop_python_file))
+                    if (project_node->as_string(prop_code_preference) == "Python" &&
+                        !iter->hasValue(prop_python_file))
                     {
                         iter->set_value(prop_python_file, iter->as_string(prop_base_file));
                     }
-                    else if (project_node->as_string(prop_code_preference) == "Ruby" && !iter->hasValue(prop_ruby_file))
+                    else if (project_node->as_string(prop_code_preference) == "Ruby" &&
+                             !iter->hasValue(prop_ruby_file))
                     {
                         iter->set_value(prop_ruby_file, iter->as_string(prop_base_file));
                     }
-                    else if (project_node->as_string(prop_code_preference) == "XRC" && !iter->hasValue(prop_xrc_file))
+                    else if (project_node->as_string(prop_code_preference) == "XRC" &&
+                             !iter->hasValue(prop_xrc_file))
                     {
                         iter->set_value(prop_xrc_file, iter->as_string(prop_base_file));
                         // XRC files can be combined into a single file
                         if (!project_node->hasValue(prop_combined_xrc_file))
-                            project_node->set_value(prop_combined_xrc_file, iter->as_string(prop_base_file));
+                            project_node->set_value(prop_combined_xrc_file,
+                                                    iter->as_string(prop_base_file));
                     }
                 }
             }
 
-            if (project_node->getChildCount() > 1 && project_node->as_string(prop_code_preference) != "XRC")
+            if (project_node->getChildCount() > 1 &&
+                project_node->as_string(prop_code_preference) != "XRC")
             {
-                wxMessageBox("Each form must have a unique base filename when generating Python or C++ code.\nCurrently, "
-                             "only one form has a unique filename. You will need to add names to the other forms before "
+                wxMessageBox("Each form must have a unique base filename when generating Python or "
+                             "C++ code.\nCurrently, "
+                             "only one form has a unique filename. You will need to add names to "
+                             "the other forms before "
                              "generating code for them.",
                              "Code Import Change", wxOK | wxICON_WARNING);
             }
@@ -927,8 +965,8 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         ProjectImages.CollectBundles();
 
 #if defined(_DEBUG)
-        // If the file has been created once before, then for the first form, copy the old classname and base filename to
-        // the re-converted first form.
+        // If the file has been created once before, then for the first form, copy the old classname
+        // and base filename to the re-converted first form.
 
         if (m_project_node->getChildCount() && file.file_exists())
         {
@@ -937,19 +975,22 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             if (!result)
             {
     #if defined(_DEBUG)
-                wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
+                                wxOK | wxICON_ERROR)
                     .ShowModal();
     #else
                 if (allow_ui)
                 {
-                    wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                    wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg,
+                                    "Parsing Error", wxOK | wxICON_ERROR)
                         .ShowModal();
                 }
     #endif  // _DEBUG
             }
             else
             {
-                if (auto old_project = LoadProject(doc, allow_ui); old_project && old_project->getChildCount())
+                if (auto old_project = LoadProject(doc, allow_ui);
+                    old_project && old_project->getChildCount())
                 {
                     auto old_form = old_project->getChild(0);
                     auto new_form = m_project_node->getChild(0);
@@ -1228,7 +1269,8 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
             {
                 if (m_allow_ui)
                 {
-                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                    wxMessageBox(wxString("The project file ")
+                                     << file << " is invalid and cannot be opened.",
                                  "Import wxCrafter project");
                 }
                 return;
@@ -1250,7 +1292,8 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                    new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
                 }
@@ -1280,7 +1323,8 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
             {
                 if (m_allow_ui)
                 {
-                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                    wxMessageBox(wxString("The project file ")
+                                     << file << " is invalid and cannot be opened.",
                                  "Import wxFormBuilder project");
                 }
                 return;
@@ -1302,7 +1346,8 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                    new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
                 }
@@ -1332,7 +1377,8 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
             {
                 if (m_allow_ui)
                 {
-                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                    wxMessageBox(wxString("The project file ")
+                                     << file << " is invalid and cannot be opened.",
                                  "Import wxFormBuilder project");
                 }
                 return;
@@ -1354,7 +1400,8 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                    new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
                 }
@@ -1384,7 +1431,8 @@ void ProjectHandler::appendGlade(wxArrayString& files)
             {
                 if (m_allow_ui)
                 {
-                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                    wxMessageBox(wxString("The project file ")
+                                     << file << " is invalid and cannot be opened.",
                                  "Import wxGlade project");
                 }
                 return;
@@ -1406,7 +1454,8 @@ void ProjectHandler::appendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                    new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
                 }
@@ -1436,7 +1485,8 @@ void ProjectHandler::appendSmith(wxArrayString& files)
             {
                 if (m_allow_ui)
                 {
-                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                    wxMessageBox(wxString("The project file ")
+                                     << file << " is invalid and cannot be opened.",
                                  "Import wxSmith project");
                 }
                 return;
@@ -1458,7 +1508,8 @@ void ProjectHandler::appendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                    new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
                 }
@@ -1489,7 +1540,8 @@ void ProjectHandler::appendXRC(wxArrayString& files)
             {
                 if (m_allow_ui)
                 {
-                    wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
+                    wxMessageBox(wxString("The project file ")
+                                     << file << " is invalid and cannot be opened.",
                                  "Import XRC project");
                 }
                 return;
@@ -1511,7 +1563,8 @@ void ProjectHandler::appendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui); new_node)
+                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                    new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
                 }
@@ -1572,13 +1625,14 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
                     if (prop_ptr->as_string().empty())
                     {
                         msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
-                              parent->as_string(prop_var_name) + " changed from " + old_value + " to no flags";
+                              parent->as_string(prop_var_name) + " changed from " + old_value +
+                              " to no flags";
                     }
                     else
                     {
                         msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
-                              parent->as_string(prop_var_name) + " changed from " + old_value + " to " +
-                              prop_ptr->as_string();
+                              parent->as_string(prop_var_name) + " changed from " + old_value +
+                              " to " + prop_ptr->as_string();
                     }
                     MSG_INFO(msg);
 
@@ -1595,11 +1649,12 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
         // generation to always figure it out).
         if (node->as_int(prop_rows) > 0 && node->as_int(prop_cols) > 0)
         {
-            // REVIEW: [Randalphwa - 08-29-2023] Need to check if it is a performance hit to make the sizer
-            // figure this out. We could set it whenver we generate the code for it.
+            // REVIEW: [Randalphwa - 08-29-2023] Need to check if it is a performance hit to make
+            // the sizer figure this out. We could set it whenver we generate the code for it.
             node->set_value(prop_rows, 0);
             m_isProject_updated = true;
-            MSG_INFO(tt_string("Removed row setting from ") << node->as_string(prop_var_name) << " since cols is set");
+            MSG_INFO(tt_string("Removed row setting from ")
+                     << node->as_string(prop_var_name) << " since cols is set");
         }
     }
 

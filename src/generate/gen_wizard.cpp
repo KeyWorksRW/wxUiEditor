@@ -21,7 +21,8 @@
 
 wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* parent */)
 {
-    FAIL_MSG("Do not call CreateMockup() for wxWizard -- you must use the MockupWizard class instead!");
+    FAIL_MSG(
+        "Do not call CreateMockup() for wxWizard -- you must use the MockupWizard class instead!");
     return nullptr;
 }
 
@@ -76,7 +77,10 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
         }
         code.Comma().Str("pos = ").Pos(prop_pos);
         // wxWizard does not use a size parameter
-        code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE")).Str("style = ").Style();
+        code.Comma()
+            .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
+            .Str("style = ")
+            .Style();
         code.EndFunction();
         code.Unindent();
 
@@ -119,7 +123,10 @@ bool WizardFormGenerator::SettingsCode(Code& code)
 
     if (code.hasValue(prop_extra_style))
     {
-        code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ").Add(prop_extra_style);
+        code.Eol(eol_if_needed)
+            .FormFunction("SetExtraStyle(")
+            .FormFunction("GetExtraStyle() | ")
+            .Add(prop_extra_style);
         code.EndFunction();
     }
 
@@ -130,14 +137,23 @@ bool WizardFormGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_bmp_placement))
     {
-        code.Eol(eol_if_needed).FormFunction("SetBitmapPlacement(").as_string(prop_bmp_placement).EndFunction();
+        code.Eol(eol_if_needed)
+            .FormFunction("SetBitmapPlacement(")
+            .as_string(prop_bmp_placement)
+            .EndFunction();
         if (code.IntValue(prop_bmp_min_width) > 0)
         {
-            code.Eol().FormFunction("SetBitmapMinWidth(").as_string(prop_bmp_min_width).EndFunction();
+            code.Eol()
+                .FormFunction("SetBitmapMinWidth(")
+                .as_string(prop_bmp_min_width)
+                .EndFunction();
         }
         if (code.hasValue(prop_bmp_background_colour))
         {
-            code.Eol().FormFunction("SetBitmapBackgroundColour(").ColourCode(prop_bmp_background_colour).EndFunction();
+            code.Eol()
+                .FormFunction("SetBitmapBackgroundColour(")
+                .ColourCode(prop_bmp_background_colour)
+                .EndFunction();
         }
     }
 
@@ -189,12 +205,15 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            code.Eol(eol_if_needed).FormFunction("if (!Create(").Str("parent, id, title, wxNullBitmap, pos, style))");
+            code.Eol(eol_if_needed)
+                .FormFunction("if (!Create(")
+                .Str("parent, id, title, wxNullBitmap, pos, style))");
             code.Eol().OpenBrace().Str("return;").CloseBrace();
         }
         else if (code.is_python())
         {
-            code.Eol(eol_if_needed).Str("if not self.Create(parent, id, title, wx.BitmapBundle(), pos, style):");
+            code.Eol(eol_if_needed)
+                .Str("if not self.Create(parent, id, title, wx.BitmapBundle(), pos, style):");
             code.Eol().Tab().Str("return");
         }
         // wxRuby3 code generation doesn't use 2-step construction.
@@ -228,7 +247,8 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
         code.Str(panes[0]->as_string(prop_var_name)).EndFunction();
     }
 
-    if (auto& center = code.node()->as_string(prop_center); center.size() && !center.is_sameas("no"))
+    if (auto& center = code.node()->as_string(prop_center);
+        center.size() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Center(").Add(center).EndFunction();
     }
@@ -296,15 +316,15 @@ bool WizardFormGenerator::HeaderCode(Code& code)
         }
     }
     code.EndFunction();
-    code.Eol().Eol() +=
-        "bool Run() { return RunWizard((wxWizardPage*) GetPageAreaSizer()->GetItem((size_t) 0)->GetWindow()); }";
+    code.Eol().Eol() += "bool Run() { return RunWizard((wxWizardPage*) "
+                        "GetPageAreaSizer()->GetItem((size_t) 0)->GetWindow()); }";
     code.Eol().Eol();
 
     return true;
 }
 
-bool WizardFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool WizardFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/wizard.h>", set_src, set_hdr);
 
@@ -369,24 +389,29 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->hasValue(prop_center))
     {
-        if (node->as_string(prop_center).is_sameas("wxVERTICAL") || node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        if (node->as_string(prop_center).is_sameas("wxVERTICAL") ||
+            node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((tt_string(node->as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((tt_string(node->as_string(prop_center))
+                                << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
         else
         {
-            item.append_child("centered").text().set(node->as_string(prop_center).is_sameas("no") ? 0 : 1);
+            item.append_child("centered")
+                .text()
+                .set(node->as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
 
     if (node->hasValue(prop_style))
     {
-        if ((xrc_flags & xrc::add_comments) && node->as_string(prop_style).contains("wxWANTS_CHARS"))
+        if ((xrc_flags & xrc::add_comments) &&
+            node->as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
@@ -419,13 +444,17 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         if (node->hasValue(prop_bmp_background_colour))
             item.append_child("bitmap-bg")
                 .text()
-                .set(node->as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+                .set(node->as_wxColour(prop_bmp_background_colour)
+                         .GetAsString(wxC2S_HTML_SYNTAX)
+                         .ToUTF8()
+                         .data());
     }
 
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
-            item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" persist is not supported in the XRC file. ");
 
         GenXrcComments(node, item);
     }
@@ -442,7 +471,8 @@ void WizardFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& ha
     }
 }
 
-//////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  WizardPageGenerator
+/////////////////////////////////////////////
 
 wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {

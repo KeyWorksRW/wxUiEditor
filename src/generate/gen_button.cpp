@@ -17,8 +17,9 @@
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString, DlgPoint(node, prop_pos),
-                               DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString,
+                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_label))
     {
@@ -105,9 +106,9 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     if (!widget || !node || !prop)
         return false;
 
-    // We do not support changing the "markup" property because while the control displays correctly when markup is set,
-    // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
-    // version of the button is displayed).
+    // We do not support changing the "markup" property because while the control displays correctly
+    // when markup is set, it does not revert when markup is cleared (at least on Windows where
+    // markup controls whether a generic or native version of the button is displayed).
 
     if (prop->isProp(prop_label) && prop->hasValue())
     {
@@ -121,8 +122,8 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     }
     else if (prop->isProp(prop_markup))
     {
-        // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
-        // off and go back to native rendering.
+        // Turning markup on switches to generic rending of the button. However, you have to
+        // recreate it to switch it off and go back to native rendering.
 
         if (node->as_bool(prop_markup))
         {
@@ -132,7 +133,8 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     }
     else if (prop->isProp(prop_default))
     {
-        // You can change a button to be the default, but you cannot change it back without recreating it.
+        // You can change a button to be the default, but you cannot change it back without
+        // recreating it.
         if (prop->as_bool())
         {
             wxStaticCast(widget, wxButton)->SetDefault();
@@ -170,7 +172,11 @@ bool ButtonGenerator::SettingsCode(Code& code)
     {
         if (!code.is_perl())
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetLabelMarkup(").QuotedString(prop_label).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetLabelMarkup(")
+                .QuotedString(prop_label)
+                .EndFunction();
         }
         else
         {
@@ -192,7 +198,11 @@ bool ButtonGenerator::SettingsCode(Code& code)
     {
         if (code.hasValue(prop_position))
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").as_string(prop_position).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetBitmapPosition(")
+                .as_string(prop_position)
+                .EndFunction();
         }
 
         if (code.hasValue(prop_margins))
@@ -229,7 +239,8 @@ int ButtonGenerator::GetRequiredVersion(Node* node)
 
 int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxButton");
@@ -267,8 +278,8 @@ void ButtonGenerator::RequiredHandlers(Node* node, std::set<std::string>& handle
     handlers.emplace(old_button ? "wxBitmapButtonXmlHandler" : "wxButtonXmlHandler");
 }
 
-bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                  GenLang /* language */)
+bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                  std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -276,7 +287,8 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
     return true;
 }
 
-bool ButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool ButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                 GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

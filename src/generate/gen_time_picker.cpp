@@ -17,8 +17,9 @@
 
 wxObject* TimePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTimePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
-                                       DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxTimePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
+                             DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -46,8 +47,8 @@ bool TimePickerCtrlGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/timectrl.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/dateevt.h>", set_src, set_hdr);
@@ -59,7 +60,8 @@ bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int TimePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTimePickerCtrl");
@@ -80,7 +82,8 @@ void TimePickerCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
     handlers.emplace("wxTimeCtrlXmlHandler");
 }
 
-bool TimePickerCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool TimePickerCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                         GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

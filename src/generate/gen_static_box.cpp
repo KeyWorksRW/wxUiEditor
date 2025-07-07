@@ -21,8 +21,9 @@
 
 wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                  DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     return widget;
 }
@@ -38,7 +39,8 @@ bool StaticBoxGenerator::ConstructionCode(Code& code)
 
 int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticBox");
@@ -51,7 +53,8 @@ int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     {
         if (node->as_bool(prop_markup))
         {
-            item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" markup cannot be be set in the XRC file. ");
         }
 
         GenXrcComments(node, item);
@@ -65,8 +68,8 @@ void StaticBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxStaticBoxXmlHandler");
 }
 
-bool StaticBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool StaticBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
 

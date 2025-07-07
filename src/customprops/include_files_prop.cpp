@@ -18,7 +18,8 @@ IncludeFilesProperty::IncludeFilesProperty(const wxString& label, NodeProperty* 
 {
 }
 
-bool IncludeFilesDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
+bool IncludeFilesDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
+                                             wxPGProperty* WXUNUSED(property))
 {
     IncludeFilesDialog dlg(propGrid->GetPanel());
     dlg.Initialize(m_prop);

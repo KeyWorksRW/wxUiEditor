@@ -20,12 +20,14 @@ EditCustomMockupProperty::EditCustomMockupProperty(const wxString& label, NodePr
 {
 }
 
-EditCustomMockupDialog::EditCustomMockupDialog(wxWindow* parent, NodeProperty* prop) : EditCustomMockupBase(parent)
+EditCustomMockupDialog::EditCustomMockupDialog(wxWindow* parent, NodeProperty* prop) :
+    EditCustomMockupBase(parent)
 {
     m_result = prop->as_wxString();
 };
 
-bool EditCustomMockupDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool EditCustomMockupDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                                 wxPGProperty* WXUNUSED(property))
 {
     EditCustomMockupDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

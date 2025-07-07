@@ -17,8 +17,9 @@
 
 wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
-                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                       node->as_wxFont(prop_initial_font), DlgPoint(node, prop_pos),
+                                       DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_max_point_size))
     {
@@ -48,7 +49,10 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
         else
             code.itoa(fontprop.GetPointSize());
 
-        code.Comma().Add(ConvertFontFamilyToString(fontprop.GetFamily())).Comma().Add(font.GetStyleString().utf8_string());
+        code.Comma()
+            .Add(ConvertFontFamilyToString(fontprop.GetFamily()))
+            .Comma()
+            .Add(font.GetStyleString().utf8_string());
         code.Comma().Add(font.GetWeightString().utf8_string()).Comma();
 
         if (fontprop.IsUnderlined())
@@ -86,14 +90,18 @@ bool FontPickerGenerator::SettingsCode(Code& code)
 
     if (node->as_string(prop_max_point_size) != "100")
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetMaxPointSize(").as_string(prop_max_point_size).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetMaxPointSize(")
+            .as_string(prop_max_point_size)
+            .EndFunction();
     }
 
     return true;
 }
 
-bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/fontpicker.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/font.h>", set_src, set_hdr);
@@ -105,7 +113,8 @@ bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFontPickerCtrl");
@@ -133,12 +142,14 @@ void FontPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxFontPickerCtrlXmlHandler");
 }
 
-bool FontPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool FontPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                     GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
-        set_imports.emplace("use Wx qw(wxFNTP_DEFAULT_STYLE wxFNTP_USE_TEXTCTRL wxFNTP_FONTDESC_AS_LABEL\n"
-                            "          wxFNTP_USEFONT_FOR_LABEL);");
+        set_imports.emplace(
+            "use Wx qw(wxFNTP_DEFAULT_STYLE wxFNTP_USE_TEXTCTRL wxFNTP_FONTDESC_AS_LABEL\n"
+            "          wxFNTP_USEFONT_FOR_LABEL);");
         set_imports.emplace("use Wx qw[:font];");
         return true;
     }

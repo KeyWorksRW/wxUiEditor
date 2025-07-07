@@ -24,12 +24,14 @@ namespace GenEnum
         type_checklist_item,
         type_code_edit,      // includes a button that triggers a dialog with a scintilla editor
         type_custom_mockup,  // uses EditCustomMockup dialog
-        type_editoption,     // same as option, except that property grid uses wxEditEnumProperty instead of wxEnumProperty
+        type_editoption,     // same as option, except that property grid uses wxEditEnumProperty
+                             // instead of wxEnumProperty
         type_file,
         type_float,
         type_html_edit,  // includes a button that triggers a dialog with a scintilla editor
         type_id,
-        type_include_files,  // Uses custom dialog for editing a list of local or system include files
+        type_include_files,  // Uses custom dialog for editing a list of local or system include
+                             // files
         type_image,
         type_int,
         type_option,
@@ -43,11 +45,11 @@ namespace GenEnum
         type_string_code_grow_columns,  // uses GridPropertyDlg to edit a list of growable columns
         type_string_code_grow_rows,     // uses GridPropertyDlg to edit a list of growable rows
         type_string_code_cstm_param,    // uses GridPropertyDlg to edit a list of custom parameters
-        type_string_code_single,        // includes single-line custom editor, does not process escapes
-        type_string_edit,               // includes a button that triggers a small text editor dialog
-        type_string_edit_escapes,       // includes editor dialog and also escapes characters
-        type_string_edit_single,        // includes single-line text editor, does not process escapes
-        type_string_escapes,            // doubles the backslash in escaped characters: \n, \t, \r, and "\""
+        type_string_code_single,   // includes single-line custom editor, does not process escapes
+        type_string_edit,          // includes a button that triggers a small text editor dialog
+        type_string_edit_escapes,  // includes editor dialog and also escapes characters
+        type_string_edit_single,   // includes single-line text editor, does not process escapes
+        type_string_escapes,  // doubles the backslash in escaped characters: \n, \t, \r, and "\""
 
         // All the stringlist variants use wxArrayStringProperty, but with different separators.
         // All of them include a button to edit/move multiple choices.
@@ -583,7 +585,8 @@ namespace GenEnum
         prop_rust_project_preamble,
         prop_wxRust_version,
 
-        // This must always be the last item as it is used to calculate the array size needed to store all items
+        // This must always be the last item as it is used to calculate the array size needed to
+        // store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size,
         prop_processed  // special value used by some importers
@@ -690,7 +693,8 @@ namespace GenEnum
         type_doc_menubar,
         type_wx_view,
 
-        // This must always be the last item as it is used to calculate the array size needed to store all items
+        // This must always be the last item as it is used to calculate the array size needed to
+        // store all items
         gen_type_array_size,
         gen_type_unknown = gen_type_array_size
     };
@@ -699,8 +703,8 @@ namespace GenEnum
     enum GenName : size_t
     {
 
-        // Note that this list not only includes all the top level generators, but also the interface generators that a top
-        // level generator can include as part of it's declaration.
+        // Note that this list not only includes all the top level generators, but also the
+        // interface generators that a top level generator can include as part of it's declaration.
 
         gen_AUI = 0,
 
@@ -929,7 +933,8 @@ namespace GenEnum
         gen_wxAuiMDIParentFrame,
         gen_wxAuiMDIChildFrame,
 
-        // This must always be the last item as it is used to calculate the array size needed to store all items
+        // This must always be the last item as it is used to calculate the array size needed to
+        // store all items
         gen_name_array_size,
         gen_unknown = gen_name_array_size,
 

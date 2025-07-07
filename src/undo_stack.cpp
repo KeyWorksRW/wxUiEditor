@@ -26,7 +26,8 @@ void UndoStack::Undo()
 {
     if (m_undo.size())
     {
-        auto command = m_undo.back();  // make a copy of the share_ptr to increase the reference count
+        auto command =
+            m_undo.back();  // make a copy of the share_ptr to increase the reference count
         m_undo.pop_back();
         m_redo.push_back(command);
         command->Revert();
@@ -37,7 +38,8 @@ void UndoStack::Redo()
 {
     if (m_redo.size())
     {
-        auto command = m_redo.back();  // make a copy of the share_ptr to increase the reference count
+        auto command =
+            m_redo.back();  // make a copy of the share_ptr to increase the reference count
         m_redo.pop_back();
         m_undo.push_back(command);
         command->Change();
@@ -66,7 +68,8 @@ wxString UndoStack::GetRedoString()
 
 ///////////////////////////////// GroupUndoActions ////////////////////////////////////
 
-GroupUndoActions::GroupUndoActions(const tt_string& undo_str, Node* sel_node) : UndoAction(undo_str.c_str())
+GroupUndoActions::GroupUndoActions(const tt_string& undo_str, Node* sel_node) :
+    UndoAction(undo_str.c_str())
 {
     if (sel_node)
     {

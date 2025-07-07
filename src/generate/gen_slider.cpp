@@ -20,8 +20,9 @@
 wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_value), node->as_int(prop_minValue),
-                     node->as_int(prop_maxValue), DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+        new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_value),
+                     node->as_int(prop_minValue), node->as_int(prop_maxValue),
+                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetValue(node->as_int(prop_position));
     if (node->as_int(prop_line_size) > 0)
@@ -82,25 +83,42 @@ bool SliderGenerator::SettingsCode(Code& code)
     }
     if (node->as_int(prop_line_size) > 0)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetLineSize(").as_string(prop_line_size).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetLineSize(")
+            .as_string(prop_line_size)
+            .EndFunction();
     }
     if (node->as_int(prop_page_size) > 0)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetPageSize(").as_string(prop_page_size).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetPageSize(")
+            .as_string(prop_page_size)
+            .EndFunction();
     }
     if (node->as_int(prop_tick_frequency) > 0)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetTickFreq(").as_string(prop_tick_frequency).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetTickFreq(")
+            .as_string(prop_tick_frequency)
+            .EndFunction();
     }
     if (node->as_int(prop_thumb_length) > 0)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetThumbLength(").as_string(prop_thumb_length).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetThumbLength(")
+            .as_string(prop_thumb_length)
+            .EndFunction();
     }
 
     return true;
 }
 
-bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                          Node* node)
 {
     if (prop->isProp(prop_minValue))
     {
@@ -130,8 +148,8 @@ bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProper
     }
 }
 
-bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                  GenLang /* language */)
+bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                  std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/slider.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -141,7 +159,8 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 int SliderGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSlider");
@@ -176,7 +195,8 @@ void SliderGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& 
     handlers.emplace("wxSliderXmlHandler");
 }
 
-bool SliderGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool SliderGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                 GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

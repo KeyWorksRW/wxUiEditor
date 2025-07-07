@@ -53,7 +53,8 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
 {
     for (size_t lang = 1; lang <= GEN_LANG_XRC; lang <<= 1)
     {
-        s_lang_category_prefix[static_cast<GenLang>(lang)] = GenLangToString(static_cast<GenLang>(lang));
+        s_lang_category_prefix[static_cast<GenLang>(lang)] =
+            GenLangToString(static_cast<GenLang>(lang));
     }
 
     for (auto& iter: list_wx_ids)
@@ -65,15 +66,17 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     m_astr_wx_decorations.Add("__attribute__((dllexport))");
     m_astr_wx_decorations.Add("[[gnu::dllexport]]");
 
-    m_notebook_parent = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
+    m_notebook_parent =
+        new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook_parent->SetArtProvider(new wxAuiSimpleTabArt());
 
     m_prop_grid = new CustomPropertyManager;
     m_prop_grid->Create(m_notebook_parent, PROPERTY_ID, wxDefaultPosition, wxDefaultSize,
                         wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
 
-    m_event_grid = new wxPropertyGridManager(m_notebook_parent, EVENT_ID, wxDefaultPosition, wxDefaultSize,
-                                             wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
+    m_event_grid = new wxPropertyGridManager(
+        m_notebook_parent, EVENT_ID, wxDefaultPosition, wxDefaultSize,
+        wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
 
     m_notebook_parent->AddPage(m_prop_grid, "Properties", false, wxWithImages::NO_IMAGE);
     m_notebook_parent->AddPage(m_event_grid, "Events", false, wxWithImages::NO_IMAGE);
@@ -113,7 +116,8 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
              Create();
          });
 
-    m_notebook_parent->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &PropGridPanel::OnAuiNotebookPageChanged, this);
+    m_notebook_parent->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED,
+                            &PropGridPanel::OnAuiNotebookPageChanged, this);
 
     frame->AddCustomEventHandler(GetEventHandler());
 }
@@ -157,8 +161,8 @@ int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flag
     return value;
 }
 
-void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory& category, PropNameSet& prop_set,
-                                  bool is_child_cat)
+void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory& category,
+                                  PropNameSet& prop_set, bool is_child_cat)
 {
     size_t propCount = category.getPropNameCount();
     for (size_t i = 0; i < propCount; i++)
@@ -185,7 +189,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 {
                     if (auto result = gen->GetHint(prop); result)
                     {
-                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->make_wxString());
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT,
+                                                          result->make_wxString());
                     }
                 }
                 m_prop_grid->SetPropertyHelpString(pg, GetPropHelp(prop));
@@ -194,7 +199,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 {
                     if (prop->isProp(prop_id))
                     {
-                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE,
+                                                          m_astr_wx_ids);
                     }
                 }
                 else if (propType == type_image || propType == type_animation)
@@ -212,7 +218,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 {
                     if (prop->isProp(prop_class_decoration))
                     {
-                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_decorations);
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE,
+                                                          m_astr_wx_decorations);
                     }
                 }
             }
@@ -230,7 +237,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
             if (prop_name == prop_unchecked_bitmap)
                 m_prop_grid->Collapse(pg);
 
-            if (auto it = m_expansion_map.find(map_PropNames[prop_name]); it != m_expansion_map.end())
+            if (auto it = m_expansion_map.find(map_PropNames[prop_name]);
+                it != m_expansion_map.end())
             {
                 if (it->second)
                 {
@@ -248,7 +256,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
         else
         {
             MSG_WARNING(tt_string("The property ")
-                        << map_PropNames[prop_name] << " appears more than once in " << node->declName());
+                        << map_PropNames[prop_name] << " appears more than once in "
+                        << node->declName());
         }
     }
 
@@ -267,8 +276,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
         wxPGProperty* catId;
         if (is_child_cat)
         {
-            catId =
-                m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
+            catId = m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()),
+                                          new wxPropertyCategory(nextCat.GetName()));
         }
         else
         {
@@ -277,8 +286,8 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
 
         AddProperties(name, node, nextCat, prop_set, true);
 
-        // wxStyledTextCtrl has several categories most of which are rarely used, so it makes sense to collapse them
-        // initially.
+        // wxStyledTextCtrl has several categories most of which are rarely used, so it makes sense
+        // to collapse them initially.
         if (nextCat.GetName() == "Margin Columns" || nextCat.GetName() == "Selections" ||
             nextCat.GetName() == "Tabs and Indentation" || nextCat.GetName() == "Wrapping")
         {
@@ -333,7 +342,8 @@ inline constexpr const char* lst_mouse_events[] = {
 };
 // clang-format on
 
-void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& category, EventSet& event_set)
+void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& category,
+                              EventSet& event_set)
 {
     auto& eventList = category.getEvents();
     for (auto& eventName: eventList)
@@ -345,8 +355,8 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
 
         auto eventInfo = event->getEventInfo();
 
-        ASSERT_MSG(event_set.find(eventName) == event_set.end(), tt_string("Encountered a duplicate event in ")
-                                                                     << node->declName());
+        ASSERT_MSG(event_set.find(eventName) == event_set.end(),
+                   tt_string("Encountered a duplicate event in ") << node->declName());
         if (event_set.find(eventName) == event_set.end())
         {
             auto grid_property = new EventStringProperty(event->get_name(), event);
@@ -404,8 +414,8 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
         {
             continue;
         }
-        wxPGProperty* catId =
-            m_event_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
+        wxPGProperty* catId = m_event_grid->AppendIn(GetCategoryDisplayName(category.GetName()),
+                                                     new wxPropertyCategory(nextCat.GetName()));
 
         AddEvents(name, node, nextCat, event_set);
 
@@ -422,7 +432,8 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
         }
         else
         {
-            // Keyboard and Mouse events aren't used a lot, but are quite lengthy, so we collapse them by default.
+            // Keyboard and Mouse events aren't used a lot, but are quite lengthy, so we collapse
+            // them by default.
 
             if (nextCat.getName() == "Keyboard Events")
             {
@@ -633,8 +644,10 @@ tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const
     }
     if (description.empty())
     {
-        // If the generator didn't specify a description, then look for a description in the help map
-        if (auto map_help = GenEnum::map_PropHelp.find(prop->get_name()); map_help != GenEnum::map_PropHelp.end())
+        // If the generator didn't specify a description, then look for a description in the help
+        // map
+        if (auto map_help = GenEnum::map_PropHelp.find(prop->get_name());
+            map_help != GenEnum::map_PropHelp.end())
         {
             description = map_help->second;
         }

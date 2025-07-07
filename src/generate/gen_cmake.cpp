@@ -7,12 +7,12 @@
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_results.h"      // Code generation file writing functions
-#include "mainapp.h"          // MainApp class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 
-namespace  {
+namespace
+{
     enum CMakeWriteFlag
     {
         CMAKE_WRITE_NORMAL = 0,      // Normal write operation
@@ -25,7 +25,8 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 {
     if (parent_node->isGen(gen_folder) && !parent_node->hasValue(prop_folder_cmake_file))
     {
-        if (!Project.as_bool(prop_generate_cmake) || (parent_node->isGen(gen_Project) && !Project.hasValue(prop_cmake_file)))
+        if (!Project.as_bool(prop_generate_cmake) ||
+            (parent_node->isGen(gen_Project) && !Project.hasValue(prop_cmake_file)))
         {
             return result::exists;
         }
@@ -91,8 +92,8 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     out.emplace_back();
 
     // Recrusive lambda to collect forms in derived and non-derived vectors
-    auto CollectForms = [](std::vector<Node*>& forms, std::vector<Node*>& derived_forms, Node* node_start,
-                           auto&& CollectForms) -> void
+    auto CollectForms = [](std::vector<Node*>& forms, std::vector<Node*>& derived_forms,
+                           Node* node_start, auto&& CollectForms) -> void
     {
         if (!node_start)
         {
@@ -102,7 +103,8 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         {
             if (node_start == Project.getProjectNode())
             {
-                if (auto* node_folder = child->getFolder(); node_folder && node_folder->hasValue(prop_folder_cmake_file))
+                if (auto* node_folder = child->getFolder();
+                    node_folder && node_folder->hasValue(prop_folder_cmake_file))
                 {
                     // This file already got added to a different .cmake file
                     continue;
@@ -147,7 +149,8 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
             if (parent_node == Project.getProjectNode())
             {
-                if (auto* node_folder = form->getFolder(); node_folder && node_folder->hasValue(prop_folder_cmake_file))
+                if (auto* node_folder = form->getFolder();
+                    node_folder && node_folder->hasValue(prop_folder_cmake_file))
                 {
                     // This file already got added to a different .cmake file
                     continue;

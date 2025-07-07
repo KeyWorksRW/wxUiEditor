@@ -31,7 +31,8 @@ namespace xrc_import
         { "bitmap-minwidth", prop_bmp_min_width },
         { "bitmap-placement", prop_bmp_placement },
         { "bitmapposition", prop_position },
-        { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
+        // BUGBUG: [Randalphwa - 06-17-2022] should bitmapsize be prop_bitmapsize?
+        { "bitmapsize", prop_image_size },
         { "choices", prop_contents },
         { "class", prop_class_name },
         { "clicked", prop_checked },
@@ -142,9 +143,11 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
 
     if (auto result = doc.load_file_string(file); !result)
     {
-        std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                                      result.description(), result.line, result.column, result.offset);
-        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+        std::string msg =
+            std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                        result.description(), result.line, result.column, result.offset);
+        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR)
+            .ShowModal();
         return {};
     }
 
@@ -228,19 +231,22 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
 
     if (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE"))
     {
-        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") || flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
+        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") ||
+            flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
         {
             if (align_value.size())
                 align_value << '|';
             align_value << "wxALIGN_CENTER_VERTICAL";
         }
-        else if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") || flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
+        else if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") ||
+                 flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
         {
             if (align_value.size())
                 align_value << '|';
             align_value << "wxALIGN_CENTER_HORIZONTAL";
         }
-        if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") || flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
+        if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") ||
+            flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
         {
             if (align_value.size())
                 align_value << '|';
@@ -423,8 +429,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         style.clear();
         for (auto& iter: mstr)
         {
-            if (iter.starts_with("wxLC_ICON") || iter.starts_with("wxLC_SMALL_ICON") || iter.starts_with("wxLC_LIST") ||
-                iter.starts_with("wxLC_REPORT"))
+            if (iter.starts_with("wxLC_ICON") || iter.starts_with("wxLC_SMALL_ICON") ||
+                iter.starts_with("wxLC_LIST") || iter.starts_with("wxLC_REPORT"))
             {
                 node->set_value(prop_mode, iter);
             }
@@ -548,7 +554,8 @@ GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node*
         return gen_PanelForm;
     }
     else if (getGenName == gen_separator && parent &&
-             (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar) || parent->isGen(gen_wxAuiToolBar)))
+             (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar) ||
+              parent->isGen(gen_wxAuiToolBar)))
     {
         return gen_toolSeparator;
     }
@@ -897,13 +904,15 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         if (parent && parent->getForm())
                         {
                             MSG_INFO(tt_string(m_importProjectFile.filename())
-                                     << ": Unrecognized property: " << xml_obj.name() << " for " << node->declName()
-                                     << " in " << parent->getForm()->as_string(prop_class_name));
+                                     << ": Unrecognized property: " << xml_obj.name() << " for "
+                                     << node->declName() << " in "
+                                     << parent->getForm()->as_string(prop_class_name));
                         }
                         else
                         {
                             MSG_INFO(tt_string(m_importProjectFile.filename())
-                                     << ": Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+                                     << ": Unrecognized property: " << xml_obj.name() << " for "
+                                     << node->declName());
                         }
                     }
                     return;
@@ -934,13 +943,15 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                     if (parent && parent->getForm())
                     {
                         MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": " << xml_obj.name() << " not supported for " << node->declName() << " in "
+                                 << ": " << xml_obj.name() << " not supported for "
+                                 << node->declName() << " in "
                                  << parent->getForm()->as_string(prop_class_name));
                     }
                     else
                     {
                         MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": " << xml_obj.name() << " not supported for " << node->declName());
+                                 << ": " << xml_obj.name() << " not supported for "
+                                 << node->declName());
                     }
                 }
                 return;
@@ -969,15 +980,20 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         if (!node->isGen(gen_gbsizeritem))
                         {
                             MSG_INFO(tt_string(m_importProjectFile.filename())
-                                     << ": " << "\"option\" specified for node that doesn't have prop_proportion: "
-                                     << node->declName() << " in " << parent->getForm()->as_string(prop_class_name));
+                                     << ": "
+                                     << "\"option\" specified for node that doesn't have "
+                                        "prop_proportion: "
+                                     << node->declName() << " in "
+                                     << parent->getForm()->as_string(prop_class_name));
                         }
                     }
                     else
                     {
-                        MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": "
-                                 << "\"option\" specified for node that doesn't have prop_proportion: " << node->declName());
+                        MSG_INFO(
+                            tt_string(m_importProjectFile.filename())
+                            << ": "
+                            << "\"option\" specified for node that doesn't have prop_proportion: "
+                            << node->declName());
                     }
                 }
                 return;
@@ -1080,13 +1096,15 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         if (parent && parent->getForm())
         {
             MSG_INFO(tt_string(m_importProjectFile.filename())
-                     << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName() << " in "
+                     << ": " << "Unrecognized property: " << xml_obj.name() << " for "
+                     << node->declName() << " in "
                      << parent->getForm()->as_string(prop_class_name));
         }
         else
         {
             MSG_INFO(tt_string(m_importProjectFile.filename())
-                     << ": " << "Unrecognized property: " << xml_obj.name() << " for " << node->declName());
+                     << ": " << "Unrecognized property: " << xml_obj.name() << " for "
+                     << node->declName());
         }
     }
 }
@@ -1125,7 +1143,8 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     }
 }
 
-void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum::PropName node_prop)
+void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
+                              GenEnum::PropName node_prop)
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
@@ -1247,8 +1266,8 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                         MSG_INFO(tt_string(m_importProjectFile.filename())
                                  << ": "
                                     "Unrecognized object: "
-                                 << object_name << " in " << map_GenNames.at(parent->getGenName()) << " ("
-                                 << form->as_string(prop_class_name) << ')');
+                                 << object_name << " in " << map_GenNames.at(parent->getGenName())
+                                 << " (" << form->as_string(prop_class_name) << ')');
                     }
                     else
                     {
@@ -1260,7 +1279,8 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                 }
                 else
                 {
-                    MSG_INFO(tt_string(m_importProjectFile.filename()) << ": " << "Unrecognized object: " << object_name);
+                    MSG_INFO(tt_string(m_importProjectFile.filename())
+                             << ": " << "Unrecognized object: " << object_name);
                 }
             }
             return NodeSharedPtr();
@@ -1321,7 +1341,8 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                 return CreateXrcNode(xml_obj, page.get(), sizeritem);
             }
         }
-        else if (parent && (parent->isGen(gen_wxPanel) || parent->isGen(gen_PanelForm) || parent->isGen(gen_wxDialog)))
+        else if (parent && (parent->isGen(gen_wxPanel) || parent->isGen(gen_PanelForm) ||
+                            parent->isGen(gen_wxDialog)))
         {
             auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, parent).first;
             if (sizer)
@@ -1337,7 +1358,8 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
         // wxSmith uses wxMenu as a child of a wxMenu. In wxUiEditor, we use gen_submenu in order to
         // visually distinguish it as a parent.
-        else if (parent && getGenName == gen_wxMenu && (parent->isGen(gen_wxMenu) || parent->isGen(gen_submenu)))
+        else if (parent && getGenName == gen_wxMenu &&
+                 (parent->isGen(gen_wxMenu) || parent->isGen(gen_submenu)))
         {
             new_node = NodeCreation.createNode(gen_submenu, parent).first;
             if (new_node)
@@ -1496,20 +1518,24 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
         {
             auto currentValue = new_node->as_string(prop_alignment);
-            if (currentValue.size() && (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
-                                        currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
+            if (currentValue.size() &&
+                (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
+                 currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
             {
-                auto fixed = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
+                auto fixed = ClearMultiplePropFlags(
+                    "wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
                 new_node->set_value(prop_alignment, fixed);
             }
         }
         else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
         {
             auto currentValue = new_node->as_string(prop_alignment);
-            if (currentValue.size() && (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
-                                        currentValue.contains("wxALIGN_CENTER_VERTICAL")))
+            if (currentValue.size() &&
+                (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
+                 currentValue.contains("wxALIGN_CENTER_VERTICAL")))
             {
-                auto fixed = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
+                auto fixed = ClearMultiplePropFlags(
+                    "wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
                 new_node->set_value(prop_alignment, fixed);
             }
         }
@@ -1584,17 +1610,20 @@ void ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node)
     {
         font_info.PointSize(size_child.text().as_double());
     }
-    if (auto family_child = xml_obj.child("family"); family_child && family_child.text().as_view() != "default")
+    if (auto family_child = xml_obj.child("family");
+        family_child && family_child.text().as_view() != "default")
     {
         FontFamilyPairs family_pair;
         font_info.Family(family_pair.GetValue(family_child.text().as_view()));
     }
-    if (auto style_child = xml_obj.child("style"); style_child && style_child.text().as_view() != "normal")
+    if (auto style_child = xml_obj.child("style");
+        style_child && style_child.text().as_view() != "normal")
     {
         FontStylePairs style_pair;
         font_info.Style(style_pair.GetValue(style_child.text().as_view()));
     }
-    if (auto weight_child = xml_obj.child("weight"); weight_child && weight_child.text().as_view() != "normal")
+    if (auto weight_child = xml_obj.child("weight");
+        weight_child && weight_child.text().as_view() != "normal")
     {
         FontWeightPairs weight_pair;
         font_info.Weight(weight_pair.GetValue(weight_child.text().as_view()));

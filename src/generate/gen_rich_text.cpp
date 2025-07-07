@@ -17,8 +17,9 @@
 
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
+    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                     node->as_wxString(prop_value), DlgPoint(node, prop_pos),
+                                     DlgSize(node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
 
     if (node->hasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
@@ -41,7 +42,11 @@ bool RichTextCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.hasValue(prop_hint))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetHint(")
+            .QuotedString(prop_hint)
+            .EndFunction();
     }
 
     if (code.IsTrue(prop_focus))
@@ -59,7 +64,8 @@ bool RichTextCtrlGenerator::SettingsCode(Code& code)
 
 int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRichTextCtrl");
@@ -82,8 +88,8 @@ void RichTextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxRichTextCtrlXmlHandler -- you must explicitly add this handler");
 }
 
-bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/richtext/richtextctrl.h>", set_src, set_hdr);
     return true;

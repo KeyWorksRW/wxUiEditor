@@ -74,8 +74,8 @@ bool TextViewGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
-                                    GenLang /* language */)
+bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& /* set_hdr */, GenLang /* language */)
 {
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");
@@ -96,7 +96,8 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
             }
             else
             {
-                set_src.insert("// Either the Document class cannot be found, or it doesn't specify a base filename.");
+                set_src.insert("// Either the Document class cannot be found, or it doesn't "
+                               "specify a base filename.");
             }
 
             break;

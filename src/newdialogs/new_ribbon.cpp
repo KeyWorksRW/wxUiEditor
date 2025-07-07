@@ -139,7 +139,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "project_handler.h"         // ProjectHandler class
-#include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"               // Undoable command classes derived from UndoAction
 #include "utils.h"                   // Miscellaneous utilities
 
 void NewRibbon::OnInit(wxInitDialogEvent& event)
@@ -168,7 +168,8 @@ void NewRibbon::createNode()
         bar_node = NodeCreation.createNode(gen_wxRibbonBar, wxGetFrame().getSelectedNode()).first;
         if (!bar_node)
         {
-            wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
+            wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.",
+                         "Create wxRibbonBar");
             return;
         }
     }
@@ -196,14 +197,16 @@ void NewRibbon::createNode()
         }
         else if (m_panel_type == "Button")
         {
-            auto button_bar = NodeCreation.createNode(gen_wxRibbonButtonBar, ribbon_panel.get()).first;
+            auto button_bar =
+                NodeCreation.createNode(gen_wxRibbonButtonBar, ribbon_panel.get()).first;
             ribbon_panel->adoptChild(button_bar);
             auto button = NodeCreation.createNode(gen_ribbonButton, button_bar.get()).first;
             button_bar->adoptChild(button);
         }
         else if (m_panel_type == "Gallery")
         {
-            auto gallery_bar = NodeCreation.createNode(gen_wxRibbonGallery, ribbon_panel.get()).first;
+            auto gallery_bar =
+                NodeCreation.createNode(gen_wxRibbonGallery, ribbon_panel.get()).first;
             ribbon_panel->adoptChild(gallery_bar);
             auto item = NodeCreation.createNode(gen_ribbonGalleryItem, gallery_bar.get()).first;
             gallery_bar->adoptChild(item);
@@ -215,7 +218,8 @@ void NewRibbon::createNode()
         auto parent = wxGetFrame().getSelectedNode();
         auto pos = parent->findInsertionPos(parent);
         tt_string undo_str("New wxRibbonBar");
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
+        wxGetFrame().PushUndoAction(
+            std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
     }
     else
     {
@@ -238,7 +242,8 @@ void NewRibbon::createNode()
         wxGetFrame().SelectNode(parent_node);
 
         tt_string undo_str("New wxRibbonBar");
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent_node, undo_str, -1));
+        wxGetFrame().PushUndoAction(
+            std::make_shared<InsertNodeAction>(bar_node.get(), parent_node, undo_str, -1));
     }
 
     wxGetFrame().FireCreatedEvent(bar_node);
@@ -257,7 +262,8 @@ bool NewRibbon::IsCreatable(bool notify_user)
 
     if (notify_user)
     {
-        wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
+        wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.",
+                     "Create wxRibbonBar");
     }
 
     return false;

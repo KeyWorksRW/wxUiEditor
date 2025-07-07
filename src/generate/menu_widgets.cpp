@@ -45,7 +45,8 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
             wxString label;
             if (child->as_string(prop_stock_id) != "none")
             {
-                label = wxGetStockLabel(NodeCreation.getConstantAsInt(child->as_string(prop_stock_id)));
+                label =
+                    wxGetStockLabel(NodeCreation.getConstantAsInt(child->as_string(prop_stock_id)));
             }
             else
             {
@@ -84,7 +85,8 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
             wxString label;
             if (child->as_string(prop_stock_id) != "none")
             {
-                label = wxGetStockLabel(NodeCreation.getConstantAsInt(child->as_string(prop_stock_id)));
+                label =
+                    wxGetStockLabel(NodeCreation.getConstantAsInt(child->as_string(prop_stock_id)));
             }
             else
             {
@@ -133,11 +135,12 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
                 menu_label << "\t" << shortcut;
             }
 
-            // If the user specified a stock ID, then we need to use that id in order to have wxWidgets generate the
-            // label and bitmap.
+            // If the user specified a stock ID, then we need to use that id in order to have
+            // wxWidgets generate the label and bitmap.
 
             int id = wxID_ANY;
-            if (menu_item->as_string(prop_id) != "wxID_ANY" && menu_item->as_string(prop_id).starts_with("wxID_"))
+            if (menu_item->as_string(prop_id) != "wxID_ANY" &&
+                menu_item->as_string(prop_id).starts_with("wxID_"))
                 id = NodeCreation.getConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
 
             auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->as_wxString(prop_help),
@@ -164,7 +167,8 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             {
                 if (menu_item->hasValue(prop_unchecked_bitmap))
                 {
-                    item->SetBitmaps(wxNullBitmap, menu_item->as_wxBitmapBundle(prop_unchecked_bitmap));
+                    item->SetBitmaps(wxNullBitmap,
+                                     menu_item->as_wxBitmapBundle(prop_unchecked_bitmap));
                 }
             }
 #endif
@@ -228,7 +232,8 @@ bool MenuBarBase::GetImports(Node* node, std::set<std::string>& set_imports, Gen
     return false;
 }
 
-//////////////////////////////////////////  MenuBarGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  MenuBarGenerator
+/////////////////////////////////////////////
 
 bool MenuBarGenerator::ConstructionCode(Code& code)
 {
@@ -252,8 +257,8 @@ bool MenuBarGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
@@ -265,7 +270,8 @@ bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuBar");
@@ -286,7 +292,8 @@ void MenuBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxMenuBarXmlHandler");
 }
 
-//////////////////////////////////////////  MenuBarFormGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  MenuBarFormGenerator
+/////////////////////////////////////////////
 
 bool MenuBarFormGenerator::ConstructionCode(Code& code)
 {
@@ -329,8 +336,8 @@ bool MenuBarFormGenerator::BaseClassNameCode(Code& code)
     return true;
 }
 
-bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
@@ -342,7 +349,8 @@ bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuBar");
@@ -363,7 +371,8 @@ void MenuBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxMenuBarXmlHandler");
 }
 
-//////////////////////////////////////////  PopupMenuGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  PopupMenuGenerator
+/////////////////////////////////////////////
 
 bool PopupMenuGenerator::ConstructionCode(Code& code)
 {
@@ -406,15 +415,16 @@ bool PopupMenuGenerator::BaseClassNameCode(Code& code)
     return true;
 }
 
-bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
     return true;
 }
 
-//////////////////////////////////////////  SeparatorGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  SeparatorGenerator
+/////////////////////////////////////////////
 
 bool SeparatorGenerator::ConstructionCode(Code& code)
 {
@@ -430,8 +440,8 @@ bool SeparatorGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 

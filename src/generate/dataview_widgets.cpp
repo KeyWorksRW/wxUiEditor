@@ -21,19 +21,33 @@
 class DataViewModel : public wxDataViewModel
 {
 public:
-    unsigned int GetChildren(const wxDataViewItem&, wxDataViewItemArray& /*children*/) const override { return 0; }
+    unsigned int GetChildren(const wxDataViewItem&,
+                             wxDataViewItemArray& /*children*/) const override
+    {
+        return 0;
+    }
     unsigned int GetColumnCount() const override { return 0; }
-    wxString GetColumnType(unsigned int /*col*/) const override { return wxVariant("Dummy").GetType(); }
-    wxDataViewItem GetParent(const wxDataViewItem&) const override { return wxDataViewItem(nullptr); }
+    wxString GetColumnType(unsigned int /*col*/) const override
+    {
+        return wxVariant("Dummy").GetType();
+    }
+    wxDataViewItem GetParent(const wxDataViewItem&) const override
+    {
+        return wxDataViewItem(nullptr);
+    }
     bool IsContainer(const wxDataViewItem&) const override { return false; }
     void GetValue(wxVariant&, const wxDataViewItem&, unsigned int /*col*/) const override {}
-    bool SetValue(const wxVariant&, const wxDataViewItem&, unsigned int /*col*/) override { return true; }
+    bool SetValue(const wxVariant&, const wxDataViewItem&, unsigned int /*col*/) override
+    {
+        return true;
+    }
 };
 
 wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                           DlgSize(node, prop_size), GetStyleInt(node));
 
     wxObjectDataPtr<DataViewModel> model;
     model = new DataViewModel;
@@ -44,7 +58,8 @@ wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
+void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                 bool /* is_preview */)
 {
     auto list = wxStaticCast(wxobject, wxDataViewCtrl);
 
@@ -58,66 +73,84 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
             {
                 auto* col = list->AppendTextColumn(
                     childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "Toggle")
             {
                 auto* col = list->AppendToggleColumn(
                     childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "Progress")
             {
                 auto* col = list->AppendProgressColumn(
                     childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "IconText")
             {
                 auto* col = list->AppendIconTextColumn(
                     childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "Date")
             {
                 auto* col = list->AppendDateColumn(
                     childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "Bitmap")
             {
                 auto* col = list->AppendBitmapColumn(
                     childObj->as_wxString(prop_label), childObj->as_int(prop_model_column),
-                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)), childObj->as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->as_int(prop_align)), childObj->as_int(prop_flags));
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
         }
@@ -132,8 +165,8 @@ bool DataViewCtrl::ConstructionCode(Code& code)
     return true;
 }
 
-bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                               GenLang /* language */)
+bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
+                               std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -145,7 +178,8 @@ bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::
 
 int DataViewCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDataViewCtrl");
@@ -171,7 +205,8 @@ std::pair<bool, tt_string> DataViewCtrl::isLanguageVersionSupported(GenLang lang
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewCtrl is not supported by " << GenLangToString(language) };
+    return { false,
+             tt_string() << "wxDataViewCtrl is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
@@ -194,19 +229,22 @@ std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
     }
 }
 
-//////////////////////////////////////////  DataViewListCtrl  //////////////////////////////////////////
+//////////////////////////////////////////  DataViewListCtrl
+/////////////////////////////////////////////
 
 wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                         DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                               DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
 }
 
-void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
+void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                     bool /* is_preview */)
 {
     auto list = wxStaticCast(wxobject, wxDataViewListCtrl);
 
@@ -219,45 +257,57 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
             if (childObj->as_string(prop_type) == "Text")
             {
                 auto col = list->AppendTextColumn(
-                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
-                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "Toggle")
             {
                 auto col = list->AppendToggleColumn(
-                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
-                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "Progress")
             {
                 auto col = list->AppendProgressColumn(
-                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
-                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
             else if (childObj->as_string(prop_type) == "IconText")
             {
                 auto col = list->AppendIconTextColumn(
-                    childObj->as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
-                    childObj->as_int(prop_width), static_cast<wxAlignment>(childObj->as_int(prop_align)),
+                    childObj->as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
+                    childObj->as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
                 if (childObj->hasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
+                    col->GetRenderer()->EnableEllipsize(
+                        static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
                 }
             }
         }
@@ -272,8 +322,8 @@ bool DataViewListCtrl::ConstructionCode(Code& code)
     return true;
 }
 
-bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -285,7 +335,8 @@ bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int DataViewListCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDataViewListCtrl");
@@ -311,7 +362,8 @@ std::pair<bool, tt_string> DataViewListCtrl::isLanguageVersionSupported(GenLang 
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewListCtrl is not supported by " << GenLangToString(language) };
+    return { false, tt_string() << "wxDataViewListCtrl is not supported by "
+                                << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang language)
@@ -334,12 +386,14 @@ std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang langua
     }
 }
 
-//////////////////////////////////////////  DataViewTreeCtrl  //////////////////////////////////////////
+//////////////////////////////////////////  DataViewTreeCtrl
+/////////////////////////////////////////////
 
 wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                         DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                               DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -354,8 +408,8 @@ bool DataViewTreeCtrl::ConstructionCode(Code& code)
     return true;
 }
 
-bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
@@ -366,7 +420,8 @@ std::pair<bool, tt_string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang 
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewTreeCtrl is not supported by " << GenLangToString(language) };
+    return { false, tt_string() << "wxDataViewTreeCtrl is not supported by "
+                                << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang language)
@@ -395,7 +450,8 @@ std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang langua
 
 int DataViewTreeCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDataViewListCtrl");
@@ -418,11 +474,13 @@ void DataViewTreeCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxDataViewXmlHandler");
 }
 
-//////////////////////////////////////////  DataViewColumn  //////////////////////////////////////////
+//////////////////////////////////////////  DataViewColumn
+/////////////////////////////////////////////
 
 bool DataViewColumn::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").as_string(prop_type).Str("Column(");
+    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").as_string(prop_type).Str(
+        "Column(");
     code.QuotedString(prop_label)
         .Comma()
         .as_string(prop_model_column)
@@ -440,7 +498,12 @@ bool DataViewColumn::ConstructionCode(Code& code)
 
     if (code.hasValue(prop_ellipsize))
     {
-        code.Eol().NodeName().Function("GetRenderer()").Function("EnableEllipsize(").Add(prop_ellipsize).EndFunction();
+        code.Eol()
+            .NodeName()
+            .Function("GetRenderer()")
+            .Function("EnableEllipsize(")
+            .Add(prop_ellipsize)
+            .EndFunction();
     }
 
     return true;
@@ -453,7 +516,8 @@ std::pair<bool, tt_string> DataViewColumn::isLanguageVersionSupported(GenLang la
         return { true, {} };
     };
 
-    return { false, tt_string() << "DataViewColumn is not supported by " << GenLangToString(language) };
+    return { false,
+             tt_string() << "DataViewColumn is not supported by " << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewColumn::GetWarning(Node* node, GenLang language)
@@ -475,11 +539,13 @@ std::optional<tt_string> DataViewColumn::GetWarning(Node* node, GenLang language
     }
 }
 
-//////////////////////////////////////////  DataViewListColumn  //////////////////////////////////////////
+//////////////////////////////////////////  DataViewListColumn
+/////////////////////////////////////////////
 
 bool DataViewListColumn::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").as_string(prop_type).Str("Column(");
+    code.AddAuto().NodeName().Str(" = ").ParentName().Function("Append").as_string(prop_type).Str(
+        "Column(");
     code.QuotedString(prop_label).Comma().as_string(prop_mode).Comma().as_string(prop_width);
     code.Comma();
     if (code.is_cpp())
@@ -491,7 +557,12 @@ bool DataViewListColumn::ConstructionCode(Code& code)
 
     if (code.hasValue(prop_ellipsize))
     {
-        code.Eol().NodeName().Function("GetRenderer()").Function("EnableEllipsize(").Add(prop_ellipsize).EndFunction();
+        code.Eol()
+            .NodeName()
+            .Function("GetRenderer()")
+            .Function("EnableEllipsize(")
+            .Add(prop_ellipsize)
+            .EndFunction();
     }
 
     return true;
@@ -502,7 +573,8 @@ std::pair<bool, tt_string> DataViewListColumn::isLanguageVersionSupported(GenLan
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "DataViewListColumn is not supported by " << GenLangToString(language) };
+    return { false, tt_string() << "DataViewListColumn is not supported by "
+                                << GenLangToString(language) };
 }
 
 std::optional<tt_string> DataViewListColumn::GetWarning(Node* node, GenLang language)

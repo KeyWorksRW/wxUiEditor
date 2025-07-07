@@ -28,7 +28,8 @@
 #include "write_code.h"       // Write code to Scintilla or file
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
-bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t compressed_size);
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
+                    size_t compressed_size);
 
 DataHandler& ProjectData = DataHandler::getInstance();
 
@@ -90,7 +91,8 @@ void DataHandler::Initialize()
                 if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
                 {
                     // If it's an XML file, then don't continue if xml_condensed has changed
-                    if (!node->isGen(gen_data_xml) || node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
+                    if (!node->isGen(gen_data_xml) ||
+                        node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
                         continue;
                 }
 
@@ -156,9 +158,12 @@ bool DataHandler::LoadAndCompress(Node* node)
     if (node->isGen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
     {
         pugi::xml_document doc;
-        if (auto result = doc.load_file_string(embed.filename, pugi::parse_trim_pcdata | pugi::parse_default); !result)
+        if (auto result =
+                doc.load_file_string(embed.filename, pugi::parse_trim_pcdata | pugi::parse_default);
+            !result)
         {
-            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
                 .ShowModal();
             return false;
         }
@@ -173,7 +178,8 @@ bool DataHandler::LoadAndCompress(Node* node)
         wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
         if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
         {
-            // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+            // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be
+            // impossible
             return false;
         }
         save_strem.Close();
@@ -209,7 +215,8 @@ bool DataHandler::LoadAndCompress(Node* node)
             wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
             if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
             {
-                // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+                // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be
+                // impossible
                 return false;
             }
             save_strem.Close();
@@ -346,7 +353,8 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             // original size is in the high 32 bits
             code.Str("return std::string((const char*) get_data(");
             code.Str(var_name).Str(", sizeof(").Str(var_name);
-            code << "), " << (embed.array_size >> 32) << ").get(), " << (embed.array_size >> 32) << ");";
+            code << "), " << (embed.array_size >> 32) << ").get(), " << (embed.array_size >> 32)
+                 << ");";
         }
         else
         {
@@ -400,13 +408,15 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         }
         else
         {
-            data_function_list.emplace_back(tt_string("std::pair<const unsigned char*, size_t> get_") << var_name << "();");
+            data_function_list.emplace_back(
+                tt_string("std::pair<const unsigned char*, size_t> get_") << var_name << "();");
             data_function_filename_list.emplace_back(embed.filename);
         }
     }
 
     // Lambda to write function declarations with aligned comments
-    auto write_function_list = [&](const std::vector<std::string>& func_list, const std::vector<std::string>& filename_list)
+    auto write_function_list = [&](const std::vector<std::string>& func_list,
+                                   const std::vector<std::string>& filename_list)
     {
         if (func_list.empty())
             return;
@@ -425,7 +435,8 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
             const auto& filename = filename_list[i];
             if (filename.size())
             {
-                header->writeLine(std::format("{}{}// {}", func, std::string(max_func_len - func.size(), ' '), filename));
+                header->writeLine(std::format(
+                    "{}{}// {}", func, std::string(max_func_len - func.size(), ' '), filename));
             }
         }
         header->writeLine();
@@ -457,9 +468,10 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         }
         if (embed.array_size >> 32 > 0 && Project.AddOptionalComments())
         {
-            header->writeLine(tt_string("extern const unsigned char ")
-                              << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // Original size: "
-                              << std::format(std::locale(""), "{:L} bytes", (embed.array_size >> 32)));
+            header->writeLine(
+                tt_string("extern const unsigned char ")
+                << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // Original size: "
+                << std::format(std::locale(""), "{:L} bytes", (embed.array_size >> 32)));
         }
         else
         {
@@ -488,7 +500,7 @@ bool DataHandler::NeedsUtilityHeader() const
     return false;
 }
 
-//////////////////////////////////////////  data_list namespace functions  ////////////////////////////////
+/////////////////////////////////  data_list namespace functions /////////////////////////////////
 
 Node* data_list::FindDataList()
 {

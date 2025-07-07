@@ -18,8 +18,9 @@
 
 wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -30,8 +31,9 @@ bool StaticLineGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName();
-    if (!code.IsEqualTo(prop_id, "wxID_ANY") || code.hasValue(prop_pos) || code.hasValue(prop_size) ||
-        code.hasValue(prop_window_name) || code.PropContains(prop_style, "wxLI_VERTICAL"))
+    if (!code.IsEqualTo(prop_id, "wxID_ANY") || code.hasValue(prop_pos) ||
+        code.hasValue(prop_size) || code.hasValue(prop_window_name) ||
+        code.PropContains(prop_style, "wxLI_VERTICAL"))
     {
         code.Comma().as_string(prop_id).PosSizeFlags();
     }
@@ -43,8 +45,8 @@ bool StaticLineGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/statline.h>", set_src, set_hdr);
     return true;
@@ -52,7 +54,8 @@ bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int StaticLineGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticLine");
@@ -72,7 +75,8 @@ void StaticLineGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxStaticLineXmlHandler");
 }
 
-bool StaticLineGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool StaticLineGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                     GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

@@ -39,7 +39,10 @@ public:
             return 0;
     }
 
-    void addChild(GenType getGenType, ptrdiff_t max_children) { m_map_children[getGenType] = max_children; }
+    void addChild(GenType getGenType, ptrdiff_t max_children)
+    {
+        m_map_children[getGenType] = max_children;
+    }
 
 private:
     GenType m_gen_type;

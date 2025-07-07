@@ -8,7 +8,6 @@
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 
 #include "gen_prop_item.h"
@@ -26,7 +25,11 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 
     if (code.view(prop_type) == "Category")
     {
-        code.Function("Append(").AddIfCpp("new ").Add("wxPropertyCategory").AddIfRuby(".new").Str("(");
+        code.Function("Append(")
+            .AddIfCpp("new ")
+            .Add("wxPropertyCategory")
+            .AddIfRuby(".new")
+            .Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_label).Str(")").EndFunction();
     }
     else

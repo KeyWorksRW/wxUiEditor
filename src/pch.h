@@ -172,8 +172,10 @@ namespace xrc
         use_xrc_dir = 1 << 1,   // if prop_xrc_dir is set, use that instead of prop_art_directory
         previewing = 1 << 2,    // overrides add_comments and use_xrc_dir
 
-        format_no_indent_nodes = 1 << 3,     // do not indent nodes in the XRC file (pugi::format_indent off)
-        format_indent_attributes = 1 << 4,   // indent attributes in the XRC file (pugi::format_indent_attributes on)
+        format_no_indent_nodes =
+            1 << 3,  // do not indent nodes in the XRC file (pugi::format_indent off)
+        format_indent_attributes =
+            1 << 4,  // indent attributes in the XRC file (pugi::format_indent_attributes on)
         format_indent_with_spaces = 1 << 5,  // indent with spaces instead of tabs
     };
 }  // namespace xrc
@@ -226,8 +228,8 @@ void MSG_ERROR(const std::string& msg);
     #define CHECK_RET(cond, msg)      wxCHECK2_MSG(cond, return, msg)
 #else
 
-// These are essentially the same as the wxWidgets macros except that it calls AssertionDlg instead of
-// wxFAIL_COND_MSG
+// These are essentially the same as the wxWidgets macros except that it calls AssertionDlg instead
+// of wxFAIL_COND_MSG
 
     #define CHECK2_MSG(cond, op, msg)                                     \
         if (cond)                                                         \
@@ -254,7 +256,7 @@ void MSG_ERROR(const std::string& msg);
 // recompiled. Since the files have to be recompiled anyway, we might as well pre-compile this file.
 #include "gen_enums.h"  // Enumerations used by the generators
 
-// This file changes rarely, but like gen_enums.h, when it does change, a large number of files in the
-// project need to be recompiled (currently 214 out of 274). The Node class is an integral part of all
-// the generators, as well as most of the Panels so it makes sense to pre-compile this file.
+// This file changes rarely, but like gen_enums.h, when it does change, a large number of files in
+// the project need to be recompiled (currently 214 out of 274). The Node class is an integral part
+// of all the generators, as well as most of the Panels so it makes sense to pre-compile this file.
 #include "node.h"  // Node class

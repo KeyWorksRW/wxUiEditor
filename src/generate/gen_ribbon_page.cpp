@@ -16,13 +16,14 @@
 
 #include "gen_ribbon_page.h"
 
-//////////////////////////////////////////  RibbonPageGenerator  //////////////////////////////////////////
+////////////////////////////////////  RibbonPageGenerator ///////////////////////////////////////
 
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto bmp = node->hasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
     // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-    auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->as_wxString(prop_label), bmp, 0);
+    auto widget =
+        new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->as_wxString(prop_label), bmp, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -38,7 +39,8 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
     {
         code.Comma();
 
-        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                               tt::TRIM::both);
         GenerateBundleParameter(code, parts, true);
     }
     code.EndFunction();
@@ -56,8 +58,8 @@ bool RibbonPageGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/page.h>", set_src, set_hdr);
 
@@ -70,7 +72,8 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonPage");
@@ -89,13 +92,13 @@ int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     return result;
 }
 
-//////////////////////////////////////////  RibbonPanelGenerator  //////////////////////////////////////////
+////////////////////////////////////  RibbonPanelGenerator ///////////////////////////////////////
 
 wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->as_wxString(prop_label), node->as_wxBitmap(prop_bitmap),
-                          DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->as_wxString(prop_label),
+                                    node->as_wxBitmap(prop_bitmap), DlgPoint(node, prop_pos),
+                                    DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -104,12 +107,20 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool RibbonPanelGenerator::ConstructionCode(Code& code)
 {
-    code.AddAuto().NodeName().CreateClass().ParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
+    code.AddAuto()
+        .NodeName()
+        .CreateClass()
+        .ParentName()
+        .Comma()
+        .as_string(prop_id)
+        .Comma()
+        .QuotedString(prop_label);
     if (code.hasValue(prop_bitmap))
     {
         code.Comma();
 
-        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                               tt::TRIM::both);
         GenerateBundleParameter(code, parts, true);
     }
     code.EndFunction();
@@ -117,8 +128,8 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/panel.h>", set_src, set_hdr);
 
@@ -131,7 +142,8 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonPanel");

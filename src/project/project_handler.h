@@ -95,7 +95,8 @@ public:
 
     // Returns the absolute path to the output file for this node. If no output filename is
     // specified, first will still contain a path with no filename, and second will be false.
-    std::pair<tt_string, bool> GetOutputPath(Node* form, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    std::pair<tt_string, bool> GetOutputPath(Node* form,
+                                             GenLang language = GEN_LANG_CPLUSPLUS) const;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
@@ -130,7 +131,8 @@ public:
 
     // Call setProjectUpdated() if the project file's minimum version needs to be updated
     void setProjectUpdated() { m_isProject_updated = true; }
-    // Call isProjectUpdated() to determine if the project file's minimum version needs to be updated
+    // Call isProjectUpdated() to determine if the project file's minimum version needs to be
+    // updated
     bool isProjectUpdated() const { return m_isProject_updated; }
 
     bool isUiAllowed() const { return m_allow_ui; }
@@ -150,7 +152,8 @@ public:
     // E.g., wxWidgets 3.1.6 returns 30106, 3.2.0 returns 30200
     int getLangVersion(GenLang language) const;
 
-    // const tt_string& value(GenEnum::PropName name) const { return m_project_node->as_string(name); }
+    // const tt_string& value(GenEnum::PropName name) const { return
+    // m_project_node->as_string(name); }
     const tt_string_view view(PropName name) const { return m_project_node->as_string(name); }
     const tt_string& as_string(PropName name) const { return m_project_node->as_string(name); }
 

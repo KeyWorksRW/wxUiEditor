@@ -20,7 +20,8 @@ public:
 
     PropertyGrid_Animation(const wxString& label, NodeProperty* prop);
 
-    wxVariant ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const override;
+    wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
+                           wxVariant& childValue) const override;
     void RefreshChildren() override;
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }

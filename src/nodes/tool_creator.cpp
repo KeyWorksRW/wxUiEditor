@@ -11,14 +11,12 @@
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
 #include "data_handler.h"            // DataHandler class
-#include "gen_images_list.h"         // ImagesGenerator -- Images List Embedded images generator
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
-#include "node_decl.h"               // NodeDeclaration class
 #include "node_prop.h"               // NodeProperty -- NodeProperty class
 #include "preferences.h"             // Preferences -- Stores user preferences
 #include "project_handler.h"         // ProjectHandler class
-#include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"               //  Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
 
@@ -65,7 +63,8 @@ static void PostProcessPanel(Node* panel_node)
 void SetUniqueRibbonToolID(Node* node)
 {
     auto* bar_parent = node->getParent();
-    while (bar_parent && (!bar_parent->isGen(gen_wxRibbonBar) && !bar_parent->isGen(GenEnum::gen_RibbonBar)))
+    while (bar_parent &&
+           (!bar_parent->isGen(gen_wxRibbonBar) && !bar_parent->isGen(GenEnum::gen_RibbonBar)))
     {
         bar_parent = bar_parent->getParent();
     }
@@ -167,9 +166,11 @@ bool Node::createToolNode(GenName name, int pos)
     {
         if (!isFormParent() && !isForm())
         {
-            wxMessageBox("A folder can only be created when a form, another folder or the project is selected.",
+            wxMessageBox("A folder can only be created when a form, another folder or the project "
+                         "is selected.",
                          "Cannot create folder", wxOK | wxICON_ERROR);
-            return true;  // indicate that we have full processed creation even though it's just an error message
+            return true;  // indicate that we have full processed creation even though it's just an
+                          // error message
         }
         auto* parent = isForm() ? getParent() : this;
         if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
@@ -184,19 +185,20 @@ bool Node::createToolNode(GenName name, int pos)
             wxGetFrame().Freeze();
             tt_string undo_string("Insert new folder");
             auto childPos = isForm() ? parent->getChildPosition(this) : 0;
-            wxGetFrame().PushUndoAction(
-                std::make_shared<InsertNodeAction>(new_node.get(), parent, "Insert new folder", childPos));
+            wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(
+                new_node.get(), parent, "Insert new folder", childPos));
 
-            // InsertNodeAction does not fire the creation event since that's usually handled by the caller as
-            // needed. We don't want to fire an event because we don't want the Mockup or Code panels to update until
-            // we have changed the parent. However we *do* need to let the navigation panel know that a new node has
-            // been added.
+            // InsertNodeAction does not fire the creation event since that's usually handled by the
+            // caller as needed. We don't want to fire an event because we don't want the Mockup or
+            // Code panels to update until we have changed the parent. However we *do* need to let
+            // the navigation panel know that a new node has been added.
 
             wxGetFrame().getNavigationPanel()->InsertNode(new_node.get());
 
             if (isForm())
             {
-                wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(this, new_node.get()));
+                wxGetFrame().PushUndoAction(
+                    std::make_shared<ChangeParentAction>(this, new_node.get()));
             }
             wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
             wxGetFrame().Thaw();
@@ -210,9 +212,10 @@ bool Node::createToolNode(GenName name, int pos)
         {
             if (iter->isGen(gen_Images))
             {
-                wxMessageBox("Only one Images List is allowed per project.", "Cannot create Images List",
-                             wxOK | wxICON_ERROR);
-                return true;  // indicate that we have fully processed creation even though it's just an error message
+                wxMessageBox("Only one Images List is allowed per project.",
+                             "Cannot create Images List", wxOK | wxICON_ERROR);
+                return true;  // indicate that we have fully processed creation even though it's
+                              // just an error message
             }
         }
 
@@ -220,8 +223,8 @@ bool Node::createToolNode(GenName name, int pos)
         if (!new_node)
             return false;
         // Note that this will insert itself in front of any Data List
-        auto insert_node =
-            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), "insert Images list", 0);
+        auto insert_node = std::make_shared<InsertNodeAction>(
+            new_node.get(), Project.getProjectNode(), "insert Images list", 0);
         insert_node->SetFireCreatedEvent(true);
         wxGetFrame().PushUndoAction(insert_node);
         wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
@@ -234,8 +237,10 @@ bool Node::createToolNode(GenName name, int pos)
         {
             if (iter->isGen(gen_Data))
             {
-                wxMessageBox("Only one Data List is allowed per project.", "Cannot create Data List", wxOK | wxICON_ERROR);
-                return true;  // indicate that we have fully processed creation even though it's just an error message
+                wxMessageBox("Only one Data List is allowed per project.",
+                             "Cannot create Data List", wxOK | wxICON_ERROR);
+                return true;  // indicate that we have fully processed creation even though it's
+                              // just an error message
             }
             else if (iter->isGen(gen_Images))
             {
@@ -247,8 +252,8 @@ bool Node::createToolNode(GenName name, int pos)
         auto new_node = NodeCreation.createNode(name, Project.getProjectNode()).first;
         if (!new_node)
             return false;
-        auto insert_node =
-            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), "insert Data list", insert_pos);
+        auto insert_node = std::make_shared<InsertNodeAction>(
+            new_node.get(), Project.getProjectNode(), "insert Data list", insert_pos);
         insert_node->SetFireCreatedEvent(true);
         wxGetFrame().PushUndoAction(insert_node);
         wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
@@ -261,7 +266,8 @@ bool Node::createToolNode(GenName name, int pos)
         {
             wxMessageBox("An Images List must be created before you can add an embedded image.",
                          "Cannot create embedded image", wxOK | wxICON_ERROR);
-            return true;  // indicate that we have fully processed creation even though it's just an error message
+            return true;  // indicate that we have fully processed creation even though it's just an
+                          // error message
         }
     }
     else if (name == gen_data_string)
@@ -269,19 +275,22 @@ bool Node::createToolNode(GenName name, int pos)
         auto* data_node = data_list::FindDataList();
         if (!data_node)
         {
-            wxMessageBox("A Data List must be created before you can add a data string.", "Cannot create data string",
-                         wxOK | wxICON_ERROR);
-            return true;  // indicate that we have fully processed creation even though it's just an error message
+            wxMessageBox("A Data List must be created before you can add a data string.",
+                         "Cannot create data string", wxOK | wxICON_ERROR);
+            return true;  // indicate that we have fully processed creation even though it's just an
+                          // error message
         }
         data_node->createChildNode(name);
         return true;
     }
-    else if (name == gen_ribbonButton && (isGen(gen_wxRibbonToolBar) || getParent()->isGen(gen_wxRibbonToolBar)))
+    else if (name == gen_ribbonButton &&
+             (isGen(gen_wxRibbonToolBar) || getParent()->isGen(gen_wxRibbonToolBar)))
     {
         name = gen_ribbonTool;
     }
 
-    if (auto valid_parent = NodeCreation.isValidCreateParent(name, this); valid_parent && valid_parent != this)
+    if (auto valid_parent = NodeCreation.isValidCreateParent(name, this);
+        valid_parent && valid_parent != this)
     {
         if (valid_parent && valid_parent == getParent() && !valid_parent->isGen(gen_wxGridBagSizer))
         {
@@ -506,7 +515,8 @@ void MainFrame::createToolNode(GenName name)
         return;
     }
 
-    if (name == gen_tool && (m_selected_node->isType(type_aui_toolbar) || m_selected_node->isType(type_aui_tool)))
+    if (name == gen_tool &&
+        (m_selected_node->isType(type_aui_toolbar) || m_selected_node->isType(type_aui_tool)))
     {
         name = gen_auitool;
     }
@@ -531,8 +541,9 @@ void MainFrame::createToolNode(GenName name)
                 break;
 
             case gen_wxRibbonButtonBar:
-                wxMessageBox("A wxRibbonButtonBar can only be created as a child of a wxRibbonPanel.",
-                             "Cannot create wxRibbonButtonBar", wxOK | wxICON_ERROR);
+                wxMessageBox(
+                    "A wxRibbonButtonBar can only be created as a child of a wxRibbonPanel.",
+                    "Cannot create wxRibbonButtonBar", wxOK | wxICON_ERROR);
                 break;
 
             case gen_wxRibbonPanel:
@@ -541,8 +552,8 @@ void MainFrame::createToolNode(GenName name)
                 break;
 
             default:
-                wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name] << " as a child of "
-                                         << m_selected_node->declName());
+                wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name]
+                                         << " as a child of " << m_selected_node->declName());
         }
     }
 }

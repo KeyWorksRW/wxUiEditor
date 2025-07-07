@@ -17,8 +17,9 @@
 
 wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                   DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
+                         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_hint))
     {
@@ -56,7 +57,11 @@ bool SearchCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.hasValue(prop_hint))
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetHint(")
+            .QuotedString(prop_hint)
+            .EndFunction();
     }
 
     if (code.IsTrue(prop_focus))
@@ -82,8 +87,8 @@ bool SearchCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/srchctrl.h>", set_src, set_hdr);
     return true;
@@ -94,15 +99,16 @@ bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSearchCtrl");
 
     ADD_ITEM_PROP(prop_value, "value")
 
-    // Note that XRC calls SetDescriptiveText() instead of SetHint() which has a different apperance (SetDescription text is
-    // not greyed out).
+    // Note that XRC calls SetDescriptiveText() instead of SetHint() which has a different apperance
+    // (SetDescription text is not greyed out).
     ADD_ITEM_PROP(prop_hint, "hint")
 
     GenXrcStylePosSize(node, item);

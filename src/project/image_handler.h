@@ -12,7 +12,7 @@
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
-#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
 class Node;
 class wxAnimation;
@@ -37,9 +37,10 @@ struct ImageInfo
 
 struct EmbeddedImage
 {
-    Node* form;                   // the form node the image is declared in
-    std::vector<ImageInfo> imgs;  // InitializeEmbedStructure() will always create at least one entry
-    wxSize size;                  // dimensions of the first image in the array
+    Node* form;  // the form node the image is declared in
+    std::vector<ImageInfo>
+        imgs;     // InitializeEmbedStructure() will always create at least one entry
+    wxSize size;  // dimensions of the first image in the array
 
     // Note that this will update any file within EmbeddedImage whose file_time has changed
     // since the file was first loaded.
@@ -151,7 +152,8 @@ protected:
     bool AddNewEmbeddedImage(tt_string path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
-    EmbeddedImage* AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed = nullptr);
+    EmbeddedImage* AddEmbeddedBundleImage(tt_string path, Node* form,
+                                          EmbeddedImage* embed = nullptr);
 
     // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
     // depending on the type of the image file.

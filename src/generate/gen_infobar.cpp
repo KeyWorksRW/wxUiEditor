@@ -22,15 +22,16 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (Project.getCodePreference() == GEN_LANG_RUBY)
     {
-        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxInfoBar not available in wxRuby3",
-                                        wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                        "wxInfoBar not available in wxRuby3", wxDefaultPosition,
+                                        wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
     m_infobar = new wxInfoBar(wxStaticCast(parent, wxWindow));
 
-    // Show the message before effects are added in case the show_effect has a delay (which would delay the display of
-    // the dialog)
+    // Show the message before effects are added in case the show_effect has a delay (which would
+    // delay the display of the dialog)
 
     m_infobar->ShowMessage("Message ...", wxICON_INFORMATION);
 
@@ -81,8 +82,8 @@ void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */)
     m_infobar->ShowMessage("Message ...");
 }
 
-bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/infobar.h>", set_src, set_hdr);
     return true;
@@ -93,7 +94,8 @@ bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxInfoBar");

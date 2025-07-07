@@ -39,7 +39,10 @@ public:
 #endif
 
 #ifdef _WIN32
-    tt_string(const std::filesystem::directory_entry& dir) { tt::utf16to8(dir.path().generic_wstring(), *this); }
+    tt_string(const std::filesystem::directory_entry& dir)
+    {
+        tt::utf16to8(dir.path().generic_wstring(), *this);
+    }
 #else
     tt_string(const std::filesystem::directory_entry& dir) { *this = dir.path().string(); }
 #endif
@@ -82,7 +85,8 @@ public:
     int comparei(std::string_view str) const;
 
     // Locates the position of a substring.
-    size_t locate(std::string_view str, size_t posStart = 0, tt::CASE check = tt::CASE::exact) const;
+    size_t locate(std::string_view str, size_t posStart = 0,
+                  tt::CASE check = tt::CASE::exact) const;
 
     // Returns true if the sub string exists
     bool contains(std::string_view sub, tt::CASE checkcase = tt::CASE::exact) const
@@ -214,8 +218,8 @@ public:
     }
 
     // Replace first (or all) occurrences of substring with another one
-    size_t Replace(std::string_view oldtext, std::string_view newtext, bool replace_all = tt::REPLACE::once,
-                   tt::CASE checkcase = tt::CASE::exact);
+    size_t Replace(std::string_view oldtext, std::string_view newtext,
+                   bool replace_all = tt::REPLACE::once, tt::CASE checkcase = tt::CASE::exact);
 
     // Replace everything from pos to the end of the current string with str
     tt_string& replace_all(size_t pos, std::string_view str)
@@ -260,10 +264,16 @@ public:
     }
 
     // Returns true if current filename contains the specified case-insensitive extension.
-    bool has_extension(std::string_view ext) const { return tt::is_sameas(extension(), ext, tt::CASE::either); }
+    bool has_extension(std::string_view ext) const
+    {
+        return tt::is_sameas(extension(), ext, tt::CASE::either);
+    }
 
     // Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename(std::string_view name) const { return tt::is_sameas(filename(), name, tt::CASE::either); }
+    bool has_filename(std::string_view name) const
+    {
+        return tt::is_sameas(filename(), name, tt::CASE::either);
+    }
 
     // Returns a view to the current extension. View is empty if there is no extension.
     //

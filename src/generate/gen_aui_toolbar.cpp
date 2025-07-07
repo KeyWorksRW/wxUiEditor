@@ -20,8 +20,9 @@
 
 wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
+    auto widget =
+        new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
     if (node->hasValue(prop_margins))
     {
@@ -39,7 +40,8 @@ wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
+void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                            bool is_preview)
 {
     auto toolbar = wxStaticCast(wxobject, wxAuiToolBar);
     ASSERT(toolbar);
@@ -58,9 +60,9 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
-                                          (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
-                                          wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp,
+                                          wxNullBitmap, (wxItemKind) childObj->as_int(prop_kind),
+                                          childObj->as_wxString(prop_help), wxEmptyString, nullptr);
             if (childObj->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
             {
                 auto cur_state = GetBitlistInt(childObj.get(), prop_initial_state);
@@ -69,7 +71,8 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
         }
         else if (childObj->isGen(gen_auitool_label))
         {
-            toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label), childObj->as_int(prop_width));
+            toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label),
+                              childObj->as_int(prop_width));
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -125,7 +128,8 @@ bool AuiToolBarFormGenerator::ConstructionCode(Code& code)
         code.Indent(3);
         code.Comma().Add("pos=").Pos(prop_pos);
         code.Comma().Add("size=").WxSize(prop_size);
-        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
+                                     4);
         code.Add("style=").Style();
         code.Str("):");
         code.Unindent();
@@ -218,7 +222,8 @@ void AuiToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::
 {
     BaseGenerator::GenEvent(code, event, class_name);
 
-    // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
+    // Since this is the base class, we don't want to use the pointer that GenEventCode() would
+    // normally create
     code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
@@ -228,32 +233,45 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
 
     if (!code.isPropValue(prop_separation, 5))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetToolSeparation(")
+            .as_string(prop_separation)
+            .EndFunction();
     }
 
     if (code.hasValue(prop_margins))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMargins(")
+            .as_string(prop_margins)
+            .EndFunction();
     }
 
     if (!code.isPropValue(prop_packing, 1))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetToolPacking(")
+            .as_string(prop_packing)
+            .EndFunction();
     }
 
     return true;
 }
 
-bool AuiToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool AuiToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibar.h>", set_src, set_hdr);
 
     return true;
 }
 
-// REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar item -- the closest
-// equivalent is m_userdata, but that's a long so it won't work for storing a pointer.
+// REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar
+// item -- the closest equivalent is m_userdata, but that's a long so it won't work for storing a
+// pointer.
 void AuiToolBarFormGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 {
 #if 0
@@ -272,7 +290,8 @@ void AuiToolBarFormGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 
 int AuiToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiToolBar");
@@ -299,7 +318,8 @@ void AuiToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
     handlers.emplace("wxAuiToolBarXmlHandler");
 }
 
-bool AuiToolBarFormGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool AuiToolBarFormGenerator::GetImports(Node*, std::set<std::string>& set_imports,
+                                         GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
@@ -312,12 +332,14 @@ bool AuiToolBarFormGenerator::GetImports(Node*, std::set<std::string>& set_impor
     return false;
 }
 
-//////////////////////////////////////////  AuiToolBarGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  AuiToolBarGenerator
+/////////////////////////////////////////////
 
 wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
+    auto widget =
+        new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
     if (node->hasValue(prop_margins))
     {
@@ -335,7 +357,8 @@ wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
+void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                        bool is_preview)
 {
     auto toolbar = wxStaticCast(wxobject, wxAuiToolBar);
     ASSERT(toolbar);
@@ -354,9 +377,9 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp, wxNullBitmap,
-                                          (wxItemKind) childObj->as_int(prop_kind), childObj->as_wxString(prop_help),
-                                          wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->as_wxString(prop_label), bmp,
+                                          wxNullBitmap, (wxItemKind) childObj->as_int(prop_kind),
+                                          childObj->as_wxString(prop_help), wxEmptyString, nullptr);
             if (childObj->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
             {
                 auto cur_state = GetBitlistInt(childObj.get(), prop_initial_state);
@@ -365,7 +388,8 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         }
         else if (childObj->isGen(gen_auitool_label))
         {
-            toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label), childObj->as_int(prop_width));
+            toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label),
+                              childObj->as_int(prop_width));
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -425,32 +449,45 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
 
     if (!code.isPropValue(prop_separation, 5))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolSeparation(").as_string(prop_separation).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetToolSeparation(")
+            .as_string(prop_separation)
+            .EndFunction();
     }
 
     if (code.hasValue(prop_margins))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMargins(")
+            .as_string(prop_margins)
+            .EndFunction();
     }
 
     if (!code.isPropValue(prop_packing, 1))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetToolPacking(").as_string(prop_packing).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetToolPacking(")
+            .as_string(prop_packing)
+            .EndFunction();
     }
 
     return true;
 }
 
-bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibar.h>", set_src, set_hdr);
 
     return true;
 }
 
-// REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar item -- the closest
-// equivalent is m_userdata, but that's a long so it won't work for storing a pointer.
+// REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar
+// item -- the closest equivalent is m_userdata, but that's a long so it won't work for storing a
+// pointer.
 void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 {
 #if 0
@@ -469,7 +506,8 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 
 int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiToolBar");
@@ -509,7 +547,8 @@ bool AuiToolBarGenerator::GetImports(Node*, std::set<std::string>& set_imports, 
     return false;
 }
 
-//////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  AuiToolGenerator
+/////////////////////////////////////////////
 
 bool AuiToolGenerator::ConstructionCode(Code& code)
 {
@@ -524,7 +563,8 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
 
 int AuiToolGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasProp(prop_initial_state) && node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
+    if (node->hasProp(prop_initial_state) &&
+        node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
         return std::max(minRequiredVer + 2, BaseGenerator::GetRequiredVersion(node));
     }
@@ -544,8 +584,8 @@ int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
     return BaseGenerator::xrc_updated;
 }
 
-bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
-                                   GenLang /* language */)
+bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& /* set_hdr */, GenLang /* language */)
 {
     if (node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
@@ -558,7 +598,8 @@ bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     }
 }
 
-//////////////////////////////////////////  AuiToolLabelGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  AuiToolLabelGenerator
+/////////////////////////////////////////////
 
 bool AuiToolLabelGenerator::ConstructionCode(Code& code)
 {
@@ -587,7 +628,8 @@ int AuiToolLabelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     return BaseGenerator::xrc_updated;
 }
 
-//////////////////////////////////////////  AuiToolSpacerGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  AuiToolSpacerGenerator
+/////////////////////////////////////////////
 
 bool AuiToolSpacerGenerator::ConstructionCode(Code& code)
 {
@@ -613,7 +655,8 @@ int AuiToolSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
     return BaseGenerator::xrc_updated;
 }
 
-//////////////////////////////////////////  AuiToolStretchSpacerGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  AuiToolStretchSpacerGenerator
+/////////////////////////////////////////////
 
 bool AuiToolStretchSpacerGenerator::ConstructionCode(Code& code)
 {
@@ -635,7 +678,8 @@ bool AuiToolStretchSpacerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-int AuiToolStretchSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int AuiToolStretchSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                                size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "space");

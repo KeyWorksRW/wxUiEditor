@@ -8,7 +8,7 @@
 #include "code.h"
 
 #include "mainframe.h"       // MainFrame class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
 Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
@@ -91,14 +91,16 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     return *this;
 }
 
-Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator, tt_string_view def_style)
+Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
+                         tt_string_view def_style)
 {
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
     auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
 
     if (m_node->hasValue(prop_window_name))
     {
-        // Window name is always the last parameter, so if it is specified, everything has to be generated.
+        // Window name is always the last parameter, so if it is specified, everything has to be
+        // generated.
         Comma();
         Pos(prop_pos, pos_scaling).Comma().WxSize(prop_size, size_scaling).Comma();
         Style();
@@ -119,10 +121,12 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
         style_needed = true;
     else if (m_node->hasValue(prop_window_style))
         style_needed = true;
-    else if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+    else if (m_node->hasValue(prop_orientation) &&
+             !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         style_needed = true;
-    else if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    else if (m_node->hasValue(prop_tab_position) &&
+             !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         style_needed = true;
     else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         style_needed = true;
@@ -157,7 +161,8 @@ Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validato
 {
     if (m_node->hasValue(prop_window_name))
     {
-        // Window name is always the last parameter, so if it is specified, everything has to be generated.
+        // Window name is always the last parameter, so if it is specified, everything has to be
+        // generated.
         Comma();
         Pos().Comma().WxSize().Comma();
         Style(nullptr, force_style);
@@ -185,14 +190,16 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (m_node->hasValue(prop_tab_position) &&
+        !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (style_set)
             *this += '|';
         style_set = true;
         as_string(prop_tab_position);
     }
-    if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    if (m_node->hasValue(prop_orientation) &&
+        !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (style_set)
             *this += '|';
@@ -223,7 +230,8 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
             }
             else
             {
-                tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|", tt::TRIM::both);
+                tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|",
+                                        tt::TRIM::both);
                 for (auto& iter: multistr)
                 {
                     if (iter.empty())
@@ -232,7 +240,8 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                         *this += '|';
                     if (iter.is_sameprefix("wx"))
                     {
-                        if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language); language_prefix.size())
+                        if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
+                            language_prefix.size())
                         {
                             // Some languages will have a module added after their standard prefix.
                             CheckLineLength(language_prefix.size() + iter.size() - 2);

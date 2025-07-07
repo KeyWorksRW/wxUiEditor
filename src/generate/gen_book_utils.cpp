@@ -11,7 +11,7 @@
 #include "gen_common.h"  // Common component functions
 #include "gen_enums.h"
 #include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "ui_images.h"       // Generated images header
 #include "utils.h"
 
@@ -85,7 +85,8 @@ void AddBookImageList(Node* node_book, wxObject* widget)
 
 void BookCtorAddImagelist(Code& code)
 {
-    if ((code.IsTrue(prop_display_images) || code.IsGen(gen_wxToolbook)) && isBookHasImage(code.node()))
+    if ((code.IsTrue(prop_display_images) || code.IsGen(gen_wxToolbook)) &&
+        isBookHasImage(code.node()))
     {
         if (code.is_perl())
             code.Eol();
@@ -105,17 +106,23 @@ void BookCtorAddImagelist(Code& code)
                             if (child_node->hasValue(prop_bitmap))
                             {
                                 tt_string bundle_code;
-                                if (GenerateBundleCode(child_node->as_string(prop_bitmap), bundle_code))
+                                if (GenerateBundleCode(child_node->as_string(prop_bitmap),
+                                                       bundle_code))
                                 {
                                     code.Eol() << bundle_code;
-                                    code.Eol() << "\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
+                                    code.Eol() << "\tbundle_list.push_back(wxBitmapBundle::"
+                                                  "FromBitmaps(bitmaps));";
                                     // Close the brace that was opened by GenerateBundleCode()
                                     code.Eol() << "}";
                                 }
                                 else
                                 {
-                                    // If GenerateBundleCode() returns false, then only a bitmap was generated
-                                    code.Eol().Str("bundle_list.push_back(").Str(bundle_code).EndFunction();
+                                    // If GenerateBundleCode() returns false, then only a bitmap was
+                                    // generated
+                                    code.Eol()
+                                        .Str("bundle_list.push_back(")
+                                        .Str(bundle_code)
+                                        .EndFunction();
                                 }
                             }
                             rlambda(child_node.get(), rlambda);
@@ -134,13 +141,15 @@ void BookCtorAddImagelist(Code& code)
                         if (GenerateBundleCode(child_node->as_string(prop_bitmap), bundle_code))
                         {
                             code.Eol() << bundle_code;
-                            code.Eol() << "\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
+                            code.Eol()
+                                << "\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
                             // Close the brace that was opened by GenerateBundleCode()
                             code.Eol() << "}";
                         }
                         else
                         {
-                            // If GenerateBundleCode() returns false, then only a bitmap was generated
+                            // If GenerateBundleCode() returns false, then only a bitmap was
+                            // generated
                             code.Eol().Str("bundle_list.push_back(").Str(bundle_code).EndFunction();
                         }
                     }
@@ -164,8 +173,8 @@ void BookCtorAddImagelist(Code& code)
                             {
                                 Code bundle_code(child_node.get(), code.get_language());
                                 bundle_code.Bundle(prop_bitmap);
-                                // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is imperative
-                                // that the comma is not broken out into the next line.
+                                // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is
+                                // imperative that the comma is not broken out into the next line.
                                 code.Eol() << bundle_code << ",";
                             }
                             rlambda(child_node.get(), rlambda);
@@ -182,8 +191,8 @@ void BookCtorAddImagelist(Code& code)
                     {
                         Code bundle_code(child_node.get(), code.get_language());
                         bundle_code.Bundle(prop_bitmap);
-                        // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is imperative
-                        // that the comma is not broken out into the next line.
+                        // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is
+                        // imperative that the comma is not broken out into the next line.
                         code.Eol() << bundle_code << ",";
                     }
                 }
@@ -245,8 +254,8 @@ void BookCtorAddImagelist(Code& code)
                             {
                                 Code bundle_code(child_node.get(), code.get_language());
                                 bundle_code.Bundle(prop_bitmap);
-                                // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is imperative
-                                // that the comma is not broken out into the next line.
+                                // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is
+                                // imperative that the comma is not broken out into the next line.
                                 code.Eol().Str("$images->Add(") << bundle_code << ");";
                             }
                             rlambda(child_node.get(), rlambda);
@@ -263,8 +272,8 @@ void BookCtorAddImagelist(Code& code)
                     {
                         Code bundle_code(child_node.get(), code.get_language());
                         bundle_code.Bundle(prop_bitmap);
-                        // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is imperative
-                        // that the comma is not broken out into the next line.
+                        // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is
+                        // imperative that the comma is not broken out into the next line.
                         code.Eol().Str("$images->Add(") << bundle_code << ");";
                     }
                 }

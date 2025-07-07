@@ -17,8 +17,9 @@
 
 wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(node, prop_pos),
-                                       DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
+                             DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_style).contains("wxDP_ALLOWNONE"))
         widget->SetNullText(node->as_wxString(prop_null_text));
@@ -60,8 +61,8 @@ bool DatePickerCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/datectrl.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/dateevt.h>", set_src, set_hdr);
@@ -77,7 +78,8 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDatePickerCtrl");
@@ -101,7 +103,8 @@ void DatePickerCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
     handlers.emplace("wxDateCtrlXmlHandler");
 }
 
-bool DatePickerCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool DatePickerCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                         GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

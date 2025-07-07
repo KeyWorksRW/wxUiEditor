@@ -18,7 +18,8 @@ void Prefs::ReadConfig()
     auto* config = wxConfig::Get();
     config->SetPath("/preferences");
 
-    m_flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT | PREFS_MSG_WARNING);
+    m_flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT |
+                                            PREFS_MSG_WARNING);
     m_project_flags = config->ReadLong("project_flags", PREFS_PJT_MEMBER_PREFIX);
     m_preview_type = static_cast<PREVIEW_TYPE>(config->ReadLong("preview_type", PREVIEW_TYPE_XRC));
 

@@ -36,19 +36,22 @@ bool resForm::is_same_right(const std::vector<resCtrl>& ctrls, size_t child_a, s
 {
     if (ctrls[child_a].du_left() != ctrls[child_b].du_left())
         return false;
-    if (ctrls[child_a].du_left() + ctrls[child_a].du_width() != ctrls[child_b].du_left() + ctrls[child_b].du_width())
+    if (ctrls[child_a].du_left() + ctrls[child_a].du_width() !=
+        ctrls[child_b].du_left() + ctrls[child_b].du_width())
         return false;
     return true;
 }
 
-bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b, bool loose_check) const
+bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b,
+                          bool loose_check) const
 {
     if (ctrls[child_a].du_top() == ctrls[child_b].du_top())
         return true;
 
     if (loose_check)
     {
-        if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() || ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
+        if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() ||
+            ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
             return true;
         else if (ctrls[child_a].du_top() == ctrls[child_b].du_top() - 1 ||
                  ctrls[child_a].du_top() == ctrls[child_b].du_top() - 2)
@@ -59,14 +62,15 @@ bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, siz
 
     if (ctrls[child_a].getNode()->isGen(gen_wxStaticText))
     {
-        if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() || ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
+        if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() ||
+            ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
             return true;
     }
     return false;
 }
 
-bool resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ctrls, size_t child_a, size_t child_b,
-                          bool loose_check) const
+bool resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ctrls, size_t child_a,
+                          size_t child_b, bool loose_check) const
 {
     if (ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top())
         return true;
@@ -92,9 +96,11 @@ bool resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ct
     return false;
 }
 
-bool resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const
+bool resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a,
+                                 size_t child_b) const
 {
-    if (ctrls[child_a].du_top() >= ctrls[child_b].du_top() && ctrls[child_a].du_bottom() <= ctrls[child_b].du_bottom())
+    if (ctrls[child_a].du_top() >= ctrls[child_b].du_top() &&
+        ctrls[child_a].du_bottom() <= ctrls[child_b].du_bottom())
     {
         return true;
     }
@@ -104,8 +110,8 @@ bool resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child
     }
 }
 
-bool resForm::is_within_vertical(const std::vector<std::reference_wrapper<resCtrl>>& ctrls, size_t child_a,
-                                 size_t child_b) const
+bool resForm::is_within_vertical(const std::vector<std::reference_wrapper<resCtrl>>& ctrls,
+                                 size_t child_a, size_t child_b) const
 {
     if (ctrls[child_a].get().du_top() >= ctrls[child_b].get().du_top() &&
         ctrls[child_a].get().du_bottom() <= ctrls[child_b].get().du_bottom())
@@ -120,7 +126,8 @@ bool resForm::is_within_vertical(const std::vector<std::reference_wrapper<resCtr
 
 void resForm::SortCtrls()
 {
-    // Sort controls vertically. For each group of controls that have the same vertical position, sort them horizontally.
+    // Sort controls vertically. For each group of controls that have the same vertical position,
+    // sort them horizontally.
 
     std::sort(m_ctrls.begin(), m_ctrls.end(),
               [](resCtrl a, resCtrl b)
@@ -131,9 +138,10 @@ void resForm::SortCtrls()
                       return (a.du_top() < b.du_top());
               });
 
-    // Sometimes a static text control will be placed to the left of another control such as an edit control, and moved down
-    // a little bit so that it aligns with the control it precedes. When we sorted controls vertically, the static text
-    // control will appear below the control it is supposed to precede.
+    // Sometimes a static text control will be placed to the left of another control such as an edit
+    // control, and moved down a little bit so that it aligns with the control it precedes. When we
+    // sorted controls vertically, the static text control will appear below the control it is
+    // supposed to precede.
 
     for (size_t idx = 1; idx < m_ctrls.size(); ++idx)
     {
@@ -147,10 +155,11 @@ void resForm::SortCtrls()
         }
     }
 
-    // After the initial sorting, some tweaks may have been made to change positions -- such as when a text control is
-    // preceded by a static text control that is centered vertically. We may add other changes as well, such as moving
-    // OK/Cancel buttons that were set on the right side. Changing the top position of a control will typically mean that it
-    // needs to be resorted horizonally, so we fix that here.
+    // After the initial sorting, some tweaks may have been made to change positions -- such as when
+    // a text control is preceded by a static text control that is centered vertically. We may add
+    // other changes as well, such as moving OK/Cancel buttons that were set on the right side.
+    // Changing the top position of a control will typically mean that it needs to be resorted
+    // horizonally, so we fix that here.
 
     for (size_t begin = 0; begin < m_ctrls.size() - 1; ++begin)
     {
@@ -173,8 +182,9 @@ void resForm::SortCtrls()
     }
 }
 
-// This is almost identical to the function of the same name in resCtrl -- however that one needs to access m_node in order
-// to handle a wxComboBox which has a different height then specified in the resource file.
+// This is almost identical to the function of the same name in resCtrl -- however that one needs to
+// access m_node in order to handle a wxComboBox which has a different height then specified in the
+// resource file.
 
 bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
 {
@@ -224,15 +234,17 @@ bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
 
     /*
 
-        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using
-        "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will end up being wrong when displayed by
-        wxWidgets because wxWidgets follows the Windows 10 guidelines which normally uses a 9pt font.
+        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are
+       going to be using "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will
+       end up being wrong when displayed by wxWidgets because wxWidgets follows the Windows 10
+       guidelines which normally uses a 9pt font.
 
         The following code converts dialog coordinates into pixels assuming a 9pt font.
 
-        For the most part, these values are simply used to determine which sizer to place the control in. However, it will
-        change things like the wrapping width of a wxStaticText -- our wxWidgets version will be larger than the original if
-        the dialog used an 8pt font, smaller if it used a 10pt font.
+        For the most part, these values are simply used to determine which sizer to place the
+       control in. However, it will change things like the wrapping width of a wxStaticText -- our
+       wxWidgets version will be larger than the original if the dialog used an 8pt font, smaller if
+       it used a 10pt font.
 
     */
 

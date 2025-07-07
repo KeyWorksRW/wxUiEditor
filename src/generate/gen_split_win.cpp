@@ -19,7 +19,8 @@
 class wxCustomSplitterWindow : public wxSplitterWindow
 {
 public:
-    wxCustomSplitterWindow(wxWindow* parent, wxWindowID id, const wxPoint& point = wxDefaultPosition,
+    wxCustomSplitterWindow(wxWindow* parent, wxWindowID id,
+                           const wxPoint& point = wxDefaultPosition,
                            const wxSize& size = wxDefaultSize, long style = wxSP_3D) :
         wxSplitterWindow(parent, id, point, size, style)
     {
@@ -41,8 +42,9 @@ private:
 
 wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                               DlgSize(node, prop_size), (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
+    auto splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                               DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                               (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
 
     if (node->hasValue(prop_sashgravity))
     {
@@ -65,7 +67,8 @@ wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return splitter;
 }
 
-void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
+void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                            bool is_preview)
 {
     auto splitter = wxStaticCast(wxobject, wxCustomSplitterWindow);
     if (!splitter)
@@ -131,7 +134,8 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 node = getMockup()->getNode(wxobject);
                 if (!node)
                 {
-                    // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let the user know
+                    // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let
+                    // the user know
                     return;
                 }
 
@@ -177,7 +181,11 @@ bool SplitterWindowGenerator::SettingsCode(Code& code)
 
     if (node->hasValue(prop_sashgravity) && node->as_string(prop_sashgravity) != "0")
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetSashGravity(").Add(prop_sashgravity).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetSashGravity(")
+            .Add(prop_sashgravity)
+            .EndFunction();
     }
 
     if (node->hasValue(prop_sashsize) && node->as_string(prop_sashsize) != "-1")
@@ -187,14 +195,18 @@ bool SplitterWindowGenerator::SettingsCode(Code& code)
 
     if (node->hasValue(prop_min_pane_size) && node->as_string(prop_min_pane_size) != "0")
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetMinimumPaneSize(").Add(prop_min_pane_size).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetMinimumPaneSize(")
+            .Add(prop_min_pane_size)
+            .EndFunction();
     }
 
     return true;
 }
 
-bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/splitter.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))
@@ -210,7 +222,8 @@ bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSplitterWindow");
@@ -243,7 +256,8 @@ void SplitterWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
     handlers.emplace("wxSplitterWindowXmlHandler");
 }
 
-bool SplitterWindowGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool SplitterWindowGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                         GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

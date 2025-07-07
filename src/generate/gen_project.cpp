@@ -12,7 +12,7 @@
 #include "node.h"             // Node class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "project_handler.h"  // ProjectHandler class
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
 #include "newdialogs/new_dialog.h"  // NewDialog -- Dialog for creating a new project dialog
 #include "newdialogs/new_frame.h"   // NewFrame -- Dialog for creating a new project wxFrame
@@ -95,7 +95,8 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
     return false;
 }
 
-bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* /* node */)
+bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                           Node* /* node */)
 {
     if (prop->isProp(prop_cpp_line_length) || prop->isProp(prop_python_line_length))
     {
@@ -103,7 +104,8 @@ bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePrope
         auto num = variant.GetInteger();
         if (num < 70)
         {
-            event->SetValidationFailureMessage("70 is the shortest line length that you can specify.");
+            event->SetValidationFailureMessage(
+                "70 is the shortest line length that you can specify.");
             event->Veto();
             return false;
         }

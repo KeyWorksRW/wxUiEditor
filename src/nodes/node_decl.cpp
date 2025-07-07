@@ -8,10 +8,10 @@
 #include "node_decl.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "node.h"            // Contains the user-modifiable node
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
-NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) : m_type(type), m_category(class_name)
+NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) :
+    m_type(type), m_category(class_name)
 {
     m_gen_name = rmap_GenNames[class_name];
     m_gen_type = type->getGenType();
@@ -147,7 +147,8 @@ ptrdiff_t NodeDeclaration::getAllowableChildren(GenType child_gen_type) const
 {
     if (m_gen_name == gen_wxFrame)
     {
-        if (child_gen_type == type_menubar || child_gen_type == type_statusbar || child_gen_type == type_toolbar)
+        if (child_gen_type == type_menubar || child_gen_type == type_statusbar ||
+            child_gen_type == type_toolbar)
             return 1;
     }
 

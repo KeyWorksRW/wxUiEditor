@@ -14,12 +14,13 @@
 
 #include "window_widgets.h"
 
-//////////////////////////////////////////  ScrolledCanvasGenerator  //////////////////////////////////////////
+//////////////////////////////////  ScrolledCanvasGenerator /////////////////////////////////////
 
 wxObject* ScrolledCanvasGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolled<wxWindow>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                           DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxScrolled<wxWindow>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -55,15 +56,16 @@ bool ScrolledCanvasGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolwin.h>", set_src, set_hdr);
 
     return true;
 }
 
-int ScrolledCanvasGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+int ScrolledCanvasGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */,
+                                          size_t /* xrc_flags */)
 {
     return xrc_not_supported;
 }
@@ -87,12 +89,13 @@ std::optional<tt_string> ScrolledCanvasGenerator::GetWarning(Node* node, GenLang
     }
 }
 
-//////////////////////////////////////////  ScrolledWindowGenerator  //////////////////////////////////////////
+//////////////////////////////////  ScrolledWindowGenerator /////////////////////////////////////
 
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolledWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                       DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxScrolledWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                             DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -128,8 +131,8 @@ bool ScrolledWindowGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolwin.h>", set_src, set_hdr);
 
@@ -141,7 +144,8 @@ bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int ScrolledWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxScrolledWindow");

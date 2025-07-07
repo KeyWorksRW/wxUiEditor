@@ -45,10 +45,10 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 {
     if (m_isPropChangeSuspended)
     {
-        // If the property was modified in the property grid, then we are receiving this event after the node in the
-        // property has already been changed. We don't need to process it since we already saw it, but we can use the
-        // oppoprtunity to do some additional processing, such as notifying the user that the Mockup can't display the
-        // property change.
+        // If the property was modified in the property grid, then we are receiving this event after
+        // the node in the property has already been changed. We don't need to process it since we
+        // already saw it, but we can use the oppoprtunity to do some additional processing, such as
+        // notifying the user that the Mockup can't display the property change.
 
         OnPostPropChange(event);
         return;
@@ -162,7 +162,8 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
         info->Dismiss();
         if (event.GetNodeProperty()->as_string() == "wxBORDER_RAISED")
         {
-            info->ShowMessage("The Mockup panel is not able to show a mockup of the raised border.", wxICON_INFORMATION);
+            info->ShowMessage("The Mockup panel is not able to show a mockup of the raised border.",
+                              wxICON_INFORMATION);
         }
     }
     else if (event.GetNodeProperty()->isProp(prop_focus))
@@ -181,14 +182,16 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
 
         if (count > 1)
         {
-            wxGetFrame().GetPropInfoBar()->ShowMessage("More than one control has focus set.", wxICON_INFORMATION);
+            wxGetFrame().GetPropInfoBar()->ShowMessage("More than one control has focus set.",
+                                                       wxICON_INFORMATION);
         }
         else
         {
             wxGetFrame().GetPropInfoBar()->Dismiss();
         }
     }
-    else if (event.GetNodeProperty()->isProp(prop_size) || event.GetNodeProperty()->isProp(prop_minimum_size) ||
+    else if (event.GetNodeProperty()->isProp(prop_size) ||
+             event.GetNodeProperty()->isProp(prop_minimum_size) ||
              event.GetNodeProperty()->isProp(prop_maximum_size))
     {
         auto node = event.getNode();
@@ -198,24 +201,27 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
         if (new_size != wxDefaultSize || min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             // If any value is -1 then it's not actually set and no comparison is needed
-            if (min_size != wxDefaultSize && ((new_size.x != -1 && min_size.x != -1 && new_size.x < min_size.x) ||
-                                              (new_size.y != -1 && min_size.y != -1 && new_size.y < min_size.y)))
+            if (min_size != wxDefaultSize &&
+                ((new_size.x != -1 && min_size.x != -1 && new_size.x < min_size.x) ||
+                 (new_size.y != -1 && min_size.y != -1 && new_size.y < min_size.y)))
             {
-                wxGetFrame().GetPropInfoBar()->ShowMessage("The size property is smaller than the minimum size property.",
-                                                           wxICON_WARNING);
+                wxGetFrame().GetPropInfoBar()->ShowMessage(
+                    "The size property is smaller than the minimum size property.", wxICON_WARNING);
             }
-            else if (max_size != wxDefaultSize && ((new_size.x != -1 && max_size.x != -1 && new_size.x > max_size.x) ||
-                                                   (new_size.y != -1 && max_size.y != -1 && new_size.y > max_size.y)))
+            else if (max_size != wxDefaultSize &&
+                     ((new_size.x != -1 && max_size.x != -1 && new_size.x > max_size.x) ||
+                      (new_size.y != -1 && max_size.y != -1 && new_size.y > max_size.y)))
             {
-                wxGetFrame().GetPropInfoBar()->ShowMessage("The size property is larger than the maximum size property.",
-                                                           wxICON_WARNING);
+                wxGetFrame().GetPropInfoBar()->ShowMessage(
+                    "The size property is larger than the maximum size property.", wxICON_WARNING);
             }
             else if (min_size != wxDefaultSize && max_size != wxDefaultSize &&
                      ((min_size.x != -1 && max_size.x != -1 && min_size.x > max_size.x) ||
                       (min_size.y != -1 && max_size.y != -1 && min_size.y > max_size.y)))
             {
                 wxGetFrame().GetPropInfoBar()->ShowMessage(
-                    "The minimum size property is larger than the maximum size property.", wxICON_WARNING);
+                    "The minimum size property is larger than the maximum size property.",
+                    wxICON_WARNING);
             }
             else
             {
@@ -405,7 +411,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_escapes:
         case type_string_edit_escapes:
             {
-                auto value = ConvertEscapeSlashes(m_prop_grid->GetPropertyValueAsString(property).utf8_string());
+                auto value = ConvertEscapeSlashes(
+                    m_prop_grid->GetPropertyValueAsString(property).utf8_string());
                 modifyProperty(prop, value);
             }
             break;
@@ -417,8 +424,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 // REVIEW: [Randalphwa - 06-26-2023] This will only work if we use quotes to
                 // separate items.
                 tt_string newValue = property->GetValueAsString().utf8_string();
-                // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped.
-                // Adding a trailing space prevents this clipping.
+                // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is
+                // partially clipped. Adding a trailing space prevents this clipping.
 
                 if (m_currentSel->isGen(gen_wxRadioBox) && newValue.size())
                 {
@@ -497,7 +504,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 {
                     if (newValue.empty())
                     {
-                        // An empty name will generate uncompilable code, so we simply switch it to the default name
+                        // An empty name will generate uncompilable code, so we simply switch it to
+                        // the default name
                         auto new_name = prop->getPropDeclaration()->getDefaultValue();
                         auto final_name = node->getUniqueName(new_name);
                         newValue = final_name.size() ? final_name : new_name;
@@ -511,7 +519,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 if (prop->isProp(prop_class_name))
                 {
-                    if (auto selected_node = wxGetFrame().getSelectedNode(); selected_node && selected_node->isForm())
+                    if (auto selected_node = wxGetFrame().getSelectedNode();
+                        selected_node && selected_node->isForm())
                     {
                         CheckOutputFile(newValue, selected_node);
 
@@ -522,9 +531,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                             if (!selected_node->hasValue(prop_derived_class_name))
                             {
-                                ReplaceDerivedName(newValue, selected_node->getPropPtr(prop_derived_class_name));
-                                ReplaceDerivedFile(selected_node->as_string(prop_derived_class_name),
-                                                   selected_node->getPropPtr(prop_derived_file));
+                                ReplaceDerivedName(
+                                    newValue, selected_node->getPropPtr(prop_derived_class_name));
+                                ReplaceDerivedFile(
+                                    selected_node->as_string(prop_derived_class_name),
+                                    selected_node->getPropPtr(prop_derived_file));
                             }
                         }
                     }
@@ -547,7 +558,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
     if (auto gen = prop->getNode()->getGenerator(); gen)
     {
-        auto result = gen->isLanguagePropSupported(prop->getNode(), Project.getCodePreference(), prop->get_name());
+        auto result = gen->isLanguagePropSupported(prop->getNode(), Project.getCodePreference(),
+                                                   prop->get_name());
         if (result.has_value())
         {
             wxGetFrame().ShowInfoBarMsg(result.value());

@@ -19,8 +19,9 @@ using namespace code;
 
 wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                   DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetRange(node->as_int(prop_min), node->as_int(prop_max));
     widget->SetValue(node->as_int(prop_initial));
@@ -47,7 +48,12 @@ bool SpinButtonGenerator::ConstructionCode(Code& code)
 
 bool SpinButtonGenerator::SettingsCode(Code& code)
 {
-    code.NodeName().Function("SetRange(").as_string(prop_min).Comma().as_string(prop_max).EndFunction();
+    code.NodeName()
+        .Function("SetRange(")
+        .as_string(prop_min)
+        .Comma()
+        .as_string(prop_max)
+        .EndFunction();
 
     if (code.IsTrue(prop_initial))
     {
@@ -62,8 +68,8 @@ bool SpinButtonGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinbutt.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -73,7 +79,8 @@ bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinButton");
@@ -91,8 +98,8 @@ int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     }
     else
     {
-        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin control
-        // can only be horizontal, we simply pass that flag.
+        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin
+        // control can only be horizontal, we simply pass that flag.
         GenXrcPreStylePosSize(node, item, "wxSP_VERTICAL");
     }
 

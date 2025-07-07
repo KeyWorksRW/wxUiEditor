@@ -55,8 +55,9 @@ void GrowColumnsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         m_grid->AppendRows(to_int(entries.size()) - m_grid->GetNumberRows());
     }
 
-    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent of the longest line
-    // including an additional space at the end solves the problem, at least running on Windows 11.
+    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent
+    // of the longest line including an additional space at the end solves the problem, at least
+    // running on Windows 11.
     auto text_width = m_grid->GetTextExtent(" Proportion ");
     m_grid->SetDefaultColSize(text_width.GetWidth(), true);
     for (int row = 0; auto& iter: entries)
@@ -69,13 +70,16 @@ void GrowColumnsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         ++row;
     }
 
-    m_help_text->SetLabel("Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer)"
-                          "except that if all proportions are 0, then all columns are resized equally"
-                          "(instead of not being resized at all).");
+    m_help_text->SetLabel(
+        "Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer)"
+        "except that if all proportions are 0, then all columns are resized equally"
+        "(instead of not being resized at all).");
 
     // Force the width to get wrap in a way that makes the text the most clear.
     auto width =
-        m_help_text->GetTextExtent("Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer)")
+        m_help_text
+            ->GetTextExtent(
+                "Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer)")
             .GetWidth();
     m_help_text->Wrap(width);
     m_help_text->Show();
@@ -158,7 +162,8 @@ void GrowColumnsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool GrowColumnsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool GrowColumnsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                            wxPGProperty* WXUNUSED(property))
 {
     GrowColumnsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

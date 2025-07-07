@@ -19,13 +19,14 @@
 
 using namespace code;
 
-//////////////////////////////////////////  SpinCtrlGenerator  //////////////////////////////////////////
+/////////////////////////////////////  SpinCtrlGenerator ////////////////////////////////////////
 
 wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node), node->as_int(prop_min), node->as_int(prop_max),
-                                 node->as_int(prop_initial));
+    auto widget =
+        new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
+                       node->as_int(prop_min), node->as_int(prop_max), node->as_int(prop_initial));
 
     if (node->as_bool(prop_hexadecimal))
         widget->SetBase(16);
@@ -59,15 +60,24 @@ bool SpinCtrlGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass().ValidParentName();
     auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
     Node* node = code.node();
-    if (needed_parms == nothing_needed && node->as_int(prop_min) == 0 && node->as_int(prop_max) == 100 &&
-        node->as_int(prop_initial) == 0)
+    if (needed_parms == nothing_needed && node->as_int(prop_min) == 0 &&
+        node->as_int(prop_max) == 100 && node->as_int(prop_initial) == 0)
     {
         if (node->as_string(prop_id) != "wxID_ANY")
             code.Comma().as_string(prop_id);
         code.EndFunction();
         return true;
     }
-    code.Comma().as_string(prop_id).Comma().Add("wxEmptyString").Comma().Pos().Comma().WxSize().Comma().Style();
+    code.Comma()
+        .as_string(prop_id)
+        .Comma()
+        .Add("wxEmptyString")
+        .Comma()
+        .Pos()
+        .Comma()
+        .WxSize()
+        .Comma()
+        .Style();
     code.Comma().itoa(prop_min, prop_max).Comma().as_string(prop_initial);
     if (needed_parms & window_name_needed)
         code.Comma().QuotedString(prop_window_name);
@@ -85,7 +95,11 @@ bool SpinCtrlGenerator::SettingsCode(Code& code)
 
     if (code.node()->as_int(prop_inc) > 1)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetIncrement(").as_string(prop_inc).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetIncrement(")
+            .as_string(prop_inc)
+            .EndFunction();
     }
 
     return true;
@@ -93,7 +107,8 @@ bool SpinCtrlGenerator::SettingsCode(Code& code)
 
 int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinCtrl");
@@ -114,8 +129,8 @@ int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     }
     else
     {
-        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin control
-        // can only be horizontal, we simply pass that flag.
+        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin
+        // control can only be horizontal, we simply pass that flag.
         GenXrcPreStylePosSize(node, item, "wxSP_HORIZONTAL");
     }
 
@@ -134,8 +149,8 @@ void SpinCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxSpinCtrlXmlHandler");
 }
 
-bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -143,22 +158,23 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
-//////////////////////////////////////////  SpinCtrlDoubleGenerator  //////////////////////////////////////////
+//////////////////////////////////  SpinCtrlDoubleGenerator /////////////////////////////////////
 
 wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (Project.getCodePreference() == GEN_LANG_RUBY)
     {
-        auto* widget =
-            new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, "wxSpinCtrlDouble not available in wxRuby3",
-                             wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        auto* widget = new wxStaticText(
+            wxStaticCast(parent, wxWindow), wxID_ANY, "wxSpinCtrlDouble not available in wxRuby3",
+            wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
-    auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
-                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
-                                       node->as_double(prop_min), node->as_double(prop_max), node->as_double(prop_initial),
-                                       node->as_double(prop_inc));
+    auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                       node->as_wxString(prop_value), DlgPoint(node, prop_pos),
+                                       DlgSize(node, prop_size), GetStyleInt(node),
+                                       node->as_double(prop_min), node->as_double(prop_max),
+                                       node->as_double(prop_initial), node->as_double(prop_inc));
 
     if (node->as_int(prop_digits) > 0)
     {
@@ -175,16 +191,33 @@ bool SpinCtrlDoubleGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass().ValidParentName();
     auto needed_parms = code.WhatParamsNeeded("wxSP_ARROW_KEYS");
     Node* node = code.node();
-    if (needed_parms == nothing_needed && node->as_int(prop_min) == 0 && node->as_int(prop_max) == 100 &&
-        node->as_int(prop_initial) == 0 && node->as_int(prop_inc) == 1)
+    if (needed_parms == nothing_needed && node->as_int(prop_min) == 0 &&
+        node->as_int(prop_max) == 100 && node->as_int(prop_initial) == 0 &&
+        node->as_int(prop_inc) == 1)
     {
         if (node->as_string(prop_id) != "wxID_ANY")
             code.Comma().as_string(prop_id);
         code.EndFunction();
         return true;
     }
-    code.Comma().as_string(prop_id).Comma().Add("wxEmptyString").Comma().Pos().Comma().WxSize().Comma().Style();
-    code.Comma().as_string(prop_min).Comma().as_string(prop_max).Comma().as_string(prop_initial).Comma().as_string(prop_inc);
+    code.Comma()
+        .as_string(prop_id)
+        .Comma()
+        .Add("wxEmptyString")
+        .Comma()
+        .Pos()
+        .Comma()
+        .WxSize()
+        .Comma()
+        .Style();
+    code.Comma()
+        .as_string(prop_min)
+        .Comma()
+        .as_string(prop_max)
+        .Comma()
+        .as_string(prop_initial)
+        .Comma()
+        .as_string(prop_inc);
     if (needed_parms & window_name_needed)
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();
@@ -204,7 +237,8 @@ bool SpinCtrlDoubleGenerator::SettingsCode(Code& code)
 
 int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinCtrlDouble");
@@ -223,8 +257,8 @@ int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     }
     else
     {
-        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin control
-        // can only be horizontal, we simply pass that flag.
+        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin
+        // control can only be horizontal, we simply pass that flag.
         GenXrcPreStylePosSize(node, item, "wxSP_HORIZONTAL");
     }
 
@@ -243,8 +277,8 @@ void SpinCtrlDoubleGenerator::RequiredHandlers(Node* /* node */, std::set<std::s
     handlers.emplace("wxSpinCtrlDoubleXmlHandler");
 }
 
-bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
     if (node->hasValue(prop_validator_variable))
@@ -252,7 +286,8 @@ bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set
     return true;
 }
 
-bool SpinCtrlDoubleGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool SpinCtrlDoubleGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                                  Node* node)
 {
     if (prop->isProp(prop_digits))
     {

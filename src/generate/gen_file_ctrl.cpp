@@ -26,9 +26,10 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     else
         wild = wxFileSelectorDefaultWildcardStr;
 
-    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_folder),
-                                 node->as_wxString(prop_initial_filename), wild, GetStyleInt(node), DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size));
+    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                 node->as_wxString(prop_initial_folder),
+                                 node->as_wxString(prop_initial_filename), wild, GetStyleInt(node),
+                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size));
 
     if (!(node->as_int(prop_style) & wxFC_NOSHOWHIDDEN))
         widget->ShowHidden(node->as_bool(prop_show_hidden));
@@ -95,7 +96,11 @@ bool FileCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IntValue(prop_filter_index) > 0)
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetFilterIndex(").as_string(prop_filter_index).EndFunction();
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetFilterIndex(")
+            .as_string(prop_filter_index)
+            .EndFunction();
     }
 
     if (code.IsTrue(prop_show_hidden))
@@ -106,8 +111,8 @@ bool FileCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/filectrl.h>", set_src, set_hdr);
     return true;
@@ -118,7 +123,8 @@ bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFileCtrl");
@@ -147,7 +153,8 @@ void FileCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxFileCtrlXmlHandler");
 }
 
-bool FileCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool FileCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                   GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

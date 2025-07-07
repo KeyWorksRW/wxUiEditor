@@ -86,15 +86,18 @@ void ColourCode(Code& code, GenEnum::PropName prop_name);
 
 struct GenResults;
 // Common function to generate all files for a specific language
-bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList,
+                           GenLang language);
 
 // Called by GenerateLanguageFiles and in OnGenSingle...() to generate a single form
-bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList, GenLang language);
+bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList,
+                          GenLang language);
 
 void OnGenerateSingleLanguage(GenLang language);
 void OnGenerateLanguage(GenLang language);
 
-/////////////////////////////////////// Code-enabled Functions ///////////////////////////////////////
+/////////////////////////////////////// Code-enabled Functions
+//////////////////////////////////////////
 
 // Generate settings common to all forms
 void GenFormSettings(Code& code);

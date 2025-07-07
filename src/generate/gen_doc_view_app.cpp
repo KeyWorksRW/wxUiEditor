@@ -7,6 +7,7 @@
 #include "gen_doc_view_app.h"
 
 #include "code.h"  // Code -- Helper class for generating code
+
 inline constexpr const auto txt_DocViewPreHeader =
     R"===(// Base class for wxDocument/wxView applications.
 // App class should inherit from this in addition to wxApp.
@@ -182,8 +183,8 @@ void DocViewAppGenerator::AddProtectedHdrMembers(std::set<std::string>& code_lin
     code_lines.emplace("std::vector<wxDocTemplate*> m_docTemplates;");
 }
 
-bool DocViewAppGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */,
-                                      GenLang /* language */)
+bool DocViewAppGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src,
+                                      std::set<std::string>& /* set_hdr */, GenLang /* language */)
 {
     set_src.insert("#include <wx/aui/tabmdi.h");
     set_src.insert("#include <wx/config.h");

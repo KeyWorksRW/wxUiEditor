@@ -18,12 +18,13 @@
 
 #include "gen_prop_grid_mgr.h"
 
-//////////////////////////////////////////  PropertyGridManagerGenerator  //////////////////////////////////////////
+////////////////////////////////  PropertyGridManagerGenerator ///////////////////////////////////
 
 wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                            DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                            DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                            GetStyleInt(node));
 
     if (node->hasValue(prop_extra_style))
     {
@@ -59,15 +60,16 @@ void PropertyGridManagerGenerator::OnPageChanged(wxPropertyGridEvent& event)
     event.Skip();
 }
 
-void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
-                                                 bool /* is_preview */)
+void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */,
+                                                 Node* node, bool /* is_preview */)
 {
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
     for (auto& child: node->getChildNodePtrs())
     {
         if (child->isGen(gen_propGridPage))
         {
-            auto* page = pgm->AddPage(child->as_wxString(prop_label), child->as_wxBitmapBundle(prop_bitmap));
+            auto* page =
+                pgm->AddPage(child->as_wxString(prop_label), child->as_wxBitmapBundle(prop_bitmap));
 
             AfterCreationAddItems(page, child.get());
         }
@@ -96,7 +98,8 @@ bool PropertyGridManagerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                               std::set<std::string>& set_hdr,
                                                GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
@@ -122,7 +125,8 @@ bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
     }
 }
 
-bool PropertyGridManagerGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool PropertyGridManagerGenerator::GetImports(Node*, std::set<std::string>& set_imports,
+                                              GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
@@ -135,14 +139,19 @@ bool PropertyGridManagerGenerator::GetImports(Node*, std::set<std::string>& set_
     return false;
 }
 
-//////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////
+/////////////////////////////////  PropertyGridPageGenerator ////////////////////////////////////
 
 bool PropertyGridPageGenerator::ConstructionCode(Code& code)
 {
     if (code.hasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
-        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").QuotedString(prop_label);
+        code.AddAuto()
+            .NodeName()
+            .Str(" = ")
+            .ParentName()
+            .Function("AddPage(")
+            .QuotedString(prop_label);
         code.Comma();
         if (is_bitmaps_list)
         {
@@ -169,7 +178,13 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        code.AddAuto().NodeName().Str(" = ").ParentName().Function("AddPage(").QuotedString(prop_label).EndFunction();
+        code.AddAuto()
+            .NodeName()
+            .Str(" = ")
+            .ParentName()
+            .Function("AddPage(")
+            .QuotedString(prop_label)
+            .EndFunction();
     }
 
     return true;

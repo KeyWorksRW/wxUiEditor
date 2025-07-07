@@ -97,7 +97,8 @@ ClassOverrideType GetClassOverrideType(Node* node);
 
 // This will set the lexer and colors taking into account the user's preferences for dark
 // mode, and specific language colors
-void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true, bool add_keywords = true);
+void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
+                  bool add_keywords = true);
 
 // Call this after creating a wxRibbonBar tool in order to ensure that it has a unique ID/
 void SetUniqueRibbonToolID(Node* node);

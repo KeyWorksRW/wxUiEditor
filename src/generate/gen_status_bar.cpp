@@ -22,7 +22,8 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto org_style = GetStyleInt(node);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
-    auto widget = new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
+    auto widget =
+        new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
 
     auto fields = node->as_statusbar_fields(prop_fields);
     if (fields.size())
@@ -154,15 +155,36 @@ bool StatusBarGenerator::SettingsCode(Code& code)
     {
         code.OpenBrace();
         code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};";
-        code.Eol().NodeName().Function("SetStatusWidths(").itoa(fields.size()).Comma().Str("sb_field_widths);");
-        code.Eol().Str("const int sb_field_styles[").itoa(fields.size()).Str("] = {").Str(styles).Str("};");
-        code.Eol().NodeName().Function("SetStatusStyles(").itoa(fields.size()).Comma().Str("sb_field_styles);");
+        code.Eol()
+            .NodeName()
+            .Function("SetStatusWidths(")
+            .itoa(fields.size())
+            .Comma()
+            .Str("sb_field_widths);");
+        code.Eol()
+            .Str("const int sb_field_styles[")
+            .itoa(fields.size())
+            .Str("] = {")
+            .Str(styles)
+            .Str("};");
+        code.Eol()
+            .NodeName()
+            .Function("SetStatusStyles(")
+            .itoa(fields.size())
+            .Comma()
+            .Str("sb_field_styles);");
         code.CloseBrace();
     }
     else
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetStatusWidths([").Str(widths).Str("]").EndFunction();
-        // REVIEW: [Randalphwa - 03-02-2025] Currently, wxPerl 3.2 doesn't support wxSB_SUNKEN, so we add it as a variable
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetStatusWidths([")
+            .Str(widths)
+            .Str("]")
+            .EndFunction();
+        // REVIEW: [Randalphwa - 03-02-2025] Currently, wxPerl 3.2 doesn't support wxSB_SUNKEN, so
+        // we add it as a variable
         if (code.is_perl())
         {
             bool sunken_style = false;
@@ -221,8 +243,8 @@ int StatusBarGenerator::GetRequiredVersion(Node* node)
     return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
 }
 
-bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/statusbr.h>", set_src, set_hdr);
     return true;
@@ -230,7 +252,8 @@ bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStatusBar");
@@ -276,7 +299,8 @@ void StatusBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxStatusBarXmlHandler");
 }
 
-bool StatusBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool StatusBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                    GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

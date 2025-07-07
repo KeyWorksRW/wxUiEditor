@@ -56,8 +56,9 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
     }
 
-    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent of the longest line
-    // including an additional space at the end solves the problem, at least running on Windows 11.
+    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent
+    // of the longest line including an additional space at the end solves the problem, at least
+    // running on Windows 11.
     auto col_width = m_grid->GetTextExtent("wxSB_NORMAL ");
     m_grid->SetDefaultColSize(col_width.GetWidth(), true);
 
@@ -77,11 +78,12 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         ++row;
     }
 
-    m_help_text->SetLabel(
-        "A positive width indicates a fixed width field, a negative width indicates a proportional field.");
+    m_help_text->SetLabel("A positive width indicates a fixed width field, a negative width "
+                          "indicates a proportional field.");
 
     // Force the width to get wrap in a way that makes the text the most clear.
-    auto width = m_help_text->GetTextExtent("A positive width indicates a fixed width field, ").GetWidth();
+    auto width =
+        m_help_text->GetTextExtent("A positive width indicates a fixed width field, ").GetWidth();
     m_help_text->Wrap(width);
 
     m_help_text->Show();
@@ -102,9 +104,9 @@ void SBarFieldsDialog::OnOK(wxCommandEvent& event)
     if (m_value == "wxSB_NORMAL|-1")
         m_value = "1";
 
-    // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we sometimes get
-    // a warning about undeleted events. Since none of the other custom property editors have this issue, it's most
-    // likely due to something in m_grid.
+    // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we
+    // sometimes get a warning about undeleted events. Since none of the other custom property
+    // editors have this issue, it's most likely due to something in m_grid.
     // m_grid->GetEventHandler()->DeletePendingEvents();
     // GetEventHandler()->DeletePendingEvents();
 
@@ -176,7 +178,8 @@ void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool SBarFieldsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool SBarFieldsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                           wxPGProperty* WXUNUSED(property))
 {
     SBarFieldsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

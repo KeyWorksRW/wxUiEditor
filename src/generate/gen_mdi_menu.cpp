@@ -11,20 +11,16 @@
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 
-//////////////////////////////////////////  MdiFrameMenuBar  //////////////////////////////////////////
-
-bool MdiFrameMenuBar::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                  GenLang /* language */)
+bool MdiFrameMenuBar::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                  std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
     return true;
 }
 
-//////////////////////////////////////////  MdiDocumentMenuBar  //////////////////////////////////////////
-
-bool MdiDocumentMenuBar::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool MdiDocumentMenuBar::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 

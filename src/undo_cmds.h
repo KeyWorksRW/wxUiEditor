@@ -21,7 +21,8 @@ class InsertNodeAction : public UndoAction
 {
 public:
     InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos = -1);
-    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
+    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str,
+                     int pos = -1);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
@@ -35,7 +36,8 @@ public:
     size_t GetMemorySize() override { return sizeof(*this); }
 
 protected:
-    void Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str, int pos = -1);
+    void Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str,
+              int pos = -1);
 
 private:
     NodeSharedPtr m_parent;
@@ -50,7 +52,8 @@ class RemoveNodeAction : public UndoAction
 {
 public:
     RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard = false);
-    RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str, bool AddToClipboard = false);
+    RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str,
+                     bool AddToClipboard = false);
 
     // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
@@ -82,7 +85,10 @@ public:
     NodeProperty* GetProperty() override { return m_property; }
 
     // The +2 is to account for the trailing zero in each std::string value.
-    size_t GetMemorySize() override { return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2; }
+    size_t GetMemorySize() override
+    {
+        return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2;
+    }
 
 private:
     NodeProperty* m_property;
@@ -128,7 +134,10 @@ public:
     void Change() override;
     void Revert() override;
 
-    size_t GetMemorySize() override { return sizeof(*this) + m_revert_value.size() + m_change_value.size(); }
+    size_t GetMemorySize() override
+    {
+        return sizeof(*this) + m_revert_value.size() + m_change_value.size();
+    }
 
 private:
     NodeEvent* m_event;
@@ -241,7 +250,8 @@ private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_old_selected;
 
-    // REVIEW: [Randalphwa - 06-13-2022] m_old_pos can be -1, so it really should either be an int or an int64_t.
+    // REVIEW: [Randalphwa - 06-13-2022] m_old_pos can be -1, so it really should either be an int
+    // or an int64_t.
     size_t m_old_pos;
 
     int m_pos;

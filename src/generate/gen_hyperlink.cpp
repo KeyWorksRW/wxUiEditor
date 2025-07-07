@@ -22,15 +22,17 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
     wxHyperlinkCtrlBase* widget;
     if (node->as_bool(prop_underlined) && !node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
-        widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                     node->as_wxString(prop_url), DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+        widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                     node->as_wxString(prop_label), node->as_wxString(prop_url),
+                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size),
                                      GetStyleInt(node));
     }
     else
     {
-        widget = new wxGenericHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                            node->as_wxString(prop_url), DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                            GetStyleInt(node));
+        widget = new wxGenericHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                            node->as_wxString(prop_label),
+                                            node->as_wxString(prop_url), DlgPoint(node, prop_pos),
+                                            DlgSize(node, prop_size), GetStyleInt(node));
 
         if (!node->hasValue(prop_font))
         {
@@ -64,7 +66,8 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 bool HyperlinkGenerator::ConstructionCode(Code& code)
 {
     bool use_generic_version = false;
-    if (!code.IsTrue(prop_underlined) || code.node()->as_string(prop_subclass).starts_with("wxGeneric"))
+    if (!code.IsTrue(prop_underlined) ||
+        code.node()->as_string(prop_subclass).starts_with("wxGeneric"))
     {
         if (code.is_cpp() || (code.is_ruby() && Project.getLangVersion(GEN_LANG_RUBY) >= 10505))
         {
@@ -73,7 +76,8 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
     }
     if (use_generic_version && Project.AddOptionalComments() && !code.IsTrue(prop_underlined))
     {
-        code.AddComment(" wxGenericHyperlinkCtrl is used in order to remove the underline from the font.");
+        code.AddComment(
+            " wxGenericHyperlinkCtrl is used in order to remove the underline from the font.");
     }
     code.AddAuto().NodeName().CreateClass(use_generic_version);
 
@@ -88,7 +92,11 @@ bool HyperlinkGenerator::SettingsCode(Code& code)
 {
     if (!code.IsTrue(prop_underlined) && !code.hasValue(prop_font))
     {
-        code.Eol(eol_if_empty).NodeName().Function("SetFont(").Class("wxSystemSettings").ClassMethod("GetFont(");
+        code.Eol(eol_if_empty)
+            .NodeName()
+            .Function("SetFont(")
+            .Class("wxSystemSettings")
+            .ClassMethod("GetFont(");
         code.Add("wxSYS_DEFAULT_GUI_FONT)").EndFunction();
     }
 
@@ -118,7 +126,8 @@ bool HyperlinkGenerator::SettingsCode(Code& code)
 
 int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
@@ -163,24 +172,29 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 #if !defined(WIDGETS_FORK)
         if (node->hasValue(prop_hover_color))
         {
-            item.append_child(pugi::node_comment).set_value(" hover color cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" hover color cannot be be set in the XRC file. ");
         }
         if (node->hasValue(prop_normal_color))
         {
-            item.append_child(pugi::node_comment).set_value(" normal color cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" normal color cannot be be set in the XRC file. ");
         }
         if (node->hasValue(prop_visited_color))
         {
-            item.append_child(pugi::node_comment).set_value(" visited color cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" visited color cannot be be set in the XRC file. ");
         }
 #endif
         if (!node->as_bool(prop_underlined))
         {
-            item.append_child(pugi::node_comment).set_value(" removing underline cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" removing underline cannot be be set in the XRC file. ");
         }
         if (node->as_bool(prop_sync_hover_colour))
         {
-            item.append_child(pugi::node_comment).set_value(" sync hover color cannot be be set in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" sync hover color cannot be be set in the XRC file. ");
         }
         GenXrcComments(node, item);
     }
@@ -193,7 +207,8 @@ void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxHyperlinkCtrlXmlHandler");
 }
 
-bool HyperlinkGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool HyperlinkGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
+                                    GenLang language)
 {
     if (language == GEN_LANG_PERL && !node->as_bool(prop_underlined) && !node->hasValue(prop_font))
     {
@@ -205,15 +220,17 @@ bool HyperlinkGenerator::GetImports(Node* node, std::set<std::string>& set_impor
 
 bool HyperlinkGenerator::IsGeneric(Node* node)
 {
-    return (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"));
+    return (!node->as_bool(prop_underlined) ||
+            node->as_string(prop_subclass).starts_with("wxGeneric"));
 }
 
-bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_src */,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     // Unfortunately wx/generic/hyperlink.h doesn't include the required wx/hyperlink.h file.
     // That means the order of inclusion is critical, hence the hack below to change the
-    // alphabetical order of the two headers. See https://github.com/wxWidgets/wxWidgets/issues/23060
+    // alphabetical order of the two headers. See
+    // https://github.com/wxWidgets/wxWidgets/issues/23060
 
     if (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"))
         set_hdr.insert("#include <wx/hyperlink.h>\n#include <wx/generic/hyperlink.h>");

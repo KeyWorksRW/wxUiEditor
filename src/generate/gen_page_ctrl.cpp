@@ -13,8 +13,6 @@
 #include "gen_xrc_utils.h"   // Common XRC generating functions
 #include "node.h"            // Node class
 
-#include "pugixml.hpp"  // xml read/write/create/process
-
 #include "gen_page_ctrl.h"
 
 wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -47,7 +45,8 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                     ++idx_image;
                 }
             }
-            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
+            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false,
+                          idx_image);
         }
         else if (node->hasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
         {
@@ -60,7 +59,8 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                         idx_image = 0;
                     break;
                 }
-                if (node_parent->getChild(idx_child)->hasValue(prop_bitmap) || node_parent->isGen(gen_wxToolbook))
+                if (node_parent->getChild(idx_child)->hasValue(prop_bitmap) ||
+                    node_parent->isGen(gen_wxToolbook))
                 {
                     if (idx_image < 0)
                         idx_image = 0;
@@ -69,7 +69,8 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 }
             }
 
-            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
+            book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false,
+                          idx_image);
         }
         else
         {
@@ -111,7 +112,8 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                     }
                 }
 
-                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false, idx_image);
+                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label),
+                                  false, idx_image);
             }
             else
             {
@@ -155,11 +157,13 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
                     code.Comma().True();
 
                 if (node->hasValue(prop_bitmap) &&
-                    (node->getParent()->as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
+                    (node->getParent()->as_bool(prop_display_images) ||
+                     node->isParent(gen_wxToolbook)))
                 {
                     auto node_parent = node->getParent();
                     int idx_image = -1;
-                    for (size_t idx_child = 0; idx_child < node_parent->getChildCount(); ++idx_child)
+                    for (size_t idx_child = 0; idx_child < node_parent->getChildCount();
+                         ++idx_child)
                     {
                         if (node_parent->getChild(idx_child) == node)
                         {

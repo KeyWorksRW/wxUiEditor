@@ -16,7 +16,7 @@
 #include "node.h"             // Node class
 #include "node_decl.h"        // NodeDeclaration class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -85,7 +85,8 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 
         if (class_name == "wxStdDialogButtonSizer")
         {
-            if (!node->getForm()->isGen(gen_wxDialog) || node->as_bool(prop_Save) || node->as_bool(prop_ContextHelp))
+            if (!node->getForm()->isGen(gen_wxDialog) || node->as_bool(prop_Save) ||
+                node->as_bool(prop_ContextHelp))
             {
                 if (node->as_bool(prop_OK))
                     code << "\n\twxButton* " << node->getNodeName() << "OK;";
@@ -109,7 +110,8 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
         }
         else if (class_name == "wxStaticBitmap")
         {
-            // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to support it.
+            // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to
+            // support it.
             if (node->as_string(prop_scale_mode) != "None")
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
@@ -189,7 +191,8 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name.is_sameas("CustomControl"))
     {
-        if (auto* node_namespace = node->getFolder(); node_namespace && node_namespace->hasValue(prop_folder_namespace))
+        if (auto* node_namespace = node->getFolder();
+            node_namespace && node_namespace->hasValue(prop_folder_namespace))
         {
             code << node_namespace->as_string(prop_folder_namespace) << "::";
         }
@@ -214,7 +217,8 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 }
 
 // This is a static function
-void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids, std::set<std::string>& set_const_ids)
+void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
+                                   std::set<std::string>& set_const_ids)
 {
     for (auto& iter: node->getPropsVector())
     {
@@ -223,7 +227,8 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
             auto& prop_id = iter.as_string();
             if (prop_id.size() && !prop_id.starts_with("wxID_"))
             {
-                if (tt::is_found(prop_id.find('=')))  // If it has an assignment operator, it's a constant
+                if (tt::is_found(
+                        prop_id.find('=')))  // If it has an assignment operator, it's a constant
                     set_const_ids.insert(prop_id);
                 else
                     set_enum_ids.insert(prop_id);
@@ -256,18 +261,23 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
         // Only add the event if a handler was specified
         if (iter.second.get_value().size())
         {
-            // Because the NodeEvent* gets stored in a set if there is a conditional, it won't get duplicated
-            // even if it is added by both the Node and any container containing the same conditional
+            // Because the NodeEvent* gets stored in a set if there is a conditional, it won't get
+            // duplicated even if it is added by both the Node and any container containing the same
+            // conditional
 
-            if (node->hasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+            if (node->hasProp(prop_platforms) &&
+                node->as_string(prop_platforms) != "Windows|Unix|Mac")
             {
                 if (!m_map_conditional_events.contains(node->as_string(prop_platforms)))
                 {
-                    m_map_conditional_events[node->as_string(prop_platforms)] = std::vector<NodeEvent*>();
+                    m_map_conditional_events[node->as_string(prop_platforms)] =
+                        std::vector<NodeEvent*>();
                 }
-                if (!CheckIfEventExists(m_map_conditional_events[node->as_string(prop_platforms)], &iter.second))
+                if (!CheckIfEventExists(m_map_conditional_events[node->as_string(prop_platforms)],
+                                        &iter.second))
                 {
-                    m_map_conditional_events[node->as_string(prop_platforms)].push_back(&iter.second);
+                    m_map_conditional_events[node->as_string(prop_platforms)].push_back(
+                        &iter.second);
                 }
             }
 
@@ -277,11 +287,15 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
             {
                 if (!m_map_conditional_events.contains(node_container->as_string(prop_platforms)))
                 {
-                    m_map_conditional_events[node_container->as_string(prop_platforms)] = std::vector<NodeEvent*>();
+                    m_map_conditional_events[node_container->as_string(prop_platforms)] =
+                        std::vector<NodeEvent*>();
                 }
-                if (!CheckIfEventExists(m_map_conditional_events[node_container->as_string(prop_platforms)], &iter.second))
+                if (!CheckIfEventExists(
+                        m_map_conditional_events[node_container->as_string(prop_platforms)],
+                        &iter.second))
                 {
-                    m_map_conditional_events[node_container->as_string(prop_platforms)].push_back(&iter.second);
+                    m_map_conditional_events[node_container->as_string(prop_platforms)].push_back(
+                        &iter.second);
                 }
             }
 
@@ -351,7 +365,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                                 }
                                 else
                                 {
-                                    MSG_INFO(tt_string() << "Unable to get file time for " << embed->imgs[0].filename);
+                                    MSG_INFO(tt_string() << "Unable to get file time for "
+                                                         << embed->imgs[0].filename);
                                 }
                             }
                         }
@@ -384,8 +399,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             }
             else
             {
-                // Since this is a thread, you can't send the standard MSG_WARNING if the window is opened, or it will
-                // lock the debugger.
+                // Since this is a thread, you can't send the standard MSG_WARNING if the window is
+                // opened, or it will lock the debugger.
             }
         }
 
@@ -474,7 +489,8 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
             // If ProjectImages returns a function name, then the function will be in the
             // Images List header file, so we don't need to generate any functions for it in
             // the source file.
-            if (auto function_name = ProjectImages.GetBundleFuncName(node->as_string(prop_icon)); function_name.empty())
+            if (auto function_name = ProjectImages.GetBundleFuncName(node->as_string(prop_icon));
+                function_name.empty())
             {
                 if (parts[IndexType] == "Header")
                 {
@@ -528,7 +544,9 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                             if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
                                 bundle && bundle->lst_filenames.size())
                             {
-                                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                                if (auto embed =
+                                        ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                                    embed)
                                 {
 #if defined(_DEBUG)
                                     auto name = ProjectImages.GetBundleFuncName(embed);
@@ -555,7 +573,9 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                         if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
                             bundle && bundle->lst_filenames.size())
                         {
-                            if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                            if (auto embed =
+                                    ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                                embed)
                             {
 #if defined(_DEBUG)
                                 auto name = ProjectImages.GetBundleFuncName(embed);
@@ -574,7 +594,8 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 {
                     if (iter.type() == type_animation)
                         m_NeedAnimationFunction = true;
-                    else if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+                    else if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm",
+                                            tt::CASE::either))
                         m_NeedHeaderFunction = true;
                 }
             }

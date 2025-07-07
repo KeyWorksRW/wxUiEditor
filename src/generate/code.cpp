@@ -9,9 +9,9 @@
 
     Notes:
 
-    The Eol() function will automatically append tabs if m_indent is greater than 0. That means you should *not* append tabs
-    using += '/t', and you should be very cautious about using += '\n' instead of Eol() since the Eol() call will
-    automatically append tabs if needed.
+    The Eol() function will automatically append tabs if m_indent is greater than 0. That means you
+    should *not* append tabs using += '/t', and you should be very cautious about using += '\n'
+    instead of Eol() since the Eol() call will automatically append tabs if needed.
 
     code_add.cpp contains the Code::Add...() functions
     code_gen.cpp contains the Code::Gen...() functions
@@ -926,7 +926,8 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     if (is_cpp())
     {
         *this += "new ";
-        if (m_node->hasValue(prop_subclass) && !m_node->as_string(prop_subclass).starts_with("wxGeneric"))
+        if (m_node->hasValue(prop_subclass) &&
+            !m_node->as_string(prop_subclass).starts_with("wxGeneric"))
         {
             *this += m_node->as_string(prop_subclass);
             *this += '(';
@@ -963,7 +964,8 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     {
         if (class_name.is_sameprefix("wx") && !is_cpp())
         {
-            if (std::string_view language_prefix = GetLanguagePrefix(class_name, m_language); language_prefix.size())
+            if (std::string_view language_prefix = GetLanguagePrefix(class_name, m_language);
+                language_prefix.size())
             {
                 *this << language_prefix << class_name.substr(2);
             }
@@ -1304,7 +1306,8 @@ Code& Code::QuotedString(tt_string_view text)
         }
     }
 
-    // This is only used by C++, but we need to know if it was set in order to generate closing parenthesis.
+    // This is only used by C++, but we need to know if it was set in order to generate closing
+    // parenthesis.
     bool has_utf_char = false;
     if (is_cpp())
     {
@@ -1637,10 +1640,12 @@ bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
         return false;
     if (m_node->hasValue(prop_window_style))
         return false;
-    if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+    if (m_node->hasValue(prop_orientation) &&
+        !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
         !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         return false;
-    if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    if (m_node->hasValue(prop_tab_position) &&
+        !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         return false;
     if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         return false;
@@ -1665,10 +1670,12 @@ int Code::WhatParamsNeeded(tt_string_view default_style) const
         return (pos_needed | size_needed | style_needed);
     else if (m_node->hasValue(prop_window_style))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->hasValue(prop_orientation) && !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+    else if (m_node->hasValue(prop_orientation) &&
+             !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->hasValue(prop_tab_position) && !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    else if (m_node->hasValue(prop_tab_position) &&
+             !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         return (pos_needed | size_needed | style_needed);
     else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
         return (pos_needed | size_needed | style_needed);
@@ -1699,8 +1706,10 @@ Code& Code::SizerFlagsFunction(tt_string_view function_name)
 Code& Code::BorderSize(GenEnum::PropName prop_name)
 {
     int border_size = m_node->as_int(prop_name);
-    bool is_scalable_border = (border_size > 0 && border_size != 5 && border_size != 10 && border_size != 15);
-    if ((prop_name == prop_border_size && m_node->as_bool(prop_scale_border_size)) && is_scalable_border)
+    bool is_scalable_border =
+        (border_size > 0 && border_size != 5 && border_size != 10 && border_size != 15);
+    if ((prop_name == prop_border_size && m_node->as_bool(prop_scale_border_size)) &&
+        is_scalable_border)
     {
         if (is_ruby())
         {

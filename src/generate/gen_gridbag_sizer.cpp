@@ -13,7 +13,7 @@
 #include "gen_xrc_utils.h"   // Common XRC generating functions
 #include "mockup_parent.h"   // Top-level MockUp Parent window
 #include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -38,7 +38,8 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
+void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                          bool is_preview)
 {
     if (node->as_bool(prop_hide_children))
     {
@@ -77,9 +78,11 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         {
             // Needs to be auto positioned after the other children are added
 
-            if (auto item = GetGBSizerItem(node, lastPosition, span, const_cast<wxObject*>(child)); item)
+            if (auto item = GetGBSizerItem(node, lastPosition, span, const_cast<wxObject*>(child));
+                item)
             {
-                newNodes.push_back(std::pair<wxObject*, wxGBSizerItem*>(const_cast<wxObject*>(child), item));
+                newNodes.push_back(
+                    std::pair<wxObject*, wxGBSizerItem*>(const_cast<wxObject*>(child), item));
             }
             continue;
         }
@@ -88,8 +91,8 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 
         if (sizer->CheckForIntersection(position, span))
         {
-            // REVIEW: [KeyWorks - 10-22-2020] Not creating it in the Mockup isn't very helpful to the user since
-            // they won't be able to see why the item hasn't been created.
+            // REVIEW: [KeyWorks - 10-22-2020] Not creating it in the Mockup isn't very helpful to
+            // the user since they won't be able to see why the item hasn't been created.
             continue;
         }
 
@@ -270,22 +273,23 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool GridBagSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool GridBagSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/gbsizer.h>", set_src, set_hdr);
     return true;
 }
 
-wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGBPosition& position, const wxGBSpan& span,
-                                                     wxObject* child)
+wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGBPosition& position,
+                                                     const wxGBSpan& span, wxObject* child)
 {
     auto sizer_flags = sizeritem->getSizerFlags();
 
     if (sizeritem->isGen(gen_spacer))
     {
-        return new wxGBSizerItem(sizeritem->as_int(prop_width), sizeritem->as_int(prop_height), position, span,
-                                 sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+        return new wxGBSizerItem(sizeritem->as_int(prop_width), sizeritem->as_int(prop_height),
+                                 position, span, sizer_flags.GetFlags(),
+                                 sizer_flags.GetBorderInPixels());
     }
 
     // Add the child (window or sizer) to the sizer
@@ -294,15 +298,18 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 
     if (windowChild)
     {
-        return new wxGBSizerItem(windowChild, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+        return new wxGBSizerItem(windowChild, position, span, sizer_flags.GetFlags(),
+                                 sizer_flags.GetBorderInPixels());
     }
     else if (sizerChild)
     {
-        return new wxGBSizerItem(sizerChild, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+        return new wxGBSizerItem(sizerChild, position, span, sizer_flags.GetFlags(),
+                                 sizer_flags.GetBorderInPixels());
     }
     else
     {
-        FAIL_MSG("The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - this should not be "
+        FAIL_MSG("The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - "
+                 "this should not be "
                  "possible!");
         return nullptr;
     }
@@ -345,9 +352,9 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     }
     else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
     {
-        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
-        // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
-        // create for most forms.
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
+        // a problem for forms which often can specify their own minimum size. The workaround is to
+        // set the minimum size of the parent sizer that we create for most forms.
 
         item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
     }

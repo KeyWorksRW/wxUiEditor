@@ -6,19 +6,21 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/msgdlg.h>
+#include <wx/statusbr.h>
 
 #include "cstm_propgrid.h"
 
-#include "mainframe.h"       // Main window frame
-#include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
+// #include "mainframe.h"       // Main window frame
 
-// The primary reason for this is to fix the broken English used for the default error message in the wxWidgets code.
+// The primary reason for this is to fix the broken English used for the default error message in
+// the wxWidgets code.
 
-// Most of this code originates from wxWidgets/src/propgrid/propgrid.cpp, updated to Modern C++ coding practices. Note that
-// because the message text has been converted to proper English grammar, it will not be automatically translated by
-// wxWidgets in non-English languages.
+// Most of this code originates from wxWidgets/src/propgrid/propgrid.cpp, updated to Modern C++
+// coding practices. Note that because the message text has been converted to proper English
+// grammar, it will not be automatically translated by wxWidgets in non-English languages.
 
-bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant& WXUNUSED(invalidValue))
+bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
+                                               wxVariant& WXUNUSED(invalidValue))
 {
     auto validation_behaviour = static_cast<int>(m_validationInfo.GetFailureBehavior());
 
@@ -52,8 +54,8 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
         DrawItemAndChildren(property);
     }
 
-    // Note that since this is already a customized wxPropertyGrid, we don't call DoShowPropertyError() if
-    // wxPG_VFB_SHOW_MESSAGE is set.
+    // Note that since this is already a customized wxPropertyGrid, we don't call
+    // DoShowPropertyError() if wxPG_VFB_SHOW_MESSAGE is set.
 
     if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageBox) ||
         validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessage) ||
@@ -62,8 +64,8 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
         auto msg = m_validationInfo.GetFailureMessage();
         if (msg.empty())
         {
-            msg =
-                _("You have entered an invalid value. Either change the value, or press ESC to restore the original value.");
+            msg = _("You have entered an invalid value. Either change the value, or press ESC to "
+                    "restore the original value.");
         }
 
         if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageOnStatusBar))
@@ -79,8 +81,9 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant
 
         if (validation_behaviour & static_cast<int>(wxPGVFBFlags::ShowMessageBox))
         {
-            // Displaying the message box can cause a focus change which will result in idle processing sending the
-            // validation event again. Preserving the focus window avoids validating twice.
+            // Displaying the message box can cause a focus change which will result in idle
+            // processing sending the validation event again. Preserving the focus window avoids
+            // validating twice.
             auto focus_window = wxWindow::FindFocus();
 
             /* TRANSLATORS: Caption of message box displaying any property error */

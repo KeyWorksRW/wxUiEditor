@@ -54,7 +54,10 @@ public:
 
     auto getProjectVersion() { return m_ProjectVersion; }
 
-    bool AskedAboutMissingDir(const wxString path) { return (m_missing_dirs.find(path) != m_missing_dirs.end()); }
+    bool AskedAboutMissingDir(const wxString path)
+    {
+        return (m_missing_dirs.find(path) != m_missing_dirs.end());
+    }
     void AddMissingDir(const wxString path) { m_missing_dirs.insert(path); }
 
     bool isDarkMode() const noexcept { return m_isDarkMode; }
@@ -100,9 +103,11 @@ private:
     // bool m_isProject_updated { false };
     bool m_TestingMenuEnabled { false };
     bool m_is_testing_switch { false };
-    bool m_is_generating { false };        // true if generating code from the command line
-    bool m_is_verbose_codegen { false };   // true if verbose code generation is enabled (--verbose)
-    bool m_is_coverage_testing { false };  // true if generating code for test coverage (--gen_coverage)
+    bool m_is_generating { false };       // true if generating code from the command line
+    bool m_is_verbose_codegen { false };  // true if verbose code generation is enabled (--verbose)
+    bool m_is_coverage_testing {
+        false
+    };  // true if generating code for test coverage (--gen_coverage)
 
 #if (DARK_MODE)
     bool m_isDarkMode { true };

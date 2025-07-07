@@ -145,7 +145,6 @@ bool SysHeaderDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title
 #include <wx/tokenzr.h>   // wxTokenizer
 
 #include <filesystem>
-namespace fs = std::filesystem;
 
 #include "project_handler.h"  // Project
 
@@ -214,7 +213,8 @@ void SysHeaderDlg::OnRootSelected(wxCommandEvent& WXUNUSED(event))
     try
     {
         // Fill wxCheckListBox with filenames containing .h, .hh, .hpp, or .hxx
-        for (const auto& entry: std::filesystem::recursive_directory_iterator(root_path.make_path()))
+        for (const auto& entry:
+             std::filesystem::recursive_directory_iterator(root_path.make_path()))
         {
             if (entry.is_regular_file())
             {
@@ -238,7 +238,8 @@ void SysHeaderDlg::OnRootSelected(wxCommandEvent& WXUNUSED(event))
 // Called to add a path to the list of root directories
 void SysHeaderDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 {
-    wxDirDialog dlg(this, "Choose directory", wxEmptyString, wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    wxDirDialog dlg(this, "Choose directory", wxEmptyString,
+                    wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
     dlg.SetPath(Project.getProjectPath());
     if (dlg.ShowModal() != wxID_OK)
         return;

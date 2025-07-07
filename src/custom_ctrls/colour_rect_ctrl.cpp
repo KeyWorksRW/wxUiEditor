@@ -11,7 +11,8 @@
 
 using namespace wxue_ctrl;
 
-ColourRectCtrl::ColourRectCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style) :
+ColourRectCtrl::ColourRectCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                               const wxSize& size, long style) :
     wxControl(parent, id, pos, size, style)
 {
     Bind(wxEVT_PAINT, &ColourRectCtrl::OnPaint, this);

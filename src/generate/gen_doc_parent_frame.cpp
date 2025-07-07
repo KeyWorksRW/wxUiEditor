@@ -44,20 +44,22 @@ bool DocParentFrameGenerator::BaseClassNameCode(Code& code)
     return FrameCommon::BaseClassNameCode(code);
 }
 
-bool DocParentFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                          GenLang /* language */)
+bool DocParentFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/docview.h>", set_src, set_hdr);
 
     return true;
 }
 
-bool DocParentFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool DocParentFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                                  Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool DocParentFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+bool DocParentFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
+                                         GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
@@ -92,8 +94,8 @@ bool DocChildFrame::BaseClassNameCode(Code& code)
     return FrameCommon::BaseClassNameCode(code);
 }
 
-bool DocChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                GenLang /* language */)
+bool DocChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/docview.h>", set_src, set_hdr);
 
@@ -105,7 +107,8 @@ bool DocChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool DocChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+bool DocChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
+                               GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

@@ -20,15 +20,16 @@
 
 wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0);
+    auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos),
+                                        DlgSize(node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
 }
 
-void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                             bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
 
@@ -41,7 +42,8 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
         else
             bmp = GetInternalImage("default");
 
-        btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bmp, child->as_wxString(prop_help),
+        btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bmp,
+                           child->as_wxString(prop_help),
                            (wxRibbonButtonKind) child->as_int(prop_kind));
     }
 }
@@ -54,15 +56,16 @@ bool RibbonButtonBarGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                           GenLang /* language */)
+bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                           std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/buttonbar.h>", set_src, set_hdr);
 
     return true;
 }
 
-int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                           size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "wxRibbonButtonBar");
@@ -70,7 +73,8 @@ int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, s
     return BaseGenerator::xrc_updated;
 }
 
-//////////////////////////////////////////  RibbonButtonGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  RibbonButtonGenerator
+/////////////////////////////////////////////
 
 bool RibbonButtonGenerator::ConstructionCode(Code& code)
 {

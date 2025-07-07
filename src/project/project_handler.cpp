@@ -199,8 +199,8 @@ const wxFileName* ProjectHandler::get_wxFileName() const
     {
         if (m_project_node->hasValue(prop_art_directory))
         {
-            m_project_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString, wxEmptyString,
-                                   wxPATH_NATIVE);
+            m_project_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString,
+                                   wxEmptyString, wxPATH_NATIVE);
             m_project_path->MakeRelativeTo(m_project_path->GetPath());
             m_project_path->MakeAbsolute();
             return m_project_path.get();
@@ -223,7 +223,8 @@ const wxFileName* ProjectHandler::getArtPath()
     {
         if (m_project_node->hasValue(prop_art_directory))
         {
-            m_art_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString, wxEmptyString, wxPATH_NATIVE);
+            m_art_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString,
+                               wxEmptyString, wxPATH_NATIVE);
             m_art_path->MakeRelativeTo(m_project_path->GetPath());
             m_art_path->MakeAbsolute();
             return m_art_path.get();
@@ -282,7 +283,8 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
                 result = folder->as_string(prop_output_file);
             else if (folder->isGen(gen_data_folder))
             {
-                // Move the form to the gen_Data node since the folder doesn't specify an output file.
+                // Move the form to the gen_Data node since the folder doesn't specify an output
+                // file.
                 form = folder->getParent();
             }
         }
@@ -298,9 +300,11 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = folder->as_string(prop_folder_xrc_directory);
 
 #if GENERATE_NEW_LANG_CODE
-        else if (language == GEN_LANG_FORTRAN && folder->hasValue(prop_folder_fortran_output_folder))
+        else if (language == GEN_LANG_FORTRAN &&
+                 folder->hasValue(prop_folder_fortran_output_folder))
             result = folder->as_string(prop_folder_fortran_output_folder);
-        else if (language == GEN_LANG_HASKELL && folder->hasValue(prop_folder_haskell_output_folder))
+        else if (language == GEN_LANG_HASKELL &&
+                 folder->hasValue(prop_folder_haskell_output_folder))
             result = folder->as_string(prop_folder_haskell_output_folder);
         else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
             result = folder->as_string(prop_folder_lua_output_folder);
@@ -328,9 +332,11 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = m_project_node->as_string(prop_xrc_directory);
 
 #if GENERATE_NEW_LANG_CODE
-        else if (language == GEN_LANG_FORTRAN && m_project_node->hasValue(prop_fortran_output_folder))
+        else if (language == GEN_LANG_FORTRAN &&
+                 m_project_node->hasValue(prop_fortran_output_folder))
             result = m_project_node->as_string(prop_fortran_output_folder);
-        else if (language == GEN_LANG_HASKELL && m_project_node->hasValue(prop_haskell_output_folder))
+        else if (language == GEN_LANG_HASKELL &&
+                 m_project_node->hasValue(prop_haskell_output_folder))
             result = m_project_node->as_string(prop_haskell_output_folder);
         else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
             result = m_project_node->as_string(prop_lua_output_folder);
@@ -576,7 +582,8 @@ size_t ProjectHandler::getOutputType(int flags) const
             {
                 if (child->hasValue(prop_base_file))
                 {
-                    if (child->as_string(prop_base_file) == child->getPropDefaultValue(prop_base_file) &&
+                    if (child->as_string(prop_base_file) ==
+                            child->getPropDefaultValue(prop_base_file) &&
                         getCodePreference(form) != GEN_LANG_CPLUSPLUS)
                     {
                         continue;
@@ -599,7 +606,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_perl_file) == child->getPropDefaultValue(prop_perl_file) &&
+                        if (child->as_string(prop_perl_file) ==
+                                child->getPropDefaultValue(prop_perl_file) &&
                             getCodePreference(form) != GEN_LANG_PERL)
                         {
                             continue;
@@ -611,7 +619,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_python_file) == child->getPropDefaultValue(prop_python_file) &&
+                        if (child->as_string(prop_python_file) ==
+                                child->getPropDefaultValue(prop_python_file) &&
                             getCodePreference(form) != GEN_LANG_PYTHON)
                         {
                             continue;
@@ -623,7 +632,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_ruby_file) == child->getPropDefaultValue(prop_ruby_file) &&
+                        if (child->as_string(prop_ruby_file) ==
+                                child->getPropDefaultValue(prop_ruby_file) &&
                             getCodePreference(form) != GEN_LANG_RUBY)
                         {
                             continue;
@@ -635,7 +645,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_rust_file) == child->getPropDefaultValue(prop_rust_file) &&
+                        if (child->as_string(prop_rust_file) ==
+                                child->getPropDefaultValue(prop_rust_file) &&
                             getCodePreference(form) != GEN_LANG_RUST)
                         {
                             continue;
@@ -650,7 +661,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                         // Note that we do *not* ignore this if getCodePreference(form) !=
                         // GEN_LANG_XRC. If the language is using XRC for the UI, then the XRC must
                         // be generated as well.
-                        if (child->as_string(prop_xrc_file) == child->getPropDefaultValue(prop_xrc_file))
+                        if (child->as_string(prop_xrc_file) ==
+                            child->getPropDefaultValue(prop_xrc_file))
                         {
                             continue;
                         }
@@ -662,7 +674,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_fortran_file) == child->getPropDefaultValue(prop_fortran_file) &&
+                        if (child->as_string(prop_fortran_file) ==
+                                child->getPropDefaultValue(prop_fortran_file) &&
                             getCodePreference(form) != GEN_LANG_FORTRAN)
                         {
                             continue;
@@ -674,7 +687,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_haskell_file) == child->getPropDefaultValue(prop_haskell_file) &&
+                        if (child->as_string(prop_haskell_file) ==
+                                child->getPropDefaultValue(prop_haskell_file) &&
                             getCodePreference(form) != GEN_LANG_HASKELL)
                         {
                             continue;
@@ -686,7 +700,8 @@ size_t ProjectHandler::getOutputType(int flags) const
                 {
                     if (child->isGen(gen_Images) || child->isGen(gen_Data))
                     {
-                        if (child->as_string(prop_lua_file) == child->getPropDefaultValue(prop_lua_file) &&
+                        if (child->as_string(prop_lua_file) ==
+                                child->getPropDefaultValue(prop_lua_file) &&
                             getCodePreference(form) != GEN_LANG_LUA)
                         {
                             continue;
@@ -754,9 +769,11 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
                             {
                                 m_form_Image = m_ImagesForm ? m_ImagesForm : child->getForm();
                             }
-                            if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+                            if (!m_form_BundleBitmaps &&
+                                ProjectImages.GetPropertyImageBundle(parts))
                             {
-                                m_form_BundleBitmaps = m_ImagesForm ? m_ImagesForm : child->getForm();
+                                m_form_BundleBitmaps =
+                                    m_ImagesForm ? m_ImagesForm : child->getForm();
                             }
                         }
                     }
@@ -768,7 +785,8 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
                         }
                     }
 
-                    if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
+                    if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps &&
+                        m_form_Image)
                     {
                         return;
                     }
@@ -830,7 +848,8 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
 
 Node* ProjectHandler::getImagesForm()
 {
-    if (!m_ImagesForm && m_project_node->getChildCount() > 0 && m_project_node->getChild(0)->isGen(gen_Images))
+    if (!m_ImagesForm && m_project_node->getChildCount() > 0 &&
+        m_project_node->getChild(0)->isGen(gen_Images))
     {
         m_ImagesForm = m_project_node->getChild(0);
     }
@@ -845,7 +864,8 @@ Node* ProjectHandler::getDataForm()
         {
             m_DataForm = m_project_node->getChild(0);
         }
-        else if (m_project_node->getChildCount() > 1 && m_project_node->getChild(1)->isGen(gen_Data))
+        else if (m_project_node->getChildCount() > 1 &&
+                 m_project_node->getChild(1)->isGen(gen_Data))
         {
             m_DataForm = m_project_node->getChild(1);
         }

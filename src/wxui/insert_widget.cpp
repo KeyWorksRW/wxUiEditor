@@ -127,7 +127,9 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
         {
             return createToolNode(result->second);
         }
-        FAIL_MSG(tt_string() << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
+        FAIL_MSG(
+            tt_string()
+            << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
     }
 }
 

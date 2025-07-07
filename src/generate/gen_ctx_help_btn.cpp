@@ -18,8 +18,9 @@
 
 wxObject* CtxHelpButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP, DlgPoint(node, prop_pos),
-                                          DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxContextHelpButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP,
+                                          DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                          GetStyleInt(node));
 
     return widget;
 }
@@ -42,7 +43,11 @@ bool CtxHelpButtonGenerator::SettingsCode(Code& code)
     {
         if (code.hasValue(prop_position))
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").as_string(prop_position).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetBitmapPosition(")
+                .as_string(prop_position)
+                .EndFunction();
         }
 
         if (code.hasValue(prop_margins))
@@ -61,14 +66,15 @@ bool CtxHelpButtonGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool CtxHelpButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                         GenLang /* language */)
+bool CtxHelpButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/cshelp.h>", set_src, set_hdr);
     return true;
 }
 
-int CtxHelpButtonGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+int CtxHelpButtonGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */,
+                                         size_t /* xrc_flags */)
 {
     return BaseGenerator::xrc_not_supported;
 }

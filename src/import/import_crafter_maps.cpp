@@ -12,8 +12,8 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4404, gen_wxButton },         // wxBitmapButton, converted to wxButton
     { 4405, gen_wxStaticText },     // verified
     { 4406, gen_wxTextCtrl },       // verified
-    { 4407, gen_PanelForm },        // verified, but we don't support font, foreground colour, or tooltip
-    { 4408, gen_wxPanel },          // verified, but we don't support font, foreground colour, or tooltip
+    { 4407, gen_PanelForm },        // verified, no support for font, fg colour, or tooltip
+    { 4408, gen_wxPanel },          // verified, no support for font, fg colour, or tooltip
     { 4409, gen_wxStaticBitmap },   // verified
     { 4410, gen_wxComboBox },       // verified
     { 4411, gen_wxChoice },         // verified
@@ -110,7 +110,8 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4523, gen_wxActivityIndicator },  // verified
     { 4524, gen_wxTimePickerCtrl },     // verified
 
-    { 4414, gen_unknown },  // column header for wxListView, supported directly as a wxListView property
+    { 4414,
+      gen_unknown },  // column header for wxListView, supported directly as a wxListView property
     { 4468, gen_unknown },  // Theses are the buttons to enable in gen_wxStdDialogButtonSizer
     { 4476, gen_unknown },  // "pane" for gen_wxCollapsiblePane -- supported directly
 
@@ -138,8 +139,8 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
 // std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
 constexpr auto map_crafter_props = frozen::make_map<std::string_view, GenEnum::PropName>({
 
-    // strings must be lower case even though they appear mixed case in the .wxcp file -- they are converted to lower-case
-    // before pattern matching.
+    // strings must be lower case even though they appear mixed case in the .wxcp file -- they are
+    // converted to lower-case before pattern matching.
 
     { "# columns", prop_cols },
     { "# rows", prop_rows },

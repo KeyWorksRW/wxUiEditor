@@ -19,7 +19,7 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -44,7 +44,9 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
-RustCodeGenerator::RustCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUST, form_node) {}
+RustCodeGenerator::RustCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUST, form_node)
+{
+}
 
 void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
@@ -54,7 +56,8 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&RustCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_get_events(&RustCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(m_events));
     std::thread thrd_collect_img_headers(&RustCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
@@ -78,8 +81,8 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #else
     if (m_panel_type != NOT_PANEL)
     {
-        m_source->writeLine(
-            "// The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+        m_source->writeLine("// The following comment block is only displayed in a _DEBUG build, "
+                            "or when written to a file.\n\n");
     }
 #endif  // _DEBUG
     {
@@ -263,13 +266,15 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
         return;
     }
 
-    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate
+    // each function once.
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_RUST);
     auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
     {
-        return (EventHandlerDlg::GetRustValue(a->get_value()) < EventHandlerDlg::GetRustValue(b->get_value()));
+        return (EventHandlerDlg::GetRustValue(a->get_value()) <
+                EventHandlerDlg::GetRustValue(b->get_value()));
     };
 
     // Sort events by function name
@@ -330,15 +335,16 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
 
-            code.Str(
-                "// Unimplemented Event handler functions\n// Copy any listed and paste them below the comment block, or "
-                "to your inherited class.");
+            code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them "
+                     "below the comment block, or "
+                     "to your inherited class.");
             code.Eol().Str("/*").Eol();
             break;
         }
         if (is_all_events_implemented)
         {
-            // If the user has defined all the event handlers, then we don't need to output anything else.
+            // If the user has defined all the event handlers, then we don't need to output anything
+            // else.
             return;
         }
     }
@@ -347,7 +353,8 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
         // The user hasn't defined their own event handlers in this module
         is_all_events_implemented = false;
 
-        code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them below the comment block, or "
+        code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them "
+                 "below the comment block, or "
                  "to your inherited class.");
         code.Eol().Str("/*").Eol();
     }

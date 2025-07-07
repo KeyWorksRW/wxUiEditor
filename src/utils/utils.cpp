@@ -16,7 +16,7 @@
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 tt_string DoubleToStr(double val)
@@ -215,8 +215,8 @@ tt_string ConvertEscapeSlashes(tt_string_view str)
         auto ch = str[pos];
         if (ch == '\\')
         {
-            // REVIEW: [KeyWorks - 06-07-2020] Like the original wxString version, this will not save a backslash if it is at
-            // the end of a line. Is that intentional or just a bug?
+            // REVIEW: [KeyWorks - 06-07-2020] Like the original wxString version, this will not
+            // save a backslash if it is at the end of a line. Is that intentional or just a bug?
             if (pos < str.length() - 1)
             {
                 auto nextChar = str[pos + 1];
@@ -352,7 +352,8 @@ bool isValidVarName(const std::string& str, GenLang language)
 
     for (auto iter: str)
     {
-        if (!((iter >= 'a' && iter <= 'z') || (iter >= 'A' && iter <= 'Z') || (iter >= '0' && iter <= '9') || iter == '_'))
+        if (!((iter >= 'a' && iter <= 'z') || (iter >= 'A' && iter <= 'Z') ||
+              (iter >= '0' && iter <= '9') || iter == '_'))
             return false;
     }
 
@@ -633,23 +634,30 @@ GenLang ConvertToGenLang(tt_string_view language)
 {
     if (language.starts_with("C++") || language.starts_with("Folder C++"))
         return GEN_LANG_CPLUSPLUS;
-    else if (language == "Perl" || language.starts_with("wxPerl") || language.starts_with("Folder wxPerl"))
+    else if (language == "Perl" || language.starts_with("wxPerl") ||
+             language.starts_with("Folder wxPerl"))
         return GEN_LANG_PERL;
-    else if (language == "Python" || language.starts_with("wxPython") || language.starts_with("Folder wxPython"))
+    else if (language == "Python" || language.starts_with("wxPython") ||
+             language.starts_with("Folder wxPython"))
         return GEN_LANG_PYTHON;
-    else if (language == "Ruby" || language.starts_with("wxRuby") || language.starts_with("Folder wxRuby"))
+    else if (language == "Ruby" || language.starts_with("wxRuby") ||
+             language.starts_with("Folder wxRuby"))
         return GEN_LANG_RUBY;
-    else if (language == "Rust" || language.starts_with("wxRust") || language.starts_with("Folder wxRust"))
+    else if (language == "Rust" || language.starts_with("wxRust") ||
+             language.starts_with("Folder wxRust"))
         return GEN_LANG_RUST;
     else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
         return GEN_LANG_XRC;
 
 #if GENERATE_NEW_LANG_CODE
-    else if (language == "Fortran" || language.starts_with("wxFortran") || language.starts_with("Folder wxFortran"))
+    else if (language == "Fortran" || language.starts_with("wxFortran") ||
+             language.starts_with("Folder wxFortran"))
         return GEN_LANG_FORTRAN;
-    else if (language == "Haskell" || language.starts_with("wxHaskell") || language.starts_with("Folder wxHaskell"))
+    else if (language == "Haskell" || language.starts_with("wxHaskell") ||
+             language.starts_with("Folder wxHaskell"))
         return GEN_LANG_HASKELL;
-    else if (language == "Lua" || language.starts_with("wxLua") || language.starts_with("Folder wxLua"))
+    else if (language == "Lua" || language.starts_with("wxLua") ||
+             language.starts_with("Folder wxLua"))
         return GEN_LANG_LUA;
 #endif  // GENERATE_NEW_LANG_CODE
 
@@ -657,11 +665,12 @@ GenLang ConvertToGenLang(tt_string_view language)
     else
     {
 #if GENERATE_NEW_LANG_CODE
-        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_FORTRAN |
-                                    GEN_LANG_HASKELL | GEN_LANG_LUA | GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
+        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
+                                    GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA |
+                                    GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
 #else
-        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY | GEN_LANG_PERL | GEN_LANG_RUST |
-                                    GEN_LANG_XRC);
+        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
+                                    GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
 #endif  // GENERATE_NEW_LANG_CODE
     }
 }

@@ -165,7 +165,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "project_handler.h"         // ProjectHandler class
-#include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
 {
@@ -246,13 +246,14 @@ void NewFrame::createNode()
     wxGetFrame().SelectNode(parent_node);
 
     tt_string undo_str("New wxFrame");
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
+    wxGetFrame().PushUndoAction(
+        std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
 
-    // If it's a mainframe then bars were probably added, so it makes sense to switch to the Bars ribbon bar page since
-    // that's likely what the user will be doing next (adding tools or menus).
+    // If it's a mainframe then bars were probably added, so it makes sense to switch to the Bars
+    // ribbon bar page since that's likely what the user will be doing next (adding tools or menus).
     if (m_has_mainframe)
         wxGetFrame().getRibbonPanel()->ActivateBarPage();
 }

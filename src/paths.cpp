@@ -14,7 +14,7 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "undo_cmds.h"        // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {
@@ -31,13 +31,14 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 
     if (!newValue.DirExists())
     {
-        // Displaying the message box can cause a focus change event which will call validation again in the OnIdle()
-        // processing. Preserve the focus to avoid validating twice.
+        // Displaying the message box can cause a focus change event which will call validation
+        // again in the OnIdle() processing. Preserve the focus to avoid validating twice.
         auto focus = wxWindow::FindFocus();
 
-        auto result = wxMessageBox(wxString() << "The directory \"" << newValue.GetFullPath()
-                                              << "\" does not exist. Do you want to use this name anyway?",
-                                   "Directory doesn't exist", wxYES_NO | wxICON_WARNING, wxGetMainFrame());
+        auto result =
+            wxMessageBox(wxString() << "The directory \"" << newValue.GetFullPath()
+                                    << "\" does not exist. Do you want to use this name anyway?",
+                         "Directory doesn't exist", wxYES_NO | wxICON_WARNING, wxGetMainFrame());
         if (focus)
         {
             focus->SetFocus();
@@ -46,26 +47,28 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
         if (result != wxYES)
         {
             event.Veto();
-            event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
-            wxGetFrame().setStatusField("Either change the directory, or press ESC to restore the original value.");
+            event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell |
+                                               wxPGVFBFlags::StayInProperty);
+            wxGetFrame().setStatusField(
+                "Either change the directory, or press ESC to restore the original value.");
             return;
         }
     }
 
-    // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
-    // otherwise it will revert back to the original name before the Veto.
+    // If the event was previously veto'd, and the user corrected the file, then we have to set it
+    // here, otherwise it will revert back to the original name before the Veto.
 
     event.GetProperty()->SetValueFromString(newValue.GetFullPath());
 }
 
-// Unlike the AllowDirectoryChange() above, this will *not* allow a duplicate prop_base_file filename since the generated
-// code will create a linker error due to the duplicate filenames (and the risk of overwriting an already generated file for
-// a different class).
+// Unlike the AllowDirectoryChange() above, this will *not* allow a duplicate prop_base_file
+// filename since the generated code will create a linker error due to the duplicate filenames (and
+// the risk of overwriting an already generated file for a different class).
 
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
-    if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) || prop->isProp(prop_ruby_file) ||
-        prop->isProp(prop_xrc_file))
+    if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) ||
+        prop->isProp(prop_ruby_file) || prop->isProp(prop_xrc_file))
     {
         wxFileName newValue;
         newValue.Assign(event.GetPropertyValue().GetString());
@@ -91,8 +94,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The base filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->as_string(prop_class_name)
-                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                            << "\" is already in use by "
+                                            << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to "
+                                               "restore the original name.",
                                  "Duplicate base filename", wxICON_STOP);
                     if (focus)
                     {
@@ -100,8 +105,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
-                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
-                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell |
+                                                       wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField(
+                        "Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
@@ -112,8 +119,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The python filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->as_string(prop_class_name)
-                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                            << "\" is already in use by "
+                                            << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to "
+                                               "restore the original name.",
                                  "Duplicate python filename", wxICON_STOP);
                     if (focus)
                     {
@@ -121,8 +130,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
-                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
-                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell |
+                                                       wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField(
+                        "Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
@@ -133,8 +144,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The ruby filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->as_string(prop_class_name)
-                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                            << "\" is already in use by "
+                                            << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to "
+                                               "restore the original name.",
                                  "Duplicate ruby filename", wxICON_STOP);
                     if (focus)
                     {
@@ -142,8 +155,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
-                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
-                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell |
+                                                       wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField(
+                        "Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
@@ -154,8 +169,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The perl filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->as_string(prop_class_name)
-                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                            << "\" is already in use by "
+                                            << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to "
+                                               "restore the original name.",
                                  "Duplicate perl filename", wxICON_STOP);
                     if (focus)
                     {
@@ -163,8 +180,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
-                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
-                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell |
+                                                       wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField(
+                        "Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
@@ -178,8 +197,10 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     auto focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The xrc filename \"" << filename.make_wxString()
-                                            << "\" is already in use by " << child->as_string(prop_class_name)
-                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                            << "\" is already in use by "
+                                            << child->as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to "
+                                               "restore the original name.",
                                  "Duplicate xrc filename", wxICON_STOP);
 
                     if (focus)
@@ -188,15 +209,17 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
                     }
 
                     event.Veto();
-                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell | wxPGVFBFlags::StayInProperty);
-                    wxGetFrame().setStatusField("Either change the name, or press ESC to restore the original value.");
+                    event.SetValidationFailureBehavior(wxPGVFBFlags::MarkCell |
+                                                       wxPGVFBFlags::StayInProperty);
+                    wxGetFrame().setStatusField(
+                        "Either change the name, or press ESC to restore the original value.");
                     return;
                 }
             }
         }
 
-        // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
-        // otherwise it will revert back to the original name before the Veto.
+        // If the event was previously veto'd, and the user corrected the file, then we have to set
+        // it here, otherwise it will revert back to the original name before the Veto.
 
         event.GetProperty()->SetValueFromString(newValue.GetFullPath());
     }
@@ -221,9 +244,9 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     tt_string dir = newValue.GetFullPath().utf8_string();
     dir.backslashestoforward();
 
-    // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
-    // with a backslash. However, modifyProperty() will save our forward slash version, so even thought the
-    // display isn't correct, it will be stored in the project file correctly.
+    // Note that on Windows, even though we changed the property to a forward slash, it will still
+    // be displayed with a backslash. However, modifyProperty() will save our forward slash version,
+    // so even thought the display isn't correct, it will be stored in the project file correctly.
 
     event.GetProperty()->SetValueFromString(dir.make_wxString());
     tt_string value(dir);

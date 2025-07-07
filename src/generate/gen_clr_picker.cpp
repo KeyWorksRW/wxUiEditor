@@ -17,8 +17,9 @@
 
 wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxColour(prop_colour),
-                                         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                         node->as_wxColour(prop_colour), DlgPoint(node, prop_pos),
+                                         DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -43,8 +44,8 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/clrpicker.h>", set_src, set_hdr);
     return true;
@@ -55,12 +56,14 @@ bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int ColourPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxColourPickerCtrl");
 
-    item.append_child("value").text().set(node->as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    item.append_child("value").text().set(
+        node->as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
@@ -78,12 +81,14 @@ void ColourPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxColourPickerCtrlXmlHandler");
 }
 
-bool ColourPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool ColourPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                       GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
         set_imports.emplace("use Wx qw[:color];");
-        set_imports.emplace("use Wx qw(wxCLRP_DEFAULT_STYLE wxCLRP_SHOW_LABEL wxCLRP_USE_TEXTCTRL);");
+        set_imports.emplace(
+            "use Wx qw(wxCLRP_DEFAULT_STYLE wxCLRP_SHOW_LABEL wxCLRP_USE_TEXTCTRL);");
         return true;
     }
     return false;

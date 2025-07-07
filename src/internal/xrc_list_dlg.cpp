@@ -92,7 +92,8 @@ void XrcListDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     auto idx_cur_sel = 0;
     for (auto& form: forms)
     {
-        // THis list should be sychronized with the list of forms in previews.cpp (MainFrame::OnPreviewXrc)
+        // THis list should be sychronized with the list of forms in previews.cpp
+        // (MainFrame::OnPreviewXrc)
         switch (form->getGenName())
         {
             case gen_wxDialog:
@@ -103,7 +104,8 @@ void XrcListDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
             case gen_RibbonBar:
             case gen_ToolBar:
                 {
-                    auto index = m_listbox->Append(form->as_string(prop_class_name), static_cast<void*>(form));
+                    auto index = m_listbox->Append(form->as_string(prop_class_name),
+                                                   static_cast<void*>(form));
                     if (m_form == wxGetMainFrame()->getSelectedNode())
                         idx_cur_sel = index;
                 }

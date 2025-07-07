@@ -89,9 +89,9 @@ static const ClassGenPair lst_name_gen[] = {
 
         directive [text], id, dimensions, style, extended style
 
-    To use a single function to process either CONTROL directives or specific directives like CTEXT and LISTBOX, we have to
-    get the text if specified or step over it if not. Once the id has been retrieved, we need to step over the class and
-    style parameters *only* if it's a CONTROL.
+    To use a single function to process either CONTROL directives or specific directives like CTEXT
+   and LISTBOX, we have to get the text if specified or step over it if not. Once the id has been
+   retrieved, we need to step over the class and style parameters *only* if it's a CONTROL.
 
 */
 
@@ -99,8 +99,8 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
-        // Create a copy of the original line without the extra spaces that can be used to send to our log window if there
-        // are problems processing it.
+        // Create a copy of the original line without the extra spaces that can be used to send to
+        // our log window if there are problems processing it.
 
         m_original_line.clear();
         auto temp_view = line.subview();
@@ -116,7 +116,8 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         m_original_line.assign(temp_view, temp_view.find_space());
 
-        // Now copy the rest of the line after skipping over all the alignment whitespace used after the directive
+        // Now copy the rest of the line after skipping over all the alignment whitespace used after
+        // the directive
         temp_view.moveto_nextword();
         m_original_line << ' ' << temp_view;
     }
@@ -250,7 +251,8 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         if (m_node)
         {
-            if (m_node->isGen(gen_wxComboBox) || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxListBox))
+            if (m_node->isGen(gen_wxComboBox) || m_node->isGen(gen_wxTextCtrl) ||
+                m_node->isGen(gen_wxListBox))
             {
                 label_required = false;
             }
@@ -265,8 +267,8 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         else if (line.starts_with("CTEXT"))
         {
             m_node = NodeCreation.newNode(gen_wxStaticText);
-            // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
-            // either.
+            // We don't know if this will be in a horizontal or vertical sizer, so we just use
+            // wxALIGN_CENTER which works for either.
             m_node->set_value(prop_style, "wxALIGN_CENTER_HORIZONTAL");
         }
         else if (line.starts_with("DEFPUSHBUTTON"))
@@ -305,8 +307,9 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         else
         {
-            // TODO: [KeyWorks - 06-01-2021] We handle all controls that MS documented on 05/31/2018, which as of 6/01/2021
-            // is still the current documentation. So, if we get here the control is unrecognizable.
+            // TODO: [KeyWorks - 06-01-2021] We handle all controls that MS documented on
+            // 05/31/2018, which as of 6/01/2021 is still the current documentation. So, if we get
+            // here the control is unrecognizable.
 
             if (wxGetApp().isTestingMenuEnabled())
             {
@@ -358,7 +361,8 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         else
         {
             MSG_ERROR(tt_string() << "CONTROL missing class :" << m_original_line);
-            // Without a class, style and dimensions are probably wrong, so just ignore the entire control.
+            // Without a class, style and dimensions are probably wrong, so just ignore the entire
+            // control.
             m_node.reset();
             return;
         }
@@ -479,7 +483,8 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
             m_node->set_value(prop_wrap, m_pixel_rect.GetWidth());
         }
 
-        if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox))
+        if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) ||
+            m_node->isGen(gen_wxComboBox))
         {
             m_node->set_value(prop_minimum_size, tt_string() << m_du_rect.GetWidth() << ",-1d");
         }

@@ -10,7 +10,7 @@
 #include "write_code.h"
 
 #include "code.h"            // Code -- Helper class for generating code
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
 void WriteCode::writeLine(const Code& code)
 {
@@ -36,7 +36,8 @@ void WriteCode::writeLine(const Code& code)
         if (line.size())
         {
             // Don't indent #if, #else or #endif
-            if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") || line.starts_with("#endif")))
+            if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") ||
+                                    line.starts_with("#endif")))
             {
                 for (int i = 0; i < m_indent; ++i)
                 {
@@ -76,7 +77,8 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
         if (line.size())
         {
             // Don't indent #if, #else or #endif
-            if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") || line.starts_with("#endif")))
+            if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") ||
+                                    line.starts_with("#endif")))
             {
                 for (int i = 0; i < m_indent; ++i)
                 {
@@ -130,7 +132,8 @@ void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
         if (indentation != indent::none)
         {
             // Don't indent #if, #else or #endif
-            if (code[0] != '#' || !(code.starts_with("#if") || code.starts_with("#else") || code.starts_with("#endif")))
+            if (code[0] != '#' || !(code.starts_with("#if") || code.starts_with("#else") ||
+                                    code.starts_with("#endif")))
             {
                 for (int i = 0; i < m_indent; ++i)
                 {

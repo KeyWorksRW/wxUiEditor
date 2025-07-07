@@ -21,9 +21,10 @@
     #error "wxUSE_UNICODE_UTF8 must be set to 1 in setup.h."
 #elif !wxUSE_UTF8_LOCALE_ONLY
     #if defined(__WXMSW__)
-        // REVIEW: [Randalphwa - 11-14-2024] Setting wxUSE_UTF8_LOCALE_ONLY to 1 on Unix causes wxString::Format() to
-        // fail at least in wxUiEditor's copy of wxWidgets. This may already be fixed, but for now this error is
-        // disabled unless on Windows, which probably means the entire class is unusable on Unix/Mac.
+        // REVIEW: [Randalphwa - 11-14-2024] Setting wxUSE_UTF8_LOCALE_ONLY to 1 on Unix causes
+        // wxString::Format() to fail at least in wxUiEditor's copy of wxWidgets. This may already
+        // be fixed, but for now this error is disabled unless on Windows, which probably means the
+        // entire class is unusable on Unix/Mac.
         #error "wxUSE_UTF8_LOCALE_ONLY must be set to 1 in setup.h."
     #endif
 #endif
@@ -67,10 +68,19 @@ public:
     // wxWidgets.
 
     tt_wxString(const char* str) { this->assign(wxString::FromUTF8Unchecked(str)); }
-    tt_wxString(const std::string& str) { this->assign(wxString::FromUTF8Unchecked(str.data(), str.size())); }
-    tt_wxString(std::string_view str) { this->assign(wxString::FromUTF8Unchecked(str.data(), str.size())); }
+    tt_wxString(const std::string& str)
+    {
+        this->assign(wxString::FromUTF8Unchecked(str.data(), str.size()));
+    }
+    tt_wxString(std::string_view str)
+    {
+        this->assign(wxString::FromUTF8Unchecked(str.data(), str.size()));
+    }
 
-    tt_wxString(const std::filesystem::directory_entry& dir) { this->assign(dir.path().generic_wstring()); }
+    tt_wxString(const std::filesystem::directory_entry& dir)
+    {
+        this->assign(dir.path().generic_wstring());
+    }
 
     // Call utf8_string() to get the entire string. Otherwise, this will call Mid().utf8_string()
     std::string sub_cstr(size_type pos = 0, size_type count = tt::npos) const;
@@ -106,13 +116,15 @@ public:
     tt_wxString& assign_view(std::string_view str, size_t posStart = 0, size_t len = npos);
 
     // Locates the position of a substring.
-    size_t locate(std::string_view str, size_t posStart = 0, tt::CASE checkcase = tt::CASE::exact) const
+    size_t locate(std::string_view str, size_t posStart = 0,
+                  tt::CASE checkcase = tt::CASE::exact) const
     {
         return ToTTString().locate(str, posStart, checkcase);
     }
 
     // Locates the position of a substring.
-    size_t locate_wx(const wxString& str, size_t posStart = 0, tt::CASE checkcase = tt::CASE::exact) const
+    size_t locate_wx(const wxString& str, size_t posStart = 0,
+                     tt::CASE checkcase = tt::CASE::exact) const
     {
         return locate(static_cast<tt_wxString>(str), posStart, checkcase);
     }
@@ -201,7 +213,8 @@ public:
     //
     // A whitespace character is a space, tab, eol or form feed character.
     std::string sub_find_nonspace(size_t start = 0) const;
-    // tt_string sub_find_nonspace(size_t start = 0) const { return sub_cstr(find_nonspace(start)); }
+    // tt_string sub_find_nonspace(size_t start = 0) const { return sub_cstr(find_nonspace(start));
+    // }
 
     // Returns an offset to the next word -- i.e., find the first non-whitespace character
     // after the next whitespace character.
@@ -249,7 +262,8 @@ public:
     void erase_from_wx(const wxString& sub);
 
     // Replace first (or all) occurrences of substring with another one
-    size_t replace_view(std::string_view oldtext, std::string_view newtext, bool replace_all = tt::REPLACE::once);
+    size_t replace_view(std::string_view oldtext, std::string_view newtext,
+                        bool replace_all = tt::REPLACE::once);
 
     bool is_found(size_t pos) const { return (pos != npos); }
 
@@ -282,13 +296,19 @@ public:
     bool has_extension(std::string_view ext) { return subview().has_extension(ext); }
 
     // ext param should begin with a period (e.g., ".cpp")
-    bool has_extension_wx(const wxString& ext) { return subview().has_extension(static_cast<tt_wxString>(ext)); }
+    bool has_extension_wx(const wxString& ext)
+    {
+        return subview().has_extension(static_cast<tt_wxString>(ext));
+    }
 
     // Returns true if current filename contains the specified case-insensitive file name.
     bool has_filename(std::string_view name) const { return subview().has_filename(name); }
 
     // Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename_wx(const wxString& name) const { return subview().has_filename(static_cast<tt_wxString>(name)); }
+    bool has_filename_wx(const wxString& name) const
+    {
+        return subview().has_filename(static_cast<tt_wxString>(name));
+    }
 
     // Returns a view to the current extension. View is empty if there is no extension.
     //
@@ -339,10 +359,12 @@ public:
     // Changes any current path to an absolute path.
     tt_wxString& make_absolute();
 
-    // Returns the file name which can be used to access this file if the current directory is pathBase
+    // Returns the file name which can be used to access this file if the current directory is
+    // pathBase
     tt_wxString& make_relative(std::string_view pathBase);
 
-    // Returns the file name which can be used to access this file if the current directory is pathBase
+    // Returns the file name which can be used to access this file if the current directory is
+    // pathBase
     tt_wxString& make_relative_wx(const wxString& pathBase);
 
     // Returns true if the current string refers to an existing file.

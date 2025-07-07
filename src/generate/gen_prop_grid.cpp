@@ -10,7 +10,6 @@
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"    // Common XRC generating functions
 #include "node.h"             // Node class
-#include "pugixml.hpp"        // xml read/write/create/process
 #include "utils.h"            // Utility functions that work with general properties
 #include "utils_prop_grid.h"  // PropertyGrid utilities
 
@@ -18,8 +17,9 @@
 
 wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                           DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_extra_style))
     {
@@ -31,7 +31,8 @@ wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
+void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                          bool /* is_preview */)
 {
     AfterCreationAddItems(wxStaticCast(wxobject, wxPropertyGrid), node);
 }
@@ -47,8 +48,8 @@ bool PropertyGridGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
 

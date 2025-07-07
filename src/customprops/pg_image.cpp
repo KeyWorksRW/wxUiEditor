@@ -27,7 +27,7 @@ using namespace wxue_img;
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 
 #include "art_ids.cpp"  // wxART_ strings
 
@@ -38,7 +38,8 @@ using namespace wxue_img;
 
 wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Image, wxPGProperty);
 
-PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop) : wxPGProperty(label, wxPG_LABEL)
+PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop) :
+    wxPGProperty(label, wxPG_LABEL)
 {
     m_img_props.node_property = prop;
     m_value = prop->as_wxString();
@@ -81,7 +82,8 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
         }
         else
         {
-            AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_BITMAP));
+            AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop,
+                                                    CustomPointProperty::type_BITMAP));
         }
     }
     else
@@ -96,7 +98,8 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
         }
         else
         {
-            AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop, CustomPointProperty::type_BITMAP));
+            AddPrivateChild(new CustomPointProperty("Original Size (ignored)", prop,
+                                                    CustomPointProperty::type_BITMAP));
         }
     }
 
@@ -122,13 +125,16 @@ void PropertyGrid_Image::RefreshChildren()
         if (m_img_props.type == "Art")
         {
             Item(IndexImage)->SetLabel("id");
-            Item(IndexImage)->SetHelpString("Specifies the art ID and optional Client (separated by a | character).");
+            Item(IndexImage)
+                ->SetHelpString(
+                    "Specifies the art ID and optional Client (separated by a | character).");
         }
         else if (m_img_props.type == "Embed" || m_img_props.type == "SVG")
         {
             Item(IndexImage)->SetLabel("image");
             Item(IndexImage)
-                ->SetHelpString("Specifies the original image which will be embedded into a generated class source file as "
+                ->SetHelpString("Specifies the original image which will be embedded into a "
+                                "generated class source file as "
                                 "an unsigned char array.");
         }
         else if (m_img_props.type == "XPM")
@@ -152,12 +158,13 @@ void PropertyGrid_Image::RefreshChildren()
                 }
                 else  // XPM
                 {
-                    wxImage img = ProjectImages.GetPropertyBitmap(m_img_props.CombineValues(), false);
+                    wxImage img =
+                        ProjectImages.GetPropertyBitmap(m_img_props.CombineValues(), false);
                     if (img.IsOk())
                     {
-                        // SetValueImage expects a bitmap with an alpha channel, so if it doesn't have one, make one now.
-                        // Note that if this was an XPM file, then the mask will be converted to an alpha channel which
-                        // is what we want.
+                        // SetValueImage expects a bitmap with an alpha channel, so if it doesn't
+                        // have one, make one now. Note that if this was an XPM file, then the mask
+                        // will be converted to an alpha channel which is what we want.
 
                         if (!img.HasAlpha())
                             img.InitAlpha();
@@ -239,7 +246,8 @@ void PropertyGrid_Image::SetAutoComplete()
     m_isAutoCompleteSet = true;
 }
 
-wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
+wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
+                                           wxVariant& childValue) const
 {
     ImageProperties img_props;
     if (UserPrefs.is_SvgImages())
@@ -292,7 +300,8 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                     auto mstr = childValue.GetString().utf8_string();
                     tt_view_vector art_str(mstr, '|', tt::TRIM::both);
                     wxString art_id = art_str[0].make_wxString();
-                    auto bmp = wxArtProvider::GetBitmap(art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                    auto bmp = wxArtProvider::GetBitmap(
+                        art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
                     if (bmp.IsOk())
                     {
                         img_props.SetSize(bmp.GetSize());

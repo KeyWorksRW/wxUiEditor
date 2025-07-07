@@ -91,7 +91,8 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-void FindGenerators(Node* node, std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
+void FindGenerators(Node* node,
+                    std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
 {
     if (node->isGen(gen_Images) || node->isGen(gen_Data))
         return;

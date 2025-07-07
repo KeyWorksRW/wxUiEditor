@@ -226,15 +226,17 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
             shortname.remove_extension();
             project_file.remove_filename();
 
-            auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname, wxEmptyString, wxDefaultPosition,
-                                                        wxDefaultSize, wxHL_DEFAULT_STYLE);
+            auto hyperlink =
+                new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname, wxEmptyString,
+                                           wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE);
 
             wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
             font.SetSymbolicSize(wxFONTSIZE_LARGE);
             hyperlink->SetFont(font);
-            // wxRED is the default for the generic version of this control, but we want to be certain it stays that way in
-            // case wxWidgets changes. The colour change makes it easier for the user to be certain they are over the link
-            // they want in the vertical list of links.
+            // wxRED is the default for the generic version of this control, but we want to be
+            // certain it stays that way in case wxWidgets changes. The colour change makes it
+            // easier for the user to be certain they are over the link they want in the vertical
+            // list of links.
             hyperlink->SetHoverColour(*wxRED);
             hyperlink->SetURL(history.GetHistoryFile(idx));
             hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlg::OnHyperlink, this);
@@ -263,13 +265,15 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
                 tt_string shortname = project_file.filename();
                 project_file.remove_filename();
 
-                auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, shortname.make_wxString(), wxEmptyString,
-                                                            wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE);
+                auto hyperlink = new wxGenericHyperlinkCtrl(
+                    this, wxID_ANY, shortname.make_wxString(), wxEmptyString, wxDefaultPosition,
+                    wxDefaultSize, wxHL_DEFAULT_STYLE);
 
                 wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
                 font.SetSymbolicSize(wxFONTSIZE_LARGE);
                 hyperlink->SetFont(font);
-                // Reverse the colours so that it's obvious which ones are the Debug build import files.
+                // Reverse the colours so that it's obvious which ones are the Debug build import
+                // files.
                 hyperlink->SetNormalColour(*wxRED);
                 hyperlink->SetHoverColour(*wxBLUE);
                 hyperlink->SetURL(append_history_ptr->GetHistoryFile(idx));

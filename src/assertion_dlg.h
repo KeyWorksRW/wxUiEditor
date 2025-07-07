@@ -10,7 +10,8 @@
 // Note that while it is considered more "modern" there's nothing in the current code base for
 // wxUiEditor that would benefit from using std::source_location.
 
-bool AssertionDlg(const char* filename, const char* function, int line, const char* cond, const std::string& msg);
+bool AssertionDlg(const char* filename, const char* function, int line, const char* cond,
+                  const std::string& msg);
 
 // The advantage of using ASSERT over wxASSERT is that ASSERT allows the macro to execute wxTrap in
 // the caller's code, so that you don't have to step out of the assertion function to get back to

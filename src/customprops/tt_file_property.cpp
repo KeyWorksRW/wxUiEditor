@@ -15,7 +15,8 @@
 
 wxPG_IMPLEMENT_PROPERTY_CLASS(ttFileProperty, wxEditorDialogProperty, TextCtrlAndButton);
 
-ttFileProperty::ttFileProperty(NodeProperty* prop) : wxEditorDialogProperty(prop->declName().make_wxString(), wxPG_LABEL)
+ttFileProperty::ttFileProperty(NodeProperty* prop) :
+    wxEditorDialogProperty(prop->declName().make_wxString(), wxPG_LABEL)
 {
     m_prop = prop;
     SetValue(prop->value().make_wxString());
@@ -34,7 +35,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
     wxString wildcard;
     wxString title;
     auto* form = m_prop->getNode()->getForm();
-    auto* folder = form ? form->getFolder() : static_cast<Node*>(nullptr);  // this will usually be a nullptr
+    auto* folder =
+        form ? form->getFolder() : static_cast<Node*>(nullptr);  // this will usually be a nullptr
 
     switch (m_prop->get_name())
     {
@@ -124,7 +126,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             if (folder && folder->hasValue(prop_folder_fortran_output_folder))
                 root_path.AssignDir(folder->as_string(prop_folder_fortran_output_folder));
             else if (Project.getProjectNode()->hasValue(prop_fortran_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_fortran_output_folder));
+                root_path.AssignDir(
+                    Project.getProjectNode()->as_string(prop_fortran_output_folder));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Fortran filename";
@@ -135,7 +138,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             if (folder && folder->hasValue(prop_folder_haskell_output_folder))
                 root_path.AssignDir(folder->as_string(prop_folder_haskell_output_folder));
             else if (Project.getProjectNode()->hasValue(prop_haskell_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_haskell_output_folder));
+                root_path.AssignDir(
+                    Project.getProjectNode()->as_string(prop_haskell_output_folder));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Haskell filename";
@@ -181,7 +185,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             }
             else
             {
-                auto result = Project.GetOutputPath(m_prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
+                auto result =
+                    Project.GetOutputPath(m_prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
                 if (!result.second)
                     root_path.AssignDir(result.first);
                 else
@@ -219,7 +224,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         full_path.Assign(cur_path);
     }
     full_path.MakeAbsolute();
-    wxFileDialog dlg(pg->GetPanel(), title, full_path.GetPath(), full_path.GetFullName(), wildcard, wxFD_SAVE);
+    wxFileDialog dlg(pg->GetPanel(), title, full_path.GetPath(), full_path.GetFullName(), wildcard,
+                     wxFD_SAVE);
     if (dlg.ShowModal() == wxID_OK)
     {
         full_path.Assign(dlg.GetPath());
@@ -234,13 +240,15 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
     return false;
 }
 
-wxString ttFileProperty::ValueToString(wxVariant& value, wxPGPropValFormatFlags WXUNUSED(flags)) const
+wxString ttFileProperty::ValueToString(wxVariant& value,
+                                       wxPGPropValFormatFlags WXUNUSED(flags)) const
 {
     auto result = value.GetString();
     return value.GetString();
 }
 
-bool ttFileProperty::StringToValue(wxVariant& variant, const wxString& text, wxPGPropValFormatFlags WXUNUSED(flags)) const
+bool ttFileProperty::StringToValue(wxVariant& variant, const wxString& text,
+                                   wxPGPropValFormatFlags WXUNUSED(flags)) const
 {
     if (auto filename = variant.GetString(); filename != text)
     {

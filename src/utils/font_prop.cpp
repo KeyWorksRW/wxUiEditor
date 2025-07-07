@@ -12,7 +12,7 @@
 #include "font_prop.h"
 
 #include "node_prop.h"       // NodeProperty class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
 
 namespace font
 {
@@ -55,7 +55,10 @@ FontStylePairs font_style_pairs;
 FontProperty::FontProperty()
 {
     auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
-    Family(def_gui.GetFamily()).FaceName(def_gui.GetFaceName()).Style(def_gui.GetStyle()).Weight(def_gui.GetWeight());
+    Family(def_gui.GetFamily())
+        .FaceName(def_gui.GetFaceName())
+        .Style(def_gui.GetStyle())
+        .Weight(def_gui.GetWeight());
     m_pointSize = def_gui.GetFractionalPointSize();
 }
 
@@ -63,7 +66,10 @@ FontProperty::FontProperty(const wxFont& font)
 {
     if (font.IsOk())
     {
-        Family(font.GetFamily()).Style(font.GetStyle()).Weight(font.GetWeight()).Underlined(font.GetUnderlined());
+        Family(font.GetFamily())
+            .Style(font.GetStyle())
+            .Weight(font.GetWeight())
+            .Underlined(font.GetUnderlined());
         if (font.GetFaceName().size())
         {
             FaceName(font.GetFaceName());
@@ -106,7 +112,10 @@ void FontProperty::Convert(tt_string_view font, bool old_style)
     {
         m_isDefGuiFont = true;
         auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
-        Family(def_gui.GetFamily()).FaceName(def_gui.GetFaceName()).Style(def_gui.GetStyle()).Weight(def_gui.GetWeight());
+        Family(def_gui.GetFamily())
+            .FaceName(def_gui.GetFaceName())
+            .Style(def_gui.GetStyle())
+            .Weight(def_gui.GetWeight());
         m_pointSize = def_gui.GetFractionalPointSize();
 
         return;
@@ -180,15 +189,18 @@ void FontProperty::Convert(tt_string_view font, bool old_style)
     m_isDefGuiFont = false;
     FaceName(mstr[0].make_wxString());
 
-    // We have a facename, so now we need to determine if this is the new style that uses friendly names, or the old
-    // wxFB-like style which used numbers. The second value for the wxFB-style is the font style which will be 90 or higher
-    // -- too high to be a point size. So, we look at that number, and if it's less than 90, then assume it's the new style.
+    // We have a facename, so now we need to determine if this is the new style that uses friendly
+    // names, or the old wxFB-like style which used numbers. The second value for the wxFB-style is
+    // the font style which will be 90 or higher
+    // -- too high to be a point size. So, we look at that number, and if it's less than 90, then
+    // assume it's the new style.
 
     if (mstr.size() > font::idx_facename_style)
     {
         auto value = std::atof(std::string(mstr[font::idx_facename_style]).c_str());
         if (!old_style &&
-            value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too large to be a point size
+            value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too
+                                                              // large to be a point size
         {
             m_pointSize = value;
 
@@ -270,8 +282,11 @@ wxString FontProperty::as_wxString() const
         // symbol size, style, weight, underlined, strikethrough
 
         tt_string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
-        prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
-        prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
+        prop_str << ","
+                 << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << ","
+                 << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" :
+                                                          font_weight_pairs.GetName(GetWeight()));
         prop_str.Replace(",normal", ",", true);
         if (!IsUnderlined() && !IsStrikethrough())
         {
@@ -296,12 +311,14 @@ wxString FontProperty::as_wxString() const
     {
         tt_string prop_str(font_family_pairs.GetName(GetFamily()));
         {
-            // std::to_chars will return the smallest number of digits needed to represent the number. Point sizes are
-            // usually whole numbers, so most of the time this will return a numnber without a decimal point.
+            // std::to_chars will return the smallest number of digits needed to represent the
+            // number. Point sizes are usually whole numbers, so most of the time this will return a
+            // numnber without a decimal point.
 
             std::array<char, 10> float_str;
             if (auto [ptr, ec] =
-                    std::to_chars(float_str.data(), float_str.data() + float_str.size(), GetFractionalPointSize());
+                    std::to_chars(float_str.data(), float_str.data() + float_str.size(),
+                                  GetFractionalPointSize());
                 ec == std::errc())
             {
                 prop_str << ',' << std::string_view(float_str.data(), ptr - float_str.data());
@@ -312,8 +329,11 @@ wxString FontProperty::as_wxString() const
                 prop_str << ",9";
             }
         }
-        prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
-        prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
+        prop_str << ","
+                 << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << ","
+                 << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" :
+                                                          font_weight_pairs.GetName(GetWeight()));
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
@@ -336,7 +356,8 @@ wxString FontProperty::as_wxString() const
         {
             std::array<char, 10> float_str;
             if (auto [ptr, ec] =
-                    std::to_chars(float_str.data(), float_str.data() + float_str.size(), GetFractionalPointSize());
+                    std::to_chars(float_str.data(), float_str.data() + float_str.size(),
+                                  GetFractionalPointSize());
                 ec == std::errc())
             {
                 prop_str << ',' << std::string_view(float_str.data(), ptr - float_str.data());
@@ -347,9 +368,14 @@ wxString FontProperty::as_wxString() const
                 prop_str << ",9";
             }
         }
-        prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
-        prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
-        prop_str << "," << (GetFamily() == wxFONTFAMILY_DEFAULT ? "" : font_family_pairs.GetName(GetFamily()));
+        prop_str << ","
+                 << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << ","
+                 << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" :
+                                                          font_weight_pairs.GetName(GetWeight()));
+        prop_str << ","
+                 << (GetFamily() == wxFONTFAMILY_DEFAULT ? "" :
+                                                           font_family_pairs.GetName(GetFamily()));
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
@@ -390,7 +416,10 @@ wxFont FontProperty::GetFont() const
     else
     {
         wxFontInfo info(m_pointSize);
-        info.Family(GetFamily()).Style(GetStyle()).Weight(GetNumericWeight()).FaceName(GetFaceName());
+        info.Family(GetFamily())
+            .Style(GetStyle())
+            .Weight(GetNumericWeight())
+            .FaceName(GetFaceName());
         info.Underlined(IsUnderlined()).Strikethrough(IsStrikethrough());
         return wxFont(info);
     }

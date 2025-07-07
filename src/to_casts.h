@@ -1,7 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Smart Numeric Casts
 // Author:    John Morrison Leon
-// Article:   https://www.codeproject.com/Articles/5329780/Smart-Numeric-Casts-to-End-the-Agony-of-int-or-sta
+// Article:
+// https://www.codeproject.com/Articles/5329780/Smart-Numeric-Casts-to-End-the-Agony-of-int-or-sta
 /////////////////////////////////////////////////////////////////////////////
 
 // These classes are based on the work by John Leon in the article cited above.
@@ -23,7 +24,8 @@ public:
 
     inline operator int() const noexcept
     {
-        ASSERT_MSG(static_cast<const int>(v) == -1 || v <= INT_MAX, "value is too large to convert to int")
+        ASSERT_MSG(static_cast<const int>(v) == -1 || v <= INT_MAX,
+                   "value is too large to convert to int")
         return static_cast<const int>(v);
     }
 };

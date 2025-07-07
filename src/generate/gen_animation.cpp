@@ -17,7 +17,7 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "pugixml.hpp"        // xml read/write/create/process
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Utility functions that work with properties
 
 #include "gen_animation.h"
@@ -26,8 +26,9 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (tt::contains(node->as_string(prop_animation), ".ani", tt::CASE::either))
     {
-        auto widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
-                                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+        auto widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                                 wxNullAnimation, DlgPoint(node, prop_pos),
+                                                 DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
         if (auto prop = node->getPropPtr(prop_animation); prop)
             prop->as_animation(&animation);
@@ -43,7 +44,8 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     else
     {
         auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
-                                          DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+                                          DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                          GetStyleInt(node));
         auto animation = widget->CreateAnimation();
         if (auto prop = node->getPropPtr(prop_animation); prop)
             prop->as_animation(&animation);
@@ -71,7 +73,8 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             tt_view_vector parts(code.node()->as_string(prop_animation), ';');
             if (parts.size() > IndexImage)
             {
-                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+                    embed)
                 {
                     code.Str("get_animation(").Str("$").Str(embed->imgs[0].array_name) += ")";
                     found_embedded = true;
@@ -87,10 +90,16 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     else
     {
         // The generic version is required to display .ANI files on wxGTK.
-        bool use_generic_version = (code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either) ||
-                                    code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
+        bool use_generic_version =
+            (code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either) ||
+             code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
         code.AddAuto().NodeName().CreateClass(use_generic_version);
-        code.ValidParentName().Comma().as_string(prop_id).Comma().Add("wxNullAnimation").CheckLineLength();
+        code.ValidParentName()
+            .Comma()
+            .as_string(prop_id)
+            .Comma()
+            .Add("wxNullAnimation")
+            .CheckLineLength();
         code.PosSizeFlags();
     }
 
@@ -157,9 +166,13 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             bool found_embedded = false;
             if (parts.size() > IndexImage)
             {
-                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+                if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+                    embed)
                 {
-                    code.Eol().Str("stream = io.BytesIO(").Str(embed->imgs[0].array_name).Str(".GetData())");
+                    code.Eol()
+                        .Str("stream = io.BytesIO(")
+                        .Str(embed->imgs[0].array_name)
+                        .Str(".GetData())");
                     code.Eol().Str("animate.Load(stream)");
                     found_embedded = true;
                 }
@@ -197,13 +210,15 @@ bool AnimationGenerator::SettingsCode(Code& code)
 
 int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    // wxGenericAnimationCtrl is required to display .ANI files on wxGTK. Since the other platforms effecitvely use
-    // wxGenericAnimationCtrl any way (since there are no native implementations of wxAnimationCtrl) this shouldn't
-    // make any difference for them.
-    if (node->hasValue(prop_animation) && node->as_string(prop_animation).contains(".gif", tt::CASE::either))
+    // wxGenericAnimationCtrl is required to display .ANI files on wxGTK. Since the other platforms
+    // effecitvely use wxGenericAnimationCtrl any way (since there are no native implementations of
+    // wxAnimationCtrl) this shouldn't make any difference for them.
+    if (node->hasValue(prop_animation) &&
+        node->as_string(prop_animation).contains(".gif", tt::CASE::either))
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     else
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
@@ -252,11 +267,12 @@ void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
     }
 }
 
-bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                     GenLang /* language */)
+bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
-    if ((node->hasValue(prop_animation) && !node->as_string(prop_animation).contains(".gif", tt::CASE::either)) ||
+    if ((node->hasValue(prop_animation) &&
+         !node->as_string(prop_animation).contains(".gif", tt::CASE::either)) ||
         node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
         InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);

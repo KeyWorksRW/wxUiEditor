@@ -17,7 +17,7 @@
 #include "gen_enums.h"  // Enumerations for generators
 
 #include "node.h"              // Node class
-#include "tt_string_vector.h"  // tt_string_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
 namespace code
 {
@@ -98,7 +98,8 @@ public:
         }
         else
         {
-            m_break_at = 100000;  // initialize this high enough that no line will break unless SetBreakAt() is called
+            m_break_at = 100000;  // initialize this high enough that no line will break unless
+                                  // SetBreakAt() is called
         }
     }
 
@@ -124,12 +125,21 @@ public:
 
     bool hasValue(GenEnum::PropName prop_name) const;
 
-    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler will assume value is a bool if
-    // you call  isPropValue(propm, "string")
+    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler will
+    // assume value is a bool if you call  isPropValue(propm, "string")
 
-    bool isPropValue(PropName name, const char* value) const noexcept { return m_node->isPropValue(name, value); }
-    bool isPropValue(PropName name, bool value) const noexcept { return m_node->isPropValue(name, value); }
-    bool isPropValue(PropName name, int value) const noexcept { return m_node->isPropValue(name, value); }
+    bool isPropValue(PropName name, const char* value) const noexcept
+    {
+        return m_node->isPropValue(name, value);
+    }
+    bool isPropValue(PropName name, bool value) const noexcept
+    {
+        return m_node->isPropValue(name, value);
+    }
+    bool isPropValue(PropName name, int value) const noexcept
+    {
+        return m_node->isPropValue(name, value);
+    }
 
     tt_string_view view(PropName name) const { return m_node->view(name); }
 
@@ -140,7 +150,10 @@ public:
     bool IsFalse(GenEnum::PropName prop_name) const { return !m_node->as_bool(prop_name); }
 
     // Equivalent to calling (node->as_string(prop_name) == text)
-    bool IsEqualTo(GenEnum::PropName prop_name, tt_string_view text) const { return (m_node->as_string(prop_name) == text); }
+    bool IsEqualTo(GenEnum::PropName prop_name, tt_string_view text) const
+    {
+        return (m_node->as_string(prop_name) == text);
+    }
 
     // Equivalent to calling (node->as_string(prop_name) != text)
     bool IsNotEqualTo(GenEnum::PropName prop_name, tt_string_view text) const
@@ -149,10 +162,16 @@ public:
     }
 
     // Equivalent to calling (node->as_int(prop_name) == val)
-    bool IsEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) == val); }
+    bool IsEqualTo(GenEnum::PropName prop_name, int val) const
+    {
+        return (m_node->as_int(prop_name) == val);
+    }
 
     // Equivalent to calling (node->as_int(prop_name) != val)
-    bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const { return (m_node->as_int(prop_name) != val); }
+    bool IsNotEqualTo(GenEnum::PropName prop_name, int val) const
+    {
+        return (m_node->as_int(prop_name) != val);
+    }
 
     bool IsGen(GenEnum::GenName getGenName) const { return m_node->isGen(getGenName); }
 
@@ -339,7 +358,8 @@ public:
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
     // Specify override_name to override node->declName()
-    Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr, bool assign = true);
+    Code& CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr,
+                      bool assign = true);
 
     // Adds the object's class name and a open parenthesis: class(
     //
@@ -437,7 +457,8 @@ public:
     }
 
     // Will either generate wxSize(...) or FromDIP(wxSize(...))
-    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size, int enable_dpi_scaling = conditional_scaling);
+    Code& WxSize(GenEnum::PropName prop_name = GenEnum::PropName::prop_size,
+                 int enable_dpi_scaling = conditional_scaling);
 
     // Will either generate wxSize(...) or FromDIP(wxSize(...))
     Code& WxSize(wxSize size, int enable_dpi_scaling = conditional_scaling);
@@ -447,14 +468,15 @@ public:
     Code& WxPoint(wxPoint position, int enable_dpi_scaling = conditional_scaling);
 
     // Will either generate wxPoint(...) or FromDIP(wxPoint(...))
-    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos, int enable_dpi_scaling = conditional_scaling);
+    Code& Pos(GenEnum::PropName prop_name = GenEnum::PropName::prop_pos,
+              int enable_dpi_scaling = conditional_scaling);
 
     // Check for pos, size, style, window_style, and window name, and generate code if needed
     // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
     //
     // If the only style specified is def_style, then it will not be added.
-    Code& PosSizeFlags(ScalingType enable_dpi_scaling = conditional_scaling, bool uses_def_validator = false,
-                       tt_string_view def_style = tt_empty_cstr);
+    Code& PosSizeFlags(ScalingType enable_dpi_scaling = conditional_scaling,
+                       bool uses_def_validator = false, tt_string_view def_style = tt_empty_cstr);
 
     // Call this when you need to force a specific style such as "wxCHK_3STATE"
     Code& PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator = true);
@@ -464,7 +486,8 @@ public:
     // If style is a friendly name, add the prefix parameter to prefix lookups.
     Code& Style(const char* prefix = nullptr, tt_string_view force_style = tt_empty_cstr);
 
-    Code& GenFont(GenEnum::PropName prop_name = prop_font, tt_string_view font_function = "SetFont(");
+    Code& GenFont(GenEnum::PropName prop_name = prop_font,
+                  tt_string_view font_function = "SetFont(");
 
     // Generates code for prop_window_extra_style, prop_background_colour,
     // prop_foreground_colour, prop_disabled, prop_hidden, prop_maximum_size, prop_variant,
@@ -532,7 +555,8 @@ public:
     // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property contains a
     // 'n', or language is C++ and wxWidgets 3.1 is being used, or enable_dpi_scaling is set
     // to conditional_scaling and the node is a form.
-    bool is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling = code::allow_scaling) const;
+    bool is_ScalingEnabled(GenEnum::PropName prop_name,
+                           int enable_dpi_scaling = code::allow_scaling) const;
 
     // For Ruby, this will place any member variables declared as public in a attr_accessor
     // list.

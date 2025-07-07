@@ -18,8 +18,9 @@
 
 wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                          DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     if (node->as_bool(prop_auto_start))
@@ -56,8 +57,8 @@ bool ActivityIndicatorGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                             GenLang /* language */)
+bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                             std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/activityindicator.h>", set_src, set_hdr);
     return true;
@@ -65,7 +66,8 @@ bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& 
 
 int ActivityIndicatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxActivityIndicator");

@@ -17,7 +17,8 @@ class EventStringDialogAdapter : public wxPGEditorDialogAdapter
 public:
     EventStringDialogAdapter(NodeEvent* event) : wxPGEditorDialogAdapter(), m_event(event) {}
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                      wxPGProperty* WXUNUSED(property)) override;
 
 private:
     NodeEvent* m_event;
@@ -32,7 +33,10 @@ public:
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new EventStringDialogAdapter(m_event); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override
+    {
+        return new EventStringDialogAdapter(m_event);
+    }
 
 private:
     NodeEvent* m_event;

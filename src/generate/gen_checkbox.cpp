@@ -21,8 +21,9 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
         style_value |= wxALIGN_RIGHT;
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value | GetStyleInt(node));
+    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                 node->as_wxString(prop_label), DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), style_value | GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
         widget->SetValue(true);
@@ -66,8 +67,8 @@ bool CheckBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -77,7 +78,8 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int CheckBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCheckBox");
@@ -101,14 +103,16 @@ void CheckBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxCheckBoxXmlHandler");
 }
 
-//////////////////////////////////////////  Check3StateGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  Check3StateGenerator
+/////////////////////////////////////////////
 
 wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = wxCHK_3STATE | GetStyleInt(node);
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
-                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value);
+    auto widget =
+        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
+                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value);
 
     auto& state = node->as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")
@@ -182,8 +186,8 @@ bool Check3StateGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
     // 3-state checkboxes don't support validators
@@ -192,7 +196,8 @@ bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCheckBox");
@@ -231,7 +236,8 @@ void Check3StateGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxCheckBoxXmlHandler");
 }
 
-bool Check3StateGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool Check3StateGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                      GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

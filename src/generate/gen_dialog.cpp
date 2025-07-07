@@ -22,14 +22,14 @@
 // This is only used for Mockup Preview and XrcCompare -- it is not used by the Mockup panel
 wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                              GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                              DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->hasValue(prop_extra_style))
     {
         int ex_style = 0;
-        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a std::string to pass to
-        // it
+        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
+        // std::string to pass to it
         tt_string_vector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
@@ -57,14 +57,16 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         code.Str("bool ").as_string(prop_class_name);
-        code +=
-            "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
-            "long style, const wxString &name)";
+        code += "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
+                "wxPoint& pos, const wxSize& size, "
+                "long style, const wxString &name)";
         code.OpenBrace();
 
         if (code.hasValue(prop_extra_style))
         {
-            code.Eol(eol_if_needed).FormFunction("SetExtraStyle(GetExtraStyle() | ").Add(prop_extra_style);
+            code.Eol(eol_if_needed)
+                .FormFunction("SetExtraStyle(GetExtraStyle() | ")
+                .Add(prop_extra_style);
             code.EndFunction();
         }
 
@@ -101,8 +103,9 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Comma().Str("size=").WxSize(prop_size).Comma();
         code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
-        size_t name_len =
-            code.hasValue(prop_window_name) ? code.node()->as_string(prop_window_name).size() : sizeof("wx.DialogNameStr");
+        size_t name_len = code.hasValue(prop_window_name) ?
+                              code.node()->as_string(prop_window_name).size() :
+                              sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.hasValue(prop_window_name))
@@ -131,12 +134,22 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         }
         code.Comma().Str("title = ").QuotedString(prop_title);
         // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
-        code.Comma().CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE")).Str("size = ").WxSize(prop_size);
-        code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE")).Str("style = ").Style();
+        code.Comma()
+            .CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION"))
+            .Str("pos = ")
+            .Pos(prop_pos);
+        code.Comma()
+            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
+            .Str("size = ")
+            .WxSize(prop_size);
+        code.Comma()
+            .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
+            .Str("style = ")
+            .Style();
         if (code.hasValue(prop_window_name))
         {
-            code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() + 2);
+            code.Comma().CheckLineLength(sizeof("name = ") +
+                                         code.as_string(prop_window_name).size() + 2);
             code.Str("name = ").QuotedString(prop_window_name);
         }
 
@@ -167,7 +180,8 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
             code += "\"frame\"";
         code.Str(" unless defined $name;");
 
-        code.Eol().Str("my $self = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
+        code.Eol().Str(
+            "my $self = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
     }
     else if (code.is_rust())
     {
@@ -270,10 +284,11 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
     bool is_scaling_enabled =
-        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size) ? true : false;
+        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size) ? true :
+                                                                                              false;
 
-    if (min_size == wxDefaultSize && max_size == wxDefaultSize && form->as_wxSize(prop_size) == wxDefaultSize &&
-        !is_scaling_enabled)
+    if (min_size == wxDefaultSize && max_size == wxDefaultSize &&
+        form->as_wxSize(prop_size) == wxDefaultSize && !is_scaling_enabled)
     {
         // If is_scaling_enabled == false, then neither pos or size have high dpi scaling enabled
         code.Eol(eol_if_needed).FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
@@ -282,19 +297,25 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     {
         if (min_size != wxDefaultSize)
         {
-            code.Eol(eol_if_needed).FormFunction("SetMinSize(").WxSize(prop_minimum_size, code::force_scaling).EndFunction();
+            code.Eol(eol_if_needed)
+                .FormFunction("SetMinSize(")
+                .WxSize(prop_minimum_size, code::force_scaling)
+                .EndFunction();
         }
         if (max_size != wxDefaultSize)
         {
-            code.Eol(eol_if_needed).FormFunction("SetMaxSize(").WxSize(prop_maximum_size, code::force_scaling).EndFunction();
+            code.Eol(eol_if_needed)
+                .FormFunction("SetMaxSize(")
+                .WxSize(prop_maximum_size, code::force_scaling)
+                .EndFunction();
         }
 
         if (code.is_cpp())
         {
-            // For C++ the dialog's Create() method is what gets exposed which allows the dev to specify
-            // default values for either pos or size when the class in instantiated. If the dev uses
-            // 2-step initialization, then the code that creates the dialog may have overridden either
-            // pos or size. It they did, then we need to scale those values here.
+            // For C++ the dialog's Create() method is what gets exposed which allows the dev to
+            // specify default values for either pos or size when the class in instantiated. If the
+            // dev uses 2-step initialization, then the code that creates the dialog may have
+            // overridden either pos or size. It they did, then we need to scale those values here.
 
             code.Eol(eol_if_needed)
                 .BeginConditional()
@@ -303,11 +324,19 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
                 .EndConditional()
                 .OpenBrace(true);
             code.AddComment("Now that the dialog is created, set the scaled position");
-            code.FormFunction("SetPosition(").FormFunction("FromDIP(pos)").EndFunction().CloseBrace(true);
+            code.FormFunction("SetPosition(")
+                .FormFunction("FromDIP(pos)")
+                .EndFunction()
+                .CloseBrace(true);
 
             // The default will be size == wxDefaultSize, in which case all we need to do is call
             // SetSizerAndFit(child_node)
-            code.Eol().BeginConditional().Str("size == ").Add("wxDefaultSize").EndConditional().OpenBrace(true);
+            code.Eol()
+                .BeginConditional()
+                .Str("size == ")
+                .Add("wxDefaultSize")
+                .EndConditional()
+                .OpenBrace(true);
             code.AddComment("If default size let the sizer set the dialog's size");
             code.AddComment("so that it is large enough to fit it's child controls.");
             code.Eol(eol_if_needed)
@@ -316,8 +345,9 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
                 .EndFunction()
                 .CloseBrace(true, false);
 
-            // If size != wxDefaultSize, it's more complicated because either the width or the height might still
-            // be set to wxDefaultCoord. In that case, we need to call Fit() to calculate the missing dimension
+            // If size != wxDefaultSize, it's more complicated because either the width or the
+            // height might still be set to wxDefaultCoord. In that case, we need to call Fit() to
+            // calculate the missing dimension
 
             code.Eol().Str("else").AddIfPython(":").OpenBrace(true);
             code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
@@ -335,9 +365,12 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         }
         else
         {
-            // For Perl, Python, and Ruby, any scaling is handled by the code that instantiates the dialog,
-            // so all we need is SetSizerAndFit().
-            code.Eol(eol_if_needed).FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
+            // For Perl, Python, and Ruby, any scaling is handled by the code that instantiates the
+            // dialog, so all we need is SetSizerAndFit().
+            code.Eol(eol_if_needed)
+                .FormFunction("SetSizerAndFit(")
+                .NodeName(child_node)
+                .EndFunction();
         }
     }
 
@@ -418,7 +451,11 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     else
         code.Str("wxDialogNameStr");
 
-    code.Str(")").Eol().OpenBrace().Str("Create(parent, id, title, pos, size, style, name);").CloseBrace();
+    code.Str(")")
+        .Eol()
+        .OpenBrace()
+        .Str("Create(parent, id, title, pos, size, style, name);")
+        .CloseBrace();
 
     code.Eol().Str("bool Create(wxWindow *parent");
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
@@ -469,8 +506,8 @@ bool DialogFormGenerator::BaseClassNameCode(Code& code)
     return true;
 }
 
-bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
     return true;
@@ -491,7 +528,8 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->hasValue(prop_style))
     {
-        if ((xrc_flags & xrc::add_comments) && node->as_string(prop_style).contains("wxWANTS_CHARS"))
+        if ((xrc_flags & xrc::add_comments) &&
+            node->as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
@@ -515,18 +553,22 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->hasValue(prop_center))
     {
-        if (node->as_string(prop_center).is_sameas("wxVERTICAL") || node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        if (node->as_string(prop_center).is_sameas("wxVERTICAL") ||
+            node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((tt_string(node->as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((tt_string(node->as_string(prop_center))
+                                << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
         else
         {
-            item.append_child("centered").text().set(node->as_string(prop_center).is_sameas("no") ? 0 : 1);
+            item.append_child("centered")
+                .text()
+                .set(node->as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
 
@@ -551,7 +593,8 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
-            item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
+            item.append_child(pugi::node_comment)
+                .set_value(" persist is not supported in the XRC file. ");
 
         GenXrcComments(node, item);
     }
@@ -569,7 +612,8 @@ void DialogFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& ha
     }
 }
 
-bool DialogFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+bool DialogFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
+                                     GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
@@ -577,7 +621,8 @@ bool DialogFormGenerator::GetImports(Node* node, std::set<std::string>& set_impo
         set_imports.emplace("use Wx qw[:dialog];");
         set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
 
-        if (node->as_string(prop_style).contains("wxMAXIMIZE_BOX") || node->as_string(prop_style).contains("wxCLOSE_BOX") ||
+        if (node->as_string(prop_style).contains("wxMAXIMIZE_BOX") ||
+            node->as_string(prop_style).contains("wxCLOSE_BOX") ||
             node->as_string(prop_style).contains("wxMINIMIZE_BOX"))
         {
             set_imports.emplace("use Wx qw[:frame];");

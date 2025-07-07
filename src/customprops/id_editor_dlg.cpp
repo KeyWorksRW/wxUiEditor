@@ -203,8 +203,6 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <array>
-
 #include <wx/stockitem.h>  // stock items helpers
 
 #include "id_lists.h"
@@ -412,7 +410,8 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
             if (!m_prefix_selected)
             {
                 tt_string_vector prefixes;
-                prefixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"', tt::TRIM::both);
+                prefixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"',
+                                   tt::TRIM::both);
                 for (auto& iter: prefixes)
                 {
                     if (id.starts_with(iter))
@@ -426,7 +425,8 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
             if (!m_suffix_selected)
             {
                 tt_string_vector suffixes;
-                suffixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"', tt::TRIM::both);
+                suffixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"',
+                                   tt::TRIM::both);
                 for (auto& iter: suffixes)
                 {
                     if (id.ends_with(iter))

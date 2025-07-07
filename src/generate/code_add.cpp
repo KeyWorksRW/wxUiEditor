@@ -11,7 +11,7 @@
 #include "code.h"
 
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 
 // clang-format off
@@ -84,8 +84,8 @@ Code& Code::Add(tt_string_view text)
         {
             if (text.size())
             {
-                // Ruby doesn't like breaking the parenthesis for a function call onto the next line,
-                // or the .new function
+                // Ruby doesn't like breaking the parenthesis for a function call onto the next
+                // line, or the .new function
                 if (text.front() == '.' || text.front() == '(')
                 {
                     old_linebreak = m_auto_break;
@@ -146,7 +146,8 @@ Code& Code::Add(tt_string_view text)
                         continue;
                     }
 #endif
-                    if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
+                    if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+                        language_prefix.size())
                     {
                         // Some languages will have a module added after their standard prefix.
                         CheckLineLength(language_prefix.size() + iter.size() - 2);
@@ -184,7 +185,8 @@ Code& Code::Add(tt_string_view text)
                     return *this;
                 }
 
-                if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
+                if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+                    language_prefix.size())
                 {
                     CheckLineLength(language_prefix.size() + text.size() - 2);
                     *this << language_prefix << text.substr(2);
@@ -195,7 +197,8 @@ Code& Code::Add(tt_string_view text)
                     *this << m_language_wxPrefix << text.substr(2);
                 }
             }
-            else if (std::string_view language_prefix = GetLanguagePrefix(text, m_language); language_prefix.size())
+            else if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+                     language_prefix.size())
             {
                 CheckLineLength(language_prefix.size() + text.size() - 2);
                 *this << language_prefix << text.substr(2);

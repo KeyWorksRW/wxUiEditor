@@ -103,7 +103,8 @@ void GenInhertedClass(GenResults& results)
             retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
             if (retval == result::fail)
             {
-                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                results.msgs.emplace_back()
+                    << "Cannot create or write to the file " << path << '\n';
             }
             else if (retval == result::exists)
             {
@@ -165,7 +166,8 @@ void GenInhertedClass(GenResults& results)
     }
 }
 
-void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root, GenLang language)
+void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root,
+                      GenLang language)
 {
     tt_cwd cwd(true);
     Project.ChangeDir();
@@ -222,16 +224,18 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
     {
         for (const auto& form: forms)
         {
-            // The Images class doesn't have a prop_class_name, so use "Images". Note that this will fail if there is a
-            // real form where the user set the class name to "Images". If this wasn't an Internal function, then we
-            // would need to store nodes rather than class names.
+            // The Images class doesn't have a prop_class_name, so use "Images". Note that this will
+            // fail if there is a real form where the user set the class name to "Images". If this
+            // wasn't an Internal function, then we would need to store nodes rather than class
+            // names.
 
             tt_string class_name(form->as_string(prop_class_name));
             if (form->isGen(gen_Project))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
-                tt_string path = Project.getProjectPath() + Project.getProjectNode()->as_string(prop_cmake_file);
+                tt_string path =
+                    Project.getProjectPath() + Project.getProjectNode()->as_string(prop_cmake_file);
                 path.make_absolute();
                 tt_string tmp_path(path);
                 if (auto pos_file = path.find_filename(); tt::is_found(pos_file))
@@ -244,7 +248,8 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     tmp_path.insert(0, "~wxue_");
                 }
 
-                // We need to tweak the call to WriteCMakeFile() to get it to write to our temporary .cmake file.
+                // We need to tweak the call to WriteCMakeFile() to get it to write to our temporary
+                // .cmake file.
                 GenResults tmp_results;
                 tmp_results.updated_files.emplace_back(tmp_path);
                 WriteCMakeFile(Project.getProjectNode(), tmp_results, 2);

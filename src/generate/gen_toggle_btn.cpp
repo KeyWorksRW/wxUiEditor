@@ -18,8 +18,9 @@
 
 wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                           DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_bool(prop_markup))
         widget->SetLabelMarkup(node->as_wxString(prop_label));
@@ -56,9 +57,9 @@ wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    // We do not support changing the "markup" property because while the control displays correctly when markup is set,
-    // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
-    // version of the button is displayed).
+    // We do not support changing the "markup" property because while the control displays correctly
+    // when markup is set, it does not revert when markup is cleared (at least on Windows where
+    // markup controls whether a generic or native version of the button is displayed).
 
     if (prop->isProp(prop_label))
     {
@@ -72,8 +73,8 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     }
     else if (prop->isProp(prop_markup))
     {
-        // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
-        // off and go back to native rendering.
+        // Turning markup on switches to generic rending of the button. However, you have to
+        // recreate it to switch it off and go back to native rendering.
 
         if (node->as_bool(prop_markup))
         {
@@ -119,14 +120,22 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_markup) && code.hasValue(prop_label))
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetLabelMarkup(").QuotedString(prop_label).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetLabelMarkup(")
+            .QuotedString(prop_label)
+            .EndFunction();
     }
 
     if (code.hasValue(prop_bitmap))
     {
         if (code.hasValue(prop_position))
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").as_string(prop_position).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetBitmapPosition(")
+                .as_string(prop_position)
+                .EndFunction();
         }
 
         if (code.hasValue(prop_margins))
@@ -145,8 +154,8 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                        GenLang /* language */)
+bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
@@ -156,10 +165,12 @@ bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int ToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    GenXrcObjectAttributes(node, item, node->hasValue(prop_label) ? "wxToggleButton" : "wxBitmapToggleButton");
+    GenXrcObjectAttributes(node, item,
+                           node->hasValue(prop_label) ? "wxToggleButton" : "wxBitmapToggleButton");
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_BOOL(prop_pressed, "checked")
@@ -181,12 +192,14 @@ void ToggleButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxToggleButtonXmlHandler");
 }
 
-//////////////////////////////////////////  BitmapToggleButtonGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  BitmapToggleButtonGenerator
+/////////////////////////////////////////////
 
 wxObject* BitmapToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxBitmapToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullBitmap, DlgPoint(node, prop_pos),
-                                           DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxBitmapToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullBitmap,
+                                           DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                           GetStyleInt(node));
 
     widget->SetValue((node->as_bool(prop_pressed)));
 
@@ -216,7 +229,8 @@ wxObject* BitmapToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent
     return widget;
 }
 
-bool BitmapToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
+bool BitmapToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* /* node */,
+                                                   NodeProperty* prop)
 {
     if (prop->isProp(prop_pressed))
     {
@@ -250,7 +264,11 @@ bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
     {
         if (code.hasValue(prop_position))
         {
-            code.Eol(eol_if_needed).NodeName().Function("SetBitmapPosition(").as_string(prop_position).EndFunction();
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetBitmapPosition(")
+                .as_string(prop_position)
+                .EndFunction();
         }
 
         if (code.hasValue(prop_margins))
@@ -269,7 +287,8 @@ bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool BitmapToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+bool BitmapToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                              std::set<std::string>& set_hdr,
                                               GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
@@ -280,7 +299,8 @@ bool BitmapToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>&
 
 int BitmapToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBitmapToggleButton");
@@ -299,7 +319,8 @@ int BitmapToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object
     return result;
 }
 
-void BitmapToggleButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+void BitmapToggleButtonGenerator::RequiredHandlers(Node* /* node */,
+                                                   std::set<std::string>& handlers)
 {
     // This handler also handles wxBitmapToggleButton
     handlers.emplace("wxToggleButtonXmlHandler");

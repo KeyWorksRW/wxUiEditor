@@ -5,9 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// Note that for most forms, this is the top level wxPanel and we create the contents of the form as if we were the form. The
-// notable exception is a MockupWizard -- in this case we create a MockupWizard child which itself is a wxPanel that
-// substitutes for the wxWizard form.
+// Note that for most forms, this is the top level wxPanel and we create the contents of the form as
+// if we were the form. The notable exception is a MockupWizard -- in this case we create a
+// MockupWizard child which itself is a wxPanel that substitutes for the wxWizard form.
 
 #include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/bookctrl.h>          // wxBookCtrlBase: common base class for wxList/Tree/Notebook
@@ -55,7 +55,7 @@ void MockupContent::RemoveNodes()
 // This is called by MockupParent in order to create all child components
 void MockupContent::CreateAllGenerators()
 {
-    wxWindowUpdateLocker(this);
+    wxWindowUpdateLocker lock(this);
 
     m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -79,7 +79,8 @@ void MockupContent::CreateAllGenerators()
     }
     else if (form->isGen(gen_Images))
     {
-        ASSERT_MSG(form->getGenerator(), tt_string() << "Missing component for " << form->declName());
+        ASSERT_MSG(form->getGenerator(), tt_string()
+                                             << "Missing component for " << form->declName());
         auto generator = form->getGenerator();
         if (!generator)
             return;
@@ -89,7 +90,8 @@ void MockupContent::CreateAllGenerators()
     }
     else if (form->isGen(gen_Data))
     {
-        ASSERT_MSG(form->getGenerator(), tt_string() << "Missing component for " << form->declName());
+        ASSERT_MSG(form->getGenerator(), tt_string()
+                                             << "Missing component for " << form->declName());
         auto generator = form->getGenerator();
         if (!generator)
             return;
@@ -120,15 +122,17 @@ void MockupContent::CreateAllGenerators()
         }
 
         if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||
-            form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) || form->isGen(gen_wxPropertySheetDialog))
+            form->isGen(gen_AuiToolBar) || form->isGen(gen_PopupMenu) ||
+            form->isGen(gen_wxPropertySheetDialog))
         {
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);
         }
         else if (form->isType(type_frame_form))
         {
-            // In a frame window, a menu, toolbar and statusbar can appear anywhere, but they need to be created in our
-            // Mockup window in a specific order to match what the real window will look like.
+            // In a frame window, a menu, toolbar and statusbar can appear anywhere, but they need
+            // to be created in our Mockup window in a specific order to match what the real window
+            // will look like.
 
             size_t pos_menu { tt::npos };
             size_t pos_toolbar { tt::npos };
@@ -177,7 +181,8 @@ void MockupContent::CreateAllGenerators()
     }
 }
 
-void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxBoxSizer* parent_sizer)
+void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object,
+                                   wxBoxSizer* parent_sizer)
 {
     ASSERT_MSG(node->getGenerator(), tt_string() << "Missing component for " << node->declName());
     auto generator = node->getGenerator();
@@ -195,14 +200,16 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 wxStaticCast(parent_object, wxGridBagSizer)
                     ->Add(node->as_int(prop_width), node->as_int(prop_height),
                           wxGBPosition(node->as_int(prop_row), node->as_int(prop_column)),
-                          wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)), flags.GetFlags(),
+                          wxGBSpan(node->as_int(prop_rowspan), node->as_int(prop_colspan)),
+                          flags.GetFlags(),
                           parent->FromDIP(wxSize(node->as_int(prop_border_size), -1)).x);
             }
             else
             {
                 if (node->as_int(prop_proportion) != 0)
                 {
-                    wxStaticCast(parent_object, wxSizer)->AddStretchSpacer(node->as_int(prop_proportion));
+                    wxStaticCast(parent_object, wxSizer)
+                        ->AddStretchSpacer(node->as_int(prop_proportion));
                 }
                 else
                 {
@@ -238,7 +245,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         // We don't create any children because the only thing visible is the mock menu
         return;
     }
-    else if (node->isSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
+    else if (node->isSizer() || node->isGen(gen_wxStdDialogButtonSizer) ||
+             node->isGen(gen_TextSizer))
     {
         if (node->isStaticBoxSizer())
         {
@@ -326,8 +334,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             auto child_obj = getNode(created_object);
             auto sizer_flags = child_obj->getSizerFlags();
             int border_size = child_obj->as_int(prop_border_size);
-            if (child_obj->as_bool(prop_scale_border_size) && border_size != 0 && border_size != 5 && border_size != 10 &&
-                border_size != 15)
+            if (child_obj->as_bool(prop_scale_border_size) && border_size != 0 &&
+                border_size != 5 && border_size != 10 && border_size != 15)
             {
                 border_size = FromDIP(wxSize(border_size, -1)).x;
             }
@@ -338,7 +346,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 wxGBSpan span(child_obj->as_int(prop_rowspan), child_obj->as_int(prop_colspan));
 
                 if (created_window)
-                    sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
+                    sizer->Add(created_window, position, span, sizer_flags.GetFlags(),
+                               sizer_flags.GetBorderInPixels());
                 else
                     sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(), border_size);
             }
@@ -347,11 +356,13 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 auto sizer = wxStaticCast(parent_object, wxSizer);
                 if (created_window && !child_obj->isStaticBoxSizer())
                 {
-                    sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(), border_size);
+                    sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
+                               border_size);
                 }
                 else
                 {
-                    sizer->Add(created_sizer, sizer_flags.GetProportion(), sizer_flags.GetFlags(), border_size);
+                    sizer->Add(created_sizer, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
+                               border_size);
                 }
             }
         }
@@ -366,7 +377,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
     }
 
-    else if ((created_sizer && wxDynamicCast(parent_object, wxWindow)) || (!parent_object && created_sizer))
+    else if ((created_sizer && wxDynamicCast(parent_object, wxWindow)) ||
+             (!parent_object && created_sizer))
     {
         parent->SetSizer(created_sizer);
         parent->Fit();
@@ -541,7 +553,8 @@ void MockupContent::OnNodeSelected(Node* node)
                     auto this_book = m_node_obj_pair[node];
                     if (this_book)
                     {
-                        if (auto index = tree_book->FindPage(wxStaticCast(this_book, wxWindow)); index >= 0)
+                        if (auto index = tree_book->FindPage(wxStaticCast(this_book, wxWindow));
+                            index >= 0)
                         {
                             tree_book->SetSelection(index);
                             m_mockupParent->ClearIgnoreSelection();
@@ -559,7 +572,8 @@ void MockupContent::OnNodeSelected(Node* node)
             {
                 if (child->getGenType() == type_page && !child->getChildCount())
                 {
-                    // When a PageCtrl is first created, it won't have any children and cannot be selected
+                    // When a PageCtrl is first created, it won't have any children and cannot be
+                    // selected
                     m_mockupParent->ClearIgnoreSelection();
                     return;
                 }
@@ -589,9 +603,9 @@ void MockupContent::OnNodeSelected(Node* node)
                 continue;
             else if (child->getGenType() == type_page && !child->getChildCount())
             {
-                // PageCtrl is an abstract class -- until it has a child, the parent book cannot select it as a
-                // page. If this is the last page, then we must back up the selection index and break out of the
-                // loop.
+                // PageCtrl is an abstract class -- until it has a child, the parent book cannot
+                // select it as a page. If this is the last page, then we must back up the selection
+                // index and break out of the loop.
                 if (idx_child + 1 >= parent->getChildCount())
                 {
                     if (sel_pos > 0)
@@ -704,8 +718,9 @@ void MockupContent::SelectNode(wxObject* wxobject)
 
 void MockupContent::ResetWindowVariant()
 {
-    // Essentially this is the opposite of wxWindowBase::DoSetWindowVariant found in wxWidgets/src/common/wincmn.cpp -- this
-    // just multiplies rather than divides if smaller, or divides rather than multiplies if larger.
+    // Essentially this is the opposite of wxWindowBase::DoSetWindowVariant found in
+    // wxWidgets/src/common/wincmn.cpp -- this just multiplies rather than divides if smaller, or
+    // divides rather than multiplies if larger.
 
     if (m_variant == wxWINDOW_VARIANT_NORMAL)
         return;

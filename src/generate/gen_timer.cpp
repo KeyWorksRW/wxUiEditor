@@ -14,8 +14,8 @@
 
 #include "gen_timer.h"
 
-bool TimerGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr,
-                                 GenLang /* language */)
+bool TimerGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */,
+                                 std::set<std::string>& set_hdr, GenLang /* language */)
 {
     set_hdr.insert("#include <wx/timer.h>");
     return true;
@@ -28,8 +28,9 @@ int TimerGenerator::GetRequiredVersion(Node* /* node */)
 
 bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
 {
-    if (!form->isType(type_frame_form) && !form->isGen(gen_wxDialog) && !form->isGen(gen_PanelForm) &&
-        !form->isGen(gen_wxMdiWindow) && !form->isGen(gen_wxAuiMDIChildFrame) && !form->isGen(gen_wxPopupTransientWindow))
+    if (!form->isType(type_frame_form) && !form->isGen(gen_wxDialog) &&
+        !form->isGen(gen_PanelForm) && !form->isGen(gen_wxMdiWindow) &&
+        !form->isGen(gen_wxAuiMDIChildFrame) && !form->isGen(gen_wxPopupTransientWindow))
         return false;
 
     for (auto& iter: form->getChildNodePtrs())
@@ -66,6 +67,7 @@ void TimerGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& c
 {
     BaseGenerator::GenEvent(code, event, class_name);
 
-    // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
+    // Since this is the base class, we don't want to use the pointer that GenEventCode() would
+    // normally create
     code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }

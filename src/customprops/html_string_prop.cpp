@@ -48,7 +48,8 @@ void EditHtmlDialog::OnTextChange(wxStyledTextEvent& WXUNUSED(event))
     m_htmlWin->SetPage(content);
 }
 
-bool EditHtmlDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool EditHtmlDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                         wxPGProperty* WXUNUSED(property))
 {
     EditHtmlDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

@@ -36,8 +36,9 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
         wildcard = wxFileSelectorDefaultWildcardStr;
     }
 
-    auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), msg,
-                                       wildcard, DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget = new wxFilePickerCtrl(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), msg,
+        wildcard, DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -65,7 +66,8 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support wxFileSelectorPromptStr
+        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
+        // wxFileSelectorPromptStr
         if (code.is_perl())
             code.QuotedString(tt_string_view("Select a file"));
         else
@@ -79,7 +81,8 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support wxFileSelectorDefaultWildcardStr
+        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
+        // wxFileSelectorDefaultWildcardStr
         if (code.is_perl())
             code.Str("wxFileSelectorDefaultWildcardStr->new()");
         else
@@ -106,8 +109,8 @@ bool FilePickerGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                      GenLang /* language */)
+bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/filepicker.h>", set_src, set_hdr);
     return true;
@@ -117,8 +120,8 @@ std::optional<tt_string> FilePickerGenerator::GetPropertyDescription(NodePropert
 {
     if (prop->isProp(prop_message))
     {
-        return (
-            tt_string() << "Title bar text for the file picker dialog. If not specified, \"Select a file\" will be used.");
+        return (tt_string() << "Title bar text for the file picker dialog. If not specified, "
+                               "\"Select a file\" will be used.");
     }
     else
     {
@@ -131,7 +134,8 @@ std::optional<tt_string> FilePickerGenerator::GetPropertyDescription(NodePropert
 
 int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFilePickerCtrl");
@@ -156,13 +160,15 @@ void FilePickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxFilePickerCtrlXmlHandler");
 }
 
-bool FilePickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool FilePickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                     GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
-        set_imports.emplace("use Wx qw(wxFLP_DEFAULT_STYLE wxFLP_USE_TEXTCTRL wxFLP_OPEN wxFLP_SAVE\n"
-                            "          wxFLP_OVERWRITE_PROMPT wxFLP_FILE_MUST_EXIST wxFLP_CHANGE_DIR\n"
-                            "          wxFLP_SMALL);");
+        set_imports.emplace(
+            "use Wx qw(wxFLP_DEFAULT_STYLE wxFLP_USE_TEXTCTRL wxFLP_OPEN wxFLP_SAVE\n"
+            "          wxFLP_OVERWRITE_PROMPT wxFLP_FILE_MUST_EXIST wxFLP_CHANGE_DIR\n"
+            "          wxFLP_SMALL);");
 
         return true;
     }

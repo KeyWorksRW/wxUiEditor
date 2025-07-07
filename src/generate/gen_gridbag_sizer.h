@@ -17,7 +17,8 @@ class GridBagSizerGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
+                       bool /* is_preview */) override;
 
     bool ConstructionCode(Code&) override;
     bool AfterChildrenCode(Code&) override;
@@ -29,5 +30,6 @@ public:
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
 protected:
-    wxGBSizerItem* GetGBSizerItem(Node* sizeritem, const wxGBPosition& position, const wxGBSpan& span, wxObject* child);
+    wxGBSizerItem* GetGBSizerItem(Node* sizeritem, const wxGBPosition& position,
+                                  const wxGBSpan& span, wxObject* child);
 };

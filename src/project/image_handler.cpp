@@ -24,9 +24,9 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler -- Project class
 #include "pugixml.hpp"        // xml parser
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
-#include "ui_images.h"
-#include "utils.h"  // Miscellaneous utility functions
+#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
+#include "ui_images.h"        // Contains various images handling functions
+#include "utils.h"            // Miscellaneous utility functions
 
 // clang-format off
 
@@ -133,8 +133,8 @@ bool ImageHandler::CheckNode(Node* node)
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
         {
             tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
-            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage || parts[IndexImage].filename().empty() ||
-                parts[IndexImage] == art_directory)
+            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage ||
+                parts[IndexImage].filename().empty() || parts[IndexImage] == art_directory)
             {
                 continue;
             }
@@ -181,8 +181,8 @@ bool ImageHandler::CheckNode(Node* node)
 
 wxImage ImageHandler::GetImage(const tt_string& description)
 {
-    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
-        description.starts_with("Art;"))
+    if (description.starts_with("Embed;") || description.starts_with("XPM;") ||
+        description.starts_with("Header;") || description.starts_with("Art;"))
     {
         return GetPropertyBitmap(description);
     }
@@ -192,8 +192,9 @@ wxImage ImageHandler::GetImage(const tt_string& description)
 
 wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description)
 {
-    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
-        description.starts_with("Art;") || description.starts_with("SVG;"))
+    if (description.starts_with("Embed;") || description.starts_with("XPM;") ||
+        description.starts_with("Header;") || description.starts_with("Art;") ||
+        description.starts_with("SVG;"))
     {
         return GetPropertyBitmapBundle(description);
     }
@@ -226,7 +227,8 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
         {
             tt_string_vector id_client(parts[IndexArtID], '|');
             ASSERT_MSG(m_allow_ui, "We should never get here if m_allow_ui is false");
-            image = (wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
+            image = (wxArtProvider::GetBitmapBundle(id_client[0],
+                                                    wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
                          .GetBitmapFor(wxGetFrame().getWindow()))
                         .ConvertToImage();
         }
@@ -313,8 +315,8 @@ EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
     }
 }
 
-// This is called in BaseCodeGenerator::CollectImageHeaders (gen_base.cpp) when an animation file is found that
-// was not previously loaded.
+// This is called in BaseCodeGenerator::CollectImageHeaders (gen_base.cpp) when an animation file is
+// found that was not previously loaded.
 bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animation)
 {
     if (!path.file_exists())
@@ -420,8 +422,8 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form)
                 auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeEmbedStructure(embed, path, form);
 
-                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
-                // better compression.
+                // If possible, convert the file to a PNG -- even if the original file is a PNG,
+                // since we might end up with better compression.
 
                 if (isConvertibleMime(handler->GetMimeType()))
                 {
@@ -439,20 +441,24 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form)
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
                         embed->imgs[0].array_size = read_stream->GetBufferSize();
-                        embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
-                        memcpy(embed->imgs[0].array_data.get(), read_stream->GetBufferStart(), embed->imgs[0].array_size);
+                        embed->imgs[0].array_data =
+                            std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
+                        memcpy(embed->imgs[0].array_data.get(), read_stream->GetBufferStart(),
+                               embed->imgs[0].array_size);
                     }
                     else
                     {
 #if defined(_DEBUG)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
-                        auto size_comparison = std::format(std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
+                        auto size_comparison = std::format(
+                            std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
 #endif  // _DEBUG
 
                         embed->imgs[0].type = handler->GetType();
                         embed->imgs[0].array_size = stream.GetSize();
-                        embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
+                        embed->imgs[0].array_data =
+                            std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
                         stream.Read(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
                     }
                 }
@@ -462,7 +468,8 @@ bool ImageHandler::AddNewEmbeddedImage(tt_string path, Node* form)
 
                     stream.SeekI(0);
                     embed->imgs[0].array_size = stream.GetSize();
-                    embed->imgs[0].array_data = std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
+                    embed->imgs[0].array_data =
+                        std::make_unique<unsigned char[]>(embed->imgs[0].array_size);
                     stream.Read(embed->imgs[0].array_data.get(), embed->imgs[0].array_size);
                 }
 
@@ -480,13 +487,14 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed, size_t index)
     if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
     {
         ASSERT_MSG(index == 0, "Embedded SVG images should only have a single image")
-        // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
-        // leading spaces, etc.
+        // Run the file through an XML parser so that we can remove content that isn't used, as well
+        // as removing line breaks, leading spaces, etc.
         pugi::xml_document doc;
         auto result = doc.load_file_string(embed->imgs[0].filename);
         if (!result)
         {
-            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
                 .ShowModal();
             return;
         }
@@ -540,8 +548,8 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed, size_t index)
             {
                 embed->imgs[index].file_time = embed->imgs[index].filename.last_write_time();
 
-                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
-                // better compression.
+                // If possible, convert the file to a PNG -- even if the original file is a PNG,
+                // since we might end up with better compression.
 
                 if (isConvertibleMime(handler->GetMimeType()))
                 {
@@ -559,22 +567,26 @@ void ImageHandler::UpdateEmbeddedImage(EmbeddedImage* embed, size_t index)
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
                         embed->imgs[index].array_size = read_stream->GetBufferSize();
-                        embed->imgs[index].array_data = std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
+                        embed->imgs[index].array_data =
+                            std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
                         memcpy(embed->imgs[index].array_data.get(), read_stream->GetBufferStart(),
                                embed->imgs[index].array_size);
                     }
                     else
                     {
                         embed->imgs[index].array_size = stream.GetSize();
-                        embed->imgs[index].array_data = std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
-                        stream.Read(embed->imgs[index].array_data.get(), embed->imgs[index].array_size);
+                        embed->imgs[index].array_data =
+                            std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
+                        stream.Read(embed->imgs[index].array_data.get(),
+                                    embed->imgs[index].array_size);
                     }
                 }
                 else
                 {
                     stream.SeekI(0);
                     embed->imgs[index].array_size = stream.GetSize();
-                    embed->imgs[index].array_data = std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
+                    embed->imgs[index].array_data =
+                        std::make_unique<unsigned char[]>(embed->imgs[index].array_size);
                     stream.Read(embed->imgs[index].array_data.get(), embed->imgs[index].array_size);
                 }
 
@@ -848,14 +860,16 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                 tt_string file_extension = additional_path.extension();
                 additional_path.remove_extension();
                 auto erase_pos = additional_path.size();
-                for (map_pos = map_bundle_extensions.begin(); map_pos != map_bundle_extensions.end(); ++map_pos)
+                for (map_pos = map_bundle_extensions.begin();
+                     map_pos != map_bundle_extensions.end(); ++map_pos)
                 {
                     if (erase_pos < additional_path.size())
                         additional_path.erase(erase_pos);
                     additional_path << map_pos->first << file_extension;
                     if (additional_path.file_exists())
                     {
-                        if (auto added = AddEmbeddedBundleImage(additional_path, form, embed); added)
+                        if (auto added = AddEmbeddedBundleImage(additional_path, form, embed);
+                            added)
                         {
                             img_bundle.lst_filenames.emplace_back(additional_path);
                             // ++file_count;
@@ -865,11 +879,13 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                 }
             }
 
-            bool is_at_suffix = (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
+            bool is_at_suffix =
+                (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
             // while (file_count < 2 && map_pos != map_bundle_extensions.end())
             while (map_pos != map_bundle_extensions.end())
             {
-                // If we have a map position, then we have found a suffix, so we now try to find the next matching filename.
+                // If we have a map position, then we have found a suffix, so we now try to find the
+                // next matching filename.
                 additional_path.Replace(map_pos->first, map_pos->second);
                 if (additional_path.file_exists())
                 {
@@ -881,7 +897,8 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
                 }
 
                 ++map_pos;
-                if (is_at_suffix && map_pos != map_bundle_extensions.end() && !map_pos->first.starts_with('@'))
+                if (is_at_suffix && map_pos != map_bundle_extensions.end() &&
+                    !map_pos->first.starts_with('@'))
                 {
                     // We have run out of '@' suffixes to look for
                     break;
@@ -894,7 +911,8 @@ bool ImageHandler::AddNewEmbeddedBundle(const tt_string_vector& parts, tt_string
     return true;
 }
 
-EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, EmbeddedImage* embed)
+EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form,
+                                                    EmbeddedImage* embed)
 {
     wxFFileInputStream stream(path.make_wxString());
     if (!stream.IsOk())
@@ -938,8 +956,8 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, 
                     }
                 }
 
-                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up
-                // with better compression.
+                // If possible, convert the file to a PNG -- even if the original file is a PNG,
+                // since we might end up with better compression.
 
                 if (isConvertibleMime(handler->GetMimeType()))
                 {
@@ -957,7 +975,8 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, 
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
                         embed->imgs[idx].array_size = read_stream->GetBufferSize();
-                        embed->imgs[idx].array_data = std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
+                        embed->imgs[idx].array_data =
+                            std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
                         memcpy(embed->imgs[idx].array_data.get(), read_stream->GetBufferStart(),
                                embed->imgs[idx].array_size);
                     }
@@ -966,12 +985,14 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, 
 #if defined(_DEBUG)
                         size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
-                        auto size_comparison = std::format(std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
+                        auto size_comparison = std::format(
+                            std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
 #endif
 
                         embed->imgs[idx].type = handler->GetType();
                         embed->imgs[idx].array_size = stream.GetSize();
-                        embed->imgs[idx].array_data = std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
+                        embed->imgs[idx].array_data =
+                            std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
                         stream.Read(embed->imgs[idx].array_data.get(), embed->imgs[idx].array_size);
                     }
                 }
@@ -981,7 +1002,8 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string path, Node* form, 
 
                     stream.SeekI(0);
                     embed->imgs[idx].array_size = stream.GetSize();
-                    embed->imgs[idx].array_data = std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
+                    embed->imgs[idx].array_data =
+                        std::make_unique<unsigned char[]>(embed->imgs[idx].array_size);
                     stream.Read(embed->imgs[idx].array_data.get(), embed->imgs[idx].array_size);
                 }
 
@@ -1142,7 +1164,8 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
         }
     }
 
-    ASSERT_MSG(img_bundle.lst_filenames.size() > 0, "image_first must always have it's filename added.")
+    ASSERT_MSG(img_bundle.lst_filenames.size() > 0,
+               "image_first must always have it's filename added.")
 
     if (img_bundle.lst_filenames.size() == 1)
     {
@@ -1185,7 +1208,8 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
     if (parts.size() < 2 || node->isFormParent())
         return;
 
-    // ProcessBundleProperty() will add a new bundle, or replace an old bundle if the path has changed.
+    // ProcessBundleProperty() will add a new bundle, or replace an old bundle if the path has
+    // changed.
 
     ProcessBundleProperty(parts, node);
     auto result = m_bundles.find(ConvertToLookup(parts));
@@ -1199,8 +1223,9 @@ void ImageHandler::UpdateBundle(const tt_string_vector& parts, Node* node)
             {
                 if (embed->form != form)
                 {
-                    // This will happen when a bundle bitmap is added to the Images generator. The initial bitmap will be
-                    // correctly changed to use the new form, but we also need to process  all the sub images as well
+                    // This will happen when a bundle bitmap is added to the Images generator. The
+                    // initial bitmap will be correctly changed to use the new form, but we also
+                    // need to process  all the sub images as well
 
                     if (form->isGen(gen_Images))
                     {
@@ -1231,7 +1256,8 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description)
         if (parts[IndexArtID].contains("|"))
         {
             tt_string_vector id_client(parts[IndexArtID], '|');
-            return wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
+            return wxArtProvider::GetBitmapBundle(id_client[0],
+                                                  wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
         }
         else
         {
@@ -1275,7 +1301,8 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
 
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
-        wxMemoryInputStream stream(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+        wxMemoryInputStream stream(wxue_img::pulsing_unknown_gif,
+                                   sizeof(wxue_img::pulsing_unknown_gif));
         p_animation->Load(stream);
         return;
     }
@@ -1285,7 +1312,8 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
     {
         if (path == Project.as_string(prop_art_directory))
         {
-            wxMemoryInputStream stream(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+            wxMemoryInputStream stream(wxue_img::pulsing_unknown_gif,
+                                       sizeof(wxue_img::pulsing_unknown_gif));
             p_animation->Load(stream);
             return;
         }
@@ -1319,24 +1347,27 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
 
     if (!p_animation->IsOk())
     {
-        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
+        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif,
+        // sizeof(wxue_img::pulsing_unknown_gif));
     }
 }
 
 bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
 {
-    // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
-    // leading spaces, etc.
+    // Run the file through an XML parser so that we can remove content that isn't used, as well as
+    // removing line breaks, leading spaces, etc.
     pugi::xml_document doc;
     auto result = doc.load_file_string(path);
     if (!result)
     {
-        // BUGBUG: [Randalphwa - 02-15-2024] If someone edits the SVG file by hand, or uses a tool that doesn't produce
-        // valid XML, then we'll get an error here. We need to let the user know, but not if code is being generated
-        // from a command line, and not if there are a lot of files with errors.
+        // BUGBUG: [Randalphwa - 02-15-2024] If someone edits the SVG file by hand, or uses a tool
+        // that doesn't produce valid XML, then we'll get an error here. We need to let the user
+        // know, but not if code is being generated from a command line, and not if there are a lot
+        // of files with errors.
         //
         // tldr; Find a way to collect errors/warnings and present them all at once.
-        wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+        wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
+                        wxOK | wxICON_ERROR)
             .ShowModal();
         return false;
     }
@@ -1422,8 +1453,9 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
         auto file_size = file_original.Length();
         tt_string size_comparison;
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
-        size_comparison = std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",
-                                      path.filename().ToStdString(), file_size, compressed_size, percent);
+        size_comparison =
+            std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",
+                        path.filename().ToStdString(), file_size, compressed_size, percent);
         // Enable line below to show results for every file
         // MSG_INFO(size_comparison)
     }
@@ -1488,7 +1520,8 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         wxMemoryInputStream stream_in(imgs[0].array_data.get(), imgs[0].array_size & 0xFFFFFFFF);
         wxZlibInputStream zlib_strm(stream_in);
         zlib_strm.Read(str.get(), org_size);
-        return wxBitmapBundle::FromSVG(str.get(), override_size == wxDefaultSize ? size : override_size);
+        return wxBitmapBundle::FromSVG(str.get(),
+                                       override_size == wxDefaultSize ? size : override_size);
     }
     else if (imgs[0].type == wxBITMAP_TYPE_XPM)
     {
@@ -1545,13 +1578,15 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 
             for (const auto& child: form->getChildNodePtrs())
             {
-                tt_view_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_view_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                                tt::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;
                 }
 
-                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
+                if (parts[0] == form_image_parts[0] &&
+                    parts[1].filename() == form_image_parts[1].filename())
                 {
                     auto embed = GetEmbeddedImage(parts[IndexImage]);
                     ASSERT(embed);  // should be impossible not to have an embed here
@@ -1590,15 +1625,18 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string_vector& parts)
         {
             for (const auto& child: form->getChildNodePtrs())
             {
-                tt_string_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_string_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                                  tt::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;
                 }
 
-                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
+                if (parts[0] == form_image_parts[0] &&
+                    parts[1].filename() == form_image_parts[1].filename())
                 {
-                    if (auto bundle = GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+                    if (auto bundle = GetPropertyImageBundle(parts);
+                        bundle && bundle->lst_filenames.size())
                     {
                         auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
                         if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
@@ -1649,23 +1687,27 @@ tt_string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg
 namespace wxue_img
 {
     inline const unsigned char pulsing_unknown_gif[377] {
-        71,  73,  70,  56,  57,  97,  15,  0,   20,  0,   196, 0,   0,   255, 255, 255, 253, 124, 134, 253, 118, 129, 253,
-        115, 126, 252, 108, 120, 252, 105, 117, 255, 102, 102, 251, 100, 113, 250, 87,  101, 250, 84,  98,  249, 77,  91,
-        249, 71,  86,  248, 67,  82,  248, 62,  77,  248, 58,  74,  247, 48,  65,  246, 41,  59,  246, 36,  54,  245, 33,
-        50,  238, 29,  47,  230, 28,  45,  222, 27,  43,  214, 26,  42,  206, 25,  40,  198, 24,  39,  189, 23,  37,  172,
-        21,  34,  159, 19,  31,  148, 18,  29,  140, 17,  27,  132, 16,  26,  125, 15,  24,  33,  255, 11,  78,  69,  84,
-        83,  67,  65,  80,  69,  50,  46,  48,  3,   1,   0,   0,   0,   33,  249, 4,   9,   40,  0,   0,   0,   44,  0,
-        0,   0,   0,   15,  0,   20,  0,   0,   5,   80,  32,  32,  142, 100, 105, 158, 104, 74,  6,   3,   65,  28,  10,
-        250, 54,  208, 211, 56,  209, 121, 60,  90,  167, 85,  145, 201, 165, 164, 120, 100, 62,  34,  137, 228, 178, 41,
-        93,  56,  31,  36,  64,  65,  129, 170, 8,   140, 141, 84,  150, 192, 108, 79,  9,   198, 229, 123, 154, 100, 58,
-        100, 149, 186, 80,  88,  80,  212, 140, 71,  69,  163, 206, 120, 162, 234, 188, 126, 207, 7,   132, 0,   0,   33,
-        249, 4,   9,   40,  0,   0,   0,   44,  0,   0,   0,   0,   15,  0,   20,  0,   0,   5,   126, 32,  32,  2,   193,
-        64,  16,  7,   50,  174, 129, 112, 40,  76,  204, 44,  204, 138, 46,  15,  117, 93,  149, 244, 60,  145, 209, 129,
-        33,  185, 112, 62,  31,  77,  47,  50,  185, 0,   16,  138, 71,  101, 243, 25,  73,  34,  146, 138, 6,   48,  169,
-        96,  52,  213, 81,  116, 130, 233, 136, 142, 200, 209, 0,   1,   49,  134, 87,  34,  151, 195, 210, 121, 195, 229,
-        116, 251, 10,  95,  135, 11,  15,  13,  20,  84,  126, 35,  14,  77,  96,  132, 35,  90,  28,  30,  122, 137, 143,
-        35,  5,   5,   8,   11,  20,  144, 8,   9,   12,  16,  25,  144, 12,  15,  18,  22,  27,  144, 16,  94,  26,  30,
-        144, 25,  141, 105, 144, 144, 33,  0,   59
+        71,  73,  70,  56,  57,  97,  15,  0,   20,  0,   196, 0,   0,   255, 255, 255, 253, 124,
+        134, 253, 118, 129, 253, 115, 126, 252, 108, 120, 252, 105, 117, 255, 102, 102, 251, 100,
+        113, 250, 87,  101, 250, 84,  98,  249, 77,  91,  249, 71,  86,  248, 67,  82,  248, 62,
+        77,  248, 58,  74,  247, 48,  65,  246, 41,  59,  246, 36,  54,  245, 33,  50,  238, 29,
+        47,  230, 28,  45,  222, 27,  43,  214, 26,  42,  206, 25,  40,  198, 24,  39,  189, 23,
+        37,  172, 21,  34,  159, 19,  31,  148, 18,  29,  140, 17,  27,  132, 16,  26,  125, 15,
+        24,  33,  255, 11,  78,  69,  84,  83,  67,  65,  80,  69,  50,  46,  48,  3,   1,   0,
+        0,   0,   33,  249, 4,   9,   40,  0,   0,   0,   44,  0,   0,   0,   0,   15,  0,   20,
+        0,   0,   5,   80,  32,  32,  142, 100, 105, 158, 104, 74,  6,   3,   65,  28,  10,  250,
+        54,  208, 211, 56,  209, 121, 60,  90,  167, 85,  145, 201, 165, 164, 120, 100, 62,  34,
+        137, 228, 178, 41,  93,  56,  31,  36,  64,  65,  129, 170, 8,   140, 141, 84,  150, 192,
+        108, 79,  9,   198, 229, 123, 154, 100, 58,  100, 149, 186, 80,  88,  80,  212, 140, 71,
+        69,  163, 206, 120, 162, 234, 188, 126, 207, 7,   132, 0,   0,   33,  249, 4,   9,   40,
+        0,   0,   0,   44,  0,   0,   0,   0,   15,  0,   20,  0,   0,   5,   126, 32,  32,  2,
+        193, 64,  16,  7,   50,  174, 129, 112, 40,  76,  204, 44,  204, 138, 46,  15,  117, 93,
+        149, 244, 60,  145, 209, 129, 33,  185, 112, 62,  31,  77,  47,  50,  185, 0,   16,  138,
+        71,  101, 243, 25,  73,  34,  146, 138, 6,   48,  169, 96,  52,  213, 81,  116, 130, 233,
+        136, 142, 200, 209, 0,   1,   49,  134, 87,  34,  151, 195, 210, 121, 195, 229, 116, 251,
+        10,  95,  135, 11,  15,  13,  20,  84,  126, 35,  14,  77,  96,  132, 35,  90,  28,  30,
+        122, 137, 143, 35,  5,   5,   8,   11,  20,  144, 8,   9,   12,  16,  25,  144, 12,  15,
+        18,  22,  27,  144, 16,  94,  26,  30,  144, 25,  141, 105, 144, 144, 33,  0,   59
     };
 
 }

@@ -23,13 +23,14 @@ wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     wxTreeCtrlBase* widget;
     if (node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
-        widget = new wxGenericTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                       DlgSize(node, prop_size), GetStyleInt(node));
+        widget = new wxGenericTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                       GetStyleInt(node));
     }
     else
     {
-        widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                GetStyleInt(node));
+        widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                DlgSize(node, prop_size), GetStyleInt(node));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -39,15 +40,21 @@ wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool TreeCtrlGenerator::ConstructionCode(Code& code)
 {
-    bool use_generic_version = code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
-    code.AddAuto().NodeName().CreateClass(use_generic_version).ValidParentName().Comma().as_string(prop_id);
+    bool use_generic_version =
+        code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
+    code.AddAuto()
+        .NodeName()
+        .CreateClass(use_generic_version)
+        .ValidParentName()
+        .Comma()
+        .as_string(prop_id);
     code.PosSizeFlags(code::allow_scaling, true, "wxTR_DEFAULT_STYLE");
 
     return true;
 }
 
-bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/treectrl.h>", set_src, set_hdr);
     if (node->as_string(prop_subclass).starts_with("wxGeneric"))
@@ -62,7 +69,8 @@ bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int TreeCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTreeCtrl");

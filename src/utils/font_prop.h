@@ -15,8 +15,8 @@
 class wxVariant;
 class NodeProperty;
 
-// Storing everything in a wxFontInfo class would be ideal, but that class requires the point size in the constructor and
-// doesn't allow you to change it after the fact.
+// Storing everything in a wxFontInfo class would be ideal, but that class requires the point size
+// in the constructor and doesn't allow you to change it after the fact.
 
 class FontProperty
 {
@@ -82,8 +82,8 @@ public:
         return *this;
     }
 
-    // The following setters match the names in wxFontInfo so that code written for wxFontInfo or FontProperty can be used
-    // interchangeably (at least for setters and getters)
+    // The following setters match the names in wxFontInfo so that code written for wxFontInfo or
+    // FontProperty can be used interchangeably (at least for setters and getters)
 
     FontProperty& Family(wxFontFamily family)
     {
@@ -106,8 +106,14 @@ public:
         return *this;
     }
 
-    FontProperty& Bold(bool bold = true) { return Weight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL); }
-    FontProperty& Light(bool light = true) { return Weight(light ? wxFONTWEIGHT_LIGHT : wxFONTWEIGHT_NORMAL); }
+    FontProperty& Bold(bool bold = true)
+    {
+        return Weight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
+    }
+    FontProperty& Light(bool light = true)
+    {
+        return Weight(light ? wxFONTWEIGHT_LIGHT : wxFONTWEIGHT_NORMAL);
+    }
     FontProperty& Italic(bool italic = true)
     {
         SetFlag(wxFONTFLAG_ITALIC, italic);
@@ -171,7 +177,9 @@ private:
     wxFontFamily m_family { wxFONTFAMILY_DEFAULT };
     wxString m_faceName;
     wxFontEncoding m_encoding { wxFONTENCODING_DEFAULT };
-    double m_pointSize { wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize() };
+    double m_pointSize {
+        wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize()
+    };
     wxFontWeight m_weight { wxFONTWEIGHT_NORMAL };
     int m_flags { wxFONTFLAG_DEFAULT };
 

@@ -23,17 +23,17 @@
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
 #include "../import/import_wxsmith.h"  // Import a wxSmith file
-#include "gen_xrc.h"                   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "import_panel.h"              // ImportPanel -- Panel to display original imported file
-#include "mainframe.h"                 // MainFrame -- Main window frame
-#include "node.h"                      // Node class
-#include "preferences.h"               // Prefs -- Set/Get wxUiEditor preferences
-#include "previews.h"                  // Top level Preview functions
-#include "project_handler.h"           // ProjectHandler class
-#include "tt_view_vector.h"            // tt_string_vector -- Class for reading and writing line-oriented strings/files
-#include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"                     // Utility functions that work with properties
-#include "xrccompare.h"                // C++/XRC UI Comparison dialog
+#include "gen_xrc.h"          // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "import_panel.h"     // ImportPanel -- Panel to display original imported file
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
+#include "previews.h"         // Top level Preview functions
+#include "project_handler.h"  // ProjectHandler class
+#include "tt_view_vector.h"   // tt_string_vector -- read/write line-oriented strings/files
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
+#include "utils.h"            // Utility functions that work with properties
+#include "xrccompare.h"       // C++/XRC UI Comparison dialog
 
 #include "pugixml.hpp"
 
@@ -174,9 +174,12 @@ void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
         auto xrc_text = m_scintilla->GetText().utf8_string();
         if (auto result = doc.load_string(xrc_text); !result)
         {
-            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                                          result.description(), result.line, result.column, result.offset);
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            std::string msg = std::format(
+                std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                result.description(), result.line, result.column, result.offset);
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
 
             return;
         }
@@ -185,7 +188,8 @@ void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
     auto root = doc.first_child();
     if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
     {
-        wxMessageBox("Invalid XML -- no resource object", "XML Verification Test", wxOK | wxICON_ERROR);
+        wxMessageBox("Invalid XML -- no resource object", "XML Verification Test",
+                     wxOK | wxICON_ERROR);
         return;
     }
 
@@ -195,8 +199,8 @@ void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
     tt_string path = Project.getProjectPath();
-    wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc", "XRC File (*.xrc)|*.xrc",
-                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc",
+                        "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {
@@ -207,16 +211,21 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
         pugi::xml_document doc;
         if (auto result = doc.load_string(xrc_text); !result)
         {
-            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                                          result.description(), result.line, result.column, result.offset);
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            std::string msg = std::format(
+                std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                result.description(), result.line, result.column, result.offset);
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
 
             return;
         }
 
         if (!doc.save_file(filename))
         {
-            wxMessageBox(wxString("An unexpected error occurred exporting ") << filename.make_wxString(), "Export XRC");
+            wxMessageBox(wxString("An unexpected error occurred exporting ")
+                             << filename.make_wxString(),
+                         "Export XRC");
         }
     }
 }
@@ -230,9 +239,12 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
         auto xrc_text = m_scintilla->GetText().utf8_string();
         if (auto result = doc.load_string(xrc_text); !result)
         {
-            std::string msg = std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                                          result.description(), result.line, result.column, result.offset);
-            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR).ShowModal();
+            std::string msg = std::format(
+                std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
+                result.description(), result.line, result.column, result.offset);
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
 
             return;
         }

@@ -13,14 +13,14 @@
 #include "gen_xrc_utils.h"   // Common XRC generating functions
 #include "mockup_parent.h"   // Top-level MockUp Parent window
 #include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
 wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols), node->as_int(prop_vgap),
-                                                 node->as_int(prop_hgap));
+    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
+                                                 node->as_int(prop_vgap), node->as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -69,15 +69,20 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     Node* node = code.node();
 
-    // If rows is empty, only columns are supplied and wxFlexGridSizer will deduece the
-    // number of rows to use
+    // If rows is empty, only columns are supplied and wxFlexGridSizer will deduece the number of
+    // rows to use
     if (node->as_int(prop_rows) != 0 || code.is_perl())
     {
         // REVIEW: [Randalphwa - 04-22-2025] Currently, wxPerl requires all 4 parameters, unlike the
         // other languages.
         code.as_string(prop_rows).Comma();
     }
-    code.as_string(prop_cols).Comma().as_string(prop_vgap).Comma().as_string(prop_hgap).EndFunction();
+    code.as_string(prop_cols)
+        .Comma()
+        .as_string(prop_vgap)
+        .Comma()
+        .as_string(prop_hgap)
+        .EndFunction();
 
     // If growable settings are used, there can be a lot of lines of code generated. To make
     // it a bit clearer in C++, we put it in braces.
@@ -133,7 +138,11 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
         return true;
     }
 
-    code.Eol(eol_if_empty).NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
+    code.Eol(eol_if_empty)
+        .NodeName()
+        .Function("SetFlexibleDirection(")
+        .Add(direction)
+        .EndFunction();
 
     auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
@@ -149,7 +158,8 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                           bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))
     {
@@ -194,8 +204,8 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
     return true;
 }
 
-bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                         GenLang /* language */)
+bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
@@ -241,9 +251,9 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
     }
     else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
     {
-        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms
-        // which often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer
-        // that we create for most forms.
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
+        // a problem for forms which often can specify their own minimum size. The workaround is to
+        // set the minimum size of the parent sizer that we create for most forms.
 
         item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
     }

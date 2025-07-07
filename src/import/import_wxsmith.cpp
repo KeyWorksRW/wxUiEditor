@@ -31,8 +31,9 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
         return false;
     }
 
-    // Using a try block means that if at any point it becomes obvious the project file is invalid and we cannot recover,
-    // then we can throw an error and give a standard response about an invalid file.
+    // Using a try block means that if at any point it becomes obvious the project file is invalid
+    // and we cannot recover, then we can throw an error and give a standard response about an
+    // invalid file.
 
     try
     {
@@ -44,7 +45,9 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
         if (!m_project->getChildCount())
         {
-            wxMessageBox(wxString() << filename.make_wxString() << " does not contain any top level forms.", "Import");
+            wxMessageBox(wxString() << filename.make_wxString()
+                                    << " does not contain any top level forms.",
+                         "Import");
             return false;
         }
 

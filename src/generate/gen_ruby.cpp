@@ -21,7 +21,7 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -102,7 +102,9 @@ static const std::vector<tt_string> disable_list = {
 // clang-format on
 #endif  // _DEBUG
 
-RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUBY, form_node) {}
+RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUBY, form_node)
+{
+}
 
 void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 {
@@ -117,7 +119,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&RubyCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_get_events(&RubyCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(m_events));
     std::thread thrd_need_img_func(&RubyCodeGenerator::ParseImageProperties, this, m_form_node);
     std::thread thrd_collect_img_headers(&RubyCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
@@ -143,8 +146,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #else
     if (m_panel_type != NOT_PANEL)
     {
-        m_source->writeLine(
-            "# The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+        m_source->writeLine("# The following comment block is only displayed in a _DEBUG build, or "
+                            "when written to a file.\n\n");
     }
 #endif  // _DEBUG
     {
@@ -169,7 +172,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    m_source->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+    m_source->writeLine(
+        "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
 
     m_set_enum_ids.clear();
     m_set_const_ids.clear();
@@ -194,7 +198,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #if defined(_DEBUG)
             MSG_ERROR(err.what());
 #else
-            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error", wxICON_ERROR | wxOK);
+            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()),
+                                      "Internal Thread Error", wxICON_ERROR | wxOK);
             dlg_error.ShowModal();
 #endif  // _DEBUG
         }
@@ -204,8 +209,10 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         return;
     }
 
-    m_header->writeLine("WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-    m_header->writeLine(tt_string("# Sample inherited class from ") << m_form_node->as_string(prop_class_name));
+    m_header->writeLine(
+        "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+    m_header->writeLine(tt_string("# Sample inherited class from ")
+                        << m_form_node->as_string(prop_class_name));
     m_header->writeLine();
 
     std::set<std::string> imports;
@@ -250,7 +257,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         for (auto& form: forms)
         {
-            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) && form->hasValue(prop_ruby_file))
+            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) &&
+                form->hasValue(prop_ruby_file))
             {
                 tt_string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
@@ -287,7 +295,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #if defined(_DEBUG)
         MSG_ERROR(err.what());
 #else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error", wxICON_ERROR | wxOK);
+        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
+                                  wxICON_ERROR | wxOK);
         dlg_error.ShowModal();
 #endif  // _DEBUG
     }
@@ -324,7 +333,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         tt_string inherit("class ");
         inherit << inherit_name;
-        inherit << m_form_node->as_string(prop_ruby_file) << "." << m_form_node->as_string(prop_class_name) << "):";
+        inherit << m_form_node->as_string(prop_ruby_file) << "."
+                << m_form_node->as_string(prop_class_name) << "):";
 
         m_header->writeLine(inherit);
         m_header->Indent();
@@ -507,7 +517,8 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
 void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
 {
-    ASSERT_MSG(m_embedded_images.size(), "CheckMimeBase64Requirement() should only be called if there are embedded images");
+    ASSERT_MSG(m_embedded_images.size(),
+               "CheckMimeBase64Requirement() should only be called if there are embedded images");
     if (m_embedded_images.empty())
     {
         return;
@@ -640,8 +651,8 @@ void RubyCodeGenerator::GenerateImagesForm()
         }
         m_source->writeLine(code);
         code.clear();
-        auto encoded =
-            base64_encode(iter_array->imgs[0].array_data.get(), iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+        auto encoded = base64_encode(iter_array->imgs[0].array_data.get(),
+                                     iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
         if (encoded.size())
         {
             // Remove the trailing '+' character
@@ -664,13 +675,15 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
         return;
     }
 
-    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate
+    // each function once.
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_RUBY);
     auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
     {
-        return (EventHandlerDlg::GetRubyValue(a->get_value()) < EventHandlerDlg::GetRubyValue(b->get_value()));
+        return (EventHandlerDlg::GetRubyValue(a->get_value()) <
+                EventHandlerDlg::GetRubyValue(b->get_value()));
     };
 
     // Sort events by function name
@@ -724,13 +737,15 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
 
     if (found_user_handlers)
     {
-        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below the comment block, or "
+        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below "
+                 "the comment block, or "
                  "to your inherited class.");
         code.Eol().Eol();
     }
     else
     {
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your inherited class.");
+        code.Str("# Event handler functions\n# Add these below the comment block, or to your "
+                 "inherited class.");
         code.Eol().Eol();
     }
 

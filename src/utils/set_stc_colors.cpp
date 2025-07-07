@@ -126,7 +126,8 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                     continue;
                 }
 
-                if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                if (!iter->declName().starts_with("wx") ||
+                    iter->declName().is_sameas("wxContextMenuEvent"))
                     continue;
                 widget_keywords << ' ' << iter->declName();
             }
@@ -163,20 +164,32 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
         }
 
-        stc->StyleSetForeground(wxSTC_C_STRING, UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_CppStringColour());
-        stc->StyleSetForeground(wxSTC_C_STRINGEOL,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_CppStringColour());
-        stc->StyleSetForeground(wxSTC_C_COMMENT,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        stc->StyleSetForeground(wxSTC_C_COMMENTLINE,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        stc->StyleSetForeground(wxSTC_C_COMMENTDOC,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_CppCommentColour());
-        stc->StyleSetForeground(wxSTC_C_WORD, UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_CppKeywordColour());
-        stc->StyleSetForeground(wxSTC_C_WORD2, UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_CppColour());
-        stc->StyleSetForeground(wxSTC_C_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_CppNumberColour());
+        stc->StyleSetForeground(wxSTC_C_STRING, UserPrefs.is_HighContrast() ?
+                                                    clr_strings :
+                                                    UserPrefs.get_CppStringColour());
+        stc->StyleSetForeground(wxSTC_C_STRINGEOL, UserPrefs.is_HighContrast() ?
+                                                       clr_strings :
+                                                       UserPrefs.get_CppStringColour());
+        stc->StyleSetForeground(wxSTC_C_COMMENT, UserPrefs.is_HighContrast() ?
+                                                     clr_comments :
+                                                     UserPrefs.get_CppCommentColour());
+        stc->StyleSetForeground(wxSTC_C_COMMENTLINE, UserPrefs.is_HighContrast() ?
+                                                         clr_comments :
+                                                         UserPrefs.get_CppCommentColour());
+        stc->StyleSetForeground(wxSTC_C_COMMENTDOC, UserPrefs.is_HighContrast() ?
+                                                        clr_comments :
+                                                        UserPrefs.get_CppCommentColour());
+        stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, UserPrefs.is_HighContrast() ?
+                                                            clr_comments :
+                                                            UserPrefs.get_CppCommentColour());
+        stc->StyleSetForeground(wxSTC_C_WORD, UserPrefs.is_HighContrast() ?
+                                                  clr_keywords :
+                                                  UserPrefs.get_CppKeywordColour());
+        stc->StyleSetForeground(
+            wxSTC_C_WORD2, UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_CppColour());
+        stc->StyleSetForeground(wxSTC_C_NUMBER, UserPrefs.is_HighContrast() ?
+                                                    clr_numbers :
+                                                    UserPrefs.get_CppNumberColour());
     }
     else if (language == GEN_LANG_PERL)
     {
@@ -211,8 +224,10 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
                 if (!iter->declName().starts_with("wx"))
                     continue;
-                else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
-                         iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+                else if (iter->declName().is_sameas("wxContextMenuEvent") ||
+                         iter->declName() == "wxTreeCtrlBase" ||
+                         iter->declName().starts_with("wxRuby") ||
+                         iter->declName().starts_with("wxPython"))
                     continue;
                 wxPerl_keywords << ' ' << iter->declName().subview(2);
             }
@@ -234,15 +249,21 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             }
         }
 
-        stc->StyleSetForeground(wxSTC_PL_COMMENTLINE,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_PerlCommentColour());
-        stc->StyleSetForeground(wxSTC_PL_NUMBER,
-                                UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_PerlNumberColour());
-        stc->StyleSetForeground(wxSTC_PL_STRING,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_PerlStringColour());
-        stc->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_PerlColour());
-        stc->StyleSetForeground(wxSTC_PL_PREPROCESSOR,
-                                UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_PerlColour());
+        stc->StyleSetForeground(wxSTC_PL_COMMENTLINE, UserPrefs.is_HighContrast() ?
+                                                          clr_comments :
+                                                          UserPrefs.get_PerlCommentColour());
+        stc->StyleSetForeground(wxSTC_PL_NUMBER, UserPrefs.is_HighContrast() ?
+                                                     clr_numbers :
+                                                     UserPrefs.get_PerlNumberColour());
+        stc->StyleSetForeground(wxSTC_PL_STRING, UserPrefs.is_HighContrast() ?
+                                                     clr_strings :
+                                                     UserPrefs.get_PerlStringColour());
+        stc->StyleSetForeground(wxSTC_PL_WORD, UserPrefs.is_HighContrast() ?
+                                                   clr_functions :
+                                                   UserPrefs.get_PerlColour());
+        stc->StyleSetForeground(wxSTC_PL_PREPROCESSOR, UserPrefs.is_HighContrast() ?
+                                                           clr_keywords :
+                                                           UserPrefs.get_PerlColour());
     }
     else if (language == GEN_LANG_PYTHON)
     {
@@ -272,7 +293,8 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                     continue;
                 }
 
-                if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                if (!iter->declName().starts_with("wx") ||
+                    iter->declName().is_sameas("wxContextMenuEvent"))
                     continue;
                 // wxPython_keywords << " wx." << iter->declName().subview(2);
                 wxPython_keywords << ' ' << iter->declName().subview(2);
@@ -301,15 +323,21 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             stc->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
         }
-        stc->StyleSetForeground(wxSTC_P_COMMENTLINE,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_PythonCommentColour());
-        stc->StyleSetForeground(wxSTC_P_NUMBER,
-                                UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_PythonNumberColour());
-        stc->StyleSetForeground(wxSTC_P_STRING,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_PythonStringColour());
-        stc->StyleSetForeground(wxSTC_P_WORD, UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_PythonColour());
-        stc->StyleSetForeground(wxSTC_P_WORD2,
-                                UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_PythonKeywordColour());
+        stc->StyleSetForeground(wxSTC_P_COMMENTLINE, UserPrefs.is_HighContrast() ?
+                                                         clr_comments :
+                                                         UserPrefs.get_PythonCommentColour());
+        stc->StyleSetForeground(wxSTC_P_NUMBER, UserPrefs.is_HighContrast() ?
+                                                    clr_numbers :
+                                                    UserPrefs.get_PythonNumberColour());
+        stc->StyleSetForeground(wxSTC_P_STRING, UserPrefs.is_HighContrast() ?
+                                                    clr_strings :
+                                                    UserPrefs.get_PythonStringColour());
+        stc->StyleSetForeground(wxSTC_P_WORD, UserPrefs.is_HighContrast() ?
+                                                  clr_keywords :
+                                                  UserPrefs.get_PythonColour());
+        stc->StyleSetForeground(wxSTC_P_WORD2, UserPrefs.is_HighContrast() ?
+                                                   clr_functions :
+                                                   UserPrefs.get_PythonKeywordColour());
     }
 
     else if (language == GEN_LANG_RUBY)
@@ -323,9 +351,10 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             // We don't set ruby keywords because we can't colorize them differently from the
             // wxWidgets keywords.
 
-            tt_string wxRuby_keywords("ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL "
-                                      "ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
-                                      "TAB_TRAVERSAL FILTER_DIGITS Wx");
+            tt_string wxRuby_keywords(
+                "ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL "
+                "ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
+                "TAB_TRAVERSAL FILTER_DIGITS Wx");
             for (auto& iter: lst_widgets_keywords)
             {
                 wxRuby_keywords << ' ' << (iter + 2);
@@ -341,7 +370,8 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
                 if (!iter->declName().starts_with("wx"))
                     continue;
-                else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
+                else if (iter->declName().is_sameas("wxContextMenuEvent") ||
+                         iter->declName() == "wxTreeCtrlBase" ||
                          iter->declName().starts_with("wxRuby"))
                     continue;
                 wxRuby_keywords << ' ' << iter->declName().subview(2);
@@ -363,23 +393,32 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 stc->StyleSetBackground(idx, bg);
             }
         }
-        stc->StyleSetForeground(wxSTC_RB_WORD, UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_RubyColour());
-        stc->StyleSetForeground(wxSTC_RB_STRING,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
-        stc->StyleSetForeground(wxSTC_RB_STRING_Q,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
-        stc->StyleSetForeground(wxSTC_RB_STRING_QQ,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
-        stc->StyleSetForeground(wxSTC_RB_STRING_QX,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
-        stc->StyleSetForeground(wxSTC_RB_STRING_QR,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
-        stc->StyleSetForeground(wxSTC_RB_STRING_QW,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RubyStringColour());
-        stc->StyleSetForeground(wxSTC_RB_COMMENTLINE,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_RubyCommentColour());
-        stc->StyleSetForeground(wxSTC_RB_NUMBER,
-                                UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_RubyNumberColour());
+        stc->StyleSetForeground(
+            wxSTC_RB_WORD, UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_RubyColour());
+        stc->StyleSetForeground(wxSTC_RB_STRING, UserPrefs.is_HighContrast() ?
+                                                     clr_strings :
+                                                     UserPrefs.get_RubyStringColour());
+        stc->StyleSetForeground(wxSTC_RB_STRING_Q, UserPrefs.is_HighContrast() ?
+                                                       clr_strings :
+                                                       UserPrefs.get_RubyStringColour());
+        stc->StyleSetForeground(wxSTC_RB_STRING_QQ, UserPrefs.is_HighContrast() ?
+                                                        clr_strings :
+                                                        UserPrefs.get_RubyStringColour());
+        stc->StyleSetForeground(wxSTC_RB_STRING_QX, UserPrefs.is_HighContrast() ?
+                                                        clr_strings :
+                                                        UserPrefs.get_RubyStringColour());
+        stc->StyleSetForeground(wxSTC_RB_STRING_QR, UserPrefs.is_HighContrast() ?
+                                                        clr_strings :
+                                                        UserPrefs.get_RubyStringColour());
+        stc->StyleSetForeground(wxSTC_RB_STRING_QW, UserPrefs.is_HighContrast() ?
+                                                        clr_strings :
+                                                        UserPrefs.get_RubyStringColour());
+        stc->StyleSetForeground(wxSTC_RB_COMMENTLINE, UserPrefs.is_HighContrast() ?
+                                                          clr_comments :
+                                                          UserPrefs.get_RubyCommentColour());
+        stc->StyleSetForeground(wxSTC_RB_NUMBER, UserPrefs.is_HighContrast() ?
+                                                     clr_numbers :
+                                                     UserPrefs.get_RubyNumberColour());
         stc->StyleSetForeground(wxSTC_RB_SYMBOL, clr_functions);
         // stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_variables);
         stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_keywords);
@@ -415,7 +454,8 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                     continue;
                 }
 
-                if (!iter->declName().starts_with("wx") || iter->declName().is_sameas("wxContextMenuEvent"))
+                if (!iter->declName().starts_with("wx") ||
+                    iter->declName().is_sameas("wxContextMenuEvent"))
                     continue;
                 widget_keywords << ' ' << iter->declName().view_substr(2);
             }
@@ -436,15 +476,21 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             }
         }
 
-        stc->StyleSetForeground(wxSTC_RUST_COMMENTLINE,
-                                UserPrefs.is_HighContrast() ? clr_comments : UserPrefs.get_RustCommentColour());
-        stc->StyleSetForeground(wxSTC_RUST_NUMBER,
-                                UserPrefs.is_HighContrast() ? clr_numbers : UserPrefs.get_RustNumberColour());
-        stc->StyleSetForeground(wxSTC_RUST_STRING,
-                                UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_RustStringColour());
-        stc->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.is_HighContrast() ? clr_keywords : UserPrefs.get_RustColour());
-        stc->StyleSetForeground(wxSTC_RUST_WORD2,
-                                UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_RustKeywordColour());
+        stc->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.is_HighContrast() ?
+                                                            clr_comments :
+                                                            UserPrefs.get_RustCommentColour());
+        stc->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.is_HighContrast() ?
+                                                       clr_numbers :
+                                                       UserPrefs.get_RustNumberColour());
+        stc->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.is_HighContrast() ?
+                                                       clr_strings :
+                                                       UserPrefs.get_RustStringColour());
+        stc->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.is_HighContrast() ?
+                                                     clr_keywords :
+                                                     UserPrefs.get_RustColour());
+        stc->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.is_HighContrast() ?
+                                                      clr_functions :
+                                                      UserPrefs.get_RustKeywordColour());
     }
     else if (language == GEN_LANG_XRC)
     {
@@ -469,15 +515,24 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 stc->StyleSetBackground(idx, bg);
             }
 
-            stc->StyleSetForeground(wxSTC_H_COMMENT, UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
-            stc->StyleSetForeground(wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
-            stc->StyleSetForeground(wxSTC_H_ENTITY, UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
-            stc->StyleSetForeground(wxSTC_H_SINGLESTRING, UserPrefs.is_HighContrast() ? clr_strings : wxColour("#85e085"));
-            stc->StyleSetForeground(wxSTC_H_ATTRIBUTE,
-                                    UserPrefs.is_HighContrast() ? clr_variables : UserPrefs.get_XrcAttributeColour());
-            stc->StyleSetForeground(wxSTC_H_DOUBLESTRING,
-                                    UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_XrcDblStringColour());
-            stc->StyleSetForeground(wxSTC_H_TAG, UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_XrcTagColour());
+            stc->StyleSetForeground(
+                wxSTC_H_COMMENT, UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
+            stc->StyleSetForeground(
+                wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
+            stc->StyleSetForeground(wxSTC_H_ENTITY,
+                                    UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
+            stc->StyleSetForeground(wxSTC_H_SINGLESTRING, UserPrefs.is_HighContrast() ?
+                                                              clr_strings :
+                                                              wxColour("#85e085"));
+            stc->StyleSetForeground(wxSTC_H_ATTRIBUTE, UserPrefs.is_HighContrast() ?
+                                                           clr_variables :
+                                                           UserPrefs.get_XrcAttributeColour());
+            stc->StyleSetForeground(wxSTC_H_DOUBLESTRING, UserPrefs.is_HighContrast() ?
+                                                              clr_strings :
+                                                              UserPrefs.get_XrcDblStringColour());
+            stc->StyleSetForeground(wxSTC_H_TAG, UserPrefs.is_HighContrast() ?
+                                                     clr_functions :
+                                                     UserPrefs.get_XrcTagColour());
         }
         else
         {
@@ -577,8 +632,10 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
             if (!iter->declName().starts_with("wx"))
                 continue;
-            else if (iter->declName().is_sameas("wxContextMenuEvent") || iter->declName() == "wxTreeCtrlBase" ||
-                     iter->declName().starts_with("wxRuby") || iter->declName().starts_with("wxPython"))
+            else if (iter->declName().is_sameas("wxContextMenuEvent") ||
+                     iter->declName() == "wxTreeCtrlBase" ||
+                     iter->declName().starts_with("wxRuby") ||
+                     iter->declName().starts_with("wxPython"))
                 continue;
             wxLua_keywords << ' ' << iter->declName().subview(2);
         }
@@ -626,15 +683,24 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 stc->StyleSetBackground(idx, bg);
             }
 
-            stc->StyleSetForeground(wxSTC_H_COMMENT, UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
-            stc->StyleSetForeground(wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
-            stc->StyleSetForeground(wxSTC_H_ENTITY, UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
-            stc->StyleSetForeground(wxSTC_H_SINGLESTRING, UserPrefs.is_HighContrast() ? clr_strings : wxColour("#85e085"));
-            stc->StyleSetForeground(wxSTC_H_ATTRIBUTE,
-                                    UserPrefs.is_HighContrast() ? clr_variables : UserPrefs.get_XrcAttributeColour());
-            stc->StyleSetForeground(wxSTC_H_DOUBLESTRING,
-                                    UserPrefs.is_HighContrast() ? clr_strings : UserPrefs.get_XrcDblStringColour());
-            stc->StyleSetForeground(wxSTC_H_TAG, UserPrefs.is_HighContrast() ? clr_functions : UserPrefs.get_XrcTagColour());
+            stc->StyleSetForeground(
+                wxSTC_H_COMMENT, UserPrefs.is_HighContrast() ? clr_comments : wxColour("#85e085"));
+            stc->StyleSetForeground(
+                wxSTC_H_NUMBER, UserPrefs.is_HighContrast() ? clr_numbers : wxColour("#ff6666"));
+            stc->StyleSetForeground(wxSTC_H_ENTITY,
+                                    UserPrefs.is_HighContrast() ? clr_types : wxColour("#ff6666"));
+            stc->StyleSetForeground(wxSTC_H_SINGLESTRING, UserPrefs.is_HighContrast() ?
+                                                              clr_strings :
+                                                              wxColour("#85e085"));
+            stc->StyleSetForeground(wxSTC_H_ATTRIBUTE, UserPrefs.is_HighContrast() ?
+                                                           clr_variables :
+                                                           UserPrefs.get_XrcAttributeColour());
+            stc->StyleSetForeground(wxSTC_H_DOUBLESTRING, UserPrefs.is_HighContrast() ?
+                                                              clr_strings :
+                                                              UserPrefs.get_XrcDblStringColour());
+            stc->StyleSetForeground(wxSTC_H_TAG, UserPrefs.is_HighContrast() ?
+                                                     clr_functions :
+                                                     UserPrefs.get_XrcTagColour());
         }
     }
 }

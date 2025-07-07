@@ -5,8 +5,9 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// These maps can be used to convert the enumeration value into a string for writing out to a project file. When wxUiEditor
-// is first initialized, the regular maps will be read and used to initialize the rmaps.
+// These maps can be used to convert the enumeration value into a string for writing out to a
+// project file. When wxUiEditor is first initialized, the regular maps will be read and used to
+// initialize the rmaps.
 
 #include "gen_enums.h"
 
@@ -283,7 +284,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_label_text, "label_text" },
     { prop_line_digits, "line_digits" },
     { prop_line_margin, "line_margin" },
-    { prop_line_numbers, "line_numbers" },  // previously used in wxStyledTextCtrl, but now uses margins
+    { prop_line_numbers,
+      "line_numbers" },  // previously used in wxStyledTextCtrl, but now uses margins
     { prop_line_size, "line_size" },
     { prop_local_hdr_includes, "local_hdr_includes" },
     { prop_local_pch_file, "local_pch_file" },

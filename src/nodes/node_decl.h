@@ -79,7 +79,10 @@ public:
     size_t GetBaseClassCount(bool inherited = true) const;
     bool hasBaseClasses() const { return m_base.size(); }
 
-    void SetBundleFunction(std::function<wxBitmapBundle(int width, int height)> func) { m_bundle_function = func; }
+    void SetBundleFunction(std::function<wxBitmapBundle(int width, int height)> func)
+    {
+        m_bundle_function = func;
+    }
     void SetImage(wxImage image) { m_image = image; }
     wxImage GetImage() const { return m_image; }
     wxBitmapBundle GetBitmapBundle(int width, int height) const;
@@ -102,7 +105,10 @@ public:
     std::optional<tt_string> GetOverRideDefValue(GenEnum::PropName prop_name);
 
     void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
-    bool IsPropHidden(GenEnum::PropName prop_name) { return (m_hide_properties.find(prop_name) != m_hide_properties.end()); }
+    bool IsPropHidden(GenEnum::PropName prop_name)
+    {
+        return (m_hide_properties.find(prop_name) != m_hide_properties.end());
+    }
 
 private:
     tt_string m_internal_flags;

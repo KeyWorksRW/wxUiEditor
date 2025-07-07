@@ -177,11 +177,13 @@ CodeCompare::~CodeCompare()
 
     if (Project.hasValue(prop_base_directory))
     {
-        dir.GetAllFiles(Project.as_string(prop_base_directory).make_wxString(), &files, "~wxue_**.*");
+        dir.GetAllFiles(Project.as_string(prop_base_directory).make_wxString(), &files,
+                        "~wxue_**.*");
 
         for (auto& iter: files)
         {
-            // ~wxue_.WinMerge will often be added to this list, but deleted before we start processing, so check first
+            // ~wxue_.WinMerge will often be added to this list, but deleted before we start
+            // processing, so check first
             if (wxFileExists(iter))
             {
                 wxRemoveFile(iter);
@@ -328,7 +330,8 @@ void CodeCompare::OnLua(wxCommandEvent& /* event */)
 HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::string_view directory,
                       INT nShow = SW_SHOWNORMAL, HWND hwndParent = NULL);
 
-HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::string_view dir, INT nShow, HWND hwndParent)
+HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::string_view dir,
+                      INT nShow, HWND hwndParent)
 {
     std::wstring name16;
     tt::utf8to16(filename, name16);
@@ -355,8 +358,8 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 
     doc.save_file("~wxue_.WinMerge");
 
-    // WinMergeU.exe typically is not in the system PATH, and as such, wxExecute won't be able to find it. ShellExecute will
-    // find the registered location for the program.
+    // WinMergeU.exe typically is not in the system PATH, and as such, wxExecute won't be able to
+    // find it. ShellExecute will find the registered location for the program.
 
     tt_cwd cwd;
 
@@ -369,7 +372,8 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 
 void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 {
-    wxMessageBox("WinMerge is only supported on Windows.", "WinMerge Not Found", wxOK | wxICON_INFORMATION);
+    wxMessageBox("WinMerge is only supported on Windows.", "WinMerge Not Found",
+                 wxOK | wxICON_INFORMATION);
 }
 
 #endif  // _WIN32

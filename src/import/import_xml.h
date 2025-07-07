@@ -39,7 +39,8 @@ public:
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 
     // Caller should return true if it is able to handle this unknown property
-    virtual bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */)
+    virtual bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                                       Node* /* parent */)
     {
         return false;
     }
@@ -47,13 +48,14 @@ public:
     // Caller should return true if it is able to handle this known property. This is used
     // when the property name is knonwn, but it's actually the wrong property for the node
     // type. E.g., prop_border for a sizer really should be prop_border_size.
-    virtual bool HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */, Node* /* parent */,
-                                      GenEnum::PropName /* wxue_prop */)
+    virtual bool HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                                      Node* /* parent */, GenEnum::PropName /* wxue_prop */)
     {
         return false;
     }
 
-    void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent = nullptr);
+    void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node,
+                                 Node* parent = nullptr);
 
 protected:
     void ProcessFont(const pugi::xml_node& xml_obj, Node* node);
@@ -65,7 +67,8 @@ protected:
     void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
     void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
     void ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* node);
-    void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum::PropName node_prop = prop_bitmap);
+    void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
+                       GenEnum::PropName node_prop = prop_bitmap);
     void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);
     void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 

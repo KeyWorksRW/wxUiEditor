@@ -10,8 +10,8 @@
 #include "node_gridbag.h"  // GridBag class
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
-#include "gridbag_item.h"         // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
-#include "mainapp.h"              // App -- Main application class
+#include "gridbag_item.h"         // Dialog for inserting an item into a wxGridBagSizer node
+#include "mainapp.h"              // Main application class
 #include "mainframe.h"            // Main window frame
 #include "node.h"                 // Node class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
@@ -70,8 +70,8 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
         ptrdiff_t pos_append = 0;
         int last_column = -1;
 
-        // Both rows and columns can be in any random child position, so each node must be examined to find the last
-        // column of the row we want to append to.
+        // Both rows and columns can be in any random child position, so each node must be examined
+        // to find the last column of the row we want to append to.
         for (size_t pos = 0; pos < gbsizer->getChildCount(); ++pos)
         {
             if (gbsizer->getChild(pos)->as_int(prop_row) == dlg.GetRow())
@@ -92,22 +92,24 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
         if (pos_append >= static_cast<ptrdiff_t>(gbsizer->getChildCount()))
             pos_append = -1;  // Append the child at the very end
 
-        wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, pos_append));
+        wxGetFrame().PushUndoAction(
+            std::make_shared<AppendGridBagAction>(new_node, gbsizer, pos_append));
         return true;
     }
 
-    // If we get here, then either the row or the column must be inserted. That means any duplicate row/column needs to be
-    // incremented, which has to be done recursively.
+    // If we get here, then either the row or the column must be inserted. That means any duplicate
+    // row/column needs to be incremented, which has to be done recursively.
 
     tt_string undo_str;
     undo_str << "Insert " << map_GenNames[new_node->getGenName()];
 
-    // Unlike a normal undo command, this one will simply make a copy of the current gbsizer and the current selection.
+    // Unlike a normal undo command, this one will simply make a copy of the current gbsizer and the
+    // current selection.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
     wxGetFrame().PushUndoAction(undo_cmd);
 
-    // Inserting means we have to change multiple columns or multiple rows, and to do that we need the children correctly
-    // sorted.
+    // Inserting means we have to change multiple columns or multiple rows, and to do that we need
+    // the children correctly sorted.
 
     GridBagSort(gbsizer);
 
@@ -140,7 +142,8 @@ size_t GridBag::IncrementRows(int row, Node* gbsizer)
             insert_position = idx;
             while (idx < gbsizer->getChildCount())
             {
-                gbsizer->getChild(idx)->set_value(prop_row, gbsizer->getChild(idx)->as_int(prop_row) + 1);
+                gbsizer->getChild(idx)->set_value(prop_row,
+                                                  gbsizer->getChild(idx)->as_int(prop_row) + 1);
                 ++idx;
             }
             break;
@@ -163,7 +166,8 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
             {
                 if (gbsizer->getChild(idx)->as_int(prop_row) != row)
                     break;
-                gbsizer->getChild(idx)->set_value(prop_column, gbsizer->getChild(idx)->as_int(prop_column) + 1);
+                gbsizer->getChild(idx)->set_value(prop_column,
+                                                  gbsizer->getChild(idx)->as_int(prop_column) + 1);
                 ++idx;
             }
             break;
@@ -222,8 +226,9 @@ static void SwapNodes(Node* gbSizer, size_t first_pos, size_t second_pos)
 
 bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
 {
-    // This function is completely reliant on the children of the wxGridBagSizer being sorted. That means unless we are just
-    // doing a check or know that no action can be taken, then we always resort the entire gridbagsizer.
+    // This function is completely reliant on the children of the wxGridBagSizer being sorted. That
+    // means unless we are just doing a check or know that no action can be taken, then we always
+    // resort the entire gridbagsizer.
 
     ASSERT(node->getParent()->isGen(gen_wxGridBagSizer));
 
@@ -271,7 +276,8 @@ void GridBag::MoveLeft(Node* node)
     tt_string undo_str;
     undo_str << "Change column of " << map_GenNames[node->getGenName()];
 
-    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
+    // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
     wxGetFrame().PushUndoAction(undo_cmd);
 
@@ -289,7 +295,8 @@ void GridBag::MoveLeft(Node* node)
     }
     else
     {
-        auto previous_column = previous_node->as_int(prop_column) + (previous_node->as_int(prop_colspan) - 1);
+        auto previous_column =
+            previous_node->as_int(prop_column) + (previous_node->as_int(prop_colspan) - 1);
         if (cur_column - 1 > previous_column)
             isColumnChangeOnly = true;
     }
@@ -318,7 +325,8 @@ void GridBag::MoveRight(Node* node)
 
     tt_string undo_str;
     undo_str << "Change column of " << map_GenNames[node->getGenName()];
-    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
+    // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
     wxGetFrame().PushUndoAction(undo_cmd);
 
@@ -328,7 +336,9 @@ void GridBag::MoveRight(Node* node)
     auto cur_row = node->as_int(prop_row);
     auto cur_column = node->as_int(prop_column);
 
-    auto next_node = (cur_position + 1 < gbsizer->getChildCount()) ? gbsizer->getChild(cur_position + 1) : nullptr;
+    auto next_node = (cur_position + 1 < gbsizer->getChildCount()) ?
+                         gbsizer->getChild(cur_position + 1) :
+                         nullptr;
 
     bool isColumnChangeOnly { false };
     if (!next_node || next_node->as_int(prop_row) != cur_row)
@@ -365,7 +375,8 @@ void GridBag::MoveUp(Node* node)
     tt_string undo_str;
     undo_str << "Change row";
 
-    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
+    // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
     wxGetFrame().PushUndoAction(undo_cmd);
 
@@ -439,7 +450,8 @@ void GridBag::MoveDown(Node* node)
     tt_string undo_str;
     undo_str << "Change row";
 
-    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
+    // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
     wxGetFrame().PushUndoAction(undo_cmd);
 
@@ -489,7 +501,8 @@ void GridBag::MoveDown(Node* node)
     {
         gbsizer->getChild(end_swap)->set_value(prop_row, cur_row);
         ++end_swap;
-        if (end_swap == gbsizer->getChildCount() || gbsizer->getChild(end_swap)->as_int(prop_row) != new_row)
+        if (end_swap == gbsizer->getChildCount() ||
+            gbsizer->getChild(end_swap)->as_int(prop_row) != new_row)
             break;
     }
 

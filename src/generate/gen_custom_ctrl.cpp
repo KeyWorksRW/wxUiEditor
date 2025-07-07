@@ -28,14 +28,17 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
         if (auto pos = parts[0].find('('); pos != tt::npos)
         {
             tt_string_vector options(parts[0].subview(pos + 1), ",");
-            widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, options[0], wxDefaultPosition, wxDefaultSize,
-                                      wxBORDER_SIMPLE |
-                                          (options.size() > 1 && options[1].contains("1") ? wxALIGN_CENTER_HORIZONTAL : 0));
+            widget =
+                new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, options[0],
+                                 wxDefaultPosition, wxDefaultSize,
+                                 wxBORDER_SIMPLE | (options.size() > 1 && options[1].contains("1") ?
+                                                        wxALIGN_CENTER_HORIZONTAL :
+                                                        0));
         }
         else
         {
-            widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, wxDefaultPosition,
-                                      wxDefaultSize, wxBORDER_SIMPLE);
+            widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                      wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
         }
         if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
         {
@@ -54,7 +57,8 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
     // Default to a bitmap if no mockup is specified
     else
     {
-        widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
+        widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                           GetInternalImage("CustomControl"));
         if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
         {
             widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
@@ -66,7 +70,8 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
             if (size.x != -1 && size.y != -1)
             {
                 widget->SetMinSize(size);
-                wxStaticCast(widget, wxGenericStaticBitmap)->SetScaleMode(wxStaticBitmap::Scale_Fill);
+                wxStaticCast(widget, wxGenericStaticBitmap)
+                    ->SetScaleMode(wxStaticBitmap::Scale_Fill);
             }
         }
     }
@@ -98,7 +103,8 @@ bool CustomControl::ConstructionCode(Code& code)
     tt_string parameters(code.view(prop_parameters));
     if (parameters.starts_with('('))
         parameters.erase(0, 1);
-    parameters.Replace("${parent}", code.node()->getParentName(code.get_language(), true), tt::REPLACE::all);
+    parameters.Replace("${parent}", code.node()->getParentName(code.get_language(), true),
+                       tt::REPLACE::all);
     if (code.is_cpp())
     {
         parameters.Replace("self", "this", tt::REPLACE::all);
@@ -137,8 +143,8 @@ bool CustomControl::ConstructionCode(Code& code)
             }
             else
             {
-                // In C++ we can just replace the macro with the string from the property, but in Python we need to
-                // do additional processing on most strings.
+                // In C++ we can just replace the macro with the string from the property, but in
+                // Python we need to do additional processing on most strings.
                 if (code.is_cpp())
                 {
                     parameters.Replace(iter.first, code.view(iter.second));
@@ -156,7 +162,11 @@ bool CustomControl::ConstructionCode(Code& code)
     if (parameters.size() && parameters.back() != ')')
         parameters += ")";
 
-    code.as_string(prop_class_name).Str("(").CheckLineLength(parameters.size()).Str(parameters).AddIfCpp(";");
+    code.as_string(prop_class_name)
+        .Str("(")
+        .CheckLineLength(parameters.size())
+        .Str(parameters)
+        .AddIfCpp(";");
 
     return true;
 }
@@ -189,7 +199,8 @@ bool CustomControl::SettingsCode(Code& code)
 
 int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "unknown");
@@ -199,7 +210,8 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
     return result;
 }
 
-bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr, GenLang language)
+bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                std::set<std::string>& set_hdr, GenLang language)
 {
     if (node->hasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
     {
@@ -234,8 +246,9 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
     {
         if (node->hasValue(prop_namespace))
         {
-            set_hdr.insert(tt_string("namespace ") << node->as_string(prop_namespace) << "\n{\n\t" << "class "
-                                                   << node->as_string(prop_class_name) << ";\n}");
+            set_hdr.insert(tt_string("namespace ")
+                           << node->as_string(prop_namespace) << "\n{\n\t" << "class "
+                           << node->as_string(prop_class_name) << ";\n}");
         }
         else
             set_hdr.insert(tt_string() << "class " << node->as_string(prop_class_name) << ';');

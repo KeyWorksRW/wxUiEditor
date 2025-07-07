@@ -14,8 +14,8 @@ using namespace GenEnum;
 class PropDeclaration
 {
 public:
-    PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type, std::string_view def_value,
-                    std::string_view help)
+    PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type,
+                    std::string_view def_value, std::string_view help)
     {
         m_name_enum = prop_name;
         m_prop_type = prop_type;

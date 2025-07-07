@@ -12,7 +12,7 @@
 
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node -- Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
@@ -22,8 +22,8 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 {
     m_prop_type = type;
 
-    if ((type == CustomPointProperty::type_SVG || type == CustomPointProperty::type_ART) && prop->hasValue() &&
-        prop->as_string().contains("["))
+    if ((type == CustomPointProperty::type_SVG || type == CustomPointProperty::type_ART) &&
+        prop->hasValue() && prop->as_string().contains("["))
     {
         tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
@@ -89,7 +89,8 @@ void CustomPointProperty::RefreshChildren()
     }
 }
 
-wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int childIndex, wxVariant& childValue) const
+wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int childIndex,
+                                            wxVariant& childValue) const
 {
     wxString value = childValue;
     if (value.empty())
@@ -115,7 +116,8 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
 
     value.clear();
     value << point.x << ',' << point.y;
-    if (!dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
+    if (!dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART &&
+        m_prop_type != type_BITMAP)
         value << 'n';
 
     return value;
@@ -161,9 +163,11 @@ void CustomPointProperty::InitValues(tt_string_view value)
         m_point.x = tt::atoi(parts[0]);
         m_point.y = tt::atoi(parts[1]);
 
-        // If mainframe window was created before the project was loaded, then any values with 'd' should already have been
-        // converted to pixels. This just ensures it still works in case we missed something.
-        ASSERT_MSG(!tt::contains(value, 'd', tt::CASE::either), "'d' in size/point not converted when project loaded.");
+        // If mainframe window was created before the project was loaded, then any values with 'd'
+        // should already have been converted to pixels. This just ensures it still works in case we
+        // missed something.
+        ASSERT_MSG(!tt::contains(value, 'd', tt::CASE::either),
+                   "'d' in size/point not converted when project loaded.");
         if (tt::contains(value, 'd', tt::CASE::either))
         {
             m_point = wxGetApp().getMainFrame()->ConvertDialogToPixels(m_point);
@@ -177,7 +181,8 @@ tt_string CustomPointProperty::CombineValues()
 {
     tt_string value;
     value << m_point.x << ',' << m_point.y;
-    if (!m_dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
+    if (!m_dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART &&
+        m_prop_type != type_BITMAP)
         value << 'n';
     return value;
 }

@@ -22,7 +22,7 @@
 #include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 #include "to_casts.h"        // to_int, to_size_t, and to_char classes
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
 #include "utils.h"           // Miscellaneous utility functions
 
 #ifndef SCI_SETKEYWORDS
@@ -82,12 +82,13 @@ inline const char* lst_widgets_keywords[] = {
 };
 // clang-format on
 
-CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
+CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
+    CodeDisplayBase(parent), m_panel_type(panel_type)
 {
     SetStcColors(m_scintilla, panel_type);
 
-    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not
-    // cross-platform. See issue #597.
+    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
+    // which is not cross-platform. See issue #597.
 
     FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
@@ -131,8 +132,8 @@ void CodeDisplay::OnFind(wxFindDialogEvent& event)
 
     if (result == wxSTC_INVALID_POSITION)
     {
-        wxMessageBox(wxString() << event.GetFindString() << " not found.", "Not Found", wxICON_ERROR,
-                     wxStaticCast(event.GetClientData(), wxWindow));
+        wxMessageBox(wxString() << event.GetFindString() << " not found.", "Not Found",
+                     wxICON_ERROR, wxStaticCast(event.GetClientData(), wxWindow));
     }
     else
     {
@@ -178,8 +179,8 @@ void CodeDisplay::OnNodeSelected(Node* node)
         return;
     }
 
-    if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC && !node->isGen(gen_ribbonTool) &&
-        !node->isGen(gen_ribbonButton))
+    if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC &&
+        !node->isGen(gen_ribbonTool) && !node->isGen(gen_ribbonButton))
     {
         return;  // probably a form, spacer, or image
     }
@@ -253,7 +254,8 @@ void CodeDisplay::OnNodeSelected(Node* node)
         {
             if (node->hasValue(prop_bitmap))
             {
-                tt_view_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                tt_view_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                     tt::TRIM::both);
                 if (parts.size() && parts[IndexImage].size())
                 {
                     if (auto result = FileNameToVarName(parts[IndexImage]); result)
@@ -326,7 +328,8 @@ void CodeDisplay::OnRibbonToolSelected(Node* node)
         }
         else if (parent->isGen(gen_wxRibbonToolBar))
         {
-            search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id) << ",";
+            search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id)
+                   << ",";
             if (m_panel_type == GEN_LANG_PYTHON)
                 search.Replace("->", ".");
             else if (m_panel_type == GEN_LANG_RUBY)

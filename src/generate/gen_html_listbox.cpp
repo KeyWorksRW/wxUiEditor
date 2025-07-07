@@ -15,12 +15,11 @@
 
 #include "gen_html_listbox.h"
 
-//////////////////////////////////////////  HtmlListBoxGenerator  //////////////////////////////////////////
-
 wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                          DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
+    auto widget =
+        new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->hasValue(prop_contents))
     {
@@ -48,17 +47,20 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 bool HtmlListBoxGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
-    if (auto params_needed = code.WhatParamsNeeded("wxHLB_DEFAULT_STYLE"); params_needed != nothing_needed)
+    if (auto params_needed = code.WhatParamsNeeded("wxHLB_DEFAULT_STYLE");
+        params_needed != nothing_needed)
     {
         code.Comma().Pos().Comma().WxSize();
         if (code.is_cpp())
         {
-            code.Comma().CheckLineLength(sizeof("0, nullptr, ") + code.node()->as_string(prop_style).size());
+            code.Comma().CheckLineLength(sizeof("0, nullptr, ") +
+                                         code.node()->as_string(prop_style).size());
             code += "0, nullptr";
         }
         else
         {
-            code.Comma().CheckLineLength(sizeof("[], ") + code.node()->as_string(prop_style).size());
+            code.Comma().CheckLineLength(sizeof("[], ") +
+                                         code.node()->as_string(prop_style).size());
             code.Add("[]");
         }
         code.Comma().Style();
@@ -116,7 +118,11 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
             int sel = code.node()->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
             {
-                code.Eol(eol_if_empty).NodeName().Function("SetSelection(").as_string(prop_selection_int).EndFunction();
+                code.Eol(eol_if_empty)
+                    .NodeName()
+                    .Function("SetSelection(")
+                    .as_string(prop_selection_int)
+                    .EndFunction();
             }
         }
     }
@@ -124,8 +130,8 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/htmllbox.h>", set_src, set_hdr);
     return true;
@@ -149,7 +155,8 @@ bool HtmlListBoxGenerator::GetImports(Node*, std::set<std::string>& set_imports,
 
 int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSimpleHtmlListBox");

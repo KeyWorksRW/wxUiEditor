@@ -5,8 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// A wxWizard derives from wxDialog which makes it unusable as a child of the wxPanel used by our Mockup panel. We emulate
-// the functionality here, use similar methods to what that the real wxWizard uses (see wxWidgets/src/generic/wizard.cpp).
+// A wxWizard derives from wxDialog which makes it unusable as a child of the wxPanel used by our
+// Mockup panel. We emulate the functionality here, use similar methods to what that the real
+// wxWizard uses (see wxWidgets/src/generic/wizard.cpp).
 
 #include <wx/dcmemory.h>  // wxMemoryDC base header
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
@@ -51,12 +52,14 @@ void MockupWizard::CreateBmpPageRow()
         if (m_bitmap.IsOk())
         {
             wxSize bmp_size(wxDefaultSize);
-            if (m_wizard_node->as_int(prop_bmp_placement) > 0 && m_wizard_node->as_int(prop_bmp_min_width) > 0)
+            if (m_wizard_node->as_int(prop_bmp_placement) > 0 &&
+                m_wizard_node->as_int(prop_bmp_min_width) > 0)
             {
                 ResizeBitmap(m_bitmap);
                 bmp_size.x = m_wizard_node->as_int(prop_bmp_min_width);
             }
-            m_static_bitmap = new wxStaticBitmap(this, wxID_ANY, m_bitmap, wxDefaultPosition, bmp_size);
+            m_static_bitmap =
+                new wxStaticBitmap(this, wxID_ANY, m_bitmap, wxDefaultPosition, bmp_size);
             m_bmp_page_sizer->Add(m_static_bitmap, wxSizerFlags());
             m_bmp_page_sizer->Add(wxSizerFlags::GetDefaultBorder(), 0);
 
@@ -212,7 +215,8 @@ void MockupWizard::AddPage(MockupWizardPage* page)
         if (bmp->IsOk())
         {
             auto bmp_size = bmp->GetScaledSize();
-            if (m_wizard_node->as_int(prop_bmp_min_width) > 0 && bmp_size.x < m_wizard_node->as_int(prop_bmp_min_width))
+            if (m_wizard_node->as_int(prop_bmp_min_width) > 0 &&
+                bmp_size.x < m_wizard_node->as_int(prop_bmp_min_width))
             {
                 bmp_size.x = m_wizard_node->as_int(prop_bmp_min_width);
             }
@@ -252,8 +256,9 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
     if (!m_bmp_placement || !bmp.IsOk())
         return false;
 
-    // GetScaledWidth() and GetScaledHeight() are new to wxWidgets 3.1.5 and are not currently documented, though they use
-    // GetScaleFactor() which is documented. E.g., GetScaledWidth() { return GetWidth() / GetScaleFactor(); }
+    // GetScaledWidth() and GetScaledHeight() are new to wxWidgets 3.1.5 and are not currently
+    // documented, though they use GetScaleFactor() which is documented. E.g., GetScaledWidth() {
+    // return GetWidth() / GetScaleFactor(); }
 
     auto bmp_width = wxMax(bmp.GetScaledWidth(), m_wizard_node->as_int(prop_bmp_min_width));
     auto bmp_height = wxMax(m_largest_nonbmp_page.y, bmp.GetScaledHeight());
@@ -269,7 +274,8 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
 
     if (m_bmp_placement & wxWIZARD_TILE)
     {
-        wxWizard::TileBitmap(wxRect(0, 0, static_cast<int>(bmp_width), static_cast<int>(bmp_height)), dc, bmp);
+        wxWizard::TileBitmap(
+            wxRect(0, 0, static_cast<int>(bmp_width), static_cast<int>(bmp_height)), dc, bmp);
     }
     else
     {
@@ -299,7 +305,8 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
     return true;
 }
 
-MockupWizardPage::MockupWizardPage(Node* node, wxObject* parent) : wxPanel(wxStaticCast(parent, wxWindow))
+MockupWizardPage::MockupWizardPage(Node* node, wxObject* parent) :
+    wxPanel(wxStaticCast(parent, wxWindow))
 {
     if (node->hasValue(prop_bitmap))
     {

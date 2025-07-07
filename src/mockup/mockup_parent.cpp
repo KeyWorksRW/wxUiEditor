@@ -7,9 +7,10 @@
 
 /*
 
-    * MockupParent is the top-level panel which maintains a border around the virtual "form" window as well as providing
-    * scrollbars if needed. It has a dark background to make it easier to see the virtual "form" and is why we we use a
-    * different wxPanel to host the title bar and content panels (since it will have a standard background).
+    * MockupParent is the top-level panel which maintains a border around the virtual "form" window
+    * as well as providing scrollbars if needed. It has a dark background to make it easier to see
+    * the virtual "form" and is why we we use a different wxPanel to host the title bar and content
+    * panels (since it will have a standard background).
 
     * m_MockupWindow is a simple wxPanel that hosts the title bar and container panels.
 
@@ -48,7 +49,8 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 
     // Make the background around the window darker to enhance the contrast with the form
-    SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE).ChangeLightness(100));
+    SetOwnBackgroundColour(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE).ChangeLightness(100));
 
     auto mockup_sizer = new wxBoxSizer(wxVERTICAL);
     auto form_sizer = new wxBoxSizer(wxVERTICAL);
@@ -63,7 +65,8 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     m_text_title = new wxStaticText(m_panelTitleBar, wxID_ANY, wxEmptyString);
     title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border());
     auto bmp =
-        new wxStaticBitmap(m_panelTitleBar, wxID_ANY, wxBitmap(LoadHeaderImage(title_close_png, sizeof(title_close_png))));
+        new wxStaticBitmap(m_panelTitleBar, wxID_ANY,
+                           wxBitmap(LoadHeaderImage(title_close_png, sizeof(title_close_png))));
     title_sizer->Add(bmp, wxSizerFlags());
 
     m_panelTitleBar->SetSizerAndFit(title_sizer);
@@ -77,7 +80,8 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
 
     m_MockupWindow->SetSizer(form_sizer);
     m_MockupWindow->Layout();
-    mockup_sizer->Add(m_MockupWindow, wxSizerFlags().Border(wxALL, wxSizerFlags::GetDefaultBorder()));
+    mockup_sizer->Add(m_MockupWindow,
+                      wxSizerFlags().Border(wxALL, wxSizerFlags::GetDefaultBorder()));
 
     SetSizerAndFit(mockup_sizer);
 
@@ -126,10 +130,12 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     frame->AddCustomEventHandler(GetEventHandler());
 }
 
-// This gets called when a different form is selected, a different project loaded, controls added and/or deleted, etc.
+// This gets called when a different form is selected, a different project loaded, controls added
+// and/or deleted, etc.
 void MockupParent::CreateContent()
 {
-    // Just in case this gets called when we aren't being shown, only clear the panel if we haven't cleared it already.
+    // Just in case this gets called when we aren't being shown, only clear the panel if we haven't
+    // cleared it already.
     if (m_AreNodesCreated)
     {
         m_panelContent->RemoveNodes();
@@ -164,7 +170,8 @@ void MockupParent::CreateContent()
     }
     else if (m_form->isType(GenEnum::type_frame_form))
     {
-        m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
+        m_panelContent->SetOwnBackgroundColour(
+            wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
     }
     else if (m_form->isGen(gen_wxPopupTransientWindow))
     {
@@ -180,8 +187,8 @@ void MockupParent::CreateContent()
 #endif
     }
 
-    if (m_form->isType(type_frame_form) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard) ||
-        m_form->isGen(gen_wxPropertySheetDialog))
+    if (m_form->isType(type_frame_form) || m_form->isGen(gen_wxDialog) ||
+        m_form->isGen(gen_wxWizard) || m_form->isGen(gen_wxPropertySheetDialog))
     {
         m_text_title->SetLabel(m_form->as_wxString(prop_title));
         m_panelTitleBar->Show();
@@ -316,7 +323,8 @@ void MockupParent::SelectNode(wxObject* wxobject)
     m_panelContent->SelectNode(wxobject);
 }
 
-///////////////////////////////////////////// Generator functions ////////////////////////////////////////////////
+///////////////////////////////////////////// Generator functions
+///////////////////////////////////////////////////
 
 // These are functions the component windows need access to
 
@@ -446,16 +454,18 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             if (prop->isProp(prop_message) && prop->getNode()->isGen(gen_wxBannerWindow))
                 break;  // In this case, Mockup does need to be redrawn
             else if (prop->isProp(prop_id) && prop->getNode()->isGen(gen_wxButton))
-                break;  // In this case, Mockup does need to be redrawn since label could have changed
+                break;  // In this case, Mockup does need to be redrawn since label could have
+                        // changed
             else
                 return;
         }
     }
 
-    // Some properties can be changed after the widget is created. We call the generator to update the widget, and if returns
-    // true then we resize and repaint the entire Mockup window. There are cases where the resize isn't necessary, but since
-    // the updating happens in a Freeze/Thaw section, there shouldn't be any noticeable effect to the user with a resize that
-    // doesn't actually change the size.
+    // Some properties can be changed after the widget is created. We call the generator to update
+    // the widget, and if returns true then we resize and repaint the entire Mockup window. There
+    // are cases where the resize isn't necessary, but since the updating happens in a Freeze/Thaw
+    // section, there shouldn't be any noticeable effect to the user with a resize that doesn't
+    // actually change the size.
 
     bool is_updated = false;
 
@@ -466,7 +476,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             auto window = Get_wxObject(node);
             if (!window)
             {
-                // For some content such as FormPanel, the selected node doesn't have a window that can be enabled/disabled
+                // For some content such as FormPanel, the selected node doesn't have a window that
+                // can be enabled/disabled
                 CreateContent();
                 return;
             }
@@ -492,8 +503,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 new_size.y += size_title.y;
             }
 
-            if (m_IsMagnifyWindow &&
-                !(m_form->isGen(gen_RibbonBar) || m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar)))
+            if (m_IsMagnifyWindow && !(m_form->isGen(gen_RibbonBar) || m_form->isGen(gen_ToolBar) ||
+                                       m_form->isGen(gen_MenuBar)))
             {
                 new_size.IncTo(m_size_magnified);
             }
@@ -512,7 +523,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (!is_updated)
     {
-        // We set m_isPropertyChanging so that we ignore generators calling our SelectNode() because a page changed
+        // We set m_isPropertyChanging so that we ignore generators calling our SelectNode() because
+        // a page changed
         m_isPropertyChanging = true;
         CreateContent();
         m_panelContent->OnNodeSelected(wxGetFrame().getSelectedNode());

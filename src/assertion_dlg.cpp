@@ -19,9 +19,11 @@ static std::mutex g_mutexAssert;
 // than trapping in this function and then having to step out of this function to get to the
 // function that threw the assert.
 
-bool AssertionDlg(const char* filename, const char* function, int line, const char* cond, const std::string& msg)
+bool AssertionDlg(const char* filename, const char* function, int line, const char* cond,
+                  const std::string& msg)
 {
-    // This is in case additional message processing results in an assert while this one is already being displayed.
+    // This is in case additional message processing results in an assert while this one is already
+    // being displayed.
     std::unique_lock<std::mutex> classLock(g_mutexAssert);
 
     tt_string str;
@@ -71,10 +73,11 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
 }
 
 // wxSetAssertHandler(ttAssertionHandler) will change wxASSERT dialogs to this one.
-void ttAssertionHandler(const wxString& filename, int line, const wxString& function, const wxString& cond,
-                        const wxString& msg)
+void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
+                        const wxString& cond, const wxString& msg)
 {
-    // This is in case additional message processing results in an assert while this one is already being displayed.
+    // This is in case additional message processing results in an assert while this one is already
+    // being displayed.
     std::unique_lock<std::mutex> classLock(g_mutexAssert);
 
     wxString str;

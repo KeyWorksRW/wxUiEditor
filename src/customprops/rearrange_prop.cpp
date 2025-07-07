@@ -72,9 +72,9 @@ void RearrangeDialog::OnOK(wxCommandEvent& event)
     }
     m_value = m_prop->convert_checklist_items(m_contents);
 
-    // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we sometimes get
-    // a warning about undeleted events. Since none of the other custom property editors have this issue, it's most
-    // likely due to something in m_grid.
+    // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we
+    // sometimes get a warning about undeleted events. Since none of the other custom property
+    // editors have this issue, it's most likely due to something in m_grid.
     m_grid->GetEventHandler()->DeletePendingEvents();
 
     event.Skip();
@@ -136,7 +136,8 @@ void RearrangeDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool RearrangeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property))
+bool RearrangeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
+                                          wxPGProperty* WXUNUSED(property))
 {
     RearrangeDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

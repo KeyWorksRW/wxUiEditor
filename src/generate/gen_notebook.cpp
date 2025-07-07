@@ -48,8 +48,8 @@ bool NotebookGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                    GenLang /* language */)
+bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/notebook.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))
@@ -65,7 +65,8 @@ bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int NotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxNotebook");
@@ -94,7 +95,8 @@ void NotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
     handlers.emplace("wxNotebookXmlHandler");
 }
 
-bool NotebookGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports, GenLang language)
+bool NotebookGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                   GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <stdexcept>
 #include <vector>
 
 #include "gen_enums.h"  // Enumerations for generators
@@ -48,7 +47,8 @@ public:
     std::vector<std::string>& getEvents() { return m_events; }
 
 private:
-    // This has to be wxString instead of std::string because wxPropertyCategory and wxPropertyGridInterface require it
+    // This has to be wxString instead of std::string because wxPropertyCategory and
+    // wxPropertyGridInterface require it
     wxString m_name;
 
     std::vector<PropName> m_prop_names;

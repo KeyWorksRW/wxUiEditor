@@ -21,8 +21,9 @@
 
 wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                    DlgSize(node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                          DlgSize(node, prop_size), GetStyleInt(node));
     if (node->as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
         widget->SetArtProvider(new wxAuiGenericTabArt());
     else if (node->as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
@@ -64,7 +65,8 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                         bool /* is_preview */)
 {
     if (auto notebook = wxStaticCast(wxobject, wxAuiNotebook); notebook)
     {
@@ -121,8 +123,8 @@ bool AuiNotebookGenerator::ConstructionCode(Code& code)
 bool AuiNotebookGenerator::SettingsCode(Code& code)
 {
     bool is_changed = false;
-    // Note that currently there is no UI to set this -- it's simply here to handle importing from other designers.
-    // See issue #936
+    // Note that currently there is no UI to set this -- it's simply here to handle importing from
+    // other designers. See issue #936
 #if 0
     if (code.IntValue(prop_tab_height) > 0)
     {
@@ -163,8 +165,8 @@ bool AuiNotebookGenerator::AfterChildrenCode(Code& code)
     return is_tooltip_set;
 }
 
-bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibook.h>", set_src, set_hdr);
     if (node->hasValue(prop_persist_name))
@@ -181,7 +183,8 @@ bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int AuiNotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                 BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiNotebook");

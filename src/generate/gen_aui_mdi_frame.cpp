@@ -45,20 +45,22 @@ bool AuiMdiFrameGenerator::BaseClassNameCode(Code& code)
     return FrameCommon::BaseClassNameCode(code);
 }
 
-bool AuiMdiFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                       GenLang /* language */)
+bool AuiMdiFrameGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                       std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/tabmdi.h>", set_src, set_hdr);
 
     return true;
 }
 
-bool AuiMdiFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool AuiMdiFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                               Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool AuiMdiFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+bool AuiMdiFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
+                                      GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {
@@ -94,20 +96,22 @@ bool AuiMDIChildFrame::BaseClassNameCode(Code& code)
     return FrameCommon::BaseClassNameCode(code);
 }
 
-bool AuiMDIChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                                   GenLang /* language */)
+bool AuiMDIChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                   std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/tabmdi.h>", set_src, set_hdr);
 
     return true;
 }
 
-bool AuiMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+bool AuiMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                           Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool AuiMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */, GenLang language)
+bool AuiMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
+                                  GenLang language)
 {
     if (language == GEN_LANG_PERL)
     {

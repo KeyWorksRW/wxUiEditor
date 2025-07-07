@@ -30,10 +30,12 @@ public:
     wxString make_wxString() const { return wxString::FromUTF8(data(), size()); }
 
 #if defined(_WIN32) && !(wxUSE_UNICODE_UTF8)
-    /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
+    /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other
+    /// platforms
     std::wstring wx_str() const { return to_utf16(); };
 #else
-    /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
+    /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other
+    /// platforms
     std::string wx_str() const { return std::string(*this); }
 #endif  // _WIN32
 
@@ -53,7 +55,8 @@ public:
     int comparei(std::string_view str) const;
 
     /// Locates the position of a substring.
-    size_t locate(std::string_view str, size_t posStart = 0, tt::CASE check = tt::CASE::exact) const;
+    size_t locate(std::string_view str, size_t posStart = 0,
+                  tt::CASE check = tt::CASE::exact) const;
 
     /// Returns true if the sub string exists
     bool contains(std::string_view sub, tt::CASE checkcase = tt::CASE::exact) const
@@ -106,10 +109,16 @@ public:
     int atoi(size_t start = 0) const { return tt::atoi(data() + start); }
 
     /// Returns true if current filename contains the specified case-insensitive extension.
-    bool has_extension(std::string_view ext) const { return tt::is_sameas(extension(), ext, tt::CASE::either); }
+    bool has_extension(std::string_view ext) const
+    {
+        return tt::is_sameas(extension(), ext, tt::CASE::either);
+    }
 
     /// Returns true if current filename contains the specified case-insensitive file name.
-    bool has_filename(std::string_view name) const { return tt::is_sameas(filename(), name, tt::CASE::either); }
+    bool has_filename(std::string_view name) const
+    {
+        return tt::is_sameas(filename(), name, tt::CASE::either);
+    }
 
     /// Returns a tt_string_view to the current extension. View is empty if there is no extension.
     ///
@@ -156,8 +165,8 @@ public:
     /// offset will be ignored.
     tt_string_view view_substr(size_t offset, char chBegin = '"', char chEnd = '"') const;
 
-    // All of the following view_() functions will return an empty tt_string_view if the specified character cannot be
-    // found, or the start position is out of range (including start == npos).
+    // All of the following view_() functions will return an empty tt_string_view if the specified
+    // character cannot be found, or the start position is out of range (including start == npos).
 
     tt_string_view view_space(size_t start = 0) const { return subview(find_space(start)); }
     tt_string_view view_nonspace(size_t start = 0) const { return subview(find_nonspace(start)); }
@@ -181,7 +190,8 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////
     // Note: all moveto_() functions start from the beginning of the tt_string_view. On success
-    // they change the tt_string_view and return true. On failure, the tt_string_view remains unchanged.
+    // they change the tt_string_view and return true. On failure, the tt_string_view remains
+    // unchanged.
     /////////////////////////////////////////////////////////////////////////////////
 
     /// Move start position to the next whitespace character

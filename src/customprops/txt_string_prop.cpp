@@ -10,7 +10,7 @@
 #include "txt_string_prop.h"
 
 #include "node_prop.h"       // NodeProperty class
-#include "tt_view_vector.h"  // tt_view_vector -- Class for reading and writing line-oriented strings/files
+#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"           // Miscellaneous utility functions
 
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.cpp
@@ -50,7 +50,8 @@ public:
     };
 };
 
-bool EditStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
+bool EditStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
+                                           wxPGProperty* WXUNUSED(property))
 {
     EditStringDialog dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

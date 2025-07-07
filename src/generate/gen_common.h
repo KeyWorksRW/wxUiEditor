@@ -110,6 +110,9 @@ bool BitmapList(Code& code, const GenEnum::PropName prop);
 
 /////////////////////////////////////// wxPerl Functions ///////////////////////////////////////
 
+// Returns true if a list was created. List name will be called "bitmaps".
+bool PerlBitmapList(Code& code, GenEnum::PropName prop);
+
 // Deterimes where the perl code will be written to, and returns an absolute path to that
 // location.
 tt_string MakePerlPath(Node* node);

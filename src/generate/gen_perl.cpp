@@ -16,6 +16,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
+#include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
@@ -55,6 +56,40 @@ $frame->Show;
 $app->MainLoop;
 )===";
 
+inline constexpr const auto txt_perl_get_bundle =
+R"===(
+# Loads image(s) from a string and returns a Wx::BitmapBundle object.
+sub wxue_get_bundle {
+    my ($image_data1, $image_data2, $image_data3) = @_;
+
+    my $image1 = Wx::Image->new;
+    $image1->LoadStream(IO::String->new($image_data1));
+
+    if (defined $image_data2) {
+        my $image2 = Wx::Image->new;
+        $image2->LoadStream(IO::String->new($image_data2));
+        if (defined $image_data3) {
+            my $image3 = Wx::Image->new;
+            $image3->LoadStream(IO::String->new($image_data3));
+            my @bitmaps = (
+                Wx::Bitmap->new($image1),
+                Wx::Bitmap->new($image2),
+                Wx::Bitmap->new($image3)
+            );
+            my $bundle = Wx::BitmapBundle::FromBitmaps(\@bitmaps);
+            return $bundle;
+        } else {
+            my $bundle = Wx::BitmapBundle::FromBitmaps(
+                Wx::Bitmap->new($image1),
+                Wx::Bitmap->new($image2)
+            );
+            return $bundle;
+        }
+    }
+    my $bundle = Wx::BitmapBundle::FromImage($image1);
+    return $bundle;
+})===";
+
 // clang-format on
 
 extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
@@ -87,6 +122,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     std::set<std::string> img_include_set;
 
     std::thread thrd_get_events(&PerlCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_need_img_func(&PerlCodeGenerator::ParseImageProperties, this, m_form_node);
     std::thread thrd_collect_img_headers(&PerlCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
@@ -180,6 +216,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         m_source->writeLine("use MIME::Base64;");
         thrd_get_events.join();
+        thrd_need_img_func.join();
         GenerateImagesForm();
         return;
     }
@@ -271,6 +308,16 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     // TODO: [Randalphwa - 07-13-2023] Need to figure out if wxPerl supports persistence
 
+    // Timer code must be created before the events, otherwise the timer variable won't exist
+    // when the event is created.
+
+    code.clear();
+    if (TimerGenerator::StartIfChildTimer(m_form_node, code))
+    {
+        m_source->writeLine(code);
+        m_source->writeLine();
+    }
+
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
@@ -306,6 +353,12 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_source->writeLine("\treturn $self;", indent::none);
     m_source->writeLine("}\n\n", indent::none);
 
+    thrd_need_img_func.join();
+    if (m_NeedImageFunction)
+    {
+        m_source->writeLine(txt_perl_get_bundle, indent::auto_keep_whitespace);
+    }
+
     // Only add this when writing to disk. Otherwise, it needs to be added after
     // the comment block, and only if there is no user code after the comment
     // block. This is to ensure that the user can add event handlers that are
@@ -316,6 +369,21 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     m_header->ResetIndent();
+
+    code.clear();
+    // Now write any embedded images that aren't declared in the gen_Images List
+    for (auto& iter: m_embedded_images)
+    {
+        // Only write the images that aren't declared in any gen_Images List. Note that
+        // this *WILL* result in duplicate images being written to different forms.
+        if (iter->form != m_ImagesForm)
+        {
+            WriteImageConstruction(code);
+            m_source->doWrite("\n");  // force an extra line break
+            m_source->SetLastLineBlank();
+            break;
+        }
+    }
 
     // TODO: [Randalphwa - 07-13-2023] If we use embedded images, we need to write them out here.
 #if 0
@@ -758,4 +826,67 @@ bool HasPerlMapConstant(std::string_view value)
             return true;
     }
     return false;
+}
+
+bool PerlBitmapList(Code& code, GenEnum::PropName prop)
+{
+    auto& description = code.node()->as_string(prop);
+    ASSERT_MSG(description.size(), "PerlBitmapList called with empty description");
+    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
+    {
+        return false;
+    }
+
+    auto bundle = ProjectImages.GetPropertyImageBundle(description);
+
+    if (!bundle || bundle->lst_filenames.size() < 3)
+    {
+        return false;
+    }
+
+    bool is_xpm = (parts[IndexType].is_sameas("XPM"));
+    auto path = MakePerlPath(code.node());
+
+    code += "bitmaps = [ ";
+    bool needs_comma = false;
+    for (auto& iter: bundle->lst_filenames)
+    {
+        if (needs_comma)
+        {
+            code.UpdateBreakAt();
+            code.Comma(false).Eol().Tab(3);
+        }
+
+        bool is_embed_success = false;
+        if (parts[IndexType].starts_with("Embed"))
+        {
+            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+            {
+                code.AddPerlImageName(embed);
+                code += ".Bitmap";
+                needs_comma = true;
+                is_embed_success = true;
+            }
+        }
+
+        if (!is_embed_success)
+        {
+            tt_string name(iter);
+            name.make_absolute();
+            name.make_relative(path);
+            name.backslashestoforward();
+
+            code.Str("Wx::Bitmap->new(").QuotedString(name);
+            if (is_xpm)
+                code.Comma().Str("wxBITMAP_TYPE_XPM");
+            code += ")";
+            needs_comma = true;
+        }
+    }
+    code += " ]\n";
+    code.UpdateBreakAt();
+
+    return true;
 }

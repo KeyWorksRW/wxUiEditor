@@ -482,6 +482,7 @@ public:
     void BundleRuby(const tt_string_vector& parts);
 
     void AddPythonImageName(const EmbeddedImage* embed);
+    void AddPerlImageName(const EmbeddedImage* embed);
 
     // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
     // Generates wxNullColour if the property is empty.

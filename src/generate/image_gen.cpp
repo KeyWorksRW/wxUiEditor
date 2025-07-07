@@ -505,6 +505,35 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         return;
     }
 
+    else if (code.is_perl())
+    {
+        code.Str("wxue_get_bundle(").Str("$").Str(embed->imgs[0].array_name);
+        if (bundle->lst_filenames.size() > 1)
+        {
+            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            {
+                code.Comma().Str("$").Str(embed2->imgs[0].array_name);
+            }
+            if (bundle->lst_filenames.size() > 2)
+            {
+                if (EmbeddedImage* embed3 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]); embed3)
+                {
+                    code.Comma().Str("$").Str(embed3->imgs[0].array_name);
+                }
+            }
+        }
+        code += ')';
+
+        if (get_bitmap)
+        {
+            code.Str(".get_bitmap(").Eol().Tab(2).Str("wxSize.new(");
+            code << ("from_dip(") << embed->size.x << "), from_dip(" << embed->size.y << ")))";
+            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be rescaled
+            // using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do it. However, the
+            // only embedded images we support are bundles, so this probably isn't practical.
+        }
+    }
+
     tt_string path;
     if (code.is_python())
     {

@@ -8,13 +8,12 @@
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
 #include <wx/statbmp.h>           // wxStaticBitmap class interface
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "pugixml.hpp"        // xml read/write/create/process
-#include "utils.h"            // Utility functions that work with properties
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "pugixml.hpp"      // xml read/write/create/process
+#include "utils.h"          // Utility functions that work with properties
 
 #include "gen_static_bmp.h"
 
@@ -49,7 +48,24 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
         if (code.hasValue(prop_bitmap))
         {
             bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
-            if (code.is_python())
+            if (code.is_perl())
+            {
+                bool is_list_created = PerlBitmapList(code, prop_bitmap);
+                if (code.is_local_var())
+                {
+                    code << "my ";
+                }
+                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                if (is_list_created)
+                {
+                    code += "Wx::BitmapBundle::FromBitmaps($bitmaps)";
+                }
+                else
+                {
+                    code.Bundle(prop_bitmap);
+                }
+            }
+            else if (code.is_python())
             {
                 bool is_list_created = PythonBitmapList(code, prop_bitmap);
                 if (!use_generic_version)

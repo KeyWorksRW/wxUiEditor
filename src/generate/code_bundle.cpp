@@ -76,8 +76,67 @@ void Code::BundlePerl(const tt_string_vector& parts)
         wxSize art_size { 16, 16 };
         art_size = GetSizeInfo(parts[IndexSize]);
 
-        // Size is a hack for now...
+        if (parts.size() > IndexSize && parts[IndexSize].size())
+        {
+            wxSize svg_size { -1, -1 };
+            svg_size = GetSizeInfo(parts[IndexSize]);
+
+            if (svg_size != wxDefaultSize)
+            {
+                art_size = svg_size;
+            }
+        }
+        CheckLineLength(sizeof(", Wx::Size->new((999, 999)))"));
+
         *this << ", Wx::Size->new(" << art_size.x << ", " << art_size.y << "))";
+        return;
+    }
+
+    auto path = MakePerlPath(node());
+
+    // TODO: [Randalphwa - 06-30-2025] wxPerl3 currently does not support SVG images, so we need to do something here...
+
+    if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+    {
+        tt_string name(bundle->lst_filenames[0]);
+        name.make_absolute();
+        if (!name.file_exists())
+        {
+            name = Project.ArtDirectory();
+            name.append_filename(bundle->lst_filenames[0]);
+        }
+        name.make_relative(path);
+        name.backslashestoforward();
+
+        if (parts[IndexType].contains("XPM"))
+        {
+            Str("Wx::Bitmap->new(");
+            CheckLineLength(name.size() + 3);
+            QuotedString(name).Comma().Str("wxBITMAP_TYPE_XPM)");
+        }
+
+        else if (bundle->lst_filenames.size() == 1)
+        {
+            *this += "Wx::BitmapBundle.FromBitmap(";
+            bool is_embed_success = false;
+
+            if (parts[IndexType].starts_with("Embed"))
+            {
+                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                {
+                    CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap)"));
+                    AddPerlImageName(embed);
+                    *this += ".Bitmap)";
+                    is_embed_success = true;
+                }
+            }
+
+            if (!is_embed_success)
+            {
+                CheckLineLength(name.size() + sizeof("Wx::Bitmap->new()"));
+                Str("Wx::Bitmap->new(").QuotedString(name) += "))";
+            }
+        }
     }
 }
 
@@ -258,6 +317,18 @@ void Code::AddPythonImageName(const EmbeddedImage* embed)
     if (embed->form->isGen(gen_Images))
     {
         tt_string import_name = embed->form->as_string(prop_python_file).filename();
+        import_name.remove_extension();
+
+        Str(import_name).Str(".");
+    }
+    Str(embed->imgs[0].array_name);
+}
+
+void Code::AddPerlImageName(const EmbeddedImage* embed)
+{
+    if (embed->form->isGen(gen_Images))
+    {
+        tt_string import_name = embed->form->as_string(prop_perl_file).filename();
         import_name.remove_extension();
 
         Str(import_name).Str(".");

@@ -158,8 +158,6 @@ else()
         MAX_NAME_COUNT=10000
         MAX_NAME_SIZE=32
     )
-    # Because zlib/gzlib.c uses a LSEEK macro to define which lseek function to use
-    target_compile_options(wxCLib PRIVATE "-Wimplicit-function-declaration")
 
 endif()
 

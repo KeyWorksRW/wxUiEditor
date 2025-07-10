@@ -404,7 +404,7 @@ set(CPACK_RPM_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_RPM_PACKAGE_SUMMARY "wxWidgets UI designer")
 
 # Use the build number to determine if the package is newer than the previous build.
-set(CPACK_RPM_PACKAGE_RELEASE to ${PROJECT_VERSION_BUILD})
+set(CPACK_RPM_PACKAGE_RELEASE ${PROJECT_VERSION_BUILD})
 
 set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/preinst")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWorksRW>")
@@ -415,7 +415,7 @@ set(CPACK_DEBIAN_PACKAGE_ICON ${CMAKE_CURRENT_LIST_DIR}/src/art_src/wxUiEditor.s
 set(CPACK_DEBIAN_PACKAGE_SUMMARY "wxWidgets UI designer")
 
 # Use the build number to determine if the package is newer than the previous build.
-set(CPACK_DEBIAN_PACKAGE_RELEASE to ${PROJECT_VERSION_BUILD})
+set(CPACK_DEBIAN_PACKAGE_RELEASE ${PROJECT_VERSION_BUILD})
 
 # Register .wxui file extension with wxUiEditor
 

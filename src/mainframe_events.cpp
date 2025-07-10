@@ -19,6 +19,7 @@
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+#include "version.h"          // Version numbers and other constants
 
 #include "preferences_dlg.h"  // PreferencesDlg -- Dialog for setting user preferences
 #include "startup_dlg.h"      // Dialog to display if wxUE is launched with no arguments

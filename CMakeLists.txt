@@ -1,10 +1,38 @@
 cmake_minimum_required(VERSION 3.20)
 
+string(TIMESTAMP YEAR "%y")      # e.g., "25"
+string(TIMESTAMP DOY "%j")       # e.g., "192"
+string(TIMESTAMP PROJECT_YEAR "%Y")
+math(EXPR BUILD_NUM "${YEAR}%100 * 1000 + ${DOY}")
+
+set(PROJECT_VERSION_MAJOR 1)
+set(PROJECT_VERSION_MINOR 2)
+set(PROJECT_VERSION_PATCH 9)
+set(PROJECT_VERSION_BUILD ${BUILD_NUM})
+set(PROJECT_VERSION_YEAR ${PROJECT_YEAR})
+
 project(wxUiEditor
     LANGUAGES CXX
-    VERSION 1.2.1.0
+    VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_BUILD}
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
+
+####################### Check for Multi-Config Generator #######################
+
+get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if (NOT isMultiConfig)
+    message("\nBecause you are using a single target generator, you MUST specify")
+    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
+
+    set(allowedBuildTypes Debug Release)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
+
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+    elseif (NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
+        message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
+    endif()
+endif()
 
 ####################### Options #######################
 
@@ -76,23 +104,19 @@ if( MUTUALLY_EXCLUSIVE_OPTION_COUNT GREATER 1 )
                          "can be enabled at a time." )
 endif()
 
-####################### Check for Multi-Config Generator #######################
+####################### Version #######################
 
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if (NOT isMultiConfig)
-    message("\nBecause you are using a single target generator, you MUST specify")
-    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/src/version.h.in
+    ${CMAKE_CURRENT_LIST_DIR}/src/version.h
+    @ONLY
+)
 
-    set(allowedBuildTypes Debug Release)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
-
-    if (NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
-    elseif (NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
-        message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
-    endif()
-endif()
-
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/src/version.rc.in
+    ${CMAKE_CURRENT_LIST_DIR}/src/version.rc
+    @ONLY
+)
 ####################### General Settings #######################
 
 # CMAKE_CXX_STANDARD is not set, using -std::c++latest instead. However, currently your compiler
@@ -379,6 +403,9 @@ set(CPACK_RPM_PACKAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_RPM_PACKAGE_SUMMARY "wxWidgets UI designer")
 
+# Use the build number to determine if the package is newer than the previous build.
+set(CPACK_RPM_PACKAGE_RELEASE to ${PROJECT_VERSION_BUILD})
+
 set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/preinst")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KeyWorks Software <https://github.com/KeyWorksRW>")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgtk-3-0, libc6 (>= 2.31)")
@@ -386,6 +413,9 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/KeyWorksRW/wxUiEditor")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "wxWidgets UI designer")
 set(CPACK_DEBIAN_PACKAGE_ICON ${CMAKE_CURRENT_LIST_DIR}/src/art_src/wxUiEditor.svg)
 set(CPACK_DEBIAN_PACKAGE_SUMMARY "wxWidgets UI designer")
+
+# Use the build number to determine if the package is newer than the previous build.
+set(CPACK_DEBIAN_PACKAGE_RELEASE to ${PROJECT_VERSION_BUILD})
 
 # Register .wxui file extension with wxUiEditor
 

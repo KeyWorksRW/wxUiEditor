@@ -1,0 +1,16 @@
+#pragma once
+
+// Version numbers are generated in ../CMakeLists.txt
+
+#define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define PROJECT_VERSION_BUILD @PROJECT_VERSION_BUILD@
+#define PROJECT_VERSION_YEAR @PROJECT_VERSION_YEAR@
+
+#define STRINGIFY2(x) #x
+#define STRINGIFY(x)  STRINGIFY2(x)
+
+inline constexpr const char* txtVersion = "wxUiEditor " STRINGIFY(PROJECT_VERSION_MAJOR) "." STRINGIFY(
+    PROJECT_VERSION_MINOR) "." STRINGIFY(PROJECT_VERSION_PATCH) "." STRINGIFY(PROJECT_VERSION_BUILD);
+inline constexpr const char* txtCopyRight = "Copyright (c) 2019-" STRINGIFY(PROJECT_VERSION_YEAR) " KeyWorks Software";

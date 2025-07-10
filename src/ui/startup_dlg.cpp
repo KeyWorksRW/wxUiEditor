@@ -197,6 +197,8 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 // clang-format on
 
+#include "version.h"  // Version numbers and other constants
+
 void StartupDlg::OnInit(wxInitDialogEvent& event)
 {
     if (!GetParent())

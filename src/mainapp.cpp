@@ -26,6 +26,7 @@
 #include "preferences.h"           // Set/Get wxUiEditor preferences
 #include "project_handler.h"       // ProjectHandler class
 #include "utils.h"                 // Utility functions that work with properties
+#include "version.h"               // Version numbers and other constants
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 

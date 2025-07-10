@@ -183,9 +183,7 @@ namespace xrc
 // When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
 // wxUiEditor.exe.manifest and ../CMakeLists.txt
 
-constexpr const char* txtVersion = "wxUiEditor 1.2.9.0";
-constexpr const char* txtCopyRight = "Copyright (c) 2019-2025 KeyWorks Software";
-constexpr const char* txtAppname = "wxUiEditor";
+inline constexpr const char* txtAppname = "wxUiEditor";
 
 // This is the highest project number supported by this build of wxUiEditor. It should be
 // updated after every release, if there are any changes to the project format that might

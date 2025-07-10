@@ -8,9 +8,6 @@
 #if defined(_WIN32) && !defined(__BORLANDC__)
 #  define LSEEK _lseeki64
 #else
-// Without this header file, gcc-14 will create an error because of an implicit function
-// declaration for lseek.
-#include <unistd.h>
 #if defined(_LARGEFILE64_SOURCE) && _LFS64_LARGEFILE-0
 #  define LSEEK lseek64
 #else

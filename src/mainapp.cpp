@@ -432,17 +432,18 @@ void App::ShowMsgWindow()
 }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+    #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
+
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    #if 0
-    // Enable this to verify that address sanitizer is working. It will throw an exception when when
-    // the function tries to return. Note that both the MSVC compiler and clangd will complain about
-    // this obvious bug, but it's a simple way to verify that the address sanitizer is working.
-    int x[100];
-    x[100] = 5;
-    #endif
+    wxGetMainFrame()->SelectNode(Project.getProjectNode(), evt_flags::force_selection);
 
-    wxASSERT_MSG(false, "assert in MsgLogging");
+    NewMdiForm dlg(wxGetFrame().getWindow());
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        dlg.createNode();
+    }
 }
 
 #endif

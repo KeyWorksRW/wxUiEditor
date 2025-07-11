@@ -106,3 +106,49 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
     return true;
 }
+
+inline constexpr const auto txt_TextCtrlViewHdrBlock =
+    R"===(
+#pragma once
+
+#include <wx/docview.h>
+#include <wx/textctrl.h>
+
+// This view uses a standard wxTextCtrl to show its contents
+class %class% : public wxView
+{
+public:
+    %class%() : wxView(), m_text(nullptr) {}
+
+    virtual bool OnCreate(wxDocument* doc, long flags) override;
+    virtual void OnDraw(wxDC* dc) override;
+    virtual bool OnClose(bool deleteWindow = true) override;
+
+    wxTextCtrl* GetText() const { return m_text; }
+
+protected:
+    void OnCopy(wxCommandEvent& WXUNUSED(event)) { m_text->Copy(); }
+    void OnPaste(wxCommandEvent& WXUNUSED(event)) { m_text->Paste(); }
+    void OnSelectAll(wxCommandEvent& WXUNUSED(event)) { m_text->SelectAll(); }
+
+private:
+    wxTextCtrl* m_text;
+
+    wxDECLARE_EVENT_TABLE();
+    wxDECLARE_DYNAMIC_CLASS(%class%);
+};
+)===";
+
+bool TextViewGenerator::HeaderCode(Code& code)
+{
+    tt_string_vector lines;
+    lines.ReadString(txt_TextCtrlViewHdrBlock);
+    tt_string class_name = code.node()->as_string(prop_class_name);
+    for (auto& line: lines)
+    {
+        line.Replace("%class%", class_name, true);
+        code.Str(line).Eol();
+    }
+
+    return true;
+}

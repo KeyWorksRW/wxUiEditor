@@ -120,9 +120,16 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
         tt_string_vector lines;
         lines.ReadString(txt_DocViewAppCppSrc);
         tt_string class_name = code.node()->as_string(prop_class_name);
+
+        bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
+            if (is_mdi)
+            {
+                line.Replace("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
+                line.Replace("wxAuiMDIParentFrame", "wxMDIParentFrame", true);
+            }
             code.Str(line).Eol();
         }
     }
@@ -137,9 +144,15 @@ bool DocViewAppGenerator::AfterConstructionCode(Code& code)
         tt_string_vector lines;
         lines.ReadString(txt_DocViewAppAfterCtor);
         tt_string class_name = code.node()->as_string(prop_class_name);
+        bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
+            if (is_mdi)
+            {
+                line.Replace("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
+                line.Replace("wxAuiMDIParentFrame", "wxMDIParentFrame", true);
+            }
             code.Str(line).Eol();
         }
     }
@@ -183,10 +196,13 @@ void DocViewAppGenerator::AddProtectedHdrMembers(std::set<std::string>& code_lin
     code_lines.emplace("std::vector<wxDocTemplate*> m_docTemplates;");
 }
 
-bool DocViewAppGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src,
+bool DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                       std::set<std::string>& /* set_hdr */, GenLang /* language */)
 {
-    set_src.insert("#include <wx/aui/tabmdi.h");
+    if (node->as_string(prop_kind) == "AUI")
+    {
+        set_src.insert("#include <wx/aui/tabmdi.h");
+    }
     set_src.insert("#include <wx/config.h");
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");

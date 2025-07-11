@@ -109,15 +109,15 @@
 #include "gen_ribbon_page.h"     // RibbonPageGenerator -- wxRibbonPage and wxRibbonPanel generators
 #include "gen_ribbon_tool.h"     // RibbonToolBarGenerator -- wxRibbonButtonBar generator
 
-#include "gen_aui_mdi_frame.h"     // AuiMdiFrameGenerator -- wxFrame generator
-#include "gen_doc_mdi_frame.h"     // DocParentFrameGenerator -- wxDocParentFrame generator
-#include "gen_doc_parent_frame.h"  // DocParentFrameGenerator -- wxDocParentFrame generator
+#include "mdi/gen_aui_mdi_frame.h"     // AuiMdiFrameGenerator -- wxFrame generator
+#include "mdi/gen_doc_mdi_frame.h"     // DocParentFrameGenerator -- wxDocParentFrame generator
+#include "mdi/gen_doc_parent_frame.h"  // DocParentFrameGenerator -- wxDocParentFrame generamdi/tor
 
-#include "gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
-#include "gen_mdi_menu.h"      // Menu bar classes for an MDI frame
+#include "mdi/gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
+#include "mdi/gen_mdi_menu.h"      // Menu bar classes for an MDI frame
 
-#include "gen_doc_textctrl.h"   // wxTextCtrl document class
-#include "gen_view_textctrl.h"  // wxTextCtrl view class
+#include "mdi/gen_doc_textctrl.h"   // wxTextCtrl document class
+#include "mdi/gen_view_textctrl.h"  // wxTextCtrl view class
 
 #include "gen_enums.h"  // Enumerations for generators
 

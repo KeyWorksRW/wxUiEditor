@@ -191,10 +191,16 @@ set (file_list
 
     # Document Management (MDI)
 
-    generate/gen_doc_view_app.cpp   # Generates base class for wxDocument/wView applications
+    generate/mdi/gen_doc_view_app.cpp   # Generates base class for wxDocument/wView applications
 
-    generate/gen_doc_textctrl.cpp   # wxTextCtrl document class
-    generate/gen_view_textctrl.cpp  # wxTextCtrl view class
+    generate/mdi/gen_doc_textctrl.cpp   # wxTextCtrl document class
+    generate/mdi/gen_view_textctrl.cpp  # wxTextCtrl view class
+
+    generate/mdi/gen_doc_parent_frame.cpp  # wxDocParentFrame generator
+    generate/mdi/gen_doc_mdi_frame.cpp     # wxDocMdiParentFrame generator
+    generate/mdi/gen_aui_mdi_frame.cpp     # wxAuiMDIParentFrame generator
+
+    generate/mdi/gen_mdi_menu.cpp       # Menu bar classes for an MDI frame
 
     # Forms
 
@@ -205,16 +211,12 @@ set (file_list
     generate/gen_propsheet_dlg.cpp  # wxPropertySheetDialog generator
     generate/gen_wizard.cpp         # wxWizard generator
 
-    generate/gen_doc_parent_frame.cpp   # wxDocParentFrame generator
-    generate/gen_doc_mdi_frame.cpp      # wxDocMdiParentFrame generator
-    generate/gen_aui_mdi_frame.cpp      # wxAuiMDIParentFrame generator
     generate/gen_frame_common.cpp       # wxDocParent common generator functions
 
     # Menus
 
     generate/menu_widgets.cpp      # MenuBar, MenuBarForm, PopupMenu, Separator
     generate/gen_ctx_menu.cpp      # CtxMenuGenerator -- generates function and includes
-    generate/gen_mdi_menu.cpp      # Menu bar classes for an MDI frame
     generate/gen_menu.cpp          # Menu Generator
     generate/gen_menuitem.cpp      # Menu Item Generator
     generate/gen_submenu.cpp       # SubMenu Generator

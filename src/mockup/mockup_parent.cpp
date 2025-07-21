@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top-level MockUp Parent window
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -134,6 +134,8 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
 // and/or deleted, etc.
 void MockupParent::CreateContent()
 {
+    wxWindowUpdateLocker freeze(this);
+
     // Just in case this gets called when we aren't being shown, only clear the panel if we haven't
     // cleared it already.
     if (m_AreNodesCreated)
@@ -158,8 +160,6 @@ void MockupParent::CreateContent()
         MSG_INFO("Mockup window recreated.");
     }
 #endif  // _DEBUG
-
-    wxWindowUpdateLocker freeze(this);
 
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
@@ -257,6 +257,9 @@ void MockupParent::CreateContent()
 
 void MockupParent::OnNodeDeleted(CustomEvent& /* event */)
 {
+    // Don't redraw while the node is being deleted.
+    wxWindowUpdateLocker freeze(this);
+
     // When we get the deleted event, the node being deleted is still selected, which can cause
     // a crash if we try to process it. After the node is deleted, a new node will be selected
     // (which might be a different form entirely), so we delete everything now and hide the

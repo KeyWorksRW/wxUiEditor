@@ -2451,6 +2451,20 @@ void CppCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>
                 {
                     set_hdr.insert("#include <wx/font.h>");
                 }
+                FontProperty fontprop(iter);
+                if (fontprop.isDefGuiFont())
+                {
+                    set_src.insert("#include <wx/settings.h>");
+                }
+                else
+                {
+                    fontprop.Convert(iter.get_value());
+                    const auto point_size = fontprop.GetFractionalPointSize();
+                    if (point_size <= 0)
+                    {
+                        set_src.insert("#include <wx/settings.h>");
+                    }
+                }
             }
             else if (iter.type() == type_wxColour)
             {

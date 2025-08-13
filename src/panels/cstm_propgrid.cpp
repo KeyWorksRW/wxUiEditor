@@ -28,7 +28,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
         ::wxBell();
 
     if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) &&
-        !property->HasFlag(wxPGPropertyFlags::InvalidValue))
+        !property->HasFlag(wxPGFlags::InvalidValue))
     {
         auto foreground_colour = *wxWHITE;
         auto background_colour = *wxRED;

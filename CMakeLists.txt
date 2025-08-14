@@ -57,42 +57,6 @@ option( INTERNAL_FEATURE1 "Build with Feature #1 enabled" ) # Currently tied to 
 option( INTERNAL_FEATURE2 "Build with Feature #2 enabled" ) # Currently tied to Data List
 option( INTERNAL_FEATURE3 "Build with Feature #3 enabled" ) # unused
 
-# The following options cannot be combined, are only usable for MSVC compiler, and are only for
-# a Release build.
-
-# [Randalphwa - 03-06-2023] Using MSVC Version 19.32.31332 with profiling on changes how
-# node->as_checklist_items() works, resulting in invalid C++ code generation for
-# wxCheckListBox. As such, the options to profile have been disabled until this can be tested
-# again on a newer compiler.
-
-# option(INTERNAL_PGO_GENERATE "Create instrumented build for profiling run (MSVC only)" OFF)
-# option(INTERNAL_PGO_USEPROFILE "Create optimized build using profile data (MSVC only)" OFF)
-
-# Count how many of the mutually exclusive options are enabled
-set( MUTUALLY_EXCLUSIVE_OPTION_COUNT 0 )
-
-if( BUILD_FORK )
-    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
-endif()
-
-if( BUILD_SNAPSHOT )
-    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
-endif()
-
-if( BUILD_CUSTOM )
-    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
-endif()
-
-if( BUILD_BUILTIN )
-    math( EXPR MUTUALLY_EXCLUSIVE_OPTION_COUNT "${MUTUALLY_EXCLUSIVE_OPTION_COUNT}+1" )
-endif()
-
-# If more than one option is enabled, display an error message
-if( MUTUALLY_EXCLUSIVE_OPTION_COUNT GREATER 1 )
-    message( FATAL_ERROR "Only one of BUILD_FORK, BUILD_SNAPSHOT, BUILD_CUSTOM, and BUILD_BUILTIN, "
-        "can be enabled at a time." )
-endif()
-
 # ###################### Version #######################
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/src/version.h.in

@@ -1,7 +1,12 @@
 name: "Check Build"
 
+# As of 8/13/2025 this no longer works because the target check_build creates a library that does not
+# have wxWidgets libraries as a dependency. Without CMake building the wxWidgets library, the required
+# wx/setup.h is never created which causes the check_build target to fail. This is the downside of using
+# FetchContent.
+
 on:
-  pull_request:
+  workflow_dispatch:
     paths-ignore:
       - src/art_src
       - src/tests
@@ -38,6 +43,15 @@ jobs:
       uses: actions/checkout@v4
 
     - run: mkdir ${{github.workspace}}/build
+
+    - name: Cache CMake FetchContent
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{github.workspace}}/build/_deps
+        key: ${{ runner.os }}-cmake-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-fetchcontent-
 
     - name: Configure CMake
       run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}

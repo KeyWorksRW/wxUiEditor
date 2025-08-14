@@ -1,7 +1,12 @@
 name: "Check Build"
 
+# As of 8/13/2025 this no longer works because the target check_build creates a library that does not
+# have wxWidgets libraries as a dependency. Without CMake building the wxWidgets library, the required
+# wx/setup.h is never created which causes the check_build target to fail. This is the downside of using
+# FetchContent.
+
 on:
-  pull_request:
+  workflow_dispatch:
     paths-ignore:
       - src/art_src
       - src/tests

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Classs to write code to disk
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +11,8 @@
 
 #include "file_codewriter.h"
 
-#include "code.h"            // Code -- Helper class for generating code
+#include "code.h"  // Code -- Helper class for generating code
+#include "gen_enums.h"
 #include "mainapp.h"         // App -- Main application class
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 
@@ -136,7 +137,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
         // If the file has never been written before, then we end the class outside of the closing
         // comment block. This allows the user to add event handlers or other functionality within
         // the class.
-        if (!file_exists)
+        if (!file_exists && !node->isGen(GenEnum::gen_Images) && !node->isGen(GenEnum::gen_Data))
         {
             Code code(node, GEN_LANG_RUBY);
             code.Eol().Str("end  # end of ").Str(node->getNodeName()).Str(" class");

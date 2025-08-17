@@ -1481,7 +1481,7 @@ const std::unordered_map<std::string_view, const char*> s_EventNames = {
     { "wxEVT_CHECKLISTBOX", "OnCheckListBoxToggled" },
     { "wxEVT_CHOICE", "OnChoice" },
     { "wxEVT_CLOSE", "OnClose" },
-    { "wxEVT_CLOSE_WINDOW", "OnClose" },
+    { "wxEVT_CLOSE_WINDOW", "OnCloseWindow" },
     { "wxEVT_COLOURPICKER_CHANGED", "OnColourChanged" },
     { "wxEVT_COMBOBOX", "OnCombobox" },
     { "wxEVT_COMBOBOX_CLOSEUP", "OnComboboxCloseup" },

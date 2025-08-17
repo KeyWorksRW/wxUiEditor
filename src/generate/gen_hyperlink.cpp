@@ -130,12 +130,14 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
                                                  BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
+    bool use_generic_version = (!node->as_bool(prop_underlined) ||
+                                node->as_string(prop_subclass).starts_with("wxGeneric"));
 
-#if defined(WIDGETS_FORK)
+    GenXrcObjectAttributes(node, item,
+                           use_generic_version ? "wxGenericHyperlinkCtrl" : "wxHyperlinkCtrl");
+
     if (!node->as_bool(prop_underlined))
     {
-        item.append_child("use_generic").text().set(1);
         if (!node->hasValue(prop_font))
         {
             auto font_object = item.append_child("font");
@@ -144,6 +146,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
             font_object.append_child("underlined").text().set("0");
         }
     }
+#if 0
     if (node->hasValue(prop_normal_color))
     {
         item.append_child("normal").text().set(
@@ -169,7 +172,6 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (xrc_flags & xrc::add_comments)
     {
-#if !defined(WIDGETS_FORK)
         if (node->hasValue(prop_hover_color))
         {
             item.append_child(pugi::node_comment)
@@ -184,12 +186,6 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
         {
             item.append_child(pugi::node_comment)
                 .set_value(" visited color cannot be be set in the XRC file. ");
-        }
-#endif
-        if (!node->as_bool(prop_underlined))
-        {
-            item.append_child(pugi::node_comment)
-                .set_value(" removing underline cannot be be set in the XRC file. ");
         }
         if (node->as_bool(prop_sync_hover_colour))
         {

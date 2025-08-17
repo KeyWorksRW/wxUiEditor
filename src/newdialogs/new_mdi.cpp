@@ -100,7 +100,7 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* staticText_11 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Class name:");
     staticText_11->SetToolTip("Change this to something unique to your project.");
-    static_box_2->Add(staticText_11, wxSizerFlags().Center().Right().Border(wxALL));
+    static_box_2->Add(staticText_11, wxSizerFlags().Center().Border(wxALL));
 
     auto* view_classname = new wxTextCtrl(static_box_2->GetStaticBox(), wxID_ANY, "TextViewBase");
     view_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_view_class));

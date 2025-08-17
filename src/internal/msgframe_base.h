@@ -36,7 +36,7 @@ public:
         id_warning_msgs
     };
 
-    MsgFrameBase() {}
+    MsgFrameBase() = default;
     MsgFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "wxUiEditor Messages",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL, const wxString &name = wxFrameNameStr)

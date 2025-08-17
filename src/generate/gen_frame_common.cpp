@@ -439,7 +439,7 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
 bool FrameCommon::HeaderCode(Code& code, int frame_type)
 {
     auto* node = code.node();
-    code.NodeName() += "() {}";
+    code.NodeName() += "() = default;";
     code.Eol().NodeName().Str("(");
     if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
     {

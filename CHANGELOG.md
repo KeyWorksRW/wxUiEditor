@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - wxRuby code will now call create_std_dialog_button_sizer() and create_separated_sizer() to create a wxStdDialogButtonSizer in a Dialog.
 - wxPython code will now call CreateStdDialogButtonSizer() and CreateSeparatedSizer to create a wxStdDialogButtonSizer in a Dialog.
 - When a stock id is selected for a control with a _label_ property, and the label text has not been changed since the control was created, the label will be cleared to enable the automatic creation of the label text by the wxWidgets stock id.
+- C++ trivial constructors now use `= default;' instead of `{}`
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.

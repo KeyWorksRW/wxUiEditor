@@ -188,11 +188,23 @@ set( wxUSE_LUNASVG ON CACHE BOOL "Use LunaSVG for rendering SVG images" FORCE )
 set( wxUSE_NANOSVG OFF CACHE BOOL "Use NanoSVG for rendering SVG images" FORCE )
 set( wxBUILD_INSTALL OFF CACHE BOOL "Don't build wxWidgets install" )
 
+# On Windows, the only browser backend that ships with Windows 10 and 11 is IE.
+# To use the Edge backend, we would need to install the WebView2 runtime.
+set( wxUSE_WEBVIEW_EDGE OFF CACHE BOOL "Use wxWebView Edge backend for web viewing" )
+
 if( WIN32 )
+    set( wxUSE_WEBVIEW_IE ON CACHE BOOL "Use wxWebView IE backend for web viewing" )
     set( wxUSE_WEBVIEW ON CACHE BOOL "Use wxWidgets' web viewing classes" )
+    set( wxUSE_WEBVIEW_WEBKIT OFF CACHE BOOL "Use wxWebView WebKit for web viewing" )
 elseif( APPLE )
+    # Apple ships with WebKit, so this should get enabled once it is verified
+    # that it works
+    # set( wxUSE_WEBVIEW ON CACHE BOOL "Don't use wxWidgets' web viewing classes" )
+    # set( wxUSE_WEBVIEW_WEBKIT ON CACHE BOOL "Use wxWebView WebKit for web viewing" )
     set( wxUSE_WEBVIEW OFF CACHE BOOL "Don't use wxWidgets' web viewing classes" )
 else()
+    # Unix doesn't ship WebKit on all platforms, so we can't use it unless we
+    # install it.
     set( wxUSE_WEBVIEW OFF CACHE BOOL "Don't use wxWidgets' web viewing classes" )
 endif()
 

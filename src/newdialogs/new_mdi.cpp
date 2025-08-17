@@ -78,11 +78,11 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto* radioBtn = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, "wxAuiMDIParentFrame", wxDefaultPosition,
         wxDefaultSize, wxRB_GROUP);
-    radioBtn->SetValue(true);
     radioBtn->SetValidator(wxGenericValidator(&m_aui_frame));
     static_box->Add(radioBtn, wxSizerFlags().Border(wxALL));
 
     auto* radioBtn_2 = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, "wxDocMDIParentFrame");
+    radioBtn_2->SetValue(true);
     radioBtn_2->SetValidator(wxGenericValidator(&m_doc_frame));
     static_box->Add(radioBtn_2, wxSizerFlags().Border(wxALL));
 
@@ -91,15 +91,16 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* static_box_2 = new wxStaticBoxSizer(wxHORIZONTAL, this, "View");
 
     auto* choice_view = new wxChoice(static_box_2->GetStaticBox(), wxID_ANY);
-    choice_view->Append("Text Control");
-    choice_view->Append("Image");
-    m_view_type = "Text Control";  // set validator variable
+    choice_view->Append("wxSplitterWindow");
+    choice_view->Append("wxStyledTextCtrl");
+    choice_view->Append("wxTextCtrl");
+    m_view_type = "wxTextCtrl";  // set validator variable
     choice_view->SetValidator(wxGenericValidator(&m_view_type));
     static_box_2->Add(choice_view, wxSizerFlags(1).Border(wxALL));
 
     auto* staticText_11 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Class name:");
     staticText_11->SetToolTip("Change this to something unique to your project.");
-    static_box_2->Add(staticText_11, wxSizerFlags().Center().Border(wxALL));
+    static_box_2->Add(staticText_11, wxSizerFlags().Center().Right().Border(wxALL));
 
     auto* view_classname = new wxTextCtrl(static_box_2->GetStaticBox(), wxID_ANY, "TextViewBase");
     view_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_view_class));
@@ -245,21 +246,19 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
     if (!Validate() || !TransferDataFromWindow())
         return;
 
-    if (m_view_type == "Text Control")
+    if (m_filter.empty())
     {
-        if (m_filter.empty())
-        {
-            m_filter = "*.txt";
-        }
-        if (m_default_extension.empty())
-        {
-            m_default_extension = "txt";
-        }
+        m_filter = "*.txt";
+    }
+    if (m_default_extension.empty())
+    {
+        m_default_extension = "txt";
+    }
 
-        if (m_description.empty())
-        {
-            m_description = "Text";
-        }
+    if (m_description.empty())
+    {
+        m_description = "Text";
+    }
 
 #if 0
         if (m_doc_name.empty())
@@ -271,7 +270,6 @@ void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
             m_view_name = "Text View";
         }
 #endif
-    }
 
     ASSERT(IsModal());
     EndModal(wxID_OK);
@@ -290,7 +288,8 @@ void NewMdiForm::createNode()
     {
         UpdateFormClass(form_node.get());
     }
-    if (m_view_type == "Text Control")
+    if (m_view_type == "wxStyledTextCtrl" || m_view_type == "wxTextCtrl" ||
+        m_view_type == "wxSplitterWindow")
     {
         auto doc_node = NodeCreation.createNode(gen_DocumentTextCtrl, folder.get()).first;
         ASSERT(doc_node);
@@ -548,7 +547,7 @@ void NewMdiForm::createNode()
 
     wxGetFrame().SelectNode(parent_node);
 
-    tt_string undo_str("New MDI App");
+    tt_string undo_str("New MDI Form");
 
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(folder.get(), parent_node, undo_str, -1));
@@ -558,4 +557,36 @@ void NewMdiForm::createNode()
 }
 
 // Called whenever m_classname changes
-void NewMdiForm::VerifyClassName() {}
+void NewMdiForm::VerifyClassName()
+{
+    // Check all class names to ensure they are unique
+    bool has_duplicate = false;
+    wxString duplicate_name;
+
+    // Check app class name
+    if (!IsClassNameUnique(m_app_class))
+    {
+        has_duplicate = true;
+        duplicate_name = m_app_class;
+    }
+    // Check doc class name
+    else if (!IsClassNameUnique(m_doc_class))
+    {
+        has_duplicate = true;
+        duplicate_name = m_doc_class;
+    }
+    // Check view class name
+    else if (!IsClassNameUnique(m_view_class))
+    {
+        has_duplicate = true;
+        duplicate_name = m_view_class;
+    }
+
+    if (has_duplicate)
+    {
+        wxMessageBox(wxString::Format("The class name \"%s\" is already in use by another form.",
+                                      duplicate_name),
+                     "Duplicate Class Name", wxOK | wxICON_ERROR, this);
+        return;
+    }
+}

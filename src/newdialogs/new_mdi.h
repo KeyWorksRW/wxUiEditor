@@ -53,8 +53,8 @@ private:
 
     // Validator variables
 
-    bool m_aui_frame { true };
-    bool m_doc_frame { false };
+    bool m_aui_frame { false };
+    bool m_doc_frame { true };
     wxString m_app_class { "DocViewAppBase" };
     wxString m_default_extension;
     wxString m_description;

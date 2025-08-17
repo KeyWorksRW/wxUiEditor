@@ -1,6 +1,6 @@
 // Purpose:   Generates base class for wxDocument/wView applications
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 

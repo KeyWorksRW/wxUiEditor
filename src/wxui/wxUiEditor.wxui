@@ -5565,7 +5565,6 @@
               flags="wxEXPAND">
               <node
                 class="wxRadioButton"
-                checked="1"
                 class_access="none"
                 label="wxAuiMDIParentFrame"
                 style="wxRB_GROUP"
@@ -5574,6 +5573,7 @@
                 validator_variable="m_aui_frame" />
               <node
                 class="wxRadioButton"
+                checked="1"
                 class_access="none"
                 label="wxDocMDIParentFrame"
                 var_name="radioBtn_2"
@@ -5589,8 +5589,8 @@
               <node
                 class="wxChoice"
                 class_access="none"
-                contents="&quot;Text Control&quot; &quot;Image&quot;"
-                selection_string="Text Control"
+                contents="&quot;wxSplitterWindow&quot; &quot;wxStyledTextCtrl&quot; &quot;wxTextCtrl&quot;"
+                selection_string="wxTextCtrl"
                 var_name="choice_view"
                 get_function="get_view_type"
                 validator_variable="m_view_type"
@@ -5602,7 +5602,7 @@
                 label="Class name:"
                 var_name="staticText_11"
                 tooltip="Change this to something unique to your project."
-                alignment="wxALIGN_CENTER_VERTICAL" />
+                alignment="wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT" />
               <node
                 class="wxTextCtrl"
                 class_access="none"

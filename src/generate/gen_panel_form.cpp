@@ -97,8 +97,54 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         {
             code.Add("Wx::ID_ANY");
         }
-        code.PosSizeFlags();
+        // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
+        code.Comma()
+            .CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION"))
+            .Str("pos = ")
+            .Pos(prop_pos);
+        code.Comma()
+            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
+            .Str("size = ")
+            .WxSize(prop_size);
+        code.Comma()
+            .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
+            .Str("style = ")
+            .Style();
+        if (code.hasValue(prop_window_name))
+        {
+            code.Comma().CheckLineLength(sizeof("name = ") +
+                                         code.as_string(prop_window_name).size() + 2);
+            code.Str("name = ").QuotedString(prop_window_name);
+        }
+
+        code.EndFunction();
         code.Unindent();
+        if (auto indent_pos = code.GetCode().find("parent"); tt::is_found(indent_pos))
+        {
+            indent_pos -= code.GetCode().find("\n");
+            std::string spaces(indent_pos, ' ');
+            code.GetCode().Replace("\t\t\t\t", spaces, true);
+        }
+    }
+    else if (code.is_perl())
+    {
+        code.Str("sub new {");
+        code.Indent();
+        code.Eol().Str("my( $class, $parent, $id, $pos, $size, $style, $name ) = @_;");
+        code.Eol() += "$parent = undef unless defined $parent;";
+        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
+        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
+        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
+        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
+        code.Eol().Str("$name = ");
+        if (code.hasValue(prop_window_name))
+            code.QuotedString(prop_window_name);
+        else
+            code += "\"panel\"";
+        code.Str(" unless defined $name;");
+
+        code.Eol().Str(
+            "my $self = $class->SUPER::new( $parent, $id, $pos, $size, $style, $name );");
     }
     else
     {
@@ -450,6 +496,26 @@ bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
 
     return true;
+}
+
+bool PanelFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
+                                    GenLang language)
+{
+    if (language == GEN_LANG_PERL)
+    {
+        set_imports.emplace("use base qw[Wx::Panel];");
+        set_imports.emplace("use Wx qw[:panel];");
+        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
+
+        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
+        {
+            set_imports.emplace(qw_events);
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 tt_string PanelFormGenerator::GetPythonHelpText(Node* /* node */)

@@ -26,6 +26,8 @@ public:
                      GenLang /* language */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
+    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
+
     tt_string GetPythonHelpText(Node*) override;
     tt_string GetRubyHelpText(Node*) override;
     tt_string GetPythonURL(Node*) override;

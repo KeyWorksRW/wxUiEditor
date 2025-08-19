@@ -1685,24 +1685,63 @@ void OnGenerateLanguage(GenLang language)
 
 tt_string GatherPerlNodeEvents(Node* node)
 {
-    tt_string qw_events;
-    for (auto& iter: node->getMapEvents())
+    std::set<std::string_view> event_set;
+
+    auto append_perl_events = [&](Node* node)
     {
-        // Only add the event if a handler was specified
-        if (iter.second.get_value().size())
+        for (auto& iter: node->getMapEvents())
         {
-            auto event_name = iter.first;
-            // remove "wx" prefix
-            event_name.erase(0, 2);
-            if (event_name == "EVT_CLOSE_WINDOW")
-                event_name = "EVT_CLOSE";
-            qw_events << event_name << ' ';
+            // Only add the event if a handler was specified
+            if (iter.second.get_value().size())
+            {
+                std::string_view event_name = iter.first;
+                if (node->isGen(GenEnum::gen_wxStdDialogButtonSizer))
+                {
+                    event_name = "EVT_BUTTON";
+                }
+                else
+                {
+                    // remove "wx" prefix
+                    event_name.remove_prefix(2);
+                    if (event_name == "EVT_CLOSE_WINDOW")
+                        event_name = "EVT_CLOSE";
+                }
+                event_set.insert(event_name);
+            }
         }
+    };
+
+    auto rlambda = [&](Node* node, auto&& rlambda) -> void
+    {
+        append_perl_events(node);
+        if (auto& children = node->getChildNodePtrs(); children.size())
+        {
+            for (auto child: children)
+            {
+                rlambda(child.get(), rlambda);
+            }
+        }
+    };
+
+    if (node->isForm())
+    {
+        rlambda(node, rlambda);
     }
-    if (qw_events.size())
+    else
+    {
+        append_perl_events(node);
+    }
+
+    tt_string qw_events;
+    if (event_set.size())
     {
         qw_events.RightTrim();
         qw_events.insert(0, "use Wx::Event qw(");
+        for (auto& event: event_set)
+        {
+            qw_events << event << ' ';
+        }
+        qw_events.RightTrim();
         qw_events << ");";
     }
 

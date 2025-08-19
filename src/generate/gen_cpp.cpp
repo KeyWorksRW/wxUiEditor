@@ -1037,7 +1037,8 @@ void CppCodeGenerator::GenerateCppClassHeader()
     }
     else
     {
-        if (!m_form_node->isType(type_DocViewApp) && !m_form_node->isType(type_wx_document) && !m_form_node->isType(type_wx_view))
+        if (!m_form_node->isType(type_DocViewApp) && !m_form_node->isType(type_wx_document) &&
+            !m_form_node->isType(type_wx_view))
         {
             FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class "
                      "name to derive from.");

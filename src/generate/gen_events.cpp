@@ -107,6 +107,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
     bool is_lambda { false };
 
+    // An opening bracket ('[') indicates a lambda expression
     if (event_code.contains("["))
     {
         if (code.is_cpp())
@@ -134,6 +135,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             is_lambda = true;
         }
     }
+    // BUGBUG: [Randalphwa - 08-19-2025] Need to add a comment as to what this is for -- months and
+    // months later, even I don't remember what it does...
     else if (event_code.contains("::"))
     {
         handler.Add(event->get_name()) << ", ";

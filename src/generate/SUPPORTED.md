@@ -74,7 +74,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxAuiMDIChildFrame     | yes | ---  | ---    | no   | --- | gen_aui_mdi_frame.cpp    |
 | wxMenu                 | yes | ---  | yes    | ---  | --- | menu_widgets.cpp         |
 | wxMenuBar              | yes | ---  | yes    | ---  | --- | menu_widgets.cpp         |
-| wxPanel                | yes | yes  | yes    | ---  | --- | gen_panel_form.cpp       |
+| wxPanel                | yes | yes  | yes    | yes  | --- | gen_panel_form.cpp       |
 | wxPopupTransientWindow | yes | ---  | yes    | yes  | no  | gen_popup_trans_win.cpp  |
 | wxPropertySheetDialog  | yes | ---  | ---    | ---  | --- | gen_propsheet_dlg.cpp    |
 | wxRibbonBar            | yes | ---  | yes    | ---  | --- | gen_ribbon_bar.cpp       |

@@ -185,7 +185,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
                 if (code.is_perl())
                 {
                     btn_name = "$self->{";
-                    btn_name += code.node()->getNodeName();
+                    btn_name += code.node()->getNodeName(GEN_LANG_PERL);
                     btn_name += "_";
                 }
                 else
@@ -478,6 +478,9 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
     std::string comma(", ");
     if (event_code.contains("["))
     {
+        // BUGBUG: [Randalphwa - 08-19-2025] Why aren't we supporting Python and Ruby lambdas like
+        // we do in gen_events.cpp
+
         if (!code.is_cpp())
             return;
         handler << event->get_name() << ',' << event->get_value();
@@ -488,6 +491,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
     }
     else if (event_code.contains("::"))
     {
+        // REVIEW: [Randalphwa - 08-19-2025] This needs to be updated to match the code in
+        // gen_events.cpp
         handler.Add(event->get_name()) << ", ";
         if (event->get_value()[0] != '&' && handler.is_cpp())
             handler << '&';
@@ -514,6 +519,14 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
             code.Str("evt_button(");
         else
             code.Str("evt_update_ui(");
+    }
+    else if (code.is_perl())
+    {
+        // remove "wx" prefix
+        event_name.remove_prefix(2);
+        code.Str(event_name).Str("($self, ");
+
+        // code.NodeName().Str("->GetId(), $self->can('") << event_code << "'));";
     }
     else
     {
@@ -571,6 +584,13 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
     else if (code.is_python())
     {
         code.Comma() << handler.GetCode();
+    }
+    else if (code.is_perl())
+    {
+        // Remove the closing brace after {stdBtn, and instead add it after the full stdBtn variable
+        // name
+        code.Replace("}", "");
+        code.Str("}->GetId(), $self->can('") << event_code << "')";
     }
     code.EndFunction();
 }

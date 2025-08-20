@@ -133,7 +133,7 @@ bool App::OnInit()
         // Unlike MSW, this can be set at any time and it will affect all future windows. Note,
         // however, that we have no control over the specific colors used, so we can't support our
         // High Contrast mode that we support in Windows.
-        SetAppearance(wxAppAppearance::Dark);
+        SetAppearance(wxApp::Appearance::Dark);
 #endif
     }
 

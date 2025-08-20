@@ -490,7 +490,9 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 {
     m_check_dark_mode->SetValue(UserPrefs.is_DarkMode());
+#if defined(__WINDOWS__)
     m_check_high_contrast->SetValue(UserPrefs.is_HighContrast());
+#endif
     m_check_fullpath->SetValue(UserPrefs.is_FullPathTitle());
     m_check_svg_bitmaps->SetValue(UserPrefs.is_SvgImages());
 
@@ -570,8 +572,10 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
 
     if (m_check_dark_mode->GetValue() != UserPrefs.is_DarkMode())
         is_dark_changed = true;
+#if defined(__WINDOWS__)
     if (m_check_high_contrast->GetValue() != UserPrefs.is_HighContrast())
         is_dark_changed = true;
+#endif
     if (m_check_fullpath->GetValue() != UserPrefs.is_FullPathTitle())
         is_fullpath_changed = true;
 
@@ -600,7 +604,9 @@ void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
     UserPrefs.set_DarkModePending(Prefs::PENDING_DARK_MODE_ENABLE |
                                   (m_check_dark_mode->GetValue() ? Prefs::PENDING_DARK_MODE_ON :
                                                                    Prefs::PENDING_DARK_MODE_OFF));
+#if defined(__WINDOWS__)
     UserPrefs.set_HighContrast(m_check_high_contrast->GetValue());
+#endif
     UserPrefs.set_FullPathTitle(m_check_fullpath->GetValue());
     UserPrefs.set_SvgImages(m_check_svg_bitmaps->GetValue());
 

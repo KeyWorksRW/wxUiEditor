@@ -55,9 +55,12 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_check_dark_mode->SetToolTip("Requires closing and restarting wxUiEditor");
     m_box_dark_settings->Add(m_check_dark_mode, wxSizerFlags().Border(wxALL));
 
+#if defined(__WINDOWS__)
+
     m_check_high_contrast = new wxCheckBox(page_general, wxID_ANY, "High Contrast");
     m_check_high_contrast->SetToolTip("Only used if Dark Mode is selected");
     m_box_dark_settings->Add(m_check_high_contrast, wxSizerFlags().Border(wxALL));
+#endif  // limited to specific platforms
     m_box_dark_settings->ShowItems(false);
     m_general_page_sizer->Add(m_box_dark_settings,
     wxSizerFlags().Expand().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
@@ -471,7 +474,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -531,9 +534,7 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
     m_btn_font->SetMainLabel(font_prop.as_wxString());
 
-#if defined(__WXMSW__)
     m_box_dark_settings->ShowItems(true);
-#endif
 
     m_general_page_sizer->Layout();
     Fit();

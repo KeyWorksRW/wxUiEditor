@@ -124,16 +124,18 @@ bool App::OnInit()
     SetVendorName("KeyWorks");
     UserPrefs.ReadConfig();
 
-#if defined(_WIN32)
-
-    // [Randalphwa - 03-29-2023] Currently, this isn't really usable because we hard-code
-    // colors in our property sheet and scintilla code displays.
     if (UserPrefs.is_DarkMode())
     {
+#if defined(_WIN32)
         auto* DarkModeSettings = new DarkSettings;
         MSWEnableDarkMode(0, DarkModeSettings);
-    }
+#else
+        // Unlike MSW, this can be set at any time and it will affect all future windows. Note,
+        // however, that we have no control over the specific colors used, so we can't support our
+        // High Contrast mode that we support in Windows.
+        SetAppearance(wxAppAppearance::Dark);
 #endif
+    }
 
     return true;
 }

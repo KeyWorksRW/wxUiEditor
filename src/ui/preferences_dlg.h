@@ -58,7 +58,6 @@ protected:
     wxCheckBox* m_check_cpp_snake_case;
     wxCheckBox* m_check_dark_mode;
     wxCheckBox* m_check_fullpath;
-    wxCheckBox* m_check_high_contrast;
     wxCheckBox* m_check_load_last;
     wxCheckBox* m_check_right_propgrid;
     wxCheckBox* m_check_svg_bitmaps;
@@ -89,6 +88,10 @@ protected:
     wxColourPickerCtrl* m_colour_xrc_string;
     wxColourPickerCtrl* m_colour_xrc_tag;
     wxCommandLinkButton* m_btn_font;
+
+#if defined(__WINDOWS__)
+    wxCheckBox* m_check_high_contrast;
+#endif  // limited to specific platforms
 };
 
 // ************* End of generated code ***********

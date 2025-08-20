@@ -5602,7 +5602,7 @@
                 label="Class name:"
                 var_name="staticText_11"
                 tooltip="Change this to something unique to your project."
-                alignment="wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT" />
+                alignment="wxALIGN_CENTER_VERTICAL|" />
               <node
                 class="wxTextCtrl"
                 class_access="none"
@@ -8464,6 +8464,7 @@
                   class="wxCheckBox"
                   label="High Contrast"
                   var_name="m_check_high_contrast"
+                  platforms="Windows"
                   tooltip="Only used if Dark Mode is selected" />
               </node>
               <node

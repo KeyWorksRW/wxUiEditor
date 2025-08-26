@@ -105,10 +105,6 @@ set (file_list
     generate/gen_rust.cpp          # Generate wxRust code
     generate/gen_xrc.cpp           # Generate XRC
 
-    # generate/gen_fortran.cpp       # Generate wxFortran code
-    # generate/gen_haskell.cpp       # Generate wxHaskell code
-    # generate/gen_lua.cpp           # Generate wxLua/wxLuaJIT code
-
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object
     # can be used in a Dialog or Frame, then the generator must also be able to

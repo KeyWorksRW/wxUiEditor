@@ -131,31 +131,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
-
-#if GENERATE_NEW_LANG_CODE
-    else if (m_panel_type == GEN_LANG_FORTRAN)
-    {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
-    }
-    else if (m_panel_type == GEN_LANG_HASKELL)
-    {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
-    }
-    else if (m_panel_type == GEN_LANG_LUA)
-    {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
-    }
-#endif  // GENERATE_NEW_LANG_CODE
-
     else
     {
         FAIL_MSG("Unknown Panel type!")
@@ -364,20 +339,6 @@ void BasePanel::GenerateBaseClass()
             code_generator = std::make_unique<RustCodeGenerator>(m_cur_form);
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            code_generator = std::make_unique<FortranCodeGenerator>(m_cur_form);
-            break;
-
-        case GEN_LANG_HASKELL:
-            code_generator = std::make_unique<HaskellCodeGenerator>(m_cur_form);
-            break;
-
-        case GEN_LANG_LUA:
-            code_generator = std::make_unique<LuaCodeGenerator>(m_cur_form);
-            break;
-#endif
-
         case GEN_LANG_XRC:
             code_generator = std::make_unique<XrcCodeGenerator>(m_cur_form);
             break;
@@ -423,20 +384,6 @@ void BasePanel::GenerateBaseClass()
         case GEN_LANG_RUST:
             code_generator->GenerateClass(panel_page);
             break;
-
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            code_generator->GenerateClass(panel_page);
-            break;
-
-        case GEN_LANG_HASKELL:
-            code_generator->GenerateClass(panel_page);
-            break;
-
-        case GEN_LANG_LUA:
-            code_generator->GenerateClass(panel_page);
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
 
         case GEN_LANG_XRC:
             code_generator->GenerateClass(panel_page);

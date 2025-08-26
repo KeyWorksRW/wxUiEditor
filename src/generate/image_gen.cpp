@@ -169,12 +169,6 @@ std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
     { GEN_LANG_PYTHON, prop_python_line_length },
     { GEN_LANG_RUBY, prop_ruby_line_length  },
     { GEN_LANG_RUST, prop_rust_line_length },
-
-#if GENERATE_NEW_LANG_CODE
-    { GEN_LANG_FORTRAN, prop_fortran_line_length },
-    { GEN_LANG_HASKELL, prop_haskell_line_length },
-    { GEN_LANG_LUA, prop_lua_line_length },
-#endif  // GENERATE_NEW_LANG_CODE
 };
 
 // clang-format on

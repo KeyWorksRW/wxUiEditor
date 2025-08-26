@@ -661,11 +661,6 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
                     class_info->AddBaseClass(getNodeDeclaration("wxRuby Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxPerl Settings"));
                     class_info->AddBaseClass(getNodeDeclaration("wxRust Settings"));
-#if GENERATE_NEW_LANG_CODE
-                    class_info->AddBaseClass(getNodeDeclaration("wxFortran Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxHaskell Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxLua Settings"));
-#endif
 
                     elem_base = elem_base.next_sibling("inherits");
                     continue;

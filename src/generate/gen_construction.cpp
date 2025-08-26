@@ -317,20 +317,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
                 break;
 
-#if GENERATE_NEW_LANG_CODE
-            case GEN_LANG_FORTRAN:
-                code.Eol() << "if defined(__WINDOWS__)";
-                break;
-
-            case GEN_LANG_HASKELL:
-                code.Eol() << "if os == \"mingw32\"";
-                break;
-
-            case GEN_LANG_LUA:
-                code.Eol() << "if wxPlatform == \"msw\"";
-                break;
-#endif  // GENERATE_NEW_LANG_CODE
-
             default:
                 FAIL_MSG(tt_string() << "Unsupported language: " << m_language);
                 break;
@@ -380,32 +366,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "PHP_OS == 'Linux'";
                 break;
 
-#if GENERATE_NEW_LANG_CODE
-            case GEN_LANG_FORTRAN:
-                if (code.size())
-                    code << " .OR. ";
-                else
-                    code.Eol() << "if ";
-                code << "defined(__UNIX__)";
-                break;
-
-            case GEN_LANG_HASKELL:
-                if (code.size())
-                    code << " || ";
-                else
-                    code.Eol() << "if ";
-                code << "os == \"linux\"";
-                break;
-
-            case GEN_LANG_LUA:
-                if (code.size())
-                    code << " or ";
-                else
-                    code.Eol() << "if ";
-                code << "wxPlatform == \"gtk\"";
-                break;
-#endif  // GENERATE_NEW_LANG_CODE
-
             default:
                 break;
         }
@@ -454,32 +414,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "PHP_OS == 'Darwin'";
                 break;
 
-#if GENERATE_NEW_LANG_CODE
-            case GEN_LANG_FORTRAN:
-                if (code.size())
-                    code << " .OR. ";
-                else
-                    code.Eol() << "if ";
-                code << "defined(__WXOSX__)";
-                break;
-
-            case GEN_LANG_HASKELL:
-                if (code.size())
-                    code << " || ";
-                else
-                    code.Eol() << "if ";
-                code << "os == \"darwin\"";
-                break;
-
-            case GEN_LANG_LUA:
-                if (code.size())
-                    code << " or ";
-                else
-                    code.Eol() << "if ";
-                code << "wxPlatform == \"mac\"";
-                break;
-#endif  // GENERATE_NEW_LANG_CODE
-
             default:
                 break;
         }
@@ -513,20 +447,6 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_RUST:
             m_source->Unindent();
             break;
-
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            m_source->Unindent();
-            break;
-
-        case GEN_LANG_HASKELL:
-            m_source->Unindent();
-            break;
-
-        case GEN_LANG_LUA:
-            m_source->Unindent();
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             break;

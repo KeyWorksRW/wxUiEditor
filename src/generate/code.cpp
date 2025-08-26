@@ -306,23 +306,6 @@ std::string_view Code::GetLanguagePrefix(tt_string_view candidate, GenLang langu
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
             return {};
 
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            prefix_list = &s_short_fortran_map;
-            global_list = &g_map_fortran_prefix;
-            break;
-
-        case GEN_LANG_HASKELL:
-            prefix_list = &s_short_haskell_map;
-            global_list = &g_map_haskell_prefix;
-            break;
-
-        case GEN_LANG_LUA:
-            prefix_list = &s_short_lua_map;
-            global_list = &g_map_lua_prefix;
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         default:
             FAIL_MSG("Unknown language");
             return {};
@@ -390,30 +373,6 @@ void Code::Init(Node* node, GenLang language)
         // Always assume Rust code has one tab at the beginning of the line
         m_break_length -= m_indent_size;
     }
-
-#if GENERATE_NEW_LANG_CODE
-    else if (language == GEN_LANG_FORTRAN)
-    {
-        // REVIEW: [Randalphwa - 11-24-2024] wxFortran3 doesn't exist yet, but I'm guessing that
-        // there will be a wx derived type with members accessed using %.
-        m_language_wxPrefix = "wx%";
-        m_break_length = Project.as_size_t(prop_fortran_line_length);
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_HASKELL)
-    {
-        m_language_wxPrefix = "wx";  // wxHaskell doesn't change wxWidgets naming
-        m_break_length = Project.as_size_t(prop_haskell_line_length);
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        // Lua simply uses a "wx." prefix before the normal wxWidgets "wx" prefix
-        m_language_wxPrefix = "wx.wx";
-        m_break_length = Project.as_size_t(prop_lua_line_length);
-        m_break_length -= m_indent_size;
-    }
-#endif  // GENERATE_NEW_LANG_CODE
     else if (language == GEN_LANG_XRC)
     {
         m_language_wxPrefix = "wx";
@@ -704,12 +663,6 @@ Code& Code::Function(tt_string_view text, bool add_operator)
                 *this += text;
             }
         }
-#if GENERATE_NEW_LANG_CODE
-        else if (is_lua())
-        {
-            *this << '.' << text;
-        }
-#endif
         else
         {
             *this << "->" << text;
@@ -777,13 +730,6 @@ Code& Code::FormFunction(tt_string_view text)
     {
         *this += "$self->";
     }
-#if GENERATE_NEW_LANG_CODE
-
-    else if (is_lua())
-    {
-        *this += "this:";
-    }
-#endif
 
     *this += text;
     return *this;
@@ -838,35 +784,6 @@ Code& Code::Class(tt_string_view text)
             *this += text;
         }
     }
-#if GENERATE_NEW_LANG_CODE
-
-    else if (is_fortran())
-    {
-        if (text.is_sameprefix("wx"))
-        {
-            *this << "wx%" << text;
-        }
-        else
-        {
-            *this += text;
-        }
-    }
-    else if (is_lua())
-    {
-        if (text.is_sameprefix("wx"))
-        {
-            *this << "wx." << text;
-        }
-        else
-        {
-            *this += text;
-        }
-    }
-    else if (is_haskell())
-    {
-        *this += text;
-    }
-#endif
 
     return *this;
 }
@@ -1095,12 +1012,6 @@ Code& Code::NodeName(Node* node)
             return *this;
         }
     }
-#if GENERATE_NEW_LANG_CODE
-    else if (is_lua() && !node->isForm() && !node->isLocal() && !node_name.starts_with("self."))
-    {
-        *this += "self.";
-    }
-#endif
 
     *this += node_name;
     return *this;
@@ -1517,13 +1428,6 @@ Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
             Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
             *this += ')';
         }
-#if GENERATE_NEW_LANG_CODE
-        else if (is_lua())
-        {
-            CheckLineLength(sizeof("wx.wxSize(999, 999)"));
-            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-        }
-#endif
     }
     else
     {
@@ -1609,13 +1513,6 @@ Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
             Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
             *this += ')';
         }
-#if GENERATE_NEW_LANG_CODE
-        else if (is_lua())
-        {
-            CheckLineLength(sizeof("wx.wxPoint(999, 999)"));
-            Class("wxPoint(").itoa(size.x).Comma().itoa(size.y) << ')';
-        }
-#endif
     }
     else
     {
@@ -1787,13 +1684,6 @@ Code& Code::EndConditional()
     {
         *this << ':';
     }
-#if GENERATE_NEW_LANG_CODE
-
-    else if (is_lua())
-    {
-        *this << ':';
-    }
-#endif
 
     // Ruby doesn't need anything to complete the conditional statement
 

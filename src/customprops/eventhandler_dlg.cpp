@@ -41,12 +41,6 @@ constexpr int EVENT_PAGE_PYTHON = 2;
 constexpr int EVENT_PAGE_RUBY = 3;
 constexpr int EVENT_PAGE_RUST = 4;
 
-#if GENERATE_NEW_LANG_CODE
-constexpr int EVENT_PAGE_FORTRAN = 5;
-constexpr int EVENT_PAGE_HASKELL = 6;
-constexpr int EVENT_PAGE_LUA = 7;
-#endif
-
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     EventHandlerDlgBase(parent), m_event(event)
 {
@@ -56,26 +50,12 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     m_ruby_page = EVENT_PAGE_RUBY;
     m_rust_page = EVENT_PAGE_RUST;
 
-#if GENERATE_NEW_LANG_CODE
-    m_fortran_page = EVENT_PAGE_FORTRAN;
-    m_haskell_page = EVENT_PAGE_HASKELL;
-    m_lua_page = EVENT_PAGE_LUA;
-#endif  // GENERATE_NEW_LANG_CODE
-
     m_gen_languages = Project.getGenerateLanguages();
     m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
     m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
     m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
     m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
     m_is_rust_enabled = (m_gen_languages & GEN_LANG_RUST);
-
-#if GENERATE_NEW_LANG_CODE
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-    // here in case they do get supported in the future.
-    m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
-    m_is_haskell_enabled = (m_gen_languages & GEN_LANG_HASKELL);
-    m_is_lua_enabled = (m_gen_languages & GEN_LANG_LUA);
-#endif  // GENERATE_NEW_LANG_CODE
 
     // Now that we've determined which languages are enabled, we can remove any pages
     // for languages that are not used in this project.
@@ -89,12 +69,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         m_python_page--;
         m_ruby_page--;
         m_rust_page--;
-
-#if GENERATE_NEW_LANG_CODE
-        m_fortran_page--;
-        m_haskell_page--;
-        m_lua_page--;
-#endif  // GENERATE_NEW_LANG_CODE
     }
     if (!m_is_perl_enabled)
     {
@@ -102,70 +76,22 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         m_python_page--;
         m_ruby_page--;
         m_rust_page--;
-
-#if GENERATE_NEW_LANG_CODE
-        m_fortran_page--;
-        m_haskell_page--;
-        m_lua_page--;
-#endif  // GENERATE_NEW_LANG_CODE
     }
     if (!m_is_python_enabled)
     {
         m_notebook->RemovePage(m_python_page);
         m_ruby_page--;
         m_rust_page--;
-
-#if GENERATE_NEW_LANG_CODE
-        m_fortran_page--;
-        m_haskell_page--;
-        m_lua_page--;
-#endif  // GENERATE_NEW_LANG_CODE
     }
     if (!m_is_ruby_enabled)
     {
         m_notebook->RemovePage(m_ruby_page);
         m_rust_page--;
-
-#if GENERATE_NEW_LANG_CODE
-        m_fortran_page--;
-        m_haskell_page--;
-        m_lua_page--;
-#endif  // GENERATE_NEW_LANG_CODE
     }
     if (!m_is_rust_enabled)
     {
         m_notebook->RemovePage(m_rust_page);
-
-#if GENERATE_NEW_LANG_CODE
-        m_fortran_page--;
-        m_haskell_page--;
-        m_lua_page--;
-#endif  // GENERATE_NEW_LANG_CODE
     }
-
-#if GENERATE_NEW_LANG_CODE
-    if (!m_is_fortran_enabled)
-    {
-        m_notebook->RemovePage(m_fortran_page);
-        m_haskell_page--;
-        m_lua_page--;
-        m_perl_page--;
-        m_rust_page--;
-    }
-    if (!m_is_haskell_enabled)
-    {
-        m_notebook->RemovePage(m_haskell_page);
-        m_lua_page--;
-        m_perl_page--;
-        m_rust_page--;
-    }
-    if (!m_is_lua_enabled)
-    {
-        m_notebook->RemovePage(m_lua_page);
-        m_perl_page--;
-        m_rust_page--;
-    }
-#endif
     m_value = event->get_value().make_wxString();
 
     if (m_is_cpp_enabled)
@@ -185,24 +111,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     {
         SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
     }
-
-#if GENERATE_NEW_LANG_CODE
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-    // here in case they do get supported in the future.
-
-    if (m_is_fortran_enabled)
-    {
-        SetStcColors(m_fortran_stc_lambda, GEN_LANG_FORTRAN);
-    }
-    if (m_is_haskell_enabled)
-    {
-        SetStcColors(m_haskell_stc_lambda, GEN_LANG_HASKELL);
-    }
-    if (m_is_lua_enabled)
-    {
-        SetStcColors(m_lua_stc_lambda, GEN_LANG_LUA);
-    }
-#endif  // GENERATE_NEW_LANG_CODE
 
     auto form = event->getNode()->getForm();
     if (form)
@@ -267,27 +175,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
             m_rust_stc_lambda->SetLexer(wxSTC_LEX_PHPSCRIPT);
             m_rust_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
         }
-
-#if GENERATE_NEW_LANG_CODE
-        // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
-        // are here in case they do get supported in the future.
-
-        if (m_is_fortran_enabled)
-        {
-            m_fortran_stc_lambda->SetLexer(wxSTC_LEX_FORTRAN);
-            m_fortran_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_fortran_keywords);
-        }
-        if (m_is_haskell_enabled)
-        {
-            m_haskell_stc_lambda->SetLexer(wxSTC_LEX_HASKELL);
-            m_haskell_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_haskell_keywords);
-        }
-        if (m_is_lua_enabled)
-        {
-            m_lua_stc_lambda->SetLexer(wxSTC_LEX_LUA);
-            m_lua_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
-        }
-#endif  // GENERATE_NEW_LANG_CODE
     }
 
     if (m_code_preference == GEN_LANG_CPLUSPLUS)
@@ -300,29 +187,11 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         m_notebook->SetSelection(m_ruby_page);
     else if (m_code_preference == GEN_LANG_RUST)
         m_notebook->SetSelection(m_rust_page);
-
-#if GENERATE_NEW_LANG_CODE
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
-    // are here in case they do get supported in the future.
-    else if (m_code_preference == GEN_LANG_FORTRAN)
-        m_notebook->SetSelection(m_fortran_page);
-    else if (m_code_preference == GEN_LANG_HASKELL)
-        m_notebook->SetSelection(m_haskell_page);
-    else if (m_code_preference == GEN_LANG_LUA)
-        m_notebook->SetSelection(m_lua_page);
-#endif  // GENERATE_NEW_LANG_CODE
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_static_bind_text->SetLabel(wxEmptyString);
-
-#if GENERATE_NEW_LANG_CODE
-    // Remove in reverse order so prevent positions from changing
-    m_notebook->RemovePage(EVENT_PAGE_LUA);
-    m_notebook->RemovePage(EVENT_PAGE_HASKELL);
-    m_notebook->RemovePage(EVENT_PAGE_FORTRAN);
-#endif  // !GENERATE_NEW_LANG_CODE
 
     if (m_value.empty())
     {
@@ -754,17 +623,6 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
         m_ruby_text_function->SetValue("none");
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
         m_rust_text_function->SetValue("none");
-
-#if GENERATE_NEW_LANG_CODE
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
-    // are here in case they do get supported in the future.
-    else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
-        m_fortran_text_function->SetValue("none");
-    else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
-        m_haskell_text_function->SetValue("none");
-    else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
-        m_lua_text_function->SetValue("none");
-#endif  // GENERATE_NEW_LANG_CODE
 }
 
 void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
@@ -790,17 +648,6 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
         m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
         m_rust_text_function->SetValue(value);
-
-#if GENERATE_NEW_LANG_CODE
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they
-    // are here in case they do get supported in the future.
-    else if (m_is_fortran_enabled && m_notebook->GetCurrentPage() == m_fortran_bookpage)
-        m_fortran_text_function->SetValue(value);
-    else if (m_is_haskell_enabled && m_notebook->GetCurrentPage() == m_haskell_bookpage)
-        m_haskell_text_function->SetValue(value);
-    else if (m_is_lua_enabled && m_notebook->GetCurrentPage() == m_lua_bookpage)
-        m_lua_text_function->SetValue(value);
-#endif  // GENERATE_NEW_LANG_CODE
 }
 
 void EventHandlerDlg::FormatBindText()

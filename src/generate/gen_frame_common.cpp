@@ -192,30 +192,6 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             .Eol();
         return true;
     }
-#if GENERATE_NEW_LANG_CODE
-    else if (code.is_lua())
-    {
-        code.Eol().NodeName().Str(" = {}\n");
-        code.Eol()
-            .Str("function ")
-            .NodeName()
-            .Str(":create(parent, id, title, pos, size, style, name)");
-        code.Indent();
-        code.Eol().Str("parent = parent or wx.NULL");
-        code.Eol().Str("id = id or ").as_string(prop_id);
-        code.Eol().Str("title = title or ").QuotedString(prop_title);
-        code.Eol().Str("pos = pos or ").Pos(prop_pos);
-        code.Eol().Str("size = size or ").WxSize(prop_size);
-        code.Eol().Str("style = style or ").Style();
-        code.Eol().Str("name = name or ");
-        if (code.hasValue(prop_window_name))
-            code.QuotedString(prop_window_name);
-        else
-            code += "\"frame\"";
-        code.Eol().Eol().Str("this = wx.wxFrame(parent, id, title, pos, size, style, name)");
-    }
-#endif
-
     else
     {
         code.AddComment("Unknown language", true);
@@ -229,13 +205,6 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
 
 bool FrameCommon::SettingsCode(Code& code, int frame_type)
 {
-#if GENERATE_NEW_LANG_CODE
-    if (code.is_lua())
-    {
-        code.ResetIndent();
-        code.ResetBraces();
-    }
-#endif
     if (!code.node()->isPropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
@@ -310,12 +279,6 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
         code.Eol(eol_if_needed) +=
             "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
     }
-#if GENERATE_NEW_LANG_CODE
-    else if (code.is_lua())
-    {
-        // Lua doesn't check the result of creating the window
-    }
-#endif
     else
     {
         return false;

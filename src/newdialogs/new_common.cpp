@@ -38,21 +38,6 @@ void UpdateFormClass(Node* form_node)
         form_node->set_value(prop_xrc_file, filename);
     }
 
-#if GENERATE_NEW_LANG_CODE
-    else if (Project.getCodePreference() == GEN_LANG_FORTRAN)
-    {
-        form_node->set_value(prop_fortran_file, filename);
-    }
-    else if (Project.getCodePreference() == GEN_LANG_HASKELL)
-    {
-        form_node->set_value(prop_haskell_file, filename);
-    }
-    else if (Project.getCodePreference() == GEN_LANG_LUA)
-    {
-        form_node->set_value(prop_lua_file, filename);
-    }
-#endif  // GENERATE_NEW_LANG_CODE
-
     if (is_base_class)
     {
         auto class_name = form_node->as_string(prop_class_name);

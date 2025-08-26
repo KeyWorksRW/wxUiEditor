@@ -1418,6 +1418,10 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             code_generator = std::make_unique<CppCodeGenerator>(form);
             break;
 
+        case GEN_LANG_PERL:
+            code_generator = std::make_unique<PerlCodeGenerator>(form);
+            break;
+
         case GEN_LANG_PYTHON:
             code_generator = std::make_unique<PythonCodeGenerator>(form);
             break;
@@ -1426,27 +1430,9 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
-        case GEN_LANG_PERL:
-            code_generator = std::make_unique<PerlCodeGenerator>(form);
-            break;
-
         case GEN_LANG_RUST:
             code_generator = std::make_unique<RustCodeGenerator>(form);
             break;
-
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            code_generator = std::make_unique<FortranCodeGenerator>(form);
-            break;
-
-        case GEN_LANG_HASKELL:
-            code_generator = std::make_unique<HaskellCodeGenerator>(form);
-            break;
-
-        case GEN_LANG_LUA:
-            code_generator = std::make_unique<LuaCodeGenerator>(form);
-            break;
-#endif
 
         case GEN_LANG_XRC:
             code_generator = std::make_unique<XrcCodeGenerator>(form);
@@ -1493,20 +1479,6 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
         case GEN_LANG_RUST:
             code_generator->GenerateClass();
             break;
-
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            code_generator->GenerateClass();
-            break;
-
-        case GEN_LANG_HASKELL:
-            code_generator->GenerateClass();
-            break;
-
-        case GEN_LANG_LUA:
-            code_generator->GenerateClass();
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
 
         case GEN_LANG_XRC:
             code_generator->GenerateClass();

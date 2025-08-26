@@ -514,56 +514,6 @@ MainFrame::MainFrame() :
             },
             id_GenerateXrc);
 
-#if GENERATE_NEW_LANG_CODE
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GEN_LANG_FORTRAN);
-            },
-            id_GenerateFortran);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GEN_LANG_HASKELL);
-            },
-            id_GenerateHaskell);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GEN_LANG_LUA);
-            },
-            id_GenerateLua);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
-            },
-            id_GenSingleFortran);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
-            },
-            id_GenSingleHaskell);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_LUA);
-            },
-            id_GenSingleLua);
-#endif
-
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)

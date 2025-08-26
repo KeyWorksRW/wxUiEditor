@@ -452,20 +452,6 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
             event_code = EventHandlerDlg::GetRustValue(event->get_value());
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            event_code = EventHandlerDlg::GetFortranValue(event->get_value());
-            break;
-
-        case GEN_LANG_HASKELL:
-            event_code = EventHandlerDlg::GetHaskellValue(event->get_value());
-            break;
-
-        case GEN_LANG_LUA:
-            event_code = EventHandlerDlg::GetLuaValue(event->get_value());
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         default:
             FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(code.m_language)
                                  << " (" << code.m_language << ")");

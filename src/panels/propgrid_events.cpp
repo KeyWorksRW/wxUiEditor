@@ -324,41 +324,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-#if GENERATE_NEW_LANG_CODE
-            else if (grid_property->GetLabel().Contains("Fortran"))
-            {
-                if (prop->as_string() != "any" && prop->as_string() != "Fortran")
-                {
-                    m_prop_grid->Collapse(grid_property);
-                }
-                else
-                {
-                    m_prop_grid->Expand(grid_property);
-                }
-            }
-            else if (grid_property->GetLabel().Contains("Haskell"))
-            {
-                if (prop->as_string() != "any" && prop->as_string() != "Haskell")
-                {
-                    m_prop_grid->Collapse(grid_property);
-                }
-                else
-                {
-                    m_prop_grid->Expand(grid_property);
-                }
-            }
-            else if (grid_property->GetLabel().Contains("Lua"))
-            {
-                if (prop->as_string() != "any" && prop->as_string() != "Lua")
-                {
-                    m_prop_grid->Collapse(grid_property);
-                }
-                else
-                {
-                    m_prop_grid->Expand(grid_property);
-                }
-            }
-#endif  // GENERATE_NEW_LANG_CODE
 
             grid_iterator.Next();
         }

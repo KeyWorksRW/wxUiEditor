@@ -326,26 +326,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case MenuSingleGenFortran:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_FORTRAN);
-            }
-            break;
-
-        case MenuSingleGenHaskell:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_HASKELL);
-            }
-            break;
-
-        case MenuSingleGenLua:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_LUA);
-            }
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         case MenuADD_PAGE:
             if (m_node->isGen(gen_BookPage))
             {

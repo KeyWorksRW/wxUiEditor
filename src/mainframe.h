@@ -86,12 +86,6 @@ public:
     BasePanel* GetRustPanel() { return m_rustPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-#if GENERATE_NEW_LANG_CODE
-    BasePanel* GetFortranPanel() { return m_fortranPanel; }
-    BasePanel* GetHaskellPanel() { return m_haskellPanel; }
-    BasePanel* GetLuaPanel() { return m_luaPanel; }
-#endif
-
     void UpdateLanguagePanels();
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
@@ -385,12 +379,6 @@ private:
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_rustPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
-
-#if GENERATE_NEW_LANG_CODE
-    BasePanel* m_fortranPanel { nullptr };
-    BasePanel* m_haskellPanel { nullptr };
-    BasePanel* m_luaPanel { nullptr };
-#endif  // GENERATE_NEW_LANG_CODE
 
     ImportPanel* m_imnportPanel { nullptr };
 

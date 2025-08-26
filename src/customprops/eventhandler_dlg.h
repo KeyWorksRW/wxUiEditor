@@ -125,12 +125,6 @@ private:
     int m_ruby_page;
     int m_rust_page;
 
-#if GENERATE_NEW_LANG_CODE
-    int m_fortran_page;
-    int m_haskell_page;
-    int m_lua_page;
-#endif  // GENERATE_NEW_LANG_CODE
-
     size_t m_gen_languages;     // set by Project.getGenerateLanguages()
     GenLang m_code_preference;  // This will be one of the GEN_LANG values
 
@@ -140,21 +134,9 @@ private:
     bool m_is_ruby_enabled { false };
     bool m_is_rust_enabled { false };
 
-#if GENERATE_NEW_LANG_CODE
-    bool m_is_fortran_enabled { false };
-    bool m_is_haskell_enabled { false };
-    bool m_is_lua_enabled { false };
-#endif  // GENERATE_NEW_LANG_CODE
-
     bool m_is_cpp_lambda { false };
     bool m_is_perl_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
     bool m_is_rust_lambda { false };
-
-#if GENERATE_NEW_LANG_CODE
-    bool m_is_fortran_lambda { false };
-    bool m_is_haskell_lambda { false };
-    bool m_is_lua_lambda { false };
-#endif  // GENERATE_NEW_LANG_CODE
 };

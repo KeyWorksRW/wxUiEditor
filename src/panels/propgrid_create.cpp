@@ -878,42 +878,6 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
         }
     }
 
-#if GENERATE_NEW_LANG_CODE
-    else if (name.contains("wxFortran"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#9900e6"));  // Dark Purple
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ff99ff"));  // Light Purple
-        if (Project.getCodePreference(node) != GEN_LANG_FORTRAN)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxHaskell"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#0000e6"));  // Dark Blue
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#99bbff"));  // Light Blue
-        if (Project.getCodePreference(node) != GEN_LANG_HASKELL)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxLua"))
-    {
-        if (UserPrefs.is_DarkMode())
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#0073e6"));  // Dark Blue
-        else
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#80bfff"));  // Light Blue
-        if (Project.getCodePreference(node) != GEN_LANG_LUA)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-#endif  // GENERATE_NEW_LANG_CODE
-
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
         it != m_expansion_map.end())
     {

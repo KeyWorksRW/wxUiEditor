@@ -309,20 +309,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         code_generator = std::make_unique<RustCodeGenerator>(form);
                         break;
 
-#if GENERATE_NEW_LANG_CODE
-                    case GEN_LANG_FORTRAN:
-                        code_generator = std::make_unique<FortranCodeGenerator>(form);
-                        break;
-
-                    case GEN_LANG_HASKELL:
-                        code_generator = std::make_unique<HaskellCodeGenerator>(form);
-                        break;
-
-                    case GEN_LANG_LUA:
-                        code_generator = std::make_unique<LuaCodeGenerator>(form);
-                        break;
-#endif
-
                     case GEN_LANG_XRC:
                         code_generator = std::make_unique<XrcCodeGenerator>(form);
                         break;
@@ -362,20 +348,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         code_generator->GenerateClass();
                         break;
 
-#if GENERATE_NEW_LANG_CODE
-                    case GEN_LANG_FORTRAN:
-                        code_generator->GenerateClass();
-                        break;
-
-                    case GEN_LANG_HASKELL:
-                        code_generator->GenerateClass();
-                        break;
-
-                    case GEN_LANG_LUA:
-                        code_generator->GenerateClass();
-                        break;
-#endif  // GENERATE_NEW_LANG_CODE
-
                     case GEN_LANG_XRC:
                         code_generator->GenerateClass();
                         break;
@@ -414,6 +386,10 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                             new_code_generator = std::make_unique<CppCodeGenerator>(form);
                             break;
 
+                        case GEN_LANG_PERL:
+                            new_code_generator = std::make_unique<PerlCodeGenerator>(form);
+                            break;
+
                         case GEN_LANG_PYTHON:
                             new_code_generator = std::make_unique<PythonCodeGenerator>(form);
                             break;
@@ -422,27 +398,9 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                             new_code_generator = std::make_unique<RubyCodeGenerator>(form);
                             break;
 
-                        case GEN_LANG_PERL:
-                            new_code_generator = std::make_unique<PerlCodeGenerator>(form);
-                            break;
-
                         case GEN_LANG_RUST:
                             new_code_generator = std::make_unique<RustCodeGenerator>(form);
                             break;
-
-#if GENERATE_NEW_LANG_CODE
-                        case GEN_LANG_FORTRAN:
-                            new_code_generator = std::make_unique<FortranCodeGenerator>(form);
-                            break;
-
-                        case GEN_LANG_HASKELL:
-                            new_code_generator = std::make_unique<HaskellCodeGenerator>(form);
-                            break;
-
-                        case GEN_LANG_LUA:
-                            new_code_generator = std::make_unique<LuaCodeGenerator>(form);
-                            break;
-#endif
 
                         case GEN_LANG_XRC:
                             new_code_generator = std::make_unique<XrcCodeGenerator>(form);
@@ -483,20 +441,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         case GEN_LANG_RUST:
                             new_code_generator->GenerateClass();
                             break;
-
-#if GENERATE_NEW_LANG_CODE
-                        case GEN_LANG_FORTRAN:
-                            new_code_generator->GenerateClass();
-                            break;
-
-                        case GEN_LANG_HASKELL:
-                            new_code_generator->GenerateClass();
-                            break;
-
-                        case GEN_LANG_LUA:
-                            new_code_generator->GenerateClass();
-                            break;
-#endif  // GENERATE_NEW_LANG_CODE
 
                         case GEN_LANG_XRC:
                             new_code_generator->GenerateClass();

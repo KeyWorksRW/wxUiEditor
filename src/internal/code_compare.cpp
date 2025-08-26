@@ -244,18 +244,6 @@ void CodeCompare::OnRadioButton(GenLang language)
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_XRC);
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_FORTRAN);
-            break;
-        case GEN_LANG_HASKELL:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_HASKELL);
-            break;
-        case GEN_LANG_LUA:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_LUA);
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         default:
             FAIL_MSG(tt_string() << "Unknown language: " << language);
             break;
@@ -300,23 +288,6 @@ void CodeCompare::OnXRC(wxCommandEvent& /* event */)
 {
     OnRadioButton(GEN_LANG_XRC);
 }
-
-#if GENERATE_NEW_LANG_CODE
-void CodeCompare::OnFortran(wxCommandEvent& WXUNUSED(event))
-{
-    OnRadioButton(GEN_LANG_FORTRAN);
-}
-
-void CodeCompare::OnHaskell(wxCommandEvent& /* event */)
-{
-    OnRadioButton(GEN_LANG_HASKELL);
-}
-
-void CodeCompare::OnLua(wxCommandEvent& /* event */)
-{
-    OnRadioButton(GEN_LANG_LUA);
-}
-#endif
 
 // clang-format off
 

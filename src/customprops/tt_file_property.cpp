@@ -121,43 +121,6 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             wildcard = "XRC Files|*.xrc";
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case prop_fortran_file:
-            if (folder && folder->hasValue(prop_folder_fortran_output_folder))
-                root_path.AssignDir(folder->as_string(prop_folder_fortran_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_fortran_output_folder))
-                root_path.AssignDir(
-                    Project.getProjectNode()->as_string(prop_fortran_output_folder));
-            else
-                root_path.AssignDir(Project.get_wxFileName()->GetPath());
-            title = "Fortran filename";
-            wildcard = "Fortran Files|*.f90;*.f95;*.f03;*.f08";
-            break;
-
-        case prop_haskell_file:
-            if (folder && folder->hasValue(prop_folder_haskell_output_folder))
-                root_path.AssignDir(folder->as_string(prop_folder_haskell_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_haskell_output_folder))
-                root_path.AssignDir(
-                    Project.getProjectNode()->as_string(prop_haskell_output_folder));
-            else
-                root_path.AssignDir(Project.get_wxFileName()->GetPath());
-            title = "Haskell filename";
-            wildcard = "Haskell Files|*.hs;*.lhs";
-            break;
-
-        case prop_lua_file:
-            if (folder && folder->hasValue(prop_folder_lua_output_folder))
-                root_path.AssignDir(folder->as_string(prop_folder_lua_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_lua_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_lua_output_folder));
-            else
-                root_path.AssignDir(Project.get_wxFileName()->GetPath());
-            title = "Lua filename";
-            wildcard = "Lua Files|*.lua";
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         case prop_cmake_file:
         case prop_folder_cmake_file:
             root_path = Project.getProjectPath();

@@ -587,20 +587,6 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_xrc_file);
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            ChangeOutputFile(prop_fortran_file);
-            break;
-
-        case GEN_LANG_HASKELL:
-            ChangeOutputFile(prop_haskell_file);
-            break;
-
-        case GEN_LANG_LUA:
-            ChangeOutputFile(prop_lua_file);
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         default:
             break;
     }

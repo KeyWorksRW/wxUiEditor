@@ -271,21 +271,6 @@ Code& Code::AddAuto()
         {
             *this += "let ";
         }
-#if GENERATE_NEW_LANG_CODE
-
-        else if (is_fortran())
-        {
-            *this += "type(";
-        }
-        else if (is_haskell())
-        {
-            *this += "let ";
-        }
-        else if (is_lua())
-        {
-            *this += "local ";
-        }
-#endif  // GENERATE_NEW_LANG_CODE
     }
     return *this;
 }
@@ -300,20 +285,6 @@ Code& Code::AddConditionalAnd()
     {
         *this << " and ";
     }
-#if GENERATE_NEW_LANG_CODE
-    else if (is_fortran())
-    {
-        *this << " .AND. ";
-    }
-    else if (is_haskell())
-    {
-        *this << " && ";
-    }
-    else if (is_lua())
-    {
-        *this << " and ";
-    }
-#endif
 
     else
     {
@@ -333,20 +304,6 @@ Code& Code::AddConditionalOr()
     {
         *this << " or ";
     }
-#if GENERATE_NEW_LANG_CODE
-    else if (is_fortran())
-    {
-        *this << " .OR. ";
-    }
-    else if (is_haskell())
-    {
-        *this << " || ";
-    }
-    else if (is_lua())
-    {
-        *this << " or ";
-    }
-#endif
     else
     {
         MSG_WARNING("unknown language");

@@ -298,17 +298,6 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = folder->as_string(prop_folder_rust_output_folder);
         else if (language == GEN_LANG_XRC && folder->hasValue(prop_folder_xrc_directory))
             result = folder->as_string(prop_folder_xrc_directory);
-
-#if GENERATE_NEW_LANG_CODE
-        else if (language == GEN_LANG_FORTRAN &&
-                 folder->hasValue(prop_folder_fortran_output_folder))
-            result = folder->as_string(prop_folder_fortran_output_folder);
-        else if (language == GEN_LANG_HASKELL &&
-                 folder->hasValue(prop_folder_haskell_output_folder))
-            result = folder->as_string(prop_folder_haskell_output_folder);
-        else if (language == GEN_LANG_LUA && folder->hasValue(prop_folder_lua_output_folder))
-            result = folder->as_string(prop_folder_lua_output_folder);
-#endif  // GENERATE_NEW_LANG_CODE
     }
 
     // Even if the node has a folder parent, there may not be a directory set for it, so check
@@ -330,17 +319,6 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
             result = m_project_node->as_string(prop_rust_output_folder);
         else if (language == GEN_LANG_XRC && m_project_node->hasValue(prop_xrc_directory))
             result = m_project_node->as_string(prop_xrc_directory);
-
-#if GENERATE_NEW_LANG_CODE
-        else if (language == GEN_LANG_FORTRAN &&
-                 m_project_node->hasValue(prop_fortran_output_folder))
-            result = m_project_node->as_string(prop_fortran_output_folder);
-        else if (language == GEN_LANG_HASKELL &&
-                 m_project_node->hasValue(prop_haskell_output_folder))
-            result = m_project_node->as_string(prop_haskell_output_folder);
-        else if (language == GEN_LANG_LUA && m_project_node->hasValue(prop_lua_output_folder))
-            result = m_project_node->as_string(prop_lua_output_folder);
-#endif  // GENERATE_NEW_LANG_CODE
     }
 
     if (result.empty())
@@ -370,17 +348,6 @@ std::pair<tt_string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang lan
         case GEN_LANG_XRC:
             base_file = form->as_string(prop_xrc_file);
             break;
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            base_file = form->as_string(prop_fortran_file);
-            break;
-        case GEN_LANG_HASKELL:
-            base_file = form->as_string(prop_haskell_file);
-            break;
-        case GEN_LANG_LUA:
-            base_file = form->as_string(prop_lua_file);
-            break;
-#endif
 
         default:
             FAIL_MSG(tt_string() << "Unknown language: " << language);
@@ -519,15 +486,6 @@ GenLang ProjectHandler::getCodePreference(Node* node) const
     else if (value == "XRC")
         return GEN_LANG_XRC;
 
-#if GENERATE_NEW_LANG_CODE
-    else if (value == "Fortran")
-        return GEN_LANG_FORTRAN;
-    else if (value == "Haskell")
-        return GEN_LANG_HASKELL;
-    else if (value == "Lua")
-        return GEN_LANG_LUA;
-#endif  // GENERATE_NEW_LANG_CODE
-
     else
         return GEN_LANG_CPLUSPLUS;
 }
@@ -553,15 +511,6 @@ size_t ProjectHandler::getGenerateLanguages() const
         languages |= GEN_LANG_RUST;
     if (value.contains("XRC", tt::CASE::either))
         languages |= GEN_LANG_XRC;
-
-#if GENERATE_NEW_LANG_CODE
-    if (value.contains("Fortran", tt::CASE::either))
-        languages |= GEN_LANG_FORTRAN;
-    if (value.contains("Haskell", tt::CASE::either))
-        languages |= GEN_LANG_HASKELL;
-    if (value.contains("Lua", tt::CASE::either))
-        languages |= GEN_LANG_LUA;
-#endif  // GENERATE_NEW_LANG_CODE
 
     return languages;
 }
@@ -669,47 +618,6 @@ size_t ProjectHandler::getOutputType(int flags) const
                     }
                     result |= OUTPUT_XRC;
                 }
-#if GENERATE_NEW_LANG_CODE
-                if (child->hasValue(prop_fortran_file))
-                {
-                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
-                    {
-                        if (child->as_string(prop_fortran_file) ==
-                                child->getPropDefaultValue(prop_fortran_file) &&
-                            getCodePreference(form) != GEN_LANG_FORTRAN)
-                        {
-                            continue;
-                        }
-                    }
-                    result |= OUTPUT_FORTRAN;
-                }
-                if (child->hasValue(prop_haskell_file))
-                {
-                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
-                    {
-                        if (child->as_string(prop_haskell_file) ==
-                                child->getPropDefaultValue(prop_haskell_file) &&
-                            getCodePreference(form) != GEN_LANG_HASKELL)
-                        {
-                            continue;
-                        }
-                    }
-                    result |= OUTPUT_HASKELL;
-                }
-                if (child->hasValue(prop_lua_file))
-                {
-                    if (child->isGen(gen_Images) || child->isGen(gen_Data))
-                    {
-                        if (child->as_string(prop_lua_file) ==
-                                child->getPropDefaultValue(prop_lua_file) &&
-                            getCodePreference(form) != GEN_LANG_LUA)
-                        {
-                            continue;
-                        }
-                    }
-                    result |= OUTPUT_LUA;
-                }
-#endif  // GENERATE_NEW_LANG_CODE
             }
         }
     };
@@ -902,20 +810,6 @@ int ProjectHandler::getLangVersion(GenLang language) const
         case GEN_LANG_XRC:
             version = m_project_node->as_string(prop_wxWidgets_version);
             break;
-
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            version = m_project_node->as_string(prop_wxFortran_version);
-            break;
-
-        case GEN_LANG_HASKELL:
-            version = m_project_node->as_string(prop_wxHaskell_version);
-            break;
-
-        case GEN_LANG_LUA:
-            version = m_project_node->as_string(prop_wxLua_version);
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             FAIL_MSG(tt_string() << "Unknown language: " << language);

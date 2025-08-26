@@ -896,18 +896,14 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         {
             if (language & GEN_LANG_CPLUSPLUS)
                 project_node->set_value(prop_code_preference, "C++");
-            else if (language & GEN_LANG_PYTHON)
-                project_node->set_value(prop_code_preference, "Python");
             else if (language & GEN_LANG_PERL)  // wxGlade can generate Perl
                 project_node->set_value(prop_code_preference, "Perl");
+            else if (language & GEN_LANG_PYTHON)
+                project_node->set_value(prop_code_preference, "Python");
             else if (language & GEN_LANG_RUST)  // wxFormBuilder can generate Rust
                 project_node->set_value(prop_code_preference, "Rust");
             else if (language & GEN_LANG_XRC)
                 project_node->set_value(prop_code_preference, "XRC");
-#if GENERATE_NEW_LANG_CODE
-            else if (language & GEN_LANG_LUA)  // wxFormBuilder can generate Lua
-                project_node->set_value(prop_code_preference, "Lua");
-#endif
 
             // None of the other designers generate code for wxRuby3 or wxHaskell
 
@@ -939,16 +935,6 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 {
                     project_node->set_value(prop_code_preference, "XRC");
                 }
-#if GENERATE_NEW_LANG_CODE
-                else if (dlg.is_gen_haskell())
-                {
-                    project_node->set_value(prop_code_preference, "Haskell");
-                }
-                else if (dlg.is_gen_lua())
-                {
-                    project_node->set_value(prop_code_preference, "Lua");
-                }
-#endif
                 else  // default to C++
                 {
                     project_node->set_value(prop_code_preference, "C++");
@@ -1088,16 +1074,6 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                         generated_changed = true;
                     }
                 }
-#if GENERATE_NEW_LANG_CODE
-                else if (dlg.is_gen_haskell())
-                {
-                    project->set_value(prop_code_preference, "Haskell");
-                }
-                else if (dlg.is_gen_lua())
-                {
-                    project->set_value(prop_code_preference, "Lua");
-                }
-#endif
                 else  // default to C++
                 {
                     project->set_value(prop_code_preference, "C++");

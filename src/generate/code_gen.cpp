@@ -346,14 +346,6 @@ void Code::GenFontColourSettings()
         {
             if (bg_clr.starts_with('#'))
             {
-#if GENERATE_NEW_LANG_CODE
-                if (is_lua())
-                {
-                    // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
-                    Class("wxColour(").QuotedString(bg_clr) += ')';
-                }
-                else
-#endif
                 {
                     Object("wxColour").QuotedString(bg_clr) += ')';
                 }
@@ -362,15 +354,6 @@ void Code::GenFontColourSettings()
             {
                 // This handles older project versions, and hand-edited project files
                 const auto colour = m_node->as_wxColour(prop_background_colour);
-#if GENERATE_NEW_LANG_CODE
-                if (is_lua())
-                {
-                    // Lua 3.2 doesn't allow passing a string to SetBackgroundColour
-                    Class("wxColour(")
-                        .QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
-                }
-                else
-#endif
                 {
                     Object("wxColour")
                         .QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';

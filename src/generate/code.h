@@ -109,12 +109,6 @@ public:
     bool is_ruby() const { return m_language == GEN_LANG_RUBY; }
     bool is_rust() const { return m_language == GEN_LANG_RUST; }
 
-#if GENERATE_NEW_LANG_CODE
-    bool is_fortran() const { return m_language == GEN_LANG_FORTRAN; }
-    bool is_haskell() const { return m_language == GEN_LANG_HASKELL; }
-    bool is_lua() const { return m_language == GEN_LANG_LUA; }
-#endif  // GENERATE_NEW_LANG_CODE
-
     bool is_local_var() const;
 
     // Equivalent to calling m_node->as_int(prop_name)

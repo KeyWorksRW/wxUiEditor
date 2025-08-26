@@ -492,28 +492,11 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
         {
             generate_type = GEN_LANG_XRC;
         }
-#if GENERATE_NEW_LANG_CODE
-        else if (parser.Found("gen_fortran", &filename))
-        {
-            generate_type = GEN_LANG_FORTRAN;
-        }
-        else if (parser.Found("gen_haskell", &filename))
-        {
-            generate_type = GEN_LANG_HASKELL;
-        }
-        else if (parser.Found("gen_lua", &filename))
-        {
-            generate_type = GEN_LANG_LUA;
-        }
-#endif  // GENERATE_NEW_LANG_CODE
 
         else if (parser.Found("gen_all", &filename))
         {
             generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY |
                              GEN_LANG_RUST);
-#if GENERATE_NEW_LANG_CODE
-            generate_type |= (GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA);
-#endif  // GENERATE_NEW_LANG_CODE
         }
         else if (parser.Found("gen_quick", &filename))
         {
@@ -555,18 +538,6 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             generate_type = (generate_type | GEN_LANG_XRC);
             test_only = true;
         }
-#if GENERATE_NEW_LANG_CODE
-        if (parser.Found("test_haskell", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_HASKELL);
-            test_only = true;
-        }
-        if (parser.Found("test_lua", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_LUA);
-            test_only = true;
-        }
-#endif  // GENERATE_NEW_LANG_CODE
 
         if (generate_type != GEN_LANG_NONE && filename.empty())
         {
@@ -700,11 +671,6 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             GenCode(GEN_LANG_RUBY);
             GenCode(GEN_LANG_RUST);
             GenCode(GEN_LANG_XRC);
-#if GENERATE_NEW_LANG_CODE
-            GenCode(GEN_LANG_FORTRAN);
-            GenCode(GEN_LANG_HASKELL);
-            GenCode(GEN_LANG_LUA);
-#endif
 
             auto& log_msg = log.emplace_back();
             auto end_time = std::chrono::steady_clock::now();

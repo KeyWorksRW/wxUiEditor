@@ -72,24 +72,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         event_code = EventHandlerDlg::GetRustValue(event->get_value());
     }
 
-    // REVIEW: [Randalphwa - 01-09-2025] Support for these is not currently planned, but they are
-    // here in case they do get supported in the future.
-#if GENERATE_NEW_LANG_CODE
-
-    else if (code.m_language == GEN_LANG_FORTRAN)
-    {
-        event_code = EventHandlerDlg::GetFortranValue(event->get_value());
-    }
-    else if (code.m_language == GEN_LANG_HASKELL)
-    {
-        event_code = EventHandlerDlg::GetHaskellValue(event->get_value());
-    }
-    else if (code.m_language == GEN_LANG_LUA)
-    {
-        event_code = EventHandlerDlg::GetLuaValue(event->get_value());
-    }
-#endif  // GENERATE_NEW_LANG_CODE
-
     else
     {
         FAIL_MSG("Unknown language");

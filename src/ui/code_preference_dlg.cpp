@@ -117,11 +117,6 @@ void CodePreferenceDlg::OnInit(wxInitDialogEvent& event)
         m_radioBtn_Perl->Hide();
         m_radioBtn_Rust->Hide();
         m_radioBtn_XRC->Hide();
-#if GENERATE_NEW_LANG_CODE
-        m_radioBtn_Fortran->Hide();
-        m_radioBtn_Haskell->Hide();
-        m_radioBtn_Lua->Hide();
-#endif
 
         Layout();
     }

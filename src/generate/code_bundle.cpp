@@ -40,16 +40,6 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
                 // RustBundleCode(*this, prop_name);
                 break;
 
-#if GENERATE_NEW_LANG_CODE
-            case GEN_LANG_HASKELL:
-                // HaskellBundleCode(*this, prop_name);
-                break;
-
-            case GEN_LANG_LUA:
-                // LuaBundleCode(*this, prop_name);
-                break;
-#endif
-
             default:
                 break;
         }

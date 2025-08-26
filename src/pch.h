@@ -98,11 +98,6 @@
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
 #endif
 
-// This is used around languages that are not supported by wxUiEditor. They surround code that might
-// be useful if any of the languages are enabled (in which case, the specific code should be moved
-// out of the conditional block.
-#define GENERATE_NEW_LANG_CODE 0
-
 // To prevent accidentally overlapping event ids, all starting values for enumerated id values
 // should use one of these defines.
 

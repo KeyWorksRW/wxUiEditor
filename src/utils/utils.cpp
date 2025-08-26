@@ -397,16 +397,6 @@ bool isValidVarName(const std::string& str, GenLang language)
     {
         return lambda(g_set_rust_keywords, g_rust_keywords);
     }
-#if GENERATE_NEW_LANG_CODE
-    else if (language == GEN_LANG_HASKELL)
-    {
-        return lambda(g_set_haskell_keywords, g_haskell_keywords);
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        return lambda(g_set_lua_keywords, g_lua_keywords);
-    }
-#endif
 
     return true;
 }
@@ -580,11 +570,6 @@ bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_languag
     else if (m_language == GEN_LANG_PERL)
         return false;
 #endif
-
-#if GENERATE_NEW_LANG_CODE
-    else if (m_language == GEN_LANG_LUA)
-        return false;
-#endif
     else
         return true;
 }
@@ -612,18 +597,6 @@ std::string_view GenLangToString(GenLang language)
             return "XRC";
             break;
 
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            return "Fortran";
-            break;
-        case GEN_LANG_HASKELL:
-            return "Haskell";
-            break;
-        case GEN_LANG_LUA:
-            return "Lua";
-            break;
-#endif  // GENERATE_NEW_LANG_CODE
-
         default:
             return "an unknown language";
             break;
@@ -649,29 +622,11 @@ GenLang ConvertToGenLang(tt_string_view language)
     else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
         return GEN_LANG_XRC;
 
-#if GENERATE_NEW_LANG_CODE
-    else if (language == "Fortran" || language.starts_with("wxFortran") ||
-             language.starts_with("Folder wxFortran"))
-        return GEN_LANG_FORTRAN;
-    else if (language == "Haskell" || language.starts_with("wxHaskell") ||
-             language.starts_with("Folder wxHaskell"))
-        return GEN_LANG_HASKELL;
-    else if (language == "Lua" || language.starts_with("wxLua") ||
-             language.starts_with("Folder wxLua"))
-        return GEN_LANG_LUA;
-#endif  // GENERATE_NEW_LANG_CODE
-
     // If this wasn't an actual language setting, then return all languages
     else
     {
-#if GENERATE_NEW_LANG_CODE
-        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                                    GEN_LANG_FORTRAN | GEN_LANG_HASKELL | GEN_LANG_LUA |
-                                    GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
-#else
         return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
                                     GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
-#endif  // GENERATE_NEW_LANG_CODE
     }
 }
 
@@ -691,15 +646,6 @@ std::string GetLanguageExtension(GenLang language)
             return ".rs";
         case GEN_LANG_XRC:
             return ".xrc";
-
-#if GENERATE_NEW_LANG_CODE
-        case GEN_LANG_FORTRAN:
-            return ".f90";
-        case GEN_LANG_HASKELL:
-            return ".hs";
-        case GEN_LANG_LUA:
-            return ".lua";
-#endif  // GENERATE_NEW_LANG_CODE
 
         default:
             return ".cpp";

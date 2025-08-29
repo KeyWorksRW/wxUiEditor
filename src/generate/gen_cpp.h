@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <thread>
+
 #include "gen_base.h"  // BaseCodeGenerator
 
 class CppCodeGenerator : public BaseCodeGenerator
@@ -22,6 +24,10 @@ public:
 protected:
     void GenerateCppClassHeader();
     void GenerateCppClassConstructor();
+
+    // Called from GenerateClass() to generate #include statements in both source and header
+    // files
+    void GenerateClassIncludes(Code& code, PANEL_PAGE panel_type, std::thread* thrd_get_events);
 
     // Write code to m_source that will load any image handlers needed by the form's class
     void GenerateCppHandlers();

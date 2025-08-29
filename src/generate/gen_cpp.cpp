@@ -673,218 +673,8 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine(txt_BaseCmtBlock);
     }
 
-    tt_string file;
-    if (auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
-    {
-        tt_cwd cwd(true);
-        Project.ChangeDir();
-        file = base_file;
-        file.make_relative(Project.getProjectPath());
-        file.backslashestoforward();
-        file.remove_extension();
-
-        m_baseFullPath = base_file;
-        m_baseFullPath.make_absolute();
-        m_baseFullPath.remove_filename();
-    }
-
-    m_header->writeLine("#pragma once");
-    m_header->writeLine();
-
-    std::set<std::string> src_includes;
-    std::set<std::string> hdr_includes;
-    if (Project.as_string(prop_help_provider) != "none")
-        src_includes.insert("#include <wx/cshelp.h>");
-    if (Project.as_bool(prop_internationalize))
-        hdr_includes.insert("#include <wx/intl.h>");
-
-    // This will almost always be needed, and it in turn includes a bunch of other files like
-    // string.h which are also almost always needed.
-    hdr_includes.insert("#include <wx/gdicmn.h>");
-
-    CollectIncludes(m_form_node, src_includes, hdr_includes);
-
-    if (m_form_node->as_bool(prop_persist))
-    {
-        src_includes.insert("#include <wx/persist.h>");
-        src_includes.insert("#include <wx/persist/toplevel.h>");
-    }
-
-    if (m_form_node->hasValue(prop_icon))
-    {
-        src_includes.insert("#include <wx/icon.h>");
-    }
-
-    if (m_NeedArtProviderHeader)
-    {
-        src_includes.insert("#include <wx/artprov.h>");
-    }
-
-    // Delay calling join() for as long as possible to increase the chance that the thread will
-    // have already completed.
-    thrd_get_events.join();
-    if (m_events.size() || m_map_conditional_events.size() || m_ctx_menu_events.size())
-    {
-        hdr_includes.insert("#include <wx/event.h>");
-    }
-
-    if (panel_type != CPP_PANEL)
-    {
-        // Write the #include files to m_header
-        GenInitHeaderFile(hdr_includes);
-    }
-
-    if (m_form_node->hasValue(prop_cpp_conditional))
-    {
-        if (!m_form_node->as_string(prop_cpp_conditional).starts_with("#"))
-            code.Str("#if ");
-        code.Str(m_form_node->as_string(prop_cpp_conditional));
-        m_source->writeLine(code);
-        m_source->writeLine();
-        code.clear();
-    }
-
-    if (Project.hasValue(prop_local_pch_file))
-    {
-        m_source->writeLine(tt_string()
-                            << "#include \"" << Project.as_string(prop_local_pch_file) << '"');
-        m_source->writeLine();
-    }
-
-    // Make certain there is a blank line before the the wxWidget #includes
-    m_source->writeLine();
-
-    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the header
-    // set.
-
-    if (auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
-    {
-        m_header_ext = hdr_extension;
-    }
-    if (Project.hasValue(prop_src_preamble))
-    {
-        WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
-    }
-
-    std::vector<std::string> ordered_includes;
-    if (auto pos = src_includes.find("#include <wx/generic/stattextg.h>");
-        pos != src_includes.end())
-    {
-        src_includes.erase(pos);
-        if (pos = src_includes.find("#include <wx/stattext.h>"); pos != src_includes.end())
-        {
-            src_includes.erase(pos);
-        }
-
-        if (ordered_includes.empty())
-        {
-            ordered_includes.emplace_back("// Order dependent includes");
-        }
-
-        ordered_includes.emplace_back("#include <wx/stattext.h>");
-        ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
-    }
-    if (auto pos = src_includes.find("#include <wx/generic/treectlg.h>"); pos != src_includes.end())
-    {
-        src_includes.erase(pos);
-        if (pos = src_includes.find("#include <wx/treectrl.h>"); pos != src_includes.end())
-        {
-            src_includes.erase(pos);
-        }
-
-        if (ordered_includes.empty())
-        {
-            ordered_includes.emplace_back("// Order dependent includes");
-        }
-
-        ordered_includes.emplace_back("#include <wx/treectrl.h>");
-        ordered_includes.emplace_back("#include <wx/generic/treectlg.h>");
-    }
-
-    if (ordered_includes.size())
-    {
-        for (auto& iter: ordered_includes)
-        {
-            m_source->writeLine(iter);
-        }
-        m_source->writeLine();
-    }
-
-    for (auto& iter: src_includes)
-    {
-        if (tt::contains(iter, "<wx"))
-            m_source->writeLine((tt_string&) iter);
-    }
-
-    m_source->writeLine();
-
-    if (Project.getProjectNode()->hasValue(prop_project_src_includes))
-    {
-        m_source->writeLine();
-        tt_view_vector list;
-        list.SetString(Project.getProjectNode()->as_string(prop_project_src_includes));
-        for (auto& iter: list)
-        {
-            tt_string include = iter;
-            include.make_absolute();
-            include.make_relative(Project.getBaseDirectory(m_form_node));
-            include.backslashestoforward();
-            m_source->writeLine(tt_string("#include \"") << include << '"');
-        }
-
-        m_source->writeLine();
-    }
-
-    // Now output all the other header files (this will include derived_class header files)
-    for (auto& iter: src_includes)
-    {
-        if (!tt::contains(iter, "<wx"))
-            m_source->writeLine((tt_string&) iter);
-    }
-
-    m_source->writeLine();
-
-    if (m_form_node->hasValue(prop_source_preamble))
-    {
-        WritePropSourceCode(m_form_node, prop_source_preamble);
-    }
-
-    if (m_form_node->hasValue(prop_system_src_includes))
-    {
-        m_source->writeLine();
-        tt_view_vector list;
-        list.SetString(m_form_node->as_string(prop_system_src_includes));
-        for (auto& iter: list)
-        {
-            m_source->writeLine(tt_string("#include <") << iter << '>');
-        }
-    }
-
-    if (file.empty())
-    {
-        m_source->writeLine();
-        m_source->writeLine("// Specify the filename to use in the base_file property");
-        m_source->writeLine("#include \"Your filename here\"");
-    }
-    else
-    {
-        file.replace_extension(m_header_ext);
-        m_source->writeLine();
-        m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
-    }
-
-    if (m_form_node->hasValue(prop_local_src_includes))
-    {
-        m_source->writeLine();
-        tt_view_vector list;
-        list.SetString(m_form_node->as_string(prop_local_src_includes));
-        for (auto& iter: list)
-        {
-            m_source->writeLine(tt_string("#include \"") << iter << '"');
-        }
-    }
-
-    m_source->writeLine();
+    // Generate #include statements in both source and header files
+    GenerateClassIncludes(code, panel_type, &thrd_get_events);
 
     try
     {
@@ -1265,6 +1055,225 @@ void CppCodeGenerator::GenerateCppClassHeader()
     {
         m_header->writeLine("};");
     }
+}
+
+// Called from GenerateClass() to generate #include statements in both source and header
+// files
+void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
+                                             std::thread* thrd_get_events)
+{
+    tt_string file;
+    if (auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
+    {
+        tt_cwd cwd(true);
+        Project.ChangeDir();
+        file = base_file;
+        file.make_relative(Project.getProjectPath());
+        file.backslashestoforward();
+        file.remove_extension();
+
+        m_baseFullPath = base_file;
+        m_baseFullPath.make_absolute();
+        m_baseFullPath.remove_filename();
+    }
+
+    m_header->writeLine("#pragma once");
+    m_header->writeLine();
+
+    std::set<std::string> src_includes;
+    std::set<std::string> hdr_includes;
+    if (Project.as_string(prop_help_provider) != "none")
+        src_includes.insert("#include <wx/cshelp.h>");
+    if (Project.as_bool(prop_internationalize))
+        hdr_includes.insert("#include <wx/intl.h>");
+
+    // This will almost always be needed, and it in turn includes a bunch of other files like
+    // string.h which are also almost always needed.
+    hdr_includes.insert("#include <wx/gdicmn.h>");
+
+    CollectIncludes(m_form_node, src_includes, hdr_includes);
+
+    if (m_form_node->as_bool(prop_persist))
+    {
+        src_includes.insert("#include <wx/persist.h>");
+        src_includes.insert("#include <wx/persist/toplevel.h>");
+    }
+
+    if (m_form_node->hasValue(prop_icon))
+    {
+        src_includes.insert("#include <wx/icon.h>");
+    }
+
+    if (m_NeedArtProviderHeader)
+    {
+        src_includes.insert("#include <wx/artprov.h>");
+    }
+
+    // Delay calling join() for as long as possible to increase the chance that the thread will
+    // have already completed.
+    thrd_get_events->join();
+    if (m_events.size() || m_map_conditional_events.size() || m_ctx_menu_events.size())
+    {
+        hdr_includes.insert("#include <wx/event.h>");
+    }
+
+    if (panel_type != CPP_PANEL)
+    {
+        // Write the #include files to m_header
+        GenInitHeaderFile(hdr_includes);
+    }
+
+    if (m_form_node->hasValue(prop_cpp_conditional))
+    {
+        if (!m_form_node->as_string(prop_cpp_conditional).starts_with("#"))
+            code.Str("#if ");
+        code.Str(m_form_node->as_string(prop_cpp_conditional));
+        m_source->writeLine(code);
+        m_source->writeLine();
+        code.clear();
+    }
+
+    if (Project.hasValue(prop_local_pch_file))
+    {
+        m_source->writeLine(tt_string()
+                            << "#include \"" << Project.as_string(prop_local_pch_file) << '"');
+        m_source->writeLine();
+    }
+
+    // Make certain there is a blank line before the the wxWidget #includes
+    m_source->writeLine();
+
+    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the header
+    // set.
+
+    if (auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
+    {
+        m_header_ext = hdr_extension;
+    }
+    if (Project.hasValue(prop_src_preamble))
+    {
+        WritePropSourceCode(Project.getProjectNode(), prop_src_preamble);
+    }
+
+    std::vector<std::string> ordered_includes;
+    if (auto pos = src_includes.find("#include <wx/generic/stattextg.h>");
+        pos != src_includes.end())
+    {
+        src_includes.erase(pos);
+        if (pos = src_includes.find("#include <wx/stattext.h>"); pos != src_includes.end())
+        {
+            src_includes.erase(pos);
+        }
+
+        if (ordered_includes.empty())
+        {
+            ordered_includes.emplace_back("// Order dependent includes");
+        }
+
+        ordered_includes.emplace_back("#include <wx/stattext.h>");
+        ordered_includes.emplace_back("#include <wx/generic/stattextg.h>");
+    }
+    if (auto pos = src_includes.find("#include <wx/generic/treectlg.h>"); pos != src_includes.end())
+    {
+        src_includes.erase(pos);
+        if (pos = src_includes.find("#include <wx/treectrl.h>"); pos != src_includes.end())
+        {
+            src_includes.erase(pos);
+        }
+
+        if (ordered_includes.empty())
+        {
+            ordered_includes.emplace_back("// Order dependent includes");
+        }
+
+        ordered_includes.emplace_back("#include <wx/treectrl.h>");
+        ordered_includes.emplace_back("#include <wx/generic/treectlg.h>");
+    }
+
+    if (ordered_includes.size())
+    {
+        for (auto& iter: ordered_includes)
+        {
+            m_source->writeLine(iter);
+        }
+        m_source->writeLine();
+    }
+
+    for (auto& iter: src_includes)
+    {
+        if (tt::contains(iter, "<wx"))
+            m_source->writeLine((tt_string&) iter);
+    }
+
+    m_source->writeLine();
+
+    if (Project.getProjectNode()->hasValue(prop_project_src_includes))
+    {
+        m_source->writeLine();
+        tt_view_vector list;
+        list.SetString(Project.getProjectNode()->as_string(prop_project_src_includes));
+        for (auto& iter: list)
+        {
+            tt_string include = iter;
+            include.make_absolute();
+            include.make_relative(Project.getBaseDirectory(m_form_node));
+            include.backslashestoforward();
+            m_source->writeLine(tt_string("#include \"") << include << '"');
+        }
+
+        m_source->writeLine();
+    }
+
+    // Now output all the other header files (this will include derived_class header files)
+    for (auto& iter: src_includes)
+    {
+        if (!tt::contains(iter, "<wx"))
+            m_source->writeLine((tt_string&) iter);
+    }
+
+    m_source->writeLine();
+
+    if (m_form_node->hasValue(prop_source_preamble))
+    {
+        WritePropSourceCode(m_form_node, prop_source_preamble);
+    }
+
+    if (m_form_node->hasValue(prop_system_src_includes))
+    {
+        m_source->writeLine();
+        tt_view_vector list;
+        list.SetString(m_form_node->as_string(prop_system_src_includes));
+        for (auto& iter: list)
+        {
+            m_source->writeLine(tt_string("#include <") << iter << '>');
+        }
+    }
+
+    if (file.empty())
+    {
+        m_source->writeLine();
+        m_source->writeLine("// Specify the filename to use in the base_file property");
+        m_source->writeLine("#include \"Your filename here\"");
+    }
+    else
+    {
+        file.replace_extension(m_header_ext);
+        m_source->writeLine();
+        m_source->writeLine(tt_string() << "#include \"" << file.filename() << "\"");
+    }
+
+    if (m_form_node->hasValue(prop_local_src_includes))
+    {
+        m_source->writeLine();
+        tt_view_vector list;
+        list.SetString(m_form_node->as_string(prop_local_src_includes));
+        for (auto& iter: list)
+        {
+            m_source->writeLine(tt_string("#include \"") << iter << '"');
+        }
+    }
+
+    m_source->writeLine();
 }
 
 void CppCodeGenerator::GenerateCppClassConstructor()

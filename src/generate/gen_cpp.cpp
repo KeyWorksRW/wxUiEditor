@@ -378,21 +378,20 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
 void CppCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names,
                                        size_t& indent)
 {
-    // BUGBUG: [KeyWorks - 09-01-2021] tt_string_vector works fine with a string as the separator.
-    // So does tt_view_vector which is what we should be using here.
-
-    // tt_string_vector works with a single char, not a string.
+    // namespace_prop can be a single or multiple namespaces separated by either :: or ;. Replace
+    // both separator types with a single ':' character.
     namespace_prop.Replace("::", ":");
-    // we also accept using semi-colons to separate the namespaces
     namespace_prop.Replace(";", ":");
     names.SetString(namespace_prop, ':');
+
     tt_string using_name;
-    m_header->writeLine();
+    m_header->writeLine();  // start with a blank line
     for (auto& iter: names)
     {
         m_header->writeLine(tt_string() << "namespace " << iter);
         m_header->writeLine("{");
         m_header->Indent();
+        // This lets the caller know how much to indent the code inside the namespace
         ++indent;
 
         if (using_name.empty())
@@ -933,6 +932,10 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
+
+    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that is
+    // we provide. The indent will be updated to tell us how much the generated code should be
+    // indented to account for the namespace(s).
     size_t indent = 0;
     tt_string_vector names;
     if (namespace_prop.size())

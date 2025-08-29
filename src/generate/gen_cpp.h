@@ -29,6 +29,9 @@ protected:
     // Recursive function for generating all get/set validator functions in the header file
     void GenCppValidatorFunctions(Node* node);
 
+    // Convert one or more namespaces and store them in the names vector, and update the
+    // indent to tell us how much to un-indent the code inside the namespace after
+    // GenerateCppClassHeader()
     void GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent);
     // Generate any headers and functions needed for images in m_source
     void GenCppImageFunctions();

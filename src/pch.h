@@ -87,6 +87,9 @@
     // warning: unused typedef 'complete'
     #pragma clang diagnostic ignored "-Wunused-local-typedef"
 
+    // include\wx/propgrid/propgrid.h(123,9): warning: unknown pragma ignored [-Wunknown-pragmas]
+    #pragma clang diagnostic ignored "-Wunknown-pragmas"
+
 #endif
 
 #include <map>

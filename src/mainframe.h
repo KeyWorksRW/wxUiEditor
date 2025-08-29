@@ -436,8 +436,6 @@ private:
     // If true, the entire project was imported, and a Save As must be done before a Save is
     // allowed.
     bool m_isImported { false };
-
-    bool m_has_clipboard_data { false };
 };
 
 // Returns a reference to the mainframe window

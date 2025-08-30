@@ -46,6 +46,7 @@ All notable changes to this project will be documented in this file.
 - wxTreebook correctly utilizes images in nested books -- fixed for all generated languages
 - Code generation for SVG images no longer scale the image twice
 - Fix C++ code generation for the form version of bars (toolbars, ribbonbars, menubars)
+- Don't nest wxue_img namespace within a project, folder, or class namespace -- this was generating invalid code.
 
 ## [Released (1.2.1)]
 

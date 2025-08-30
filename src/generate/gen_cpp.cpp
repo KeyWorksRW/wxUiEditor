@@ -508,9 +508,6 @@ void CppCodeGenerator::GenCppImageFunctions()
 
 void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
 {
-    // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children,
-    // and add each name as a forwarded class.
-
     std::vector<std::string> ordered_includes;
     if (auto pos = hdr_includes.find("#include <wx/generic/stattextg.h>");
         pos != hdr_includes.end())
@@ -1779,6 +1776,10 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
                 }
             }
             // BUGBUG: [Randalphwa - 07-31-2023] We need to handle wxArrayInt
+
+            // REVIEW: [Randalphwa - 08-30-2025] I *think* the bug is still valid since we do have a
+            // wxArrayInt val_data_type, however for 3.3.x code, it needs to be replaced with std::
+            // containers.
             else
             {
                 code << ';';

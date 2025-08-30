@@ -85,7 +85,6 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     {
         case 1:
             {
-                // BUGBUG: [Randalphwa - 06-12-2022] Don't use getMockup() if is_preview is true!
                 wxWindow* subwindow;
                 if (!is_preview)
                     subwindow = wxDynamicCast(getMockup()->getChild(wxobject, 0), wxWindow);

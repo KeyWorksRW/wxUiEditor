@@ -146,9 +146,6 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
     }
     if (namespace_prop.size())
     {
-        // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all
-        // children, and add each name as a forwarded class.
-
         // tt_string_vector works with a single char, not a string.
         namespace_prop.Replace("::", ":");
         // we also accept using semi-colons to separate the namespaces

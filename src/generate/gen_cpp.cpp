@@ -564,6 +564,20 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
 
     m_header->writeLine();
 
+    std::vector<std::string> namespaces;
+    for (auto iter = hdr_includes.begin(); iter != hdr_includes.end();)
+    {
+        if (iter->starts_with("namespace "))
+        {
+            namespaces.emplace_back(*iter);
+            iter = hdr_includes.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
     // Now output all the other header files (this will include forward class declarations)
     for (auto& iter: hdr_includes)
     {
@@ -597,6 +611,34 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
         for (auto& iter: list)
         {
             m_header->writeLine(tt_string("#include \"") << iter << '"');
+        }
+    }
+
+    if (namespaces.size())
+    {
+        m_header->writeLine();
+        for (auto& iter: namespaces)
+        {
+            tt_view_vector list(iter, '\n');
+
+            // See gen_custom_ctrl.cpp -- GetIncludes(). Format is namespace name\n{\nclass name;\n}
+            m_header->writeLine(list[0]);
+            m_header->writeLine(list[1]);
+            m_header->Indent();
+
+            for (size_t idx = 2; idx < list.size(); ++idx)
+            {
+                if (list[idx].starts_with("}"))
+                {
+                    m_header->Unindent();
+                    m_header->writeLine(list[idx]);
+                    break;
+                }
+                else
+                {
+                    m_header->writeLine(list[idx]);
+                }
+            }
         }
     }
 }
@@ -652,7 +694,8 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
                                          std::ref(img_include_set));
     std::thread thrd_need_img_func(&CppCodeGenerator::ParseImageProperties, this, m_form_node);
 
-    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
+    // If the code files are being written to disk, then UpdateEmbedNodes() has already been
+    // called.
     if (panel_type != NOT_PANEL)
     {
         ProjectImages.UpdateEmbedNodes();
@@ -723,9 +766,9 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
 
-    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that is
-    // we provide. The indent will be updated to tell us how much the generated code should be
-    // indented to account for the namespace(s).
+    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that
+    // is we provide. The indent will be updated to tell us how much the generated code should
+    // be indented to account for the namespace(s).
     size_t indent = 0;
     tt_string_vector names;
     if (namespace_prop.size())
@@ -845,8 +888,8 @@ void CppCodeGenerator::GenerateCppClassHeader()
     m_header->Indent();
     m_header->SetLastLineBlank();
 
-    // The set is used to prevent duplicates and to write the lines sorted. Call WriteSetLines() to
-    // write the lines and clear the set.
+    // The set is used to prevent duplicates and to write the lines sorted. Call WriteSetLines()
+    // to write the lines and clear the set.
     std::set<std::string> code_lines;
     CollectMemberVariables(m_form_node, Permission::Public, code_lines);
     if (code_lines.size())
@@ -1143,8 +1186,8 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     // Make certain there is a blank line before the the wxWidget #includes
     m_source->writeLine();
 
-    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the header
-    // set.
+    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the
+    // header set.
 
     if (auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
     {
@@ -1291,7 +1334,8 @@ void CppCodeGenerator::GenerateCppClassConstructor()
         if (m_form_node->isType(type_frame_form) || m_form_node->isGen(gen_wxDialog) ||
             m_form_node->isGen(gen_wxPropertySheetDialog) || m_form_node->isGen(gen_wxWizard))
         {
-            // Write code to m_source that will load any image handlers needed by the form's class
+            // Write code to m_source that will load any image handlers needed by the form's
+            // class
             GenerateCppHandlers();
             if (m_form_node->hasValue(prop_icon))
             {
@@ -1492,8 +1536,8 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
         return;
     }
 
-    // Multiple events can be bound to the same function, so use a set to make sure we only generate
-    // each function once.
+    // Multiple events can be bound to the same function, so use a set to make sure we only
+    // generate each function once.
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
@@ -1589,8 +1633,8 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
         }
         if (is_all_events_implemented)
         {
-            // If the user has defined all the event handlers, then we don't need to output anything
-            // else.
+            // If the user has defined all the event handlers, then we don't need to output
+            // anything else.
             return;
         }
     }
@@ -1745,8 +1789,8 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
                 }
                 m_map_protected[node->as_string(prop_platforms)].insert(code);
             }
-            // If node_container is non-null, it means the current node is within a container that
-            // has a conditional.
+            // If node_container is non-null, it means the current node is within a container
+            // that has a conditional.
             else if (auto node_container = node->getPlatformContainer(); node_container)
             {
                 if (!m_map_protected.contains(node_container->as_string(prop_platforms)))
@@ -2206,7 +2250,8 @@ void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
                     if (!node->as_bool(prop_underlined) ||
                         node->as_string(prop_subclass).starts_with("wxGeneric"))
                     {
-                        // If the underlined property is false, we need to use the generic version.
+                        // If the underlined property is false, we need to use the generic
+                        // version.
                         ChangeClass("wxGenericHyperlinkCtrl");
                     }
                 }
@@ -2513,10 +2558,10 @@ void CppCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>
                     continue;
                 }
 
-                // The problem at this point is that we don't know how the bitmap will be used. It
-                // could be just a wxBitmap, or it could be handed to a wxImage for sizing, or it
-                // might be handed to wxWindow->SetIcon(). We play it safe and supply all three
-                // header files.
+                // The problem at this point is that we don't know how the bitmap will be used.
+                // It could be just a wxBitmap, or it could be handed to a wxImage for sizing,
+                // or it might be handed to wxWindow->SetIcon(). We play it safe and supply all
+                // three header files.
 
                 if (isAddToSrc)
                 {

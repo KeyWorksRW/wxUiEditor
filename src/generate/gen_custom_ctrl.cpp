@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom Control generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -247,8 +247,8 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
         if (node->hasValue(prop_namespace))
         {
             set_hdr.insert(tt_string("namespace ")
-                           << node->as_string(prop_namespace) << "\n{\n\t" << "class "
-                           << node->as_string(prop_class_name) << ";\n}");
+                           << node->as_string(prop_namespace) << "\n{\n"
+                           << "class " << node->as_string(prop_class_name) << ";\n}");
         }
         else
             set_hdr.insert(tt_string() << "class " << node->as_string(prop_class_name) << ';');

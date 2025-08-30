@@ -766,16 +766,6 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
 
-    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that
-    // is we provide. The indent will be updated to tell us how much the generated code should
-    // be indented to account for the namespace(s).
-    size_t indent = 0;
-    tt_string_vector names;
-    if (namespace_prop.size())
-    {
-        GenHdrNameSpace(namespace_prop, names, indent);
-    }
-
     if (m_form_node->isGen(gen_Images))
     {
         // thrd_collect_img_headers.join() has already been called
@@ -790,9 +780,25 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         return;
     }
 
+    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that we
+    // provide. The indent will be updated to tell us how much the generated code should be indented
+    // to account for the namespace(s).
+    size_t indent = 0;
+    tt_string_vector names;
+    if (namespace_prop.size())
+    {
+        if (m_embedded_images.size())
+        {
+            WriteImagePostHeader();
+            m_header->writeLine();
+        }
+
+        GenHdrNameSpace(namespace_prop, names, indent);
+    }
+
     if (m_panel_type != CPP_PANEL)
     {
-        GenerateCppClassHeader();
+        GenerateCppClassHeader(namespace_prop.size());
     }
 
     thrd_need_img_func.join();
@@ -819,7 +825,7 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 }
 
-void CppCodeGenerator::GenerateCppClassHeader()
+void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
@@ -848,7 +854,8 @@ void CppCodeGenerator::GenerateCppClassHeader()
         code.clear();
     }
 
-    if (m_embedded_images.size())
+    // If the class has a namespace, then this was already written
+    if (!class_namespace && m_embedded_images.size())
     {
         WriteImagePostHeader();
         m_header->writeLine();

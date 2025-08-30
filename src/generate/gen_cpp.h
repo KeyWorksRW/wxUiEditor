@@ -22,7 +22,7 @@ public:
                              PANEL_PAGE panel_type = NOT_PANEL) override;
 
 protected:
-    void GenerateCppClassHeader();
+    void GenerateCppClassHeader(bool class_namespace = false);
     void GenerateCppClassConstructor();
 
     // Called from GenerateClass() to generate #include statements in both source and header
@@ -35,8 +35,8 @@ protected:
     // Recursive function for generating all get/set validator functions in the header file
     void GenCppValidatorFunctions(Node* node);
 
-    // Convert one or more namespaces and store them in the names vector, and update the
-    // indent to tell us how much to un-indent the code inside the namespace after
+    // Convert one or more project/folder/form namespaces and store them in the names vector, and
+    // update the indent to tell us how much to un-indent the code inside the namespace after
     // GenerateCppClassHeader()
     void GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent);
     // Generate any headers and functions needed for images in m_source

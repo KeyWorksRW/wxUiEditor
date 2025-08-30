@@ -144,9 +144,6 @@ bool NewWizard::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void NewWizard::OnInit(wxInitDialogEvent& event)
 {
-    // BUGBUG: [KeyWorks - 01-13-2022] Remove once issue #616 is fixed
-    m_classname->SetFocus();
-
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 

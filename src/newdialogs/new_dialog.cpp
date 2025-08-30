@@ -146,7 +146,7 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Dialog for creating a new project dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -160,9 +160,6 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void NewDialog::OnInit(wxInitDialogEvent& event)
 {
-    // BUGBUG: [KeyWorks - 01-13-2022] Remove once issue #616 is fixed
-    m_classname->SetFocus();
-
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 

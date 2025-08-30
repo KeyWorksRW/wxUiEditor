@@ -258,7 +258,6 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
 PANEL_PAGE BasePanel::GetPanelPage() const
 {
     auto* top_notebook = wxGetFrame().getTopNotebook();
-    auto top_page_name = top_notebook->GetPageText(top_notebook->GetSelection());
     auto* child_panel = static_cast<BasePanel*>(top_notebook->GetCurrentPage());
     if (auto* page = child_panel->m_notebook->GetCurrentPage(); page)
     {

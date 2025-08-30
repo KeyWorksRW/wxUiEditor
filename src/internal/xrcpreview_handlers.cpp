@@ -303,7 +303,6 @@ void XrcPreview::OnSearch(wxCommandEvent& event)
 {
     m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
     m_scintilla->SearchAnchor();
-    auto srch_string = event.GetString();
     auto result = m_scintilla->SearchNext(0, event.GetString());
 
     if (result == wxSTC_INVALID_POSITION)

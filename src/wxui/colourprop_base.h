@@ -19,9 +19,10 @@
 #include <wx/stattext.h>
 
 class kwColourPickerCtrl;
+
 namespace wxue_ctrl
 {
-class ColourRectCtrl;
+    class ColourRectCtrl;
 }
 
 class ColourPropBase : public wxDialog

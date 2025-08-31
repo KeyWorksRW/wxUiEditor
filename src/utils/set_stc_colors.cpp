@@ -21,9 +21,6 @@
 extern const char* g_u8_cpp_keywords;
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
-extern const char* g_fortran_keywords;
-extern const char* g_haskell_keywords;
-extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
 extern const char* g_rust_keywords;
 
@@ -315,8 +312,6 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             double hue, saturation, luminance;
             wxColourToHSL(wxColour(0, 128, 0), hue, saturation, luminance);
             luminance = .80;
-            auto light_green = HSLToWxColour(hue, saturation, luminance);
-
             stc->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour("#85e085"));
         }
         else

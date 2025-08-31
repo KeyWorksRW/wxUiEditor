@@ -286,7 +286,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 }
                 else if (img_props.type == "Art")
                 {
-                    auto copy = value;
+                    // auto copy = value;
                     // img_props.SetWidth(24);
                     // img_props.SetHeight(24);
                 }

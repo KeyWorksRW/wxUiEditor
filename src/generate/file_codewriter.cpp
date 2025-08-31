@@ -32,15 +32,6 @@ R"===(
 // ***********************************************
 )===";
 
-inline constexpr const auto end_fortran_block =
-R"===(! ************* End of generated code ***********
-! DO NOT EDIT THIS COMMENT BLOCK!
-!
-! Code below this comment block will be preserved
-! if the code for this class is re-generated.
-! ***********************************************
-)===";
-
 inline constexpr const auto end_python_perl_ruby_block =
 R"===(# ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
@@ -50,19 +41,8 @@ R"===(# ************* End of generated code ***********
 # ***********************************************
 )===";
 
-inline constexpr const auto end_lua_haskell_block =
-R"===(-- ************* End of generated code ***********
--- DO NOT EDIT THIS COMMENT BLOCK!
---
--- Code below this comment block will be preserved
--- if the code for this class is re-generated.
--- ***********************************************
-)===";
-
 const char* cpp_rust_end_cmt_line = "// ************* End of generated code";
-const char* fortran_end_cmt_line = "! ************* End of generated code";
 const char* python_perl_ruby_end_cmt_line = "# ************* End of generated code";
-const char* lua_haskell_cmt_line = "-- ************* End of generated code";
 
 // clang-format on
 

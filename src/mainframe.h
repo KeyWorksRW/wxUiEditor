@@ -269,9 +269,6 @@ public:
     void OnGenerateCode(wxCommandEvent& event) override;
 
     void OnGenSingleCpp(wxCommandEvent& event);
-    void OnGenSingleFortran(wxCommandEvent& event);
-    void OnGenSingleHaskell(wxCommandEvent& event);
-    void OnGenSingleLua(wxCommandEvent& event);
     void OnGenSinglePerl(wxCommandEvent& event);
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);

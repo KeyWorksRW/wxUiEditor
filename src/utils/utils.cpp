@@ -331,16 +331,12 @@ bool isConvertibleMime(const tt_string& suffix)
 extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
-extern const char* g_haskell_keywords;
-extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
 extern const char* g_rust_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
 std::set<std::string> g_set_ruby_keywords;
-std::set<std::string> g_set_haskell_keywords;
-std::set<std::string> g_set_lua_keywords;
 std::set<std::string> g_set_perl_keywords;
 std::set<std::string> g_set_rust_keywords;
 

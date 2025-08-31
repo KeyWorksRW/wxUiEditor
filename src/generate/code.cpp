@@ -235,35 +235,11 @@ const view_map g_map_ruby_prefix
 
 };
 
-const view_map g_map_fortran_prefix
-{
-};
-
-const view_map g_map_haskell_prefix
-{
-};
-
-const view_map g_map_lua_prefix
-{
-};
-
 const view_map g_map_perl_prefix
 {
 };
 
 const view_map g_map_rust_prefix
-{
-};
-
-static const view_map s_short_fortran_map
-{
-};
-
-static const view_map s_short_haskell_map
-{
-};
-
-static const view_map s_short_lua_map
 {
 };
 

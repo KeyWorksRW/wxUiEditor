@@ -102,7 +102,6 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
         m_radio_custom->SetValue(true);
         m_colourPicker->Enable(true);
 
-        auto clr = prop->as_color();
         m_colour_rect->SetColour(prop->as_color());
         m_colourPicker->SetColour(prop->as_color());
     }

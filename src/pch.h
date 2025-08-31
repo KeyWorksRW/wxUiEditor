@@ -132,13 +132,6 @@ enum GenLang
     GEN_LANG_RUBY = 1 << 4,
     GEN_LANG_RUST = 1 << 5,
 
-    // REVIEW: [Randalphwa - 01-10-2025] These languages are currently not supported. If you enable
-    // any of them then you *MUST* change the values of GEN_LANG_XRC and GEN_LANG_XML below.
-
-    // GEN_LANG_FORTRAN = 1 << 6,
-    // GEN_LANG_HASKELL = 1 << 7,
-    // GEN_LANG_LUA = 1 << 8,
-
     // These should always be the last languages in the list.
     GEN_LANG_XRC = 1 << 6,
     GEN_LANG_XML = 1 << 7,

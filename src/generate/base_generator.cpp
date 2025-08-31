@@ -641,6 +641,11 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
             pg_setting->Enable(!changed_prop->as_bool());
         }
 
+        if (auto pg_setting = prop_grid->GetProperty("pure_virtual_functions"); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_bool());
+        }
+
         if (auto pg_setting = prop_grid->GetProperty("derived_class_name"); pg_setting)
         {
             pg_setting->Enable(changed_prop->as_bool());

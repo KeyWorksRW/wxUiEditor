@@ -374,6 +374,7 @@ namespace GenEnum
         prop_project_src_includes,
         prop_proportion,
         prop_protected_class_methods,
+        prop_pure_virtual_functions,
         prop_python_import_list,
         prop_radiobtn_var_name,
         prop_range,

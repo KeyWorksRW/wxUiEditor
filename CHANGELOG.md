@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Dialogs now support the variant property
 - Added support for wxPopupWindow as a form
 - Any comments you add to a control's `var_comment` property can optionally be written to any generated XRC file (`xrc_add_var_comments` in XRC Settings in the Project file)
+- C++ `use_derived_class` option has a new `pure_virtual_functions` option that will make all non-lambda event handlers pure virtual in the generated base class.
 
 ### Changed
 

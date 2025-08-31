@@ -44,9 +44,41 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         }
         else
         {
+#ifndef __WXOSX__
             pattern = "Bitmap "
-                      "files|*.png;*.bmp;*.ico;*.xpm|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|"
+                      "files|*.png;*.bmp;*.ico;*.webp;*.xpm|PNG|*.png|Tiff|*.tif;*.tiff|WEBP|*."
+                      "webp|XPM|*.xpm|Bitmaps|"
                       "*.bmp|Icon|*.ico||";
+#else
+            pattern =
+                "Bitmap "
+                "files|*.png;*.bmp;*.ico;*.webp;*.xpm|PNG|*.png|WEBP|*.webp|XPM|*.xpm|Bitmaps|"
+                "*.bmp|Icon|*.ico||";
+#endif
+            bool remove_webp = false;
+            if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+            {
+                // WEBP was added to wxWidgets 3.3.0 -- earlier versions don't support it.
+                remove_webp = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300);
+            }
+            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            {
+                // REVIEW: [Randalphwa - 08-31-2025] Currently, the wxPython dev has stated
+                // wxWidgets 3.3.x will not be supported -- he is waiting for the stable release
+                // (3.4.x). I'm guessing that the version will be wxPython 4.4.x, but until it gets
+                // released, that's uncertain.
+                remove_webp = Project.getLangVersion(GEN_LANG_PYTHON) < 404000;
+            }
+
+            // REVIEW: [Randalphwa - 08-31-2025] wxRuby already supports 3.3.x, and I *think* wxPerl
+            // does as well, but the latter requires testing. If wxRust3 ever exists, it will be
+            // built on 3.3.x or later.
+
+            if (remove_webp)
+            {
+                pattern.Replace("|WEBP|*.webp", "", false);
+                pattern.Replace(";*.webp", "", false);
+            }
         }
 
         wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString,

@@ -357,6 +357,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_project_src_includes, "project_src_includes" },
     { prop_proportion, "proportion" },
     { prop_protected_class_methods, "protected_class_methods" },
+    { prop_pure_virtual_functions, "pure_virtual_functions" },
     { prop_python_import_list, "python_import_list" },
     { prop_radiobtn_var_name, "radiobtn_var_name" },
     { prop_range, "range" },

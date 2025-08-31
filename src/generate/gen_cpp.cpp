@@ -16,6 +16,7 @@
 #include "data_handler.h"     // DataHandler class
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
+#include "gen_enums.h"
 #include "gen_results.h"      // Code generation file writing functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
@@ -1925,8 +1926,17 @@ void CppCodeGenerator::GenHdrEvents()
             }
             if (m_form_node->as_bool(prop_use_derived_class))
             {
-                code << "virtual void " << event_code << "("
-                     << event->getEventInfo()->get_event_class() << "& event) { event.Skip(); }";
+                if (!m_form_node->as_bool(GenEnum::prop_pure_virtual_functions))
+                {
+                    code << "virtual void " << event_code << "("
+                         << event->getEventInfo()->get_event_class()
+                         << "& event) { event.Skip(); }";
+                }
+                else
+                {
+                    code << "virtual void " << event_code << "("
+                         << event->getEventInfo()->get_event_class() << "& event) = 0;";
+                }
             }
             else
             {
@@ -1950,8 +1960,17 @@ void CppCodeGenerator::GenHdrEvents()
 
             if (m_form_node->as_bool(prop_use_derived_class))
             {
-                code << "virtual void " << event_code << "("
-                     << event->getEventInfo()->get_event_class() << "& event) { event.Skip(); }";
+                if (!m_form_node->as_bool(GenEnum::prop_pure_virtual_functions))
+                {
+                    code << "virtual void " << event_code << "("
+                         << event->getEventInfo()->get_event_class()
+                         << "& event) { event.Skip(); }";
+                }
+                else
+                {
+                    code << "virtual void " << event_code << "("
+                         << event->getEventInfo()->get_event_class() << "& event) = 0;";
+                }
             }
             else
             {

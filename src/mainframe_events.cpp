@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include <wx/aboutdlg.h>     // declaration of wxAboutDialog class
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/clipbrd.h>      // wxClipboad class and clipboard functions
@@ -186,6 +187,11 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
 
 void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
 {
+    wxString url;
+    url = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
+              "https://docs.wxwidgets.org/3.2.8" :
+              "https://docs.wxwidgets.org/latest";
+
     if (m_selected_node)
     {
         if (auto generator = m_selected_node->getGenerator(); generator)
@@ -193,8 +199,7 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
             auto file = generator->GetHelpURL(m_selected_node.get());
             if (file.size())
             {
-                // wxString url("https://docs.wxwidgets.org/trunk/class");
-                wxString url("https://docs.wxwidgets.org/3.2.0/class");
+                url += "/class";
                 if (file.starts_with("group"))
                     url.RemoveLast(sizeof("class") - 1);
                 url << file.make_wxString();
@@ -203,8 +208,7 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
             }
         }
     }
-    // wxLaunchDefaultBrowser("https://docs.wxwidgets.org/trunk/");
-    wxLaunchDefaultBrowser("https://docs.wxwidgets.org/3.2.0/");
+    wxLaunchDefaultBrowser(url);
 }
 
 void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))

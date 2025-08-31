@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -399,6 +399,7 @@ static auto lst_common_properties = {
     prop_class_access,
     prop_disabled,
     prop_flags,
+    prop_focus,
     prop_font,
     prop_foreground_colour,
     prop_hidden,

@@ -71,7 +71,6 @@ configure_file(
 )
 
 # ###################### General Settings #######################
-
 set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
 set( CMAKE_CXX_EXTENSIONS OFF )
@@ -188,7 +187,6 @@ set( wxUSE_LUNASVG ON CACHE BOOL "Use LunaSVG for rendering SVG images" FORCE )
 set( wxUSE_NANOSVG OFF CACHE BOOL "Use NanoSVG for rendering SVG images" FORCE )
 set( wxBUILD_INSTALL OFF CACHE BOOL "Don't build wxWidgets install" )
 
-set( wxUSE_LIBTIFF OFF CACHE BOOL "Don't use libtiff (problems compiling on Mac" )
 set( wxUSE_TGA OFF CACHE BOOL "Don't build tga image support" )
 set( wxUSE_PCX OFF CACHE BOOL "Don't build pcx image support" )
 set( wxUSE_IFF OFF CACHE BOOL "Don't build iff image support" )
@@ -211,6 +209,17 @@ else()
     # Unix doesn't ship WebKit on all platforms, so we can't use it unless we
     # install it.
     set( wxUSE_WEBVIEW OFF CACHE BOOL "Don't use wxWidgets' web viewing classes" )
+endif()
+
+if( APPLE )
+    # Ensure the stdlib extension macro is defined for all compilation units (including fetched
+    # projects)
+    add_definitions( -D__STDC_WANT_LIB_EXT1__=1 )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__STDC_WANT_LIB_EXT1__=1" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_WANT_LIB_EXT1__=1" )
+
+    set( wxUSE_LIBTIFF OFF CACHE BOOL "Don't use libtiff (problems compiling on Mac" )
+    set( wxUSE_REGEX OFF CACHE BOOL "Don't use pcre (problems compiling on Mac" )
 endif()
 
 # Prevent FetchContent from updating wxWidgets after initial download

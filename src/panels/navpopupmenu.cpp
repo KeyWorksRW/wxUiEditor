@@ -515,17 +515,6 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                 Append(MenuSingleGenXRC, "Generate XRC for this form");
                 ++count;
             }
-
-            if (node->hasValue(prop_haskell_file))
-            {
-                Append(MenuSingleGenHaskell, "Generate Haskell for this form");
-                ++count;
-            }
-            if (node->hasValue(prop_lua_file))
-            {
-                Append(MenuSingleGenLua, "Generate Lua for this form");
-                ++count;
-            }
             if (node->hasValue(prop_perl_file))
             {
                 Append(MenuSingleGenPerl, "Generate Perl for this form");

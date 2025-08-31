@@ -165,9 +165,6 @@ public:
         MenuSingleGenPython,
         MenuSingleGenRuby,
         MenuSingleGenXRC,
-        MenuSingleGenFortran,
-        MenuSingleGenHaskell,
-        MenuSingleGenLua,
         MenuSingleGenPerl,
         MenuSingleGenRust,
 

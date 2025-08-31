@@ -58,18 +58,10 @@ const char* g_perl_keywords =
     "qw sub return goto and or not xor "
     "unless use no package require my our local state ";
 
-const char* g_lua_keywords = "and break do else elseif end false for function goto if in local nil "
-                             "not or repeat return then true until while";
-
 const char* g_rust_keywords =
     "as break const continue crate do else enum extern false fn for if impl in let loop match mod "
     "move mut pub "
     "ref return self self mut static struct trait true type unsafe use where while";
-
-const char* g_haskell_keywords = "case class data deriving do else if import in infix infixl "
-                                 "infixr instance let module newtype of then type where";
-
-const char* g_fortran_keywords = "program module subroutine function if else end do select case";
 
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : wxPanel(parent)
 {

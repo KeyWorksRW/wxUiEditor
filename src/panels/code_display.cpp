@@ -35,9 +35,6 @@
 extern const char* g_u8_cpp_keywords;
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
-extern const char* g_fortran_keywords;
-extern const char* g_haskell_keywords;
-extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
 extern const char* g_rust_keywords;
 

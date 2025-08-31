@@ -55,21 +55,6 @@ public:
     // C++ is not enabled and another language specified a value.
     static tt_string GetCppValue(tt_string_view value);
 
-    // This will return a string as if Fortran was the only value specified even if the original
-    // value had values for multiple languages. Note that this *will* return a value even if
-    // Ruby is not enabled and another language specified a value.
-    static tt_string GetFortranValue(tt_string_view value);
-
-    // This will return a string as if Haskell was the only value specified even if the original
-    // value had values for multiple languages. Note that this *will* return a value even if
-    // Ruby is not enabled and another language specified a value.
-    static tt_string GetHaskellValue(tt_string_view value);
-
-    // This will return a string as if Lua was the only value specified even if the original
-    // value had values for multiple languages. Note that this *will* return a value even if
-    // Ruby is not enabled and another language specified a value.
-    static tt_string GetLuaValue(tt_string_view value);
-
     // This will return a string as if Perl was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Perl is not enabled and another language specified a value.
@@ -135,7 +120,7 @@ private:
     bool m_is_rust_enabled { false };
 
     bool m_is_cpp_lambda { false };
-    bool m_is_perl_lambda { false };
+    // bool m_is_perl_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
     bool m_is_rust_lambda { false };

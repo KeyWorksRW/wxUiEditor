@@ -23,9 +23,6 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
-extern const char* g_fortran_keywords;
-extern const char* g_haskell_keywords;
-extern const char* g_lua_keywords;
 extern const char* g_perl_keywords;
 extern const char* g_perl_keywords;
 extern const char* g_ruby_keywords;
@@ -1036,48 +1033,6 @@ tt_string EventHandlerDlg::GetPerlValue(tt_string_view value)
 
 // This is a static function
 
-tt_string EventHandlerDlg::GetLuaValue(tt_string_view value)
-{
-    tt_string result;
-    auto pos = value.find("[lua:");
-    if (pos == tt::npos)
-    {
-        if (value.front() == '[')
-        {
-            // Unfortunately, this is a static function, so we have no access to m_event.
-            result = "OnEvent";
-        }
-        else
-        {
-            result = value;
-            if (auto pos_other = result.find("[ruby:"); pos_other != tt::npos)
-            {
-                result.erase(pos_other, result.size() - pos_other);
-            }
-        }
-        return result;
-    }
-    else
-    {
-        value.remove_prefix(pos);
-    }
-
-    if (!value.starts_with("[lua:lambda]"))
-    {
-        // This is just a function name, so remove the "[python:" and the trailing ']'
-        value.remove_prefix(sizeof("[lua:") - 1);
-        if (auto end = value.find(']'); end != tt::npos)
-        {
-            value.remove_suffix(value.size() - end);
-        }
-    }
-
-    result << value;
-    return result;
-}
-
-// This is a static function
-
 tt_string EventHandlerDlg::GetRustValue(tt_string_view value)
 {
     tt_string result;
@@ -1116,90 +1071,6 @@ tt_string EventHandlerDlg::GetRustValue(tt_string_view value)
     {
         // This is just a function name, so remove the "[python:" and the trailing ']'
         value.remove_prefix(sizeof("[rust:") - 1);
-        if (auto end = value.find(']'); end != tt::npos)
-        {
-            value.remove_suffix(value.size() - end);
-        }
-    }
-
-    result << value;
-    return result;
-}
-
-// This is a static function
-
-tt_string EventHandlerDlg::GetFortranValue(tt_string_view value)
-{
-    tt_string result;
-    auto pos = value.find("[fortran:");
-    if (pos == tt::npos)
-    {
-        if (value.front() == '[')
-        {
-            // Unfortunately, this is a static function, so we have no access to m_event.
-            result = "OnEvent";
-        }
-        else
-        {
-            result = value;
-            if (auto pos_other = result.find("[fortran:"); pos_other != tt::npos)
-            {
-                result.erase(pos_other, result.size() - pos_other);
-            }
-        }
-        return result;
-    }
-    else
-    {
-        value.remove_prefix(pos);
-    }
-
-    if (!value.starts_with("[fortran:lambda]"))
-    {
-        // This is just a function name, so remove the "[python:" and the trailing ']'
-        value.remove_prefix(sizeof("[fortran:") - 1);
-        if (auto end = value.find(']'); end != tt::npos)
-        {
-            value.remove_suffix(value.size() - end);
-        }
-    }
-
-    result << value;
-    return result;
-}
-
-// This is a static function
-
-tt_string EventHandlerDlg::GetHaskellValue(tt_string_view value)
-{
-    tt_string result;
-    auto pos = value.find("[haskell:");
-    if (pos == tt::npos)
-    {
-        if (value.front() == '[')
-        {
-            // Unfortunately, this is a static function, so we have no access to m_event.
-            result = "OnEvent";
-        }
-        else
-        {
-            result = value;
-            if (auto pos_other = result.find("[haskell:"); pos_other != tt::npos)
-            {
-                result.erase(pos_other, result.size() - pos_other);
-            }
-        }
-        return result;
-    }
-    else
-    {
-        value.remove_prefix(pos);
-    }
-
-    if (!value.starts_with("[haskell:lambda]"))
-    {
-        // This is just a function name, so remove the "[python:" and the trailing ']'
-        value.remove_prefix(sizeof("[haskell:") - 1);
         if (auto end = value.find(']'); end != tt::npos)
         {
             value.remove_suffix(value.size() - end);

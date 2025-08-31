@@ -62,24 +62,6 @@ void Prefs::ReadConfig()
     m_colour_ruby_number = config->Read("ruby_number_colour", "#FF0000");
     m_colour_ruby_string = config->Read("ruby_string_colour", "#008000");
 
-    m_colour_fortran = config->Read("fortran_colour", "#FF00FF");
-    m_colour_fortran_comment = config->Read("fortran_comment_colour", "#008000");
-    m_colour_fortran_keyword = config->Read("fortran_keyword_colour", "#0000FF");
-    m_colour_fortran_number = config->Read("fortran_number_colour", "#FF0000");
-    m_colour_fortran_string = config->Read("fortran_string_colour", "#008000");
-
-    m_colour_haskell = config->Read("haskell_colour", "#FF00FF");
-    m_colour_haskell_comment = config->Read("haskell_comment_colour", "#008000");
-    m_colour_haskell_keyword = config->Read("haskell_keyword_colour", "#0000FF");
-    m_colour_haskell_number = config->Read("haskell_number_colour", "#FF0000");
-    m_colour_haskell_string = config->Read("haskell_string_colour", "#008000");
-
-    m_colour_lua = config->Read("lua_colour", "#FF00FF");
-    m_colour_lua_comment = config->Read("lua_comment_colour", "#008000");
-    m_colour_lua_keyword = config->Read("lua_keyword_colour", "#0000FF");
-    m_colour_lua_number = config->Read("lua_number_colour", "#FF0000");
-    m_colour_lua_string = config->Read("lua_string_colour", "#008000");
-
     m_colour_perl = config->Read("perl_colour", "#FF00FF");
     m_colour_perl_comment = config->Read("perl_comment_colour", "#008000");
     m_colour_perl_keyword = config->Read("perl_keyword_colour", "#0000FF");
@@ -99,9 +81,6 @@ void Prefs::ReadConfig()
     m_cpp_line_length = config->Read("cpp_line_length", 110);
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
-    m_fortran_line_length = config->Read("fortran_line_length", 100);
-    m_haskell_line_length = config->Read("haskell_line_length", 80);
-    m_lua_line_length = config->Read("lua_line_length", 100);
     m_perl_line_length = config->Read("perl_line_length", 80);
     m_rust_line_length = config->Read("rust_line_length", 80);
 

@@ -129,9 +129,6 @@
         bitmap="SVG;fontPicker.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;fortran_logo.svg;[24,24]" />
-      <node
-        class="embedded_image"
         bitmap="SVG;gauge.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -148,9 +145,6 @@
       <node
         class="embedded_image"
         bitmap="SVG;grid_sizer.svg;[24,24]" />
-      <node
-        class="embedded_image"
-        bitmap="SVG;haskell-logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;hide.svg;[24,24]" />
@@ -172,9 +166,6 @@
       <node
         class="embedded_image"
         bitmap="SVG;left.svg;[24,24]" />
-      <node
-        class="embedded_image"
-        bitmap="SVG;lua-logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;menu.svg;[24,24]" />

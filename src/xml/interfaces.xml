@@ -279,29 +279,6 @@
 			help="The filename to use if generating XRC. This will be ignored if the project specifies combined XRC files."/>
 	</gen>
 
-	<!--
-	<gen class="wxFortran Settings" type="interface">
-		<property name="fortran_file" type="file"
-			help="The filename to use if generating code for wxFortran."/>
-		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid fortran code for use before the class definition."/>
-	</gen>
-
-	<gen class="wxHaskell Settings" type="interface">
-		<property name="fortran_file" type="file"
-			help="The filename to use if generating code for wxHaskell."/>
-		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid fortran code for use before the class definition."/>
-	</gen>
-
-	<gen class="wxLua Settings" type="interface">
-		<property name="lua_file" type="file"
-			help="The filename to use if generating code for wxLua or wxLuaJIT."/>
-		<property name="insert_lua_code" type="code_edit"
-			help="Specify the code to insert into the lua file after the generated import statements. This can be any valid lua code for use before the class definition."/>
-	</gen>
--->
-
 	<gen class="C++" type="interface">
 		<property name="wxWidgets_version" type="option"
 			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
@@ -428,46 +405,6 @@
 		<property name="rust_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
-<!--
-	<gen class="wxFortran" type="interface">
-		<property name="wxFortran_version" type="option"
-			help="Specifies the minimum version of wxFortran needed to run the generated code.">
-			<option name="1-0-0"/> 1-0-0 </property>
-		<property name="fortran_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all fortran code."/>
-		<property name="fortran_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			80</property>
-		<property name="fortran_project_preamble" type="code_edit"
-			help="Code to generate at the top of every source file after the comment block."/>
-	</gen>
-
-	<gen class="wxHaskell" type="interface">
-		<property name="wxHaskell_version" type="option"
-			help="Specifies the minimum version of wxHaskell needed to run the generated code.">
-			<option name="1-0-0"/> 1-0-0 </property>
-		<property name="haskell_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all haskell code."/>
-		<property name="haskell_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			80</property>
-		<property name="haskell_project_preamble" type="code_edit"
-			help="Code to generate at the top of every source file after the comment block."/>
-	</gen>
-
-	<gen class="wxLua" type="interface">
-		<property name="wxLua_version" type="option"
-			help="Specifies the minimum version of wxLua needed to run the generated code.">
-			<option name="wxLua 3.2.0"/>
-			wxLua 3.2.0 </property>
-		<property name="lua_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all lua code."/>
-		<property name="lua_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			100</property>
-		<property name="lua_project_preamble" type="code_edit"
-			help="Code to generate at the top of every source file after the comment block."/>
-	</gen> -->
 
 	<gen class="Folder C++ Overrides" type="interface">
 		<property name="folder_base_directory" type="path"

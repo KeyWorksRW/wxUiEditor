@@ -55,14 +55,12 @@ namespace wxue_img
     wxBitmapBundle bundle_flex_grid_sizer_svg(int width, int height);
     wxBitmapBundle bundle_folder_svg(int width, int height);
     wxBitmapBundle bundle_fontPicker_svg(int width, int height);
-    wxBitmapBundle bundle_fortran_logo_svg(int width, int height);
     wxBitmapBundle bundle_gauge_svg(int width, int height);
     wxBitmapBundle bundle_generate_svg(int width, int height);
     wxBitmapBundle bundle_genericdir_ctrl_svg(int width, int height);
     wxBitmapBundle bundle_grid_svg(int width, int height);
     wxBitmapBundle bundle_grid_bag_sizer_svg(int width, int height);
     wxBitmapBundle bundle_grid_sizer_svg(int width, int height);
-    wxBitmapBundle bundle_haskell_logo_svg(int width, int height);
     wxBitmapBundle bundle_hide_svg(int width, int height);
     wxBitmapBundle bundle_htmlwin_svg(int width, int height);
     wxBitmapBundle bundle_hyperlink_ctrl_svg(int width, int height);
@@ -70,7 +68,6 @@ namespace wxue_img
     wxBitmapBundle bundle_import_svg(int width, int height);
     wxBitmapBundle bundle_infobar_svg(int width, int height);
     wxBitmapBundle bundle_left_svg(int width, int height);
-    wxBitmapBundle bundle_lua_logo_svg(int width, int height);
     wxBitmapBundle bundle_menu_svg(int width, int height);
     wxBitmapBundle bundle_menuitem_svg(int width, int height);
     wxBitmapBundle bundle_new_project_svg(int width, int height);
@@ -246,14 +243,12 @@ namespace wxue_img
     extern const unsigned char flex_grid_sizer_svg[330];  // ../art_src/flex_grid_sizer.svg
     extern const unsigned char folder_svg[605];  // ../art_src/folder.svg
     extern const unsigned char fontPicker_svg[4008];  // ../art_src/fontPicker.svg
-    extern const unsigned char fortran_logo_svg[589];  // ../art_src/fortran_logo.svg
     extern const unsigned char gauge_svg[285];  // ../art_src/gauge.svg
     extern const unsigned char generate_svg[2435];  // ../art_src/generate.svg
     extern const unsigned char genericdir_ctrl_svg[7243];  // ../art_src/genericdir_ctrl.svg
     extern const unsigned char grid_bag_sizer_svg[272];  // ../art_src/grid_bag_sizer.svg
     extern const unsigned char grid_sizer_svg[483];  // ../art_src/grid_sizer.svg
     extern const unsigned char grid_svg[1863];  // ../art_src/grid.svg
-    extern const unsigned char haskell_logo_svg[355];  // ../art_src/haskell-logo.svg
     extern const unsigned char hide_svg[994];  // ../art_src/hide.svg
     extern const unsigned char htmlwin_svg[3983];  // ../art_src/htmlwin.svg
     extern const unsigned char hyperlink_ctrl_svg[2905];  // ../art_src/hyperlink_ctrl.svg
@@ -261,7 +256,6 @@ namespace wxue_img
     extern const unsigned char import_svg[2454];  // ../art_src/import.svg
     extern const unsigned char infobar_svg[1411];  // ../art_src/infobar.svg
     extern const unsigned char left_svg[437];  // ../art_src/left.svg
-    extern const unsigned char lua_logo_svg[1031];  // ../art_src/lua-logo.svg
     extern const unsigned char menu_svg[2449];  // ../art_src/menu.svg
     extern const unsigned char menuitem_svg[2783];  // ../art_src/menuitem.svg
     extern const unsigned char new_project_svg[1062];  // ../art_src/new-project.svg

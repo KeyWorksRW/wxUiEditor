@@ -27,11 +27,8 @@ enum : size_t
     OUTPUT_PYTHON = 1 << 2,
     OUTPUT_RUBY = 1 << 3,
     OUTPUT_XRC = 1 << 4,
-    OUTPUT_FORTRAN = 1 << 5,
-    OUTPUT_HASKELL = 1 << 6,
-    OUTPUT_LUA = 1 << 7,
-    OUTPUT_PERL = 1 << 8,
-    OUTPUT_RUST = 1 << 9,
+    OUTPUT_PERL = 1 << 5,
+    OUTPUT_RUST = 1 << 6,
 };
 
 enum

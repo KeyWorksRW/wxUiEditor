@@ -10,9 +10,6 @@
         <inherits class="wxRust"/>
         <inherits class="XRC"/>
 
-        <!-- <inherits class="wxFortran"/>
-        <inherits class="wxHaskell"/>
-        <inherits class="wxLua"/> -->
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
             <option name="C++"/>
@@ -22,9 +19,6 @@
 			<option name="Rust"/>
 			<option name="XRC"/>
 
-			<!-- <option name="Fortran"/>
-			<option name="Haskell"/>
-			<option name="Lua"/> -->
             C++</property>
         <property name="generate_languages" type="bitlist"
             help="Specify the programming languages you might want to view or generate from this project. The code preference language above will always be available when this project is loaded.">
@@ -35,9 +29,6 @@
 			<option name="Rust"/>
 			<option name="XRC"/>
 
-			<!-- <option name="Fortran"/>
-			<option name="Haskell"/>
-			<option name="Lua"/> -->
             C++ | Python | Ruby
         </property>
         <property name="art_directory" type="path"

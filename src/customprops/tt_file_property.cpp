@@ -206,7 +206,7 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 wxString ttFileProperty::ValueToString(wxVariant& value,
                                        wxPGPropValFormatFlags WXUNUSED(flags)) const
 {
-    auto result = value.GetString();
+    // auto result = value.GetString();
     return value.GetString();
 }
 

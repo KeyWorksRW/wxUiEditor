@@ -188,6 +188,11 @@ set( wxUSE_LUNASVG ON CACHE BOOL "Use LunaSVG for rendering SVG images" FORCE )
 set( wxUSE_NANOSVG OFF CACHE BOOL "Use NanoSVG for rendering SVG images" FORCE )
 set( wxBUILD_INSTALL OFF CACHE BOOL "Don't build wxWidgets install" )
 
+set( wxUSE_LIBTIFF OFF CACHE BOOL "Don't use libtiff (problems compiling on Mac" )
+set( wxUSE_TGA OFF CACHE BOOL "Don't build tga image support" )
+set( wxUSE_PCX OFF CACHE BOOL "Don't build pcx image support" )
+set( wxUSE_IFF OFF CACHE BOOL "Don't build iff image support" )
+
 # On Windows, the only browser backend that ships with Windows 10 and 11 is IE.
 # To use the Edge backend, we would need to install the WebView2 runtime.
 set( wxUSE_WEBVIEW_EDGE OFF CACHE BOOL "Use wxWebView Edge backend for web viewing" )

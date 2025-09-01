@@ -26,6 +26,8 @@ set (file_list
     undo_stack.cpp        # Maintain an undo and redo stack
     wakatime.cpp          # Updates WakaTime metrics
 
+    ui/startup_dlg.cpp    # Dialog to display if wxUiEditor is launched with no arguments
+
     tt/tt.cpp               # tt namespace functions
     tt/tt_string.cpp        # std::string with additional methods
     tt/tt_string_view.cpp   # std::string_view with additional methods

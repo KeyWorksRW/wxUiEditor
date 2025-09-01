@@ -7037,15 +7037,15 @@
     <node
       class="wxDialog"
       center="no"
-      class_name="StartupDlg"
+      class_name="StartupDlgBase"
       icon="SVG;wxUiEditor.svg;[16,16]"
       title="Open, Import, or Create Project"
-      base_file="..\ui\startup_dlg"
-      local_src_includes="../mainframe.h"
+      base_file="..\wxui\startup_dlg_base"
       system_src_includes="wx/display.h"
-      no_closing_brace="1"
+      derived_class_name="StartupDlg"
+      derived_file="startupdlg"
       private_members="1"
-      use_derived_class="0"
+      pure_virtual_functions="1"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -7088,7 +7088,7 @@
             <node
               class="wxStaticText"
               label="Recent projects you have opened will appear here"
-              var_comment="// This should be hidden if there actually are any recent projects"
+              var_comment="This should be hidden if there actually are any recent projects"
               var_name="m_staticTextRecentProjects"
               wrap="200" />
             <node
@@ -8223,7 +8223,7 @@
                 <node
                   class="wxHyperlinkCtrl"
                   label="wxWidgets Documentation"
-                  url="https://docs.wxwidgets.org/trunk/"
+                  url="https://docs.wxwidgets.org/latest/"
                   flags="wxEXPAND" />
               </node>
               <node

@@ -7041,9 +7041,8 @@
       icon="SVG;wxUiEditor.svg;[16,16]"
       title="Open, Import, or Create Project"
       base_file="..\wxui\startup_dlg_base"
-      system_src_includes="wx/display.h"
       derived_class_name="StartupDlg"
-      derived_file="startupdlg"
+      derived_file="startup_dlg"
       private_members="1"
       pure_virtual_functions="1"
       wxEVT_INIT_DIALOG="OnInit">

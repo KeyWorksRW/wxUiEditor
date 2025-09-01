@@ -41,6 +41,7 @@ protected:
     void OnOpen(wxHyperlinkEvent& event) override;
 
     void OnHyperlink(wxHyperlinkEvent& event);
+    void RemoveProjectFilename(wxCommandEvent& event);
 
 private:
     tt_string m_value;

@@ -377,7 +377,7 @@ void MsgFrame::UpdateNodeInfo()
                 gen_label << "wxWidgets";
             }
             m_hyperlink->SetLabel(gen_label.make_wxString());
-            wxString url("https://docs.wxwidgets.org/trunk/");
+            wxString url("https://docs.wxwidgets.org/latest/");
             auto file = generator->GetHelpURL(cur_sel);
             if (file.size())
             {

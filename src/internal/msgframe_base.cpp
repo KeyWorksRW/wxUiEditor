@@ -119,7 +119,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     static_box_2->Add(m_txt_memory, wxSizerFlags().Border(wxALL));
 
     m_hyperlink = new wxHyperlinkCtrl(static_box_2->GetStaticBox(), wxID_ANY, "wxWidgets Documentation",
-        "https://docs.wxwidgets.org/trunk/");
+        "https://docs.wxwidgets.org/latest/");
     static_box_2->Add(m_hyperlink, wxSizerFlags().Expand().Border(wxALL));
 
     node_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));

@@ -125,6 +125,7 @@ void DocViewPanel::ActivatePage()
     wxCommandEvent dummy;
     switch (m_language)
     {
+        case GEN_LANG_PERL:
         case GEN_LANG_CPLUSPLUS:
             OnCPlus(dummy);
             break;

@@ -74,7 +74,7 @@ bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Panel for displaying docs in wxWebView
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -159,19 +159,38 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
         {
             if (auto file = gen->GetHelpURL(cur_sel); file.size())
             {
-                wxString url("https://docs.wxwidgets.org/3.2.8/class");
-                if (file.starts_with("group"))
-                    url.RemoveLast(sizeof("class") - 1);
+                wxString url;
+                url = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
+                          "https://docs.wxwidgets.org/3.2.8" :
+                          "https://docs.wxwidgets.org/latest";
+
+                if (!file.starts_with("group"))
+                    url += "/class";
                 url << file.make_wxString();
 
-                m_webview->LoadURL(url);
+                // Unfortunately, the wxWidgets documentation site now requires a captcha to verify
+                // that the user is not a bot before allowing access to the documentation.
+                // The website does not display at all in the IE embedded view that we use.
+
+                // m_webview->LoadURL(url);
+
+                m_webview->SetPage(
+                    "<html><title>Displaying Documentation in Browser</title>"
+                    "<body>"
+                    "The C++ documentation is not accessible in the embedded browser because"
+                    " the wxWidgets documentation site now requires a captcha to verify"
+                    " that the user is not a bot before allowing access to the documentation."
+                    " Instead, the documentation will be opened in the default web browser."
+                    "</body></html>",
+                    wxEmptyString);
+                wxLaunchDefaultBrowser(url);
                 return;
             }
         }
     }
     m_webview->SetPage("<html><title>Select Node</title>"
-                       "<body>The selected node does not have any specific documentation for this "
-                       "language.</body></html>",
+                       "<body>The selected node does not have any specific documentation for C++."
+                       "</body></html>",
                        wxEmptyString);
 #endif
 }

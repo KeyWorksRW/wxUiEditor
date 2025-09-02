@@ -46,11 +46,11 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6633]; // Original size: 55,980 bytes
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10714]; // Original size: 50,362 bytes
+    extern const unsigned char interfaces[10747]; // Original size: 50,923 bytes
     // ../xml/mdi.xml
     extern const unsigned char mdi[1768]; // Original size: 5,581 bytes
     // ../xml/pickers.xml
-    extern const unsigned char pickers[2457]; // Original size: 10,145 bytes
+    extern const unsigned char pickers[2475]; // Original size: 10,183 bytes
     // ../xml/project.xml
     extern const unsigned char project[1608]; // Original size: 5,810 bytes
     // ../xml/sizers.xml

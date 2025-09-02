@@ -632,16 +632,18 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     // The following are categories (type="interface") -- these don't have an actual generator
     // that implements them, but they do have a NodeDeclaration with the category name.
 
-    { gen_Bitmaps, "Bitmaps" },
     { gen_Boolean_Validator, "Boolean Validator" },
     { gen_Choice_Validator, "Choice Validator" },
-    { gen_Code_Generation, "Code Generation" },
-    { gen_Command_Bitmaps, "Command Bitmaps" },
-    { gen_DlgWindowSettings, "Dialog Window Settings" },
+    { gen_DateTime_Validator, "DateTime Validator" },
     { gen_Integer_Validator, "Integer Validator" },
     { gen_List_Validator, "List Validator" },
     { gen_String_Validator, "String Validator" },
     { gen_Text_Validator, "Text Validator" },
+
+    { gen_Bitmaps, "Bitmaps" },
+    { gen_Code_Generation, "Code Generation" },
+    { gen_Command_Bitmaps, "Command Bitmaps" },
+    { gen_DlgWindowSettings, "Dialog Window Settings" },
     { gen_Window_Events, "Window Events" },
     { gen_XrcSettings, "XRC Settings" },
     { gen_flexgridsizerbase, "flexgridsizerbase" },

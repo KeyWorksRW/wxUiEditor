@@ -141,7 +141,8 @@
 	<gen class="Dialog Window Settings" type="interface">
 		<property name="id" type="id"
 			help="The identifier for the dialog.">wxID_ANY</property>
-		<property name="variant" type="option" help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
+		<property name="variant" type="option"
+			help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
 			<option name="normal"
 				help="Normal size"/>
 			<option name="small"
@@ -149,9 +150,7 @@
 			<option name="mini"
 				help="About 33% smaller than normal."/>
 			<option name="large"
-				help="About 35% larger than normal."/>
-			normal
-		</property>
+				help="About 35% larger than normal."/> normal </property>
 		<property name="pos" type="wxPoint"
 			help="Sets the dialog position. The default is (-1, -1) which indicates that wxWidgets should generate a default position for the dialog."/>
 		<property name="size" type="wxSize"
@@ -217,8 +216,7 @@
 			help="Check this if you will be creating a derived class. If not checked, you can implement any event handlers below the generated file's final comment block.">
 			1</property>
 		<property name="pure_virtual_functions" type="bool"
-			help="Check this if you want all event handler functions to be pure virtual ( = 0).">
-			0</property>
+			help="Check this if you want all event handler functions to be pure virtual ( = 0)."> 0</property>
 		<property name="derived_class_name" type="string"
 			help="The name of the derived class. Ignored if use_derived_class is unchecked."/>
 		<property name="derived_file" type="file"
@@ -249,7 +247,7 @@
 			help="Specify the code to insert into the python file after the generated import statements. This is usually used to import addtional modules, but can be any valid python code for use before the class definition."/>
 		<property name="python_import_list" type="include_files"
 			help="Specifies the python modules that should be imported. These will be added using the import command."/>
-<!--
+		<!--
 		<property name="python_variable_args" type="bool"
 			help="If checked, the form
 		parameters will be set to (*args, **kwargs) instead of listing all the parameters and their
@@ -287,21 +285,24 @@
 		<property name="fortran_file" type="file"
 			help="The filename to use if generating code for wxFortran."/>
 		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid fortran code for use before the class definition."/>
+			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid
+	fortran code for use before the class definition."/>
 	</gen>
 
 	<gen class="wxHaskell Settings" type="interface">
 		<property name="fortran_file" type="file"
 			help="The filename to use if generating code for wxHaskell."/>
 		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid fortran code for use before the class definition."/>
+			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid
+	fortran code for use before the class definition."/>
 	</gen>
 
 	<gen class="wxLua Settings" type="interface">
 		<property name="lua_file" type="file"
 			help="The filename to use if generating code for wxLua or wxLuaJIT."/>
 		<property name="insert_lua_code" type="code_edit"
-			help="Specify the code to insert into the lua file after the generated import statements. This can be any valid lua code for use before the class definition."/>
+			help="Specify the code to insert into the lua file after the generated import statements. This can be any valid lua
+	code for use before the class definition."/>
 	</gen>
 -->
 
@@ -309,9 +310,7 @@
 		<property name="wxWidgets_version" type="option"
 			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
 			<option name="3.2.0"/>
-			<option name="3.3.0"/>
-			3.2.0
-		</property>
+			<option name="3.3.0"/> 3.2.0 </property>
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file."/>
 		<property name="derived_directory" type="path"
@@ -356,7 +355,8 @@
 		<property name="xrc_no_whitespace" type="bool"
 			help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable."> 0</property>
 		<property name="xrc_indent_attributes" type="bool"
-			help="If checked, attributes will be indented. This makes the file larger, but more readable. Ignored if xrc_no_whitespace is checked">1</property>
+			help="If checked, attributes will be indented. This makes the file larger, but more readable. Ignored if xrc_no_whitespace is checked">
+			1</property>
 		<property name="xrc_indent_with_spaces" type="bool"
 			help="If checked, indentation will be done with 2 spaces instead of a single tab.">0</property>
 		<property name="combine_all_forms" type="bool"
@@ -370,8 +370,7 @@
 	<gen class="wxPerl" type="interface">
 		<property name="wxPerl_version" type="option"
 			help="Specifies the minimum version of wxPerl needed to run the generated code.">
-			<option name="3.005"/>
-			 3.005 </property>
+			<option name="3.005"/> 3.005 </property>
 		<property name="perl_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all perl code."/>
 		<property name="perl_line_length" type="uint"
@@ -406,8 +405,7 @@
 			help="Specifies the minimum version of wxRuby needed to run the generated code.">
 			<option name="1.5.0"/>
 			<option name="1.5.5"/>
-			<option name="1.6.1"/>
-			1.6.1 </property>
+			<option name="1.6.1"/> 1.6.1 </property>
 		<property name="ruby_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all ruby code."/>
 		<property name="ruby_line_length" type="uint"
@@ -431,7 +429,7 @@
 		<property name="rust_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
-<!--
+	<!--
 	<gen class="wxFortran" type="interface">
 		<property name="wxFortran_version" type="option"
 			help="Specifies the minimum version of wxFortran needed to run the generated code.">
@@ -439,7 +437,8 @@
 		<property name="fortran_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all fortran code."/>
 		<property name="fortran_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this
+	length.">
 			80</property>
 		<property name="fortran_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
@@ -452,7 +451,8 @@
 		<property name="haskell_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all haskell code."/>
 		<property name="haskell_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this
+	length.">
 			80</property>
 		<property name="haskell_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
@@ -466,7 +466,8 @@
 		<property name="lua_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all lua code."/>
 		<property name="lua_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this
+	length.">
 			100</property>
 		<property name="lua_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
@@ -659,7 +660,7 @@
 				help="String value."/>
 			<option name="wxFileName"
 				help="Only use this with a wxGenericValidator type."/>
-				<option name="short"
+			<option name="short"
 				help="Only use this with a wxIntegerValidator type."/>
 			<option name="int"
 				help="Only use this with a wxIntegerValidator type."/>
@@ -738,6 +739,34 @@
 			help="Optional public function to set the value of the variable."/>
 	</gen>
 
+	<gen class="Choice Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxString"
+				help="String value."/>
+			<option name="int"
+				help="Integer value."/>wxString </property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
+	<gen class="DateTime Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator"/>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxDateTime"
+				help="Only use this with a wxGenericValidator type."/>wxDateTime</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
 	<gen class="Integer Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator"/>
@@ -747,15 +776,9 @@
 			help="Function name to set the value of the variable."/>
 	</gen>
 
-	<gen class="Choice Validator" type="interface">
+	<gen class="List Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator"/>
-		<property name="validator_data_type" type="option"
-			help="Data type of the member variable">
-			<option name="wxString"
-				help="String value."/>
-			<option name="int"
-				help="Integer value."/> wxString </property>
 		<property name="get_function" type="string"
 			help="Function name to get the value of the variable."/>
 		<property name="set_function" type="string"
@@ -765,15 +788,6 @@
 	<gen class="String Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator"/>
-		<property name="set_function" type="string"
-			help="Function name to set the value of the variable."/>
-	</gen>
-
-	<gen class="List Validator" type="interface">
-		<property name="validator_variable" type="string"
-			help="Name of a member variable associated with the validator"/>
-		<property name="get_function" type="string"
-			help="Function name to get the value of the variable."/>
 		<property name="set_function" type="string"
 			help="Function name to set the value of the variable."/>
 	</gen>
@@ -805,7 +819,8 @@
 		<property name="id" type="id"
 			help="Specifies the window identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">
 			wxID_ANY</property>
-		<property name="variant" type="option" help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
+		<property name="variant" type="option"
+			help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
 			<option name="normal"
 				help="Normal size"/>
 			<option name="small"
@@ -903,7 +918,8 @@
 			<option name="wxPython"
 				help="Disable wxPython code for this control (ignored if project doesn't generate wxPython code)."/>
 			<option name="wxRuby"
-				help="Disable wxRuby code for this control (ignored if project doesn't generate wxRuby code)."/></property>
+				help="Disable wxRuby code for this control (ignored if project doesn't generate wxRuby code)."/>
+		</property>
 	</gen>
 
 	<gen class="wxMdiWindow" type="interface">

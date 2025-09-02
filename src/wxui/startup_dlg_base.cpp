@@ -18,8 +18,6 @@
 
 #include "ui_images.h"
 
-#include <wx/display.h>
-
 #include "startup_dlg_base.h"
 
 bool StartupDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,

@@ -18,6 +18,7 @@
     </gen>
 
     <gen class="Check3State" image="check3state" type="widget">
+        <inherits class="CheckBoxState Validator"/>
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>

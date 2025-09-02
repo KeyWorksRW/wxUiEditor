@@ -682,7 +682,9 @@ namespace GenEnum
         // The following are categories (type="interface")
 
         gen_Boolean_Validator,
+        gen_CheckBoxState_Validator,
         gen_Choice_Validator,
+        gen_Colour_Validator,
         gen_DateTime_Validator,
         gen_Integer_Validator,
         gen_List_Validator,

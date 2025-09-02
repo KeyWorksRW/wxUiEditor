@@ -739,6 +739,19 @@
 			help="Optional public function to set the value of the variable."/>
 	</gen>
 
+	<gen class="CheckBoxState Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator. Requires wxWidgets 3.3 or later."/>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxCheckBoxState"
+				help="Only use this with a wxGenericValidator type."/>wxCheckBoxState</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
 	<gen class="Choice Validator" type="interface">
 		<property name="validator_variable" type="string"
 			help="Name of a member variable associated with the validator"/>
@@ -748,6 +761,19 @@
 				help="String value."/>
 			<option name="int"
 				help="Integer value."/>wxString </property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable."/>
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable."/>
+	</gen>
+
+	<gen class="Colour Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator. Requires wxWidgets 3.3 or later."/>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxColour"
+				help="Only use this with a wxGenericValidator type."/>wxColour</property>
 		<property name="get_function" type="string"
 			help="Function name to get the value of the variable."/>
 		<property name="set_function" type="string"

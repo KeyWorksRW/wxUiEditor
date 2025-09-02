@@ -38,7 +38,7 @@ namespace wxue_data
     // ../xml/boxes.xml
     extern const unsigned char boxes[2429]; // Original size: 14,336 bytes
     // ../xml/buttons.xml
-    extern const unsigned char buttons[2712]; // Original size: 15,282 bytes
+    extern const unsigned char buttons[2721]; // Original size: 15,325 bytes
     // ../xml/containers.xml
     extern const unsigned char containers[5006]; // Original size: 27,442 bytes
     // ../xml/data_ctrls.xml
@@ -46,11 +46,11 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6633]; // Original size: 55,980 bytes
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10747]; // Original size: 50,923 bytes
+    extern const unsigned char interfaces[10837]; // Original size: 52,122 bytes
     // ../xml/mdi.xml
     extern const unsigned char mdi[1768]; // Original size: 5,581 bytes
     // ../xml/pickers.xml
-    extern const unsigned char pickers[2475]; // Original size: 10,183 bytes
+    extern const unsigned char pickers[2481]; // Original size: 10,219 bytes
     // ../xml/project.xml
     extern const unsigned char project[1608]; // Original size: 5,810 bytes
     // ../xml/sizers.xml

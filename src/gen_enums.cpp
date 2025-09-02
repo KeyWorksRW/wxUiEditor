@@ -633,7 +633,9 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     // that implements them, but they do have a NodeDeclaration with the category name.
 
     { gen_Boolean_Validator, "Boolean Validator" },
+    { gen_CheckBoxState_Validator, "CheckBoxState Validator" },
     { gen_Choice_Validator, "Choice Validator" },
+    { gen_Colour_Validator, "Colour Validator" },
     { gen_DateTime_Validator, "DateTime Validator" },
     { gen_Integer_Validator, "Integer Validator" },
     { gen_List_Validator, "List Validator" },

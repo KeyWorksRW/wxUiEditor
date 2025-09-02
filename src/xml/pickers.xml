@@ -92,6 +92,7 @@
     </gen>
 
     <gen class="wxColourPickerCtrl" image="colourPickerIcon" type="widget">
+        <inherits class="Colour Validator"/>
         <inherits class="wxWindow">
             <hide name="variant"/>
         </inherits>

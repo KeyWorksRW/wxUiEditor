@@ -17,7 +17,8 @@ EditParamProperty::EditParamProperty(const wxString& label, NodeProperty* prop) 
 {
 }
 
-EditParamsDialog::EditParamsDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
+EditParamsDialog::EditParamsDialog(wxWindow* parent, NodeProperty* prop) :
+    GridPropertyDlgBase(parent)
 {
     m_prop = prop;
 };

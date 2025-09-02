@@ -4732,10 +4732,13 @@
       </node>
       <node
         class="wxDialog"
-        class_name="GridPropertyDlg"
+        class_name="GridPropertyDlgBase"
         title="Property Editor"
         base_file="grid_property_dlg"
         source_preamble="// This is the base class for editing multiple-field properties"
+        derived_class_name="GridPropertyDlg"
+        derived_file="gridpropertydlg_derived"
+        pure_virtual_functions="1"
         wxEVT_INIT_DIALOG="OnInit"
         wxEVT_UPDATE_UI="OnUpdateUI">
         <node

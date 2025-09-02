@@ -16,7 +16,7 @@
 #include <wx/stattext.h>
 #include <wx/toolbar.h>
 
-class GridPropertyDlg : public wxDialog
+class GridPropertyDlgBase : public wxDialog
 {
 public:
     enum
@@ -26,8 +26,8 @@ public:
         id_UndoDeleteRow
     };
 
-    GridPropertyDlg() {}
-    GridPropertyDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Property Editor",
+    GridPropertyDlgBase() {}
+    GridPropertyDlgBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Property Editor",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -41,13 +41,13 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
-    virtual void OnCancel(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteRow(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnNewRow(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUndoDelete(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCancel(wxCommandEvent& event) = 0;
+    virtual void OnDeleteRow(wxCommandEvent& event) = 0;
+    virtual void OnInit(wxInitDialogEvent& event) = 0;
+    virtual void OnNewRow(wxCommandEvent& event) = 0;
+    virtual void OnOK(wxCommandEvent& event) = 0;
+    virtual void OnUndoDelete(wxCommandEvent& event) = 0;
+    virtual void OnUpdateUI(wxUpdateUIEvent& event) = 0;
 
     // Class member variables
 

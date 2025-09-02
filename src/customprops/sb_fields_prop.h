@@ -46,7 +46,7 @@ private:
     NodeProperty* m_prop;
 };
 
-class SBarFieldsDialog : public GridPropertyDlg
+class SBarFieldsDialog : public GridPropertyDlgBase
 {
 public:
     SBarFieldsDialog(wxWindow* parent, NodeProperty* prop);

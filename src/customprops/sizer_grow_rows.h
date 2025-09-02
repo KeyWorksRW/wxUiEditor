@@ -46,7 +46,7 @@ private:
     NodeProperty* m_prop;
 };
 
-class GrowRowsDialog : public GridPropertyDlg
+class GrowRowsDialog : public GridPropertyDlgBase
 {
 public:
     GrowRowsDialog(wxWindow* parent, NodeProperty* prop);
@@ -59,6 +59,9 @@ protected:
     void OnNewRow(wxCommandEvent& WXUNUSED(event)) override;
     void OnDeleteRow(wxCommandEvent& WXUNUSED(event)) override;
     void OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event)) override;
+
+    void OnCancel(wxCommandEvent& event) override { event.Skip(); }
+    void OnUndoDelete(wxCommandEvent& event) override { event.Skip(); }
 
 private:
     struct GrowRowsEntry

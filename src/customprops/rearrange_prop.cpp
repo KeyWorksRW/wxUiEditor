@@ -20,7 +20,7 @@ RearrangeProperty::RearrangeProperty(const wxString& label, NodeProperty* prop) 
 {
 }
 
-RearrangeDialog::RearrangeDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
+RearrangeDialog::RearrangeDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlgBase(parent)
 {
     m_prop = prop;
 };

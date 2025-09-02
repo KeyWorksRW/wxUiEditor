@@ -46,7 +46,7 @@ private:
     NodeProperty* m_prop;
 };
 
-class EditParamsDialog : public GridPropertyDlg
+class EditParamsDialog : public GridPropertyDlgBase
 {
 public:
     EditParamsDialog(wxWindow* parent, NodeProperty* prop);
@@ -61,6 +61,7 @@ public:
 protected:
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
     void OnOK(wxCommandEvent& event) override;
+    void OnCancel(wxCommandEvent& event) override { event.Skip(); }
 
     void OnNewRow(wxCommandEvent& WXUNUSED(event)) override;
     void OnDeleteRow(wxCommandEvent& WXUNUSED(event)) override;

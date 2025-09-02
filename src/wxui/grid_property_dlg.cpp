@@ -18,7 +18,7 @@
 
 #include "grid_property_dlg.h"
 
-bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool GridPropertyDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     // Scaling of pos and size are handled after the dialog
@@ -98,13 +98,13 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnCancel, this, wxID_CANCEL);
-    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnOK, this, wxID_OK);
-    Bind(wxEVT_INIT_DIALOG, &GridPropertyDlg::OnInit, this);
-    Bind(wxEVT_TOOL, &GridPropertyDlg::OnDeleteRow, this, id_DeleteRow);
-    Bind(wxEVT_TOOL, &GridPropertyDlg::OnNewRow, this, id_NewRow);
-    Bind(wxEVT_TOOL, &GridPropertyDlg::OnUndoDelete, this, id_UndoDeleteRow);
-    Bind(wxEVT_UPDATE_UI, &GridPropertyDlg::OnUpdateUI, this);
+    Bind(wxEVT_BUTTON, &GridPropertyDlgBase::OnCancel, this, wxID_CANCEL);
+    Bind(wxEVT_BUTTON, &GridPropertyDlgBase::OnOK, this, wxID_OK);
+    Bind(wxEVT_INIT_DIALOG, &GridPropertyDlgBase::OnInit, this);
+    Bind(wxEVT_TOOL, &GridPropertyDlgBase::OnDeleteRow, this, id_DeleteRow);
+    Bind(wxEVT_TOOL, &GridPropertyDlgBase::OnNewRow, this, id_NewRow);
+    Bind(wxEVT_TOOL, &GridPropertyDlgBase::OnUndoDelete, this, id_UndoDeleteRow);
+    Bind(wxEVT_UPDATE_UI, &GridPropertyDlgBase::OnUpdateUI, this);
 
     return true;
 }

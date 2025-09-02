@@ -20,7 +20,8 @@ SBarFieldsProperty::SBarFieldsProperty(const wxString& label, NodeProperty* prop
 {
 }
 
-SBarFieldsDialog::SBarFieldsDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
+SBarFieldsDialog::SBarFieldsDialog(wxWindow* parent, NodeProperty* prop) :
+    GridPropertyDlgBase(parent)
 {
     m_prop = prop;
 };

@@ -46,7 +46,7 @@ private:
     NodeProperty* m_prop;
 };
 
-class RearrangeDialog : public GridPropertyDlg
+class RearrangeDialog : public GridPropertyDlgBase
 {
 public:
     RearrangeDialog(wxWindow* parent, NodeProperty* prop);

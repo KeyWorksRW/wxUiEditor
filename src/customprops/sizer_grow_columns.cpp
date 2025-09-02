@@ -17,7 +17,8 @@ GrowColumnsProperty::GrowColumnsProperty(const wxString& label, NodeProperty* pr
 {
 }
 
-GrowColumnsDialog::GrowColumnsDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
+GrowColumnsDialog::GrowColumnsDialog(wxWindow* parent, NodeProperty* prop) :
+    GridPropertyDlgBase(parent)
 {
     m_prop = prop;
 };

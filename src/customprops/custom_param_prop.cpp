@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxStringProperty class for custom control parameters
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,8 @@ EditParamProperty::EditParamProperty(const wxString& label, NodeProperty* prop) 
 {
 }
 
-EditParamsDialog::EditParamsDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
+EditParamsDialog::EditParamsDialog(wxWindow* parent, NodeProperty* prop) :
+    GridPropertyDlgBase(parent)
 {
     m_prop = prop;
 };
@@ -63,8 +64,7 @@ void EditParamsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         ++row;
     }
 
-    m_grid->DeleteCols(1, 1);                 // Remove the second column
-    m_toolBar->DeleteTool(id_UndoDeleteRow);  // Remove the Undo button
+    m_grid->DeleteCols(1, 1);  // Remove the second column
 
     Fit();
 }
@@ -87,6 +87,7 @@ void EditParamsDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
+    m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size() > 0);
 }
 
 void EditParamsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))

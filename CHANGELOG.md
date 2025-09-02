@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Any comments you add to a control's `var_comment` property can optionally be written to any generated XRC file (`xrc_add_var_comments` in XRC Settings in the Project file)
 - C++ `use_derived_class` option has a new `pure_virtual_functions` option that will make all non-lambda event handlers pure virtual in the generated base class.
 - Add WEBP support if using wxWidgets 3.3.x
+- Validators added for wxDatePickerCtrl, wxColourPickerCtrl (wxWidgets 3.3 required) and wxCheckBox (wxCheckBoxState, requires wxWidgets 3.3)
 
 ### Changed
 

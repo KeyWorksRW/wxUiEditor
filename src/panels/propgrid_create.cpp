@@ -774,6 +774,26 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
         return;
 
+    if (name.contains("CheckBoxState Validator") || name.contains("Colour Validator"))
+    {
+        // These two validators were added to wxWidgets 3.3
+        auto preferred_language = Project.getCodePreference();
+        if (preferred_language == GEN_LANG_CPLUSPLUS &&
+            Project.getLangVersion(preferred_language) < 30300)
+        {
+            return;
+        }
+        // REVIEW: [Randalphwa - 09-01-2025] It's possible that wxPerl does support it, but it's
+        // unlikely
+        else if (preferred_language == GEN_LANG_PYTHON || preferred_language == GEN_LANG_PERL)
+        {
+            return;
+        }
+
+        // REVIEW: [Randalphwa - 09-01-2025] wxRuby3 should support these, but will require testing
+        // to be sure.
+    }
+
     auto id =
         m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);

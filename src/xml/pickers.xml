@@ -92,6 +92,7 @@
     </gen>
 
     <gen class="wxColourPickerCtrl" image="colourPickerIcon" type="widget">
+        <inherits class="Colour Validator"/>
         <inherits class="wxWindow">
             <hide name="variant"/>
         </inherits>
@@ -116,6 +117,7 @@
     </gen>
 
     <gen class="wxDatePickerCtrl" image="datepicker" type="widget">
+        <inherits class="DateTime Validator"/>
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <inherits class="sizer_child"/>

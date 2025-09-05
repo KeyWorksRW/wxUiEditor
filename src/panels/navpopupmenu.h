@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Context-menu for Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -178,30 +178,31 @@ protected:
     void OnUpdateEvent(wxUpdateUIEvent& event);
 
     // Create menu for use when the current node is a sizer
-    void CreateSizerMenu(Node* node);
+    void CreateSizerMenu();
 
     // Creates menu for all non-sizer nodes
-    void CreateCommonMenu(Node* node);
+    void CreateCommonMenu();
 
     // Adds menu commands at the top of the menu. Calls node's generator to override the
     // default add commands as needed.
-    void MenuAddCommands(Node* node);
+    void MenuAddCommands();
 
     // Cut, Copy, Paste, Delete, Duplicate
-    void MenuAddStandardCommands(Node* node);
+    void MenuAddStandardCommands();
 
     // This always adds up/down, and depending on the node, it also adds left/right and move
     // into new sizer.
-    void MenuAddMoveCommands(Node* node);
+    void MenuAddMoveCommands();
 
     void ChangeNode(GenEnum::GenName new_node_gen);
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
-    void CreateSizerParent(Node* node, tt_string_view widget);
+    void CreateSizerParent(tt_string_view widget);
 
     void AddSeparatorIfNeeded();
 
 private:
-    Node* m_node { nullptr };
+    Node* m_parent { nullptr };  // parent of the node passed to ctor
+    Node* m_node { nullptr };    // node passed to ctor
     Node* m_child { nullptr };
     Node* m_sizer_node { nullptr };  // node to add child sizers to
     GenEnum::GenName m_tool_name { GenEnum::GenName::gen_name_array_size };

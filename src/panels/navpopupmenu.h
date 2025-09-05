@@ -27,7 +27,7 @@ public:
 
     enum
     {
-        MenuDUPLICATE = wxID_HIGHEST + 2000,
+        MenuDUPLICATE = START_NAV_CTX_MENU_IDS,
 
         MenuMOVE_UP,
         MenuMOVE_DOWN,

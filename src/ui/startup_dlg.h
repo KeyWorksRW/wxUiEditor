@@ -21,7 +21,7 @@ public:
     {
     }
 
-    enum : size_t
+    enum
     {
         START_MRU,
         START_CONVERT,

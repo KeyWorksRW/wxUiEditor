@@ -19,7 +19,7 @@ namespace pugi
 
 class ImportXML;
 
-enum : size_t
+enum
 {
     OUTPUT_NONE = 0,
     OUTPUT_CPLUS = 1 << 0,

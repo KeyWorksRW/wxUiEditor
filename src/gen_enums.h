@@ -13,7 +13,7 @@
 
 namespace GenEnum
 {
-    enum PropType : size_t
+    enum PropType
     {
 
         type_animation,
@@ -76,7 +76,7 @@ namespace GenEnum
     };
     extern std::map<std::string_view, PropType, std::less<>> umap_PropTypes;
 
-    enum PropName : size_t
+    enum PropName
     {
         prop_template_description,
         prop_template_directory,
@@ -584,7 +584,7 @@ namespace GenEnum
             return {};
     }
 
-    enum GenType : size_t
+    enum GenType
     {
 
         type_aui_tool,
@@ -673,7 +673,7 @@ namespace GenEnum
     };
     extern std::map<GenType, std::string_view> map_GenTypes;
 
-    enum GenName : size_t
+    enum GenName
     {
 
         // Note that this list not only includes all the top level generators, but also the

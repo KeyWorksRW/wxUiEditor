@@ -21,7 +21,7 @@ class resForm
 public:
     resForm();
 
-    enum : size_t
+    enum
     {
         form_dialog,
         form_panel,

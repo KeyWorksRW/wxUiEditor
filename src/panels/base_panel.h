@@ -17,7 +17,7 @@ class wxAuiNotebook;
 class wxFindDialogEvent;
 class wxStyledTextCtrl;
 
-enum PANEL_PAGE : size_t
+enum PANEL_PAGE
 {
     NOT_PANEL,
     CPP_PANEL,

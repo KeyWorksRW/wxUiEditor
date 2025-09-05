@@ -21,14 +21,14 @@ namespace tt
     /// Use to compare a size_t against -1
     constexpr size_t npos = static_cast<size_t>(-1);
 
-    enum class CASE : size_t
+    enum class CASE
     {
         exact,
         either,
         utf8  // comparisons are done by converting characters to lowercase UTF8
     };
 
-    enum class TRIM : size_t
+    enum class TRIM
     {
         right,
         left,

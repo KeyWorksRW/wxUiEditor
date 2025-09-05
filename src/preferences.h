@@ -199,7 +199,7 @@ public:
         PREFS_PJT_MEMBER_PREFIX = 1 << 1,
     };
 
-    enum : size_t
+    enum
     {
         PENDING_DARK_MODE_ENABLE = 1,
         PENDING_DARK_MODE_ON = 1 << 1,

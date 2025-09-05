@@ -234,12 +234,14 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
 
     if (where == MoveDirection::Left)
     {
-        if (check_only || node->as_int(prop_column) == 0)
+        if (check_only)
         {
             return (node->as_int(prop_column) > 0);
         }
-
-        MoveLeft(node);
+        else if (node->as_int(prop_column) > 0)
+        {
+            MoveLeft(node);
+        }
     }
     else if (where == MoveDirection::Right)
     {
@@ -251,12 +253,15 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
     else if (where == MoveDirection::Up)
     {
-        if (check_only || node->as_int(prop_row) == 0)
+        // This decrease the row, so it's only valid if the row > 0
+        if (check_only)
         {
             return (node->as_int(prop_row) > 0);
         }
-
-        MoveUp(node);
+        else if (node->as_int(prop_row) > 0)
+        {
+            MoveUp(node);
+        }
     }
     else if (where == MoveDirection::Down)
     {
@@ -270,11 +275,12 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
     return false;
 }
 
+// Decrease column
 void GridBag::MoveLeft(Node* node)
 {
     auto gbsizer = node->getParent();
     tt_string undo_str;
-    undo_str << "Change column of " << map_GenNames[node->getGenName()];
+    undo_str << "Decrease column of " << map_GenNames[node->getGenName()];
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
@@ -319,12 +325,13 @@ void GridBag::MoveLeft(Node* node)
     wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
+// Increase column
 void GridBag::MoveRight(Node* node)
 {
     auto gbsizer = node->getParent();
 
     tt_string undo_str;
-    undo_str << "Change column of " << map_GenNames[node->getGenName()];
+    undo_str << "Increase column of " << map_GenNames[node->getGenName()];
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
@@ -368,12 +375,13 @@ void GridBag::MoveRight(Node* node)
     wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
+// Decrease row
 void GridBag::MoveUp(Node* node)
 {
     auto gbsizer = node->getParent();
 
     tt_string undo_str;
-    undo_str << "Change row";
+    undo_str << "Decrease row";
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
@@ -425,7 +433,10 @@ void GridBag::MoveUp(Node* node)
     for (;;)
     {
         gbsizer->getChild(end_swap)->set_value(prop_row, cur_row);
-        --end_swap;
+        if (end_swap > 0)
+        {
+            --end_swap;
+        }
         if (gbsizer->getChild(end_swap)->as_int(prop_row) != new_row)
             break;
         else if (end_swap == 0)
@@ -443,12 +454,13 @@ void GridBag::MoveUp(Node* node)
     wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
+// Increase row
 void GridBag::MoveDown(Node* node)
 {
     auto gbsizer = node->getParent();
 
     tt_string undo_str;
-    undo_str << "Change row";
+    undo_str << "Increase row";
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.

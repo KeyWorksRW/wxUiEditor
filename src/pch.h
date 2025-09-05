@@ -108,12 +108,17 @@
 // To prevent accidentally overlapping event ids, all starting values for enumerated id values
 // should use one of these defines.
 
-#define START_RIBBON_IDS      wxID_HIGHEST + 1
-#define START_MAINFRAME_IDS   wxID_HIGHEST + 1000
-#define START_NAVTOOL_IDS     wxID_HIGHEST + 2000
-#define START_DOCVIEW_IDS     wxID_HIGHEST + 3000
-#define START_TESTING_IDS     wxID_HIGHEST + 4000
-#define START_IMPORT_FILE_IDS wxID_HIGHEST + 5000
+// clang-format off
+
+constexpr int START_RIBBON_IDS = wxID_HIGHEST       + 1;
+constexpr int START_MAINFRAME_IDS = wxID_HIGHEST    + 1000;
+constexpr int START_NAVTOOL_IDS = wxID_HIGHEST      + 2000;
+constexpr int START_NAV_CTX_MENU_IDS = wxID_HIGHEST + 2500;
+constexpr int START_DOCVIEW_IDS = wxID_HIGHEST      + 3000;
+constexpr int START_TESTING_IDS = wxID_HIGHEST      + 4000;
+constexpr int START_IMPORT_FILE_IDS = wxID_HIGHEST  + 5000;
+
+// clang-format on
 
 enum class MoveDirection
 {

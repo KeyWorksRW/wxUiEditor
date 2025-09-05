@@ -92,7 +92,11 @@
 
 #endif
 
-#include <map>
+// Mapping isn't used in this header file, but is used in so many source files that it makes sense
+// to read it into the pre-compiled header. The ""IWYU pragma: keep"" comment shuts off the clangd
+// warning about an unused include.
+#include <map>  // IWYU pragma: keep
+
 #include <string>
 
 #include "tt_string.h"  // tt_string -- std::string with additional methods
@@ -206,8 +210,13 @@ void MSG_ERROR(const std::string& msg);
 
 //////////////////////////////////////// macros ////////////////////////////////////////
 
-#include "assertion_dlg.h"  // Assertion Dialog
-#include "to_casts.h"       // to_int -- Smart Numeric Casts
+// The "IWYU pragma: keep" comment shuts off the clangd warning about an unused include.
+
+// Assertion Dialog
+#include "assertion_dlg.h"  // IWYU pragma: keep
+
+// to_int -- Smart Numeric Casts
+#include "to_casts.h"  // IWYU pragma: keep
 
 #if defined(NDEBUG) && !defined(INTERNAL_TESTING)
     #define CHECK2_MSG(cond, op, msg) wxASSERT_MSG(cond, msg)
@@ -243,9 +252,10 @@ void MSG_ERROR(const std::string& msg);
 
 // While this file does change frequently, when it does almost every file in the project needs to be
 // recompiled. Since the files have to be recompiled anyway, we might as well pre-compile this file.
-#include "gen_enums.h"  // Enumerations used by the generators
+// Enumerations used by the generators
+#include "gen_enums.h"  // IWYU pragma: keep
 
 // This file changes rarely, but like gen_enums.h, when it does change, a large number of files in
 // the project need to be recompiled (currently 214 out of 274). The Node class is an integral part
 // of all the generators, as well as most of the Panels so it makes sense to pre-compile this file.
-#include "node.h"  // Node class
+#include "node.h"  // IWYU pragma: keep

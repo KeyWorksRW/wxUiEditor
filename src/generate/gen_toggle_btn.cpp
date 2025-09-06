@@ -29,25 +29,25 @@ wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 
     widget->SetValue((node->as_bool(prop_pressed)));
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
-    if (node->hasValue(prop_disabled_bmp))
+    if (node->HasValue(prop_disabled_bmp))
         widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
-    if (node->hasValue(prop_pressed_bmp))
+    if (node->HasValue(prop_pressed_bmp))
         widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
-    if (node->hasValue(prop_focus_bmp))
+    if (node->HasValue(prop_focus_bmp))
         widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
-    if (node->hasValue(prop_current))
+    if (node->HasValue(prop_current))
         widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
-    if (node->hasValue(prop_position))
+    if (node->HasValue(prop_position))
         widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
-    if (node->hasValue(prop_margins))
+    if (node->HasValue(prop_margins))
         widget->SetBitmapMargins(node->as_wxSize(prop_margins));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -97,7 +97,7 @@ bool ToggleButtonGenerator::ConstructionCode(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
     // If prop_markup is set, then the label will be set in SettingsCode()
-    if (code.hasValue(prop_label) && !code.IsTrue(prop_markup))
+    if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
     {
         code.QuotedString(prop_label);
     }
@@ -118,7 +118,7 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetValue(").True().EndFunction();
     }
 
-    if (code.IsTrue(prop_markup) && code.hasValue(prop_label))
+    if (code.IsTrue(prop_markup) && code.HasValue(prop_label))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -127,9 +127,9 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        if (code.hasValue(prop_position))
+        if (code.HasValue(prop_position))
         {
             code.Eol(eol_if_needed)
                 .NodeName()
@@ -138,7 +138,7 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
                 .EndFunction();
         }
 
-        if (code.hasValue(prop_margins))
+        if (code.HasValue(prop_margins))
         {
             auto size = code.node()->as_wxSize(prop_margins);
             code.Eol(eol_if_needed).NodeName().Function("SetBitmapMargins(");
@@ -165,12 +165,12 @@ bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int ToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item,
-                           node->hasValue(prop_label) ? "wxToggleButton" : "wxBitmapToggleButton");
+                           node->HasValue(prop_label) ? "wxToggleButton" : "wxBitmapToggleButton");
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_BOOL(prop_pressed, "checked")
@@ -203,25 +203,25 @@ wxObject* BitmapToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent
 
     widget->SetValue((node->as_bool(prop_pressed)));
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
-    if (node->hasValue(prop_disabled_bmp))
+    if (node->HasValue(prop_disabled_bmp))
         widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
 
-    if (node->hasValue(prop_pressed_bmp))
+    if (node->HasValue(prop_pressed_bmp))
         widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
 
-    if (node->hasValue(prop_focus_bmp))
+    if (node->HasValue(prop_focus_bmp))
         widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
 
-    if (node->hasValue(prop_current))
+    if (node->HasValue(prop_current))
         widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
 
-    if (node->hasValue(prop_position))
+    if (node->HasValue(prop_position))
         widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
 
-    if (node->hasValue(prop_margins))
+    if (node->HasValue(prop_margins))
         widget->SetBitmapMargins(node->as_wxSize(prop_margins));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -260,9 +260,9 @@ bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetValue(").True().EndFunction();
     }
 
-    if (code.hasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        if (code.hasValue(prop_position))
+        if (code.HasValue(prop_position))
         {
             code.Eol(eol_if_needed)
                 .NodeName()
@@ -271,7 +271,7 @@ bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
                 .EndFunction();
         }
 
-        if (code.hasValue(prop_margins))
+        if (code.HasValue(prop_margins))
         {
             auto size = code.node()->as_wxSize(prop_margins);
             code.Eol(eol_if_needed).NodeName().Function("SetBitmapMargins(");
@@ -299,8 +299,8 @@ bool BitmapToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>&
 
 int BitmapToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBitmapToggleButton");

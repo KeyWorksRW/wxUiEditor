@@ -169,7 +169,7 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& /* event unused */)
         SetTitle("System Header Files");
     }
 
-    if (m_prop->hasValue())
+    if (m_prop->HasValue())
     {
         tt_view_vector list;
         list.SetString(m_prop->value());
@@ -228,7 +228,7 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& /* event unused */)
 
         if (path.empty())
         {
-            path = Project.getProjectPath();
+            path = Project.get_ProjectPath();
         }
     }
 

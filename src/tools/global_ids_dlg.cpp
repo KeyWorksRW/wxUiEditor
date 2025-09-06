@@ -241,30 +241,30 @@ void MainFrame::OnEditCustomIds(wxCommandEvent& /* event unused */)
 
 void GlobalCustomIDS::OnInit(wxInitDialogEvent& event)
 {
-    m_lb_folders->Append("Project", Project.getProjectNode());
-    for (const auto& iter: Project.getProjectNode()->getChildNodePtrs())
+    m_lb_folders->Append("Project", Project.get_ProjectNode());
+    for (const auto& iter: Project.get_ProjectNode()->get_ChildNodePtrs())
     {
-        if (iter->isGen(gen_folder))
+        if (iter->is_Gen(gen_folder))
         {
             m_lb_folders->Append(iter->as_string(prop_label), iter.get());
         }
-        else if (iter->isForm() && iter->hasValue(prop_class_name))
+        else if (iter->is_Form() && iter->HasValue(prop_class_name))
         {
             m_lb_forms->Append(iter->as_string(prop_class_name), iter.get());
         }
     }
 
-    if (Project.getProjectNode()->hasValue(prop_id_prefixes))
+    if (Project.get_ProjectNode()->HasValue(prop_id_prefixes))
     {
-        for (auto& iter: Project.getProjectNode()->as_ArrayString(prop_id_prefixes))
+        for (auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_prefixes))
         {
             m_combo_prefixes->Append(iter.make_wxString());
         }
     }
 
-    if (Project.getProjectNode()->hasValue(prop_id_suffixes))
+    if (Project.get_ProjectNode()->HasValue(prop_id_suffixes))
     {
-        for (auto& iter: Project.getProjectNode()->as_ArrayString(prop_id_suffixes))
+        for (auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_suffixes))
         {
             m_combo_suffixes->Append(iter.make_wxString());
         }
@@ -284,13 +284,13 @@ void GlobalCustomIDS::OnSelectFolders(wxCommandEvent& /* event unused */)
             auto* node = static_cast<Node*>(m_lb_folders->GetClientData(iter));
             if (node)
             {
-                for (const auto& form: node->getChildNodePtrs())
+                for (const auto& form: node->get_ChildNodePtrs())
                 {
-                    if (form->isForm() && form->hasValue(prop_class_name))
+                    if (form->is_Form() && form->HasValue(prop_class_name))
                     {
                         m_lb_forms->Append(form->as_string(prop_class_name), form.get());
                     }
-                    else if (form.get() == Project.getProjectNode())
+                    else if (form.get() == Project.get_ProjectNode())
                     {
                         m_lb_forms->Append("Project", form.get());
                     }
@@ -324,15 +324,15 @@ void GlobalCustomIDS::OnSelectForms(wxCommandEvent& /* event unused */)
         // Collect all non "wx" IDs into the ids vector
         auto CollectIDs = [&](Node* node, auto&& CollectIDs) -> void
         {
-            if (node->hasValue(prop_id) && !node->as_string(prop_id).is_sameprefix("wx"))
+            if (node->HasValue(prop_id) && !node->as_string(prop_id).is_sameprefix("wx"))
             {
                 NODE_IDS node_id;
-                node_id.id_portion = node->getPropId();
+                node_id.id_portion = node->get_PropId();
                 node_id.node = node;
                 ids.push_back(node_id);
             }
 
-            for (const auto& iter: node->getChildNodePtrs())
+            for (const auto& iter: node->get_ChildNodePtrs())
             {
                 CollectIDs(iter.get(), CollectIDs);
             }
@@ -437,15 +437,15 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
         // Collect all non "wx" IDs into the ids vector
         auto CollectIDs = [&](Node* node, auto&& CollectIDs) -> void
         {
-            if (node->hasValue(prop_id) && !node->as_string(prop_id).is_sameprefix("wx"))
+            if (node->HasValue(prop_id) && !node->as_string(prop_id).is_sameprefix("wx"))
             {
                 NODE_IDS node_id;
-                node_id.id_portion = node->getPropId();
+                node_id.id_portion = node->get_PropId();
                 node_id.node = node;
                 ids.push_back(node_id);
             }
 
-            for (const auto& iter: node->getChildNodePtrs())
+            for (const auto& iter: node->get_ChildNodePtrs())
             {
                 CollectIDs(iter.get(), CollectIDs);
             }
@@ -498,7 +498,7 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
         {
             tt_string new_id = iter.node->as_string(prop_id);
             new_id.Replace(iter.id_portion, modified_id);
-            undo_ids->addProperty(iter.node->getPropPtr(prop_id), new_id);
+            undo_ids->addProperty(iter.node->get_PropPtr(prop_id), new_id);
         }
     }
 

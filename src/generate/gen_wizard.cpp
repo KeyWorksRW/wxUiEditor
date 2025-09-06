@@ -57,7 +57,7 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id = ");
-        if (code.hasValue(prop_id))
+        if (code.HasValue(prop_id))
         {
             code.Add(prop_id);
         }
@@ -67,7 +67,7 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
         }
         code.Comma().Str("title = ").QuotedString(prop_title);
         code.Comma().Str("bitmap = ");
-        if (code.hasValue(prop_bitmap))
+        if (code.HasValue(prop_bitmap))
         {
             code.Bundle(prop_bitmap);
         }
@@ -108,12 +108,12 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         code.Str("super(parent, id, title, bitmap, pos, style)\n");
     }
 
-    if (!code.node()->isPropValue(prop_variant, "normal"))
+    if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        if (code.node()->isPropValue(prop_variant, "small"))
+        if (code.node()->is_PropValue(prop_variant, "small"))
             code.Add("wxWINDOW_VARIANT_SMALL");
-        else if (code.node()->isPropValue(prop_variant, "mini"))
+        else if (code.node()->is_PropValue(prop_variant, "mini"))
             code.Add("wxWINDOW_VARIANT_MINI");
         else
             code.Add("wxWINDOW_VARIANT_LARGE");
@@ -121,7 +121,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         code.EndFunction();
     }
 
-    if (code.hasValue(prop_extra_style))
+    if (code.HasValue(prop_extra_style))
     {
         code.Eol(eol_if_needed)
             .FormFunction("SetExtraStyle(")
@@ -130,7 +130,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         code.EndFunction();
     }
 
-    if (code.hasValue(prop_border) && !code.isPropValue(prop_border, 5))
+    if (code.HasValue(prop_border) && !code.is_PropValue(prop_border, 5))
     {
         code.Eol(eol_if_needed).FormFunction("SetBorder(").as_string(prop_border).EndFunction();
     }
@@ -148,7 +148,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
                 .as_string(prop_bmp_min_width)
                 .EndFunction();
         }
-        if (code.hasValue(prop_bmp_background_colour))
+        if (code.HasValue(prop_bmp_background_colour))
         {
             code.Eol()
                 .FormFunction("SetBitmapBackgroundColour(")
@@ -158,7 +158,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     }
 
     // Ruby passed the bitmap via the constructor
-    if (code.hasValue(prop_bitmap) && !code.is_ruby())
+    if (code.HasValue(prop_bitmap) && !code.is_ruby())
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
         if (code.is_cpp())
@@ -258,7 +258,7 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
 
 bool WizardFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
@@ -275,7 +275,7 @@ bool WizardFormGenerator::HeaderCode(Code& code)
     code.as_string(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
     auto& title = node->as_string(prop_title);
-    if (code.hasValue(prop_title))
+    if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
     }
@@ -337,9 +337,9 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
 {
     std::vector<Node*> panes;
 
-    for (const auto& child: parent->getChildNodePtrs())
+    for (const auto& child: parent->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_wxWizardPageSimple))
+        if (child->is_Gen(gen_wxWizardPageSimple))
         {
             panes.emplace_back(child.get());
         }
@@ -350,7 +350,7 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
 
 std::optional<tt_string> WizardFormGenerator::GetHint(NodeProperty* prop)
 {
-    if (prop->isProp(prop_title) && !prop->getNode()->hasValue(prop_title))
+    if (prop->isProp(prop_title) && !prop->getNode()->HasValue(prop_title))
     {
         return (tt_string() << "Title bar text");
     }
@@ -367,7 +367,7 @@ bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
         wxEVT_MENU,
         [=](wxCommandEvent&)
         {
-            node->createToolNode(gen_wxWizardPageSimple);
+            node->CreateToolNode(gen_wxWizardPageSimple);
         },
         NavPopupMenu::MenuADD_WIZARD_PAGE);
 
@@ -387,7 +387,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     ADD_ITEM_PROP(prop_title, "title")
     GenXrcBitmap(node, item, xrc_flags);
 
-    if (node->hasValue(prop_center))
+    if (node->HasValue(prop_center))
     {
         if (node->as_string(prop_center).is_sameas("wxVERTICAL") ||
             node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
@@ -408,7 +408,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
     }
 
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
     {
         if ((xrc_flags & xrc::add_comments) &&
             node->as_string(prop_style).contains("wxWANTS_CHARS"))
@@ -416,7 +416,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
-        if (!node->hasValue(prop_extra_style))
+        if (!node->HasValue(prop_extra_style))
         {
             item.append_child("style").text().set(node->as_string(prop_style));
         }
@@ -428,20 +428,20 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
     }
 
-    if (node->hasValue(prop_pos))
+    if (node->HasValue(prop_pos))
         item.append_child("pos").text().set(node->as_string(prop_pos));
-    if (node->hasValue(prop_size))
+    if (node->HasValue(prop_size))
         item.append_child("size").text().set(node->as_string(prop_size));
 
-    if (node->hasValue(prop_border) && node->as_int(prop_border) > 0)
+    if (node->HasValue(prop_border) && node->as_int(prop_border) > 0)
         item.append_child("border").text().set(node->as_string(prop_border));
 
-    if (node->hasValue(prop_bmp_placement))
+    if (node->HasValue(prop_bmp_placement))
     {
         item.append_child("bitmap-placement").text().set(node->as_string(prop_bmp_placement));
         if (node->as_int(prop_bmp_min_width) > 0)
             item.append_child("bitmap-minwidth").text().set(node->as_string(prop_bmp_min_width));
-        if (node->hasValue(prop_bmp_background_colour))
+        if (node->HasValue(prop_bmp_background_colour))
             item.append_child("bitmap-bg")
                 .text()
                 .set(node->as_wxColour(prop_bmp_background_colour)
@@ -465,7 +465,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 void WizardFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxWizardXmlHandler");
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         handlers.emplace("wxBitmapXmlHandler");
     }
@@ -481,7 +481,7 @@ wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool WizardPageGenerator::ConstructionCode(Code& code)
 {
-    if (!code.hasValue(prop_bitmap))
+    if (!code.HasValue(prop_bitmap))
     {
         code.AddAuto().as_string(prop_var_name).CreateClass();
         if (code.is_cpp())
@@ -554,13 +554,13 @@ bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
         wxEVT_MENU,
         [=](wxCommandEvent&)
         {
-            node->createToolNode(gen_wxWizardPageSimple);
+            node->CreateToolNode(gen_wxWizardPageSimple);
         },
         NavPopupMenu::MenuADD_WIZARD_PAGE);
 
-    if (node->getChildCount() && node->getChild(0)->isSizer())
+    if (node->get_ChildCount() && node->get_Child(0)->is_Sizer())
     {
-        menu->MenuAddChildSizerCommands(node->getChild(0));
+        menu->MenuAddChildSizerCommands(node->get_Child(0));
     }
 
     return true;

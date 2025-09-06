@@ -39,9 +39,9 @@ bool CtxHelpButtonGenerator::ConstructionCode(Code& code)
 
 bool CtxHelpButtonGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
-        if (code.hasValue(prop_position))
+        if (code.HasValue(prop_position))
         {
             code.Eol(eol_if_needed)
                 .NodeName()
@@ -50,7 +50,7 @@ bool CtxHelpButtonGenerator::SettingsCode(Code& code)
                 .EndFunction();
         }
 
-        if (code.hasValue(prop_margins))
+        if (code.HasValue(prop_margins))
         {
             auto size = code.node()->as_wxSize(prop_margins);
             code.Eol(eol_if_needed).NodeName().Function("SetBitmapMargins(");
@@ -86,7 +86,7 @@ std::optional<tt_string> CtxHelpButtonGenerator::GetWarning(Node* node, GenLang 
         case GEN_LANG_XRC:
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

@@ -22,26 +22,26 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                               DlgSize(node, prop_size), GetStyleInt(node));
-    if (!node->hasValue(prop_extra_style))
+    if (!node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
-        // Can't use multiview because getConstantAsInt() searches an unordered_map which
+        // Can't use multiview because get_ConstantAsInt() searches an unordered_map which
         // requires a std::string to pass to it
         tt_string_vector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
-            ex_style |= NodeCreation.getConstantAsInt(iter);
+            ex_style |= NodeCreation.get_ConstantAsInt(iter);
         }
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
     }
 
-    if (node->isPropValue(prop_variant, "small"))
+    if (node->is_PropValue(prop_variant, "small"))
         widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-    else if (node->isPropValue(prop_variant, "mini"))
+    else if (node->is_PropValue(prop_variant, "mini"))
         widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
-    else if (node->isPropValue(prop_variant, "large"))
+    else if (node->is_PropValue(prop_variant, "large"))
         widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
 
     return widget;
@@ -68,12 +68,12 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
                                      4);
         code.Add("style=").Style().Comma();
-        size_t name_len = code.hasValue(prop_window_name) ?
+        size_t name_len = code.HasValue(prop_window_name) ?
                               code.node()->as_string(prop_window_name).size() :
                               sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.PanelNameStr");
@@ -89,7 +89,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id=");
-        if (code.hasValue(prop_id))
+        if (code.HasValue(prop_id))
         {
             code.Add(prop_id);
         }
@@ -110,7 +110,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
             .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
             .Str("style = ")
             .Style();
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
         {
             code.Comma().CheckLineLength(sizeof("name = ") +
                                          code.as_string(prop_window_name).size() + 2);
@@ -137,7 +137,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
         code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
         code.Eol().Str("$name = ");
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code += "\"panel\"";
@@ -159,12 +159,12 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
 
 bool PanelFormGenerator::SettingsCode(Code& code)
 {
-    if (!code.node()->isPropValue(prop_variant, "normal"))
+    if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        if (code.node()->isPropValue(prop_variant, "small"))
+        if (code.node()->is_PropValue(prop_variant, "small"))
             code.Add("wxWINDOW_VARIANT_SMALL");
-        else if (code.node()->isPropValue(prop_variant, "mini"))
+        else if (code.node()->is_PropValue(prop_variant, "mini"))
             code.Add("wxWINDOW_VARIANT_MINI");
         else
             code.Add("wxWINDOW_VARIANT_LARGE");
@@ -175,7 +175,7 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->hasValue(prop_subclass))
+        if (code.node()->HasValue(prop_subclass))
             code.as_string(prop_subclass);
         else
             code += "wxPanel";
@@ -207,20 +207,20 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
     Node* form;
     auto* node = code.node();
     Node* form_sizer = nullptr;
-    if (node->isForm())
+    if (node->is_Form())
     {
         form = node;
-        ASSERT_MSG(form->getChildCount(), "Trying to generate code for a wxform with no children.")
-        if (!form->getChildCount())
+        ASSERT_MSG(form->get_ChildCount(), "Trying to generate code for a wxform with no children.")
+        if (!form->get_ChildCount())
             return true;  // empty dialog, so nothing to do
-        ASSERT_MSG(form->getChild(0)->isSizer() || form->isGen(gen_PanelForm),
+        ASSERT_MSG(form->get_Child(0)->is_Sizer() || form->is_Gen(gen_PanelForm),
                    "Expected first child of a wxform to be a sizer.");
-        if (form->getChild(0)->isSizer())
-            form_sizer = form->getChild(0);
+        if (form->get_Child(0)->is_Sizer())
+            form_sizer = form->get_Child(0);
     }
     else
     {
-        form = node->getForm();
+        form = node->get_Form();
     }
 
     const auto min_size = form->as_wxSize(prop_minimum_size);
@@ -435,7 +435,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     }
 
     code.Comma().Str("const wxString &name = ");
-    if (node->hasValue(prop_window_name))
+    if (node->HasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxPanelNameStr");
@@ -448,7 +448,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
 bool PanelFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
@@ -463,14 +463,14 @@ bool PanelFormGenerator::BaseClassNameCode(Code& code)
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = BaseGenerator::xrc_updated;
-    if (node->getParent() && node->getParent()->isSizer())
+    if (node->get_Parent() && node->get_Parent()->is_Sizer())
         result = BaseGenerator::xrc_sizer_item_created;
     auto item = InitializeXrcObject(node, object);
 
     item.append_attribute("class").set_value("wxPanel");
     object.append_attribute("name").set_value(node->as_string(prop_class_name));
 
-    if (!node->isPropValue(prop_variant, "normal"))
+    if (!node->is_PropValue(prop_variant, "normal"))
     {
         ADD_ITEM_PROP(prop_variant, "variant")
     }

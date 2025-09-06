@@ -89,27 +89,27 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine(txt_Rust_CmtBlock, indent::auto_keep_whitespace);
     }
 
-    if (Project.hasValue(prop_rust_project_preamble))
+    if (Project.HasValue(prop_rust_project_preamble))
     {
-        WritePropSourceCode(Project.getProjectNode(), prop_rust_project_preamble);
+        WritePropSourceCode(Project.get_ProjectNode(), prop_rust_project_preamble);
     }
 
     std::set<std::string> imports;
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
-        if (auto* gen = node->getGenerator(); gen)
+        if (auto* gen = node->get_Generator(); gen)
         {
             // gen->GetImports(node, imports);
         }
-        for (auto& child: node->getChildNodePtrs())
+        for (auto& child: node->get_ChildNodePtrs())
         {
             GatherImportModules(child.get(), GatherImportModules);
         }
     };
     GatherImportModules(m_form_node, GatherImportModules);
 
-    if (m_form_node->isGen(gen_Images))
+    if (m_form_node->is_Gen(gen_Images))
     {
         thrd_get_events.join();
         thrd_collect_img_headers.join();
@@ -148,7 +148,7 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         // TODO: [Randalphwa - 07-13-2023] Need to figure out how to handle images in wxLua.
     }
 
-    auto generator = m_form_node->getNodeDeclaration()->getGenerator();
+    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -180,7 +180,7 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    if (m_form_node->getPropPtr(prop_window_extra_style))
+    if (m_form_node->get_PropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -191,9 +191,9 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->getChildNodePtrs())
+    for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_wxContextMenuEvent))
+        if (child->is_Gen(gen_wxContextMenuEvent))
             continue;
         GenConstruction(child.get());
     }
@@ -232,7 +232,7 @@ void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine("\t}", indent::none);
     }
 
-    if (m_form_node->isGen(gen_wxWizard))
+    if (m_form_node->is_Gen(gen_wxWizard))
     {
         code.clear();
         code.Eol().Str("// Add the following below the comment block to add a simple");
@@ -429,7 +429,7 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
 
 tt_string MakeRustPath(Node* node)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_RUST);
+    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_RUST);
 
     if (path.empty())
         path = "./";

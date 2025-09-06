@@ -25,7 +25,7 @@ class EditStringDialog : public EditStringDialogBase
 public:
     EditStringDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
     {
-        SetTitle(tt_string() << prop->declName() << " property editor");
+        SetTitle(tt_string() << prop->get_DeclName() << " property editor");
         if (prop->isProp(prop_bitmap))
         {
             tt_view_vector mstr(prop->as_string(), ';', tt::TRIM::both);

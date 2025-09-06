@@ -14,10 +14,10 @@
 
 bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 {
-    auto parent = code.node()->getParent();
-    if (parent->isGen(gen_propGridCategory))
+    auto parent = code.node()->get_Parent();
+    if (parent->is_Gen(gen_propGridCategory))
     {
-        parent = parent->getParent();
+        parent = parent->get_Parent();
     }
 
     code.AddAuto().NodeName().Assign().NodeName(parent);

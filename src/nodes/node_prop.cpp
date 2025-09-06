@@ -43,7 +43,7 @@ int NodeProperty::as_int() const
         case type_editoption:
         case type_option:
         case type_id:
-            return NodeCreation.getConstantAsInt(m_value, 0);
+            return NodeCreation.get_ConstantAsInt(m_value, 0);
 
         case type_bitlist:
             {
@@ -51,7 +51,7 @@ int NodeProperty::as_int() const
                 tt_string_vector mstr(m_value, '|', tt::TRIM::both);
                 for (auto& iter: mstr)
                 {
-                    result |= NodeCreation.getConstantAsInt(iter);
+                    result |= NodeCreation.get_ConstantAsInt(iter);
                 }
                 return result;
             }
@@ -63,11 +63,11 @@ int NodeProperty::as_int() const
 
 int NodeProperty::as_id() const
 {
-    return NodeCreation.getConstantAsInt(m_value, wxID_ANY);
+    return NodeCreation.get_ConstantAsInt(m_value, wxID_ANY);
 }
 
 // Static class function
-tt_string NodeProperty::getPropId(const tt_string& complete_id)
+tt_string NodeProperty::get_PropId(const tt_string& complete_id)
 {
     tt_string id;
     if (auto pos = complete_id.find('='); pos != tt::npos)
@@ -85,9 +85,9 @@ tt_string NodeProperty::getPropId(const tt_string& complete_id)
     return id;
 }
 
-tt_string NodeProperty::getPropId() const
+tt_string NodeProperty::get_PropId() const
 {
-    return getPropId(m_value);
+    return get_PropId(m_value);
 }
 
 int NodeProperty::as_mockup(std::string_view prefix) const
@@ -99,7 +99,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
         case type_id:
             if (m_value.starts_with("wx"))
             {
-                return NodeCreation.getConstantAsInt(m_value, 0);
+                return NodeCreation.get_ConstantAsInt(m_value, 0);
             }
             else
             {
@@ -110,7 +110,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                     if (auto result = g_friend_constant.find(name);
                         result != g_friend_constant.end())
                     {
-                        return NodeCreation.getConstantAsInt(result->second, 0);
+                        return NodeCreation.get_ConstantAsInt(result->second, 0);
                     }
                 }
                 else
@@ -118,7 +118,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                     if (auto result = g_friend_constant.find(m_value);
                         result != g_friend_constant.end())
                     {
-                        return NodeCreation.getConstantAsInt(result->second, 0);
+                        return NodeCreation.get_ConstantAsInt(result->second, 0);
                     }
                 }
             }
@@ -132,7 +132,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                 {
                     if (iter.starts_with("wx"))
                     {
-                        value |= NodeCreation.getConstantAsInt(iter);
+                        value |= NodeCreation.get_ConstantAsInt(iter);
                     }
                     else
                     {
@@ -143,7 +143,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                         if (auto result = g_friend_constant.find(iter);
                             result != g_friend_constant.end())
                         {
-                            value |= NodeCreation.getConstantAsInt(result->second);
+                            value |= NodeCreation.get_ConstantAsInt(result->second);
                         }
                     }
                 }
@@ -453,7 +453,7 @@ wxArrayString NodeProperty::as_wxArrayString() const
     if (m_value.size())
     {
         if (m_value[0] == '"' &&
-            !(type() == type_stringlist_semi && Project.getOriginalProjectVersion() >= 18))
+            !(type() == type_stringlist_semi && Project.get_OriginalProjectVersion() >= 18))
         {
             auto view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
@@ -623,7 +623,7 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
 {
     std::vector<NODEPROP_CHECKLIST_ITEM> result;
 
-    if (m_value.size() && m_value[0] == '"' && wxGetApp().getProjectVersion() <= minRequiredVer)
+    if (m_value.size() && m_value[0] == '"' && wxGetApp().get_ProjectVersion() <= minRequiredVer)
     {
         auto array = as_ArrayString();
         for (auto& iter: array)
@@ -702,7 +702,7 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
     return result;
 }
 
-bool NodeProperty::hasValue() const
+bool NodeProperty::HasValue() const
 {
     if (m_value.empty())
         return false;

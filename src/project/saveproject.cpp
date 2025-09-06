@@ -15,51 +15,51 @@
 
 using namespace GenEnum;
 
-void Node::createDoc(pugi::xml_document& doc)
+void Node::CreateDoc(pugi::xml_document& doc)
 {
     auto root = doc.append_child("wxUiEditorData");
     auto node = root.append_child("node");
 
     int project_version = minRequiredVer;
-    if (Project.isProjectUpdated())
+    if (Project.is_ProjectUpdated())
     {
-        project_version = Project.getProjectVersion();
+        project_version = Project.get_ProjectVersion();
     }
-    addNodeToDoc(node, project_version);
+    AddNodeToDoc(node, project_version);
     root.append_attribute("data_version") = project_version;
 }
 
-void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
+void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 {
     if (project_version < curSupportedVer)
     {
         // Don't check if the version is already as high as we support -- this speeds up the process
-        if (auto gen = getGenerator(); gen)
+        if (auto gen = get_Generator(); gen)
         {
             if (gen->GetRequiredVersion(this) > project_version)
                 project_version = gen->GetRequiredVersion(this);
         }
     }
 
-    node.append_attribute("class") = declName();
+    node.append_attribute("class") = get_DeclName();
 
     for (auto& iter: m_properties)
     {
         auto& value = iter.as_string();
         if (value.size())
         {
-            auto info = iter.getPropDeclaration();
+            auto info = iter.get_PropDeclaration();
 
             // If the value hasn't changed from the default, don't save it
             if (info->getDefaultValue() == value)
                 continue;
 
-            auto attr = node.append_attribute(iter.declName());
+            auto attr = node.append_attribute(iter.get_DeclName());
             if (iter.type() == type_bool)
                 attr.set_value(iter.as_bool());
             else
             {
-                if (iter.isType(type_image) || iter.isType(type_animation))
+                if (iter.is_Type(type_image) || iter.is_Type(type_animation))
                 {
                     // Normalize using forward slashes, no spaces after ';' and no size info unless
                     // it is an SVG file
@@ -91,7 +91,7 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
 
             if (iter.isProp(prop_label) || iter.isProp(prop_borders))
             {
-                node.append_attribute(iter.declName());
+                node.append_attribute(iter.get_DeclName());
             }
         }
     }
@@ -108,6 +108,6 @@ void Node::addNodeToDoc(pugi::xml_node& node, int& project_version)
     for (const auto& child: m_children)
     {
         auto child_element = node.append_child("node");
-        child->addNodeToDoc(child_element, project_version);
+        child->AddNodeToDoc(child_element, project_version);
     }
 }

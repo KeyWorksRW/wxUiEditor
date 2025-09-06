@@ -21,7 +21,7 @@ using namespace code;
 wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString wild;
-    if (node->hasValue(prop_wildcard))
+    if (node->HasValue(prop_wildcard))
         wild = node->as_wxString(prop_wildcard);
     else
         wild = wxFileSelectorDefaultWildcardStr;
@@ -48,7 +48,7 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
     code.ValidParentName().Comma().as_string(prop_id);
     code.Comma().QuotedString(prop_initial_folder).Comma().QuotedString(prop_initial_filename);
     code.Comma();
-    if (code.hasValue(prop_wildcard))
+    if (code.HasValue(prop_wildcard))
         code.QuotedString(prop_wildcard);
     else
     {
@@ -79,16 +79,16 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
 
 bool FileCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.is_ruby() && Project.getProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
+    if (code.is_ruby() && Project.get_ProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
     {
         return false;
     }
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
         }
@@ -123,8 +123,8 @@ bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFileCtrl");

@@ -38,7 +38,7 @@ public:
     NodeCreator(NodeCreator const&) = delete;
     void operator=(NodeCreator const&) = delete;
 
-    static NodeCreator& getInstance()
+    static NodeCreator& get_Instance()
     {
         static NodeCreator instance;
         return instance;
@@ -52,7 +52,7 @@ public:
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    std::pair<NodeSharedPtr, int> createNode(GenName name, Node* parent,
+    std::pair<NodeSharedPtr, int> CreateNode(GenName name, Node* parent,
                                              bool verify_language_support = false);
 
     // Only creates the node if the parent allows it as a child. Returns the node and a
@@ -60,47 +60,47 @@ public:
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    std::pair<NodeSharedPtr, int> createNode(tt_string_view name, Node* parent,
+    std::pair<NodeSharedPtr, int> CreateNode(tt_string_view name, Node* parent,
                                              bool verify_language_support = false);
 
-    NodeSharedPtr createNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
+    NodeSharedPtr CreateNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
                                     bool check_for_duplicates = false, bool allow_ui = true);
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
-    NodeSharedPtr createProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
+    NodeSharedPtr CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true);
 
     // Creates an orphaned node.
-    NodeSharedPtr newNode(NodeDeclaration* node_info);
+    NodeSharedPtr NewNode(NodeDeclaration* node_info);
 
     // Creates an orphaned node.
-    NodeSharedPtr newNode(GenEnum::GenName getGenName)
+    NodeSharedPtr NewNode(GenEnum::GenName get_GenName)
     {
-        return newNode(m_a_declarations[getGenName]);
+        return NewNode(m_a_declarations[get_GenName]);
     }
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
-    NodeDeclaration* get_declaration(GenEnum::GenName getGenName)
+    NodeDeclaration* get_declaration(GenEnum::GenName get_GenName)
     {
-        return m_a_declarations[getGenName];
+        return m_a_declarations[get_GenName];
     }
 
-    NodeDeclaration* getNodeDeclaration(tt_string_view class_name);
+    NodeDeclaration* get_NodeDeclaration(tt_string_view class_name);
 
-    const NodeDeclarationArray& getNodeDeclarationArray() const { return m_a_declarations; }
+    const NodeDeclarationArray& get_NodeDeclarationArray() const { return m_a_declarations; }
 
     // This returns the integer value of most wx constants used in various components
-    int getConstantAsInt(const std::string& name, int defValue = 0) const;
+    int get_ConstantAsInt(const std::string& name, int defValue = 0) const;
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
-    NodeSharedPtr makeCopy(Node* node, Node* parent = nullptr);
+    NodeSharedPtr MakeCopy(Node* node, Node* parent = nullptr);
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
-    NodeSharedPtr makeCopy(NodeSharedPtr node) { return makeCopy(node.get()); };
+    NodeSharedPtr MakeCopy(NodeSharedPtr node) { return MakeCopy(node.get()); };
 
-    void initGenerators();
+    void InitGenerators();
 
-    bool isOldHostType(tt_string_view old_type) const
+    bool is_OldHostType(tt_string_view old_type) const
     {
         return m_setOldHostTypes.contains(old_type);
     }
@@ -110,22 +110,22 @@ public:
     //
     // Returns nullptr if no parent can be found that allows this child type (which might
     // mean that parent already has the maximum number of children allowed).
-    Node* isValidCreateParent(GenName name, Node* parent, bool use_recursion = true) const;
+    Node* is_ValidCreateParent(GenName name, Node* parent, bool use_recursion = true) const;
 
-    size_t countChildrenWithSameType(Node* parent, GenType type) const;
+    size_t CountChildrenWithSameType(Node* parent, GenType type) const;
 
 protected:
     // This must
-    void parseGeneratorFile(const char* file);
-    void parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info,
+    void ParseGeneratorFile(const char* file);
+    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info,
                          NodeCategory& category);
 
-    NodeType* getNodeType(GenEnum::GenType type_name)
+    NodeType* get_NodeType(GenEnum::GenType type_name)
     {
         return &m_a_node_types[static_cast<size_t>(type_name)];
     }
 
-    void addAllConstants();
+    void AddAllConstants();
 
 private:
     std::array<NodeDeclaration*, gen_name_array_size> m_a_declarations;

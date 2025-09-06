@@ -28,7 +28,7 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
         code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
         code << "wx.PopupWindow.__init__(self, parent, flags=";
         code.Add(prop_border);
-        if (code.hasValue(prop_style))
+        if (code.HasValue(prop_style))
         {
             code.Str(" | ").Add(prop_style);
         }
@@ -42,7 +42,7 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Add(prop_border);
-        if (code.hasValue(prop_style))
+        if (code.HasValue(prop_style))
         {
             code.Str(" | ").Add(prop_style);
         }
@@ -69,7 +69,7 @@ bool PopupTransientWinGenerator::ConstructionCode(Code& code)
         code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
         code << "wx.PopupTransientWindow.__init__(self, parent, flags=";
         code.Add(prop_border);
-        if (code.hasValue(prop_style))
+        if (code.HasValue(prop_style))
         {
             code.Str(" | ").Add(prop_style);
         }
@@ -83,7 +83,7 @@ bool PopupTransientWinGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Add(prop_border);
-        if (code.hasValue(prop_style))
+        if (code.HasValue(prop_style))
         {
             code.Str(" | ").Add(prop_style);
         }
@@ -99,13 +99,13 @@ bool PopupTransientWinGenerator::ConstructionCode(Code& code)
 
 bool PopupWinGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
     else
     {
-        code += code.node()->declName();
+        code += code.node()->get_DeclName();
     }
 
     return true;
@@ -113,13 +113,13 @@ bool PopupWinGenerator::BaseClassNameCode(Code& code)
 
 bool PopupTransientWinGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
     else
     {
-        code += code.node()->declName();
+        code += code.node()->get_DeclName();
     }
 
     return true;
@@ -149,12 +149,12 @@ int PopupTransientWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size
 
 bool PopupWinBaseGenerator::SettingsCode(Code& code)
 {
-    if (!code.node()->isPropValue(prop_variant, "normal"))
+    if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        if (code.node()->isPropValue(prop_variant, "small"))
+        if (code.node()->is_PropValue(prop_variant, "small"))
             code.Add("wxWINDOW_VARIANT_SMALL");
-        else if (code.node()->isPropValue(prop_variant, "mini"))
+        else if (code.node()->is_PropValue(prop_variant, "mini"))
             code.Add("wxWINDOW_VARIANT_MINI");
         else
             code.Add("wxWINDOW_VARIANT_LARGE");
@@ -176,17 +176,17 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
 {
     Node* form = code.node();
     Node* child_node = form;
-    ASSERT_MSG(form->isGen(gen_wxPopupWindow) || form->getChildCount(),
+    ASSERT_MSG(form->is_Gen(gen_wxPopupWindow) || form->get_ChildCount(),
                "Trying to generate code for wxPopup with no children.")
-    if (!form->getChildCount())
+    if (!form->get_ChildCount())
         return {};  // empty popup window, so nothing to do
-    ASSERT_MSG(form->getChild(0)->isSizer(), "Expected first child of wxPopup to be a sizer.");
-    if (form->getChild(0)->isSizer())
+    ASSERT_MSG(form->get_Child(0)->is_Sizer(), "Expected first child of wxPopup to be a sizer.");
+    if (form->get_Child(0)->is_Sizer())
     {
         // If the first child is not a sizer, then child_node will still point to the dialog
         // node, which means the SetSizer...(child_node) calls below will generate invalid
         // code.
-        child_node = form->getChild(0);
+        child_node = form->get_Child(0);
     }
 
     const auto min_size = form->as_wxSize(prop_minimum_size);
@@ -263,7 +263,7 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
     bool is_focus_set = false;
     auto SetChildFocus = [&](Node* child, auto&& SetChildFocus) -> void
     {
-        if (child->hasProp(prop_focus))
+        if (child->HasProp(prop_focus))
         {
             if (child->as_bool(prop_focus))
             {
@@ -272,9 +272,9 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
                 return;
             }
         }
-        else if (child->getChildCount())
+        else if (child->get_ChildCount())
         {
-            for (auto& iter: child->getChildNodePtrs())
+            for (auto& iter: child->get_ChildNodePtrs())
             {
                 SetChildFocus(iter.get(), SetChildFocus);
                 if (is_focus_set)
@@ -283,7 +283,7 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
         }
     };
 
-    for (auto& iter: form->getChildNodePtrs())
+    for (auto& iter: form->get_ChildNodePtrs())
     {
         SetChildFocus(iter.get(), SetChildFocus);
         if (is_focus_set)
@@ -299,7 +299,7 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
 bool PopupWinBaseGenerator::HeaderCode(Code& code)
 {
     code.NodeName().Str("(wxWindow* parent, int style = ").as_string(prop_border);
-    if (code.hasValue(prop_style))
+    if (code.HasValue(prop_style))
     {
         code.Str(" | ").Add(prop_style);
     }
@@ -321,7 +321,7 @@ std::pair<bool, tt_string> PopupWinBaseGenerator::isLanguageVersionSupported(Gen
         (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY)))
         return { true, {} };
     // TODO: [Randalphwa - 10-01-2024] At some point, other languages may have versions that support
-    // these, in which case call Project.getLangVersion()
+    // these, in which case call Project.get_LangVersion()
 
     return { false, tt_string() << "wxPopupWindow and wxPopupTransientWindow are not supported by "
                                 << GenLangToString(language) };

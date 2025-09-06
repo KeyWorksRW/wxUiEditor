@@ -275,14 +275,14 @@ void BasePanel::GenerateBaseClass()
     if (!m_cur_form)
     {
         auto* cur_selection = wxGetFrame().getSelectedNode();
-        if ((cur_selection->isGen(gen_folder) || cur_selection->isGen(gen_sub_folder)) &&
-            cur_selection->getChildCount() > 0)
+        if ((cur_selection->is_Gen(gen_folder) || cur_selection->is_Gen(gen_sub_folder)) &&
+            cur_selection->get_ChildCount() > 0)
         {
-            m_cur_form = cur_selection->getChild(0);
+            m_cur_form = cur_selection->get_Child(0);
         }
-        else if (Project.getChildCount() > 0)
+        else if (Project.get_ChildCount() > 0)
         {
-            m_cur_form = Project.getFirstFormChild();
+            m_cur_form = Project.get_FirstFormChild();
         }
         else
         {
@@ -357,7 +357,7 @@ void BasePanel::GenerateBaseClass()
             m_derived_hdr_panel->Clear();
             code_generator->SetHdrWriteCode(m_derived_hdr_panel);
 
-            code_generator->GenerateDerivedClass(Project.getProjectNode(), m_cur_form, panel_page);
+            code_generator->GenerateDerivedClass(Project.get_ProjectNode(), m_cur_form, panel_page);
             break;
 
         case GEN_LANG_PERL:
@@ -410,7 +410,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     if (!IsShown())
         return;
 
-    auto form = event.getNode()->getForm();
+    auto form = event.getNode()->get_Form();
 
     if (form != m_cur_form)
     {

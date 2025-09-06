@@ -17,23 +17,23 @@ void UpdateFormClass(Node* form_node)
     auto filename = CreateBaseFilename(form_node, form_node->as_string(prop_class_name));
     form_node->set_value(prop_base_file, filename);
 
-    if (Project.getCodePreference() == GEN_LANG_PERL)
+    if (Project.get_CodePreference() == GEN_LANG_PERL)
     {
         form_node->set_value(prop_perl_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+    else if (Project.get_CodePreference() == GEN_LANG_PYTHON)
     {
         form_node->set_value(prop_python_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_RUBY)
+    else if (Project.get_CodePreference() == GEN_LANG_RUBY)
     {
         form_node->set_value(prop_ruby_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_RUST)
+    else if (Project.get_CodePreference() == GEN_LANG_RUST)
     {
         form_node->set_value(prop_rust_file, filename);
     }
-    else if (Project.getCodePreference() == GEN_LANG_XRC)
+    else if (Project.get_CodePreference() == GEN_LANG_XRC)
     {
         form_node->set_value(prop_xrc_file, filename);
     }

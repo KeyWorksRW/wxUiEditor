@@ -58,19 +58,19 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     }
 
     auto form_node = m_selected_node.get();
-    if (!form_node->isForm())
+    if (!form_node->is_Form())
     {
-        if (form_node->isGen(gen_Project) && form_node->getChildCount())
+        if (form_node->is_Gen(gen_Project) && form_node->get_ChildCount())
         {
-            form_node = form_node->getChild(0);
+            form_node = form_node->get_Child(0);
         }
         else
         {
-            form_node = form_node->getForm();
+            form_node = form_node->get_Form();
         }
     }
 
-    switch (form_node->getGenName())
+    switch (form_node->get_GenName())
     {
         case gen_wxDialog:
         case gen_wxFrame:
@@ -159,7 +159,7 @@ void Preview(Node* form_node)
 
     if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
     {
-        if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
+        if (!form_node->is_Gen(gen_wxDialog) && !form_node->is_Gen(gen_PanelForm))
         {
             wxMessageBox("You can only compare dialogs and panels", "Compare");
             return;
@@ -197,7 +197,7 @@ void PreviewXrc(Node* form_node)
     Project.ChangeDir();
 
     tt_string style = form_node->as_string(prop_style);
-    if (form_node->isGen(gen_wxDialog) &&
+    if (form_node->is_Gen(gen_wxDialog) &&
         (style.empty() ||
          (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
@@ -210,13 +210,14 @@ void PreviewXrc(Node* form_node)
             "XRC Preview", wxICON_INFORMATION);
     }
 
-    auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
+    auto doc_str =
+        GenerateXrcStr(form_node, form_node->is_Gen(gen_PanelForm) ? xrc::previewing : 0);
 
     // Restore the original style if it was temporarily changed.
     if (form_node->as_string(prop_style) != style)
         form_node->set_value(prop_style, style);
 
-    PreviewXrc(doc_str, form_node->getGenName(), form_node);
+    PreviewXrc(doc_str, form_node->get_GenName(), form_node);
 }
 
 void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node)
@@ -337,10 +338,10 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                     object)
                 {
                     auto* wizard = wxStaticCast(object, wxWizard);
-                    if (form_node->getChildCount())
+                    if (form_node->get_ChildCount())
                     {
                         auto first_page =
-                            wizard->FindWindow(form_node->getChild(0)->as_wxString(prop_var_name));
+                            wizard->FindWindow(form_node->get_Child(0)->as_wxString(prop_var_name));
                         wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
                         wizard->Destroy();
                     }
@@ -374,9 +375,9 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
 
 void MainFrame::PreviewCpp(Node* form_node)
 {
-    if (form_node->isGen(gen_wxDialog))
+    if (form_node->is_Gen(gen_wxDialog))
     {
-        if (!form_node->getChildCount())
+        if (!form_node->get_ChildCount())
         {
             wxMessageBox("You can't display a dialog without any children", "Preview");
             return;
@@ -384,7 +385,7 @@ void MainFrame::PreviewCpp(Node* form_node)
     }
 
     tt_string style = form_node->as_string(prop_style);
-    if (form_node->isGen(gen_wxDialog) &&
+    if (form_node->is_Gen(gen_wxDialog) &&
         (style.empty() ||
          (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
@@ -399,7 +400,7 @@ void MainFrame::PreviewCpp(Node* form_node)
 
     try
     {
-        switch (form_node->getGenName())
+        switch (form_node->get_GenName())
         {
             case gen_PanelForm:
                 {
@@ -434,23 +435,23 @@ void MainFrame::PreviewCpp(Node* form_node)
                         wxMessageBox("Unable to create dialog", "C++ Preview");
                         return;
                     }
-                    if (form_node->hasValue(prop_extra_style))
+                    if (form_node->HasValue(prop_extra_style))
                     {
                         int ex_style = 0;
-                        // Can't use multiview because getConstantAsInt() searches an unordered_map
+                        // Can't use multiview because get_ConstantAsInt() searches an unordered_map
                         // which requires a std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup
                             // works fine.
-                            ex_style |= NodeCreation.getConstantAsInt(iter);
+                            ex_style |= NodeCreation.get_ConstantAsInt(iter);
                         }
 
                         dlg.SetExtraStyle(dlg.GetExtraStyle() | ex_style);
                     }
 
-                    CreateMockupChildren(form_node->getChild(0), &dlg, &dlg, nullptr, &dlg);
+                    CreateMockupChildren(form_node->get_Child(0), &dlg, &dlg, nullptr, &dlg);
                     if (auto btn = dlg.FindWindowById(dlg.GetAffirmativeId()); btn)
                     {
                         btn->Bind(wxEVT_BUTTON,
@@ -483,11 +484,11 @@ void MainFrame::PreviewCpp(Node* form_node)
                                     GetStyleInt(form_node));
                     frame)
                 {
-                    for (auto& iter: form_node->getChildNodePtrs())
+                    for (auto& iter: form_node->get_ChildNodePtrs())
                     {
                         CreateMockupChildren(iter.get(), frame, nullptr, nullptr, frame);
                     }
-                    // CreateMockupChildren(form_node->getChild(0), frame, frame, nullptr, frame);
+                    // CreateMockupChildren(form_node->get_Child(0), frame, frame, nullptr, frame);
 
                     wxGetMainFrame()->setPreviewWinPtr(frame);
                     frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose,
@@ -502,7 +503,7 @@ void MainFrame::PreviewCpp(Node* form_node)
             case gen_wxWizard:
                 {
                     wxWizard wizard;
-                    if (form_node->hasValue(prop_bitmap))
+                    if (form_node->HasValue(prop_bitmap))
                     {
                         auto bundle = form_node->as_wxBitmapBundle(prop_bitmap);
                         if (!wizard.Create(wxGetMainFrame(), wxID_ANY,
@@ -521,50 +522,50 @@ void MainFrame::PreviewCpp(Node* form_node)
                         return;
                     }
 
-                    if (form_node->hasValue(prop_extra_style))
+                    if (form_node->HasValue(prop_extra_style))
                     {
                         int ex_style = 0;
-                        // Can't use multiview because getConstantAsInt() searches an unordered_map
+                        // Can't use multiview because get_ConstantAsInt() searches an unordered_map
                         // which requires a std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup
                             // works fine.
-                            ex_style |= NodeCreation.getConstantAsInt(iter);
+                            ex_style |= NodeCreation.get_ConstantAsInt(iter);
                         }
                         wizard.SetExtraStyle(ex_style);
                     }
 
                     if (form_node->as_int(prop_border) != 5)
                         wizard.SetBorder(form_node->as_int(prop_border));
-                    if (form_node->hasValue(prop_bmp_placement))
+                    if (form_node->HasValue(prop_bmp_placement))
                     {
                         int placement = 0;
-                        // Can't use multiview because getConstantAsInt() searches an unordered_map
+                        // Can't use multiview because get_ConstantAsInt() searches an unordered_map
                         // which requires a std::string to pass to it
                         tt_string_vector mstr(form_node->as_string(prop_bmp_placement), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup
                             // works fine.
-                            placement |= NodeCreation.getConstantAsInt(iter);
+                            placement |= NodeCreation.get_ConstantAsInt(iter);
                         }
                         wizard.SetBitmapPlacement(placement);
 
                         if (form_node->as_int(prop_bmp_min_width) > 0)
                             wizard.SetMinimumBitmapWidth(form_node->as_int(prop_bmp_min_width));
-                        if (form_node->hasValue(prop_bmp_background_colour))
+                        if (form_node->HasValue(prop_bmp_background_colour))
                             wizard.SetBitmapBackgroundColour(
                                 form_node->as_wxColour(prop_bmp_background_colour));
                     }
 
                     std::vector<wxWizardPageSimple*> pages;
-                    for (auto& page: form_node->getChildNodePtrs())
+                    for (auto& page: form_node->get_ChildNodePtrs())
                     {
                         auto wiz_page = new wxWizardPageSimple;
                         pages.emplace_back(wiz_page);
-                        if (page->hasValue(prop_bitmap))
+                        if (page->HasValue(prop_bitmap))
                         {
                             auto bundle = page->as_wxBitmapBundle(prop_bitmap);
                             wiz_page->Create(&wizard, nullptr, nullptr, bundle);
@@ -572,8 +573,8 @@ void MainFrame::PreviewCpp(Node* form_node)
                         else
                             wiz_page->Create(&wizard);
 
-                        if (page->getChildCount())
-                            CreateMockupChildren(page->getChild(0), wiz_page, nullptr, nullptr,
+                        if (page->get_ChildCount())
+                            CreateMockupChildren(page->get_Child(0), wiz_page, nullptr, nullptr,
                                                  &wizard);
                     }
 

@@ -26,17 +26,17 @@ bool TextSizerGenerator::ConstructionCode(Code& code)
 {
     auto* node = code.node();
     code.AddAuto().NodeName();
-    auto parent = node->getParent();
-    while (parent->isSizer())
-        parent = parent->getParent();
+    auto parent = node->get_Parent();
+    while (parent->is_Sizer())
+        parent = parent->get_Parent();
 
-    if (parent->isGen(gen_wxDialog))
+    if (parent->is_Gen(gen_wxDialog))
     {
         code << " = CreateTextSizer(";
     }
     else
     {
-        code << " = wxTextSizerWrapper(" << parent->getNodeName() << ").CreateSizer(";
+        code << " = wxTextSizerWrapper(" << parent->get_NodeName() << ").CreateSizer(";
     }
 
     code.QuotedString(prop_text).Comma().as_string(prop_width).EndFunction();
@@ -47,11 +47,11 @@ bool TextSizerGenerator::ConstructionCode(Code& code)
 bool TextSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
-    auto parent = node->getParent();
-    while (parent->isSizer())
-        parent = parent->getParent();
+    auto parent = node->get_Parent();
+    while (parent->is_Sizer())
+        parent = parent->get_Parent();
 
-    if (parent->isGen(gen_wxDialog))
+    if (parent->is_Gen(gen_wxDialog))
         InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/textwrapper.h>", set_src, set_hdr);

@@ -38,31 +38,31 @@ class NodeDeclaration
 public:
     NodeDeclaration(tt_string_view class_name, NodeType* type);
 
-    // This will delete m_generator which was created by NodeCreator::initGenerators()
+    // This will delete m_generator which was created by NodeCreator::InitGenerators()
     ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
 
-    size_t getPropertyCount() const { return m_properties.size(); }
-    size_t getEventCount() const { return m_events.size(); }
+    size_t get_PropertyCount() const { return m_properties.size(); }
+    size_t get_EventCount() const { return m_events.size(); }
 
-    PropDeclaration* getPropDeclaration(size_t idx) const;
+    PropDeclaration* get_PropDeclaration(size_t idx) const;
 
-    const NodeEventInfo* getEventInfo(tt_string_view name) const;
-    const NodeEventInfo* getEventInfo(size_t idx) const;
+    const NodeEventInfo* get_EventInfo(tt_string_view name) const;
+    const NodeEventInfo* get_EventInfo(size_t idx) const;
 
     auto& GetPropInfoMap() { return m_properties; }
     auto& GetEventInfoMap() { return m_events; }
 
-    NodeType* getNodeType() const { return m_type; }
+    NodeType* get_NodeType() const { return m_type; }
 
-    GenType getGenType() const noexcept { return m_gen_type; }
-    GenName getGenName() const noexcept { return m_gen_name; }
+    GenType get_GenType() const noexcept { return m_gen_type; }
+    GenName get_GenName() const noexcept { return m_gen_name; }
 
-    bool isType(GenType type) const noexcept { return (type == m_gen_type); }
-    bool isGen(GenName name) const noexcept { return (name == m_gen_name); }
+    bool is_Type(GenType type) const noexcept { return (type == m_gen_type); }
+    bool is_Gen(GenName name) const noexcept { return (name == m_gen_name); }
 
-    tt_string_view declName() const noexcept { return tt_string_view(m_name); }
+    tt_string_view get_DeclName() const noexcept { return tt_string_view(m_name); }
 
     size_t AddBaseClass(NodeDeclaration* base)
     {
@@ -88,7 +88,7 @@ public:
     wxBitmapBundle GetBitmapBundle(int width, int height) const;
 
     void SetGenerator(BaseGenerator* generator) { m_generator = generator; }
-    BaseGenerator* getGenerator() const { return m_generator; }
+    BaseGenerator* get_Generator() const { return m_generator; }
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
@@ -96,7 +96,7 @@ public:
     const tt_string& GetGeneratorFlags() { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
-    ptrdiff_t getAllowableChildren(GenType child_gen_type) const;
+    ptrdiff_t get_AllowableChildren(GenType child_gen_type) const;
 
     void SetOverRideDefValue(GenEnum::PropName prop_name, std::string_view new_value)
     {
@@ -131,7 +131,7 @@ private:
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 
-    // Created by NodeCreator::initGenerators(), destroyed by ~NodeDeclaration()
+    // Created by NodeCreator::InitGenerators(), destroyed by ~NodeDeclaration()
     BaseGenerator* m_generator { nullptr };
 
     GenName m_gen_name;

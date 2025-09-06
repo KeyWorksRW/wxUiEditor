@@ -21,7 +21,7 @@ wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                            DlgSize(node, prop_size), GetStyleInt(node));
 
-    if (node->hasValue(prop_extra_style))
+    if (node->HasValue(prop_extra_style))
     {
         widget->SetExtraStyle(node->as_int(prop_extra_style));
     }
@@ -42,7 +42,7 @@ bool PropertyGridGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(code::allow_scaling, false, "wxPG_DEFAULT_STYLE");
 
-    if (code.hasValue(prop_extra_style))
+    if (code.HasValue(prop_extra_style))
         code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();
 
     return true;

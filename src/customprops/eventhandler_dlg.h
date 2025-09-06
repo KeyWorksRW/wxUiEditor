@@ -110,7 +110,7 @@ private:
     int m_ruby_page;
     int m_rust_page;
 
-    size_t m_gen_languages;     // set by Project.getGenerateLanguages()
+    size_t m_gen_languages;     // set by Project.get_GenerateLanguages()
     GenLang m_code_preference;  // This will be one of the GEN_LANG values
 
     bool m_is_cpp_enabled { false };

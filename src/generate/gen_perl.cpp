@@ -143,10 +143,10 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_header->Clear();
     m_source->Clear();
 
-    if (m_form_node->isType(type_frame_form))
+    if (m_form_node->is_Type(type_frame_form))
     {
         code += txt_perl_frame_app;
-        if (m_form_node->hasValue(prop_class_name))
+        if (m_form_node->HasValue(prop_class_name))
         {
             tt_string class_name = m_form_node->as_string(prop_class_name);
             if (class_name.ends_with("Base"))
@@ -181,9 +181,9 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_source->writeLine(code);
     code.clear();
 
-    if (Project.hasValue(prop_perl_project_preamble))
+    if (Project.HasValue(prop_perl_project_preamble))
     {
-        WritePropSourceCode(Project.getProjectNode(), prop_perl_project_preamble);
+        WritePropSourceCode(Project.get_ProjectNode(), prop_perl_project_preamble);
     }
 
     m_source->writeLine();
@@ -217,7 +217,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 #endif  // _DEBUG
     }
 
-    if (m_form_node->isGen(gen_Images))
+    if (m_form_node->is_Gen(gen_Images))
     {
         m_source->writeLine("use MIME::Base64;");
         thrd_get_events.join();
@@ -250,7 +250,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    auto generator = m_form_node->getNodeDeclaration()->getGenerator();
+    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -283,7 +283,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    if (m_form_node->getPropPtr(prop_window_extra_style))
+    if (m_form_node->get_PropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -294,9 +294,9 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->getChildNodePtrs())
+    for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_wxContextMenuEvent))
+        if (child->is_Gen(gen_wxContextMenuEvent))
             continue;
         GenConstruction(child.get());
     }
@@ -345,7 +345,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->ResetIndent();
     }
 
-    if (m_form_node->isGen(gen_wxWizard))
+    if (m_form_node->is_Gen(gen_wxWizard))
     {
         code.clear();
         code.Eol().Str("# Add the following below the comment block to add a simple");
@@ -442,7 +442,7 @@ void PerlCodeGenerator::WriteUsageStatements()
 
 void PerlCodeGenerator::GenerateImagesForm()
 {
-    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {
         return;
     }
@@ -736,25 +736,25 @@ void PerlCodeGenerator::InitializeUsageStatements()
 
 void PerlCodeGenerator::ParseNodesForUsage(Node* node)
 {
-    if (node->isSizer())
+    if (node->is_Sizer())
     {
         m_use_expands.emplace("use Wx qw[:sizer];");
 
         // Now recurse through any children and their children
-        for (auto& child: node->getChildNodePtrs())
+        for (auto& child: node->get_ChildNodePtrs())
         {
             ParseNodesForUsage(child.get());
         }
         return;
     }
 
-    if (node->hasValue(prop_window_style) || node->hasValue(prop_window_extra_style) ||
-        (node->hasValue(prop_variant) && node->as_string(prop_variant) != "normal"))
+    if (node->HasValue(prop_window_style) || node->HasValue(prop_window_extra_style) ||
+        (node->HasValue(prop_variant) && node->as_string(prop_variant) != "normal"))
     {
         m_use_expands.emplace("use Wx qw[:window];");
     }
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         if (node->as_string(prop_bitmap).contains("wxART_"))
         {
@@ -766,10 +766,10 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
         }
     }
 
-    if (node->hasValue(prop_font))
+    if (node->HasValue(prop_font))
     {
         m_use_expands.emplace("use Wx qw[:font];");
-        FontProperty fontprop(node->getPropPtr(prop_font));
+        FontProperty fontprop(node->get_PropPtr(prop_font));
         if (fontprop.isDefGuiFont())
         {
             // If the font is a default GUI font, then we need to include the wxDefaultGuiFont
@@ -777,7 +777,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
             m_use_expands.emplace("use Wx qw[:systemsettings];");
         }
     }
-    if (node->hasValue(prop_foreground_colour) || node->hasValue(prop_background_colour))
+    if (node->HasValue(prop_foreground_colour) || node->HasValue(prop_background_colour))
     {
         if (node->as_string(prop_foreground_colour).contains("wxSYS") ||
             node->as_string(prop_background_colour).contains("wxSYS"))
@@ -785,7 +785,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
             m_use_expands.emplace("use Wx qw[:systemsettings];");
         }
     }
-    if (auto* gen = node->getGenerator(); gen)
+    if (auto* gen = node->get_Generator(); gen)
     {
         std::set<std::string> imports;
         gen->GetImports(node, imports, GEN_LANG_PERL);
@@ -802,7 +802,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
         }
         for (auto& iter: map_perl_constants)
         {
-            if (node->hasProp(iter.first))
+            if (node->HasProp(iter.first))
             {
                 tt_string constants("use Wx qw(");
                 constants += iter.second;
@@ -813,7 +813,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
     }
 
     // Now recurse through any children and their children
-    for (auto& child: node->getChildNodePtrs())
+    for (auto& child: node->get_ChildNodePtrs())
     {
         ParseNodesForUsage(child.get());
     }
@@ -821,7 +821,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
 
 tt_string MakePerlPath(Node* node)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_PERL);
+    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_PERL);
 
     if (path.empty())
         path = "./";

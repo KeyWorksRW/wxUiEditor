@@ -55,7 +55,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
     }
 
     auto prop = event.GetNodeProperty();
-    auto grid_property = m_prop_grid->GetPropertyByLabel(prop->declName().make_wxString());
+    auto grid_property = m_prop_grid->GetPropertyByLabel(prop->get_DeclName().make_wxString());
     if (!grid_property)
         return;
 
@@ -169,8 +169,8 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
     else if (event.GetNodeProperty()->isProp(prop_focus))
     {
         auto node = event.getNode();
-        auto form = node->getForm();
-        auto list = form->findAllChildProperties(prop_focus);
+        auto form = node->get_Form();
+        auto list = form->FindAllChildProperties(prop_focus);
         size_t count = 0;
         for (auto iter: list)
         {
@@ -253,7 +253,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         // preferences. Even better would be to disable the matching generate language bit so that
         // the user can't shut it off.
 
-        modifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
+        ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
         auto grid_iterator = m_prop_grid->GetCurrentPage()->GetIterator(wxPG_ITERATE_CATEGORIES);
         while (!grid_iterator.AtEnd())
         {
@@ -349,7 +349,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             {
                 double val = m_prop_grid->GetPropertyValueAsDouble(property);
 
-                modifyProperty(prop, DoubleToStr(val));
+                ModifyProperty(prop, DoubleToStr(val));
                 break;
             }
 
@@ -364,7 +364,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_statbar_fields:
         case type_checklist_item:
             {
-                modifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
+                ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
                 break;
             }
 
@@ -378,7 +378,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             {
                 auto value = ConvertEscapeSlashes(
                     m_prop_grid->GetPropertyValueAsString(property).utf8_string());
-                modifyProperty(prop, value);
+                ModifyProperty(prop, value);
             }
             break;
 
@@ -392,7 +392,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is
                 // partially clipped. Adding a trailing space prevents this clipping.
 
-                if (m_currentSel->isGen(gen_wxRadioBox) && newValue.size())
+                if (m_currentSel->is_Gen(gen_wxRadioBox) && newValue.size())
                 {
                     size_t result;
                     for (size_t pos = 0; pos < newValue.size();)
@@ -416,16 +416,16 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         if (newValue.at(result - 1) != ' ')
                             newValue.insert(result, 1, ' ');
                     }
-                    modifyProperty(prop, newValue);
+                    ModifyProperty(prop, newValue);
                     break;
                 }
             }
 #endif  // _WIN32
-            modifyProperty(prop, property->GetValueAsString().utf8_string());
+            ModifyProperty(prop, property->GetValueAsString().utf8_string());
             break;
 
         case type_stringlist_semi:
-            modifyProperty(prop, property->GetValueAsString().utf8_string());
+            ModifyProperty(prop, property->GetValueAsString().utf8_string());
             break;
 
         case type_bool:
@@ -440,7 +440,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_wxSize:
             {
                 auto value = event.GetPropertyValue().GetString();
-                modifyProperty(prop, value.utf8_string());
+                ModifyProperty(prop, value.utf8_string());
             }
             break;
 
@@ -471,8 +471,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     {
                         // An empty name will generate uncompilable code, so we simply switch it to
                         // the default name
-                        auto new_name = prop->getPropDeclaration()->getDefaultValue();
-                        auto final_name = node->getUniqueName(new_name);
+                        auto new_name = prop->get_PropDeclaration()->getDefaultValue();
+                        auto final_name = node->get_UniqueName(new_name);
                         newValue = final_name.size() ? final_name : new_name;
 
                         auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
@@ -480,27 +480,27 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     }
                 }
 
-                modifyProperty(prop, newValue);
+                ModifyProperty(prop, newValue);
 
                 if (prop->isProp(prop_class_name))
                 {
                     if (auto selected_node = wxGetFrame().getSelectedNode();
-                        selected_node && selected_node->isForm())
+                        selected_node && selected_node->is_Form())
                     {
                         CheckOutputFile(newValue, selected_node);
 
-                        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+                        if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
                         {
                             if (!selected_node->as_bool(prop_use_derived_class))
                                 return;
 
-                            if (!selected_node->hasValue(prop_derived_class_name))
+                            if (!selected_node->HasValue(prop_derived_class_name))
                             {
                                 ReplaceDerivedName(
-                                    newValue, selected_node->getPropPtr(prop_derived_class_name));
+                                    newValue, selected_node->get_PropPtr(prop_derived_class_name));
                                 ReplaceDerivedFile(
                                     selected_node->as_string(prop_derived_class_name),
-                                    selected_node->getPropPtr(prop_derived_file));
+                                    selected_node->get_PropPtr(prop_derived_file));
                             }
                         }
                     }
@@ -510,9 +510,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             break;
     }
 
-    if (node->isGen(gen_wxContextMenuEvent))
+    if (node->is_Gen(gen_wxContextMenuEvent))
     {
-        auto event_prop = node->getParent()->getEvent("wxEVT_CONTEXT_MENU");
+        auto event_prop = node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU");
         if (event_prop)
         {
             event_prop->set_value(node->as_string(prop_handler_name));
@@ -521,9 +521,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
     ChangeEnableState(prop);
 
-    if (auto gen = prop->getNode()->getGenerator(); gen)
+    if (auto gen = prop->getNode()->get_Generator(); gen)
     {
-        auto result = gen->isLanguagePropSupported(prop->getNode(), Project.getCodePreference(),
+        auto result = gen->isLanguagePropSupported(prop->getNode(), Project.get_CodePreference(),
                                                    prop->get_name());
         if (result.has_value())
         {
@@ -575,7 +575,7 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 
     auto prop = it->second;
     auto node = prop->getNode();
-    auto generator = node->getGenerator();
+    auto generator = node->get_Generator();
     if (generator)
     {
         if (!generator->AllowPropertyChange(&event, prop, node))
@@ -591,7 +591,7 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
             break;
 
         case type_path:
-            if (!node->isGen(gen_wxFilePickerCtrl))
+            if (!node->is_Gen(gen_wxFilePickerCtrl))
             {
                 AllowDirectoryChange(event, prop, node);
             }

@@ -22,7 +22,7 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     m_img_props.node_property = prop;
     m_img_props.SetAnimationType();
     m_value = prop->as_wxString();
-    if (prop->hasValue())
+    if (prop->HasValue())
     {
         m_img_props.InitValues(prop->as_string());
     }
@@ -117,7 +117,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
                     name = Project.ArtDirectory();
                     name.append_filename(childValue.GetString().utf8_string());
                 }
-                name.make_relative(Project.getProjectPath());
+                name.make_relative(Project.get_ProjectPath());
                 name.backslashestoforward();
                 img_props.image.assign(name);
             }

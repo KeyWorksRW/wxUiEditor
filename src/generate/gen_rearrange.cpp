@@ -19,10 +19,11 @@
 
 wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.getCodePreference() == GEN_LANG_RUBY || Project.getCodePreference() == GEN_LANG_XRC)
+    if (Project.get_CodePreference() == GEN_LANG_RUBY ||
+        Project.get_CodePreference() == GEN_LANG_XRC)
     {
         tt_string msg = "wxRearrangeCtrl not available in ";
-        if (Project.getCodePreference() == GEN_LANG_RUBY)
+        if (Project.get_CodePreference() == GEN_LANG_RUBY)
             msg += "wxRuby3";
         else
             msg += "XRC";
@@ -82,7 +83,7 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
 
     if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
     {
-        if (node->hasValue(prop_window_name))
+        if (node->HasValue(prop_window_name))
         {
             code += ", 0";
         }
@@ -92,7 +93,7 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
         code.Comma().Add(type).Comma().Style();
     }
 
-    if (node->hasValue(prop_window_name))
+    if (node->HasValue(prop_window_name))
     {
         code.Comma().Add("wxDefaultValidator").Comma().QuotedString(prop_window_name);
     }
@@ -105,14 +106,14 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
         }
     }
-    if (code.hasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
         Node* node = code.node();
         auto contents = node->as_checklist_items(prop_contents);
@@ -163,7 +164,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
             code.CloseBrace();
         }
 
-        if (code.hasValue(prop_selection_string))
+        if (code.HasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty).NodeName().Function("GetList()").Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
@@ -187,7 +188,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
 
 int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasValue(prop_contents))
+    if (node->HasValue(prop_contents))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }

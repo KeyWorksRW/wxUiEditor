@@ -99,7 +99,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 
     auto& def_btn_name = node->as_string(prop_default_button);
 
-    if (node->getForm()->isGen(gen_wxDialog) &&
+    if (node->get_Form()->is_Gen(gen_wxDialog) &&
         (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
     {
         code.NodeName().Assign().FormFunction("CreateStdDialogButtonSizer(");
@@ -185,7 +185,7 @@ bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
                 if (code.is_perl())
                 {
                     btn_name = "$self->{";
-                    btn_name += code.node()->getNodeName(GEN_LANG_PERL);
+                    btn_name += code.node()->get_NodeName(GEN_LANG_PERL);
                     btn_name += "_";
                 }
                 else
@@ -262,7 +262,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->getParent()->isSizer())
+    if (node->get_Parent()->is_Sizer())
     {
         // BUGBUG: [Randalphwa - 08-06-2023] This should be added with a platform directive
 
@@ -322,7 +322,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         if (node->as_bool(prop_OK))
         {
             button.append_attribute("name").set_value("wxID_OK");
-            if (node->isPropValue(prop_default_button, "OK"))
+            if (node->is_PropValue(prop_default_button, "OK"))
             {
                 button.append_child("default").text().set(1);
             }
@@ -330,7 +330,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         else if (node->as_bool(prop_Yes))
         {
             button.append_attribute("name").set_value("wxID_YES");
-            if (node->isPropValue(prop_default_button, "Yes"))
+            if (node->is_PropValue(prop_default_button, "Yes"))
             {
                 button.append_child("default").text().set(1);
             }
@@ -338,7 +338,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         else if (node->as_bool(prop_Save))
         {
             button.append_attribute("name").set_value("wxID_SAVE");
-            if (node->isPropValue(prop_default_button, "Save"))
+            if (node->is_PropValue(prop_default_button, "Save"))
             {
                 button.append_child("default").text().set(1);
             }
@@ -354,7 +354,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         button.append_attribute("class").set_value("wxButton");
 
         button.append_attribute("name").set_value("wxID_NO");
-        if (node->isPropValue(prop_default_button, "No"))
+        if (node->is_PropValue(prop_default_button, "No"))
         {
             button.append_child("default").text().set(1);
         }
@@ -372,7 +372,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         if (node->as_bool(prop_Cancel))
         {
             button.append_attribute("name").set_value("wxID_CANCEL");
-            if (node->isPropValue(prop_default_button, "Cancel"))
+            if (node->is_PropValue(prop_default_button, "Cancel"))
             {
                 button.append_child("default").text().set(1);
             }
@@ -380,7 +380,7 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         else if (node->as_bool(prop_Close))
         {
             button.append_attribute("name").set_value("wxID_CLOSE");
-            if (node->isPropValue(prop_default_button, "Close"))
+            if (node->is_PropValue(prop_default_button, "Close"))
             {
                 button.append_child("default").text().set(1);
             }
@@ -495,8 +495,8 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
     }
 
     tt_string_view event_name =
-        (event->getEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" :
-                                                                        "wxEVT_UPDATE_UI");
+        (event->get_EventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" :
+                                                                         "wxEVT_UPDATE_UI");
     if (code.is_python())
         code.Add("self.");
     if (code.is_ruby() && (event_name == "wxEVT_BUTTON" || event_name == "wxEVT_UPDATE_UI"))

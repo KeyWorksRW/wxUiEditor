@@ -81,8 +81,8 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     set_src.insert("#include <wx/docview.h");
     set_src.insert("#include <wx/textctrl.h");
 
-    auto parent = node->getParent();
-    for (auto& iter: parent->getChildNodePtrs())
+    auto parent = node->get_Parent();
+    for (auto& iter: parent->get_ChildNodePtrs())
     {
         if (iter.get() == node)
             continue;

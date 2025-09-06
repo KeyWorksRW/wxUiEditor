@@ -91,7 +91,7 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
         return false;
     }
 
-    m_project = NodeCreation.createNode(gen_Project, nullptr).first;
+    m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
 
     try
     {
@@ -106,7 +106,7 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
             if (auto& include_files = FindValue(metadata, "m_includeFiles");
                 include_files.IsArray())
             {
-                auto preamble_ptr = m_project->getPropValuePtr(prop_src_preamble);
+                auto preamble_ptr = m_project->get_PropValuePtr(prop_src_preamble);
                 for (auto& iter: include_files.GetArray())
                 {
                     if (iter.IsString())
@@ -135,7 +135,7 @@ bool WxCrafter::Import(const tt_string& filename, bool write_doc)
             }
 
             if (write_doc)
-                m_project->createDoc(m_docOut);
+                m_project->CreateDoc(m_docOut);
         }
     }
     catch (const std::exception& e)
@@ -180,17 +180,17 @@ void WxCrafter::ProcessForm(const Value& form)
         return;
     }
 
-    auto getGenName = gen_unknown;
-    getGenName = GetGenName(value);
-    if (getGenName == gen_unknown)
+    auto get_GenName = gen_unknown;
+    get_GenName = GetGenName(value);
+    if (get_GenName == gen_unknown)
     {
         MSG_ERROR(tt_string("Unrecognized window type: ") << value.GetInt());
         m_errors.emplace("Unrecognized window type!");
         return;
     }
 
-    auto new_node = NodeCreation.createNode(getGenName, m_project.get()).first;
-    m_project->adoptChild(new_node);
+    auto new_node = NodeCreation.CreateNode(get_GenName, m_project.get()).first;
+    m_project->AdoptChild(new_node);
 
     if (!m_generate_ids)
     {
@@ -218,7 +218,7 @@ void WxCrafter::ProcessForm(const Value& form)
             {
                 m_errors.emplace(tt_string()
                                  << "Invalid wxCrafter file -- child of "
-                                 << map_GenNames.at(getGenName) << " is not a JSON object.");
+                                 << map_GenNames.at(get_GenName) << " is not a JSON object.");
                 continue;
             }
 
@@ -238,14 +238,14 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         return;
     }
 
-    auto getGenName = gen_unknown;
-    getGenName = GetGenName(value);
-    if (getGenName == gen_unknown)
+    auto get_GenName = gen_unknown;
+    get_GenName = GetGenName(value);
+    if (get_GenName == gen_unknown)
     {
         if (value.GetInt() == 4414)
         {
             // This is a column header for a wxListCtrl
-            if (parent->isGen(gen_wxListView))
+            if (parent->is_Gen(gen_wxListView))
             {
                 tt_string cur_headers = parent->as_string(prop_column_labels);
                 if (auto& properties = object["m_properties"]; properties.IsArray())
@@ -286,7 +286,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
 
             if (auto& children = FindValue(object, "m_children"); children.IsArray())
             {
-                if (getGenName == gen_wxStdDialogButtonSizer)
+                if (get_GenName == gen_wxStdDialogButtonSizer)
                 {
                     ProcessStdBtnChildren(parent, children);
                     if (parent->as_string(prop_alignment).size())
@@ -302,7 +302,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
                         if (!child.IsObject())
                         {
                             m_errors.emplace(tt_string() << "Invalid wxCrafter file -- child of "
-                                                         << map_GenNames.at(getGenName)
+                                                         << map_GenNames.at(get_GenName)
                                                          << " is not a JSON object.");
                             continue;
                         }
@@ -319,7 +319,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         return;
     }
 
-    if (getGenName == gen_wxCheckBox)
+    if (get_GenName == gen_wxCheckBox)
     {
         if (auto& array = FindValue(object, "m_styles"); array.IsArray())
         {
@@ -327,26 +327,26 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
             {
                 if (tt::is_sameas(iter.GetString(), "wxCHK_3STATE"))
                 {
-                    getGenName = gen_Check3State;
+                    get_GenName = gen_Check3State;
                     break;
                 }
             }
         }
     }
 
-    if (getGenName == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    if (get_GenName == gen_tool && parent->is_Gen(gen_wxAuiToolBar))
     {
-        getGenName = gen_auitool;
+        get_GenName = gen_auitool;
     }
 
-    auto new_node = NodeCreation.createNode(getGenName, parent).first;
+    auto new_node = NodeCreation.CreateNode(get_GenName, parent).first;
     if (!new_node)
     {
-        m_errors.emplace(tt_string() << map_GenNames.at(getGenName) << " cannot be a child of "
-                                     << parent->declName());
+        m_errors.emplace(tt_string() << map_GenNames.at(get_GenName) << " cannot be a child of "
+                                     << parent->get_DeclName());
         return;
     }
-    parent->adoptChild(new_node);
+    parent->AdoptChild(new_node);
     if (value == 4404)  // Originally, this was a wxBitmapButton
     {
         new_node->set_value(prop_style, "wxBU_EXACTFIT");
@@ -388,23 +388,24 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
 
     if (auto& children = FindValue(object, "m_children"); children.IsArray())
     {
-        if (getGenName == gen_wxPropertyGridManager)
+        if (get_GenName == gen_wxPropertyGridManager)
         {
             // We always supply one page even if it's empty so that wxPropertyGridManager::Clear()
             // will work correctly
-            getGenName = gen_propGridPage;
-            auto child_node = NodeCreation.createNode(getGenName, new_node.get()).first;
+            get_GenName = gen_propGridPage;
+            auto child_node = NodeCreation.CreateNode(get_GenName, new_node.get()).first;
             if (!child_node)
             {
-                m_errors.emplace(tt_string() << map_GenNames.at(getGenName)
-                                             << " cannot be a child of " << new_node->declName());
+                m_errors.emplace(tt_string()
+                                 << map_GenNames.at(get_GenName) << " cannot be a child of "
+                                 << new_node->get_DeclName());
                 return;
             }
-            new_node->adoptChild(child_node);
+            new_node->AdoptChild(child_node);
             new_node = child_node;
         }
 
-        if (getGenName == gen_wxStdDialogButtonSizer)
+        if (get_GenName == gen_wxStdDialogButtonSizer)
         {
             ProcessStdBtnChildren(new_node.get(), children);
             if (new_node->as_string(prop_alignment).size())
@@ -421,7 +422,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
                 {
                     m_errors.emplace(tt_string()
                                      << "Invalid wxCrafter file -- child of "
-                                     << map_GenNames.at(getGenName) << " is not a JSON object.");
+                                     << map_GenNames.at(get_GenName) << " is not a JSON object.");
                     continue;
                 }
 
@@ -464,7 +465,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("OKButtonClicked")->set_value(function);
+                                node->get_Event("OKButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -480,7 +481,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("YesButtonClicked")->set_value(function);
+                                node->get_Event("YesButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -496,7 +497,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("SaveButtonClicked")->set_value(function);
+                                node->get_Event("SaveButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -512,7 +513,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("CloseButtonClicked")->set_value(function);
+                                node->get_Event("CloseButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -528,7 +529,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("CancelButtonClicked")->set_value(function);
+                                node->get_Event("CancelButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -544,7 +545,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("NoButtonClicked")->set_value(function);
+                                node->get_Event("NoButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -558,7 +559,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("ApplyButtonClicked")->set_value(function);
+                                node->get_Event("ApplyButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -572,7 +573,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("HelpButtonClicked")->set_value(function);
+                                node->get_Event("HelpButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -586,7 +587,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
                             {
                                 tt_string function = handler.GetString();
                                 function.erase_from('(');
-                                node->getEvent("ContextHelpButtonClicked")->set_value(function);
+                                node->get_Event("ContextHelpButtonClicked")->set_value(function);
                             }
                         }
                     }
@@ -600,18 +601,18 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
 {
     // Caution: any of these property options could be a null ptr
 
-    auto style = node->getPropPtr(prop_style);
+    auto style = node->get_PropPtr(prop_style);
 
     if (style)
     {
         // Some styles will have been specifically set when other properties were processed, so
         // we need to be careful about clearing all styles.
-        if (!node->isGen(gen_wxButton) && !node->isGen(gen_wxTextCtrl))
+        if (!node->is_Gen(gen_wxButton) && !node->is_Gen(gen_wxTextCtrl))
         {
             style->set_value("");
         }
     }
-    auto win_style = node->getPropPtr(prop_window_style);
+    auto win_style = node->get_PropPtr(prop_window_style);
     if (win_style)
         win_style->set_value("");
 
@@ -621,7 +622,7 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
         if (style)
         {
             bool bit_found { false };
-            for (auto& option: style->getPropDeclaration()->getOptions())
+            for (auto& option: style->get_PropDeclaration()->getOptions())
             {
                 if (option.name == style_bit)
                 {
@@ -634,7 +635,7 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
             }
             if (bit_found)
                 continue;
-            else if (node->isGen(gen_wxRadioBox))
+            else if (node->is_Gen(gen_wxRadioBox))
             {
                 if (tt::is_sameas(style_bit, "wxRA_SPECIFY_ROWS"))
                 {
@@ -646,7 +647,7 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
 
         if (win_style)
         {
-            for (auto& option: win_style->getPropDeclaration()->getOptions())
+            for (auto& option: win_style->get_PropDeclaration()->getOptions())
             {
                 if (option.name == style_bit)
                 {
@@ -668,19 +669,19 @@ void WxCrafter::ProcessEvents(Node* node, const Value& array)
         {
             if (auto& name = event["m_eventName"]; name.IsString())
             {
-                auto node_event = node->getEvent(GetCorrectEventName(name.GetString()));
+                auto node_event = node->get_Event(GetCorrectEventName(name.GetString()));
                 if (!node_event)
                 {
                     tt_string modified_name(name.GetString());
                     modified_name.Replace("_COMMAND", "");
-                    node_event = node->getEvent(GetCorrectEventName(modified_name));
+                    node_event = node->get_Event(GetCorrectEventName(modified_name));
                     if (!node_event)
                     {
                         auto pos = modified_name.find_last_of('_');
                         if (tt::is_found(pos))
                         {
                             modified_name.erase(pos);
-                            node_event = node->getEvent(GetCorrectEventName(modified_name));
+                            node_event = node->get_Event(GetCorrectEventName(modified_name));
                         }
                     }
                 }
@@ -708,7 +709,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
     }
 
     // If the node has porp_alignment, then it will also have prop_borders and prop_flags
-    if (node->hasProp(prop_alignment))
+    if (node->HasProp(prop_alignment))
     {
         if (all_items.contains("wxEXPAND"))
         {
@@ -716,7 +717,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
         }
         else
         {
-            auto alignment = node->getPropValuePtr(prop_alignment);
+            auto alignment = node->get_PropValuePtr(prop_alignment);
 
             if (all_items.contains("wxALIGN_CENTER"))
             {
@@ -776,7 +777,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
         }
     }
 
-    if (node->hasProp(prop_border))
+    if (node->HasProp(prop_border))
     {
         if (all_items.contains("wxALL"))
         {
@@ -784,7 +785,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
         }
         else
         {
-            auto border_ptr = node->getPropValuePtr(prop_border);
+            auto border_ptr = node->get_PropValuePtr(prop_border);
             border_ptr->clear();
 
             if (all_items.contains("wxLEFT"))
@@ -852,16 +853,16 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
     {
         if (name.is_sameas("name"))
         {
-            if (node->isGen(gen_TreeListCtrlColumn))
+            if (node->is_Gen(gen_TreeListCtrlColumn))
             {
                 prop_name = prop_label;
             }
             else
             {
-                prop_name = (node->isForm() ? prop_class_name : prop_var_name);
+                prop_name = (node->is_Form() ? prop_class_name : prop_var_name);
             }
         }
-        else if (node->isGen(gen_wxStyledTextCtrl) && ProcessScintillaProperty(node, value))
+        else if (node->is_Gen(gen_wxStyledTextCtrl) && ProcessScintillaProperty(node, value))
         {
             return prop_processed;
         }
@@ -926,7 +927,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
 
         else if (name.is_sameas("construct the dropdown menu"))
         {
-            if (node->isGen(gen_tool) || node->isGen(gen_auitool))
+            if (node->is_Gen(gen_tool) || node->is_Gen(gen_auitool))
             {
                 // wxCrafter seems to always set this to true, ignoring the value for Kind.
                 return prop_processed;
@@ -1003,7 +1004,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
             }
             return prop_processed;
         }
-        else if (name.is_sameas("selected") && node->isGen(gen_BookPage))
+        else if (name.is_sameas("selected") && node->is_Gen(gen_BookPage))
         {
             if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
             {
@@ -1015,7 +1016,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
             return prop_processed;  // this doesn't apply to wxUiEditor
         else if (name.is_sameas("null page"))
             return prop_processed;  // unused
-        else if (name.is_sameas("enable spell checking") && node->hasProp(prop_spellcheck))
+        else if (name.is_sameas("enable spell checking") && node->HasProp(prop_spellcheck))
         {
             node->set_value(prop_spellcheck, "enabled");
             tt_string style = node->as_string(prop_style);
@@ -1048,7 +1049,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
         }
         else
         {
-            if (!node->isGen(gen_propGridItem))
+            if (!node->is_Gen(gen_propGridItem))
             {
                 // wxCrafter outputs a boatload of empty fields for property grid items
                 MSG_WARNING(tt_string("Unknown property: \"")
@@ -1063,15 +1064,15 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
 
 void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName prop_name)
 {
-    if (node->isGen(gen_wxPopupWindow))
+    if (node->is_Gen(gen_wxPopupWindow))
     {
         if (prop_name == prop_size || prop_name == prop_minimum_size || prop_name == prop_title)
             return;  // wxCrafter writes these, but doesn't use them (wxUiEditor does support size
                      // and minimum_size)
     }
 
-    if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonSeparator) ||
-        node->isGen(gen_ribbonButton))
+    if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonSeparator) ||
+        node->is_Gen(gen_ribbonButton))
     {
         if (prop_name == prop_kind)
         {
@@ -1121,9 +1122,9 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
             tt_string result = setting.GetString();
             if (tt::is_digit(result[0]))
             {
-                if (node->hasProp(prop_selection_int))
+                if (node->HasProp(prop_selection_int))
                     node->set_value(prop_selection_int, result.atoi());
-                else if (node->hasProp(prop_selection))
+                else if (node->HasProp(prop_selection))
                     node->set_value(prop_selection, result.atoi());
             }
             else
@@ -1148,12 +1149,12 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     }
 
     else if (prop_name == prop_var_name &&
-             (node->isGen(gen_spacer) || node->isGen(gen_toolSeparator) ||
-              node->isGen(gen_ribbonGalleryItem)))
+             (node->is_Gen(gen_spacer) || node->is_Gen(gen_toolSeparator) ||
+              node->is_Gen(gen_ribbonGalleryItem)))
     {
         return;
     }
-    else if (prop_name == prop_size && node->isGen(gen_spacer))
+    else if (prop_name == prop_size && node->is_Gen(gen_spacer))
     {
         tt_view_vector mview(FindValue(value, "m_value").GetString(), ',');
         if (mview.size() > 1)
@@ -1162,7 +1163,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
             node->set_value(prop_height, mview[1].atoi());
         }
     }
-    else if (prop_name == prop_size && node->isGen(gen_wxStdDialogButtonSizer))
+    else if (prop_name == prop_size && node->is_Gen(gen_wxStdDialogButtonSizer))
     {
         return;  // wxCrafter doesn't use this either, but does generate it
     }
@@ -1171,10 +1172,10 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     {
         if (auto& setting = FindValue(value, "m_value"); setting.IsString())
         {
-            if (node->hasProp(prop_contents))
+            if (node->HasProp(prop_contents))
             {
                 tt_string_vector contents(setting.GetString(), ';');
-                auto str_ptr = node->getPropPtr(prop_contents)->as_raw_ptr();
+                auto str_ptr = node->get_PropPtr(prop_contents)->as_raw_ptr();
                 str_ptr->clear();  // remove any default string
                 for (auto& item: contents)
                 {
@@ -1200,7 +1201,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     {
         ProcessFont(node, value);
     }
-    else if (prop_name == prop_statusbar && node->isGen(gen_ribbonButton))
+    else if (prop_name == prop_statusbar && node->is_Gen(gen_ribbonButton))
     {
         if (auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
         {
@@ -1208,7 +1209,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         }
     }
 
-    else if (prop_name == prop_kind && (node->isGen(gen_tool) || node->isGen(gen_auitool)))
+    else if (prop_name == prop_kind && (node->is_Gen(gen_tool) || node->is_Gen(gen_auitool)))
     {
         tt_string_view tool_kind = GetSelectedString(value);
         if (tool_kind.is_sameas("checkable"))
@@ -1220,7 +1221,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         else
             node->set_value(prop_kind, "wxITEM_NORMAL");
     }
-    else if (prop_name == prop_kind && node->isGen(gen_ribbonTool))
+    else if (prop_name == prop_kind && node->is_Gen(gen_ribbonTool))
     {
         node->set_value(prop_kind, GetSelectedString(value));
     }
@@ -1229,15 +1230,15 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     {
         if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
         {
-            if (!node->hasProp(prop_name))
+            if (!node->HasProp(prop_name))
             {
-                if (prop_name == prop_min && node->hasProp(prop_minValue))
+                if (prop_name == prop_min && node->HasProp(prop_minValue))
                     prop_name = prop_minValue;
-                else if (prop_name == prop_checked && node->hasProp(prop_pressed))
+                else if (prop_name == prop_checked && node->HasProp(prop_pressed))
                     prop_name = prop_pressed;
-                else if (prop_name == prop_max && node->hasProp(prop_maxValue))
+                else if (prop_name == prop_max && node->HasProp(prop_maxValue))
                     prop_name = prop_maxValue;
-                else if (prop_name == prop_tooltip && node->isGen(gen_propGridItem))
+                else if (prop_name == prop_tooltip && node->is_Gen(gen_propGridItem))
                     prop_name = prop_help;
                 else if (wxGetApp().isTestingMenuEnabled())
                 {
@@ -1245,7 +1246,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                         (prop_value.IsBool() && prop_value.GetBool()))
                     {
                         MSG_INFO(tt_string()
-                                 << node->declName() << " doesn't have a property called "
+                                 << node->get_DeclName() << " doesn't have a property called "
                                  << GenEnum::map_PropNames[prop_name]);
                     }
                 }
@@ -1283,55 +1284,55 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
 {
     if (auto& setting = FindValue(value, "m_value"); !setting.IsNull())
     {
-        if (node->isGen(gen_wxSpinCtrl) || node->isGen(gen_wxSpinButton))
+        if (node->is_Gen(gen_wxSpinCtrl) || node->is_Gen(gen_wxSpinButton))
         {
             node->set_value(prop_initial, setting.GetString());
         }
-        else if (node->isGen(gen_wxFilePickerCtrl))
+        else if (node->is_Gen(gen_wxFilePickerCtrl))
         {
             node->set_value(prop_initial_path, setting.GetString());
         }
-        else if (node->isGen(gen_wxDirPickerCtrl))
+        else if (node->is_Gen(gen_wxDirPickerCtrl))
         {
             node->set_value(prop_initial_path, setting.GetString());
         }
-        else if (node->isGen(gen_wxFontPickerCtrl))
+        else if (node->is_Gen(gen_wxFontPickerCtrl))
         {
             ProcessFont(node, value);
         }
-        else if (node->isGen(gen_wxGauge))
+        else if (node->is_Gen(gen_wxGauge))
         {
             node->set_value(prop_position, setting.GetString());
         }
-        else if (node->isGen(gen_wxComboBox))
+        else if (node->is_Gen(gen_wxComboBox))
         {
             node->set_value(prop_selection_string, setting.GetString());
         }
-        else if (node->isGen(gen_wxCheckBox) || node->isGen(gen_wxRadioButton))
+        else if (node->is_Gen(gen_wxCheckBox) || node->is_Gen(gen_wxRadioButton))
         {
             node->set_value(prop_checked, setting.GetBool());
         }
-        else if (node->isGen(gen_wxScrollBar))
+        else if (node->is_Gen(gen_wxScrollBar))
         {
             node->set_value(prop_position, setting.GetString());
         }
-        else if (node->isGen(gen_Check3State))
+        else if (node->is_Gen(gen_Check3State))
         {
             if (setting.GetBool())
                 node->set_value(prop_initial_state, "wxCHK_CHECKED");
         }
-        else if (node->isGen(gen_wxSlider))
+        else if (node->is_Gen(gen_wxSlider))
         {
             node->set_value(prop_position, setting.GetString());
         }
-        else if (node->hasProp(prop_value))
+        else if (node->HasProp(prop_value))
         {
             node->set_value(prop_value, setting.GetString());
         }
         else
         {
             MSG_ERROR(tt_string("Json sets value, but ")
-                      << map_GenNames[node->getGenName()] << " doesn't support that property!");
+                      << map_GenNames[node->get_GenName()] << " doesn't support that property!");
         }
     }
     else if (auto& colour = FindValue(value, "colour"); !colour.IsNull())
@@ -1360,18 +1361,18 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
 
         if (IsSame(object["m_label"], "Bitmap File:"))
         {
-            if (node->isGen(gen_wxAnimationCtrl))
+            if (node->is_Gen(gen_wxAnimationCtrl))
             {
                 node->set_value(prop_animation, bitmap);
             }
-            else if (node->hasProp(prop_bitmap))
+            else if (node->HasProp(prop_bitmap))
             {
                 node->set_value(prop_bitmap, bitmap);
             }
         }
         else if (IsSame(object["m_label"], "Disabled-Bitmap File"))
         {
-            if (node->hasProp(prop_disabled_bmp))
+            if (node->HasProp(prop_disabled_bmp))
                 node->set_value(prop_disabled_bmp, bitmap);
         }
     }
@@ -1423,7 +1424,7 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
             }
         }
 
-        if (node->isGen(gen_wxFontPickerCtrl))
+        if (node->is_Gen(gen_wxFontPickerCtrl))
             node->set_value(prop_initial_font, font_info.as_string());
         else
             node->set_value(prop_font, font_info.as_string());

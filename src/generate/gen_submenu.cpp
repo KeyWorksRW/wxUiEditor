@@ -26,17 +26,17 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
         code.node();  // This is just for code readability -- could just use code.node() everywhere
     tt_string submenu_item_name;
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         if (code.is_cpp())
         {
             code += "auto* ";
         }
         code.NodeName().Str("_item = ");
-        submenu_item_name = node->getNodeName() + "_item";
+        submenu_item_name = node->get_NodeName() + "_item";
     }
 
-    if (node->getParent()->isGen(gen_PopupMenu))
+    if (node->get_Parent()->is_Gen(gen_PopupMenu))
     {
         code.FormFunction("AppendSubMenu(")
             .NodeName()
@@ -54,7 +54,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             .EndFunction();
     }
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         code.Eol(eol_if_empty);
         if (code.is_cpp())

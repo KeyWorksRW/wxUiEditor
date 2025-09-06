@@ -51,11 +51,11 @@ const char* python_triple_quote = "\"\"\"";
 
 static void GatherImportModules(std::set<std::string>& imports, Node* node)
 {
-    if (auto* gen = node->getGenerator(); gen)
+    if (auto* gen = node->get_Generator(); gen)
     {
         gen->GetPythonImports(node, imports);
     }
-    for (auto& child: node->getChildNodePtrs())
+    for (auto& child: node->get_ChildNodePtrs())
     {
         GatherImportModules(imports, child.get());
     }
@@ -104,15 +104,15 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine();
     }
 
-    if (Project.hasValue(prop_python_project_preamble))
+    if (Project.HasValue(prop_python_project_preamble))
     {
-        WritePropSourceCode(Project.getProjectNode(), prop_python_project_preamble);
+        WritePropSourceCode(Project.get_ProjectNode(), prop_python_project_preamble);
     }
 
-    if (!m_form_node->isGen(gen_Images))
+    if (!m_form_node->is_Gen(gen_Images))
         m_source->writeLine("import wx\n");
 
-    if (m_form_node->isGen(gen_Images))
+    if (m_form_node->is_Gen(gen_Images))
     {
         thrd_get_events.join();
         try
@@ -148,7 +148,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_header->writeLine(import);
     }
 
-    if (m_form_node->hasValue(prop_python_import_list))
+    if (m_form_node->HasValue(prop_python_import_list))
     {
         tt_string_vector list;
         list.SetString(m_form_node->as_string(prop_python_import_list));
@@ -224,7 +224,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_header->writeLine(tt_string("import ") << m_form_node->as_string(prop_python_file) << "\n");
     m_header->writeLine();
 
-    if (m_form_node->hasValue(prop_python_insert))
+    if (m_form_node->HasValue(prop_python_insert))
     {
         tt_string convert(m_form_node->as_string(prop_python_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
@@ -257,7 +257,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    auto generator = m_form_node->getNodeDeclaration()->getGenerator();
+    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -291,7 +291,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    if (m_form_node->getPropPtr(prop_window_extra_style))
+    if (m_form_node->get_PropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -302,9 +302,9 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->getChildNodePtrs())
+    for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_wxContextMenuEvent))
+        if (child->is_Gen(gen_wxContextMenuEvent))
             continue;
         GenConstruction(child.get());
     }
@@ -347,7 +347,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         GenUnhandledEvents(m_events);
     }
 
-    if (m_form_node->isGen(gen_wxWizard))
+    if (m_form_node->is_Gen(gen_wxWizard))
     {
         code.clear();
         code.Eol().Str("# Add the following below the comment block to add a simple");
@@ -371,7 +371,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
 void PythonCodeGenerator::GenerateImagesForm()
 {
-    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {
         return;
     }
@@ -472,7 +472,7 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
             if (iter->form->as_string(prop_python_file).filename().empty())
             {
                 code.AddComment(tt_string("No filename specified for ")
-                                    << iter->form->getFormName() << " which contains "
+                                    << iter->form->get_FormName() << " which contains "
                                     << iter->imgs[0].array_name,
                                 true);
                 code += "# ";
@@ -527,7 +527,7 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
     // Sort events by function name
     std::sort(events.begin(), events.end(), sort_event_handlers);
 
-    bool inherited_class = m_form_node->hasValue(prop_python_inherit_name);
+    bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
     if (!inherited_class)
     {
         m_header->Indent();
@@ -770,7 +770,7 @@ void PythonBtnBimapCode(Code& code, bool is_single)
     for (auto& iter: btn_bmp_types)
     {
         code.Eol(eol_if_needed);
-        if (code.hasValue(iter.prop_name))
+        if (code.HasValue(iter.prop_name))
         {
             code.Eol(eol_if_needed);
             if (PythonBitmapList(code, iter.prop_name))
@@ -795,7 +795,7 @@ void PythonBtnBimapCode(Code& code, bool is_single)
 
 tt_string MakePythonPath(Node* node)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_PYTHON);
+    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_PYTHON);
 
     if (path.empty())
         path = "./";

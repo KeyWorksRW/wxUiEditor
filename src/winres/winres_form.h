@@ -68,12 +68,12 @@ protected:
     // Adopts child node and sets child flag to indicate it has been added.
     //
     // Under Debug builds, this will catch logic errors where a child is added more than once
-    void adoptChild(Node* node, resCtrl* child);
+    void AdoptChild(Node* node, resCtrl* child);
 
     // Adopts child node and sets child flag to indicate it has been added.
     //
     // Under Debug builds, this will catch logic errors where a child is added more than once
-    void adoptChild(const NodeSharedPtr& node, resCtrl& child);
+    void AdoptChild(const NodeSharedPtr& node, resCtrl& child);
 
     // Fills in m_group_ctrls with every control within the boundaries of the group box
     // void CollectGroupControls(std::vector<resCtrl>& group_ctrls, size_t idx_parent);

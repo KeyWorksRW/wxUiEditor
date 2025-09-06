@@ -36,7 +36,7 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     }
 
     m_form_type = isDialog ? form_dialog : form_panel;
-    m_form_node = NodeCreation.newNode(isDialog ? gen_wxDialog : gen_PanelForm);
+    m_form_node = NodeCreation.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -203,7 +203,7 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
         {
             m_ctrls.pop_back();
         }
-        else if (control.getNode()->isGen(gen_wxSpinCtrl) &&
+        else if (control.getNode()->is_Gen(gen_wxSpinCtrl) &&
                  control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
         {
             // A spin control can specifify that the previous control should be considered a "buddy"
@@ -211,7 +211,7 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
             // includes an edit control, so we delete the previous edit control and use it's id for
             // the spin control.
             auto cur_pos = m_ctrls.size() - 1;
-            if (cur_pos > 0 && m_ctrls[cur_pos - 1].getNode()->isGen(gen_wxTextCtrl))
+            if (cur_pos > 0 && m_ctrls[cur_pos - 1].getNode()->is_Gen(gen_wxTextCtrl))
             {
                 control.getNode()->set_value(prop_id,
                                              m_ctrls[cur_pos - 1].getNode()->as_string(prop_id));

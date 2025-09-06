@@ -74,7 +74,7 @@ public:
     wxWindow* getWindow() { return wxDynamicCast(this, wxWindow); }
 
     MockupParent* getMockup() { return m_mockupPanel; }
-    PropGridPanel* getPropPanel() { return m_property_panel; }
+    PropGridPanel* get_PropPanel() { return m_property_panel; }
     NavigationPanel* getNavigationPanel() { return m_nav_panel; }
     RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
@@ -170,7 +170,7 @@ public:
     void RemoveNode(Node* node, bool isCutMode);
 
     // Call this MainFrame version if you don't have access to a node.
-    void modifyProperty(NodeProperty* prop, tt_string_view value);
+    void ModifyProperty(NodeProperty* prop, tt_string_view value);
 
     void ChangeAlignment(Node* node, int align, bool vertical);
 
@@ -178,7 +178,7 @@ public:
 
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
-    void createToolNode(GenEnum::GenName name);
+    void CreateToolNode(GenEnum::GenName name);
 
     wxFileHistory& getFileHistory() { return m_FileHistory; }
 

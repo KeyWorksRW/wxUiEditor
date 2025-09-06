@@ -39,7 +39,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
                 "long style, const wxString &name)";
         code.OpenBrace();
 
-        if (code.hasValue(prop_extra_style))
+        if (code.HasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed)
                 .FormFunction("SetExtraStyle(GetExtraStyle() | ")
@@ -69,7 +69,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
 
         code.Eol().Str("$name = ");
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code += "\"frame\"";
@@ -100,12 +100,12 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
                                      4);
         code.Add("style=").Style().Comma();
-        size_t name_len = code.hasValue(prop_window_name) ?
+        size_t name_len = code.HasValue(prop_window_name) ?
                               code.node()->as_string(prop_window_name).size() :
                               sizeof("wx.FrameNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.FrameNameStr");
@@ -137,7 +137,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id = ");
-        if (code.hasValue(prop_id))
+        if (code.HasValue(prop_id))
         {
             code.Add(prop_id);
         }
@@ -159,7 +159,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             .CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE"))
             .Str("style = ")
             .Style();
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
         {
             code.Comma().CheckLineLength(sizeof("name = ") +
                                          code.as_string(prop_window_name).size() + 2);
@@ -205,12 +205,12 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
 
 bool FrameCommon::SettingsCode(Code& code, int frame_type)
 {
-    if (!code.node()->isPropValue(prop_variant, "normal"))
+    if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        if (code.node()->isPropValue(prop_variant, "small"))
+        if (code.node()->is_PropValue(prop_variant, "small"))
             code.Add("wxWINDOW_VARIANT_SMALL");
-        else if (code.node()->isPropValue(prop_variant, "mini"))
+        else if (code.node()->is_PropValue(prop_variant, "mini"))
             code.Add("wxWINDOW_VARIANT_MINI");
         else
             code.Add("wxWINDOW_VARIANT_LARGE");
@@ -239,12 +239,12 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     if (code.is_cpp())
     {
         code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->hasValue(prop_subclass))
+        if (code.node()->HasValue(prop_subclass))
             code.as_string(prop_subclass);
         else
-            code.Class(code.node()->declName());
+            code.Class(code.node()->get_DeclName());
         code += "::Create(";
-        if (code.node()->hasValue(prop_subclass_params))
+        if (code.node()->HasValue(prop_subclass_params))
         {
             code += code.node()->as_string(prop_subclass_params);
             code.RightTrim();
@@ -331,7 +331,7 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_window_extra_style))
+    if (code.HasValue(prop_window_extra_style))
     {
         code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle");
         if (!code.is_ruby())
@@ -348,12 +348,12 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
 bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
 {
     Node* form = code.node();
-    if (form->getChildCount())
+    if (form->get_ChildCount())
     {
         bool is_focus_set = false;
         auto SetChildFocus = [&](Node* child, auto&& SetChildFocus) -> void
         {
-            if (child->hasProp(prop_focus))
+            if (child->HasProp(prop_focus))
             {
                 if (child->as_bool(prop_focus))
                 {
@@ -362,9 +362,9 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
                     return;
                 }
             }
-            else if (child->getChildCount())
+            else if (child->get_ChildCount())
             {
-                for (auto& iter: child->getChildNodePtrs())
+                for (auto& iter: child->get_ChildNodePtrs())
                 {
                     SetChildFocus(iter.get(), SetChildFocus);
                     if (is_focus_set)
@@ -373,7 +373,7 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
             }
         };
 
-        for (auto& iter: form->getChildNodePtrs())
+        for (auto& iter: form->get_ChildNodePtrs())
         {
             SetChildFocus(iter.get(), SetChildFocus);
             if (is_focus_set)
@@ -428,7 +428,7 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
     auto& title = node->as_string(prop_title);
-    if (code.hasValue(prop_title))
+    if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
     }
@@ -548,7 +548,7 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     }
 
     code.Comma().Str("const wxString &name = ");
-    if (node->hasValue(prop_window_name))
+    if (node->HasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxFrameNameStr");
@@ -561,13 +561,13 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
 
 bool FrameCommon::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
     else
     {
-        code += code.node()->declName();
+        code += code.node()->get_DeclName();
     }
 
     return true;

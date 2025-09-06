@@ -12,7 +12,7 @@
 
 Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 {
-    FontProperty fontprop(m_node->getPropPtr(prop_name));
+    FontProperty fontprop(m_node->get_PropPtr(prop_name));
     if (fontprop.isDefGuiFont())
     {
         std::string font_var_name;
@@ -60,9 +60,9 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             Eol().Str(font_var_name).VariableMethod("SetStrikethrough(").True().EndFunction();
         Eol();
 
-        if (m_node->isForm())
+        if (m_node->is_Form())
         {
-            if (m_node->isGen(gen_wxPropertySheetDialog))
+            if (m_node->is_Gen(gen_wxPropertySheetDialog))
             {
                 FormFunction("GetBookCtrl()").Function("SetFont(").Str(font_var_name).EndFunction();
             }
@@ -72,7 +72,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
             }
             CloseFontBrace();
         }
-        else if (m_node->isGen(gen_wxStyledTextCtrl))
+        else if (m_node->is_Gen(gen_wxStyledTextCtrl))
         {
             NodeName().Function("StyleSetFont(").Add("wxSTC_STYLE_DEFAULT");
             Comma().Str(font_var_name).EndFunction();
@@ -220,9 +220,9 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
         }
         Eol(eol_if_needed);
 
-        if (m_node->isForm())
+        if (m_node->is_Form())
         {
-            if (m_node->isGen(gen_wxPropertySheetDialog))
+            if (m_node->is_Gen(gen_wxPropertySheetDialog))
             {
                 if (!is_perl())
                 {
@@ -283,7 +283,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function)
 void Code::GenFontColourSettings()
 {
     auto* node = m_node;
-    if (hasValue(prop_font))
+    if (HasValue(prop_font))
     {
         GenFont();
     }
@@ -291,9 +291,9 @@ void Code::GenFontColourSettings()
     if (auto& fg_clr = node->as_string(prop_foreground_colour); fg_clr.size())
     {
         Eol(eol_if_needed);
-        if (node->isForm())
+        if (node->is_Form())
         {
-            if (m_node->isGen(gen_wxPropertySheetDialog))
+            if (m_node->is_Gen(gen_wxPropertySheetDialog))
             {
                 FormFunction("GetBookCtrl()").Function("SetForegroundColour(");
             }
@@ -330,7 +330,7 @@ void Code::GenFontColourSettings()
     if (auto& bg_clr = node->as_string(prop_background_colour); bg_clr.size())
     {
         Eol(eol_if_needed);
-        if (node->isForm())
+        if (node->is_Form())
         {
             FormFunction("SetBackgroundColour(");
         }
@@ -365,7 +365,7 @@ void Code::GenFontColourSettings()
 
         // For background color, set both the background of the dialog and the background of the
         // book control
-        if (m_node->isGen(gen_wxPropertySheetDialog))
+        if (m_node->is_Gen(gen_wxPropertySheetDialog))
         {
             FormFunction("GetBookCtrl()").Function("SetBackgroundColour(");
             if (bg_clr.contains("wx"))
@@ -463,16 +463,16 @@ Code& Code::GenSizerFlags()
     if (auto& prop = m_node->as_string(prop_alignment); prop.size())
     {
         if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
-            (m_node->getParent()->isGen(gen_wxGridSizer) ||
-             m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
-             m_node->getParent()->isGen(gen_wxGridBagSizer)))
+            (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
+             m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
+             m_node->get_Parent()->is_Gen(gen_wxGridBagSizer)))
         {
             SizerFlagsFunction("CenterHorizontal") += ')';
         }
         else if (prop.contains("wxALIGN_CENTER_VERTICAL") &&
-                 (m_node->getParent()->isGen(gen_wxGridSizer) ||
-                  m_node->getParent()->isGen(gen_wxFlexGridSizer) ||
-                  m_node->getParent()->isGen(gen_wxGridBagSizer)))
+                 (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
+                  m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
+                  m_node->get_Parent()->is_Gen(gen_wxGridBagSizer)))
 
         {
             SizerFlagsFunction("CenterVertical") += ')';
@@ -614,9 +614,9 @@ Code& Code::GenSizerFlags()
 
 void Code::GenWindowSettings()
 {
-    if (hasValue(prop_window_extra_style))
+    if (HasValue(prop_window_extra_style))
     {
-        if (m_node->isForm())
+        if (m_node->is_Form())
         {
             FormFunction("SetExtraStyle(");
         }
@@ -631,7 +631,7 @@ void Code::GenWindowSettings()
     if (IsTrue(prop_disabled))
     {
         Eol(eol_if_empty);
-        if (!m_node->isForm())
+        if (!m_node->is_Form())
         {
             NodeName().Function("Enable(").False().EndFunction();
         }
@@ -644,7 +644,7 @@ void Code::GenWindowSettings()
     if (IsTrue(prop_hidden))
     {
         Eol(eol_if_empty);
-        if (!m_node->isForm())
+        if (!m_node->is_Form())
         {
             NodeName().Function("Hide(").EndFunction();
         }
@@ -661,13 +661,13 @@ void Code::GenWindowSettings()
     }
 
     bool allow_minmax { true };
-    if (m_node->isForm() && !m_node->isGen(gen_PanelForm) && !m_node->isGen(gen_wxToolBar))
+    if (m_node->is_Form() && !m_node->is_Gen(gen_PanelForm) && !m_node->is_Gen(gen_wxToolBar))
         allow_minmax = false;
 
     if (allow_minmax && m_node->as_wxSize(prop_minimum_size) != wxDefaultSize)
     {
         Eol(eol_if_empty);
-        if (!m_node->isForm())
+        if (!m_node->is_Form())
         {
             NodeName().Function("SetMinSize(");
         }
@@ -681,7 +681,7 @@ void Code::GenWindowSettings()
     if (allow_minmax && m_node->as_wxSize(prop_maximum_size) != wxDefaultSize)
     {
         Eol(eol_if_empty);
-        if (!m_node->isForm())
+        if (!m_node->is_Form())
         {
             NodeName().Function("SetMaxSize(");
         }
@@ -692,12 +692,12 @@ void Code::GenWindowSettings()
         WxSize(prop_maximum_size).EndFunction();
     }
 
-    if (!m_node->isForm() && !m_node->isPropValue(prop_variant, "normal"))
+    if (!m_node->is_Form() && !m_node->is_PropValue(prop_variant, "normal"))
     {
         Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
-        if (m_node->isPropValue(prop_variant, "small"))
+        if (m_node->is_PropValue(prop_variant, "small"))
             Add("wxWINDOW_VARIANT_SMALL");
-        else if (m_node->isPropValue(prop_variant, "mini"))
+        else if (m_node->is_PropValue(prop_variant, "mini"))
             Add("wxWINDOW_VARIANT_MINI");
         else
             Add("wxWINDOW_VARIANT_LARGE");
@@ -707,10 +707,10 @@ void Code::GenWindowSettings()
 
     // wxAuiNotebook uses page tooltips for the tabs, so it should be ignored when generating
     // the page cade.
-    if (hasValue(prop_tooltip) && !m_node->getParent()->isGen(gen_wxAuiNotebook))
+    if (HasValue(prop_tooltip) && !m_node->get_Parent()->is_Gen(gen_wxAuiNotebook))
     {
         Eol(eol_if_empty);
-        if (!m_node->isForm())
+        if (!m_node->is_Form())
         {
             NodeName().Function("SetToolTip(");
         }
@@ -721,10 +721,10 @@ void Code::GenWindowSettings()
         QuotedString(prop_tooltip).EndFunction();
     }
 
-    if (hasValue(prop_context_help))
+    if (HasValue(prop_context_help))
     {
         Eol(eol_if_empty);
-        if (!m_node->isForm())
+        if (!m_node->is_Form())
             NodeName().Function("SetHelpText(");
         else
             FormFunction("SetHelpText(");

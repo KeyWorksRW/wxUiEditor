@@ -14,14 +14,14 @@
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
 #include "project_handler.h"           // ProjectHandler class
-#include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "pugixml.hpp"
 
 static void CountNodes(Node* node, size_t& nodes)
 {
     ++nodes;
-    for (auto& iter: node->getChildNodePtrs())
+    for (auto& iter: node->get_ChildNodePtrs())
     {
         CountNodes(iter.get(), nodes);
     }
@@ -36,11 +36,11 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
     }
 
     auto form_node = m_selected_node.get();
-    if (!form_node->isForm())
+    if (!form_node->is_Form())
     {
-        if (!form_node->isGen(gen_Project))
+        if (!form_node->is_Gen(gen_Project))
         {
-            form_node = form_node->getForm();
+            form_node = form_node->get_Form();
         }
     }
 
@@ -52,7 +52,8 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
         auto result = doc.load_string(doc_str.c_str());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
+            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()),
+                         "XRC Import Test");
             return;
         }
     }
@@ -102,16 +103,16 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         return;
     }
 
-    if (m_selected_node.get() == Project.getProjectNode())
+    if (m_selected_node.get() == Project.get_ProjectNode())
     {
         wxMessageBox("You cannot duplicate the entire project, only forms.", "Test XRC Duplicate");
         return;
     }
 
     auto form_node = m_selected_node.get();
-    if (!form_node->isForm())
+    if (!form_node->is_Form())
     {
-        form_node = form_node->getForm();
+        form_node = form_node->get_Form();
     }
 
     pugi::xml_document doc;
@@ -122,7 +123,8 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         auto result = doc.load_string(doc_str.c_str());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()), "XRC Import Test");
+            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()),
+                         "XRC Import Test");
             return;
         }
     }
@@ -142,9 +144,10 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     {
         Project.FixupDuplicatedNode(new_node.get());
         tt_string undo_str("duplicate ");
-        undo_str << new_node->declName();
-        auto pos = Project.getProjectNode()->findInsertionPos(form_node);
-        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), undo_str, pos));
+        undo_str << new_node->get_DeclName();
+        auto pos = Project.get_ProjectNode()->FindInsertionPos(form_node);
+        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.get_ProjectNode(),
+                                                          undo_str, pos));
         FireCreatedEvent(new_node);
         SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     }

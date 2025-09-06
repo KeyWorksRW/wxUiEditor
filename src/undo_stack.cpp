@@ -74,7 +74,7 @@ GroupUndoActions::GroupUndoActions(const tt_string& undo_str, Node* sel_node) :
     if (sel_node)
     {
         m_old_selected = wxGetFrame().getSelectedNodePtr();
-        m_selected_node = sel_node->getSharedPtr();
+        m_selected_node = sel_node->get_SharedPtr();
     }
 }
 

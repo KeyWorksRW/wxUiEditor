@@ -47,7 +47,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     m_ruby_page = EVENT_PAGE_RUBY;
     m_rust_page = EVENT_PAGE_RUST;
 
-    m_gen_languages = Project.getGenerateLanguages();
+    m_gen_languages = Project.get_GenerateLanguages();
     m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
     m_is_perl_enabled = (m_gen_languages & GEN_LANG_PERL);
     m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
@@ -57,7 +57,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     // Now that we've determined which languages are enabled, we can remove any pages
     // for languages that are not used in this project.
 
-    m_code_preference = Project.getCodePreference(event->getNode());
+    m_code_preference = Project.get_CodePreference(event->getNode());
 
     if (!m_is_cpp_enabled)
     {
@@ -109,7 +109,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
     }
 
-    auto form = event->getNode()->getForm();
+    auto form = event->getNode()->get_Form();
     if (form)
     {
         // For the panels that support lambdas, set the keywords for the scintilla control that
@@ -148,7 +148,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
             tt_string wxRuby_keywords(g_ruby_keywords);
             wxRuby_keywords << (" ToolBar MenuBar BitmapBundle Bitmap Window Wx");
 
-            for (auto iter: NodeCreation.getNodeDeclarationArray())
+            for (auto iter: NodeCreation.get_NodeDeclarationArray())
             {
                 if (!iter)
                 {
@@ -156,14 +156,14 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
                     continue;
                 }
 
-                if (!iter->declName().starts_with("wx"))
+                if (!iter->get_DeclName().starts_with("wx"))
                     continue;
-                else if (iter->declName().is_sameas("wxContextMenuEvent") ||
-                         iter->declName() == "wxTreeCtrlBase" ||
-                         iter->declName().starts_with("wxRuby") ||
-                         iter->declName().starts_with("wxPython"))
+                else if (iter->get_DeclName().is_sameas("wxContextMenuEvent") ||
+                         iter->get_DeclName() == "wxTreeCtrlBase" ||
+                         iter->get_DeclName().starts_with("wxRuby") ||
+                         iter->get_DeclName().starts_with("wxPython"))
                     continue;
-                wxRuby_keywords << ' ' << iter->declName().subview(2);
+                wxRuby_keywords << ' ' << iter->get_DeclName().subview(2);
             }
             m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
         }
@@ -667,7 +667,7 @@ void EventHandlerDlg::FormatBindText()
         if (m_cpp_radio_use_function->GetValue())
         {
             auto value = m_cpp_text_function->GetValue().utf8_string();
-            handler << m_event->get_name() << ", &" << m_event->getNode()->getFormName()
+            handler << m_event->get_name() << ", &" << m_event->getNode()->get_FormName()
                     << "::" << value += ", this";
         }
         else
@@ -680,7 +680,7 @@ void EventHandlerDlg::FormatBindText()
 
             // Note that we have to double the '&' character since it is being sent to a static
             // text control that will think it is an accelerator.
-            handler << m_event->getEventInfo()->get_event_class() << "&&";
+            handler << m_event->get_EventInfo()->get_event_class() << "&&";
             if (m_check_include_event->GetValue())
                 handler += " event";
 
@@ -718,7 +718,7 @@ void EventHandlerDlg::FormatBindText()
         if (m_ruby_radio_use_function->GetValue())
         {
             auto value = m_ruby_text_function->GetValue().utf8_string();
-            if (m_event->getNode()->isForm())
+            if (m_event->getNode()->is_Form())
                 handler.Str(event_name).Str("(:") << value << ')';
             else
                 handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << value << ')';
@@ -735,11 +735,11 @@ void EventHandlerDlg::FormatBindText()
 
     Code code(m_event->getNode(), language);
 
-    if (m_event->getNode()->isForm())
+    if (m_event->getNode()->is_Form())
     {
         code.Add("Bind(").Add(handler).EndFunction();
     }
-    else if (m_event->getNode()->isGen(gen_wxMenuItem) || m_event->getNode()->isGen(gen_tool))
+    else if (m_event->getNode()->is_Gen(gen_wxMenuItem) || m_event->getNode()->is_Gen(gen_tool))
     {
         code << "Bind(" << handler << ", ";
         if (m_event->getNode()->as_string(prop_id) != "wxID_ANY")
@@ -747,7 +747,7 @@ void EventHandlerDlg::FormatBindText()
         else
             code.NodeName(m_event->getNode()).Function("GetId()").EndFunction();
     }
-    else if (m_event->getNode()->isGen(gen_ribbonTool))
+    else if (m_event->getNode()->is_Gen(gen_ribbonTool))
     {
         if (m_event->getNode()->as_string(prop_id).empty())
         {
@@ -768,29 +768,29 @@ void EventHandlerDlg::FormatBindText()
 
 void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& variables)
 {
-    if (node->hasValue(prop_class_access) && node->as_string(prop_class_access) != "none")
+    if (node->HasValue(prop_class_access) && node->as_string(prop_class_access) != "none")
     {
-        if (node->hasValue(prop_var_name))
+        if (node->HasValue(prop_var_name))
         {
             variables.insert(node->as_string(prop_var_name));
         }
     }
 
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
     {
         variables.insert(node->as_string(prop_validator_variable));
     }
 
-    if (node->hasValue(prop_checkbox_var_name))
+    if (node->HasValue(prop_checkbox_var_name))
     {
         variables.insert(node->as_string(prop_checkbox_var_name));
     }
-    else if (node->hasValue(prop_radiobtn_var_name))
+    else if (node->HasValue(prop_radiobtn_var_name))
     {
         variables.insert(node->as_string(prop_radiobtn_var_name));
     }
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
         CollectMemberVariables(child.get(), variables);
     }
@@ -829,7 +829,7 @@ void EventHandlerDlg::Update_m_value()
                 handler << "[this](";
             else
                 handler << "[](";
-            handler << m_event->getEventInfo()->get_event_class() << "&";
+            handler << m_event->get_EventInfo()->get_event_class() << "&";
             if (m_check_include_event->GetValue())
                 handler << " event";
 

@@ -39,7 +39,7 @@ public:
     const wxString& get_default_extension() const { return m_default_extension; }
     const wxString& get_filter() const { return m_filter; }
 
-    void createNode();
+    void CreateNode();
     void VerifyClassName();
 
 protected:

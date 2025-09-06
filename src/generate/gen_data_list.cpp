@@ -30,14 +30,14 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
 {
     ProjectData.Initialize();
     auto* parent = wxStaticCast(wxobject, wxWindow);
-    // sizer type needs to match "else if (form->isGen(gen_Data))" section of mockup_content.cpp
+    // sizer type needs to match "else if (form->is_Gen(gen_Data))" section of mockup_content.cpp
     auto* flex_grid_sizer = new wxFlexGridSizer(
-        number_of_columns, static_cast<int>(node->getChildCount()), horizontal_spacing);
+        number_of_columns, static_cast<int>(node->get_ChildCount()), horizontal_spacing);
 
     auto cur_sel_node = wxGetFrame().getSelectedNode();
-    if (cur_sel_node->isGen(gen_data_folder))
+    if (cur_sel_node->is_Gen(gen_data_folder))
         node = cur_sel_node;
-    for (auto& iter: node->getChildNodePtrs())
+    for (auto& iter: node->get_ChildNodePtrs())
     {
         auto* var_name = new wxStaticText(parent, wxID_ANY, iter->as_string(prop_var_name));
         flex_grid_sizer->Add(var_name, wxSizerFlags().Border(wxALL));

@@ -21,7 +21,7 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                          DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
-    if (node->hasValue(prop_hint))
+    if (node->HasValue(prop_hint))
     {
         // REVIEW: [Randalphwa - 10-17-2023] In 3.3, this now generates an assertion error,
         // even though it works fine. I have entered issue #23975 for this in the wxWidgets
@@ -29,12 +29,12 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->SetHint(node->as_wxString(prop_hint));
     }
 
-    if (node->hasValue(prop_search_button))
+    if (node->HasValue(prop_search_button))
     {
         widget->ShowSearchButton(node->as_bool(prop_search_button));
     }
 
-    if (node->hasValue(prop_cancel_button))
+    if (node->HasValue(prop_cancel_button))
     {
         widget->ShowCancelButton(node->as_bool(prop_cancel_button));
     }
@@ -55,7 +55,7 @@ bool SearchCtrlGenerator::ConstructionCode(Code& code)
 
 bool SearchCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_hint))
+    if (code.HasValue(prop_hint))
     {
         code.Eol(eol_if_empty)
             .NodeName()
@@ -66,9 +66,9 @@ bool SearchCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
         }
@@ -99,8 +99,8 @@ bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSearchCtrl");

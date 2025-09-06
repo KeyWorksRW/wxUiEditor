@@ -183,7 +183,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
     xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
     m_res_name = "wxuiCompare";
 
-    switch (form_node->getGenName())
+    switch (form_node->get_GenName())
     {
         case gen_PanelForm:
             {
@@ -217,7 +217,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
 
         case gen_wxDialog:
             {
-                if (form_node->getChildCount() < 1)
+                if (form_node->get_ChildCount() < 1)
                 {
                     wxMessageBox("Only a dialog's children can be shown -- this dialog has none.",
                                  "Compare");
@@ -290,7 +290,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
 
 bool XrcCompare::InitXrc(Node* form_node)
 {
-    size_t xrc_flags = (form_node->isGen(gen_wxDialog) ? xrc::previewing : 0);
+    size_t xrc_flags = (form_node->is_Gen(gen_wxDialog) ? xrc::previewing : 0);
     auto doc_str = GenerateXrcStr(form_node, xrc_flags);
     wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
     auto xmlDoc = std::make_unique<wxXmlDocument>(stream);
@@ -311,7 +311,7 @@ bool XrcCompare::InitXrc(Node* form_node)
 bool XrcCompare::InitImport(Node* form_node)
 {
     tt_string xrc_text = wxGetFrame().getImportPanel()->GetTextCtrl()->GetText().utf8_string();
-    if (form_node->getGenName() == gen_wxDialog)
+    if (form_node->get_GenName() == gen_wxDialog)
     {
         // Because we need to place this within sizer, we switch the class to a wxPanel. We assume
         // it will work in spite of having child attributes that only apply to wxDialog.

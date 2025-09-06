@@ -134,14 +134,14 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         ++node_memory.children;
         if (node.use_count() <= ref_count)
         {
-            node_memory.size += node->getNodeSize();
+            node_memory.size += node->get_NodeSize();
         }
 
-        for (const auto& iter: node->getChildNodePtrs())
+        for (const auto& iter: node->get_ChildNodePtrs())
         {
             // Assume that each child will have a shared ptr to the parent which will increase
             // it's reference count by 1.
-            long add_ref_count = static_cast<long>(iter->getChildCount());
+            long add_ref_count = static_cast<long>(iter->get_ChildCount());
 
             // An orphaned node will have a ref count of 1 -- add one to pass this to the
             // CalcMemory function.
@@ -161,7 +161,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         {
             if (const auto& old_node = iter->GetOldNode(); old_node)
             {
-                if (old_node->isGen(gen_Project))
+                if (old_node->is_Gen(gen_Project))
                 {
                     // Every form in the project will increase the project's ref count
                     CalcMemory(old_node, 9999, CalcMemory);
@@ -170,7 +170,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 {
                     // Assume that each child will have a shared ptr to the parent which will
                     // increase it's reference count by 1.
-                    long add_ref_count = static_cast<long>(old_node->getChildCount());
+                    long add_ref_count = static_cast<long>(old_node->get_ChildCount());
 
                     CalcMemory(old_node, add_ref_count + 3, CalcMemory);
                 }

@@ -56,7 +56,7 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
             std::vector<int> styles;
             for (auto& iter: fields)
             {
-                styles.push_back(NodeCreation.getConstantAsInt(iter.style));
+                styles.push_back(NodeCreation.get_ConstantAsInt(iter.style));
             }
             widget->SetStatusStyles(to_int(styles.size()), styles.data());
         }
@@ -88,12 +88,12 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     else
         num_fields = node->as_int(prop_fields);
 
-    if (node->hasValue(prop_subclass))
+    if (node->HasValue(prop_subclass))
     {
         code.AddAuto().NodeName();
         code.CreateClass(false, "", true);
         code.ValidParentName().Comma().as_string(prop_id).Comma().Style();
-        if (node->hasValue(prop_window_name))
+        if (node->HasValue(prop_window_name))
         {
             code.Comma().QuotedString(prop_window_name);
         }
@@ -110,7 +110,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
         code.Eol(eol_if_needed).AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
     }
 
-    if (node->hasValue(prop_window_name))
+    if (node->HasValue(prop_window_name))
     {
         code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
         code.Comma().QuotedString(prop_window_name);
@@ -232,7 +232,7 @@ bool StatusBarGenerator::SettingsCode(Code& code)
 
 int StatusBarGenerator::GetRequiredVersion(Node* node)
 {
-    if (!node->hasValue(prop_fields))
+    if (!node->HasValue(prop_fields))
     {
         return BaseGenerator::GetRequiredVersion(node);
     }
@@ -252,8 +252,8 @@ bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStatusBar");

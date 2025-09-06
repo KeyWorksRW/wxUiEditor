@@ -31,16 +31,16 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
     menu_name += "_menu";
     code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
     code.AddIfPython("()");
-    auto menu_node_ptr = NodeCreation.newNode(gen_wxMenu);
-    menu_node_ptr->setParent(code.node());  // Python code generation needs this set
+    auto menu_node_ptr = NodeCreation.NewNode(gen_wxMenu);
+    menu_node_ptr->set_Parent(code.node());  // Python code generation needs this set
     menu_node_ptr->set_value(prop_var_name, menu_name);
     menu_node_ptr->set_value(prop_class_access, "none");
 
-    for (const auto& child: code.node()->getChildNodePtrs())
+    for (const auto& child: code.node()->get_ChildNodePtrs())
     {
-        auto old_parent = child->getParent();
-        child->setParent(menu_node_ptr.get());
-        if (auto gen = child->getNodeDeclaration()->getGenerator(); gen)
+        auto old_parent = child->get_Parent();
+        child->set_Parent(menu_node_ptr.get());
+        if (auto gen = child->get_NodeDeclaration()->get_Generator(); gen)
         {
             Code child_code(child.get(), code.m_language);
             if (gen->ConstructionCode(child_code))
@@ -55,11 +55,11 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
         }
 
         // A submenu can have children
-        if (child->getChildCount())
+        if (child->get_ChildCount())
         {
-            for (const auto& grandchild: child->getChildNodePtrs())
+            for (const auto& grandchild: child->get_ChildNodePtrs())
             {
-                if (auto gen = grandchild->getNodeDeclaration()->getGenerator(); gen)
+                if (auto gen = grandchild->get_NodeDeclaration()->get_Generator(); gen)
                 {
                     Code child_code(grandchild.get(), code.m_language);
                     if (gen->ConstructionCode(child_code))
@@ -73,11 +73,12 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
                     }
                 }
                 // A submenu menu item can also be a submenu with great grandchildren.
-                if (grandchild->getChildCount())
+                if (grandchild->get_ChildCount())
                 {
-                    for (const auto& great_grandchild: grandchild->getChildNodePtrs())
+                    for (const auto& great_grandchild: grandchild->get_ChildNodePtrs())
                     {
-                        if (auto gen = great_grandchild->getNodeDeclaration()->getGenerator(); gen)
+                        if (auto gen = great_grandchild->get_NodeDeclaration()->get_Generator();
+                            gen)
                         {
                             Code child_code(great_grandchild.get(), code.m_language);
                             if (gen->ConstructionCode(child_code))
@@ -95,7 +96,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
                 }
             }
         }
-        child->setParent(old_parent);
+        child->set_Parent(old_parent);
     }
     code.Eol().NodeName().Function("SetDropdownMenu(").Str(menu_name).EndFunction();
 
@@ -108,16 +109,16 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     GenXrcObjectAttributes(node, item, "tool");
     GenXrcToolProps(node, item, xrc_flags);
 
-    if (node->getChildCount())
+    if (node->get_ChildCount())
     {
         object = object.append_child("dropdown");
         object = object.append_child("object");
         object.append_attribute("class").set_value("wxMenu");
 
-        for (const auto& child: node->getChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
             auto child_object = object.append_child("object");
-            auto child_generator = child->getNodeDeclaration()->getGenerator();
+            auto child_generator = child->get_NodeDeclaration()->get_Generator();
             if (child_generator->GenXrcObject(child.get(), child_object, xrc_flags) ==
                 BaseGenerator::xrc_not_supported)
             {
@@ -125,12 +126,12 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
             }
 
             // A submenu can have children
-            if (child->getChildCount())
+            if (child->get_ChildCount())
             {
-                for (const auto& grandchild: child->getChildNodePtrs())
+                for (const auto& grandchild: child->get_ChildNodePtrs())
                 {
                     auto grandchild_object = child_object.append_child("object");
-                    auto grandchild_generator = grandchild->getNodeDeclaration()->getGenerator();
+                    auto grandchild_generator = grandchild->get_NodeDeclaration()->get_Generator();
                     if (grandchild_generator->GenXrcObject(grandchild.get(), grandchild_object,
                                                            xrc_flags) ==
                         BaseGenerator::xrc_not_supported)
@@ -138,13 +139,13 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
                         child_object.remove_child(grandchild_object);
                     }
                     // A submenu menu item can also be a submenu with great grandchildren.
-                    if (grandchild->getChildCount())
+                    if (grandchild->get_ChildCount())
                     {
-                        for (const auto& great_grandchild: grandchild->getChildNodePtrs())
+                        for (const auto& great_grandchild: grandchild->get_ChildNodePtrs())
                         {
                             auto great_grandchild_object = grandchild_object.append_child("object");
                             auto great_grandchild_generator =
-                                grandchild->getNodeDeclaration()->getGenerator();
+                                grandchild->get_NodeDeclaration()->get_Generator();
                             if (great_grandchild_generator->GenXrcObject(
                                     great_grandchild.get(), great_grandchild_object, xrc_flags) ==
                                 BaseGenerator::xrc_not_supported)
@@ -201,8 +202,8 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
 bool ToolSeparatorGenerator::ConstructionCode(Code& code)
 {
     auto* node = code.node();
-    if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar) ||
-        node->isParent(gen_wxAuiToolBar))
+    if (node->is_Parent(gen_wxToolBar) || node->is_Parent(gen_wxRibbonToolBar) ||
+        node->is_Parent(gen_wxAuiToolBar))
     {
         code.ParentName().Function("AddSeparator(").EndFunction();
     }
@@ -257,11 +258,11 @@ tt_string ToolSeparatorGenerator::GetRubyHelpText(Node*)
 bool ToolStretchableGenerator::ConstructionCode(Code& code)
 {
     auto* node = code.node();
-    if (node->isParent(gen_wxToolBar))
+    if (node->is_Parent(gen_wxToolBar))
     {
         code.ParentName().Function("AddStretchableSpace(").EndFunction();
     }
-    else if (node->isParent(gen_wxAuiToolBar))
+    else if (node->is_Parent(gen_wxAuiToolBar))
     {
         code.ParentName().Function("AddStretchSpacer(");
         if (code.IntValue(prop_proportion) != 1)

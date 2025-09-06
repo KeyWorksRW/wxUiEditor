@@ -69,7 +69,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
         return false;
     duRect.SetHeight(tt::atoi(line));
 
-    if (m_node->isGen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
+    if (m_node->is_Gen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
     {
         // For a drop-down style, the resource file sets the height of the drop-down portion, but
         // for figuring out layout of the control, we need the non-drop height. We can't actually
@@ -78,7 +78,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
         duRect.SetHeight(12);
     }
 
-    if (m_node->isGen(gen_wxListBox))
+    if (m_node->is_Gen(gen_wxListBox))
     {
         m_node->set_value(prop_minimum_size,
                           tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
@@ -202,7 +202,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
 
     label = std::move(m_pWinResource->ConvertCodePageString(label));
 
-    if (m_node->isGen(gen_wxHyperlinkCtrl))
+    if (m_node->is_Gen(gen_wxHyperlinkCtrl))
     {
         auto begin_anchor = label.locate("<a", 0, tt::CASE::either);
         if (!tt::is_found(begin_anchor))

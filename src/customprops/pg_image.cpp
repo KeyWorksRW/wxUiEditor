@@ -43,7 +43,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 {
     m_img_props.node_property = prop;
     m_value = prop->as_wxString();
-    if (prop->hasValue())
+    if (prop->HasValue())
     {
         m_img_props.InitValues(prop->as_string());
     }
@@ -54,7 +54,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     wxPGChoices types;
 
-    if (prop->getNode()->isGen(gen_embedded_image))
+    if (prop->getNode()->is_Gen(gen_embedded_image))
     {
         types.Add(s_type_names[EMBED_INDEX]);
         types.Add(s_type_names[SVG_INDEX]);
@@ -322,7 +322,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                             name = Project.ArtDirectory();
                             name.append_filename(childValue.GetString().utf8_string());
                         }
-                        name.make_relative(Project.getProjectPath());
+                        name.make_relative(Project.get_ProjectPath());
                         name.backslashestoforward();
                     }
                     img_props.image = name;

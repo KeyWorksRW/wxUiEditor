@@ -45,7 +45,7 @@ constexpr auto prop_sheet_events =
 
 void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    if (auto generator = event->getNode()->getGenerator();
+    if (auto generator = event->getNode()->get_Generator();
         !generator || !generator->isLanguageVersionSupported(code.get_language()).first)
         return;  // Current language does not support this node
 
@@ -185,7 +185,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                                return std::tolower(c);
                            });
 
-            if (event->getNode()->isForm())
+            if (event->getNode()->is_Form())
             {
                 if (event->get_name().starts_with("wxEVT_WIZARD"))
                 {
@@ -196,13 +196,13 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                     handler.Str(event_name).Str("(:") << event_code << ')';
                 }
             }
-            else if (event->getEventInfo()->get_name() == "wxEVT_SIZE" ||
-                     event->getEventInfo()->get_name() == "wxEVT_GRID_COL_SIZE")
+            else if (event->get_EventInfo()->get_name() == "wxEVT_SIZE" ||
+                     event->get_EventInfo()->get_name() == "wxEVT_GRID_COL_SIZE")
             {
                 // wxRuby3 doesn't allow an id for this event
                 handler.Str(event_name).Str("(:") << event_code << ')';
             }
-            else if (event->getNode()->isGen(gen_StaticCheckboxBoxSizer))
+            else if (event->getNode()->is_Gen(gen_StaticCheckboxBoxSizer))
             {
                 code.Str(event_name)
                         .Str("(")
@@ -211,7 +211,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                     << event_code << ')';
                 return;
             }
-            else if (event->getNode()->isGen(gen_StaticRadioBtnBoxSizer))
+            else if (event->getNode()->is_Gen(gen_StaticRadioBtnBoxSizer))
             {
                 code.Str(event_name)
                         .Str("(")
@@ -237,7 +237,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
     // Do *NOT* assume that code.m_node is the same as event->getNode()!
 
-    if (event->getNode()->isStaticBoxSizer())
+    if (event->getNode()->is_StaticBoxSizer())
     {
         ASSERT_MSG(!code.is_ruby(), "StaticBoxSizer events have already been handled for Ruby");
         code.AddIfPython("self.");
@@ -264,8 +264,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         code.EndFunction();
     }
-    else if (event->getNode()->isGen(gen_wxMenuItem) || event->getNode()->isGen(gen_tool) ||
-             event->getNode()->isGen(gen_auitool))
+    else if (event->getNode()->is_Gen(gen_wxMenuItem) || event->getNode()->is_Gen(gen_tool) ||
+             event->getNode()->is_Gen(gen_auitool))
     {
         if (code.is_cpp() || code.is_python())
         {
@@ -273,7 +273,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code << "Bind(" << handler.GetCode() << comma;
             if (event->getNode()->as_string(prop_id) != "wxID_ANY")
             {
-                auto id = event->getNode()->getPropId();
+                auto id = event->getNode()->get_PropId();
                 code.AddIfPython("id=").Add(id).EndFunction();
             }
             else
@@ -289,11 +289,11 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code << handler;
         }
     }
-    else if (event->getNode()->isGen(gen_ribbonTool))
+    else if (event->getNode()->is_Gen(gen_ribbonTool))
     {
         if (code.is_python())
             code.Add("self.");
-        if (!event->getNode()->hasValue(prop_id))
+        if (!event->getNode()->HasValue(prop_id))
         {
             code.AddComment(
                 "**WARNING** -- tool id not specified, event handler may never be called.", true);
@@ -320,7 +320,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             }
         }
     }
-    else if (event->getNode()->isForm())
+    else if (event->getNode()->is_Form())
     {
         if (code.is_cpp() || code.is_python())
         {
@@ -372,10 +372,10 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
-    auto propName = node->getPropPtr(prop_class_name);
+    auto propName = node->get_PropPtr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->declName() << " class.");
+        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->get_DeclName() << " class.");
         return;
     }
 
@@ -419,7 +419,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 
     for (auto& event: events)
     {
-        if (auto generator = event->getNode()->getGenerator(); generator)
+        if (auto generator = event->getNode()->get_Generator(); generator)
         {
             code.clear();
             if (generator->GenEvent(code, event, class_name); code.size())
@@ -483,7 +483,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         for (auto& conditional_event: conditional_events)
         {
             code.clear();
-            if (auto generator = conditional_event->getNode()->getGenerator(); generator)
+            if (auto generator = conditional_event->getNode()->get_Generator(); generator)
             {
                 if (generator->GenEvent(code, conditional_event, class_name); code.size())
                 {

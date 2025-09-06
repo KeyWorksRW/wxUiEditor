@@ -54,7 +54,7 @@ public:
     bool isAdded() const { return m_added; }
     void setAdded() { m_added = true; }
 
-    bool isGen(GenName name) const noexcept { return getNode()->isGen(name); }
+    bool is_Gen(GenName name) const noexcept { return getNode()->is_Gen(name); }
 
     // Sets value only if the property exists.
     template <typename T>

@@ -29,7 +29,7 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
 {
     auto* node =
         code.node();  // This is just for code readability -- could just use code.node() everywhere
-    auto parent_type = node->getParent()->getGenType();
+    auto parent_type = node->get_Parent()->get_GenType();
     if (parent_type == type_menubar)
     {
         code.ParentName().Function("Append(").NodeName().Comma();
@@ -57,7 +57,7 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
     else if (code.is_cpp())
     {
         // The parent can disable generation of Bind by shutting off the context menu
-        if (!node->getParent()->as_bool(prop_context_menu))
+        if (!node->get_Parent()->as_bool(prop_context_menu))
         {
             return true;
         }
@@ -65,13 +65,13 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
         if (parent_type == type_form || parent_type == type_frame_form ||
             parent_type == type_panel_form || parent_type == type_wizard)
         {
-            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->getParentName(code.get_language())
-                 << "::" << node->getParentName(code.get_language()) << "OnContextMenu, this);";
+            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->get_ParentName(code.get_language())
+                 << "::" << node->get_ParentName(code.get_language()) << "OnContextMenu, this);";
         }
         else
         {
             code.ValidParentName().Function("Bind(wxEVT_RIGHT_DOWN, &")
-                << node->getFormName() << "::" << node->getParentName(code.get_language())
+                << node->get_FormName() << "::" << node->get_ParentName(code.get_language())
                 << "OnContextMenu, this);";
         }
     }
@@ -119,7 +119,7 @@ void MenuGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
     }
 }
 
-bool MenuGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
+bool MenuGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop->isProp(prop_stock_id))
     {
@@ -128,8 +128,8 @@ bool MenuGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->addProperty(prop, value);
             undo_stock_id->addProperty(
-                prop->getNode()->getPropPtr(prop_label),
-                wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+                prop->getNode()->get_PropPtr(prop_label),
+                wxGetStockLabel(NodeCreation.get_ConstantAsInt(value.as_str())).utf8_string());
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }

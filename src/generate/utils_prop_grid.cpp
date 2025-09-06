@@ -14,9 +14,9 @@
 
 void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
 {
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_propGridItem))
+        if (child->is_Gen(gen_propGridItem))
         {
             if (child->as_string(prop_type) == "Category")
             {
@@ -34,14 +34,14 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
                     prop->SetName(child->as_wxString(prop_label));
                     pgi->Append(prop);
 
-                    if (child->hasValue(prop_help))
+                    if (child->HasValue(prop_help))
                     {
                         pgi->SetPropertyHelpString(prop, child->as_wxString(prop_help));
                     }
                 }
             }
         }
-        else if (child->isGen(gen_propGridCategory))
+        else if (child->is_Gen(gen_propGridCategory))
         {
             pgi->Append(new wxPropertyCategory(child->as_wxString(prop_label),
                                                child->as_wxString(prop_label)));
@@ -66,9 +66,9 @@ static const auto advanced_items = {
 
 bool CheckAdvancePropertyInclude(Node* node)
 {
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_propGridItem))
+        if (child->is_Gen(gen_propGridItem))
         {
             auto& value = child->as_string(prop_type);
             for (auto& iter: advanced_items)
@@ -79,7 +79,7 @@ bool CheckAdvancePropertyInclude(Node* node)
                 }
             }
         }
-        else if (child->isGen(gen_propGridPage))
+        else if (child->is_Gen(gen_propGridPage))
         {
             if (CheckAdvancePropertyInclude(child.get()))
             {

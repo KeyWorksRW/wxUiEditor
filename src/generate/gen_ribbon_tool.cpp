@@ -38,9 +38,9 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonToolBar);
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_ribbonSeparator))
+        if (child->is_Gen(gen_ribbonSeparator))
         {
             btn_bar->AddSeparator();
         }
@@ -108,7 +108,7 @@ std::optional<tt_string> RibbonToolBarGenerator::GetWarning(Node* node, GenLang 
         case GEN_LANG_XRC:
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

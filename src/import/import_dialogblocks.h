@@ -41,7 +41,7 @@ protected:
 
     bool CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent);
     bool CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent);
-    void createChildNode(pugi::xml_node& child_node, Node* parent);
+    void CreateChildNode(pugi::xml_node& child_node, Node* parent);
     void CreateCustomNode(pugi::xml_node& child_node, Node* parent);
 
     // Process all the style-like attributes for the current node
@@ -62,7 +62,7 @@ protected:
     // the string without quotes.
     tt_string ExtractQuotedString(pugi::xml_node& str_node);
 
-    tt_string GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName);
+    tt_string GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName);
 
 private:
     bool m_use_enums { true };

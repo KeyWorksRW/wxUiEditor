@@ -96,10 +96,10 @@ public:
     tt_string& get_value() { return m_value; }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
-    tt_string getPropId() const;
+    tt_string get_PropId() const;
 
     // Returns a string containing the ID without any assignment if it is a custom id.
-    static tt_string getPropId(const tt_string& complete_id);
+    static tt_string get_PropId(const tt_string& complete_id);
 
     const tt_string& value() const { return m_value; }
 
@@ -167,25 +167,25 @@ public:
     // Returns false if the property is empty. For size and point properties, returns false
     // if the default value is used. For image properties, returns true if a filename is
     // specified. For window style, returns true if at least one option is specified.
-    bool hasValue() const;
+    bool HasValue() const;
 
-    const PropDeclaration* getPropDeclaration() const { return m_declaration; }
+    const PropDeclaration* get_PropDeclaration() const { return m_declaration; }
 
     Node* getNode() { return m_node; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    tt_string_view declName() const noexcept { return m_declaration->declName(); }
+    tt_string_view get_DeclName() const noexcept { return m_declaration->get_DeclName(); }
 
     bool isProp(PropName name) const noexcept { return m_declaration->isProp(name); }
-    bool isType(PropType type) const noexcept { return m_declaration->isType(type); }
+    bool is_Type(PropType type) const noexcept { return m_declaration->is_Type(type); }
 
     PropType type() const noexcept { return m_declaration->get_type(); }
     PropName get_name() const noexcept { return m_declaration->get_name(); }
 
-    PropDeclaration* getPropDeclaration() { return m_declaration; }
+    PropDeclaration* get_PropDeclaration() { return m_declaration; }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    size_t getPropSize() const { return sizeof(*this) + (m_value.size() + 1); }
+    size_t get_PropSize() const { return sizeof(*this) + (m_value.size() + 1); }
 
 private:
     PropDeclaration* m_declaration;

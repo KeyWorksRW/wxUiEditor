@@ -63,7 +63,7 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
         m_is_popup_menu = true;
 
     m_form_type = form_menu;
-    m_form_node = NodeCreation.newNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
+    m_form_node = NodeCreation.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -119,8 +119,8 @@ void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
         if (line.starts_with("POPUP") && !m_is_popup_menu)
         {
             auto& control = m_ctrls.emplace_back();
-            parent = control.SetNodePtr(NodeCreation.newNode(gen_wxMenu));
-            m_form_node->adoptChild(parent);
+            parent = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenu));
+            m_form_node->AdoptChild(parent);
             line.moveto_nextword();
             parent->set_value(prop_label,
                               m_pWinResource->ConvertCodePageString(line.view_substr(0)));
@@ -156,8 +156,8 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
         else if (line.starts_with("POPUP"))
         {
             auto& control = m_ctrls.emplace_back();
-            sub_parent = control.SetNodePtr(NodeCreation.newNode(gen_submenu));
-            parent->adoptChild(sub_parent);
+            sub_parent = control.SetNodePtr(NodeCreation.NewNode(gen_submenu));
+            parent->AdoptChild(sub_parent);
             line.moveto_nextword();
             sub_parent->set_value(prop_label,
                                   m_pWinResource->ConvertCodePageString(line.view_substr(0)));
@@ -168,14 +168,14 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
             if (line.starts_with("SEPARATOR"))
             {
                 auto& control = m_ctrls.emplace_back();
-                auto separator = control.SetNodePtr(NodeCreation.newNode(gen_separator));
-                parent->adoptChild(separator);
+                auto separator = control.SetNodePtr(NodeCreation.NewNode(gen_separator));
+                parent->AdoptChild(separator);
             }
             else
             {
                 auto& control = m_ctrls.emplace_back();
-                auto item = control.SetNodePtr(NodeCreation.newNode(gen_wxMenuItem));
-                parent->adoptChild(item);
+                auto item = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenuItem));
+                parent->AdoptChild(item);
                 tt_string_view label = line.view_substr(0);
                 auto end = label.find("\\t");
                 if (tt::is_found(end))

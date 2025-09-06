@@ -583,22 +583,22 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
         UserPrefs.get_CppWidgetsVersion())
     {
         UserPrefs.set_CppWidgetsVersion(m_choice_cpp_version->GetStringSelection().ToStdString());
-        Project.getProjectNode()->modifyProperty(prop_wxWidgets_version,
-                                                 UserPrefs.get_CppWidgetsVersion());
+        Project.get_ProjectNode()->ModifyProperty(prop_wxWidgets_version,
+                                                  UserPrefs.get_CppWidgetsVersion());
     }
 
     if (m_choice_python_version->GetStringSelection().ToStdString() !=
         UserPrefs.get_PythonVersion())
     {
         UserPrefs.set_PythonVersion(m_choice_python_version->GetStringSelection().ToStdString());
-        Project.getProjectNode()->modifyProperty(prop_wxPython_version,
-                                                 UserPrefs.get_PythonVersion());
+        Project.get_ProjectNode()->ModifyProperty(prop_wxPython_version,
+                                                  UserPrefs.get_PythonVersion());
     }
 
     if (m_choice_ruby_version->GetStringSelection().ToStdString() != UserPrefs.get_RubyVersion())
     {
         UserPrefs.set_RubyVersion(m_choice_ruby_version->GetStringSelection().ToStdString());
-        Project.getProjectNode()->modifyProperty(prop_wxRuby_version, UserPrefs.get_RubyVersion());
+        Project.get_ProjectNode()->ModifyProperty(prop_wxRuby_version, UserPrefs.get_RubyVersion());
     }
 
     UserPrefs.set_DarkModePending(Prefs::PENDING_DARK_MODE_ENABLE |

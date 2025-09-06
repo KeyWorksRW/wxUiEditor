@@ -26,8 +26,8 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 
     // When testing, always display the checkbox, otherwise if Python is preferred, then don't
     // display the checkbox since Python doesn't support it.
-    if (Project.getCodePreference() != GEN_LANG_PYTHON ||
-        (Project.hasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
+    if (Project.get_CodePreference() != GEN_LANG_PYTHON ||
+        (Project.HasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
     {
         long style_value = 0;
         if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
@@ -39,7 +39,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
         if (node->as_bool(prop_checked))
             m_checkbox->SetValue(true);
 
-        if (node->hasValue(prop_tooltip))
+        if (node->HasValue(prop_tooltip))
             m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
 
         auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_checkbox);
@@ -58,7 +58,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
             dlg->SetSizer(sizer);
     }
 
-    if (node->hasValue(prop_minimum_size))
+    if (node->HasValue(prop_minimum_size))
         sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
 
     return sizer;
@@ -124,26 +124,26 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     code.AddAuto();
 
     Code parent_name(code.node(), code.get_language());
-    if (!node->getParent()->isForm())
+    if (!node->get_Parent()->is_Form())
     {
-        auto parent = node->getParent();
+        auto parent = node->get_Parent();
         while (parent)
         {
-            if (parent->isContainer())
+            if (parent->is_Container())
             {
                 parent_name.NodeName(parent);
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer) ||
-                     parent->isGen(gen_StaticCheckboxBoxSizer) ||
-                     parent->isGen(gen_StaticRadioBtnBoxSizer))
+            else if (parent->is_Gen(gen_wxStaticBoxSizer) ||
+                     parent->is_Gen(gen_StaticCheckboxBoxSizer) ||
+                     parent->is_Gen(gen_StaticRadioBtnBoxSizer))
             {
                 // The () isn't added because Python and Ruby don't use it. C++ adds it in its
                 // own section below.
                 parent_name.NodeName(parent).Function("GetStaticBox");
                 break;
             }
-            parent = parent->getParent();
+            parent = parent->get_Parent();
         }
     }
     if (parent_name.empty())
@@ -181,14 +181,14 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
             .as_string(prop_orientation)
             .Comma()
             .Str(parent_name);
-        if (code.hasValue(prop_label))
+        if (code.HasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);
         }
         code.EndFunction();
     }
 
-    if (code.hasValue(prop_minimum_size))
+    if (code.HasValue(prop_minimum_size))
     {
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
@@ -207,7 +207,7 @@ bool StaticCheckboxBoxSizerGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_tooltip) && code.is_cpp())
+    if (code.HasValue(prop_tooltip) && code.is_cpp())
     {
         code.Eol(eol_if_needed).as_string(prop_checkbox_var_name).Function("SetToolTip(");
         code.QuotedString(prop_tooltip).EndFunction();
@@ -223,18 +223,18 @@ bool StaticCheckboxBoxSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->getParent();
-    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
-        !parent->isGen(gen_wxPopupTransientWindow))
+    auto parent = code.node()->get_Parent();
+    if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
+        !parent->is_Gen(gen_wxPopupTransientWindow))
     {
         code.Eol(eol_if_needed);
-        if (parent->isGen(gen_wxRibbonPanel))
+        if (parent->is_Gen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(code.node(), code.get_language()) != "this")
+            if (get_ParentName(code.node(), code.get_language()) != "this")
             {
                 code.ParentName().Add(".");
                 code.Function("SetSizerAndFit(");
@@ -262,7 +262,7 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 
     // The checkbox is always a class member, so we need to force it to be added to the header set
     set_hdr.insert("#include <wx/checkbox.h>");
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
         set_src.insert("#include <wx/valgen.h>");
     return true;
 }
@@ -277,7 +277,7 @@ int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->getParent()->isSizer())
+    if (node->get_Parent()->is_Sizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -291,7 +291,7 @@ int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     item.append_attribute("class").set_value("wxStaticBoxSizer");
     item.append_attribute("name").set_value(node->as_string(prop_var_name));
     item.append_child("orient").text().set(node->as_string(prop_orientation));
-    if (node->hasValue(prop_minimum_size))
+    if (node->HasValue(prop_minimum_size))
     {
         item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
@@ -322,7 +322,7 @@ std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node,
             if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

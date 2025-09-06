@@ -34,16 +34,16 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
     AddBookImageList(node, widget);
 
-    for (size_t idx = 0; idx < node->getChildCount(); ++idx)
+    for (size_t idx = 0; idx < node->get_ChildCount(); ++idx)
     {
-        auto child = node->getChild(idx);
-        if (child->hasValue(prop_tooltip))
+        auto child = node->get_Child(idx);
+        if (child->HasValue(prop_tooltip))
         {
             widget->SetPageToolTip(idx, child->as_string(prop_tooltip));
         }
     }
 
-    if (node->hasValue(prop_selected_tab_font))
+    if (node->HasValue(prop_selected_tab_font))
     {
         if (auto font = node->as_wxFont(prop_selected_tab_font); font.IsOk())
         {
@@ -51,7 +51,7 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
-    if (node->hasValue(prop_non_selected_tab_font))
+    if (node->HasValue(prop_non_selected_tab_font))
     {
         if (auto font = node->as_wxFont(prop_non_selected_tab_font); font.IsOk())
         {
@@ -70,10 +70,10 @@ void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
 {
     if (auto notebook = wxStaticCast(wxobject, wxAuiNotebook); notebook)
     {
-        for (size_t idx = 0; idx < node->getChildCount(); ++idx)
+        for (size_t idx = 0; idx < node->get_ChildCount(); ++idx)
         {
-            auto child = node->getChild(idx);
-            if (child->hasValue(prop_tooltip))
+            auto child = node->get_Child(idx);
+            if (child->HasValue(prop_tooltip))
             {
                 notebook->SetPageToolTip(idx, child->as_string(prop_tooltip));
             }
@@ -133,12 +133,12 @@ bool AuiNotebookGenerator::SettingsCode(Code& code)
     }
 #endif
 
-    if (code.node()->hasValue(prop_selected_tab_font))
+    if (code.node()->HasValue(prop_selected_tab_font))
     {
         code.GenFont(prop_selected_tab_font, "SetSelectedFont(");
         is_changed = true;
     }
-    if (code.node()->hasValue(prop_non_selected_tab_font))
+    if (code.node()->HasValue(prop_non_selected_tab_font))
     {
         code.GenFont(prop_non_selected_tab_font, "SetNormalFont(");
         is_changed = true;
@@ -150,10 +150,10 @@ bool AuiNotebookGenerator::SettingsCode(Code& code)
 bool AuiNotebookGenerator::AfterChildrenCode(Code& code)
 {
     bool is_tooltip_set = false;
-    for (size_t idx = 0; idx < code.node()->getChildCount(); ++idx)
+    for (size_t idx = 0; idx < code.node()->get_ChildCount(); ++idx)
     {
-        auto child = code.node()->getChild(idx);
-        if (child->hasValue(prop_tooltip))
+        auto child = code.node()->get_Child(idx);
+        if (child->HasValue(prop_tooltip))
         {
             is_tooltip_set = true;
             code.Eol().NodeName().Function("SetPageToolTip(").itoa(idx).Comma();
@@ -169,7 +169,7 @@ bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibook.h>", set_src, set_hdr);
-    if (node->hasValue(prop_persist_name))
+    if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");
     }
@@ -183,8 +183,8 @@ bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int AuiNotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiNotebook");

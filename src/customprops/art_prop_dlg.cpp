@@ -146,16 +146,16 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     {
         if (auto node = wxGetFrame().getSelectedNode(); node)
         {
-            if (node->isType(type_tool) || node->isType(type_ribbontool) ||
-                node->isType(type_aui_tool))
+            if (node->is_Type(type_tool) || node->is_Type(type_ribbontool) ||
+                node->is_Type(type_aui_tool))
             {
                 m_client = "wxART_TOOLBAR";
             }
-            else if (node->isType(type_menuitem))
+            else if (node->is_Type(type_menuitem))
             {
                 m_client = "wxART_MENU";
             }
-            else if (node->isGen(gen_wxButton))
+            else if (node->is_Gen(gen_wxButton))
             {
                 m_client = "wxART_BUTTON";
             }

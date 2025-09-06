@@ -24,11 +24,11 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
                                  DlgSize(node, prop_size), GetStyleInt(node));
 
     wxBookCtrlBase::Images bundle_list;
-    for (size_t idx_child = 0; idx_child < node->getChildCount(); ++idx_child)
+    for (size_t idx_child = 0; idx_child < node->get_ChildCount(); ++idx_child)
     {
-        if (node->getChild(idx_child)->hasValue(prop_bitmap))
+        if (node->get_Child(idx_child)->HasValue(prop_bitmap))
         {
-            auto bundle = node->getChild(idx_child)->as_wxBitmapBundle(prop_bitmap);
+            auto bundle = node->get_Child(idx_child)->as_wxBitmapBundle(prop_bitmap);
             if (!bundle.IsOk())
             {
                 bundle = wxue_img::bundle_unknown_svg(24, 24);
@@ -77,8 +77,8 @@ bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int ToolbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolbook");

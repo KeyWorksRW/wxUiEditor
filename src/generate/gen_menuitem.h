@@ -19,7 +19,7 @@ public:
                      GenLang /* language */) override;
 
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
-    bool modifyProperty(NodeProperty* prop, tt_string_view value) override;
+    bool ModifyProperty(NodeProperty* prop, tt_string_view value) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 

@@ -110,10 +110,10 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void NodeInfo::CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
-    node_memory.size += node->getNodeSize();
+    node_memory.size += node->get_NodeSize();
     ++node_memory.children;
 
-    for (auto& iter: node->getChildNodePtrs())
+    for (auto& iter: node->get_ChildNodePtrs())
     {
         CalcNodeMemory(iter.get(), node_memory);
     }
@@ -128,10 +128,10 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
     if (cur_sel)
     {
         label.clear();
-        label << "Generator: gen_" << cur_sel->declName();
+        label << "Generator: gen_" << cur_sel->get_DeclName();
         m_txt_generator->SetLabel(label);
         label.clear();
-        label << "Type: type_" << GenEnum::map_GenTypes.at(cur_sel->getGenType());
+        label << "Type: type_" << GenEnum::map_GenTypes.at(cur_sel->get_GenType());
         m_txt_type->SetLabel(label);
 
         node_memory.size = 0;
@@ -142,7 +142,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         m_txt_memory->SetLabel(label);
     }
 
-    CalcNodeMemory(Project.getProjectNode(), node_memory);
+    CalcNodeMemory(Project.get_ProjectNode(), node_memory);
 
     label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size,
                         node_memory.children);

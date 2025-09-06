@@ -66,7 +66,7 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 {
     InsertGeneratorInclude(node, "#include <wx/datectrl.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/dateevt.h>", set_src, set_hdr);
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
     {
         set_src.insert("#include <wx/valgen.h>");
     }
@@ -78,8 +78,8 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDatePickerCtrl");

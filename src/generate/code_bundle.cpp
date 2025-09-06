@@ -188,7 +188,7 @@ void Code::BundlePython(const tt_string_vector& parts)
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
             tt_string svg_name;
-            if (embed->form != node()->getForm())
+            if (embed->form != node()->get_Form())
             {
                 svg_name = embed->form->as_string(prop_python_file).filename();
                 svg_name.remove_extension();
@@ -316,7 +316,7 @@ void Code::BundlePython(const tt_string_vector& parts)
 
 void Code::AddPythonImageName(const EmbeddedImage* embed)
 {
-    if (embed->form->isGen(gen_Images))
+    if (embed->form->is_Gen(gen_Images))
     {
         tt_string import_name = embed->form->as_string(prop_python_file).filename();
         import_name.remove_extension();
@@ -328,7 +328,7 @@ void Code::AddPythonImageName(const EmbeddedImage* embed)
 
 void Code::AddPerlImageName(const EmbeddedImage* embed)
 {
-    if (embed->form->isGen(gen_Images))
+    if (embed->form->is_Gen(gen_Images))
     {
         tt_string import_name = embed->form->as_string(prop_perl_file).filename();
         import_name.remove_extension();
@@ -381,7 +381,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
             tt_string svg_name;
-            if (embed->form != node()->getForm())
+            if (embed->form != node()->get_Form())
             {
                 svg_name = embed->form->as_string(prop_ruby_file).filename();
                 svg_name.remove_extension();
@@ -456,7 +456,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
         }
         else if (bundle->lst_filenames.size() == 1)
         {
-            auto path = Project.getBaseDirectory(node(), GEN_LANG_RUBY);
+            auto path = Project.get_BaseDirectory(node(), GEN_LANG_RUBY);
 
             tt_string name(bundle->lst_filenames[0]);
             name.make_absolute();
@@ -468,7 +468,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
         }
         else if (bundle->lst_filenames.size() == 2)
         {
-            auto path = Project.getBaseDirectory(node(), GEN_LANG_RUBY);
+            auto path = Project.get_BaseDirectory(node(), GEN_LANG_RUBY);
 
             tt_string name(bundle->lst_filenames[0]);
             name.make_absolute();

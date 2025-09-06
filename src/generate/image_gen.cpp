@@ -84,7 +84,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
         }
         else if (code.is_python())
         {
-            if (iter_array->form->isGen(gen_Images))
+            if (iter_array->form->is_Gen(gen_Images))
             {
                 continue;
             }
@@ -114,7 +114,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
         }
         else if (code.is_ruby())
         {
-            if (iter_array->form->isGen(gen_Images))
+            if (iter_array->form->is_Gen(gen_Images))
             {
                 continue;
             }
@@ -342,7 +342,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
     {
         tt_string svg_name;
 
-        if (embed->form != code.node()->getForm())
+        if (embed->form != code.node()->get_Form())
         {
             svg_name = embed->form->as_string(prop_python_file).filename();
             svg_name.remove_extension();

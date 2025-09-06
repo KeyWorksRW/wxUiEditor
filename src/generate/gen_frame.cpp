@@ -53,13 +53,13 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto item = object;
 
     GenXrcObjectAttributes(node, item, "wxFrame");
-    if (!node->isPropValue(prop_variant, "normal"))
+    if (!node->is_PropValue(prop_variant, "normal"))
     {
         ADD_ITEM_PROP(prop_variant, "variant")
     }
     ADD_ITEM_PROP(prop_title, "title")
 
-    if (node->hasValue(prop_center))
+    if (node->HasValue(prop_center))
     {
         if (node->as_string(prop_center) == "wxVERTICAL" ||
             node->as_string(prop_center) == "wxHORIZONTAL" ||
@@ -72,7 +72,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
             object.append_child("centered").text().set(0);
         }
     }
-    if (node->hasValue(prop_icon))
+    if (node->HasValue(prop_icon))
     {
         tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
@@ -122,7 +122,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void FrameFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFrameXmlHandler");
-    if (node->hasValue(prop_icon))
+    if (node->HasValue(prop_icon))
     {
         handlers.emplace("wxIconXmlHandler");
         handlers.emplace("wxBitmapXmlHandler");

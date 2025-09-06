@@ -166,9 +166,9 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             m_source->writeLine();
         }
 
-        if (Project.hasValue(prop_ruby_project_preamble))
+        if (Project.HasValue(prop_ruby_project_preamble))
         {
-            WritePropSourceCode(Project.getProjectNode(), prop_ruby_project_preamble);
+            WritePropSourceCode(Project.get_ProjectNode(), prop_ruby_project_preamble);
         }
     }
 
@@ -181,7 +181,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     // before we need to join (finish) them.
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
-    if (m_form_node->isGen(gen_Images))
+    if (m_form_node->is_Gen(gen_Images))
     {
         m_source->writeLine();
         m_source->writeLine("require 'base64'");
@@ -219,11 +219,11 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
-        if (auto* gen = node->getGenerator(); gen)
+        if (auto* gen = node->get_Generator(); gen)
         {
             gen->GetImports(node, imports, GEN_LANG_RUBY);
         }
-        for (auto& child: node->getChildNodePtrs())
+        for (auto& child: node->get_ChildNodePtrs())
         {
             GatherImportModules(child.get(), GatherImportModules);
         }
@@ -238,7 +238,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_source->writeLine();
     m_header->writeLine();
 
-    if (m_form_node->hasValue(prop_relative_require_list))
+    if (m_form_node->HasValue(prop_relative_require_list))
     {
         tt_string_vector list;
         list.SetString(m_form_node->as_string(prop_relative_require_list));
@@ -253,12 +253,12 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    if (m_form_node->isType(type_frame_form) && m_form_node->as_bool(prop_import_all_dialogs))
+    if (m_form_node->is_Type(type_frame_form) && m_form_node->as_bool(prop_import_all_dialogs))
     {
         for (auto& form: forms)
         {
-            if ((form->isGen(gen_wxDialog) || form->isGen(gen_wxWizard)) &&
-                form->hasValue(prop_ruby_file))
+            if ((form->is_Gen(gen_wxDialog) || form->is_Gen(gen_wxWizard)) &&
+                form->HasValue(prop_ruby_file))
             {
                 tt_string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
@@ -311,7 +311,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_header->writeLine(tt_string("requires '") << m_form_node->as_string(prop_ruby_file) << "'\n");
     m_header->writeLine();
 
-    if (m_form_node->hasValue(prop_ruby_insert))
+    if (m_form_node->HasValue(prop_ruby_insert))
     {
         tt_string convert(m_form_node->as_string(prop_ruby_insert));
         convert.Replace("@@", "\n", tt::REPLACE::all);
@@ -344,7 +344,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    auto generator = m_form_node->getNodeDeclaration()->getGenerator();
+    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -364,7 +364,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    if (m_form_node->getPropPtr(prop_window_extra_style))
+    if (m_form_node->get_PropPtr(prop_window_extra_style))
     {
         code.clear();
         code.GenWindowSettings();
@@ -375,9 +375,9 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->getChildNodePtrs())
+    for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_wxContextMenuEvent))
+        if (child->is_Gen(gen_wxContextMenuEvent))
             continue;
         GenConstruction(child.get());
     }
@@ -396,20 +396,20 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         m_source->writeLine();
         tt_string tmp("Wx.persistent_register_and_restore(self, \"");
-        tmp << m_form_node->getNodeName() << "\");";
+        tmp << m_form_node->get_NodeName() << "\");";
         m_source->writeLine(tmp);
     }
 
     auto rlambda = [&](Node* node, auto&& rlambda) -> void
     {
-        if (node->hasValue(prop_persist_name))
+        if (node->HasValue(prop_persist_name))
         {
             tt_string code("Wx.persistent_register_and_restore(");
-            code << node->getNodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
+            code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
             m_source->writeLine(code);
         }
 
-        for (const auto& child: node->getChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
             rlambda(child.get(), rlambda);
         }
@@ -467,7 +467,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine(txt_ruby_get_animation, indent::auto_keep_whitespace);
     }
 
-    if (m_form_node->isGen(gen_wxWizard))
+    if (m_form_node->is_Gen(gen_wxWizard))
     {
         code.clear();
         // see for an example C:\rwCode\wxRuby3\samples\dialogs\wizard.rb
@@ -622,7 +622,7 @@ void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
 
 void RubyCodeGenerator::GenerateImagesForm()
 {
-    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {
         return;
     }
@@ -689,7 +689,7 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     // Sort events by function name
     std::sort(events.begin(), events.end(), sort_event_handlers);
 
-    bool inherited_class = m_form_node->hasValue(prop_ruby_inherit_name);
+    bool inherited_class = m_form_node->HasValue(prop_ruby_inherit_name);
     if (!inherited_class)
     {
         m_header->Indent();
@@ -800,7 +800,7 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
 
 tt_string MakeRubyPath(Node* node)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->getForm(), GEN_LANG_RUBY);
+    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_RUBY);
     if (path.empty())
         path = "./";
     else if (has_base_file)

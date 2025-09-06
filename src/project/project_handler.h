@@ -61,34 +61,34 @@ public:
     void Initialize(NodeSharedPtr project, bool allow_ui = true);
 
     // This will convert the project path into a full path
-    void setProjectFile(const tt_string& file);
-    void setProjectPath(const wxFileName* path);
+    void set_ProjectFile(const tt_string& file);
+    void set_ProjectPath(const wxFileName* path);
 
     // Returns the full path to the directory the project file is in
-    tt_string getProjectPath() const;
+    tt_string get_ProjectPath() const;
 
     // Returns the full path to the directory the project file is in
-    tt_string getwxProjectPath() const;
+    tt_string get_wxProjectPath() const;
 
     // Returns the full path to the project filename
-    tt_string getProjectFile() const;
+    tt_string get_ProjectFile() const;
 
     const wxFileName* get_wxFileName() const;
 
     // Get a bit flag indicating which output types are enabled.
     //
     // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
-    size_t getOutputType(int flags = OUT_FLAG_NONE) const;
+    size_t get_OutputType(int flags = OUT_FLAG_NONE) const;
 
     // Change to the project's directory
     bool ChangeDir() const;
 
     tt_string ArtDirectory();
-    const wxFileName* getArtPath();
+    const wxFileName* get_ArtPath();
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
-    tt_string getBaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    tt_string get_BaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
 
     // Returns the absolute path to the output file for this node. If no output filename is
     // specified, first will still contain a path with no filename, and second will be false.
@@ -97,27 +97,27 @@ public:
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
-    tt_string getDerivedDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    tt_string get_DerivedDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
-    tt_string getDerivedFilename(Node*) const;
+    tt_string get_DerivedFilename(Node*) const;
 
-    Node* getProjectNode() const { return m_project_node.get(); }
-    auto& getChildNodePtrs() { return m_project_node->getChildNodePtrs(); }
-    Node* getChild(size_t index) { return m_project_node->getChild(index); }
+    Node* get_ProjectNode() const { return m_project_node.get(); }
+    auto& get_ChildNodePtrs() { return m_project_node->get_ChildNodePtrs(); }
+    Node* get_Child(size_t index) { return m_project_node->get_Child(index); }
 
     // This includes forms in folders and sub-folders
     void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
 
     // Returns the first project child that is a form, or nullptr if no form children found.
-    Node* getFirstFormChild(Node* node = nullptr) const;
+    Node* get_FirstFormChild(Node* node = nullptr) const;
 
     // Make class and filenames unique to the project
     void FixupDuplicatedNode(Node* new_node);
 
-    auto getProjectVersion() const { return m_ProjectVersion; }
-    auto getOriginalProjectVersion() const { return m_OriginalProjectVersion; }
+    auto get_ProjectVersion() const { return m_ProjectVersion; }
+    auto get_OriginalProjectVersion() const { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }
 
     // Call this after the user has been warned about saving a project file that is incompatible
@@ -126,28 +126,28 @@ public:
 
     bool AddOptionalComments() const { return m_project_node->as_bool(prop_optional_comments); }
 
-    // Call setProjectUpdated() if the project file's minimum version needs to be updated
-    void setProjectUpdated() { m_isProject_updated = true; }
-    // Call isProjectUpdated() to determine if the project file's minimum version needs to be
+    // Call set_ProjectUpdated() if the project file's minimum version needs to be updated
+    void set_ProjectUpdated() { m_isProject_updated = true; }
+    // Call is_ProjectUpdated() to determine if the project file's minimum version needs to be
     // updated
-    bool isProjectUpdated() const { return m_isProject_updated; }
+    bool is_ProjectUpdated() const { return m_isProject_updated; }
 
-    bool isUiAllowed() const { return m_allow_ui; }
+    bool is_UiAllowed() const { return m_allow_ui; }
 
-    size_t getChildCount() const { return m_project_node->getChildCount(); }
+    size_t get_ChildCount() const { return m_project_node->get_ChildCount(); }
 
     // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
     // override of the language.
-    GenLang getCodePreference(Node* node = nullptr) const;
+    GenLang get_CodePreference(Node* node = nullptr) const;
 
     // Returns all of the languages that are enabled for this project. The project's Code
     // Preference is always included.
-    size_t getGenerateLanguages() const;
+    size_t get_GenerateLanguages() const;
 
     // Assume major, minor, and patch have 99 possible values.
     // Returns major * 10000 + minor * 100 + patch
     // E.g., wxWidgets 3.1.6 returns 30106, 3.2.0 returns 30200
-    int getLangVersion(GenLang language) const;
+    int get_LangVersion(GenLang language) const;
 
     // const tt_string& value(GenEnum::PropName name) const { return
     // m_project_node->as_string(name); }
@@ -159,7 +159,7 @@ public:
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
-    bool hasValue(PropName name) const { return m_project_node->hasValue(name); }
+    bool HasValue(PropName name) const { return m_project_node->HasValue(name); }
 
     bool LoadProject(const tt_string& file, bool allow_ui = true);
     NodeSharedPtr LoadProject(pugi::xml_document& doc, bool allow_ui = true);
@@ -167,13 +167,13 @@ public:
     bool Import(ImportXML& import, tt_string& file, bool append = false, bool allow_ui = true);
     bool ImportProject(tt_string& file, bool allow_ui = true);
 
-    void appendCrafter(wxArrayString& files);
-    void appendDialogBlocks(wxArrayString& files);
-    void appendFormBuilder(wxArrayString& files);
-    void appendGlade(wxArrayString& files);
-    void appendSmith(wxArrayString& files);
-    void appendXRC(wxArrayString& files);
-    void appendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs);
+    void AppendCrafter(wxArrayString& files);
+    void AppendDialogBlocks(wxArrayString& files);
+    void AppendFormBuilder(wxArrayString& files);
+    void AppendGlade(wxArrayString& files);
+    void AppendSmith(wxArrayString& files);
+    void AppendXRC(wxArrayString& files);
+    void AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs);
 
     bool NewProject(bool create_empty = false, bool allow_ui = true);
 
@@ -193,30 +193,30 @@ public:
 
     // After calling FindWxueFunctions(), this will return the form that should be used to
     // generate the one copy of wxueBundleSVG() that is used by all forms.
-    Node* getForm_BundleSVG() const { return m_form_BundleSVG; }
+    Node* get_Form_BundleSVG() const { return m_form_BundleSVG; }
 
     // After calling FindWxueFunctions(), this will return the form that should be used to
     // generate the one copy of wxueImage() that is used by all forms.
-    Node* getForm_Image() const { return m_form_Image; }
+    Node* get_Form_Image() const { return m_form_Image; }
 
     // After calling FindWxueFunctions(), this will return the form that should be used to
     // generate the one copy of wxueAnimation() that is used by all forms.
-    Node* getForm_Animation() const { return m_form_BundleBitmaps; }
+    Node* get_Form_Animation() const { return m_form_BundleBitmaps; }
 
     // This will assume any ImagesList class will be the first child of the project, and will
     // either return that Node* or nullptr if no ImagesList class is found.
-    Node* getImagesForm();
+    Node* get_ImagesForm();
 
     // This will assume any Data class will be the first or second child of the project, and
     // will either return that Node* or nullptr if no Data class is found.
-    Node* getDataForm();
+    Node* get_DataForm();
 
     // Sets project property value only if the property exists, returns false if it doesn't
     // exist.
     template <typename T>
     bool set_value(PropName name, T value)
     {
-        if (auto prop = m_project_node->getPropPtr(name); prop)
+        if (auto prop = m_project_node->get_PropPtr(name); prop)
         {
             prop->set_value(value);
             return true;

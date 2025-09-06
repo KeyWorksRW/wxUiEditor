@@ -32,10 +32,10 @@ struct NodeMemory
 
 static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
-    node_memory.size += node->getNodeSize();
+    node_memory.size += node->get_NodeSize();
     ++node_memory.children;
 
-    for (auto& iter: node->getChildNodePtrs())
+    for (auto& iter: node->get_ChildNodePtrs())
     {
         CalcNodeMemory(iter.get(), node_memory);
     }
@@ -356,10 +356,10 @@ void MsgFrame::UpdateNodeInfo()
         }
 
         label.clear();
-        label << "Generator: gen_" << cur_sel->declName();
+        label << "Generator: gen_" << cur_sel->get_DeclName();
         m_txt_generator->SetLabel(label);
         label.clear();
-        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->getGenType());
+        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->get_GenType());
         m_txt_type->SetLabel(label);
 
         node_memory.size = 0;
@@ -369,7 +369,7 @@ void MsgFrame::UpdateNodeInfo()
                             node_memory.children, node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
 
-        if (auto generator = cur_sel->getGenerator(); generator)
+        if (auto generator = cur_sel->get_Generator(); generator)
         {
             auto gen_label = generator->GetHelpText(cur_sel);
             if (gen_label.empty())
@@ -386,7 +386,7 @@ void MsgFrame::UpdateNodeInfo()
             m_hyperlink->SetURL(url);
         }
 
-        CalcNodeMemory(Project.getProjectNode(), node_memory);
+        CalcNodeMemory(Project.get_ProjectNode(), node_memory);
 
         label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size,
                             node_memory.children);
@@ -410,7 +410,7 @@ void MsgFrame::OnParent(wxCommandEvent& /* event unused */)
     auto cur_sel = wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
-        auto parent = cur_sel->getParent();
+        auto parent = cur_sel->get_Parent();
         if (!parent)
         {
             wxMessageBox("Current node doesn't have a parent!");

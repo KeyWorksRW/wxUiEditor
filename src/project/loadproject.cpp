@@ -169,7 +169,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
-    Project.setProjectFile(file);
+    Project.set_ProjectFile(file);
     ProjectImages.CollectBundles();
 
     // Imported projects start with an older version so that they pass through the old project
@@ -214,7 +214,7 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
             FAIL_MSG("Project does not have a \"node\" node.");
             throw std::runtime_error("Invalid project file");
         }
-        project = NodeCreation.createProjectNode(&node, allow_ui);
+        project = NodeCreation.CreateProjectNode(&node, allow_ui);
     }
     catch (const std::exception& err)
     {
@@ -257,7 +257,7 @@ static const auto lstStdButtonEvents = {
 
 #include "utils.h"  // for old style art indices
 
-NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* parent,
+NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* parent,
                                              bool check_for_duplicates, bool allow_ui)
 {
     auto class_name = xml_obj.attribute("class").as_str();
@@ -268,7 +268,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
     if (class_name == "wxListCtrl")
         class_name = "wxListView";
 
-    auto new_node = createNode(class_name, parent).first;
+    auto new_node = CreateNode(class_name, parent).first;
     if (!new_node)
     {
         FAIL_MSG(tt_string() << "Invalid project file: could not create " << class_name);
@@ -282,7 +282,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
         if (iter.name().starts_with("wxEVT_"))
         {
-            if (auto event = new_node->getEvent(iter.name()); event)
+            if (auto event = new_node->get_Event(iter.name()); event)
             {
                 event->set_value(iter.value());
             }
@@ -292,7 +292,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
         NodeProperty* prop = nullptr;
         if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
         {
-            prop = new_node->getPropPtr(find_prop->second);
+            prop = new_node->get_PropPtr(find_prop->second);
 
             if (prop)
             {
@@ -320,7 +320,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     prop->set_value(value);
                     // Conversion from quoted items to semicolon separated items was introduced
                     // in 1.1.1 (project version 18)
-                    if (Project.getProjectVersion() < 18)
+                    if (Project.get_ProjectVersion() < 18)
                     {
                         Project.ForceProjectVersion(18);
                     }
@@ -329,7 +329,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // If there is a mainframe window, then convert dialog units to pixels since
                 // starting with wxUiEditor 21 (1.3.0) all positions and sizes are scaled
                 // automatically using FromDIP().
-                if (Project.getOriginalProjectVersion() < 21 && allow_ui &&
+                if (Project.get_OriginalProjectVersion() < 21 && allow_ui &&
                     (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
                     tt::contains(iter.value(), 'd', tt::CASE::either))
                 {
@@ -365,7 +365,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // 1.2.1 removes the duplicate prop_hide_children, so this sets prop_hidden to
                 // true if prop_hide_children is true.
                 else if (prop->get_name() == prop_hide_children &&
-                         new_node->isGen(gen_wxStaticBoxSizer) && iter.as_bool())
+                         new_node->is_Gen(gen_wxStaticBoxSizer) && iter.as_bool())
                 {
                     new_node->set_value(prop_hidden, true);
                     prop->set_value(false);
@@ -382,15 +382,15 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     // wxGenericAnimationCtrl -- if you don't, the app will crash. Since this is
                     // only needed to display .ANI files on wxGTK, we remove the generic flag.
                     if (prop->get_name() == prop_use_generic &&
-                        new_node->isGen(gen_wxAnimationCtrl))
+                        new_node->is_Gen(gen_wxAnimationCtrl))
                     {
                         prop->set_value(false);
                     }
                 }
                 else if (prop->get_name() == prop_contents &&
-                         Project.getOriginalProjectVersion() < 18)
+                         Project.get_OriginalProjectVersion() < 18)
                 {
-                    if (new_node->isGen(gen_wxCheckListBox) && iter.as_sview().size() &&
+                    if (new_node->is_Gen(gen_wxCheckListBox) && iter.as_sview().size() &&
                         iter.as_sview()[0] == '"')
                     {
                         convert_quoted_array();
@@ -401,7 +401,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     }
                 }
                 else if (prop->type() == type_stringlist_semi &&
-                         Project.getOriginalProjectVersion() < 18)
+                         Project.get_OriginalProjectVersion() < 18)
                 {
                     if (iter.as_sview().size() && iter.as_sview()[0] == '"')
                     {
@@ -416,7 +416,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // Imported projects will be set as version ImportProjectVersion to get the fixups
                 // of constant to friendly name, and bit flag conflict resolution.
 
-                else if (Project.getProjectVersion() <= ImportProjectVersion)
+                else if (Project.get_ProjectVersion() <= ImportProjectVersion)
                 {
                     switch (prop->type())
                     {
@@ -477,7 +477,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                     prop->set_value(iter.value());
                                 }
 
-                                if (auto gen = new_node->getGenerator(); gen)
+                                if (auto gen = new_node->get_Generator(); gen)
                                 {
                                     gen->VerifyProperty(prop);
                                 }
@@ -518,32 +518,32 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 if (find_prop->second == prop_derived_class)
                 {
                     new_node->set_value(prop_subclass, iter.value());
-                    Project.setProjectUpdated();
+                    Project.set_ProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
                 else if (find_prop->second == prop_derived_header)
                 {
                     new_node->set_value(prop_subclass_header, iter.value());
-                    Project.setProjectUpdated();
+                    Project.set_ProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
                 else if (find_prop->second == prop_derived_params)
                 {
                     new_node->set_value(prop_subclass_params, iter.value());
-                    Project.setProjectUpdated();
+                    Project.set_ProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
 
                 else if (find_prop->second == prop_base_hdr_includes)
                 {
                     new_node->set_value(prop_header_preamble, iter.value());
-                    Project.setProjectUpdated();
+                    Project.set_ProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
                 else if (find_prop->second == prop_base_src_includes)
                 {
                     new_node->set_value(prop_source_preamble, iter.value());
-                    Project.setProjectUpdated();
+                    Project.set_ProjectUpdated();
                     Project.ForceProjectVersion(curSupportedVer);
                 }
             }
@@ -555,7 +555,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
             {
                 if (tt::is_sameas(iter.name(), iterStdBtns))
                 {
-                    if (auto event = new_node->getEvent(iter.name()); event)
+                    if (auto event = new_node->get_Event(iter.name()); event)
                     {
                         event->set_value(iter.value());
                     }
@@ -632,17 +632,17 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
     {
         // Order is important -- don't call GetProject() if check_for_duplicates is false
         // because there may not be a project yet.
-        if (check_for_duplicates && parent == Project.getProjectNode())
+        if (check_for_duplicates && parent == Project.get_ProjectNode())
             Project.FixupDuplicatedNode(new_node.get());
-        parent->adoptChild(new_node);
+        parent->AdoptChild(new_node);
     }
 
     for (auto child = xml_obj.child("node"); child; child = child.next_sibling("node"))
     {
-        createNodeFromXml(child, new_node.get(), false, allow_ui);
+        CreateNodeFromXml(child, new_node.get(), false, allow_ui);
     }
 
-    if (new_node->isGen(gen_wxGridBagSizer))
+    if (new_node->is_Gen(gen_wxGridBagSizer))
     {
         GridBag::GridBagSort(new_node.get());
     }
@@ -650,7 +650,7 @@ NodeSharedPtr NodeCreator::createNodeFromXml(pugi::xml_node& xml_obj, Node* pare
     return new_node;
 }
 
-NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
+NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
 {
     auto node_decl = m_a_declarations[gen_Project];
     auto new_node = std::make_shared<Node>(node_decl);
@@ -661,9 +661,9 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
     size_t base = 0;
     for (auto class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
     {
-        for (size_t index = 0; index < class_info->getPropertyCount(); ++index)
+        for (size_t index = 0; index < class_info->get_PropertyCount(); ++index)
         {
-            auto prop_declaration = class_info->getPropDeclaration(index);
+            auto prop_declaration = class_info->get_PropDeclaration(index);
 
             // Set the default value, either from the property info, or an override from this class
             auto defaultValue = prop_declaration->getDefaultValue();
@@ -674,13 +674,13 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
                     defaultValue = result.value();
             }
 
-            auto prop = new_node->addNodeProperty(prop_declaration);
+            auto prop = new_node->AddNodeProperty(prop_declaration);
             prop->set_value(defaultValue);
         }
 
-        for (size_t index = 0; index < class_info->getEventCount(); ++index)
+        for (size_t index = 0; index < class_info->get_EventCount(); ++index)
         {
-            new_node->addNodeEvent(class_info->getEventInfo(index));
+            new_node->AddNodeEvent(class_info->get_EventInfo(index));
         }
 
         if (base >= node_info_base_count)
@@ -698,7 +698,7 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
         NodeProperty* prop = nullptr;
         if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
         {
-            prop = new_node->getPropPtr(find_prop->second);
+            prop = new_node->get_PropPtr(find_prop->second);
 
             if (prop)
             {
@@ -707,7 +707,7 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
                     prop->set_value(iter.as_bool());
                 }
                 else if (prop->type() == type_stringlist_semi &&
-                         Project.getOriginalProjectVersion() < 18)
+                         Project.get_OriginalProjectVersion() < 18)
                 {
                     auto view = iter.as_sview();
                     if (view.size() > 0 && view[0] == '"')
@@ -745,10 +745,10 @@ NodeSharedPtr NodeCreator::createProjectNode(pugi::xml_node* xml_obj, bool allow
 
     for (auto child = xml_obj->child("node"); child; child = child.next_sibling("node"))
     {
-        createNodeFromXml(child, new_node.get(), false, allow_ui);
+        CreateNodeFromXml(child, new_node.get(), false, allow_ui);
     }
 
-    if (new_node->isGen(gen_wxGridBagSizer))
+    if (new_node->is_Gen(gen_wxGridBagSizer))
     {
         GridBag::GridBagSort(new_node.get());
     }
@@ -820,7 +820,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         }
 
         // By having the importer create an XML document, we can pass it through
-        // NodeCreation.createNodeFromXml() which will fix bitflag conflicts, convert wxWidgets
+        // NodeCreation.CreateNodeFromXml() which will fix bitflag conflicts, convert wxWidgets
         // constants to friendly names, and handle old-project style conversions.
 
         auto& doc = import.GetDocument();
@@ -835,52 +835,52 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             return false;
         }
 
-        if (append && m_project_node->getChildCount())
+        if (append && m_project_node->get_ChildCount())
         {
             auto form = project.child("node");
             while (form)
             {
-                NodeCreation.createNodeFromXml(form, m_project_node.get(), false, allow_ui);
+                NodeCreation.CreateNodeFromXml(form, m_project_node.get(), false, allow_ui);
                 form = form.next_sibling("node");
             }
 
             return true;
         }
 
-        auto project_node = NodeCreation.createProjectNode(&project);
+        auto project_node = NodeCreation.CreateProjectNode(&project);
 
         auto SetLangFilenames = [&]()
         {
-            for (const auto& iter: project_node->getChildNodePtrs())
+            for (const auto& iter: project_node->get_ChildNodePtrs())
             {
                 // If importing from wxGlade, then either a combined file will be set, or the
                 // individual file for the language will be already set.
-                if (iter->hasValue(prop_base_file) &&
+                if (iter->HasValue(prop_base_file) &&
                     project_node->as_string(prop_code_preference) != "C++")
                 {
                     if (project_node->as_string(prop_code_preference) == "Python" &&
-                        !iter->hasValue(prop_python_file))
+                        !iter->HasValue(prop_python_file))
                     {
                         iter->set_value(prop_python_file, iter->as_string(prop_base_file));
                     }
                     else if (project_node->as_string(prop_code_preference) == "Ruby" &&
-                             !iter->hasValue(prop_ruby_file))
+                             !iter->HasValue(prop_ruby_file))
                     {
                         iter->set_value(prop_ruby_file, iter->as_string(prop_base_file));
                     }
                     else if (project_node->as_string(prop_code_preference) == "XRC" &&
-                             !iter->hasValue(prop_xrc_file))
+                             !iter->HasValue(prop_xrc_file))
                     {
                         iter->set_value(prop_xrc_file, iter->as_string(prop_base_file));
                         // XRC files can be combined into a single file
-                        if (!project_node->hasValue(prop_combined_xrc_file))
+                        if (!project_node->HasValue(prop_combined_xrc_file))
                             project_node->set_value(prop_combined_xrc_file,
                                                     iter->as_string(prop_base_file));
                     }
                 }
             }
 
-            if (project_node->getChildCount() > 1 &&
+            if (project_node->get_ChildCount() > 1 &&
                 project_node->as_string(prop_code_preference) != "XRC")
             {
                 wxMessageBox("Each form must have a unique base filename when generating Python or "
@@ -947,14 +947,14 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
         file.replace_extension(".wxui");
-        Project.setProjectFile(file);
+        Project.set_ProjectFile(file);
         ProjectImages.CollectBundles();
 
 #if defined(_DEBUG)
         // If the file has been created once before, then for the first form, copy the old classname
         // and base filename to the re-converted first form.
 
-        if (m_project_node->getChildCount() && file.file_exists())
+        if (m_project_node->get_ChildCount() && file.file_exists())
         {
             doc.reset();
             auto result = doc.load_file_string(file);
@@ -976,10 +976,10 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
             else
             {
                 if (auto old_project = LoadProject(doc, allow_ui);
-                    old_project && old_project->getChildCount())
+                    old_project && old_project->get_ChildCount())
                 {
-                    auto old_form = old_project->getChild(0);
-                    auto new_form = m_project_node->getChild(0);
+                    auto old_form = old_project->get_Child(0);
+                    auto new_form = m_project_node->get_Child(0);
                     new_form->set_value(prop_class_name, old_form->as_string(prop_class_name));
                     new_form->set_value(prop_base_file, old_form->as_string(prop_base_file));
                 }
@@ -1006,7 +1006,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     if (create_empty)
     {
-        auto project = NodeCreation.createProjectNode(nullptr);
+        auto project = NodeCreation.CreateProjectNode(nullptr);
 
         tt_string file;
         file.assignCwd();
@@ -1090,7 +1090,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
         file.replace_extension(".wxui");
-        Project.setProjectFile(file);
+        Project.set_ProjectFile(file);
 
         if (allow_ui)
         {
@@ -1106,7 +1106,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
-    auto project = NodeCreation.createProjectNode(nullptr);
+    auto project = NodeCreation.CreateProjectNode(nullptr);
 
     tt_string file;
     tt_cwd starting_cwd;
@@ -1117,7 +1117,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
     file.replace_extension(".wxui");
-    Project.setProjectFile(file);
+    Project.set_ProjectFile(file);
 
     tt_string imported_from;
 
@@ -1198,29 +1198,29 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         {
             path.SetExt("wxui");
             path.MakeAbsolute();
-            setProjectPath(&path);
+            set_ProjectPath(&path);
         }
         wxGetFrame().setImportedFlag();
     }
     ProjectImages.CollectBundles();
 
     wxGetFrame().FireProjectLoadedEvent();
-    if (m_project_node->getChildCount())
+    if (m_project_node->get_ChildCount())
         wxGetFrame().setModified();
     return true;
 }
 
-void ProjectHandler::appendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
+void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
     {
         const auto& project = winres.GetProjectPtr();
-        for (const auto& child: project->getChildNodePtrs())
+        for (const auto& child: project->get_ChildNodePtrs())
         {
-            auto new_node = NodeCreation.makeCopy(child);
+            auto new_node = NodeCreation.MakeCopy(child);
             Project.FixupDuplicatedNode(new_node.get());
-            m_project_node->adoptChild(new_node);
+            m_project_node->AdoptChild(new_node);
         }
         if (m_allow_ui)
         {
@@ -1230,7 +1230,7 @@ void ProjectHandler::appendWinRes(const tt_string& rc_file, std::vector<tt_strin
     }
 }
 
-void ProjectHandler::appendCrafter(wxArrayString& files)
+void ProjectHandler::AppendCrafter(wxArrayString& files)
 {
     for (const auto& file: files)
     {
@@ -1257,9 +1257,9 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
                 cur_sel = m_project_node.get();
             else
             {
-                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
-                    cur_sel = cur_sel->getFolder();
+                    cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
                         cur_sel = m_project_node.get();
                 }
@@ -1268,7 +1268,7 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
                     new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
@@ -1284,7 +1284,7 @@ void ProjectHandler::appendCrafter(wxArrayString& files)
     }
 }
 
-void ProjectHandler::appendFormBuilder(wxArrayString& files)
+void ProjectHandler::AppendFormBuilder(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1311,9 +1311,9 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
                 cur_sel = m_project_node.get();
             else
             {
-                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
-                    cur_sel = cur_sel->getFolder();
+                    cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
                         cur_sel = m_project_node.get();
                 }
@@ -1322,7 +1322,7 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
                     new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
@@ -1338,7 +1338,7 @@ void ProjectHandler::appendFormBuilder(wxArrayString& files)
     }
 }
 
-void ProjectHandler::appendDialogBlocks(wxArrayString& files)
+void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1365,9 +1365,9 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
                 cur_sel = m_project_node.get();
             else
             {
-                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
-                    cur_sel = cur_sel->getFolder();
+                    cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
                         cur_sel = m_project_node.get();
                 }
@@ -1376,7 +1376,7 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
                     new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
@@ -1392,7 +1392,7 @@ void ProjectHandler::appendDialogBlocks(wxArrayString& files)
     }
 }
 
-void ProjectHandler::appendGlade(wxArrayString& files)
+void ProjectHandler::AppendGlade(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1419,9 +1419,9 @@ void ProjectHandler::appendGlade(wxArrayString& files)
                 cur_sel = m_project_node.get();
             else
             {
-                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
-                    cur_sel = cur_sel->getFolder();
+                    cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
                         cur_sel = m_project_node.get();
                 }
@@ -1430,7 +1430,7 @@ void ProjectHandler::appendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
                     new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
@@ -1446,7 +1446,7 @@ void ProjectHandler::appendGlade(wxArrayString& files)
     }
 }
 
-void ProjectHandler::appendSmith(wxArrayString& files)
+void ProjectHandler::AppendSmith(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1473,9 +1473,9 @@ void ProjectHandler::appendSmith(wxArrayString& files)
                 cur_sel = m_project_node.get();
             else
             {
-                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
-                    cur_sel = cur_sel->getFolder();
+                    cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
                         cur_sel = m_project_node.get();
                 }
@@ -1484,7 +1484,7 @@ void ProjectHandler::appendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
                     new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
@@ -1500,7 +1500,7 @@ void ProjectHandler::appendSmith(wxArrayString& files)
     }
 }
 
-void ProjectHandler::appendXRC(wxArrayString& files)
+void ProjectHandler::AppendXRC(wxArrayString& files)
 {
     for (auto& file: files)
     {
@@ -1528,9 +1528,9 @@ void ProjectHandler::appendXRC(wxArrayString& files)
                 cur_sel = m_project_node.get();
             else
             {
-                if (!cur_sel->isGen(gen_Project) && !cur_sel->isGen(gen_folder))
+                if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
-                    cur_sel = cur_sel->getFolder();
+                    cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
                         cur_sel = m_project_node.get();
                 }
@@ -1539,7 +1539,7 @@ void ProjectHandler::appendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                if (auto new_node = NodeCreation.createNodeFromXml(form, cur_sel, true, m_allow_ui);
+                if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
                     new_node)
                 {
                     FinalImportCheck(new_node.get(), false);
@@ -1557,9 +1557,9 @@ void ProjectHandler::appendXRC(wxArrayString& files)
 
 void ProjectHandler::RecursiveNodeCheck(Node* node)
 {
-    if (auto prop_ptr = node->getPropPtr(prop_alignment); prop_ptr && prop_ptr->as_string().size())
+    if (auto prop_ptr = node->get_PropPtr(prop_alignment); prop_ptr && prop_ptr->as_string().size())
     {
-        if (auto parent = node->getParent(); parent && parent->isSizer())
+        if (auto parent = node->get_Parent(); parent && parent->is_Sizer())
         {
             tt_string old_value = prop_ptr->as_string();
             if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
@@ -1618,7 +1618,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
         }
     }
 
-    if (node->isGen(gen_wxFlexGridSizer) || node->isGen(gen_wxGridSizer))
+    if (node->is_Gen(gen_wxFlexGridSizer) || node->is_Gen(gen_wxGridSizer))
     {
         // Don't set prop_rows if prop_cols is set. This lets wxWidgets determine the number of
         // rows rather than relying on the user to always figure it out (or for our code
@@ -1634,7 +1634,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
         }
     }
 
-    for (auto& iter: node->getChildNodePtrs())
+    for (auto& iter: node->get_ChildNodePtrs())
     {
         RecursiveNodeCheck(iter.get());
     }
@@ -1648,12 +1648,12 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
 
 void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
 {
-    if (set_line_length && parent->isGen(gen_Project))
+    if (set_line_length && parent->is_Gen(gen_Project))
     {
         parent->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
         parent->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
         parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
-        if (!parent->hasValue(prop_wxWidgets_version))
+        if (!parent->HasValue(prop_wxWidgets_version))
         {
             parent->set_value(prop_wxWidgets_version, "3.1.0");
         }

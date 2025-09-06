@@ -37,9 +37,9 @@ tt_string ConvertToCodeString(const tt_string& text);
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr);
 
-// This is *NOT* the same as getNodeName() -- this will handle wxStaticBox and
+// This is *NOT* the same as get_NodeName() -- this will handle wxStaticBox and
 // wxCollapsiblePane parents as well as "normal" parents
-tt_string GetParentName(Node* node, GenLang language);
+tt_string get_ParentName(Node* node, GenLang language);
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //

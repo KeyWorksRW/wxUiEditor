@@ -94,18 +94,18 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
 void FindGenerators(Node* node,
                     std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
 {
-    if (node->isGen(gen_Images) || node->isGen(gen_Data))
+    if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data))
         return;
-    if (!node->isGen(gen_folder) && !node->isGen(gen_sub_folder))
+    if (!node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
     {
-        if (!used.contains(map_GenNames[node->getGenName()]))
+        if (!used.contains(map_GenNames[node->get_GenName()]))
         {
-            used.emplace(map_GenNames[node->getGenName()]);
+            used.emplace(map_GenNames[node->get_GenName()]);
         }
     }
-    if (node->getChildCount())
+    if (node->get_ChildCount())
     {
-        for (auto& child: node->getChildNodePtrs())
+        for (auto& child: node->get_ChildNodePtrs())
         {
             FindGenerators(child.get(), used);
         }
@@ -170,7 +170,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 {
     std::unordered_set<std::string, str_view_hash, std::equal_to<>> used;
 
-    for (const auto& child: Project.getProjectNode()->getChildNodePtrs())
+    for (const auto& child: Project.get_ProjectNode()->get_ChildNodePtrs())
     {
         FindGenerators(child.get(), used);
     }

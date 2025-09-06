@@ -48,7 +48,7 @@ void GenInhertedClass(GenResults& results)
     {
         if (auto& file = form->as_string(prop_derived_file); file.size())
         {
-            path = Project.getDerivedFilename(form);
+            path = Project.get_DerivedFilename(form);
             if (path.empty())
                 continue;
             if (path.file_exists())
@@ -81,7 +81,7 @@ void GenInhertedClass(GenResults& results)
         auto cpp_cw = std::make_unique<FileCodeWriter>(path);
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(Project.getProjectNode(), form);
+        auto retval = codegen.GenerateDerivedClass(Project.get_ProjectNode(), form);
         if (retval == result::fail)
         {
             results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -215,7 +215,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
     if (ClassList.size())
     {
         if (ClassList[0].ends_with(".cmake"))
-            forms.emplace_back(Project.getProjectNode());
+            forms.emplace_back(Project.get_ProjectNode());
     }
 
     Project.CollectForms(forms);
@@ -230,12 +230,12 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
             // names.
 
             tt_string class_name(form->as_string(prop_class_name));
-            if (form->isGen(gen_Project))
+            if (form->is_Gen(gen_Project))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
-                tt_string path =
-                    Project.getProjectPath() + Project.getProjectNode()->as_string(prop_cmake_file);
+                tt_string path = Project.get_ProjectPath() +
+                                 Project.get_ProjectNode()->as_string(prop_cmake_file);
                 path.make_absolute();
                 tt_string tmp_path(path);
                 if (auto pos_file = path.find_filename(); tt::is_found(pos_file))
@@ -252,7 +252,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 // .cmake file.
                 GenResults tmp_results;
                 tmp_results.updated_files.emplace_back(tmp_path);
-                WriteCMakeFile(Project.getProjectNode(), tmp_results, 2);
+                WriteCMakeFile(Project.get_ProjectNode(), tmp_results, 2);
 
                 auto paths = root.append_child("paths");
 
@@ -267,13 +267,13 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 paths.append_child("right-readonly").text().set("1");
                 continue;
             }
-            else if (form->isGen(gen_Images))
+            else if (form->is_Gen(gen_Images))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
                 class_name = "Images";
             }
-            else if (form->isGen(gen_Data))
+            else if (form->is_Gen(gen_Data))
             {
                 if (language != GEN_LANG_CPLUSPLUS)
                     continue;
@@ -485,7 +485,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         paths.append_child("left").text().set(path.c_str());
                         paths.append_child("left-readonly").text().set("0");
 
-                        tmp_path.make_relative(Project.getProjectPath());
+                        tmp_path.make_relative(Project.get_ProjectPath());
                         tmp_path.make_absolute();
                         paths.append_child("right").text().set(tmp_path.c_str());
                         paths.append_child("right-readonly").text().set("1");

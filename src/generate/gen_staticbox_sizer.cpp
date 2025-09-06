@@ -45,12 +45,12 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     Node* node = code.node();
 
     tt_string parent_name(code.is_cpp() ? "this" : code.is_perl() ? "$self" : "self");
-    if (!node->getParent()->isForm())
+    if (!node->get_Parent()->is_Form())
     {
-        auto parent = node->getParent();
+        auto parent = node->get_Parent();
         while (parent)
         {
-            if (parent->isContainer())
+            if (parent->is_Container())
             {
                 // Code::NodeName() is the most accurate way to get the name that is
                 // correct for all languages.
@@ -58,11 +58,11 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name = name.NodeName();
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer) ||
-                     parent->isGen(gen_StaticCheckboxBoxSizer) ||
-                     parent->isGen(gen_StaticRadioBtnBoxSizer))
+            else if (parent->is_Gen(gen_wxStaticBoxSizer) ||
+                     parent->is_Gen(gen_StaticCheckboxBoxSizer) ||
+                     parent->is_Gen(gen_StaticRadioBtnBoxSizer))
             {
-                parent_name = parent->getNodeName(code.get_language());
+                parent_name = parent->get_NodeName(code.get_language());
                 if (code.is_cpp())
                     parent_name << "->GetStaticBox()";
                 else if (code.is_python())
@@ -71,13 +71,13 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                     parent_name << ".get_static_box";
                 break;
             }
-            parent = parent->getParent();
+            parent = parent->get_Parent();
         }
         if (parent)
         {
-            if (code.is_python() && !parent->isLocal())
+            if (code.is_python() && !parent->is_Local())
                 parent_name = "self." + parent_name;
-            else if (code.is_ruby() && !parent->isLocal())
+            else if (code.is_ruby() && !parent->is_Local())
                 parent_name = "@" + parent_name;
         }
     }
@@ -102,7 +102,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
 
     code.EndFunction();
 
-    if (code.hasValue(prop_minimum_size))
+    if (code.HasValue(prop_minimum_size))
     {
         code.Eol().NodeName().Function("SetMinSize(").WxSize(prop_minimum_size).EndFunction();
     }
@@ -127,18 +127,18 @@ bool StaticBoxSizerGenerator::SettingsCode(Code& code)
 
 bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
-    auto parent = code.node()->getParent();
-    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
-        !parent->isGen(gen_wxPopupTransientWindow))
+    auto parent = code.node()->get_Parent();
+    if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
+        !parent->is_Gen(gen_wxPopupTransientWindow))
     {
         code.NewLine(true);
-        if (parent->isGen(gen_wxRibbonPanel))
+        if (parent->is_Gen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(code.node(), code.get_language()) != "this")
+            if (get_ParentName(code.node(), code.get_language()) != "this")
             {
                 code.ValidParentName().Function("SetSizerAndFit(");
             }
@@ -174,7 +174,7 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->getParent()->isSizer())
+    if (node->get_Parent()->is_Sizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -188,7 +188,7 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
     item.append_attribute("class").set_value("wxStaticBoxSizer");
     item.append_attribute("name").set_value(node->as_string(prop_var_name));
     // item.append_child("orient").text().set(node->as_string(prop_orientation));
-    // if (node->hasValue(prop_minimum_size))
+    // if (node->HasValue(prop_minimum_size))
     // {
     // item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     // }

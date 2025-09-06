@@ -107,8 +107,8 @@ bool SpinCtrlGenerator::SettingsCode(Code& code)
 
 int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinCtrl");
@@ -123,7 +123,7 @@ int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->as_bool(prop_hexadecimal))
         item.append_child("base").text().set("16");
 
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
     {
         GenXrcStylePosSize(node, item);
     }
@@ -153,7 +153,7 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
         set_src.insert("#include <wx/valgen.h>");
     return true;
 }
@@ -162,7 +162,7 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    if (Project.get_CodePreference() == GEN_LANG_RUBY)
     {
         auto* widget = new wxStaticText(
             wxStaticCast(parent, wxWindow), wxID_ANY, "wxSpinCtrlDouble not available in wxRuby3",
@@ -237,8 +237,8 @@ bool SpinCtrlDoubleGenerator::SettingsCode(Code& code)
 
 int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSpinCtrlDouble");
@@ -251,7 +251,7 @@ int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     if (node->as_double(prop_inc) != 1)
         ADD_ITEM_PROP(prop_inc, "inc")
 
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
     {
         GenXrcStylePosSize(node, item);
     }
@@ -281,7 +281,7 @@ bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set
                                           std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
         set_src.insert("#include <wx/valgen.h>");
     return true;
 }

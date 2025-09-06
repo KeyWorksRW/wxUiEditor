@@ -27,7 +27,7 @@ EditColourProperty::EditColourProperty(const wxString& label, NodeProperty* prop
 
 void EditColourProperty::OnCustomPaint(wxDC& dc, const wxRect& rect, wxPGPaintData& /* paintdata */)
 {
-    if (m_prop->hasValue())
+    if (m_prop->HasValue())
     {
         if (auto clr = m_prop->as_color(); clr.IsOk())
         {
@@ -77,14 +77,14 @@ bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
 
 EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : ColourPropBase(parent)
 {
-    SetTitle(tt_string() << prop->declName() << " property editor");
+    SetTitle(tt_string() << prop->get_DeclName() << " property editor");
     m_value = prop->as_color();
     m_node = prop->getNode();
     m_prop_name = prop->get_name();
 
-    if (m_node->hasValue(prop_foreground_colour))
+    if (m_node->HasValue(prop_foreground_colour))
         m_foreground = m_node->as_wxColour(prop_foreground_colour);
-    if (m_node->hasValue(prop_background_colour))
+    if (m_node->HasValue(prop_background_colour))
         m_background = m_node->as_wxColour(prop_background_colour);
 
     if (m_foreground.IsOk())
@@ -92,7 +92,7 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
     if (m_background.IsOk())
         m_static_sample_text->SetBackgroundColour(m_background);
 
-    if (!prop->hasValue())
+    if (!prop->HasValue())
     {
         m_colour_rect->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     }

@@ -147,9 +147,9 @@ void NewWizard::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewWizard::createNode()
+void NewWizard::CreateNode()
 {
-    auto new_node = NodeCreation.createNode(gen_wxWizard, nullptr).first;
+    auto new_node = NodeCreation.CreateNode(gen_wxWizard, nullptr).first;
     ASSERT(new_node);
 
     if (m_title.size())
@@ -159,29 +159,29 @@ void NewWizard::createNode()
 
     for (int count = 0; count < m_num_pages; ++count)
     {
-        if (auto page = NodeCreation.createNode(gen_wxWizardPageSimple, new_node.get()).first; page)
+        if (auto page = NodeCreation.CreateNode(gen_wxWizardPageSimple, new_node.get()).first; page)
         {
             page->set_value(prop_var_name, tt_string("wizard_page_") << count + 1);
-            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, page.get()).first;
+            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, page.get()).first;
 
-            auto static_text = NodeCreation.createNode(gen_wxStaticText, sizer.get()).first;
+            auto static_text = NodeCreation.CreateNode(gen_wxStaticText, sizer.get()).first;
             static_text->set_value(prop_class_access, "none");
             static_text->set_value(prop_var_name, tt_string("static_text_") << count + 1);
-            sizer->adoptChild(static_text);
+            sizer->AdoptChild(static_text);
             static_text->set_value(
                 prop_label, tt_string("Page #")
                                 << count + 1
                                 << " -- TODO: replace this control with something more useful...");
             static_text->set_value(prop_wrap, "200");
 
-            page->adoptChild(sizer);
-            new_node->adoptChild(page);
+            page->AdoptChild(sizer);
+            new_node->AdoptChild(page);
         }
     }
-    new_node->fixDuplicateNodeNames();
+    new_node->FixDuplicateNodeNames();
 
     new_node->set_value(prop_class_name, m_base_class.utf8_string());
-    if (new_node->as_string(prop_class_name) != new_node->getPropDefaultValue(prop_class_name))
+    if (new_node->as_string(prop_class_name) != new_node->get_PropDefaultValue(prop_class_name))
     {
         UpdateFormClass(new_node.get());
     }
@@ -189,11 +189,11 @@ void NewWizard::createNode()
     auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.getProjectNode();
+        parent_node = Project.get_ProjectNode();
     }
     else
     {
-        parent_node = parent_node->getValidFormParent();
+        parent_node = parent_node->get_ValidFormParent();
     }
 
     wxGetFrame().SelectNode(parent_node);

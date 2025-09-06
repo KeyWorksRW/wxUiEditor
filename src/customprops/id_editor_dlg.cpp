@@ -217,8 +217,8 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 
     ASSERT_MSG(m_node, "You must call SetNode() before calling OnInit()")
 
-    auto prefixes = Project.getProjectNode()->as_ArrayString(prop_id_prefixes);
-    auto suffixes = Project.getProjectNode()->as_ArrayString(prop_id_suffixes);
+    auto prefixes = Project.get_ProjectNode()->as_ArrayString(prop_id_prefixes);
+    auto suffixes = Project.get_ProjectNode()->as_ArrayString(prop_id_suffixes);
 
     if (prefixes.size())
     {
@@ -239,7 +239,7 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
 
     if (prefixes.size() || suffixes.size())
     {
-        SelectPrefixSuffix(m_node->getForm());
+        SelectPrefixSuffix(m_node->get_Form());
     }
 
     // Dummy event so that we can call event handlers (which don't actually use the event)
@@ -301,7 +301,7 @@ void IDEditorDlg::OnStdChange(wxCommandEvent& /* event unused */)
     {
         if (iter == m_result)
         {
-            if (auto stock_id = NodeCreation.getConstantAsInt(iter); stock_id > 0)
+            if (auto stock_id = NodeCreation.get_ConstantAsInt(iter); stock_id > 0)
             {
                 m_flex_grid_sizer->ShowItems(true);
                 m_stock_label->SetLabel(wxGetStockLabel(stock_id));
@@ -402,7 +402,7 @@ void IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event)
 
 bool IDEditorDlg::SelectPrefixSuffix(Node* node)
 {
-    if (node->hasProp(prop_id))
+    if (node->HasProp(prop_id))
     {
         auto& id = node->as_string(prop_id);
         if (!id.starts_with("wxID_"))
@@ -410,7 +410,7 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
             if (!m_prefix_selected)
             {
                 tt_string_vector prefixes;
-                prefixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"',
+                prefixes.SetString(Project.get_ProjectNode()->as_string(prop_id_prefixes), '"',
                                    tt::TRIM::both);
                 for (auto& iter: prefixes)
                 {
@@ -425,7 +425,7 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
             if (!m_suffix_selected)
             {
                 tt_string_vector suffixes;
-                suffixes.SetString(Project.getProjectNode()->as_string(prop_id_prefixes), '"',
+                suffixes.SetString(Project.get_ProjectNode()->as_string(prop_id_prefixes), '"',
                                    tt::TRIM::both);
                 for (auto& iter: suffixes)
                 {
@@ -445,7 +445,7 @@ bool IDEditorDlg::SelectPrefixSuffix(Node* node)
         }
     }
 
-    for (auto& iter: node->getChildNodePtrs())
+    for (auto& iter: node->get_ChildNodePtrs())
     {
         if (SelectPrefixSuffix(iter.get()))
         {

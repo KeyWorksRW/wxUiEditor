@@ -58,7 +58,7 @@ void PropGridPanel::Create()
         wxGetMainFrame()->SetStatusText(wxEmptyString, 2);
 
         m_currentSel = node;
-        m_preferred_lang = Project.getCodePreference(node);
+        m_preferred_lang = Project.get_CodePreference(node);
 
         wxString pageName;
         if (int pageNumber = m_prop_grid->GetSelectedPage(); pageNumber != wxNOT_FOUND)
@@ -80,7 +80,7 @@ void PropGridPanel::Create()
 
         tt_string lang_created;
 
-        if (auto declaration = node->getNodeDeclaration(); declaration)
+        if (auto declaration = node->get_NodeDeclaration(); declaration)
         {
             // These sets are used to prevent trying to add a duplicate property or event to the
             // property grid. In Debug builds, attempting to do so will generate an assert message
@@ -90,22 +90,22 @@ void PropGridPanel::Create()
             PropNameSet prop_set;
             EventSet event_set;
 
-            CreatePropCategory(declaration->declName(), node, declaration, prop_set);
-            CreateEventCategory(declaration->declName(), node, declaration, event_set);
+            CreatePropCategory(declaration->get_DeclName(), node, declaration, prop_set);
+            CreateEventCategory(declaration->get_DeclName(), node, declaration, event_set);
 
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
 
-            auto lang_prefix = GenLangToString(Project.getCodePreference());
+            auto lang_prefix = GenLangToString(Project.get_CodePreference());
 
-            if (node->isForm() || node->isGen(gen_Project))
+            if (node->is_Form() || node->is_Gen(gen_Project))
             {
                 bool lang_found = false;
                 size_t lang_start = 0;
                 for (size_t i = 0; i < num_base_classes; i++)
                 {
                     auto* info_base = declaration->GetBaseClass(i);
-                    if (info_base->isGen(gen_sizer_child))
+                    if (info_base->is_Gen(gen_sizer_child))
                         continue;
                     if (!lang_found)
                     {
@@ -117,7 +117,7 @@ void PropGridPanel::Create()
 
                         for (auto& iter: s_lang_category_prefix)
                         {
-                            if (info_base->declName().contains(iter.second))
+                            if (info_base->get_DeclName().contains(iter.second))
                             {
                                 lang_found = true;
                                 lang_start = i;  // save this for the for loop used later
@@ -126,13 +126,13 @@ void PropGridPanel::Create()
                         }
                         if (!lang_found)
                         {
-                            if (!info_base->declName().is_sameas("Window Events"))
+                            if (!info_base->get_DeclName().is_sameas("Window Events"))
                             {
-                                CreatePropCategory(info_base->declName(), node, info_base,
+                                CreatePropCategory(info_base->get_DeclName(), node, info_base,
                                                    prop_set);
                             }
                             else
-                                CreateEventCategory(info_base->declName(), node, info_base,
+                                CreateEventCategory(info_base->get_DeclName(), node, info_base,
                                                     event_set);
                             continue;
                         }
@@ -141,21 +141,23 @@ void PropGridPanel::Create()
                     // We get here if we've seen a language category, so we check to see if it
                     // is the preferred language, and if so, create it now and break out of the
                     // loop.
-                    if (info_base->declName().is_sameprefix(lang_prefix))
+                    if (info_base->get_DeclName().is_sameprefix(lang_prefix))
                     {
-                        CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                        CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
 
                         // C++ settings are divided into three categories in consecutive order,
                         // so we need to create the other two categories here if the preferred
                         // language is C++.
 
                         if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
-                            info_base->declName().contains("Settings"))
+                            info_base->get_DeclName().contains("Settings"))
                         {
                             info_base = declaration->GetBaseClass(++i);
-                            CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                            CreatePropCategory(info_base->get_DeclName(), node, info_base,
+                                               prop_set);
                             info_base = declaration->GetBaseClass(++i);
-                            CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                            CreatePropCategory(info_base->get_DeclName(), node, info_base,
+                                               prop_set);
                         }
 
                         break;
@@ -167,23 +169,23 @@ void PropGridPanel::Create()
                 for (; lang_start < num_base_classes; lang_start++)
                 {
                     auto* info_base = declaration->GetBaseClass(lang_start);
-                    if (info_base->isGen(gen_sizer_child))
+                    if (info_base->is_Gen(gen_sizer_child))
                         continue;
-                    if (!info_base->declName().is_sameas("Window Events"))
+                    if (!info_base->get_DeclName().is_sameas("Window Events"))
                     {
-                        if (info_base->declName().is_sameprefix(lang_prefix))
+                        if (info_base->get_DeclName().is_sameprefix(lang_prefix))
                         {
                             if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
-                                info_base->declName().contains("Settings"))
+                                info_base->get_DeclName().contains("Settings"))
                             {
                                 lang_start +=
                                     2;  // skip over Header Settings and Derived Class Settings
                             }
                             continue;  // already added above
                         }
-                        CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                        CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
                     }
-                    CreateEventCategory(info_base->declName(), node, info_base, event_set);
+                    CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
                 }
             }
             else
@@ -191,24 +193,24 @@ void PropGridPanel::Create()
                 for (size_t i = 0; i < num_base_classes; i++)
                 {
                     auto* info_base = declaration->GetBaseClass(i);
-                    if (info_base->isGen(gen_sizer_child))
+                    if (info_base->is_Gen(gen_sizer_child))
                         continue;
-                    if (!info_base->declName().is_sameas("Window Events"))
+                    if (!info_base->get_DeclName().is_sameas("Window Events"))
                     {
-                        if ((node->isForm() || node->isGen(gen_Project)) &&
-                            info_base->declName().is_sameprefix(lang_prefix))
+                        if ((node->is_Form() || node->is_Gen(gen_Project)) &&
+                            info_base->get_DeclName().is_sameprefix(lang_prefix))
                             continue;  // already added above
-                        CreatePropCategory(info_base->declName(), node, info_base, prop_set);
+                        CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
                     }
-                    CreateEventCategory(info_base->declName(), node, info_base, event_set);
+                    CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
                 }
             }
-            if (node->isSpacer())
+            if (node->is_Spacer())
             {
-                if (node->isParent(gen_wxGridBagSizer))
+                if (node->is_Parent(gen_wxGridBagSizer))
                     CreateLayoutCategory(node);
             }
-            else if (node->getParent() && node->getParent()->isSizer())
+            else if (node->get_Parent() && node->get_Parent()->is_Sizer())
             {
                 CreateLayoutCategory(node);
             }
@@ -242,12 +244,12 @@ void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node,
 {
     auto& category = declaration->GetCategory();
 
-    if (!category.getCategoryCount() && !category.getEventCount())
+    if (!category.getCategoryCount() && !category.get_EventCount())
         return;
 
     if (category.GetName() == "wxWindow")
     {
-        if (node->getNodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
+        if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
             return;
     }
 
@@ -299,11 +301,11 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 {
     auto id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
-    if (!node->isParent(gen_wxGridBagSizer))
+    if (!node->is_Parent(gen_wxGridBagSizer))
     {
         for (auto iter: lst_LayoutProps)
         {
-            auto prop = node->getPropPtr(iter);
+            auto prop = node->get_PropPtr(iter);
             if (!prop)
                 continue;
 
@@ -315,11 +317,11 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             m_property_map[id_prop] = prop;
             if (prop->isProp(prop_alignment))
             {
-                prop->getNode()->getGenerator()->ChangeEnableState(m_prop_grid, prop);
+                prop->getNode()->get_Generator()->ChangeEnableState(m_prop_grid, prop);
             }
         }
 
-        if (auto prop = node->getPropPtr(prop_proportion); prop)
+        if (auto prop = node->get_PropPtr(prop_proportion); prop)
         {
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
@@ -333,7 +335,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     {
         for (auto iter: lst_GridBagProps)
         {
-            auto prop = node->getPropPtr(iter);
+            auto prop = node->get_PropPtr(iter);
             if (!prop)
                 continue;
 
@@ -361,103 +363,105 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     switch (type)
     {
         case type_id:
-            return new ID_Property(prop->declName().make_wxString(), prop);
+            return new ID_Property(prop->get_DeclName().make_wxString(), prop);
 
         case type_int:
-            return new wxIntProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_int());
+            return new wxIntProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+                                     prop->as_int());
 
         case type_uint:
-            return new wxUIntProperty(prop->declName().make_wxString(), wxPG_LABEL, prop->as_int());
+            return new wxUIntProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+                                      prop->as_int());
 
         case type_statbar_fields:
             // This includes a button that triggers a dialog to edit the fields.
-            return new SBarFieldsProperty(prop->declName().make_wxString(), prop);
+            return new SBarFieldsProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_checklist_item:
             // This includes a button that triggers a dialog to edit the fields.
-            return new RearrangeProperty(prop->declName().make_wxString(), prop);
+            return new RearrangeProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_string_code_grow_columns:
-            return new GrowColumnsProperty(prop->declName().make_wxString(), prop);
+            return new GrowColumnsProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_string_code_grow_rows:
-            return new GrowRowsProperty(prop->declName().make_wxString(), prop);
+            return new GrowRowsProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_string_code_cstm_param:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditParamProperty(prop->declName().make_wxString(), prop);
+            return new EditParamProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_string_code_single:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCodeSingleProperty(prop->declName().make_wxString(), prop);
+            return new EditCodeSingleProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
-            return new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                         prop->as_escape_text().make_wxString());
 
         case type_string:
-            return new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                         prop->as_wxString());
 
         case type_string_edit_escapes:
             // This includes a button that triggers a small text editor dialog
             // This doubles the backslash in escaped characters: \n, \t, \r, and \.
-            return new wxLongStringProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxLongStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                             prop->as_escape_text().make_wxString());
 
         case type_string_edit:
             // This includes a button that triggers a small text editor dialog
-            return new wxLongStringProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxLongStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                             prop->as_wxString());
 
         case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditStringProperty(prop->declName().make_wxString(), prop);
+            return new EditStringProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_code_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCodeProperty(prop->declName().make_wxString(), prop);
+            return new EditCodeProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_custom_mockup:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCustomMockupProperty(prop->declName().make_wxString(), prop);
+            return new EditCustomMockupProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_html_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditHtmlProperty(prop->declName().make_wxString(), prop);
+            return new EditHtmlProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_include_files:
             // This includes a button that triggers a custom dialog
-            return new IncludeFilesProperty(prop->declName().make_wxString(), prop);
+            return new IncludeFilesProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_bool:
-            return new wxBoolProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxBoolProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                       prop->as_string() == "1");
 
         case type_wxPoint:
-            return new CustomPointProperty(prop->declName().make_wxString(), prop,
+            return new CustomPointProperty(prop->get_DeclName().make_wxString(), prop,
                                            CustomPointProperty::type_point);
 
         case type_wxSize:
-            return new CustomPointProperty(prop->declName().make_wxString(), prop,
+            return new CustomPointProperty(prop->get_DeclName().make_wxString(), prop,
                                            CustomPointProperty::type_size);
 
         case type_wxFont:
             // This includes a button that triggers a custom font selector dialog
-            return new FontStringProperty(prop->declName().make_wxString(), prop);
+            return new FontStringProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_path:
-            return new DirectoryProperty(prop->declName().make_wxString(), prop);
+            return new DirectoryProperty(prop->get_DeclName().make_wxString(), prop);
 
         case type_animation:
-            return new PropertyGrid_Animation(prop->declName().make_wxString(), prop);
+            return new PropertyGrid_Animation(prop->get_DeclName().make_wxString(), prop);
 
         case type_image:
-            return new PropertyGrid_Image(prop->declName().make_wxString(), prop);
+            return new PropertyGrid_Image(prop->get_DeclName().make_wxString(), prop);
 
         case type_float:
-            return new wxFloatProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxFloatProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                        prop->as_float());
 
         default:
@@ -470,7 +474,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     {
         case type_bitlist:
             {
-                auto propInfo = prop->getPropDeclaration();
+                auto propInfo = prop->get_PropDeclaration();
 
                 wxPGChoices bit_flags;
                 int index = 0;
@@ -495,8 +499,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 }
 
                 int val = GetBitlistValue(prop->as_string(), bit_flags);
-                new_pg_property = new wxFlagsProperty(prop->declName().make_wxString(), wxPG_LABEL,
-                                                      bit_flags, val);
+                new_pg_property = new wxFlagsProperty(prop->get_DeclName().make_wxString(),
+                                                      wxPG_LABEL, bit_flags, val);
 
                 wxFlagsProperty* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
                 if (flagsProp)
@@ -526,7 +530,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_option:
         case type_editoption:
             {
-                auto propInfo = prop->getPropDeclaration();
+                auto propInfo = prop->get_PropDeclaration();
 
                 auto value = prop->as_string();
                 const tt_string* pHelp = nullptr;
@@ -563,13 +567,13 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 if (type == type_editoption)
                 {
-                    new_pg_property = new wxEditEnumProperty(prop->declName().make_wxString(),
+                    new_pg_property = new wxEditEnumProperty(prop->get_DeclName().make_wxString(),
                                                              wxPG_LABEL, constants);
                 }
                 else
                 {
-                    new_pg_property =
-                        new wxEnumProperty(prop->declName().make_wxString(), wxPG_LABEL, constants);
+                    new_pg_property = new wxEnumProperty(prop->get_DeclName().make_wxString(),
+                                                         wxPG_LABEL, constants);
                 }
 
                 new_pg_property->SetValueFromString(value);
@@ -597,7 +601,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_wxColour:
             {
                 auto value = prop->as_string();
-                return new EditColourProperty(prop->declName().make_wxString(), prop);
+                return new EditColourProperty(prop->get_DeclName().make_wxString(), prop);
             }
 
         case type_file:
@@ -627,8 +631,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         break;
                 }
 
-                new_pg_property = new wxFileProperty(prop->declName().make_wxString(), wxPG_LABEL,
-                                                     prop->as_string());
+                new_pg_property = new wxFileProperty(prop->get_DeclName().make_wxString(),
+                                                     wxPG_LABEL, prop->as_string());
 
                 switch (prop->get_name())
                 {
@@ -640,8 +644,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_header:
                         new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
                         new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-                        new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.getProjectPath());
-                        new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.getProjectPath());
+                        new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, Project.get_ProjectPath());
+                        new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, Project.get_ProjectPath());
                         return new_pg_property;
 #endif
 
@@ -656,7 +660,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                             // standard precompiled header filename in the parent directory, then
                             // use that as the starting directory.
 
-                            tt_string pch(Project.getProjectPath());
+                            tt_string pch(Project.get_ProjectPath());
                             pch.append_filename("../");
                             pch.append_filename("pch.h");
                             if (pch.file_exists())
@@ -685,13 +689,13 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                                 return new_pg_property;
                             }
 
-                            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
-                                                          Project.getProjectPath().make_wxString());
+                            new_pg_property->SetAttribute(
+                                wxPG_FILE_INITIAL_PATH, Project.get_ProjectPath().make_wxString());
                         }
                         return new_pg_property;
 
                     default:
-                        FAIL_MSG(tt_string("Unsupported file property: ") << prop->declName());
+                        FAIL_MSG(tt_string("Unsupported file property: ") << prop->get_DeclName());
                         return new_pg_property;
                 }
             }
@@ -699,7 +703,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_stringlist:
             {
-                new_pg_property = new wxArrayStringProperty(prop->declName().make_wxString(),
+                new_pg_property = new wxArrayStringProperty(prop->get_DeclName().make_wxString(),
                                                             wxPG_LABEL, prop->as_wxArrayString());
                 if (prop->value().size() > 0 && prop->value()[0] != '"')
                 {
@@ -716,7 +720,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_stringlist_semi:
             {
-                new_pg_property = new wxArrayStringProperty(prop->declName().make_wxString(),
+                new_pg_property = new wxArrayStringProperty(prop->get_DeclName().make_wxString(),
                                                             wxPG_LABEL, prop->as_wxArrayString());
                 wxVariant delimiter(";");
                 new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
@@ -725,7 +729,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_stringlist_escapes:
             {
-                new_pg_property = new wxArrayStringProperty(prop->declName().make_wxString(),
+                new_pg_property = new wxArrayStringProperty(prop->get_DeclName().make_wxString(),
                                                             wxPG_LABEL, prop->as_wxArrayString());
                 wxVariant var_quote("\"");
                 new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
@@ -733,13 +737,13 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             return new_pg_property;
 
         case type_uintpairlist:
-            return new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL,
+            return new wxStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
                                         prop->as_string());
 
         default:  // Unknown property
             {
-                new_pg_property = new wxStringProperty(prop->declName().make_wxString(), wxPG_LABEL,
-                                                       prop->as_string());
+                new_pg_property = new wxStringProperty(prop->get_DeclName().make_wxString(),
+                                                       wxPG_LABEL, prop->as_string());
                 new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING,
                                               wxVariant(true, "true"));
 
@@ -765,10 +769,10 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
 {
     auto& category = declaration->GetCategory();
 
-    if (!category.getCategoryCount() && !category.getPropNameCount())
+    if (!category.getCategoryCount() && !category.get_PropNameCount())
         return;
 
-    auto generate_languages = Project.getGenerateLanguages();
+    auto generate_languages = Project.get_GenerateLanguages();
 
     // Ignore if the user doesn't want to generate this language
     if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
@@ -777,9 +781,9 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     if (name.contains("CheckBoxState Validator") || name.contains("Colour Validator"))
     {
         // These two validators were added to wxWidgets 3.3
-        auto preferred_language = Project.getCodePreference();
+        auto preferred_language = Project.get_CodePreference();
         if (preferred_language == GEN_LANG_CPLUSPLUS &&
-            Project.getLangVersion(preferred_language) < 30300)
+            Project.get_LangVersion(preferred_language) < 30300)
         {
             return;
         }
@@ -807,7 +811,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     }
     else if (name.is_sameas("Bitmaps") || name.is_sameas("Command Bitmaps"))
     {
-        if (!node->isGen(gen_wxBitmapToggleButton))
+        if (!node->is_Gen(gen_wxBitmapToggleButton))
         {
             m_prop_grid->Collapse(id);
         }
@@ -825,7 +829,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
 
         // It's going to be rare to want a validator for these classes, so collapse the validator
         // for them
-        if (node->isGen(gen_wxButton) || node->isGen(gen_wxStaticText))
+        if (node->is_Gen(gen_wxButton) || node->is_Gen(gen_wxStaticText))
             m_prop_grid->Collapse(id);
     }
     else if (name.contains("C++"))
@@ -834,7 +838,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#000099"));
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));  // Light blue
-        if (Project.getCodePreference(node) != GEN_LANG_CPLUSPLUS)
+        if (Project.get_CodePreference(node) != GEN_LANG_CPLUSPLUS)
         {
             m_prop_grid->Collapse(id);
         }
@@ -845,7 +849,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
-        if (Project.getCodePreference(node) != GEN_LANG_PERL)
+        if (Project.get_CodePreference(node) != GEN_LANG_PERL)
         {
             m_prop_grid->Collapse(id);
         }
@@ -856,7 +860,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#009900"));
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
-        if (Project.getCodePreference(node) != GEN_LANG_PYTHON)
+        if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
         {
             m_prop_grid->Collapse(id);
         }
@@ -867,7 +871,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e0b3d"));
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
-        if (Project.getCodePreference(node) != GEN_LANG_RUBY)
+        if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
         {
             m_prop_grid->Collapse(id);
         }
@@ -878,7 +882,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
-        if (Project.getCodePreference(node) != GEN_LANG_RUST)
+        if (Project.get_CodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
         }
@@ -889,7 +893,7 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#00b35c"));  // Gainsboro
         else
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffe6"));  // Mint Cream
-        if (Project.getCodePreference(node) != GEN_LANG_XRC)
+        if (Project.get_CodePreference(node) != GEN_LANG_XRC)
         {
             m_prop_grid->Collapse(id);
         }

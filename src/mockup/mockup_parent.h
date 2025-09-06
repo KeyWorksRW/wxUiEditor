@@ -37,8 +37,8 @@ public:
 
     MockupContent* GetMockupContent() { return m_panelContent; }
 
-    wxObject* getChild(wxObject* wxobject, size_t childIndex);
-    wxObject* GetParentNode(wxObject* wxobject);
+    wxObject* get_Child(wxObject* wxobject, size_t childIndex);
+    wxObject* get_ParentNode(wxObject* wxobject);
 
 protected:
     void OnNodeSelected(CustomEvent& event);

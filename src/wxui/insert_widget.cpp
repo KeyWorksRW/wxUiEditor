@@ -125,7 +125,7 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
     {
         if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
         {
-            return createToolNode(result->second);
+            return CreateToolNode(result->second);
         }
         FAIL_MSG(
             tt_string()
@@ -162,15 +162,15 @@ void InsertWidget::OnNameText(wxCommandEvent& /* event unused */)
     auto node = wxGetFrame().getSelectedNode();
     if (!node)
     {
-        node = Project.getProjectNode();
+        node = Project.get_ProjectNode();
     }
     // type_widgets cannot have children, so change the "selected" node to the parent
-    if (node->isType(type_widget) && node->getParent())
+    if (node->is_Type(type_widget) && node->get_Parent())
     {
-        node = node->getParent();
+        node = node->get_Parent();
     }
 
-    for (auto* iter: NodeCreation.getNodeDeclarationArray())
+    for (auto* iter: NodeCreation.get_NodeDeclarationArray())
     {
         if (!iter)
         {
@@ -180,27 +180,27 @@ void InsertWidget::OnNameText(wxCommandEvent& /* event unused */)
 
         if (m_limit_to_children->GetValue())
         {
-            if (!node->isChildAllowed(iter))
+            if (!node->is_ChildAllowed(iter))
                 continue;
         }
-        else if (!NodeCreation.isValidCreateParent(iter->getGenName(), node))
+        else if (!NodeCreation.is_ValidCreateParent(iter->get_GenName(), node))
         {
             continue;
         }
 
         // Only one Data and Images form are allowed per project
-        if (iter->getGenName() == gen_Data && Project.getDataForm())
+        if (iter->get_GenName() == gen_Data && Project.get_DataForm())
         {
             continue;
         }
-        else if (iter->getGenName() == gen_Images && Project.getImagesForm())
+        else if (iter->get_GenName() == gen_Images && Project.get_ImagesForm())
         {
             continue;
         }
 
-        if (name.empty() || iter->declName().contains(name, tt::CASE::either))
+        if (name.empty() || iter->get_DeclName().contains(name, tt::CASE::either))
         {
-            m_listbox->AppendString(iter->declName().make_wxString());
+            m_listbox->AppendString(iter->get_DeclName().make_wxString());
         }
     }
 

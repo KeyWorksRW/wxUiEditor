@@ -44,7 +44,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
                                   wxBitmap(LoadHeaderImage(empty_png, sizeof(empty_png))));
 
     auto node = wxGetFrame().getSelectedNode();
-    if (node->isGen(gen_embedded_image))
+    if (node->is_Gen(gen_embedded_image))
     {
         auto bundle = ProjectImages.GetPropertyImageBundle(node->as_string(prop_bitmap));
 
@@ -123,7 +123,7 @@ bool EmbeddedImageGenerator::AllowPropertyChange(wxPropertyGridEvent* event, Nod
             return true;
 
         auto* embed = ProjectImages.GetEmbeddedImage(parts_new[IndexImage]);
-        if (embed && embed->form == node->getParent())
+        if (embed && embed->form == node->get_Parent())
         {
             event->SetValidationFailureMessage("You've already added this image!");
             event->Veto();
@@ -168,7 +168,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 {
     ASSERT_MSG(m_form_node, "Attempting to generate Images List when no form was located.");
 
-    if (m_embedded_images.empty() || !m_form_node->getChildCount())
+    if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {
         return;
     }
@@ -236,7 +236,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         m_source->writeLine();
 
-        for (const auto& child: m_form_node->getChildNodePtrs())
+        for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
             if (auto bundle = ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())
@@ -354,7 +354,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         m_header->writeLine();
 
-        for (const auto& child: m_form_node->getChildNodePtrs())
+        for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
             if (auto bundle = ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())
@@ -427,7 +427,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
 int ImagesGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasValue(prop_auto_add) && node->as_bool(prop_auto_add))
+    if (node->HasValue(prop_auto_add) && node->as_bool(prop_auto_add))
     {
         // return minRequiredVer + 5;  // 1.2.1 release
         return minRequiredVer + 4;  // 1.2.0 release
@@ -453,17 +453,17 @@ inline const auto lstBitmapoProps = {
 void img_list::GatherImages(Node* parent, std::set<std::string>& images,
                             std::vector<std::string>& new_images)
 {
-    if (parent->isGen(gen_Images))
+    if (parent->is_Gen(gen_Images))
     {
         return;
     }
 
-    for (const auto& child: parent->getChildNodePtrs())
+    for (const auto& child: parent->get_ChildNodePtrs())
     {
         for (auto& iter: lstBitmapoProps)
         {
-            auto prop_ptr = child->getPropPtr(iter);
-            if (prop_ptr && prop_ptr->hasValue())
+            auto prop_ptr = child->get_PropPtr(iter);
+            if (prop_ptr && prop_ptr->HasValue())
             {
                 if (images.contains(prop_ptr->value()))
                 {
@@ -490,7 +490,7 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images,
                 }
             }
         }
-        if (child->getChildCount())
+        if (child->get_ChildCount())
         {
             GatherImages(child.get(), images, new_images);
         }
@@ -504,12 +504,12 @@ void img_list::FixPropBitmap(Node* parent)
 
     tt_string art_directory = Project.as_string(prop_art_directory);
 
-    for (const auto& child: parent->getChildNodePtrs())
+    for (const auto& child: parent->get_ChildNodePtrs())
     {
         for (auto& iter: lstBitmapoProps)
         {
-            auto prop_ptr = child->getPropPtr(iter);
-            if (prop_ptr && prop_ptr->hasValue())
+            auto prop_ptr = child->get_PropPtr(iter);
+            if (prop_ptr && prop_ptr->HasValue())
             {
                 auto& description = prop_ptr->value();
                 if (description.starts_with("Embed") || description.starts_with("SVG") ||
@@ -536,7 +536,7 @@ void img_list::FixPropBitmap(Node* parent)
                 }
             }
         }
-        if (child->getChildCount())
+        if (child->get_ChildCount())
         {
             FixPropBitmap(child.get());
         }
@@ -561,17 +561,17 @@ bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
 Node* img_list::FindImageList()
 {
     Node* image_node = nullptr;
-    if (Project.getChildCount() > 0)
+    if (Project.get_ChildCount() > 0)
     {
-        if (Project.getChild(0)->isGen(gen_Images))
+        if (Project.get_Child(0)->is_Gen(gen_Images))
         {
-            image_node = Project.getChild(0);
+            image_node = Project.get_Child(0);
         }
         else
         {
-            for (const auto& iter: Project.getChildNodePtrs())
+            for (const auto& iter: Project.get_ChildNodePtrs())
             {
-                if (iter->isGen(gen_Images))
+                if (iter->is_Gen(gen_Images))
                 {
                     image_node = iter.get();
                     break;
@@ -588,10 +588,10 @@ void img_list::UpdateImagesList(int ProjectVersion)
     {
         if (Project.as_string(prop_art_directory).empty())
         {
-            Project.getProjectNode()->set_value(prop_art_directory, "./");
+            Project.get_ProjectNode()->set_value(prop_art_directory, "./");
         }
 
-        FixPropBitmap(Project.getProjectNode());
+        FixPropBitmap(Project.get_ProjectNode());
     }
 
     Node* image_node = FindImageList();
@@ -600,11 +600,11 @@ void img_list::UpdateImagesList(int ProjectVersion)
         return;
     }
 
-    if (Project.getProjectNode()->getChildCount() != 0)
+    if (Project.get_ProjectNode()->get_ChildCount() != 0)
     {
-        Project.getProjectNode()->changeChildPosition(image_node->getSharedPtr(), 0);
+        Project.get_ProjectNode()->ChangeChildPosition(image_node->get_SharedPtr(), 0);
     }
 
-    auto& children = image_node->getChildNodePtrs();
+    auto& children = image_node->get_ChildNodePtrs();
     std::sort(children.begin(), children.end(), img_list::CompareImageNames);
 }

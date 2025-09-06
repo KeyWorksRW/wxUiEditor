@@ -86,7 +86,7 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 
 bool CustomControl::ConstructionCode(Code& code)
 {
-    if (code.hasValue(prop_construction))
+    if (code.HasValue(prop_construction))
     {
         tt_string construction = code.view(prop_construction);
         construction.BothTrim();
@@ -97,13 +97,13 @@ bool CustomControl::ConstructionCode(Code& code)
 
     code.AddAuto().NodeName();
     code.Str(" = ").AddIfCpp("new ");
-    if (code.hasValue(prop_namespace) && code.is_cpp())
+    if (code.HasValue(prop_namespace) && code.is_cpp())
         code.as_string(prop_namespace) += "::";
 
     tt_string parameters(code.view(prop_parameters));
     if (parameters.starts_with('('))
         parameters.erase(0, 1);
-    parameters.Replace("${parent}", code.node()->getParentName(code.get_language(), true),
+    parameters.Replace("${parent}", code.node()->get_ParentName(code.get_language(), true),
                        tt::REPLACE::all);
     if (code.is_cpp())
     {
@@ -127,7 +127,7 @@ bool CustomControl::ConstructionCode(Code& code)
             }
             else if (iter.second == prop_id)
             {
-                parameters.Replace(iter.first, code.node()->getPropId());
+                parameters.Replace(iter.first, code.node()->get_PropId());
             }
             else if (iter.second == prop_pos)
             {
@@ -173,7 +173,7 @@ bool CustomControl::ConstructionCode(Code& code)
 
 bool CustomControl::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_settings_code))
+    if (code.HasValue(prop_settings_code))
     {
         // Unless the code is fairly simple, it's not really practical to have one settings
         // section that works for both C++ and Python. We do, however, make some basic
@@ -199,8 +199,8 @@ bool CustomControl::SettingsCode(Code& code)
 
 int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "unknown");
@@ -213,7 +213,7 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
 bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
                                 std::set<std::string>& set_hdr, GenLang language)
 {
-    if (node->hasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
+    if (node->HasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
     {
         tt_string_view cur_value = node->as_string(prop_header);
         if (cur_value.starts_with("#"))
@@ -242,9 +242,9 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
         }
     }
 
-    if (node->as_string(prop_class_access) != "none" && node->hasValue(prop_class_name))
+    if (node->as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
     {
-        if (node->hasValue(prop_namespace))
+        if (node->HasValue(prop_namespace))
         {
             set_hdr.insert(tt_string("namespace ")
                            << node->as_string(prop_namespace) << "\n{\n"

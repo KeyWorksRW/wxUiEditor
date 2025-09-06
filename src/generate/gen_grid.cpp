@@ -31,7 +31,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     // Grid category
     grid->EnableGridLines(node->as_bool(prop_grid_lines));
-    if (node->hasValue(prop_grid_line_color))
+    if (node->HasValue(prop_grid_line_color))
     {
         grid->SetGridLineColour(node->as_wxColour(prop_grid_line_color));
     }
@@ -59,15 +59,15 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
                                node->as_int(prop_col_label_vert_alignment));
     grid->SetColLabelSize(node->as_int(prop_col_label_size));
 
-    if (node->hasValue(prop_label_bg))
+    if (node->HasValue(prop_label_bg))
     {
         grid->SetLabelBackgroundColour(node->as_wxColour(prop_label_bg));
     }
-    if (node->hasValue(prop_label_text))
+    if (node->HasValue(prop_label_text))
     {
         grid->SetLabelTextColour(node->as_wxColour(prop_label_text));
     }
-    if (node->hasValue(prop_label_font))
+    if (node->HasValue(prop_label_font))
     {
         grid->SetLabelFont(node->as_wxFont(prop_label_font));
     }
@@ -76,7 +76,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     grid->EnableDragColMove(node->as_bool(prop_drag_col_move));
     grid->EnableDragColSize(node->as_bool(prop_drag_col_size));
 
-    if (node->hasValue(prop_column_sizes))
+    if (node->HasValue(prop_column_sizes))
     {
         int index = 0;
         for (auto& iter: node->as_wxArrayString(prop_column_sizes))
@@ -85,7 +85,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
-    if (node->hasValue(prop_col_label_values))
+    if (node->HasValue(prop_col_label_values))
     {
         int index = 0;
         for (auto& iter: node->as_wxArrayString(prop_col_label_values))
@@ -105,7 +105,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
     grid->EnableDragRowSize(node->as_bool(prop_drag_row_size));
 
-    if (node->hasValue(prop_row_sizes))
+    if (node->HasValue(prop_row_sizes))
     {
         int index = 0;
         for (auto& iter: node->as_wxArrayString(prop_row_sizes))
@@ -114,7 +114,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
         }
     }
 
-    if (node->hasValue(prop_row_label_values))
+    if (node->HasValue(prop_row_label_values))
     {
         int index = 0;
         for (auto& iter: node->as_wxArrayString(prop_row_label_values))
@@ -127,15 +127,15 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     grid->SetDefaultCellAlignment(node->as_int(prop_cell_horiz_alignment),
                                   node->as_int(prop_cell_vert_alignment));
 
-    if (node->hasValue(prop_cell_bg))
+    if (node->HasValue(prop_cell_bg))
     {
         grid->SetDefaultCellBackgroundColour(node->as_wxColour(prop_cell_bg));
     }
-    if (node->hasValue(prop_cell_text))
+    if (node->HasValue(prop_cell_text))
     {
         grid->SetDefaultCellTextColour(node->as_wxColour(prop_cell_text));
     }
-    if (node->hasValue(prop_cell_font))
+    if (node->HasValue(prop_cell_font))
     {
         grid->SetDefaultCellFont(node->as_wxFont(prop_cell_font));
     }
@@ -181,7 +181,7 @@ bool GridGenerator::SettingsCode(Code& code)
         code.Eol().NodeName().Function("EnableEditing(").False().EndFunction();
     if (code.IsFalse(prop_grid_lines))
         code.Eol().NodeName().Function("EnableGridLines(").False().EndFunction();
-    if (code.hasValue(prop_grid_line_color))
+    if (code.HasValue(prop_grid_line_color))
         code.Eol()
             .NodeName()
             .Function("SetGridLineColour(")
@@ -199,14 +199,14 @@ bool GridGenerator::SettingsCode(Code& code)
         .itoa(prop_margin_width, prop_margin_height)
         .EndFunction();
 
-    if (!code.isPropValue(prop_cell_fit, "overflow"))
+    if (!code.is_PropValue(prop_cell_fit, "overflow"))
     {
-        if (code.isPropValue(prop_cell_fit, "clip"))
+        if (code.is_PropValue(prop_cell_fit, "clip"))
         {
             code.Eol().NodeName().Function("SetDefaultCellFitMode(");
             code.Add("wxGridFitMode").ClassMethod("Clip()").EndFunction();
         }
-        else if (code.isPropValue(prop_cell_fit, "ellipsize"))
+        else if (code.is_PropValue(prop_cell_fit, "ellipsize"))
         {
             code.Eol().NodeName().Function("SetDefaultCellFitMode(");
             code.Add("wxGridFitMode").ClassMethod("Ellipsize()").EndFunction();
@@ -226,7 +226,7 @@ bool GridGenerator::SettingsCode(Code& code)
     else if (code.IsTrue(prop_native_col_labels))
         code.Eol().NodeName().Function("SetUseNativeColLabels(").EndFunction();
 
-    if (code.hasValue(prop_label_bg))
+    if (code.HasValue(prop_label_bg))
     {
         code.Eol()
             .NodeName()
@@ -238,11 +238,11 @@ bool GridGenerator::SettingsCode(Code& code)
     // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and
     // broken. It needs to be replaced, but it should be part of an entire wxGrid overhaul.
 
-    if (code.hasValue(prop_label_font))
+    if (code.HasValue(prop_label_font))
     {
         code.GenFont(prop_label_font, "SetLabelFont(");
     }
-    if (code.hasValue(prop_label_text))
+    if (code.HasValue(prop_label_text))
         code.Eol()
             .NodeName()
             .Function("SetLabelTextColour(")
@@ -251,20 +251,20 @@ bool GridGenerator::SettingsCode(Code& code)
 
     // Cell category
 
-    if (code.hasValue(prop_cell_bg))
+    if (code.HasValue(prop_cell_bg))
         code.Eol()
             .NodeName()
             .Function("SetDefaultCellBackgroundColour(")
             .ColourCode(prop_cell_bg)
             .EndFunction();
-    if (code.hasValue(prop_cell_text))
+    if (code.HasValue(prop_cell_text))
         code.Eol()
             .NodeName()
             .Function("SetDefaultCellTextColour(")
             .ColourCode(prop_cell_text)
             .EndFunction();
 
-    if (code.hasValue(prop_cell_font))
+    if (code.HasValue(prop_cell_font))
     {
         code.GenFont(prop_label_font, "SetDefaultCellFont");
     }
@@ -307,7 +307,7 @@ bool GridGenerator::SettingsCode(Code& code)
             .as_string(prop_col_label_size)
             .EndFunction();
 
-    if (code.hasValue(prop_column_sizes))
+    if (code.HasValue(prop_column_sizes))
     {
         int index = 0;
         for (auto& iter: code.node()->as_ArrayString(prop_column_sizes))
@@ -317,7 +317,7 @@ bool GridGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_col_label_values))
+    if (code.HasValue(prop_col_label_values))
     {
         int index = 0;
         for (auto& iter: code.node()->as_ArrayString(prop_col_label_values))
@@ -365,7 +365,7 @@ bool GridGenerator::SettingsCode(Code& code)
             .as_string(prop_row_label_size)
             .EndFunction();
 
-    if (code.hasValue(prop_row_sizes))
+    if (code.HasValue(prop_row_sizes))
     {
         int index = 0;
         for (auto& iter: code.node()->as_ArrayString(prop_row_sizes))
@@ -375,7 +375,7 @@ bool GridGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_row_label_values))
+    if (code.HasValue(prop_row_label_values))
     {
         int index = 0;
         for (auto& iter: code.node()->as_ArrayString(prop_row_label_values))
@@ -419,8 +419,8 @@ bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int GridGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxGrid");

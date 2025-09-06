@@ -30,7 +30,7 @@ bool CloseButtonGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().Add(" = ").Class("wxBitmapButton").ClassMethod("NewCloseButton(");
     code.ValidParentName().Comma().as_string(prop_id);
-    if (code.hasValue(prop_window_name))
+    if (code.HasValue(prop_window_name))
         code.Comma().QuotedString(prop_window_name);
     code.EndFunction();
 
@@ -50,7 +50,7 @@ int CloseButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->getParent()->isSizer())
+    if (node->get_Parent()->is_Sizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");

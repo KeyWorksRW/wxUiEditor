@@ -75,9 +75,9 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
     }
 
     tt_string derived_file;
-    if (m_is_derived_class && m_form_node->hasValue(prop_derived_file))
+    if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
-        derived_file = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        derived_file = Project.get_BaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (derived_file.size())
         {
             derived_file.append_filename(m_form_node->as_string(prop_derived_file));
@@ -119,7 +119,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
     tt_string baseFile;
     if (auto& file = m_form_node->as_string(prop_base_file); file.size())
     {
-        baseFile = Project.getBaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        baseFile = Project.get_BaseDirectory(form, GEN_LANG_CPLUSPLUS);
         if (baseFile.size())
         {
             baseFile.append_filename(file);
@@ -137,10 +137,10 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
     tt_string namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    tt_string namespace_prop = form->hasValue(prop_name_space) ? form->as_string(prop_name_space) :
+    tt_string namespace_prop = form->HasValue(prop_name_space) ? form->as_string(prop_name_space) :
                                                                  Project.as_string(prop_name_space);
-    if (auto* node_namespace = form->getFolder();
-        node_namespace && node_namespace->hasValue(prop_folder_namespace))
+    if (auto* node_namespace = form->get_Folder();
+        node_namespace && node_namespace->HasValue(prop_folder_namespace))
     {
         namespace_prop = node_namespace->as_string(prop_folder_namespace);
     }
@@ -216,7 +216,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
             line << namespace_using_name << "::";
         }
 
-        line << m_form_node->getNodeName();
+        line << m_form_node->get_NodeName();
 
         m_header->writeLine(line);
         m_header->writeLine("{");
@@ -244,7 +244,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
             m_source->writeLine();
         }
 
-        if (project->hasValue(prop_src_preamble))
+        if (project->HasValue(prop_src_preamble))
         {
             tt_string convert(project->as_string(prop_src_preamble));
             convert.Replace("@@", "\n", tt::REPLACE::all);
@@ -336,7 +336,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
         if (m_is_derived_class)  // non-derived class doesn't have a constructor
         {
             tt_string code;
-            if (m_form_node->isGen(gen_wxDialog))
+            if (m_form_node->is_Gen(gen_wxDialog))
             {
                 code << "// If this constructor is used, the caller must call Create(parent)\n";
                 code << derived_name << "::" << derived_name << "() {}\n\n";
@@ -346,7 +346,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
             else
             {
                 code << derived_name << "::" << derived_name << "(wxWindow* parent) : ";
-                code << m_form_node->getNodeName() << "(parent) {}";
+                code << m_form_node->get_NodeName() << "(parent) {}";
             }
 
             m_source->writeLine(code);
@@ -362,7 +362,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
         m_header->Indent();
         m_header->SetLastLineBlank();
         m_header->writeLine(tt_string()
-                            << "// Handlers for " << m_form_node->getNodeName() << " events");
+                            << "// Handlers for " << m_form_node->get_NodeName() << " events");
 
         std::set<std::string> generatedHandlers;
         for (auto event: events)
@@ -377,25 +377,25 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
                 bool close_type_button { false };
                 for (auto& iter: lst_close_type_button)
                 {
-                    if (event->getEventInfo()->get_name().is_sameas(iter))
+                    if (event->get_EventInfo()->get_name().is_sameas(iter))
                     {
                         close_type_button = true;
                         break;
                     }
                 }
 
-                m_header->writeLine(tt_string("void ")
-                                    << event_code << '(' << event->getEventInfo()->get_event_class()
-                                    << "& event) override;");
+                m_header->writeLine(tt_string("void ") << event_code << '('
+                                                       << event->get_EventInfo()->get_event_class()
+                                                       << "& event) override;");
 
                 if (panel_type != HDR_PANEL)
                 {
-                    if (event->getNode()->isForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+                    if (event->getNode()->is_Form() && event->get_name() == "wxEVT_CONTEXT_MENU")
                     {
                         bool is_handled = false;
-                        for (const auto& iter: event->getNode()->getChildNodePtrs())
+                        for (const auto& iter: event->getNode()->get_ChildNodePtrs())
                         {
-                            if (iter->isGen(gen_wxContextMenuEvent))
+                            if (iter->is_Gen(gen_wxContextMenuEvent))
                             {
                                 is_handled = true;
                                 break;
@@ -410,11 +410,11 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
                     m_source->writeLine();
                     m_source->writeLine(tt_string()
                                         << "void " << derived_name << "::" << event_code << '('
-                                        << event->getEventInfo()->get_event_class()
+                                        << event->get_EventInfo()->get_event_class()
                                         << "& /* event unused */)");
                     m_source->writeLine("{");
                     m_source->Indent();
-                    auto name = event->getEventInfo()->get_name();
+                    auto name = event->get_EventInfo()->get_name();
                     if (name == "wxEVT_INIT_DIALOG")
                     {
                         m_source->writeLine("event.Skip();  // transfer all validator data to "

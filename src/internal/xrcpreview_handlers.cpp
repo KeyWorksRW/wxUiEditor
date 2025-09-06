@@ -88,7 +88,7 @@ void XrcPreview::OnClear(wxCommandEvent& /* event unused */)
 void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
 {
     m_form_node = wxGetMainFrame()->getSelectedNode();
-    if (!m_form_node->isForm())
+    if (!m_form_node->is_Form())
     {
         XrcListDlg dlg(this);
         if (dlg.ShowModal() != wxID_OK)
@@ -103,9 +103,9 @@ void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
         return;
     }
 
-    if (!m_form_node->isForm())
+    if (!m_form_node->is_Form())
     {
-        m_form_node = m_form_node->getForm();
+        m_form_node = m_form_node->get_Form();
     }
 
     Generate();
@@ -119,7 +119,8 @@ void XrcPreview::Generate(Node* form_node)
         ASSERT_MSG(form_node, "Generate() called without a form_node and m_form_node is nullptr");
     }
 
-    auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
+    auto doc_str =
+        GenerateXrcStr(form_node, form_node->is_Gen(gen_PanelForm) ? xrc::previewing : 0);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
@@ -130,11 +131,11 @@ void XrcPreview::Generate(Node* form_node)
 
     std::string search("name=\"");
 
-    if (form_node->hasProp(prop_id) && form_node->as_string(prop_id) != "wxID_ANY")
+    if (form_node->HasProp(prop_id) && form_node->as_string(prop_id) != "wxID_ANY")
     {
         search = form_node->as_string(prop_id);
     }
-    else if (form_node->hasValue(prop_var_name))
+    else if (form_node->HasValue(prop_var_name))
     {
         search = form_node->as_string(prop_var_name);
     }
@@ -160,7 +161,7 @@ void XrcPreview::Generate(Node* form_node)
 void XrcPreview::OnPreview(wxCommandEvent& /* event unused */)
 {
     auto xrc_text = m_scintilla->GetText().utf8_string();
-    PreviewXrc(xrc_text, m_form_node->getGenName(), nullptr);
+    PreviewXrc(xrc_text, m_form_node->get_GenName(), nullptr);
 }
 
 void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
@@ -198,7 +199,7 @@ void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
 
 void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
 {
-    tt_string path = Project.getProjectPath();
+    tt_string path = Project.get_ProjectPath();
     wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc",
                         "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
@@ -265,9 +266,9 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
     {
         Project.FixupDuplicatedNode(new_node.get());
         tt_string undo_str("duplicate ");
-        undo_str << new_node->declName();
-        wxGetMainFrame()->PushUndoAction(
-            std::make_shared<InsertNodeAction>(new_node.get(), Project.getProjectNode(), undo_str));
+        undo_str << new_node->get_DeclName();
+        wxGetMainFrame()->PushUndoAction(std::make_shared<InsertNodeAction>(
+            new_node.get(), Project.get_ProjectNode(), undo_str));
         wxGetMainFrame()->FireCreatedEvent(new_node);
         wxGetMainFrame()->SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     }
@@ -279,7 +280,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
 
 void XrcPreview::OnCompare(wxCommandEvent& /* event unused */)
 {
-    if (!m_form_node->isGen(gen_wxDialog) && !m_form_node->isGen(gen_PanelForm))
+    if (!m_form_node->is_Gen(gen_wxDialog) && !m_form_node->is_Gen(gen_PanelForm))
     {
         wxMessageBox("You can only compare dialogs and panels", "Compare");
         return;

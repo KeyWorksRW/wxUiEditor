@@ -439,12 +439,12 @@ void App::ShowMsgWindow()
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    wxGetMainFrame()->SelectNode(Project.getProjectNode(), evt_flags::force_selection);
+    wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
 
     NewMdiForm dlg(wxGetFrame().getWindow());
     if (dlg.ShowModal() == wxID_OK)
     {
-        dlg.createNode();
+        dlg.CreateNode();
     }
 }
 

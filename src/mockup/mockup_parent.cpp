@@ -164,16 +164,16 @@ void MockupParent::CreateContent()
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
-    if (m_form->hasValue(prop_background_colour))
+    if (m_form->HasValue(prop_background_colour))
     {
         m_panelContent->SetBackgroundColour(m_form->as_wxColour(prop_background_colour));
     }
-    else if (m_form->isType(GenEnum::type_frame_form))
+    else if (m_form->is_Type(GenEnum::type_frame_form))
     {
         m_panelContent->SetOwnBackgroundColour(
             wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
     }
-    else if (m_form->isGen(gen_wxPopupTransientWindow))
+    else if (m_form->is_Gen(gen_wxPopupTransientWindow))
     {
         m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     }
@@ -187,8 +187,8 @@ void MockupParent::CreateContent()
 #endif
     }
 
-    if (m_form->isType(type_frame_form) || m_form->isGen(gen_wxDialog) ||
-        m_form->isGen(gen_wxWizard) || m_form->isGen(gen_wxPropertySheetDialog))
+    if (m_form->is_Type(type_frame_form) || m_form->is_Gen(gen_wxDialog) ||
+        m_form->is_Gen(gen_wxWizard) || m_form->is_Gen(gen_wxPropertySheetDialog))
     {
         m_text_title->SetLabel(m_form->as_wxString(prop_title));
         m_panelTitleBar->Show();
@@ -207,11 +207,11 @@ void MockupParent::CreateContent()
     auto min_size = m_form->as_wxSize(prop_minimum_size);
     min_size.IncTo(m_panelContent->GetSize());
 
-    if (m_form->hasValue(prop_size))
+    if (m_form->HasValue(prop_size))
     {
         min_size.IncTo(m_form->as_wxSize(prop_size));
     }
-    if (m_form->hasValue(prop_mockup_size))
+    if (m_form->HasValue(prop_mockup_size))
     {
         min_size.IncTo(m_form->as_wxSize(prop_mockup_size));
     }
@@ -233,7 +233,7 @@ void MockupParent::CreateContent()
     // the width of the title as the minimum width. Otherwise, use a default of 32.
     if (min_size.x == 0)
     {
-        if (m_form->hasValue(prop_title))
+        if (m_form->HasValue(prop_title))
         {
             wxClientDC dc(m_MockupWindow);
             auto text_size = dc.GetTextExtent(m_form->as_string(prop_title));
@@ -247,7 +247,7 @@ void MockupParent::CreateContent()
     m_MockupWindow->SetMinSize(min_size);
     Layout();
 
-    if (m_form->isPropValue(prop_disabled, true))
+    if (m_form->is_PropValue(prop_disabled, true))
     {
         m_MockupWindow->Enable(false);
     }
@@ -341,15 +341,15 @@ wxObject* MockupParent::Get_wxObject(Node* node)
     return m_panelContent->Get_wxObject(node);
 }
 
-wxObject* MockupParent::getChild(wxObject* wxobject, size_t childIndex)
+wxObject* MockupParent::get_Child(wxObject* wxobject, size_t childIndex)
 {
     if (auto node = getNode(wxobject); node)
     {
-        if (childIndex >= node->getChildCount())
+        if (childIndex >= node->get_ChildCount())
         {
             return nullptr;
         }
-        return Get_wxObject(node->getChild(childIndex));
+        return Get_wxObject(node->get_Child(childIndex));
     }
 
     FAIL_MSG("wxobject not found!");
@@ -357,12 +357,12 @@ wxObject* MockupParent::getChild(wxObject* wxobject, size_t childIndex)
     return nullptr;
 }
 
-wxObject* MockupParent::GetParentNode(wxObject* wxobject)
+wxObject* MockupParent::get_ParentNode(wxObject* wxobject)
 {
     ASSERT(wxobject);
 
     if (auto node = getNode(wxobject); node)
-        return Get_wxObject(node->getParent());
+        return Get_wxObject(node->get_Parent());
 
     FAIL_MSG("wxobject not found!");
 
@@ -429,9 +429,9 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (auto node = wxGetFrame().getSelectedNode(); node)
         {
-            if (node->isStaticBoxSizer())
+            if (node->is_StaticBoxSizer())
             {
-                node->getGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
+                node->get_Generator()->OnPropertyChange(Get_wxObject(node), node, prop);
             }
             else if (auto window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
             {
@@ -445,7 +445,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (auto node = wxGetFrame().getSelectedNode(); node)
         {
-            node->getGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
+            node->get_Generator()->OnPropertyChange(Get_wxObject(node), node, prop);
         }
         return;
     }
@@ -454,9 +454,9 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (prop->isProp(iter))
         {
-            if (prop->isProp(prop_message) && prop->getNode()->isGen(gen_wxBannerWindow))
+            if (prop->isProp(prop_message) && prop->getNode()->is_Gen(gen_wxBannerWindow))
                 break;  // In this case, Mockup does need to be redrawn
-            else if (prop->isProp(prop_id) && prop->getNode()->isGen(gen_wxButton))
+            else if (prop->isProp(prop_id) && prop->getNode()->is_Gen(gen_wxButton))
                 break;  // In this case, Mockup does need to be redrawn since label could have
                         // changed
             else
@@ -484,14 +484,14 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 CreateContent();
                 return;
             }
-            else if (node->isStaticBoxSizer())
+            else if (node->is_StaticBoxSizer())
                 wxStaticCast(window, wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
             else
                 wxStaticCast(window, wxWindow)->Enable(!prop->as_bool());
             return;
         }
 
-        auto generator = node->getGenerator();
+        auto generator = node->get_Generator();
         if (generator && generator->OnPropertyChange(Get_wxObject(node), node, prop))
         {
             wxWindowUpdateLocker freeze(this);
@@ -506,8 +506,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 new_size.y += size_title.y;
             }
 
-            if (m_IsMagnifyWindow && !(m_form->isGen(gen_RibbonBar) || m_form->isGen(gen_ToolBar) ||
-                                       m_form->isGen(gen_MenuBar)))
+            if (m_IsMagnifyWindow && !(m_form->is_Gen(gen_RibbonBar) ||
+                                       m_form->is_Gen(gen_ToolBar) || m_form->is_Gen(gen_MenuBar)))
             {
                 new_size.IncTo(m_size_magnified);
             }

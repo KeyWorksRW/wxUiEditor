@@ -19,11 +19,12 @@
 
 bool isBookDisplayImages(Node* node)
 {
-    if (!node->isGen(gen_BookPage))
+    if (!node->is_Gen(gen_BookPage))
         return node->as_bool(prop_display_images);
-    for (auto node_parent = node->getParent(); node_parent; node_parent = node_parent->getParent())
+    for (auto node_parent = node->get_Parent(); node_parent;
+         node_parent = node_parent->get_Parent())
     {
-        if (!node_parent->isGen(gen_BookPage))
+        if (!node_parent->is_Gen(gen_BookPage))
             return node_parent->as_bool(prop_display_images);
     }
     return false;
@@ -31,20 +32,20 @@ bool isBookDisplayImages(Node* node)
 
 bool isBookHasImage(Node* node)
 {
-    bool is_book = !node->isGen(gen_BookPage);
+    bool is_book = !node->is_Gen(gen_BookPage);
 
-    for (const auto& child_node: node->getChildNodePtrs())
+    for (const auto& child_node: node->get_ChildNodePtrs())
     {
-        if (child_node->isGen(gen_BookPage))
+        if (child_node->is_Gen(gen_BookPage))
         {
-            if (child_node->hasValue(prop_bitmap))
+            if (child_node->HasValue(prop_bitmap))
                 return true;
-            if (is_book && !node->isGen(gen_wxTreebook))
+            if (is_book && !node->is_Gen(gen_wxTreebook))
                 continue;
 
-            for (const auto& grand_child: child_node->getChildNodePtrs())
+            for (const auto& grand_child: child_node->get_ChildNodePtrs())
             {
-                if (grand_child->isGen(gen_BookPage))
+                if (grand_child->is_Gen(gen_BookPage))
                 {
                     auto result = isBookHasImage(grand_child.get());
                     if (result)
@@ -61,9 +62,9 @@ void AddBookImageList(Node* node_book, wxObject* widget)
     if (isBookDisplayImages(node_book) && isBookHasImage(node_book))
     {
         wxBookCtrlBase::Images bundle_list;
-        for (const auto& child_node: node_book->getChildNodePtrs())
+        for (const auto& child_node: node_book->get_ChildNodePtrs())
         {
-            if (child_node->hasValue(prop_bitmap))
+            if (child_node->HasValue(prop_bitmap))
             {
                 auto bundle = child_node->as_wxBitmapBundle(prop_bitmap);
                 if (!bundle.IsOk())
@@ -73,7 +74,7 @@ void AddBookImageList(Node* node_book, wxObject* widget)
                 bundle_list.push_back(bundle);
             }
 
-            if (node_book->isGen(gen_wxTreebook))
+            if (node_book->is_Gen(gen_wxTreebook))
             {
                 AddTreebookSubImages(child_node.get(), bundle_list);
             }
@@ -95,15 +96,15 @@ void BookCtorAddImagelist(Code& code)
         if (code.is_cpp())
         {
             code.Eol(eol_if_needed) << "wxWithImages::Images bundle_list;";
-            if (code.node()->isGen(gen_wxTreebook))
+            if (code.node()->is_Gen(gen_wxTreebook))
             {
                 auto rlambda = [&](Node* parent, auto&& rlambda) -> void
                 {
-                    for (const auto& child_node: parent->getChildNodePtrs())
+                    for (const auto& child_node: parent->get_ChildNodePtrs())
                     {
-                        if (child_node->isGen(gen_BookPage))
+                        if (child_node->is_Gen(gen_BookPage))
                         {
-                            if (child_node->hasValue(prop_bitmap))
+                            if (child_node->HasValue(prop_bitmap))
                             {
                                 tt_string bundle_code;
                                 if (GenerateBundleCode(child_node->as_string(prop_bitmap),
@@ -133,9 +134,9 @@ void BookCtorAddImagelist(Code& code)
             }
             else
             {
-                for (const auto& child_node: code.node()->getChildNodePtrs())
+                for (const auto& child_node: code.node()->get_ChildNodePtrs())
                 {
-                    if (child_node->hasValue(prop_bitmap))
+                    if (child_node->HasValue(prop_bitmap))
                     {
                         tt_string bundle_code;
                         if (GenerateBundleCode(child_node->as_string(prop_bitmap), bundle_code))
@@ -161,15 +162,15 @@ void BookCtorAddImagelist(Code& code)
             code.Eol().Str("bundle_list = [");
             code.Indent();
 
-            if (code.node()->isGen(gen_wxTreebook))
+            if (code.node()->is_Gen(gen_wxTreebook))
             {
                 auto rlambda = [&](Node* parent, auto&& rlambda) -> void
                 {
-                    for (const auto& child_node: parent->getChildNodePtrs())
+                    for (const auto& child_node: parent->get_ChildNodePtrs())
                     {
-                        if (child_node->isGen(gen_BookPage))
+                        if (child_node->is_Gen(gen_BookPage))
                         {
-                            if (child_node->hasValue(prop_bitmap))
+                            if (child_node->HasValue(prop_bitmap))
                             {
                                 Code bundle_code(child_node.get(), code.get_language());
                                 bundle_code.Bundle(prop_bitmap);
@@ -185,9 +186,9 @@ void BookCtorAddImagelist(Code& code)
             }
             else
             {
-                for (const auto& child_node: code.node()->getChildNodePtrs())
+                for (const auto& child_node: code.node()->get_ChildNodePtrs())
                 {
-                    if (child_node->hasValue(prop_bitmap))
+                    if (child_node->HasValue(prop_bitmap))
                     {
                         Code bundle_code(child_node.get(), code.get_language());
                         bundle_code.Bundle(prop_bitmap);
@@ -213,9 +214,9 @@ void BookCtorAddImagelist(Code& code)
         {
             code << "my $images = Wx::ImageList->new(";
             bool size_found = false;
-            for (const auto& child_node: code.node()->getChildNodePtrs())
+            for (const auto& child_node: code.node()->get_ChildNodePtrs())
             {
-                if (child_node->hasValue(prop_bitmap))
+                if (child_node->HasValue(prop_bitmap))
                 {
                     auto& description = child_node->as_string(prop_bitmap);
                     if (description.empty())
@@ -242,15 +243,15 @@ void BookCtorAddImagelist(Code& code)
             }
             code << ");";
 
-            if (code.node()->isGen(gen_wxTreebook))
+            if (code.node()->is_Gen(gen_wxTreebook))
             {
                 auto rlambda = [&](Node* parent, auto&& rlambda) -> void
                 {
-                    for (const auto& child_node: parent->getChildNodePtrs())
+                    for (const auto& child_node: parent->get_ChildNodePtrs())
                     {
-                        if (child_node->isGen(gen_BookPage))
+                        if (child_node->is_Gen(gen_BookPage))
                         {
-                            if (child_node->hasValue(prop_bitmap))
+                            if (child_node->HasValue(prop_bitmap))
                             {
                                 Code bundle_code(child_node.get(), code.get_language());
                                 bundle_code.Bundle(prop_bitmap);
@@ -266,9 +267,9 @@ void BookCtorAddImagelist(Code& code)
             }
             else
             {
-                for (const auto& child_node: code.node()->getChildNodePtrs())
+                for (const auto& child_node: code.node()->get_ChildNodePtrs())
                 {
-                    if (child_node->hasValue(prop_bitmap))
+                    if (child_node->HasValue(prop_bitmap))
                     {
                         Code bundle_code(child_node.get(), code.get_language());
                         bundle_code.Bundle(prop_bitmap);
@@ -297,11 +298,11 @@ void BookCtorAddImagelist(Code& code)
 
 void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
 {
-    for (const auto& child_node: node->getChildNodePtrs())
+    for (const auto& child_node: node->get_ChildNodePtrs())
     {
-        if (child_node->isGen(gen_BookPage))
+        if (child_node->is_Gen(gen_BookPage))
         {
-            if (child_node->hasValue(prop_bitmap))
+            if (child_node->HasValue(prop_bitmap))
             {
                 bundle_list.push_back(child_node->as_wxBitmapBundle(prop_bitmap));
             }
@@ -312,9 +313,9 @@ void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
 
 void AddTreebookImageCode(tt_string& code, Node* child_node, size_t& image_index)
 {
-    for (const auto& grand_child: child_node->getChildNodePtrs())
+    for (const auto& grand_child: child_node->get_ChildNodePtrs())
     {
-        if (grand_child->isGen(gen_BookPage) && grand_child->hasValue(prop_bitmap))
+        if (grand_child->is_Gen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
         {
             code << "\n\tauto img_" << image_index << " = ";
             code << GenerateBitmapCode(grand_child->as_string(prop_bitmap)) << ";";
@@ -332,27 +333,27 @@ int GetTreebookImageIndex(Node* node)
 {
     int idx_image = 0;
 
-    auto treebook = node->getParent();
-    while (treebook->isGen(gen_BookPage))
+    auto treebook = node->get_Parent();
+    while (treebook->is_Gen(gen_BookPage))
     {
-        treebook = treebook->getParent();
+        treebook = treebook->get_Parent();
     }
 
-    for (const auto& child_node: treebook->getChildNodePtrs())
+    for (const auto& child_node: treebook->get_ChildNodePtrs())
     {
         if (child_node.get() == node)
             return idx_image;
-        if (child_node->hasValue(prop_bitmap))
+        if (child_node->HasValue(prop_bitmap))
             ++idx_image;
-        for (const auto& grand_child: child_node->getChildNodePtrs())
+        for (const auto& grand_child: child_node->get_ChildNodePtrs())
         {
-            if (grand_child->isGen(gen_BookPage))
+            if (grand_child->is_Gen(gen_BookPage))
             {
                 if (grand_child.get() == node)
                 {
                     return idx_image;
                 }
-                if (grand_child->hasValue(prop_bitmap))
+                if (grand_child->HasValue(prop_bitmap))
                     ++idx_image;
             }
         }

@@ -102,7 +102,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
             m_buffer += "\n1;";
             if (m_node)
             {
-                m_buffer += "  # " + m_node->getNodeName();
+                m_buffer += "  # " + m_node->get_NodeName();
             }
         }
     }
@@ -117,10 +117,10 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
         // If the file has never been written before, then we end the class outside of the closing
         // comment block. This allows the user to add event handlers or other functionality within
         // the class.
-        if (!file_exists && !node->isGen(GenEnum::gen_Images) && !node->isGen(GenEnum::gen_Data))
+        if (!file_exists && !node->is_Gen(GenEnum::gen_Images) && !node->is_Gen(GenEnum::gen_Data))
         {
             Code code(node, GEN_LANG_RUBY);
-            code.Eol().Str("end  # end of ").Str(node->getNodeName()).Str(" class");
+            code.Eol().Str("end  # end of ").Str(node->get_NodeName()).Str(" class");
             m_buffer += code;
         }
     }
@@ -280,7 +280,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
     copy.remove_filename();
     if (copy.size() && !copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
     {
-        if (wxGetApp().isGenerating())
+        if (wxGetApp().is_Generating())
         {
             return write_no_folder;
         }

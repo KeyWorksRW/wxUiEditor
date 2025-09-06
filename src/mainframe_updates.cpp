@@ -22,9 +22,9 @@ void MainFrame::UpdateFrame()
 {
     tt_string filename;
     if (UserPrefs.is_FullPathTitle())
-        filename = Project.getProjectFile();
+        filename = Project.get_ProjectFile();
     else
-        filename = Project.getProjectFile().filename();
+        filename = Project.get_ProjectFile().filename();
 
     if (filename.empty())
     {
@@ -85,11 +85,11 @@ void MainFrame::UpdateLanguagePanels()
     if (m_docviewPanel)
         m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
 
-    auto languages = Project.getGenerateLanguages();
+    auto languages = Project.get_GenerateLanguages();
     if (languages & GEN_LANG_CPLUSPLUS && !m_cppPanel)
     {
         m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
-        if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+        if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
         {
             m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
         }
@@ -107,7 +107,7 @@ void MainFrame::UpdateLanguagePanels()
     if (languages & GEN_LANG_PERL && !m_perlPanel)
     {
         m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-        if (Project.getCodePreference() == GEN_LANG_PERL)
+        if (Project.get_CodePreference() == GEN_LANG_PERL)
         {
             m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
         }
@@ -125,7 +125,7 @@ void MainFrame::UpdateLanguagePanels()
     if (languages & GEN_LANG_PYTHON && !m_pythonPanel)
     {
         m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
-        if (Project.getCodePreference() == GEN_LANG_PYTHON)
+        if (Project.get_CodePreference() == GEN_LANG_PYTHON)
         {
             m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
         }
@@ -143,7 +143,7 @@ void MainFrame::UpdateLanguagePanels()
     if (languages & GEN_LANG_RUBY && !m_rubyPanel)
     {
         m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
-        if (Project.getCodePreference() == GEN_LANG_RUBY)
+        if (Project.get_CodePreference() == GEN_LANG_RUBY)
         {
             m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
         }
@@ -161,7 +161,7 @@ void MainFrame::UpdateLanguagePanels()
     if (languages & GEN_LANG_RUST && !m_rustPanel)
     {
         m_rustPanel = new BasePanel(m_notebook, this, GEN_LANG_RUST);
-        if (Project.getCodePreference() == GEN_LANG_RUST)
+        if (Project.get_CodePreference() == GEN_LANG_RUST)
         {
             m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
         }
@@ -177,7 +177,7 @@ void MainFrame::UpdateLanguagePanels()
     }
 
     int position;
-    switch (Project.getCodePreference())
+    switch (Project.get_CodePreference())
     {
         case GEN_LANG_CPLUSPLUS:
             ASSERT(m_cppPanel);
@@ -249,7 +249,7 @@ void MainFrame::UpdateLanguagePanels()
         m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
 
-    if (Project.getCodePreference() != GEN_LANG_XRC)
+    if (Project.get_CodePreference() != GEN_LANG_XRC)
         m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
     if (m_docviewPanel)
         m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
@@ -336,7 +336,7 @@ void MainFrame::UpdateMoveMenu()
     auto node = m_selected_node.get();
     Node* parent = nullptr;
     if (node)
-        parent = node->getParent();
+        parent = node->get_Parent();
     if (!node || !parent)
     {
         m_menuEdit->Enable(id_MoveUp, false);

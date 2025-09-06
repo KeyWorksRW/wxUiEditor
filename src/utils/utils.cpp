@@ -651,7 +651,7 @@ std::string GetLanguageExtension(GenLang language)
 ClassOverrideType GetClassOverrideType(Node* node)
 {
     ASSERT(node != nullptr);
-    if (node->hasValue(prop_subclass))
+    if (node->HasValue(prop_subclass))
     {
         if (node->as_string(prop_subclass).starts_with("wxGeneric"))
         {

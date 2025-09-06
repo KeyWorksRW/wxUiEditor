@@ -62,12 +62,12 @@ bool FormBuilder::Import(const tt_string& filename, bool write_doc)
             throw std::runtime_error("Invalid project file");
         }
 
-        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
 
         createProjectNode(object, m_project.get());
 
         if (write_doc)
-            m_project->createDoc(m_docOut);
+            m_project->CreateDoc(m_docOut);
     }
 
     catch (const std::exception& err)
@@ -107,17 +107,17 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
 
                 if (prop_name.as_view() == "internationalize")
                 {
-                    new_node->getPropPtr(prop_internationalize)
+                    new_node->get_PropPtr(prop_internationalize)
                         ->set_value(xml_prop.text().as_bool() ? "1" : "0");
                 }
                 else if (prop_name.as_view() == "help_provider")
                 {
-                    new_node->getPropPtr(prop_help_provider)->set_value(xml_prop.text().as_view());
+                    new_node->get_PropPtr(prop_help_provider)->set_value(xml_prop.text().as_view());
                 }
                 else if (prop_name.as_view() == "precompiled_header")
                 {
                     // wxFormBuilder calls it a precompiled header, but uses it as a preamble.
-                    new_node->getPropPtr(prop_src_preamble)->set_value(xml_prop.text().as_view());
+                    new_node->get_PropPtr(prop_src_preamble)->set_value(xml_prop.text().as_view());
                 }
 
                 else if (prop_name.as_view() == "embedded_files_path")
@@ -152,7 +152,7 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 }
                 else if (prop_name.as_view() == "namespace" && xml_prop.text().as_view().size())
                 {
-                    ConvertNameSpaceProp(new_node->getPropPtr(prop_name_space),
+                    ConvertNameSpaceProp(new_node->get_PropPtr(prop_name_space),
                                          xml_prop.text().as_view());
                 }
                 else if (prop_name.as_view() == "code_generation")
@@ -187,22 +187,22 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (class_name.empty())
         return NodeSharedPtr();
 
-    auto getGenName = MapClassName(xml_obj.attribute("class").value());
-    if (getGenName == gen_unknown)
+    auto get_GenName = MapClassName(xml_obj.attribute("class").value());
+    if (get_GenName == gen_unknown)
     {
         if (class_name.contains("bookpage"))
         {
-            getGenName = gen_oldbookpage;
+            get_GenName = gen_oldbookpage;
         }
         else if (class_name.starts_with("ribbon"))
         {
             if (class_name.contains("Tool"))
             {
-                getGenName = gen_ribbonTool;
+                get_GenName = gen_ribbonTool;
             }
             else
             {
-                getGenName = gen_ribbonButton;
+                get_GenName = gen_ribbonButton;
             }
         }
 
@@ -213,50 +213,50 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (getGenName == gen_wxPanel)
+    if (get_GenName == gen_wxPanel)
     {
         if (!parent)
         {
             // This gets called when pasting a formbuilder node from the clipboard
             auto owner = wxGetFrame().getSelectedNode();
-            while (owner->getGenType() == type_sizer)
-                owner = owner->getParent();
-            if (owner->declName().contains("book"))
+            while (owner->get_GenType() == type_sizer)
+                owner = owner->get_Parent();
+            if (owner->get_DeclName().contains("book"))
             {
-                getGenName = gen_BookPage;
+                get_GenName = gen_BookPage;
             }
         }
-        else if (parent->declName().contains("book"))
+        else if (parent->get_DeclName().contains("book"))
         {
-            getGenName = gen_BookPage;
+            get_GenName = gen_BookPage;
         }
     }
-    else if (getGenName == gen_wxCheckBox)
+    else if (get_GenName == gen_wxCheckBox)
     {
         for (auto& iter: xml_obj.children())
         {
             if (iter.attribute("name").as_view() == "style")
             {
                 if (iter.text().as_sview().contains("wxCHK_3STATE"))
-                    getGenName = gen_Check3State;
+                    get_GenName = gen_Check3State;
                 break;
             }
         }
     }
-    else if (getGenName == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    else if (get_GenName == gen_tool && parent->is_Gen(gen_wxAuiToolBar))
     {
-        getGenName = gen_auitool;
+        get_GenName = gen_auitool;
     }
 
-    auto newobject = NodeCreation.createNode(getGenName, parent).first;
-    if (!newobject && parent && tt::contains(map_GenTypes[parent->getGenType()], "book"))
+    auto newobject = NodeCreation.CreateNode(get_GenName, parent).first;
+    if (!newobject && parent && tt::contains(map_GenTypes[parent->get_GenType()], "book"))
     {
-        if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent).first; page_ctrl)
+        if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
         {
-            if (newobject = NodeCreation.createNode(getGenName, page_ctrl.get()).first; newobject)
+            if (newobject = NodeCreation.CreateNode(get_GenName, page_ctrl.get()).first; newobject)
             {
-                page_ctrl->adoptChild(newobject);
-                parent->adoptChild(page_ctrl);
+                page_ctrl->AdoptChild(newobject);
+                parent->AdoptChild(page_ctrl);
             }
         }
     }
@@ -271,7 +271,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             // name. E.g., PanelForm might be the class name, but what we want to display to the
             // user is wxPanel. GetHelpText() will give us something that makes sense to the user.
 
-            auto name = parent->getGenerator()->GetHelpText(parent);
+            auto name = parent->get_Generator()->GetHelpText(parent);
             if (name.size() && name != "wxWidgets")
             {
 #if defined(_DEBUG)
@@ -286,10 +286,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         m_errors.emplace(msg);
         return {};
     }
-    if (m_class_decoration.size() && newobject->isForm())
+    if (m_class_decoration.size() && newobject->is_Form())
         newobject->set_value(prop_class_decoration, m_class_decoration);
 
-    if (getGenName == gen_ribbonButton || getGenName == gen_ribbonTool)
+    if (get_GenName == gen_ribbonButton || get_GenName == gen_ribbonTool)
     {
         // wxFormBuilder uses a control for each type (8 total controls). wxUiEditor only uses 2
         // controls, and instead uses prop_kind to specify the type of button to use.
@@ -314,7 +314,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         if (auto prop_name = xml_prop.attribute("name").as_view(); prop_name.size())
         {
             auto wxue_prop = MapPropName(xml_prop.attribute("name").value());
-            auto prop_ptr = newobject->getPropPtr(wxue_prop);
+            auto prop_ptr = newobject->get_PropPtr(wxue_prop);
 
             if (wxue_prop == prop_column_sizes || wxue_prop == prop_row_sizes)
             {
@@ -351,13 +351,14 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 {
                     if (class_name.contains("book"))
                     {
-                        if (prop_ptr = newobject->getPropPtr(prop_image_size); prop_ptr)
+                        if (prop_ptr = newobject->get_PropPtr(prop_image_size); prop_ptr)
                         {
                             prop_ptr->set_value(xml_prop.text().as_view());
                             auto size = prop_ptr->as_size();
                             if (size != wxDefaultSize)
                             {
-                                if (prop_ptr = newobject->getPropPtr(prop_display_images); prop_ptr)
+                                if (prop_ptr = newobject->get_PropPtr(prop_display_images);
+                                    prop_ptr)
                                 {
                                     prop_ptr->set_value(true);
                                 }
@@ -409,8 +410,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 else if (!xml_prop.text().empty())
                 {
                     prop_ptr->set_value(xml_prop.text().as_view());
-                    if (prop_ptr->getPropDeclaration()->declName().contains("colour") ||
-                        prop_ptr->getPropDeclaration()->declName().contains("color"))
+                    if (prop_ptr->get_PropDeclaration()->get_DeclName().contains("colour") ||
+                        prop_ptr->get_PropDeclaration()->get_DeclName().contains("color"))
                     {
                         // Convert old style into #RRGGBB
                         prop_ptr->set_value(prop_ptr->as_color().GetAsString(wxC2S_HTML_SYNTAX));
@@ -423,12 +424,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
             if (prop_name == "name")
             {
-                if (newobject->isForm())
+                if (newobject->is_Form())
                 {
-                    prop_ptr = newobject->getPropPtr(prop_class_name);
+                    prop_ptr = newobject->get_PropPtr(prop_class_name);
                 }
-                else if (newobject->isGen(gen_ribbonTool) || newobject->isGen(gen_ribbonButton) ||
-                         newobject->isGen(gen_ribbonGalleryItem))
+                else if (newobject->is_Gen(gen_ribbonTool) || newobject->is_Gen(gen_ribbonButton) ||
+                         newobject->is_Gen(gen_ribbonGalleryItem))
                 {
                     // FormBuilder has a property for this but doesn't use it, nor do we.
                     continue;
@@ -436,7 +437,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
                 else
                 {
-                    prop_ptr = newobject->getPropPtr(prop_var_name);
+                    prop_ptr = newobject->get_PropPtr(prop_var_name);
                 }
 
                 ASSERT(prop_ptr);
@@ -478,7 +479,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     tt_string header(xml_prop.text().as_sview());
                     if (parent)
                     {
-                        auto form = parent->getForm();
+                        auto form = parent->get_Form();
                         tt_string cur_value = form->as_string(prop_python_import_list);
                         if (cur_value.size())
                         {
@@ -512,7 +513,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     // At this point, all properties have been processed.
 
-    if (newobject->isGen(gen_wxGridSizer) || newobject->isGen(gen_wxFlexGridSizer))
+    if (newobject->is_Gen(gen_wxGridSizer) || newobject->is_Gen(gen_wxFlexGridSizer))
     {
         if (newobject->as_int(prop_rows) > 0 && newobject->as_int(prop_cols) > 0)
             newobject->set_value(prop_rows, 0);
@@ -521,16 +522,16 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     // wxFormBuilder allows the users to create settings that will generate an assert if compiled on
     // a debug version of wxWidgets. We fix some of the more common invalid settings here.
 
-    if (newobject->hasValue(prop_flags) && newobject->as_string(prop_flags).contains("wxEXPAND"))
+    if (newobject->HasValue(prop_flags) && newobject->as_string(prop_flags).contains("wxEXPAND"))
     {
-        if (newobject->hasValue(prop_alignment))
+        if (newobject->HasValue(prop_alignment))
         {
             // wxWidgets will ignore all alignment flags if wxEXPAND is set.
             newobject->set_value(prop_alignment, "");
         }
     }
 
-    if (parent && parent->isSizer())
+    if (parent && parent->is_Sizer())
     {
         if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
         {
@@ -567,7 +568,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             if (auto result = map_evt_pair.find(event_name); result != map_evt_pair.end())
             {
                 event_name = result->second;
-                if (event_name == "wxEVT_MENU" && newobject->isGen(gen_tool))
+                if (event_name == "wxEVT_MENU" && newobject->is_Gen(gen_tool))
                     event_name = "wxEVT_TOOL";
             }
             else
@@ -592,10 +593,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
                 if (wxGetApp().isTestingMenuEnabled())
                 {
-                    if (parent && parent->getForm())
+                    if (parent && parent->get_Form())
                     {
                         MSG_INFO(tt_string() << "Event " << event_name << " not supported. Form: "
-                                             << parent->getForm()->as_string(prop_class_name));
+                                             << parent->get_Form()->as_string(prop_class_name));
                     }
                     else
                     {
@@ -607,7 +608,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 continue;
             }
 
-            if (auto event = newobject->getEvent(event_name); event)
+            if (auto event = newobject->get_Event(event_name); event)
             {
                 event->set_value(xml_event.text().as_view());
             }
@@ -617,13 +618,13 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
 
     auto child = xml_obj.child("object");
-    if (NodeCreation.isOldHostType(newobject->declName()))
+    if (NodeCreation.is_OldHostType(newobject->get_DeclName()))
     {
         auto old_book_page = newobject;
         newobject = CreateFbpNode(child, parent, newobject.get());
-        if (newobject && newobject->getParent() && newobject->getParent()->isGen(gen_PageCtrl))
+        if (newobject && newobject->get_Parent() && newobject->get_Parent()->is_Gen(gen_PageCtrl))
         {
-            auto page_ctrl = newobject->getParent();
+            auto page_ctrl = newobject->get_Parent();
             page_ctrl->set_value(prop_label, old_book_page->as_string(prop_label));
             page_ctrl->set_value(prop_bitmap, old_book_page->as_string(prop_bitmap));
             page_ctrl->set_value(prop_select, old_book_page->as_bool(prop_select));
@@ -634,7 +635,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             return newobject;
         }
 
-        if (newobject->isGen(gen_wxStdDialogButtonSizer) && parent)
+        if (newobject->is_Gen(gen_wxStdDialogButtonSizer) && parent)
         {
             // wxFormBuilder isn't able to add a sizer using CreateSeparatedSizer(), so the user has
             // to add a static line above wxStdDialogButtonSizer. The problem with that approach is
@@ -642,17 +643,17 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             // standard buttons. We fix that be removing the static line -- wxUE defaults to adding
             // the line via CreateSeparatedSizer().
 
-            auto pos = parent->getChildPosition(newobject.get());
+            auto pos = parent->get_ChildPosition(newobject.get());
             if (pos > 0)
             {
-                auto prior_sibling = parent->getChild(pos - 1);
-                if (prior_sibling->isGen(gen_wxStaticLine))
+                auto prior_sibling = parent->get_Child(pos - 1);
+                if (prior_sibling->is_Gen(gen_wxStaticLine))
                 {
-                    parent->removeChild(pos - 1);
+                    parent->RemoveChild(pos - 1);
                 }
                 else
                 {
-                    newobject->getPropPtr(prop_static_line)->set_value(false);
+                    newobject->get_PropPtr(prop_static_line)->set_value(false);
                 }
             }
         }
@@ -660,19 +661,19 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
     else if (sizeritem)
     {
-        for (auto& iter: sizeritem->getPropsVector())
+        for (auto& iter: sizeritem->get_PropsVector())
         {
-            auto prop = newobject->addNodeProperty(iter.getPropDeclaration());
+            auto prop = newobject->AddNodeProperty(iter.get_PropDeclaration());
             prop->set_value(iter.as_string());
         }
-        if (parent && newobject->getParent() == nullptr)
+        if (parent && newobject->get_Parent() == nullptr)
         {
-            parent->adoptChild(newobject);
+            parent->AdoptChild(newobject);
         }
     }
-    else if (parent && newobject->getParent() == nullptr)
+    else if (parent && newobject->get_Parent() == nullptr)
     {
-        parent->adoptChild(newobject);
+        parent->AdoptChild(newobject);
     }
 
     while (child)
@@ -685,7 +686,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     // doesn't allow that, in part because it allows the dev to edit each generated form. To
     // work around this, we add numerical suffixes to each filename generated.
 
-    if (newobject->isForm() && m_baseFile.size())
+    if (newobject->is_Form() && m_baseFile.size())
     {
         if (m_language & GEN_LANG_CPLUSPLUS)
             newobject->set_value(prop_base_file, m_baseFile);
@@ -782,7 +783,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     {
         // Form builder will apply enabled to things like a ribbon tool which cannot be
         // enabled/disabled
-        auto disabled = newobject->getPropPtr(prop_disabled);
+        auto disabled = newobject->get_PropPtr(prop_disabled);
         if (disabled)
             disabled->set_value(xml_prop.text().as_bool() ? 0 : 1);
     }
@@ -791,14 +792,14 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     {
         if (class_name == "wxToggleButton" || class_name == "wxButton")
         {
-            newobject->getPropPtr(prop_disabled_bmp)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_disabled_bmp)->set_value(xml_prop.text().as_view());
         }
     }
     else if (prop_name == "pressed")
     {
         if (class_name == "wxToggleButton" || class_name == "wxButton")
         {
-            newobject->getPropPtr(prop_pressed_bmp)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_pressed_bmp)->set_value(xml_prop.text().as_view());
         }
     }
 
@@ -806,42 +807,42 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     {
         if (class_name == "wxRadioButton")
         {
-            newobject->getPropPtr(prop_checked)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_checked)->set_value(xml_prop.text().as_view());
         }
         else if (class_name == "wxSpinCtrl")
         {
-            newobject->getPropPtr(prop_initial)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_initial)->set_value(xml_prop.text().as_view());
         }
         else if (class_name == "wxToggleButton")
         {
-            newobject->getPropPtr(prop_pressed)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_pressed)->set_value(xml_prop.text().as_view());
         }
         else if (class_name == "wxSlider" || class_name == "wxGauge" || class_name == "wxScrollBar")
         {
-            newobject->getPropPtr(prop_position)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_position)->set_value(xml_prop.text().as_view());
         }
         else if (class_name == "wxComboBox" || class_name == "wxBitmapComboBox")
         {
-            newobject->getPropPtr(prop_selection_string)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_selection_string)->set_value(xml_prop.text().as_view());
         }
         else if (class_name == "wxFilePickerCtrl" || class_name == "wxDirPickerCtrl")
         {
-            newobject->getPropPtr(prop_initial_path)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_initial_path)->set_value(xml_prop.text().as_view());
         }
         else if (class_name == "wxFontPickerCtrl")
         {
-            newobject->getPropPtr(prop_initial_font)->set_value(xml_prop.text().as_view());
+            newobject->get_PropPtr(prop_initial_font)->set_value(xml_prop.text().as_view());
         }
         else
         {
-            auto prop = newobject->getPropPtr(prop_value);
+            auto prop = newobject->get_PropPtr(prop_value);
             if (prop)
                 prop->set_value(xml_prop.text().as_view());
         }
     }
     else if (prop_name == "flags" && class_name == "wxWrapSizer")
     {
-        auto prop = newobject->getPropPtr(prop_wrap_flags);
+        auto prop = newobject->get_PropPtr(prop_wrap_flags);
         auto prop_value = xml_prop.text().as_sview();
         if (prop_value.contains("wxWRAPSIZER_DEFAULT_FLAGS"))
             prop_value = "wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES";
@@ -850,7 +851,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     else if (prop_name == "selection" && (class_name == "wxComboBox" || class_name == "wxChoice" ||
                                           class_name == "wxBitmapComboBox"))
     {
-        newobject->getPropPtr(prop_selection_int)->set_value(xml_prop.text().as_view());
+        newobject->get_PropPtr(prop_selection_int)->set_value(xml_prop.text().as_view());
     }
     else if (prop_name == "style" && class_name == "wxCheckBox")
     {
@@ -863,7 +864,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
                 return;  // this is default, so ignore it
             else if (iter.is_sameas("wxCHK_3STATE"))
             {
-                newobject->getPropPtr(prop_type)->set_value("wxCHK_3STATE");
+                newobject->get_PropPtr(prop_type)->set_value("wxCHK_3STATE");
             }
             else
             {
@@ -875,25 +876,25 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
 
         if (new_style.size())
         {
-            auto prop = newobject->getPropPtr(prop_style);
+            auto prop = newobject->get_PropPtr(prop_style);
             prop->set_value("new_style");
         }
     }
     else if (prop_name == "style" && class_name == "wxToolBar")
     {
-        auto prop = newobject->getPropPtr(prop_style);
+        auto prop = newobject->get_PropPtr(prop_style);
         auto prop_value = xml_prop.text().as_cstr();
         prop_value.Replace("wxTB_DEFAULT_STYLE", "wxTB_HORIZONTAL");
         prop->set_value(prop_value);
     }
     else if (prop_name == "orient")
     {
-        if (auto prop = newobject->getPropPtr(prop_orientation); prop)
+        if (auto prop = newobject->get_PropPtr(prop_orientation); prop)
         {
             prop->set_value(xml_prop.text().as_view());
         }
     }
-    else if (prop_name == "hidden" && newobject->isGen(gen_wxDialog))
+    else if (prop_name == "hidden" && newobject->is_Gen(gen_wxDialog))
     {
         return;
     }
@@ -902,12 +903,12 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
         tt_string_vector parts(xml_prop.text().as_view(), ';', tt::TRIM::both);
         if (parts[0].empty())
             return;
-        if (auto prop = newobject->getPropPtr(prop_subclass); prop)
+        if (auto prop = newobject->get_PropPtr(prop_subclass); prop)
         {
             prop->set_value(parts[0]);
             if (parts.size() > 0 && !parts[1].contains("forward_declare"))
             {
-                prop = newobject->getPropPtr(prop_subclass_header);
+                prop = newobject->get_PropPtr(prop_subclass_header);
                 if (prop)
                 {
                     prop->set_value(parts[1]);
@@ -930,14 +931,14 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
             newobject->set_value(prop_line_margin, "1");
         }
     }
-    else if (prop_name == "checked" && newobject->isGen(gen_Check3State))
+    else if (prop_name == "checked" && newobject->is_Gen(gen_Check3State))
     {
         if (xml_prop.text().as_bool())
         {
             newobject->set_value(prop_initial_state, "wxCHK_CHECKED");
         }
     }
-    else if (prop_name == "window_style" && newobject->isGen(gen_wxDialog))
+    else if (prop_name == "window_style" && newobject->is_Gen(gen_wxDialog))
     {
         if (xml_prop.text().as_sview().contains("wxFULL_REPAINT_ON_RESIZE"))
         {
@@ -952,10 +953,10 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     {
         if (xml_prop.text().as_view().size())
         {
-            if (prop_name == "hidden" && newobject->isGen(gen_ribbonTool))
+            if (prop_name == "hidden" && newobject->is_Gen(gen_ribbonTool))
                 return;
             else if (prop_name == "bitmapsize" &&
-                     (newobject->isGen(gen_wxToolBar) || newobject->isGen(gen_wxAuiToolBar)))
+                     (newobject->is_Gen(gen_wxToolBar) || newobject->is_Gen(gen_wxAuiToolBar)))
             {
                 // wxFormBuilder uses this to call SetToolBitmapSize. However, this is *NOT*
                 // recommended since it forces scaling on high DPI systems, ignoring any use of
@@ -967,12 +968,12 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
 
             if (wxGetApp().isTestingMenuEnabled())
             {
-                if (parent && parent->getForm())
+                if (parent && parent->get_Form())
                 {
                     MSG_INFO(tt_string("Unsupported ")
                              << prop_name << "(" << xml_prop.text().as_view() << ") property in "
                              << class_name
-                             << ". Form: " << parent->getForm()->as_string(prop_class_name));
+                             << ". Form: " << parent->get_Form()->as_string(prop_class_name));
                 }
                 else
                 {

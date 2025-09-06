@@ -70,7 +70,7 @@ void resCtrl::ParseButtonStyles(tt_string_view line)
 {
     if (line.contains("BS_RIGHTBUTTON"))
     {
-        switch (m_node->getGenName())
+        switch (m_node->get_GenName())
         {
             case gen_wxCheckBox:
             case gen_Check3State:
@@ -88,7 +88,7 @@ void resCtrl::ParseButtonStyles(tt_string_view line)
         }
     }
 
-    if (m_node->isGen(gen_wxButton) || m_node->isGen(gen_wxToggleButton))
+    if (m_node->is_Gen(gen_wxButton) || m_node->is_Gen(gen_wxToggleButton))
     {
         if (line.contains("BS_TOP"))
             AppendStyle(prop_style, "wxBU_TOP");

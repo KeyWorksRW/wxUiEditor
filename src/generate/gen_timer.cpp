@@ -28,14 +28,14 @@ int TimerGenerator::GetRequiredVersion(Node* /* node */)
 
 bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
 {
-    if (!form->isType(type_frame_form) && !form->isGen(gen_wxDialog) &&
-        !form->isGen(gen_PanelForm) && !form->isGen(gen_wxMdiWindow) &&
-        !form->isGen(gen_wxAuiMDIChildFrame) && !form->isGen(gen_wxPopupTransientWindow))
+    if (!form->is_Type(type_frame_form) && !form->is_Gen(gen_wxDialog) &&
+        !form->is_Gen(gen_PanelForm) && !form->is_Gen(gen_wxMdiWindow) &&
+        !form->is_Gen(gen_wxAuiMDIChildFrame) && !form->is_Gen(gen_wxPopupTransientWindow))
         return false;
 
-    for (auto& iter: form->getChildNodePtrs())
+    for (auto& iter: form->get_ChildNodePtrs())
     {
-        if (iter->isGen(gen_wxTimer))
+        if (iter->is_Gen(gen_wxTimer))
         {
             if (iter->as_bool(prop_auto_start))
             {

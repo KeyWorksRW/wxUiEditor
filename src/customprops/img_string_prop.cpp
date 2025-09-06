@@ -29,7 +29,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
     else if (m_img_props.type.contains("Embed"))
     {
         tt_cwd cwd(true);
-        if (Project.hasValue(prop_art_directory))
+        if (Project.HasValue(prop_art_directory))
         {
             if (auto dir = Project.ArtDirectory(); dir.dir_exists())
             {
@@ -56,18 +56,18 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
                 "*.bmp|Icon|*.ico||";
 #endif
             bool remove_webp = false;
-            if (Project.getCodePreference() == GEN_LANG_CPLUSPLUS)
+            if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
             {
                 // WEBP was added to wxWidgets 3.3.0 -- earlier versions don't support it.
-                remove_webp = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300);
+                remove_webp = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300);
             }
-            else if (Project.getCodePreference() == GEN_LANG_PYTHON)
+            else if (Project.get_CodePreference() == GEN_LANG_PYTHON)
             {
                 // REVIEW: [Randalphwa - 08-31-2025] Currently, the wxPython dev has stated
                 // wxWidgets 3.3.x will not be supported -- he is waiting for the stable release
                 // (3.4.x). I'm guessing that the version will be wxPython 4.4.x, but until it gets
                 // released, that's uncertain.
-                remove_webp = Project.getLangVersion(GEN_LANG_PYTHON) < 404000;
+                remove_webp = Project.get_LangVersion(GEN_LANG_PYTHON) < 404000;
             }
 
             // REVIEW: [Randalphwa - 08-31-2025] wxRuby already supports 3.3.x, and I *think* wxPerl
@@ -86,7 +86,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
         if (dlg.ShowModal() == wxID_OK)
         {
             wxFileName file(dlg.GetPath());
-            file.MakeRelativeTo(Project.getProjectPath().make_wxString());
+            file.MakeRelativeTo(Project.get_ProjectPath().make_wxString());
             auto name = file.GetFullPath();
             tt::backslashestoforward(name);
             SetValue(name);
@@ -97,9 +97,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
         tt_cwd cwd(true);
-        if (Project.hasValue(prop_art_directory))
+        if (Project.HasValue(prop_art_directory))
         {
-            if (auto dir = Project.getArtPath(); dir->DirExists())
+            if (auto dir = Project.get_ArtPath(); dir->DirExists())
             {
                 dir->SetCwd();
             }
@@ -120,7 +120,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
         if (dlg.ShowModal() == wxID_OK)
         {
             tt_string name = dlg.GetPath().utf8_string();
-            name.make_relative(Project.getProjectPath());
+            name.make_relative(Project.get_ProjectPath());
             name.backslashestoforward();
             SetValue(name.make_wxString());
             return true;

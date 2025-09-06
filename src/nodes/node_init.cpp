@@ -429,9 +429,9 @@ void NodeCreator::Initialize()
 
     for (auto& iter: lstParentChild)
     {
-        getNodeType(iter.parent)->addChild(iter.child, iter.max_children);
+        get_NodeType(iter.parent)->AddChild(iter.child, iter.max_children);
         if (iter.parent == type_sizer)
-            getNodeType(type_gbsizer)->addChild(iter.child, iter.max_children);
+            get_NodeType(type_gbsizer)->AddChild(iter.child, iter.max_children);
     }
 
     {
@@ -446,14 +446,14 @@ void NodeCreator::Initialize()
         }
 
         // Now parse the completed m_pdoc_interface document
-        parseGeneratorFile("");
+        ParseGeneratorFile("");
 
         for (auto& iter: functionArray)
         {
             auto xml_data = iter();
             if (xml_data.size())
             {
-                parseGeneratorFile(xml_data.c_str());
+                ParseGeneratorFile(xml_data.c_str());
             }
         }
 
@@ -461,7 +461,7 @@ void NodeCreator::Initialize()
         m_pdoc_interface = nullptr;
     }
 
-    initGenerators();
+    InitGenerators();
 
     for (auto& iter: fb_ImportTypes)
     {
@@ -471,7 +471,7 @@ void NodeCreator::Initialize()
 
 // The xml_data parameter is the char* pointer to the XML data. It will be empty when
 // processing an interface document.
-void NodeCreator::parseGeneratorFile(const char* xml_data)
+void NodeCreator::ParseGeneratorFile(const char* xml_data)
 {
     // All but one of the possible files will use the doc file, so we create it even if it gets
     // ignored because this is an interface file
@@ -578,8 +578,8 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
             m_interfaces[class_name] = generator;
         }
 
-        auto declaration = new NodeDeclaration(class_name, getNodeType(type));
-        m_a_declarations[declaration->getGenName()] = declaration;
+        auto declaration = new NodeDeclaration(class_name, get_NodeType(type));
+        m_a_declarations[declaration->get_GenName()] = declaration;
 
         if (auto flags = generator.attribute("flags").as_view(); flags.size())
         {
@@ -621,8 +621,8 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
             }
         }
 
-        // parseProperties(generator, declaration.get(), declaration->GetCategory());
-        parseProperties(generator, declaration, declaration->GetCategory());
+        // ParseProperties(generator, declaration.get(), declaration->GetCategory());
+        ParseProperties(generator, declaration, declaration->GetCategory());
 
         declaration->ParseEvents(generator, declaration->GetCategory());
 
@@ -641,7 +641,7 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
                 class_name.remove_prefix(sizeof("gen_") - 1);
             }
 
-            auto class_info = getNodeDeclaration(class_name);
+            auto class_info = get_NodeDeclaration(class_name);
 
             // This can happen if the project file is corrupted, or it it a newer version of the
             // project file that the current version doesn't support.
@@ -654,20 +654,20 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
                 auto base_name = elem_base.attribute("class").as_view();
                 if (base_name == "Language Settings")
                 {
-                    class_info->AddBaseClass(getNodeDeclaration("C++ Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("C++ Header Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("C++ Derived Class Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxPython Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxRuby Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxPerl Settings"));
-                    class_info->AddBaseClass(getNodeDeclaration("wxRust Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("C++ Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("C++ Header Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("C++ Derived Class Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("wxPerl Settings"));
+                    class_info->AddBaseClass(get_NodeDeclaration("wxRust Settings"));
 
                     elem_base = elem_base.next_sibling("inherits");
                     continue;
                 }
 
                 // Add a reference to its base class
-                auto base_info = getNodeDeclaration(base_name);
+                auto base_info = get_NodeDeclaration(base_name);
 
                 if (class_info && base_info)
                 {
@@ -714,7 +714,7 @@ void NodeCreator::parseGeneratorFile(const char* xml_data)
     }
 }
 
-void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* node_declaration,
+void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* node_declaration,
                                   NodeCategory& category)
 {
     auto elem_category = elem_obj.child("category");
@@ -727,12 +727,12 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         {
             if (auto node = m_interfaces.find(base_name); node != m_interfaces.end())
             {
-                parseProperties(node->second, node_declaration, new_cat);
+                ParseProperties(node->second, node_declaration, new_cat);
             }
         }
         else
         {
-            parseProperties(elem_category, node_declaration, new_cat);
+            ParseProperties(elem_category, node_declaration, new_cat);
         }
 
         elem_category = elem_category.next_sibling("category");
@@ -818,7 +818,7 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         // simply insert it here if it doesn't exist.
 
         if (tt::is_sameas(name, map_PropNames[prop_var_name]) &&
-            !node_declaration->isGen(gen_data_string) && !node_declaration->isGen(gen_data_xml))
+            !node_declaration->is_Gen(gen_data_string) && !node_declaration->is_Gen(gen_data_xml))
         {
             category.addProperty(prop_var_comment);
             prop_info = new PropDeclaration(
@@ -833,7 +833,7 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             // Most widgets will default to protected: as their class access. Those in the
             // set_no_class_access array should have "none" as the default class access.
 
-            if (set_no_class_access.contains(node_declaration->getGenName()))
+            if (set_no_class_access.contains(node_declaration->get_GenName()))
             {
                 access = "none";
             }
@@ -845,7 +845,7 @@ void NodeCreator::parseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
 
             auto& opts = prop_info->getOptions();
 
-            if (!node_declaration->isGen(gen_wxTimer))
+            if (!node_declaration->is_Gen(gen_wxTimer))
             {
                 opts.emplace_back();
                 opts[opts.size() - 1].name = "none";

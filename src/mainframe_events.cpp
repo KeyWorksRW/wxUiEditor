@@ -56,8 +56,8 @@ void MainFrame::OnAbout(wxCommandEvent&)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        description << "\n" << Project.getProjectFile() << "  \n";
-        description << "Original Project version: " << Project.getOriginalProjectVersion() << "\n";
+        description << "\n" << Project.get_ProjectFile() << "  \n";
+        description << "Original Project version: " << Project.get_OriginalProjectVersion() << "\n";
         description << "wxUiEditor Project version: " << curSupportedVer << "\n";
     }
 
@@ -90,7 +90,7 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.appendCrafter(files);
+        Project.AppendCrafter(files);
     }
 }
 
@@ -104,7 +104,7 @@ void MainFrame::OnAppendDialogBlocks(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.appendDialogBlocks(files);
+        Project.AppendDialogBlocks(files);
     }
 }
 
@@ -118,7 +118,7 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.appendFormBuilder(files);
+        Project.AppendFormBuilder(files);
     }
 }
 
@@ -132,7 +132,7 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.appendGlade(files);
+        Project.AppendGlade(files);
     }
 }
 
@@ -146,7 +146,7 @@ void MainFrame::OnAppendSmith(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.appendSmith(files);
+        Project.AppendSmith(files);
     }
 }
 
@@ -159,7 +159,7 @@ void MainFrame::OnAppendXRC(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        Project.appendXRC(files);
+        Project.AppendXRC(files);
     }
 }
 
@@ -188,13 +188,13 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
 void MainFrame::OnBrowseDocs(wxCommandEvent& /* event unused */)
 {
     wxString url;
-    url = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
+    url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
               "https://docs.wxwidgets.org/3.2.8" :
               "https://docs.wxwidgets.org/latest";
 
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->getGenerator(); generator)
+        if (auto generator = m_selected_node->get_Generator(); generator)
         {
             auto file = generator->GetHelpURL(m_selected_node.get());
             if (file.size())
@@ -215,7 +215,7 @@ void MainFrame::OnBrowsePython(wxCommandEvent& /* event unused */)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->getGenerator(); generator)
+        if (auto generator = m_selected_node->get_Generator(); generator)
         {
             auto file = generator->GetPythonURL(m_selected_node.get());
             if (file.size())
@@ -234,7 +234,7 @@ void MainFrame::OnBrowseRuby(wxCommandEvent& /* event unused */)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->getGenerator(); generator)
+        if (auto generator = m_selected_node->get_Generator(); generator)
         {
             auto file = generator->GetRubyURL(m_selected_node.get());
             if (file.size())
@@ -553,12 +553,13 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
     auto evt_flags = event.getNode();
 
-    if (evt_flags->isGen(gen_wxToolBar))
+    if (evt_flags->is_Gen(gen_wxToolBar))
     {
-        if (evt_flags->getParent()->isSizer())
+        if (evt_flags->get_Parent()->is_Sizer())
         {
-            auto grandparent = evt_flags->getParent()->getParent();
-            if (grandparent->isType(type_frame_form) || grandparent->isGen(gen_wxAuiMDIChildFrame))
+            auto grandparent = evt_flags->get_Parent()->get_Parent();
+            if (grandparent->is_Type(type_frame_form) ||
+                grandparent->is_Gen(gen_wxAuiMDIChildFrame))
             {
                 GetPropInfoBar()->ShowMessage("For the toolbar to be owned by the frame window, it "
                                               "should be placed directly under the frame, "
@@ -664,7 +665,7 @@ void MainFrame::OnReloadProject(wxCommandEvent& /* event unused */)
                           "Are you sure you want to reload the project?",
             "Reload Project", wxICON_WARNING | wxYES_NO) == wxYES)
     {
-        Project.LoadProject(Project.getProjectFile());
+        Project.LoadProject(Project.get_ProjectFile());
     }
 }
 
@@ -731,14 +732,14 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
 
         pugi::xml_document doc;
-        Project.getProjectNode()->createDoc(doc);
+        Project.get_ProjectNode()->CreateDoc(doc);
         if (doc.save_file(filename.GetFullPath().utf8_string(), "  ",
                           pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             m_isImported = false;
             m_FileHistory.AddFileToHistory(filename.GetFullPath());
-            Project.setProjectPath(&filename);
+            Project.set_ProjectPath(&filename);
             ProjectSaved();
             FireProjectLoadedEvent();
         }
@@ -752,12 +753,12 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || Project.getProjectFile().empty() ||
-        Project.getProjectFile().filename().is_sameas(txtEmptyProject))
+    if (m_isImported || Project.get_ProjectFile().empty() ||
+        Project.get_ProjectFile().filename().is_sameas(txtEmptyProject))
         OnSaveAsProject(event);
     else
     {
-        if (Project.getOriginalProjectVersion() != Project.getProjectVersion())
+        if (Project.get_OriginalProjectVersion() != Project.get_ProjectVersion())
         {
             if (wxMessageBox("A project saved with this version of wxUiEditor is not compatible "
                              "with older versions of "
@@ -770,15 +771,15 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
             Project.UpdateOriginalProjectVersion();  // Don't ask again
         }
         pugi::xml_document doc;
-        Project.getProjectNode()->createDoc(doc);
-        if (doc.save_file(Project.getProjectFile(), "  ", pugi::format_indent_attributes))
+        Project.get_ProjectNode()->CreateDoc(doc);
+        if (doc.save_file(Project.get_ProjectFile(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             ProjectSaved();
         }
         else
         {
-            wxMessageBox(wxString("Unable to save the project: ") << Project.getProjectFile(),
+            wxMessageBox(wxString("Unable to save the project: ") << Project.get_ProjectFile(),
                          "Save Project");
         }
     }
@@ -786,13 +787,13 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
 
 void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
 {
-    if (!m_selected_node || !m_selected_node->getParent() ||
-        !m_selected_node->getParent()->isSizer())
+    if (!m_selected_node || !m_selected_node->get_Parent() ||
+        !m_selected_node->get_Parent()->is_Sizer())
     {
         return;
     }
 
-    auto propFlag = m_selected_node->getPropPtr(prop_flags);
+    auto propFlag = m_selected_node->get_PropPtr(prop_flags);
 
     if (!propFlag)
     {
@@ -806,22 +807,22 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
 
     if (!wasExpanded)
     {
-        auto alignment = m_selected_node->getPropPtr(prop_alignment);
+        auto alignment = m_selected_node->get_PropPtr(prop_alignment);
         if (alignment && alignment->as_string().size())
         {
             // All alignment flags are invalid if wxEXPAND is set
-            modifyProperty(alignment, "");
+            ModifyProperty(alignment, "");
         }
     }
 
-    modifyProperty(propFlag, value);
+    ModifyProperty(propFlag, value);
 }
 
 void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->getGenerator(); generator)
+        if (auto generator = m_selected_node->get_Generator(); generator)
         {
             auto label = generator->GetHelpText(m_selected_node.get());
             if (label.empty())
@@ -841,7 +842,7 @@ void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->getGenerator(); generator)
+        if (auto generator = m_selected_node->get_Generator(); generator)
         {
             auto label = generator->GetPythonHelpText(m_selected_node.get());
             if (label.empty())
@@ -861,7 +862,7 @@ void MainFrame::OnUpdateBrowseRuby(wxUpdateUIEvent& event)
 {
     if (m_selected_node)
     {
-        if (auto generator = m_selected_node->getGenerator(); generator)
+        if (auto generator = m_selected_node->get_Generator(); generator)
         {
             auto label = generator->GetRubyHelpText(m_selected_node.get());
             if (label.empty())

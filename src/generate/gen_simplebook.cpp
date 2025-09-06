@@ -25,7 +25,7 @@ wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
     widget->SetEffects((wxShowEffect) node->as_mockup(prop_show_effect, "info_"),
                        (wxShowEffect) node->as_mockup(prop_hide_effect, "info_"));
-    if (node->hasValue(prop_duration))
+    if (node->HasValue(prop_duration))
     {
         widget->SetEffectTimeout(node->as_int(prop_duration));
     }
@@ -87,8 +87,8 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSimplebook");
@@ -98,8 +98,8 @@ int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (!node->isPropValue(prop_show_effect, "no effects") ||
-            !node->isPropValue(prop_show_effect, "no effects"))
+        if (!node->is_PropValue(prop_show_effect, "no effects") ||
+            !node->is_PropValue(prop_show_effect, "no effects"))
             item.append_child(pugi::node_comment)
                 .set_value("SetEffects() are not supported in XRC");
         GenXrcComments(node, item);

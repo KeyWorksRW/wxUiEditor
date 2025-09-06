@@ -129,7 +129,7 @@ using namespace GenEnum;
         get_declaration(name)->SetGenerator(new generator()); \
     }
 
-void NodeCreator::initGenerators()
+void NodeCreator::InitGenerators()
 {
     SET_GENERATOR(gen_BookPage, BookPageGenerator)
     SET_GENERATOR(gen_PageCtrl, PageCtrlGenerator)
@@ -301,5 +301,5 @@ void NodeCreator::initGenerators()
     SET_GENERATOR(gen_folder, FolderGenerator)
     SET_GENERATOR(gen_sub_folder, SubFolderGenerator)
 
-    addAllConstants();
+    AddAllConstants();
 }

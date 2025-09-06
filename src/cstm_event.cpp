@@ -41,7 +41,7 @@ void MainFrame::FireProjectLoadedEvent()
 
     ProjectLoaded();
 
-    CustomEvent event(EVT_ProjectUpdated, Project.getProjectNode());
+    CustomEvent event(EVT_ProjectUpdated, Project.get_ProjectNode());
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);
@@ -116,7 +116,7 @@ void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
 
 void MainFrame::FireProjectUpdatedEvent()
 {
-    CustomEvent event(EVT_ProjectUpdated, Project.getProjectNode());
+    CustomEvent event(EVT_ProjectUpdated, Project.get_ProjectNode());
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);

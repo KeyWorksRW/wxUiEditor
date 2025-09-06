@@ -165,24 +165,24 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
-    if (node->isGen(gen_embedded_image))
+    if (node->is_Gen(gen_embedded_image))
     {
         OnEmbedImageSelected(node);
         return;
     }
-    else if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonButton))
+    else if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonButton))
     {
         OnRibbonToolSelected(node);
         return;
     }
 
-    if (!node->hasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC &&
-        !node->isGen(gen_ribbonTool) && !node->isGen(gen_ribbonButton))
+    if (!node->HasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC &&
+        !node->is_Gen(gen_ribbonTool) && !node->is_Gen(gen_ribbonButton))
     {
         return;  // probably a form, spacer, or image
     }
 
-    auto is_event = wxGetFrame().getPropPanel()->IsEventPageShowing();
+    auto is_event = wxGetFrame().get_PropPanel()->IsEventPageShowing();
     PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
     if (m_panel_type != GEN_LANG_CPLUSPLUS && page != CPP_PANEL)
@@ -214,7 +214,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         }
         else
         {
-            auto map_events = node->getMapEvents();
+            auto map_events = node->get_MapEvents();
             for (auto& iter: map_events)
             {
                 auto value = iter.second.get_value();
@@ -230,11 +230,11 @@ void CodeDisplay::OnNodeSelected(Node* node)
     else if (m_panel_type == GEN_LANG_XRC)
     {
         tt_string search("name=\"");
-        if (node->hasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
+        if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         {
-            search << node->getPropId();
+            search << node->get_PropId();
         }
-        else if (node->hasValue(prop_var_name))
+        else if (node->HasValue(prop_var_name))
         {
             search << node->as_string(prop_var_name);
         }
@@ -246,10 +246,10 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
     else
     {
-        if (node->isGen(gen_tool) || node->isGen(gen_auitool) || node->isGen(gen_ribbonTool) ||
-            node->isGen(gen_ribbonButton))
+        if (node->is_Gen(gen_tool) || node->is_Gen(gen_auitool) || node->is_Gen(gen_ribbonTool) ||
+            node->is_Gen(gen_ribbonButton))
         {
-            if (node->hasValue(prop_bitmap))
+            if (node->HasValue(prop_bitmap))
             {
                 tt_view_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
                                      tt::TRIM::both);
@@ -258,7 +258,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
                     if (auto result = FileNameToVarName(parts[IndexImage]); result)
                     {
                         code.clear();
-                        code.Function(node->isGen(gen_ribbonButton) ? "AddButton" : "AddTool");
+                        code.Function(node->is_Gen(gen_ribbonButton) ? "AddButton" : "AddTool");
                         line = (to_int) m_view.FindLineContaining(code.GetCode());
                         if (tt::is_found(line))
                         {
@@ -268,7 +268,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
                 }
             }
 
-            if (!tt::is_found(line) && node->hasValue(prop_label))
+            if (!tt::is_found(line) && node->HasValue(prop_label))
             {
                 code.clear();
                 code.Function("AddTool");
@@ -317,13 +317,13 @@ void CodeDisplay::OnNodeSelected(Node* node)
 void CodeDisplay::OnRibbonToolSelected(Node* node)
 {
     tt_string search;
-    if (auto parent = node->getParent(); parent)
+    if (auto parent = node->get_Parent(); parent)
     {
-        if (parent->isGen(gen_wxRibbonButtonBar))
+        if (parent->is_Gen(gen_wxRibbonButtonBar))
         {
             search << '"' << node->as_string(prop_label) << '"';
         }
-        else if (parent->isGen(gen_wxRibbonToolBar))
+        else if (parent->is_Gen(gen_wxRibbonToolBar))
         {
             search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id)
                    << ",";
@@ -348,7 +348,7 @@ void CodeDisplay::OnRibbonToolSelected(Node* node)
 
 void CodeDisplay::OnEmbedImageSelected(Node* node)
 {
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         auto func_name = ProjectImages.GetBundleFuncName(node->as_string(prop_bitmap));
         if (func_name.size())

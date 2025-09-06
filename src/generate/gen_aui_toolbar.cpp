@@ -24,14 +24,14 @@ wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
-    if (node->hasValue(prop_margins))
+    if (node->HasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->hasValue(prop_packing))
+    if (node->HasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->hasValue(prop_separation))
+    if (node->HasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &AuiToolBarFormGenerator::OnTool, this);
@@ -51,10 +51,10 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 
     size_t idx_child = 0;
-    for (auto& childObj: node->getChildNodePtrs())
+    for (auto& childObj: node->get_ChildNodePtrs())
     {
         wxAuiToolBarItem* added_tool = nullptr;
-        if (childObj->isGen(gen_auitool))
+        if (childObj->is_Gen(gen_auitool))
         {
             auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
@@ -69,20 +69,20 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 added_tool->SetState(cur_state);
             }
         }
-        else if (childObj->isGen(gen_auitool_label))
+        else if (childObj->is_Gen(gen_auitool_label))
         {
             toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label),
                               childObj->as_int(prop_width));
         }
-        else if (childObj->isGen(gen_toolSeparator))
+        else if (childObj->is_Gen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
-        else if (childObj->isGen(gen_auitool_spacer))
+        else if (childObj->is_Gen(gen_auitool_spacer))
         {
             toolbar->AddSpacer(childObj->as_int(prop_width));
         }
-        else if (childObj->isGen(gen_auitool_stretchable))
+        else if (childObj->is_Gen(gen_auitool_stretchable))
         {
             toolbar->AddStretchSpacer(childObj->as_int(prop_proportion));
         }
@@ -90,9 +90,9 @@ void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
         {
             const wxObject* child;
             if (!is_preview)
-                child = getMockup()->getChild(wxobject, idx_child);
+                child = getMockup()->get_Child(wxobject, idx_child);
             else
-                child = node->getChild(idx_child)->getMockupObject();
+                child = node->get_Child(idx_child)->get_MockupObject();
 
             if (auto* control = wxDynamicCast(child, wxControl); control)
             {
@@ -206,7 +206,7 @@ bool AuiToolBarFormGenerator::HeaderCode(Code& code)
 
 bool AuiToolBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
@@ -231,7 +231,7 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
 {
     GenFormSettings(code);
 
-    if (!code.isPropValue(prop_separation, 5))
+    if (!code.is_PropValue(prop_separation, 5))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -240,7 +240,7 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_margins))
+    if (code.HasValue(prop_margins))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -249,7 +249,7 @@ bool AuiToolBarFormGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (!code.isPropValue(prop_packing, 1))
+    if (!code.is_PropValue(prop_packing, 1))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -290,8 +290,8 @@ void AuiToolBarFormGenerator::OnTool(wxCommandEvent& /* event unused */)
 
 int AuiToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiToolBar");
@@ -341,14 +341,14 @@ wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
-    if (node->hasValue(prop_margins))
+    if (node->HasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->hasValue(prop_packing))
+    if (node->HasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->hasValue(prop_separation))
+    if (node->HasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &AuiToolBarGenerator::OnTool, this);
@@ -368,10 +368,10 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     }
 
     size_t idx_child = 0;
-    for (auto& childObj: node->getChildNodePtrs())
+    for (auto& childObj: node->get_ChildNodePtrs())
     {
         wxAuiToolBarItem* added_tool = nullptr;
-        if (childObj->isGen(gen_auitool))
+        if (childObj->is_Gen(gen_auitool))
         {
             auto bmp = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
@@ -386,20 +386,20 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
                 added_tool->SetState(cur_state);
             }
         }
-        else if (childObj->isGen(gen_auitool_label))
+        else if (childObj->is_Gen(gen_auitool_label))
         {
             toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label),
                               childObj->as_int(prop_width));
         }
-        else if (childObj->isGen(gen_toolSeparator))
+        else if (childObj->is_Gen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
-        else if (childObj->isGen(gen_auitool_spacer))
+        else if (childObj->is_Gen(gen_auitool_spacer))
         {
             toolbar->AddSpacer(childObj->as_int(prop_width));
         }
-        else if (childObj->isGen(gen_auitool_stretchable))
+        else if (childObj->is_Gen(gen_auitool_stretchable))
         {
             toolbar->AddStretchSpacer(childObj->as_int(prop_proportion));
         }
@@ -407,9 +407,9 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         {
             const wxObject* child;
             if (!is_preview)
-                child = getMockup()->getChild(wxobject, idx_child);
+                child = getMockup()->get_Child(wxobject, idx_child);
             else
-                child = node->getChild(idx_child)->getMockupObject();
+                child = node->get_Child(idx_child)->get_MockupObject();
 
             if (auto* control = wxDynamicCast(child, wxControl); control)
             {
@@ -447,7 +447,7 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
 {
     GenFormSettings(code);
 
-    if (!code.isPropValue(prop_separation, 5))
+    if (!code.is_PropValue(prop_separation, 5))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -456,7 +456,7 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_margins))
+    if (code.HasValue(prop_margins))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -465,7 +465,7 @@ bool AuiToolBarGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (!code.isPropValue(prop_packing, 1))
+    if (!code.is_PropValue(prop_packing, 1))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -506,8 +506,8 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& /* event unused */)
 
 int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiToolBar");
@@ -563,7 +563,7 @@ bool AuiToolGenerator::ConstructionCode(Code& code)
 
 int AuiToolGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasProp(prop_initial_state) &&
+    if (node->HasProp(prop_initial_state) &&
         node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")
     {
         return std::max(minRequiredVer + 2, BaseGenerator::GetRequiredVersion(node));
@@ -603,7 +603,7 @@ bool AuiToolGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 bool AuiToolLabelGenerator::ConstructionCode(Code& code)
 {
-    if (code.node()->isParent(gen_wxAuiToolBar))
+    if (code.node()->is_Parent(gen_wxAuiToolBar))
     {
         code.ParentName().Function("AddLabel(");
     }
@@ -633,7 +633,7 @@ int AuiToolLabelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
 bool AuiToolSpacerGenerator::ConstructionCode(Code& code)
 {
-    if (code.node()->isParent(gen_wxAuiToolBar))
+    if (code.node()->is_Parent(gen_wxAuiToolBar))
     {
         code.ParentName().Function("AddSpacer(");
     }
@@ -660,7 +660,7 @@ int AuiToolSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 
 bool AuiToolStretchSpacerGenerator::ConstructionCode(Code& code)
 {
-    if (code.node()->isParent(gen_wxAuiToolBar))
+    if (code.node()->is_Parent(gen_wxAuiToolBar))
     {
         code.ParentName().Function("AddStretchSpacer(");
     }

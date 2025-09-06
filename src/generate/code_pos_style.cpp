@@ -97,7 +97,7 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
     auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
 
-    if (m_node->hasValue(prop_window_name))
+    if (m_node->HasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be
         // generated.
@@ -117,18 +117,18 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
 
     // This could be done as a single if statement, but it is easier to read this way.
     bool style_needed = false;
-    if ((m_node->hasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
         style_needed = true;
-    else if (m_node->hasValue(prop_window_style))
+    else if (m_node->HasValue(prop_window_style))
         style_needed = true;
-    else if (m_node->hasValue(prop_orientation) &&
+    else if (m_node->HasValue(prop_orientation) &&
              !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         style_needed = true;
-    else if (m_node->hasValue(prop_tab_position) &&
+    else if (m_node->HasValue(prop_tab_position) &&
              !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         style_needed = true;
-    else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
+    else if (m_node->is_Gen(gen_wxRichTextCtrl) || m_node->is_Gen(gen_wxListView))
         style_needed = true;
 
     // Do we need a style and/or a default validator?
@@ -159,7 +159,7 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
 
 Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator)
 {
-    if (m_node->hasValue(prop_window_name))
+    if (m_node->HasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be
         // generated.
@@ -190,7 +190,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->hasValue(prop_tab_position) &&
+    if (m_node->HasValue(prop_tab_position) &&
         !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (style_set)
@@ -198,7 +198,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
         as_string(prop_tab_position);
     }
-    if (m_node->hasValue(prop_orientation) &&
+    if (m_node->HasValue(prop_orientation) &&
         !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (style_set)
@@ -210,7 +210,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
     // Note that as_string() may break the line, so recalculate any time as_string() is called
     auto cur_pos = size();
 
-    if (m_node->isGen(gen_wxRichTextCtrl))
+    if (m_node->is_Gen(gen_wxRichTextCtrl))
     {
         if (style_set)
             *this += '|';
@@ -218,7 +218,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         AddConstant("wxRE_MULTILINE");
     }
 
-    if (m_node->hasValue(prop_style))
+    if (m_node->HasValue(prop_style))
     {
         if (style_set)
             *this += '|';
@@ -269,7 +269,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         style_set = true;
     }
 
-    if (m_node->hasValue(prop_window_style))
+    if (m_node->HasValue(prop_window_style))
     {
         if (style_set)
             *this += '|';
@@ -278,7 +278,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
         cur_pos = size();
     }
 
-    if (m_node->isGen(gen_wxListView))
+    if (m_node->is_Gen(gen_wxListView))
     {
         if (style_set)
             *this += '|';

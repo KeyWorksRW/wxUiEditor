@@ -66,9 +66,9 @@ bool CalendarCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
         }
@@ -103,8 +103,8 @@ bool CalendarCtrlGenerator::GetPythonImports(Node*, std::set<std::string>& set_i
 
 int CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCalendarCtrl");

@@ -30,7 +30,7 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 {
     auto widget = wxStaticCast(wxobject, wxTreeListCtrl);
 
-    for (const auto& iter: node->getChildNodePtrs())
+    for (const auto& iter: node->get_ChildNodePtrs())
     {
         widget->AppendColumn(iter->as_wxString(prop_label), iter->as_int(prop_width),
                              static_cast<wxAlignment>(iter->as_int(prop_alignment)),
@@ -74,7 +74,7 @@ std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang l
             if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

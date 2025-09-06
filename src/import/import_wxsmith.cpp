@@ -37,13 +37,13 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
     try
     {
-        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
         for (auto& iter: root.children())
         {
             CreateXrcNode(iter, m_project.get());
         }
 
-        if (!m_project->getChildCount())
+        if (!m_project->get_ChildCount())
         {
             wxMessageBox(wxString() << filename.make_wxString()
                                     << " does not contain any top level forms.",
@@ -52,7 +52,7 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
         }
 
         if (write_doc)
-            m_project->createDoc(m_docOut);
+            m_project->CreateDoc(m_docOut);
     }
 
     catch (const std::exception& err)
@@ -89,7 +89,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "labelrowheight")
     {
-        if (node->isGen(gen_wxGrid))
+        if (node->is_Gen(gen_wxGrid))
         {
             node->set_value(prop_default_row_size, xml_obj.text().as_int());
             return true;
@@ -97,7 +97,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "labelcolwidth")
     {
-        if (node->isGen(gen_wxGrid))
+        if (node->is_Gen(gen_wxGrid))
         {
             // wxGrid doesn't have a default column width, so we'll ignore this property
             return true;
@@ -105,7 +105,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "defaultcolsize")
     {
-        if (node->isGen(gen_wxGrid))
+        if (node->is_Gen(gen_wxGrid))
         {
             node->set_value(prop_default_col_size, xml_obj.text().as_int());
             return true;
@@ -113,7 +113,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "collabels")
     {
-        if (node->isGen(gen_wxGrid))
+        if (node->is_Gen(gen_wxGrid))
         {
             tt_string choices;
             for (auto& iter: xml_obj.children())
@@ -133,7 +133,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
             return true;
         }
     }
-    else if (node_name == "col" && node->isGen(gen_gbsizeritem))
+    else if (node_name == "col" && node->is_Gen(gen_gbsizeritem))
     {
         node->set_value(prop_column, xml_obj.text().as_int());
         return true;

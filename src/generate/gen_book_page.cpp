@@ -24,13 +24,13 @@
 wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxPanel* widget;
-    auto node_parent = node->getParent();
+    auto node_parent = node->get_Parent();
 
-    if (node->getParent()->isGen(gen_BookPage))
+    if (node->get_Parent()->is_Gen(gen_BookPage))
     {
-        auto grandparent = node_parent->getParent();
+        auto grandparent = node_parent->get_Parent();
         ASSERT(grandparent);
-        ASSERT(grandparent && grandparent->isGen(gen_wxTreebook));
+        ASSERT(grandparent && grandparent->is_Gen(gen_wxTreebook));
 
         auto grand_window = getMockup()->GetMockupContent()->Get_wxObject(grandparent);
         widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY,
@@ -42,11 +42,11 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                              DlgSize(node, prop_size), GetStyleInt(node));
     }
 
-    if (node_parent->isGen(gen_BookPage))
+    if (node_parent->is_Gen(gen_BookPage))
     {
-        auto grandparent = node_parent->getParent();
+        auto grandparent = node_parent->get_Parent();
         ASSERT(grandparent);
-        ASSERT(grandparent->isGen(gen_wxTreebook));
+        ASSERT(grandparent->is_Gen(gen_wxTreebook));
 
         parent = getMockup()->GetMockupContent()->Get_wxObject(grandparent);
         ASSERT(parent);
@@ -56,15 +56,15 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         // To find an image previously added to the treebook's image list, we need to iterate
         // through treebooks's pages and sub-pages until we find the matching node.
 
-        if (node->hasValue(prop_bitmap) && isBookDisplayImages(node))
+        if (node->HasValue(prop_bitmap) && isBookDisplayImages(node))
         {
             int idx_image = 0;
             bool is_image_found { false };
-            for (const auto& child: grandparent->getChildNodePtrs())
+            for (const auto& child: grandparent->get_ChildNodePtrs())
             {
-                if (child->hasValue(prop_bitmap))
+                if (child->HasValue(prop_bitmap))
                     ++idx_image;
-                for (const auto& grand_child: child->getChildNodePtrs())
+                for (const auto& grand_child: child->get_ChildNodePtrs())
                 {
                     if (grand_child.get() == node)
                     {
@@ -73,7 +73,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                     }
 
                     // The parent bookpage can contain regular widgets along with child BookPages
-                    if (grand_child->isGen(gen_BookPage) && grand_child->hasValue(prop_bitmap))
+                    if (grand_child->is_Gen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
                         ++idx_image;
                 }
                 if (is_image_found)
@@ -88,12 +88,12 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
-        if (node->hasValue(prop_bitmap) &&
-            (node_parent->as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
+        if (node->HasValue(prop_bitmap) &&
+            (node_parent->as_bool(prop_display_images) || node_parent->is_Gen(gen_wxToolbook)))
         {
             int idx_image = -1;
             bool is_image_found { false };
-            for (const auto& child: node_parent->getChildNodePtrs())
+            for (const auto& child: node_parent->get_ChildNodePtrs())
             {
                 if (child.get() == node)
                 {
@@ -101,22 +101,22 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                         idx_image = 0;
                     break;
                 }
-                if (child->hasValue(prop_bitmap))
+                if (child->HasValue(prop_bitmap))
                 {
                     if (idx_image < 0)
                         idx_image = 0;
                     ++idx_image;
                 }
-                if (child->getParent()->isGen(gen_wxTreebook))
+                if (child->get_Parent()->is_Gen(gen_wxTreebook))
                 {
-                    for (const auto& grand_child: child->getChildNodePtrs())
+                    for (const auto& grand_child: child->get_ChildNodePtrs())
                     {
                         if (grand_child.get() == node)
                         {
                             is_image_found = true;
                             break;
                         }
-                        if (grand_child->isGen(gen_BookPage) && grand_child->hasValue(prop_bitmap))
+                        if (grand_child->is_Gen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
                         {
                             if (idx_image < 0)
                                 idx_image = 0;
@@ -150,10 +150,10 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
-            if (node->hasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
+            if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
             {
                 int idx_image = -1;
-                for (const auto& child: node_parent->getChildNodePtrs())
+                for (const auto& child: node_parent->get_ChildNodePtrs())
                 {
                     if (child.get() == node)
                     {
@@ -161,7 +161,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                             idx_image = 0;
                         break;
                     }
-                    if (child->hasValue(prop_bitmap))
+                    if (child->HasValue(prop_bitmap))
                     {
                         if (idx_image < 0)
                             idx_image = 0;
@@ -195,7 +195,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool BookPageGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_perl() && code.node()->getParent()->isGen(gen_wxSimplebook))
+    if (code.is_perl() && code.node()->get_Parent()->is_Gen(gen_wxSimplebook))
     {
         code += "# Can't add books to wxSimplebook which is not supported in Perl";
         return true;
@@ -204,13 +204,13 @@ bool BookPageGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
 
     Node* node = code.node();
-    if (node->getParent()->isGen(gen_BookPage))
+    if (node->get_Parent()->is_Gen(gen_BookPage))
     {
         bool is_display_images = isBookDisplayImages(node);
-        auto treebook = node->getParent()->getParent();
-        while (treebook->isGen(gen_BookPage))
+        auto treebook = node->get_Parent()->get_Parent();
+        while (treebook->is_Gen(gen_BookPage))
         {
-            treebook = treebook->getParent();
+            treebook = treebook->get_Parent();
         }
 
         code.NodeName(treebook).Comma().as_string(prop_id);
@@ -231,7 +231,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         if (code.IsTrue(prop_select))
             code.Comma().True();
 
-        if (node->hasValue(prop_bitmap) && is_display_images)
+        if (node->HasValue(prop_bitmap) && is_display_images)
         {
             int idx_image = GetTreebookImageIndex(node);
             if (!node->as_bool(prop_select))
@@ -244,7 +244,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        if (node->getParent()->isGen(gen_wxPropertySheetDialog))
+        if (node->get_Parent()->is_Gen(gen_wxPropertySheetDialog))
         {
             if (code.is_ruby())
             {
@@ -262,7 +262,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         }
         code.Comma().as_string(prop_id);
         code.PosSizeFlags();
-        if (node->getParent()->isGen(gen_wxPropertySheetDialog))
+        if (node->get_Parent()->is_Gen(gen_wxPropertySheetDialog))
         {
             // Break out the close parenthesis so that the Ruby code can remove the () entirely.
             if (code.is_ruby())
@@ -283,18 +283,18 @@ bool BookPageGenerator::ConstructionCode(Code& code)
         if (code.IsTrue(prop_select))
             code.Comma().True();
 
-        if (node->hasValue(prop_bitmap) && (node->getParent()->as_bool(prop_display_images) ||
-                                            node->getParent()->isGen(gen_wxToolbook)))
+        if (node->HasValue(prop_bitmap) && (node->get_Parent()->as_bool(prop_display_images) ||
+                                            node->get_Parent()->is_Gen(gen_wxToolbook)))
         {
-            auto node_parent = node->getParent();
+            auto node_parent = node->get_Parent();
             int idx_image = -1;
-            if (node_parent->isGen(gen_wxTreebook))
+            if (node_parent->is_Gen(gen_wxTreebook))
             {
                 idx_image = GetTreebookImageIndex(node);
             }
             else
             {
-                for (const auto& child: node_parent->getChildNodePtrs())
+                for (const auto& child: node_parent->get_ChildNodePtrs())
                 {
                     if (child.get() == node)
                     {
@@ -302,7 +302,7 @@ bool BookPageGenerator::ConstructionCode(Code& code)
                             idx_image = 0;
                         break;
                     }
-                    if (child->hasValue(prop_bitmap))
+                    if (child->HasValue(prop_bitmap))
                     {
                         if (idx_image < 0)
                             idx_image = 0;
@@ -336,21 +336,21 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     auto item = InitializeXrcObject(node, object);
 
     tt_string page_type;
-    if (node->getParent()->isGen(gen_wxNotebook) || node->getParent()->isGen(gen_wxAuiNotebook))
+    if (node->get_Parent()->is_Gen(gen_wxNotebook) || node->get_Parent()->is_Gen(gen_wxAuiNotebook))
         page_type = "notebookpage";
-    else if (node->getParent()->isGen(gen_wxChoicebook))
+    else if (node->get_Parent()->is_Gen(gen_wxChoicebook))
         page_type = "choicebookpage";
-    else if (node->getParent()->isGen(gen_wxListbook))
+    else if (node->get_Parent()->is_Gen(gen_wxListbook))
         page_type = "listbookpage";
-    else if (node->getParent()->isGen(gen_wxSimplebook))
+    else if (node->get_Parent()->is_Gen(gen_wxSimplebook))
         page_type = "simplebookpage";
-    else if (node->getParent()->isGen(gen_wxToolbook))
+    else if (node->get_Parent()->is_Gen(gen_wxToolbook))
         page_type = "toolbookpage";
-    else if (node->getParent()->isGen(gen_wxTreebook))
+    else if (node->get_Parent()->is_Gen(gen_wxTreebook))
         page_type = "treebookpage";
-    else if (node->getParent()->isGen(gen_BookPage))
+    else if (node->get_Parent()->is_Gen(gen_BookPage))
         page_type = "treebookpage";
-    else if (node->getParent()->isGen(gen_wxPropertySheetDialog))
+    else if (node->get_Parent()->is_Gen(gen_wxPropertySheetDialog))
         page_type = "propertysheetpage";
     else
         FAIL_MSG(

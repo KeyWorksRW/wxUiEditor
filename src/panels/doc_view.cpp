@@ -106,7 +106,7 @@ DocViewPanel::DocViewPanel(wxWindow* parent, MainFrame* frame)
 void DocViewPanel::ActivatePage()
 {
     // Language can change if there is a folder override
-    m_language = Project.getCodePreference(m_mainframe->getSelectedNode());
+    m_language = Project.get_CodePreference(m_mainframe->getSelectedNode());
     if (!m_webview)
     {
         wxBusyCursor wait;
@@ -156,12 +156,12 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
     m_language = GEN_LANG_CPLUSPLUS;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
-        if (auto* gen = cur_sel->getGenerator(); gen)
+        if (auto* gen = cur_sel->get_Generator(); gen)
         {
             if (auto file = gen->GetHelpURL(cur_sel); file.size())
             {
                 wxString url;
-                url = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
+                url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
                           "https://docs.wxwidgets.org/3.2.8" :
                           "https://docs.wxwidgets.org/latest";
 
@@ -203,7 +203,7 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
     m_language = GEN_LANG_PYTHON;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
-        if (auto* gen = cur_sel->getGenerator(); gen)
+        if (auto* gen = cur_sel->get_Generator(); gen)
         {
             if (auto file = gen->GetPythonURL(cur_sel); file.size())
             {
@@ -229,7 +229,7 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
     m_language = GEN_LANG_RUBY;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
-        if (auto* gen = cur_sel->getGenerator(); gen)
+        if (auto* gen = cur_sel->get_Generator(); gen)
         {
             if (auto file = gen->GetRubyURL(cur_sel); file.size())
             {

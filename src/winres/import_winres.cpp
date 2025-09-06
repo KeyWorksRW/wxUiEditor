@@ -18,7 +18,7 @@ bool WinResource::Import(const tt_string& filename, bool write_doc)
     if (ImportRc(filename, forms))
     {
         if (write_doc)
-            m_project->createDoc(m_docOut);
+            m_project->CreateDoc(m_docOut);
         return true;
     }
 
@@ -102,7 +102,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
 
     if (!isNested)
     {
-        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
         m_codepage = 1252;
     }
 
@@ -466,15 +466,15 @@ void WinResource::FormToNode(resForm& form)
         case resForm::form_dialog:
         case resForm::form_panel:
             {
-                auto node = NodeCreation.makeCopy(form.GetFormNode());
-                m_project->adoptChild(node);
+                auto node = NodeCreation.MakeCopy(form.GetFormNode());
+                m_project->AdoptChild(node);
             }
             return;
 
         case resForm::form_menu:
             {
-                auto node = NodeCreation.makeCopy(form.GetFormNode());
-                m_project->adoptChild(node);
+                auto node = NodeCreation.MakeCopy(form.GetFormNode());
+                m_project->AdoptChild(node);
             }
             return;
     }

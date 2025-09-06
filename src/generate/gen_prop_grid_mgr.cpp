@@ -26,7 +26,7 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
                                             DlgPoint(node, prop_pos), DlgSize(node, prop_size),
                                             GetStyleInt(node));
 
-    if (node->hasValue(prop_extra_style))
+    if (node->HasValue(prop_extra_style))
     {
         widget->SetExtraStyle(node->as_int(prop_extra_style));
     }
@@ -46,11 +46,11 @@ void PropertyGridManagerGenerator::OnPageChanged(wxPropertyGridEvent& event)
             auto page_index = cur_page->GetIndex();
             if (auto parent = getMockup()->getNode(event.GetEventObject()); parent)
             {
-                for (size_t idx_page = 0; idx_page < parent->getChildCount(); ++idx_page)
+                for (size_t idx_page = 0; idx_page < parent->get_ChildCount(); ++idx_page)
                 {
                     if ((to_int) idx_page == page_index)
                     {
-                        wxGetFrame().SelectNode(parent->getChildNodePtrs()[idx_page].get());
+                        wxGetFrame().SelectNode(parent->get_ChildNodePtrs()[idx_page].get());
                         break;
                     }
                 }
@@ -64,9 +64,9 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                                                  Node* node, bool /* is_preview */)
 {
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
-    for (auto& child: node->getChildNodePtrs())
+    for (auto& child: node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_propGridPage))
+        if (child->is_Gen(gen_propGridPage))
         {
             auto* page =
                 pgm->AddPage(child->as_wxString(prop_label), child->as_wxBitmapBundle(prop_bitmap));
@@ -75,7 +75,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         }
     }
 
-    if (node->getChildCount())
+    if (node->get_ChildCount())
     {
         pgm->SelectPage(0);
     }
@@ -92,7 +92,7 @@ bool PropertyGridManagerGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags(code::allow_scaling, false, "wxPGMAN_DEFAULT_STYLE");
 
-    if (code.hasValue(prop_extra_style))
+    if (code.HasValue(prop_extra_style))
         code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();
 
     return true;
@@ -143,7 +143,7 @@ bool PropertyGridManagerGenerator::GetImports(Node*, std::set<std::string>& set_
 
 bool PropertyGridPageGenerator::ConstructionCode(Code& code)
 {
-    if (code.hasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
         auto is_bitmaps_list = BitmapList(code, prop_bitmap);
         code.AddAuto()

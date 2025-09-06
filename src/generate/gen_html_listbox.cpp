@@ -21,13 +21,13 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                 DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    if (node->hasValue(prop_contents))
+    if (node->HasValue(prop_contents))
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
             widget->Append(iter.make_wxString());
 
-        if (node->hasValue(prop_selection_string))
+        if (node->HasValue(prop_selection_string))
         {
             widget->SetStringSelection(node->as_wxString(prop_selection_string));
         }
@@ -78,16 +78,16 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_empty);
             code.NodeName().Function("SetFocus(").EndFunction();
         }
     }
 
-    if (code.hasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
         auto array = code.node()->as_ArrayString(prop_contents);
         for (auto& iter: array)
@@ -95,10 +95,10 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_empty).NodeName().Function("Append(").QuotedString(iter).EndFunction();
         }
 
-        if (code.hasValue(prop_selection_string))
+        if (code.HasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty);
-            if (code.hasValue(prop_validator_variable))
+            if (code.HasValue(prop_validator_variable))
             {
                 code.as_string(prop_validator_variable) << " = ";
                 code.QuotedString(prop_selection_string);
@@ -155,13 +155,13 @@ bool HtmlListBoxGenerator::GetImports(Node*, std::set<std::string>& set_imports,
 
 int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSimpleHtmlListBox");
 
-    if (node->hasValue(prop_contents))
+    if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
         auto array = node->as_ArrayString(prop_contents);
@@ -176,7 +176,7 @@ int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->hasValue(prop_selection_string))
+        if (node->HasValue(prop_selection_string))
         {
             ADD_ITEM_COMMENT("You cannot use selection_string for the selection in XRC.")
         }

@@ -52,7 +52,7 @@ public:
     void setMainFrameClosing() { m_isMainFrameClosing = true; }
     bool isMainFrameClosing() { return m_isMainFrameClosing; }
 
-    auto getProjectVersion() { return m_ProjectVersion; }
+    auto get_ProjectVersion() { return m_ProjectVersion; }
 
     bool AskedAboutMissingDir(const wxString path)
     {
@@ -73,7 +73,7 @@ public:
     // Returns true if --verbose is specified on the command line.
     bool isVerboseCodeGen() const noexcept { return m_is_verbose_codegen; }
 
-    bool isGenerating() const noexcept { return m_is_generating; }
+    bool is_Generating() const noexcept { return m_is_generating; }
 
 protected:
     bool OnInit() override;

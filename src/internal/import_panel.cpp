@@ -240,7 +240,7 @@ void ImportPanel::OnNodeSelected(Node* node)
     {
         search = "name=\"";
     }
-    if (node->hasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
+    if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
         if (auto pos = search.find('='); tt::is_found(pos))
@@ -248,7 +248,7 @@ void ImportPanel::OnNodeSelected(Node* node)
             search.erase(pos - 1, search.size() - pos + 1);
         }
     }
-    else if (node->hasValue(prop_var_name))
+    else if (node->HasValue(prop_var_name))
     {
         search << node->as_string(prop_var_name);
     }
@@ -258,7 +258,7 @@ void ImportPanel::OnNodeSelected(Node* node)
     }
     line = (to_int) m_view.FindLineContaining(search);
 
-    if (!tt::is_found(line) && m_import_file.has_extension(".pjd") && node->hasValue(prop_var_name))
+    if (!tt::is_found(line) && m_import_file.has_extension(".pjd") && node->HasValue(prop_var_name))
     {
         search = "\"" + node->as_string(prop_var_name);
         line = (to_int) m_view.FindLineContaining(search);
@@ -266,7 +266,7 @@ void ImportPanel::OnNodeSelected(Node* node)
 
     if (!tt::is_found(line) && m_import_file.has_extension(".pjd"))
     {
-        search = node->getNodeDeclaration()->declName();
+        search = node->get_NodeDeclaration()->get_DeclName();
         // DialogBlocks uses wbClassName instead of the expected wxClassName
         if (search.size() > 1 && search[1] == 'x')
             search[1] = 'b';

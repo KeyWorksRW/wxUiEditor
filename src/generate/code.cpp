@@ -559,7 +559,7 @@ Code& Code::as_string(PropName prop_name)
 {
     if (prop_name == prop_id)
     {
-        auto result = m_node->getPropId();
+        auto result = m_node->get_PropId();
         CheckLineLength(result.size());
 
         // For Ruby, if it doesn't start with 'wx' then assume it is a global with a '$' prefix
@@ -819,12 +819,12 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     if (is_cpp())
     {
         *this += "new ";
-        if (m_node->hasValue(prop_subclass) &&
+        if (m_node->HasValue(prop_subclass) &&
             !m_node->as_string(prop_subclass).starts_with("wxGeneric"))
         {
             *this += m_node->as_string(prop_subclass);
             *this += '(';
-            if (m_node->hasValue(prop_subclass_params))
+            if (m_node->HasValue(prop_subclass_params))
             {
                 *this += m_node->as_string(prop_subclass_params);
                 RightTrim();
@@ -839,14 +839,14 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
 
     tt_string class_name;
     if (override_name.empty())
-        class_name = m_node->declName();
+        class_name = m_node->get_DeclName();
     else
         class_name = override_name;
     if (use_generic)
     {
         class_name.Replace("wx", "wxGeneric");
     }
-    else if (m_node->isGen(gen_BookPage))
+    else if (m_node->is_Gen(gen_BookPage))
     {
         class_name = "wxPanel";
     }
@@ -887,7 +887,7 @@ Code& Code::CreateClass(bool use_generic, tt_string_view override_name, bool ass
     }
 
     *this += '(';
-    if (m_node->hasValue(prop_subclass_params))
+    if (m_node->HasValue(prop_subclass_params))
     {
         *this += m_node->as_string(prop_subclass_params);
         RightTrim();
@@ -944,22 +944,22 @@ Code& Code::NodeName(Node* node)
 {
     if (!node)
         node = m_node;
-    auto node_name = node->getNodeName(get_language());
+    auto node_name = node->get_NodeName(get_language());
     if (is_python())
     {
-        if (!node->isForm() && node->as_string(prop_class_access) != "none" &&
+        if (!node->is_Form() && node->as_string(prop_class_access) != "none" &&
             node->as_string(prop_class_access) != "public")
         {
             *this += "self.";
         }
     }
-    else if (is_ruby() && !node->isForm() && !node->isLocal() && node_name[0] != '@')
+    else if (is_ruby() && !node->is_Form() && !node->is_Local() && node_name[0] != '@')
     {
         *this += "@";
     }
-    else if (is_perl() && !node->isForm())
+    else if (is_perl() && !node->is_Form())
     {
-        if (node->isLocal())
+        if (node->is_Local())
         {
             if (!node_name.starts_with("$") && (size() < 1 || back() != '$'))
             {
@@ -1038,18 +1038,18 @@ Code& Code::VarName(tt_string_view var_name, bool class_access)
 
 Code& Code::ParentName()
 {
-    NodeName(m_node->getParent());
+    NodeName(m_node->get_Parent());
     return *this;
 }
 
 bool Code::is_local_var() const
 {
-    return m_node->isLocal();
+    return m_node->is_Local();
 }
 
-bool Code::hasValue(GenEnum::PropName prop_name) const
+bool Code::HasValue(GenEnum::PropName prop_name) const
 {
-    return m_node->hasValue(prop_name);
+    return m_node->HasValue(prop_name);
 }
 
 int Code::IntValue(GenEnum::PropName prop_name) const
@@ -1095,12 +1095,12 @@ static constexpr GenType s_GenParentTypes[] = {
 
 Code& Code::ValidParentName()
 {
-    auto parent = m_node->getParent();
+    auto parent = m_node->get_Parent();
     while (parent)
     {
-        if (parent->isSizer())
+        if (parent->is_Sizer())
         {
-            if (parent->isStaticBoxSizer())
+            if (parent->is_StaticBoxSizer())
             {
                 NodeName(parent);
                 if (is_ruby())
@@ -1114,7 +1114,7 @@ Code& Code::ValidParentName()
                 return *this;
             }
         }
-        else if (parent->isForm())
+        else if (parent->is_Form())
         {
             if (is_cpp())
             {
@@ -1133,26 +1133,26 @@ Code& Code::ValidParentName()
 
         for (auto iter: s_GenParentTypes)
         {
-            if (parent->isType(iter))
+            if (parent->is_Type(iter))
             {
                 NodeName(parent);
-                if (parent->isGen(gen_wxCollapsiblePane))
+                if (parent->is_Gen(gen_wxCollapsiblePane))
                 {
                     Function("GetPane()");
                 }
                 return *this;
             }
         }
-        parent = parent->getParent();
+        parent = parent->get_Parent();
     }
 
-    ASSERT_MSG(parent, tt_string() << m_node->getNodeName() << " has no parent!");
+    ASSERT_MSG(parent, tt_string() << m_node->get_NodeName() << " has no parent!");
     return *this;
 }
 
 Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
-    if (!m_node->hasValue(prop_name))
+    if (!m_node->HasValue(prop_name))
     {
         if (is_cpp())
         {
@@ -1506,21 +1506,21 @@ Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
 
 bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
 {
-    if (m_node->hasValue(prop_window_name))
+    if (m_node->HasValue(prop_window_name))
         return false;
 
-    if ((m_node->hasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
         return false;
-    if (m_node->hasValue(prop_window_style))
+    if (m_node->HasValue(prop_window_style))
         return false;
-    if (m_node->hasValue(prop_orientation) &&
+    if (m_node->HasValue(prop_orientation) &&
         !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
         !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         return false;
-    if (m_node->hasValue(prop_tab_position) &&
+    if (m_node->HasValue(prop_tab_position) &&
         !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         return false;
-    if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
+    if (m_node->is_Gen(gen_wxRichTextCtrl) || m_node->is_Gen(gen_wxListView))
         return false;
 
     if (m_node->as_wxPoint(prop_pos) != wxDefaultPosition)
@@ -1533,24 +1533,24 @@ bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
 
 int Code::WhatParamsNeeded(tt_string_view default_style) const
 {
-    if (m_node->hasValue(prop_window_name))
+    if (m_node->HasValue(prop_window_name))
     {
         return (pos_needed | size_needed | style_needed | window_name_needed);
     }
 
     // This could be done as a single if statement, but it is easier to read this way.
-    if ((m_node->hasValue(prop_style) && m_node->as_string(prop_style) != default_style))
+    if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != default_style))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->hasValue(prop_window_style))
+    else if (m_node->HasValue(prop_window_style))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->hasValue(prop_orientation) &&
+    else if (m_node->HasValue(prop_orientation) &&
              !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->hasValue(prop_tab_position) &&
+    else if (m_node->HasValue(prop_tab_position) &&
              !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
         return (pos_needed | size_needed | style_needed);
-    else if (m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxListView))
+    else if (m_node->is_Gen(gen_wxRichTextCtrl) || m_node->is_Gen(gen_wxListView))
         return (pos_needed | size_needed | style_needed);
 
     if (m_node->as_wxSize(prop_size) != wxDefaultSize)
@@ -1603,7 +1603,7 @@ Code& Code::BorderSize(GenEnum::PropName prop_name)
 
 Code& Code::ColourCode(GenEnum::PropName prop_name)
 {
-    if (!hasValue(prop_name))
+    if (!HasValue(prop_name))
     {
         Add("wxNullColour");
     }
@@ -1630,7 +1630,7 @@ bool Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
         return false;
 #endif
 
-    if (enable_dpi_scaling == code::conditional_scaling && m_node->isForm())
+    if (enable_dpi_scaling == code::conditional_scaling && m_node->is_Form())
         return false;
 
     return true;

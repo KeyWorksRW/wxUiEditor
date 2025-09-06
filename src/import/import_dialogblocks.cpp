@@ -68,7 +68,7 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
             throw std::runtime_error("Invalid project file");
         }
 
-        m_project = NodeCreation.createNode(gen_Project, nullptr).first;
+        m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
         m_project->set_value(prop_code_preference, "C++");
 
         auto option = header.find_child_by_attribute("string", "name", "target_wx_version");
@@ -123,6 +123,10 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
                                 auto sv_value = first_attr.value();
                                 auto data = first_child.text().as_sview();
                                 auto name = first_attr.name();
+                                wxUnusedVar(name);
+                                wxUnusedVar(sv_name);
+                                wxUnusedVar(sv_value);
+                                wxUnusedVar(data);
                             }
                         }
 #endif  // _DEBUG
@@ -133,7 +137,7 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
         }
 
         if (write_doc)
-            m_project->createDoc(m_docOut);
+            m_project->CreateDoc(m_docOut);
     }
 
     catch (const std::exception& err)
@@ -167,12 +171,12 @@ bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
         if (auto folder_name = form_xml.find_child_by_attribute("string", "name", "title");
             folder_name)
         {
-            auto gen_folder_type = parent->isGen(gen_folder) ? gen_sub_folder : gen_folder;
-            if (auto new_parent = NodeCreation.createNode(gen_folder_type, parent.get()).first;
+            auto gen_folder_type = parent->is_Gen(gen_folder) ? gen_sub_folder : gen_folder;
+            if (auto new_parent = NodeCreation.CreateNode(gen_folder_type, parent.get()).first;
                 new_parent)
             {
                 new_parent->set_value(prop_label, ExtractQuotedString(folder_name));
-                parent->adoptChild(new_parent);
+                parent->AdoptChild(new_parent);
                 for (auto& form: form_xml.children("document"))
                 {
                     if (CreateFormNode(form, new_parent))
@@ -196,7 +200,7 @@ bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
 
 bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent)
 {
-    GenEnum::GenName getGenName = gen_unknown;
+    GenEnum::GenName get_GenName = gen_unknown;
     if (auto widgets_class = form_xml.find_child_by_attribute("string", "name", "proxy-type");
         widgets_class)
     {
@@ -207,8 +211,8 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
         }
         type_name.Replace("Proxy", "");
 
-        getGenName = MapClassName(type_name);
-        if (getGenName == gen_unknown)
+        get_GenName = MapClassName(type_name);
+        if (get_GenName == gen_unknown)
         {
             if (type_name == "wxApp")
             {
@@ -216,14 +220,14 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 // know it's not a folder.
                 return true;
             }
-            auto msg = GatherErrorDetails(form_xml, getGenName);
-            ASSERT_MSG(getGenName != gen_unknown, tt_string("Unrecognized proxy-type class: ")
-                                                      << type_name << "\n"
-                                                      << msg);
+            auto msg = GatherErrorDetails(form_xml, get_GenName);
+            ASSERT_MSG(get_GenName != gen_unknown, tt_string("Unrecognized proxy-type class: ")
+                                                       << type_name << "\n"
+                                                       << msg);
             m_errors.emplace(tt_string("Unrecognized form class: ") << type_name);
             return false;
         }
-        else if (getGenName == gen_wxDialog)
+        else if (get_GenName == gen_wxDialog)
         {
             if (auto base_class =
                     form_xml.find_child_by_attribute("string", "name", "proxy-Base class");
@@ -232,7 +236,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 auto base_name = ExtractQuotedString(base_class);
                 if (base_name == "wxPanel")
                 {
-                    getGenName = gen_PanelForm;
+                    get_GenName = gen_PanelForm;
                 }
                 else if (base_class = form_xml.find_child_by_attribute("string", "name",
                                                                        "proxy-Window kind");
@@ -241,51 +245,51 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                     base_name = ExtractQuotedString(base_class);
                     if (base_name == "wxPanel")
                     {
-                        getGenName = gen_PanelForm;
+                        get_GenName = gen_PanelForm;
                     }
                 }
             }
         }
 
-        auto form = NodeCreation.createNode(getGenName, parent.get()).first;
+        auto form = NodeCreation.CreateNode(get_GenName, parent.get()).first;
         if (!form)
         {
-            if (parent->isGen(gen_Project) || parent->isGen(gen_folder) ||
-                parent->isGen(gen_sub_folder))
+            if (parent->is_Gen(gen_Project) || parent->is_Gen(gen_folder) ||
+                parent->is_Gen(gen_sub_folder))
             {
-                switch (getGenName)
+                switch (get_GenName)
                 {
                     default:
                         {
-                            auto msg = GatherErrorDetails(form_xml, getGenName);
+                            auto msg = GatherErrorDetails(form_xml, get_GenName);
                             FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                             m_errors.emplace(tt_string("Unable to create ") << type_name);
                         }
                         return false;
 
                     case gen_wxPanel:
-                        getGenName = gen_PanelForm;
+                        get_GenName = gen_PanelForm;
                         break;
 
                     case gen_wxMenuBar:
-                        getGenName = gen_MenuBar;
+                        get_GenName = gen_MenuBar;
                         break;
 
                     case gen_wxToolBar:
-                        getGenName = gen_ToolBar;
+                        get_GenName = gen_ToolBar;
                         break;
 
                     case gen_wxRibbonBar:
-                        getGenName = gen_RibbonBar;
+                        get_GenName = gen_RibbonBar;
                         break;
 
                     case gen_wxMenu:
-                        getGenName = gen_PopupMenu;
+                        get_GenName = gen_PopupMenu;
                         break;
                 }
-                if (form = NodeCreation.createNode(getGenName, parent.get()).first; !form)
+                if (form = NodeCreation.CreateNode(get_GenName, parent.get()).first; !form)
                 {
-                    auto msg = GatherErrorDetails(form_xml, getGenName);
+                    auto msg = GatherErrorDetails(form_xml, get_GenName);
                     FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                     m_errors.emplace(tt_string("Unable to create ") << type_name);
                     return false;
@@ -293,13 +297,13 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             }
             else
             {
-                auto msg = GatherErrorDetails(form_xml, getGenName);
+                auto msg = GatherErrorDetails(form_xml, get_GenName);
                 FAIL_MSG(tt_string() << "Unable to create " << type_name << "\n" << msg)
                 m_errors.emplace(tt_string("Unable to create ") << type_name);
                 return false;
             }
         }
-        parent->adoptChild(form);
+        parent->AdoptChild(form);
         if (auto derived_class =
                 form_xml.find_child_by_attribute("string", "name", "proxy-Base class");
             derived_class)
@@ -320,7 +324,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
 
         // Start be setting properties common to most forms
 
-        if (auto prop = form->getPropPtr(prop_class_name); prop)
+        if (auto prop = form->get_PropPtr(prop_class_name); prop)
         {
             if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-Class");
                 value)
@@ -329,7 +333,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             }
         }
 
-        if (auto prop = form->getPropPtr(prop_base_file); prop)
+        if (auto prop = form->get_PropPtr(prop_base_file); prop)
         {
             if (auto value = form_xml.find_child_by_attribute("string", "name",
                                                               "proxy-Implementation filename");
@@ -341,7 +345,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             }
         }
 
-        if (auto prop = form->getPropPtr(prop_xrc_file); prop)
+        if (auto prop = form->get_PropPtr(prop_xrc_file); prop)
         {
             if (auto value =
                     form_xml.find_child_by_attribute("string", "name", "proxy-XRC filename");
@@ -353,7 +357,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             }
         }
 
-        if (auto prop = form->getPropPtr(prop_title); prop)
+        if (auto prop = form->get_PropPtr(prop_title); prop)
         {
             if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-Title");
                 value)
@@ -362,7 +366,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
             }
         }
 
-        if (auto prop = form->getPropPtr(prop_center); prop)
+        if (auto prop = form->get_PropPtr(prop_center); prop)
         {
             if (auto value = form_xml.find_child_by_attribute("bool", "name", "proxy-Centre");
                 value && value.text().as_bool())
@@ -382,7 +386,7 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
 
         for (auto& child_xml: form_xml.children("document"))
         {
-            createChildNode(child_xml, form.get());
+            CreateChildNode(child_xml, form.get());
         }
         return true;
     }
@@ -392,15 +396,15 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
     }
 }
 
-void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
+void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
 {
-    auto getGenName = FindGenerator(child_xml, parent);
-    if (getGenName == gen_unknown)
+    auto get_GenName = FindGenerator(child_xml, parent);
+    if (get_GenName == gen_unknown)
     {
         auto type = child_xml.find_child_by_attribute("string", "name", "proxy-type");
         if (!type)
         {
-            auto msg = GatherErrorDetails(child_xml, getGenName);
+            auto msg = GatherErrorDetails(child_xml, get_GenName);
             FAIL_MSG(
                 tt_string() << "Unable to determine class due to missing \"proxy-type\" property.\n"
                             << msg)
@@ -416,7 +420,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
             }
 
             // No point complaining about custom controls
-            auto msg = GatherErrorDetails(child_xml, getGenName);
+            auto msg = GatherErrorDetails(child_xml, get_GenName);
             msg << ", Type: " << ExtractQuotedString(type);
             FAIL_MSG(tt_string() << "Unrecognized class in \"proxy-type\" property: "
                                  << ExtractQuotedString(type) << "\n"
@@ -427,21 +431,21 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
 
     // DialogBlocks uses wbToolBarButtonProxy for all toolbar buttons, so MapClassName() always
     // turns it into gen_tool.
-    if (getGenName == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    if (get_GenName == gen_tool && parent->is_Gen(gen_wxAuiToolBar))
     {
-        getGenName = gen_auitool;
+        get_GenName = gen_auitool;
     }
-    else if (getGenName == gen_wxPanel && parent->isGen(gen_wxPropertySheetDialog))
+    else if (get_GenName == gen_wxPanel && parent->is_Gen(gen_wxPropertySheetDialog))
     {
-        getGenName = gen_BookPage;
+        get_GenName = gen_BookPage;
     }
 
     bool allow_adoption =
         true;  // set to false if node has already been adopted, e.g. a genPageCtrl was inserted
-    auto node = NodeCreation.createNode(getGenName, parent).first;
+    auto node = NodeCreation.CreateNode(get_GenName, parent).first;
     if (!node)
     {
-        if (parent->isGen(gen_wxStdDialogButtonSizer) && getGenName == gen_wxButton)
+        if (parent->is_Gen(gen_wxStdDialogButtonSizer) && get_GenName == gen_wxButton)
         {
             auto add_buttons = [&](std::string_view id, GenEnum::PropName propname)
             {
@@ -465,35 +469,35 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
             return;
         }
 
-        if (parent->isSizer() && parent->getParent()->isForm())
+        if (parent->is_Sizer() && parent->get_Parent()->is_Form())
         {
-            node = NodeCreation.createNode(getGenName, parent->getParent()).first;
+            node = NodeCreation.CreateNode(get_GenName, parent->get_Parent()).first;
             if (node)
             {
-                parent = parent->getParent();
+                parent = parent->get_Parent();
             }
         }
 
         // DialogBlocks will sometimes put the statusbar nested under two sizers.
-        else if (getGenName == gen_wxStatusBar)
+        else if (get_GenName == gen_wxStatusBar)
         {
-            if (auto form = parent->getForm(); form)
+            if (auto form = parent->get_Form(); form)
             {
-                node = NodeCreation.createNode(getGenName, form).first;
+                node = NodeCreation.CreateNode(get_GenName, form).first;
                 if (node)
                 {
                     parent = form;
                 }
             }
         }
-        else if (tt::contains(map_GenTypes[parent->getGenType()], "book"))
+        else if (tt::contains(map_GenTypes[parent->get_GenType()], "book"))
         {
-            if (auto page_ctrl = NodeCreation.createNode(gen_PageCtrl, parent).first; page_ctrl)
+            if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
             {
-                if (node = NodeCreation.createNode(getGenName, page_ctrl.get()).first; node)
+                if (node = NodeCreation.CreateNode(get_GenName, page_ctrl.get()).first; node)
                 {
-                    page_ctrl->adoptChild(node);
-                    parent->adoptChild(page_ctrl);
+                    page_ctrl->AdoptChild(node);
+                    parent->AdoptChild(page_ctrl);
                     allow_adoption = false;
                 }
             }
@@ -502,21 +506,21 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
 
     if (!node)
     {
-        auto msg = GatherErrorDetails(child_xml, getGenName);
+        auto msg = GatherErrorDetails(child_xml, get_GenName);
         ASSERT_MSG(node, tt_string("Unable to create ")
-                             << map_GenNames[getGenName] << " as child of "
-                             << map_GenNames[parent->getGenName()] << "\n"
+                             << map_GenNames[get_GenName] << " as child of "
+                             << map_GenNames[parent->get_GenName()] << "\n"
                              << msg);
-        m_errors.emplace(tt_string("Unable to create ") << map_GenNames[getGenName]);
+        m_errors.emplace(tt_string("Unable to create ") << map_GenNames[get_GenName]);
         return;
     }
 
     if (allow_adoption)
     {
-        parent->adoptChild(node);
+        parent->AdoptChild(node);
     }
 
-    if (auto prop = node->getPropPtr(prop_label); prop)
+    if (auto prop = node->get_PropPtr(prop_label); prop)
     {
         if (auto value = child_xml.find_child_by_attribute("string", "name", "proxy-Label"); value)
         {
@@ -524,7 +528,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
         }
     }
 
-    if (auto prop = node->getPropPtr(prop_orientation); prop)
+    if (auto prop = node->get_PropPtr(prop_orientation); prop)
     {
         if (auto value = child_xml.find_child_by_attribute("string", "name", "proxy-Orientation");
             value)
@@ -541,7 +545,7 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
             else
             {
                 FAIL_MSG(tt_string() << "Unrecognized orientation: " << direction << "\n"
-                                     << GatherErrorDetails(child_xml, getGenName));
+                                     << GatherErrorDetails(child_xml, get_GenName));
                 m_errors.emplace(tt_string("Unrecognized orientation: ") << direction);
             }
         }
@@ -563,25 +567,25 @@ void DialogBlocks::createChildNode(pugi::xml_node& child_xml, Node* parent)
     // Now add all the children of this child node
     for (auto& grand_child_xml: child_xml.children("document"))
     {
-        createChildNode(grand_child_xml, node.get());
+        CreateChildNode(grand_child_xml, node.get());
     }
 }
 
 void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
 {
-    auto node = NodeCreation.createNode(gen_CustomControl, parent).first;
+    auto node = NodeCreation.CreateNode(gen_CustomControl, parent).first;
     if (!node)
     {
         auto msg = GatherErrorDetails(child_xml, gen_CustomControl);
         ASSERT_MSG(node, tt_string("Unable to create ")
                              << map_GenNames[gen_CustomControl] << " as child of "
-                             << map_GenNames[parent->getGenName()] << "\n"
+                             << map_GenNames[parent->get_GenName()] << "\n"
                              << msg);
         m_errors.emplace(tt_string("Unable to create ") << map_GenNames[gen_CustomControl]);
         return;
     }
 
-    parent->adoptChild(node);
+    parent->AdoptChild(node);
 
     SetNodeState(child_xml, node);       // Set disabled and hidden states
     SetNodeDimensions(child_xml, node);  // Set pos and size
@@ -614,7 +618,7 @@ void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
 
 GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* parent)
 {
-    GenEnum::GenName getGenName = gen_unknown;
+    GenEnum::GenName get_GenName = gen_unknown;
 
     // proxy-type starts with "wb" and ends with "Proxy". Change the "wb" to "wx" and remove
     // the "Proxy" to get the class name.
@@ -628,8 +632,8 @@ GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* par
         }
         // Proxy
         type_name.Replace("Proxy", "", true);
-        getGenName = MapClassName(type_name);
-        if (getGenName == gen_unknown)
+        get_GenName = MapClassName(type_name);
+        if (get_GenName == gen_unknown)
         {
             if (type_name == "wxWizardPage")
             {
@@ -637,35 +641,35 @@ GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* par
             }
             else if (type_name == "wxAuiToolBarButton")
             {
-                getGenName = gen_auitool;
+                get_GenName = gen_auitool;
             }
             else
             {
                 if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Class");
                     value)
                 {
-                    getGenName = MapClassName(ExtractQuotedString(value));
+                    get_GenName = MapClassName(ExtractQuotedString(value));
                 }
             }
         }
     }
-    if (getGenName == gen_wxPanel)
+    if (get_GenName == gen_wxPanel)
     {
-        if (parent->declName().contains("book"))
-            getGenName = gen_BookPage;
+        if (parent->get_DeclName().contains("book"))
+            get_GenName = gen_BookPage;
     }
-    else if (getGenName == gen_wxWindow)
+    else if (get_GenName == gen_wxWindow)
     {
-        getGenName = gen_CustomControl;
+        get_GenName = gen_CustomControl;
     }
 
-    return getGenName;
+    return get_GenName;
 }
 
 // Sets var_name and class access for a node
 void DialogBlocks::SetNodeVarname(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
 {
-    if (auto prop = new_node->getPropPtr(prop_var_name); prop)
+    if (auto prop = new_node->get_PropPtr(prop_var_name); prop)
     {
         if (auto value =
                 node_xml.find_child_by_attribute("string", "name", "proxy-Member variable name");
@@ -695,7 +699,7 @@ void DialogBlocks::SetNodeVarname(pugi::xml_node& node_xml, const NodeSharedPtr&
 
 void DialogBlocks::SetNodeID(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
 {
-    if (auto prop = new_node->getPropPtr(prop_id); prop)
+    if (auto prop = new_node->get_PropPtr(prop_id); prop)
     {
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Id name"); value)
         {
@@ -723,7 +727,7 @@ void DialogBlocks::SetNodeID(pugi::xml_node& node_xml, const NodeSharedPtr& new_
 // Sets disabled and hidden states for a node
 void DialogBlocks::SetNodeState(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
 {
-    if (auto prop = new_node->getPropPtr(prop_disabled); prop)
+    if (auto prop = new_node->get_PropPtr(prop_disabled); prop)
     {
         if (auto value = node_xml.find_child_by_attribute("bool", "name", "proxy-Enabled");
             value && !value.text().as_bool())
@@ -732,7 +736,7 @@ void DialogBlocks::SetNodeState(pugi::xml_node& node_xml, const NodeSharedPtr& n
         }
     }
 
-    if (auto prop = new_node->getPropPtr(prop_hidden); prop)
+    if (auto prop = new_node->get_PropPtr(prop_hidden); prop)
     {
         if (auto value = node_xml.find_child_by_attribute("bool", "name", "proxy-Hidden");
             value && value.text().as_bool())
@@ -744,7 +748,7 @@ void DialogBlocks::SetNodeState(pugi::xml_node& node_xml, const NodeSharedPtr& n
 
 void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
 {
-    if (auto prop = new_node->getPropPtr(prop_size); prop)
+    if (auto prop = new_node->get_PropPtr(prop_size); prop)
     {
         wxSize size { -1, -1 };
         if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Width"); value)
@@ -762,7 +766,7 @@ void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedP
         }
     }
 
-    if (auto prop = new_node->getPropPtr(prop_pos); prop)
+    if (auto prop = new_node->get_PropPtr(prop_pos); prop)
     {
         wxPoint pos { -1, -1 };
         if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-X"); value)
@@ -780,7 +784,7 @@ void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedP
         }
     }
 
-    if (new_node->isGen(gen_spacer))
+    if (new_node->is_Gen(gen_spacer))
     {
         if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Width"); value)
         {
@@ -797,7 +801,7 @@ void DialogBlocks::SetNodeValidator(pugi::xml_node& node_xml, const NodeSharedPt
 {
     // Note that while DialogBlocks allows the user to set the properties, it doesn't actually
     // correctly set the validator in code.
-    if (auto prop = new_node->getPropPtr(prop_validator_variable); prop)
+    if (auto prop = new_node->get_PropPtr(prop_validator_variable); prop)
     {
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Data variable");
             value)
@@ -826,7 +830,7 @@ void DialogBlocks::ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& 
             ASSERT(event_parts.size() > 1);
             if (event_parts.size() > 1)
             {
-                if (auto node_event = new_node->getEvent(GetCorrectEventName(event_parts[0]));
+                if (auto node_event = new_node->get_Event(GetCorrectEventName(event_parts[0]));
                     node_event)
                 {
                     node_event->set_value(event_parts[1]);
@@ -1365,7 +1369,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         new_node->set_value(prop_style, prop_styles);
     }
 
-    if (new_node->isGen(gen_wxDialog))
+    if (new_node->is_Gen(gen_wxDialog))
     {
         if (dialog_styles.size())
         {
@@ -1381,7 +1385,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
     // sizerchild, so we look for alignment before attempting to set these. That's because the
     // wxLEFT, wxRIGHT, etc. can be used for other things besides where the border should be.
 
-    if (new_node->hasProp(prop_alignment))
+    if (new_node->HasProp(prop_alignment))
     {
         tt_string style_str;
         if (alignment_styles.size())
@@ -1407,8 +1411,8 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
         {
             // Vertical alignment is invalid if the sizer's orientation is wxVERTICAL
-            if (auto parent = new_node->getParent();
-                parent && parent->isSizer() && parent->as_string(prop_orientation) != "wxVERTICAL")
+            if (auto parent = new_node->get_Parent();
+                parent && parent->is_Sizer() && parent->as_string(prop_orientation) != "wxVERTICAL")
             {
                 auto alignment = ExtractQuotedString(value);
                 if (alignment.is_sameas("Bottom", tt::CASE::either))
@@ -1441,8 +1445,8 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         {
             if (ExtractQuotedString(value).is_sameas("Expand", tt::CASE::either))
             {
-                if (auto parent = new_node->getParent();
-                    parent && parent->isSizer() &&
+                if (auto parent = new_node->get_Parent();
+                    parent && parent->is_Sizer() &&
                     parent->as_string(prop_orientation) != "wxHORIZONTAL")
                 {
                     if (style_str.size())
@@ -1456,8 +1460,8 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             // Vertical alignment is invalid if the sizer's orientation is wxVERTICAL
             if (ExtractQuotedString(value).is_sameas("Expand", tt::CASE::either))
             {
-                if (auto parent = new_node->getParent();
-                    parent && parent->isSizer() &&
+                if (auto parent = new_node->get_Parent();
+                    parent && parent->is_Sizer() &&
                     parent->as_string(prop_orientation) != "wxVERTICAL")
                 {
                     if (style_str.size())
@@ -1577,7 +1581,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                                 str << ' ';
                             str << '"' << iter << '"';
                         }
-                        if (auto prop = node->getPropPtr(result->second); prop)
+                        if (auto prop = node->get_PropPtr(result->second); prop)
                         {
                             prop->set_value(str);
                         }
@@ -1585,16 +1589,16 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     break;
 
                 case prop_value:
-                    if (node->isGen(gen_wxChoice) || node->isGen(gen_wxComboBox) ||
-                        node->isGen(gen_wxListBox) || node->isGen(gen_wxBitmapComboBox))
+                    if (node->is_Gen(gen_wxChoice) || node->is_Gen(gen_wxComboBox) ||
+                        node->is_Gen(gen_wxListBox) || node->is_Gen(gen_wxBitmapComboBox))
                     {
                         node->set_value(prop_selection_string, str);
                     }
-                    else if (auto prop = node->getPropPtr(result->second); prop)
+                    else if (auto prop = node->get_PropPtr(result->second); prop)
                     {
                         prop->set_value(str);
                     }
-                    else if (node->isGen(gen_wxRadioBox))
+                    else if (node->is_Gen(gen_wxRadioBox))
                     {
                         node->set_value(prop_selection, str);
                     }
@@ -1630,9 +1634,9 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     break;
 
                 case prop_label:
-                    if (node->getParent()->isGen(gen_PageCtrl))
+                    if (node->get_Parent()->is_Gen(gen_PageCtrl))
                     {
-                        node->getParent()->set_value(prop_label, str);
+                        node->get_Parent()->set_value(prop_label, str);
                     }
                     else
                     {
@@ -1641,9 +1645,9 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     break;
 
                 case prop_bitmap:
-                    if (node->getParent()->isGen(gen_PageCtrl))
+                    if (node->get_Parent()->is_Gen(gen_PageCtrl))
                     {
-                        node->getParent()->set_value(prop_bitmap, tt_string("Embed;") << str);
+                        node->get_Parent()->set_value(prop_bitmap, tt_string("Embed;") << str);
                     }
                     else
                     {
@@ -1652,7 +1656,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     break;
 
                 default:
-                    if (auto prop = node->getPropPtr(result->second); prop)
+                    if (auto prop = node->get_PropPtr(result->second); prop)
                     {
                         prop->set_value(str);
                     }
@@ -1701,15 +1705,15 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                 switch (result->second)
                 {
                     case prop_value:
-                        if (node->isGen(gen_wxSlider) || node->isGen(gen_wxScrollBar))
+                        if (node->is_Gen(gen_wxSlider) || node->is_Gen(gen_wxScrollBar))
                         {
                             node->set_value(prop_position, string_xml.text().as_view());
                         }
-                        else if (node->isGen(gen_wxSpinButton) || node->isGen(gen_wxSpinCtrl))
+                        else if (node->is_Gen(gen_wxSpinButton) || node->is_Gen(gen_wxSpinCtrl))
                         {
                             node->set_value(prop_initial, string_xml.text().as_view());
                         }
-                        else if (auto prop = node->getPropPtr(result->second); prop)
+                        else if (auto prop = node->get_PropPtr(result->second); prop)
                         {
                             prop->set_value(string_xml.text().as_view());
                         }
@@ -1727,7 +1731,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                         break;
 
                     case prop_fields:
-                        if (!node->hasValue(prop_fields))
+                        if (!node->HasValue(prop_fields))
                         {
                             node->set_value(prop_fields, string_xml.text().as_view());
                         }
@@ -1735,7 +1739,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                         break;
 
                     default:
-                        if (auto prop = node->getPropPtr(result->second); prop)
+                        if (auto prop = node->get_PropPtr(result->second); prop)
                         {
                             // There's really no reason to convert the number, since set_value()
                             // would just convert the number back to a string.
@@ -1757,12 +1761,12 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
             switch (result->second)
             {
                 case prop_value:
-                    if (node->isGen(gen_wxRadioButton) || node->isGen(gen_wxCheckBox))
+                    if (node->is_Gen(gen_wxRadioButton) || node->is_Gen(gen_wxCheckBox))
                     {
                         if (string_xml.text().as_bool())
                             node->set_value(prop_checked, true);
                     }
-                    else if (node->isGen(gen_wxToggleButton))
+                    else if (node->is_Gen(gen_wxToggleButton))
                     {
                         if (string_xml.text().as_bool())
                             node->set_value(prop_pressed, true);
@@ -1770,7 +1774,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     break;
 
                 case prop_style:
-                    if (node->isGen(gen_wxRadioBox))
+                    if (node->is_Gen(gen_wxRadioBox))
                     {
                         if (name == "wxRA_SPECIFY_COLS")
                             node->set_value(prop_style, "columns");
@@ -1779,7 +1783,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     }
 
                 default:
-                    if (auto prop = node->getPropPtr(result->second); prop)
+                    if (auto prop = node->get_PropPtr(result->second); prop)
                     {
                         if (string_xml.text().as_bool())
                         {
@@ -1792,13 +1796,13 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
     }
 }
 
-tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName getGenName)
+tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName)
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
         tt_string msg = "Name: ";
-        if (getGenName != gen_unknown)
-            msg << map_GenNames[getGenName];
+        if (get_GenName != gen_unknown)
+            msg << map_GenNames[get_GenName];
         else
             msg << "Unknown gen_name";
         if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)

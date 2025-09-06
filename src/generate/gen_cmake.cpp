@@ -23,10 +23,10 @@ namespace
 
 int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 {
-    if (parent_node->isGen(gen_folder) && !parent_node->hasValue(prop_folder_cmake_file))
+    if (parent_node->is_Gen(gen_folder) && !parent_node->HasValue(prop_folder_cmake_file))
     {
         if (!Project.as_bool(prop_generate_cmake) ||
-            (parent_node->isGen(gen_Project) && !Project.hasValue(prop_cmake_file)))
+            (parent_node->is_Gen(gen_Project) && !Project.HasValue(prop_cmake_file)))
         {
             return result::exists;
         }
@@ -43,7 +43,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         ASSERT(results.updated_files.size());
         cmake_file = results.updated_files[0];
     }
-    else if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_file))
+    else if (parent_node->is_Gen(gen_folder) && parent_node->HasValue(prop_folder_cmake_file))
     {
         cmake_file = parent_node->as_string(prop_folder_cmake_file);
     }
@@ -60,7 +60,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     }
     else
     {
-        Project.getProjectPath().ChangeDir();
+        Project.get_ProjectPath().ChangeDir();
     }
     if (cmake_file.find('.') == tt::npos)
     {
@@ -84,7 +84,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
     out.emplace_back();
     tt_string var_name(Project.as_string(prop_cmake_varname));
-    if (parent_node->isGen(gen_folder) && parent_node->hasValue(prop_folder_cmake_varname))
+    if (parent_node->is_Gen(gen_folder) && parent_node->HasValue(prop_folder_cmake_varname))
     {
         var_name = parent_node->as_string(prop_folder_cmake_varname);
     }
@@ -97,21 +97,21 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     {
         if (!node_start)
         {
-            node_start = Project.getProjectNode();
+            node_start = Project.get_ProjectNode();
         }
-        for (const auto& child: node_start->getChildNodePtrs())
+        for (const auto& child: node_start->get_ChildNodePtrs())
         {
-            if (node_start == Project.getProjectNode())
+            if (node_start == Project.get_ProjectNode())
             {
-                if (auto* node_folder = child->getFolder();
-                    node_folder && node_folder->hasValue(prop_folder_cmake_file))
+                if (auto* node_folder = child->get_Folder();
+                    node_folder && node_folder->HasValue(prop_folder_cmake_file))
                 {
                     // This file already got added to a different .cmake file
                     continue;
                 }
             }
 
-            if (child->isForm())
+            if (child->is_Form())
             {
                 if (child->as_bool(prop_use_derived_class))
                 {
@@ -124,7 +124,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
             }
             else
             {
-                if (child->isGen(gen_folder) || child->isGen(gen_sub_folder))
+                if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
                 {
                     CollectForms(forms, derived_forms, child.get(), CollectForms);
                 }
@@ -142,15 +142,15 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
         for (const auto& form: form_list)
         {
-            if (!form->hasValue(prop_base_file) && !form->isGen(gen_Data))
+            if (!form->HasValue(prop_base_file) && !form->is_Gen(gen_Data))
             {
                 continue;
             }
 
-            if (parent_node == Project.getProjectNode())
+            if (parent_node == Project.get_ProjectNode())
             {
-                if (auto* node_folder = form->getFolder();
-                    node_folder && node_folder->hasValue(prop_folder_cmake_file))
+                if (auto* node_folder = form->get_Folder();
+                    node_folder && node_folder->HasValue(prop_folder_cmake_file))
                 {
                     // This file already got added to a different .cmake file
                     continue;
@@ -161,7 +161,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
             if (!has_base_file)
             {
                 // No file was specified. It's unlikely this would actually happen given the
-                // form->hasValue(prop_base_file) above, but it does serve as a template check
+                // form->HasValue(prop_base_file) above, but it does serve as a template check
                 // -- an will prevent a problem if the above check is removed.
                 continue;
             }
@@ -212,7 +212,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     out.emplace_back();
     out.emplace_back(")");
 
-    if (auto* data_form = Project.getDataForm(); data_form && data_form->getChildCount())
+    if (auto* data_form = Project.get_DataForm(); data_form && data_form->get_ChildCount())
     {
         out.emplace_back();
         out.emplace_back();
@@ -221,7 +221,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         out.at(out.size() - 1) << "set (" << var_name;
         out.emplace_back();
 
-        for (auto& iter: data_form->getChildNodePtrs())
+        for (auto& iter: data_form->get_ChildNodePtrs())
         {
             tt_string base_file = iter->as_string(prop_data_file);
             if (base_file.size())

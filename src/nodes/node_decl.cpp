@@ -14,7 +14,7 @@ NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) :
     m_type(type), m_category(class_name)
 {
     m_gen_name = rmap_GenNames[class_name];
-    m_gen_type = type->getGenType();
+    m_gen_type = type->get_GenType();
     m_name = GenEnum::map_GenNames[m_gen_name];
 }
 
@@ -23,7 +23,7 @@ NodeDeclaration::~NodeDeclaration()
     delete m_generator;
 }
 
-PropDeclaration* NodeDeclaration::getPropDeclaration(size_t idx) const
+PropDeclaration* NodeDeclaration::get_PropDeclaration(size_t idx) const
 {
     ASSERT(idx < m_properties.size());
 
@@ -41,7 +41,7 @@ PropDeclaration* NodeDeclaration::getPropDeclaration(size_t idx) const
     return nullptr;
 }
 
-const NodeEventInfo* NodeDeclaration::getEventInfo(tt_string_view name) const
+const NodeEventInfo* NodeDeclaration::get_EventInfo(tt_string_view name) const
 {
     if (auto it = m_events.find(name); it != m_events.end())
         return it->second;
@@ -49,7 +49,7 @@ const NodeEventInfo* NodeDeclaration::getEventInfo(tt_string_view name) const
     return nullptr;
 }
 
-const NodeEventInfo* NodeDeclaration::getEventInfo(size_t idx) const
+const NodeEventInfo* NodeDeclaration::get_EventInfo(size_t idx) const
 {
     ASSERT(idx < m_events.size());
 
@@ -124,9 +124,9 @@ void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, boo
     }
 }
 
-bool NodeDeclaration::isSubclassOf(GenName getGenName) const
+bool NodeDeclaration::isSubclassOf(GenName get_GenName) const
 {
-    if (getGenName == m_gen_name)
+    if (get_GenName == m_gen_name)
     {
         return true;
     }
@@ -136,14 +136,14 @@ bool NodeDeclaration::isSubclassOf(GenName getGenName) const
         GetBaseClasses(classes);
         for (auto& iter: classes)
         {
-            if (iter->isSubclassOf(getGenName))
+            if (iter->isSubclassOf(get_GenName))
                 return true;
         }
     }
     return false;
 }
 
-ptrdiff_t NodeDeclaration::getAllowableChildren(GenType child_gen_type) const
+ptrdiff_t NodeDeclaration::get_AllowableChildren(GenType child_gen_type) const
 {
     if (m_gen_name == gen_wxFrame)
     {
@@ -152,7 +152,7 @@ ptrdiff_t NodeDeclaration::getAllowableChildren(GenType child_gen_type) const
             return 1;
     }
 
-    return m_type->getAllowableChildren(child_gen_type);
+    return m_type->get_AllowableChildren(child_gen_type);
 }
 
 std::optional<tt_string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)

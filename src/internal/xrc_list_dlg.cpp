@@ -94,7 +94,7 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
     {
         // THis list should be sychronized with the list of forms in previews.cpp
         // (MainFrame::OnPreviewXrc)
-        switch (form->getGenName())
+        switch (form->get_GenName())
         {
             case gen_wxDialog:
             case gen_PanelForm:

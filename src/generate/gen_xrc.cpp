@@ -43,11 +43,11 @@ const char* txt_dlg_name = "_wxue_temp_dlg";
 
 int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto generator = node->getNodeDeclaration()->getGenerator();
+    auto generator = node->get_NodeDeclaration()->get_Generator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
     if (result == BaseGenerator::xrc_not_supported)
     {
-        if (node->isGen(gen_Project))
+        if (node->is_Gen(gen_Project))
         {
             result = BaseGenerator::xrc_updated;
         }
@@ -70,7 +70,7 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
     if (result == BaseGenerator::xrc_sizer_item_created)
     {
         auto actual_object = object.child("object");
-        if (node->isGen(gen_wxCollapsiblePane))
+        if (node->is_Gen(gen_wxCollapsiblePane))
         {
             // XRC wants a panewindow object as the sole child of wxCollapsiblePane, and all node
             // children must be added as children of this panewindow.
@@ -79,7 +79,7 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             actual_object.append_attribute("class").set_value("panewindow");
         }
 
-        for (const auto& child: node->getChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
             // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC
             // needing a sizeritem as the immediate parent of a widget node. The exception is
@@ -87,7 +87,7 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             // all BookPages to be children of the wxTreebook with a depth parameter indicating if
             // it is a sub-page or not.
 
-            if (child->isGen(gen_BookPage) && child->getParent()->isGen(gen_BookPage))
+            if (child->is_Gen(gen_BookPage) && child->get_Parent()->is_Gen(gen_BookPage))
             {
                 int depth = 0;
                 actual_object = object;
@@ -123,12 +123,12 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
     }
     else if (result == BaseGenerator::xrc_updated)
     {
-        if (node->isGen(gen_tool_dropdown))
+        if (node->is_Gen(gen_tool_dropdown))
         {
             return result;  // The dropdown tool will already have handled it's children.
         }
 
-        for (const auto& child: node->getChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
             auto child_object = object.append_child("object");
             auto child_result = GenerateXrcObject(child.get(), child_object, xrc_flags);
@@ -161,13 +161,13 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 
 void CollectHandlers(Node* node, std::set<std::string>& handlers)
 {
-    auto generator = node->getNodeDeclaration()->getGenerator();
+    auto generator = node->get_NodeDeclaration()->get_Generator();
     generator->RequiredHandlers(node, handlers);
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
-        generator = child->getNodeDeclaration()->getGenerator();
+        generator = child->get_NodeDeclaration()->get_Generator();
         generator->RequiredHandlers(child.get(), handlers);
-        if (child->getChildCount())
+        if (child->get_ChildCount())
         {
             CollectHandlers(child.get(), handlers);
         }
@@ -181,15 +181,15 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
     root.append_attribute("version") = "2.5.3.0";
 
-    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) ||
-        node_start->isGen(gen_ToolBar))
+    if (node_start->is_Gen(gen_MenuBar) || node_start->is_Gen(gen_RibbonBar) ||
+        node_start->is_Gen(gen_ToolBar))
     {
-        if (auto temp_form = NodeCreation.createNode(gen_PanelForm, nullptr).first; temp_form)
+        if (auto temp_form = NodeCreation.CreateNode(gen_PanelForm, nullptr).first; temp_form)
         {
-            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get()).first;
-            temp_form->adoptChild(sizer);
-            auto node_copy = NodeCreation.makeCopy(node_start, sizer.get());
-            sizer->adoptChild(node_copy);
+            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, temp_form.get()).first;
+            temp_form->AdoptChild(sizer);
+            auto node_copy = NodeCreation.MakeCopy(node_start, sizer.get());
+            sizer->AdoptChild(node_copy);
             node_start = temp_form.get();
         }
     }
@@ -198,11 +198,11 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     {
         root.append_child("object");
     }
-    else if (node_start->isGen(gen_Project))
+    else if (node_start->is_Gen(gen_Project))
     {
         GenerateXrcObject(node_start, root, xrc_flags);
     }
-    else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_PanelForm))
+    else if ((xrc_flags & xrc::previewing) && node_start->is_Gen(gen_PanelForm))
     {
         auto object = root.append_child("object");
         object.append_attribute("class").set_value("wxDialog");
@@ -220,13 +220,13 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
 
         GenerateXrcObject(node_start, object, xrc_flags);
     }
-    else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
+    else if ((xrc_flags & xrc::previewing) && node_start->is_Gen(gen_wxDialog))
     {
         auto object = root.append_child("object");
         object.append_attribute("class").set_value("wxPanel");
         object.append_attribute("name").set_value(txt_dlg_name);
         object = object.append_child("object");
-        GenerateXrcObject(node_start->getChild(0), object, xrc_flags);
+        GenerateXrcObject(node_start->get_Child(0), object, xrc_flags);
     }
     else
     {
@@ -276,7 +276,7 @@ void XrcCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     else  // Info panel
     {
-        if (m_form_node != Project.getProjectNode())
+        if (m_form_node != Project.get_ProjectNode())
         {
             m_header->writeLine(tt_string("Resource name is ")
                                 << m_form_node->as_string(prop_class_name));
@@ -306,17 +306,17 @@ bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList)
 void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
 {
     auto form = wxGetMainFrame()->getSelectedNode();
-    if (form && !form->isForm())
+    if (form && !form->is_Form())
     {
-        form = form->getForm();
+        form = form->get_Form();
     }
     if (!form)
     {
         wxMessageBox("You must select a form before you can generate code.", "Code Generation");
         return;
     }
-    else if (form->isGen(gen_Images) || form->isGen(gen_Data) ||
-             form->isGen(gen_wxPopupTransientWindow))
+    else if (form->is_Gen(gen_Images) || form->is_Gen(gen_Data) ||
+             form->is_Gen(gen_wxPopupTransientWindow))
     {
         wxMessageBox("You cannot generate an XRC file for this type of form.", "Code Generation");
         return;
@@ -498,8 +498,8 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_strin
             if (path.empty())
             {
                 // If the form type is supported, warn the user about not having an XRC file for it.
-                if (!form->isGen(gen_Images) && !form->isGen(gen_Data) &&
-                    !form->isGen(gen_wxPopupTransientWindow))
+                if (!form->is_Gen(gen_Images) && !form->is_Gen(gen_Data) &&
+                    !form->is_Gen(gen_wxPopupTransientWindow))
                     results.msgs.emplace_back() << "No XRC filename specified for "
                                                 << form->as_string(prop_class_name) << '\n';
                 continue;
@@ -651,15 +651,15 @@ void XrcGenerator::AddNode(Node* node_start)
         m_root.append_attribute("version") = "2.5.3.0";
     }
 
-    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) ||
-        node_start->isGen(gen_ToolBar))
+    if (node_start->is_Gen(gen_MenuBar) || node_start->is_Gen(gen_RibbonBar) ||
+        node_start->is_Gen(gen_ToolBar))
     {
-        if (auto temp_form = NodeCreation.createNode(gen_PanelForm, nullptr).first; temp_form)
+        if (auto temp_form = NodeCreation.CreateNode(gen_PanelForm, nullptr).first; temp_form)
         {
-            auto sizer = NodeCreation.createNode(gen_VerticalBoxSizer, temp_form.get()).first;
-            temp_form->adoptChild(sizer);
-            auto node_copy = NodeCreation.makeCopy(node_start, sizer.get());
-            sizer->adoptChild(node_copy);
+            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, temp_form.get()).first;
+            temp_form->AdoptChild(sizer);
+            auto node_copy = NodeCreation.MakeCopy(node_start, sizer.get());
+            sizer->AdoptChild(node_copy);
             node_start = temp_form.get();
         }
     }
@@ -668,11 +668,11 @@ void XrcGenerator::AddNode(Node* node_start)
     {
         m_root.append_child("object");
     }
-    else if (node_start->isGen(gen_Project))
+    else if (node_start->is_Gen(gen_Project))
     {
         GenerateXrcObject(node_start, m_root, m_xrc_flags);
     }
-    else if ((m_xrc_flags & xrc::previewing) && node_start->isGen(gen_PanelForm))
+    else if ((m_xrc_flags & xrc::previewing) && node_start->is_Gen(gen_PanelForm))
     {
         auto object = m_root.append_child("object");
         object.append_attribute("class").set_value("wxDialog");
@@ -690,13 +690,13 @@ void XrcGenerator::AddNode(Node* node_start)
 
         GenerateXrcObject(node_start, object, m_xrc_flags);
     }
-    else if ((m_xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
+    else if ((m_xrc_flags & xrc::previewing) && node_start->is_Gen(gen_wxDialog))
     {
         auto object = m_root.append_child("object");
         object.append_attribute("class").set_value("wxPanel");
         object.append_attribute("name").set_value(txt_dlg_name);
         object = object.append_child("object");
-        GenerateXrcObject(node_start->getChild(0), object, m_xrc_flags);
+        GenerateXrcObject(node_start->get_Child(0), object, m_xrc_flags);
     }
     else
     {

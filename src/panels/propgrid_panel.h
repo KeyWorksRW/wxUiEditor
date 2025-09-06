@@ -85,7 +85,7 @@ protected:
 
     void ReselectItem();
 
-    void modifyProperty(NodeProperty* prop, tt_string_view str);
+    void ModifyProperty(NodeProperty* prop, tt_string_view str);
 
     void ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
     void ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);

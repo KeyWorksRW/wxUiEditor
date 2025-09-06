@@ -56,7 +56,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.node();  // This is just for code readability -- could just use code.node() everywhere
     code.AddAuto();
 
-    if (node->getParent()->isGen(gen_PopupMenu))
+    if (node->get_Parent()->is_Gen(gen_PopupMenu))
     {
         code.NodeName();
         code.AddIfCpp(" = Append(");
@@ -80,7 +80,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     auto& label = node->as_string(prop_label);
     if (label.size())
     {
-        if (node->hasValue(prop_shortcut))
+        if (node->HasValue(prop_shortcut))
         {
             code.QuotedString(tt_string() << label << '\t' << node->as_string(prop_shortcut));
         }
@@ -94,7 +94,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.Add("wxEmptyString");
     }
 
-    if (code.hasValue(prop_help) || node->as_string(prop_kind) != "wxITEM_NORMAL")
+    if (code.HasValue(prop_help) || node->as_string(prop_kind) != "wxITEM_NORMAL")
     {
         code.Comma().CheckLineLength().QuotedString(prop_help).Comma().Add(prop_kind);
     }
@@ -106,7 +106,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
 bool MenuItemGenerator::SettingsCode(Code& code)
 {
     Node* node = code.node();
-    if (code.hasValue(prop_extra_accels))
+    if (code.HasValue(prop_extra_accels))
     {
         tt_string_vector accel_list;
         accel_list.SetString(node->as_string(prop_extra_accels), '"', tt::TRIM::both);
@@ -148,7 +148,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
         code.Eol(eol_if_empty);
         if (code.is_cpp())
@@ -219,7 +219,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_unchecked_bitmap))
+    if (code.HasValue(prop_unchecked_bitmap))
     {
         code.AddComment("Set the unchecked bitmap");
         if (code.is_cpp())
@@ -283,7 +283,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (!node->getParent()->isGen(gen_PopupMenu))
+    if (!node->get_Parent()->is_Gen(gen_PopupMenu))
     {
         code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
     }
@@ -302,7 +302,7 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
-    if (node->hasValue(prop_extra_accels))
+    if (node->HasValue(prop_extra_accels))
     {
         InsertGeneratorInclude(node, "#include <wx/accel.h>", set_src, set_hdr);
     }
@@ -312,8 +312,8 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuItem");
@@ -332,7 +332,7 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_shortcut, "accel")
-    if (node->hasValue(prop_extra_accels))
+    if (node->HasValue(prop_extra_accels))
     {
         auto child = item.append_child("extra-accels");
         tt_string_vector accel_list;
@@ -385,7 +385,7 @@ void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
 }
 
-bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
+bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
 {
     if (prop->isProp(prop_stock_id))
     {
@@ -394,16 +394,16 @@ bool MenuItemGenerator::modifyProperty(NodeProperty* prop, tt_string_view value)
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->addProperty(prop, value);
             undo_stock_id->addProperty(
-                prop->getNode()->getPropPtr(prop_label),
-                wxGetStockLabel(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
+                prop->getNode()->get_PropPtr(prop_label),
+                wxGetStockLabel(NodeCreation.get_ConstantAsInt(value.as_str())).utf8_string());
             undo_stock_id->addProperty(
-                prop->getNode()->getPropPtr(prop_help),
-                wxGetStockHelpString(NodeCreation.getConstantAsInt(value.as_str())).utf8_string());
-            undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_id), value);
+                prop->getNode()->get_PropPtr(prop_help),
+                wxGetStockHelpString(NodeCreation.get_ConstantAsInt(value.as_str())).utf8_string());
+            undo_stock_id->addProperty(prop->getNode()->get_PropPtr(prop_id), value);
 
             if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
             {
-                undo_stock_id->addProperty(prop->getNode()->getPropPtr(prop_bitmap),
+                undo_stock_id->addProperty(prop->getNode()->get_PropPtr(prop_bitmap),
                                            tt_string("Art;") << result->second << "|wxART_MENU");
             }
             wxGetFrame().PushUndoAction(undo_stock_id);

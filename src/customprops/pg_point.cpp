@@ -23,7 +23,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     m_prop_type = type;
 
     if ((type == CustomPointProperty::type_SVG || type == CustomPointProperty::type_ART) &&
-        prop->hasValue() && prop->as_string().contains("["))
+        prop->HasValue() && prop->as_string().contains("["))
     {
         tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
@@ -31,7 +31,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         m_value = value;
         InitValues(value);
     }
-    else if (type == CustomPointProperty::type_BITMAP && prop->hasValue())
+    else if (type == CustomPointProperty::type_BITMAP && prop->HasValue())
     {
         tt_view_vector parts;
         parts.SetString(prop->as_string(), ';');
@@ -69,7 +69,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     // Starting with wxUiEditor 1.2.9.0, scaling information should never be stored in the property
     // itself as all scaling is done automatically.
     if (type != CustomPointProperty::type_SVG && type != CustomPointProperty::type_ART &&
-        type != CustomPointProperty::type_BITMAP && !prop->getNode()->isGen(gen_wxWizard))
+        type != CustomPointProperty::type_BITMAP && !prop->getNode()->is_Gen(gen_wxWizard))
     {
         AddPrivateChild(new CustomBoolProperty("high dpi support", wxPG_LABEL, m_dpi_scaling));
         Item(2)->SetHelpString("When checked, values will be scaled on high DPI displays.");

@@ -25,9 +25,9 @@ void GridBagItem::OnInit(wxInitDialogEvent& /* event unused */)
         m_spin_row->SetValue(m_max_row + 1);
     }
     else if (auto cur_node = wxGetFrame().getSelectedNode();
-             cur_node && !cur_node->isGen(gen_Project))
+             cur_node && !cur_node->is_Gen(gen_Project))
     {
-        if (cur_node->isGen(gen_wxGridBagSizer))
+        if (cur_node->is_Gen(gen_wxGridBagSizer))
         {
             m_gbsizer = cur_node;
             GridBag gb(cur_node);
@@ -35,9 +35,9 @@ void GridBagItem::OnInit(wxInitDialogEvent& /* event unused */)
             m_max_row = gb.GetMaxRow();
             m_spin_row->SetValue(m_max_row + 1);
         }
-        else if (cur_node->getParent()->isGen(gen_wxGridBagSizer))
+        else if (cur_node->get_Parent()->is_Gen(gen_wxGridBagSizer))
         {
-            m_gbsizer = cur_node->getParent();
+            m_gbsizer = cur_node->get_Parent();
             GridBag gb(m_gbsizer);
             m_max_column = gb.GetMaxColumn();
             m_max_row = gb.GetMaxRow();
@@ -76,14 +76,14 @@ void GridBagItem::OnColumn(wxSpinEvent& /* event unused */)
         if (column <= max_column)
         {
             bool is_inuse { false };
-            for (size_t child_idx = 0; child_idx < m_gbsizer->getChildCount(); ++child_idx)
+            for (size_t child_idx = 0; child_idx < m_gbsizer->get_ChildCount(); ++child_idx)
             {
-                if (m_gbsizer->getChild(child_idx)->as_int(prop_row) == row)
+                if (m_gbsizer->get_Child(child_idx)->as_int(prop_row) == row)
                 {
-                    if (column < m_gbsizer->getChild(child_idx)->as_int(prop_column))
+                    if (column < m_gbsizer->get_Child(child_idx)->as_int(prop_column))
                         continue;
-                    else if (column > m_gbsizer->getChild(child_idx)->as_int(prop_column) +
-                                          m_gbsizer->getChild(child_idx)->as_int(prop_colspan))
+                    else if (column > m_gbsizer->get_Child(child_idx)->as_int(prop_column) +
+                                          m_gbsizer->get_Child(child_idx)->as_int(prop_colspan))
                         continue;
                     is_inuse = true;
                     break;
@@ -144,12 +144,12 @@ void GridBagItem::OnRow(wxSpinEvent& /* event unused */)
 int GridBagItem::GetNewColumn(int row)
 {
     int new_column = 0;
-    for (size_t child_idx = 0; child_idx < m_gbsizer->getChildCount(); ++child_idx)
+    for (size_t child_idx = 0; child_idx < m_gbsizer->get_ChildCount(); ++child_idx)
     {
-        if (m_gbsizer->getChild(child_idx)->as_int(prop_row) == row)
+        if (m_gbsizer->get_Child(child_idx)->as_int(prop_row) == row)
         {
-            auto column = m_gbsizer->getChild(child_idx)->as_int(prop_column) +
-                          m_gbsizer->getChild(child_idx)->as_int(prop_colspan);
+            auto column = m_gbsizer->get_Child(child_idx)->as_int(prop_column) +
+                          m_gbsizer->get_Child(child_idx)->as_int(prop_colspan);
             if (column > new_column)
                 new_column = column;
         }

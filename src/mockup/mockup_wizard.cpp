@@ -45,7 +45,7 @@ void MockupWizard::CreateBmpPageRow()
     m_bmp_page_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_column_sizer->Add(m_bmp_page_sizer, wxSizerFlags(1).Expand().Border());
 
-    if (m_wizard_node->hasValue(prop_bitmap))
+    if (m_wizard_node->HasValue(prop_bitmap))
     {
         auto bundle = m_wizard_node->as_wxBitmapBundle(prop_bitmap);
         m_bitmap = bundle.GetBitmap(bundle.GetPreferredBitmapSizeFor(this));
@@ -191,9 +191,9 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
 
     SetSelection(m_cur_page_index);
 
-    if (m_cur_page_index < m_wizard_node->getChildCount())
+    if (m_cur_page_index < m_wizard_node->get_ChildCount())
     {
-        wxGetFrame().SelectNode(m_wizard_node->getChild(m_cur_page_index), evt_flags::fire_event);
+        wxGetFrame().SelectNode(m_wizard_node->get_Child(m_cur_page_index), evt_flags::fire_event);
     }
 }
 
@@ -266,7 +266,7 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
     wxBitmap bitmap(static_cast<int>(bmp_width), static_cast<int>(bmp_height));
     wxMemoryDC dc;
     dc.SelectObject(bitmap);
-    if (m_wizard_node->hasValue(prop_bmp_background_colour))
+    if (m_wizard_node->HasValue(prop_bmp_background_colour))
         dc.SetBackground(wxBrush(m_wizard_node->as_wxColour(prop_bmp_background_colour)));
     else
         dc.SetBackground(wxBrush(*wxWHITE));
@@ -308,7 +308,7 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
 MockupWizardPage::MockupWizardPage(Node* node, wxObject* parent) :
     wxPanel(wxStaticCast(parent, wxWindow))
 {
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         auto bundle = node->as_wxBitmapBundle(prop_bitmap);
         m_bitmap = bundle.GetBitmap(bundle.GetPreferredBitmapSizeFor(this));

@@ -46,7 +46,7 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        if (code.hasValue(prop_bitmap))
+        if (code.HasValue(prop_bitmap))
         {
             bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
             if (code.is_perl())
@@ -138,7 +138,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
         class_override_type = ClassOverrideType::Generic;
     }
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);
         tt_string bundle_code;
@@ -156,7 +156,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
             code.Tab();
         }
 
-        if (node->isLocal())
+        if (node->is_Local())
             code << "auto* ";
 
         switch (class_override_type)
@@ -166,7 +166,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                 break;
             case ClassOverrideType::Subclass:
                 code.NodeName() << " = new " << node->as_string(prop_subclass) << "(";
-                if (node->hasValue(prop_subclass_params))
+                if (node->HasValue(prop_subclass_params))
                 {
                     code += node->as_string(prop_subclass_params);
                     code.RightTrim();
@@ -194,7 +194,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
     }
     else  // no bitmap
     {
-        if (node->isLocal())
+        if (node->is_Local())
             code << "auto* ";
 
         switch (class_override_type)
@@ -204,7 +204,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                 break;
             case ClassOverrideType::Subclass:
                 code.NodeName() << " = new " << node->as_string(prop_subclass) << "(";
-                if (node->hasValue(prop_subclass_params))
+                if (node->HasValue(prop_subclass_params))
                 {
                     code += node->as_string(prop_subclass_params);
                     code.RightTrim();
@@ -287,8 +287,8 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticBitmap");
@@ -299,7 +299,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->hasValue(prop_scale_mode) && node->as_string(prop_scale_mode) != "None")
+        if (node->HasValue(prop_scale_mode) && node->as_string(prop_scale_mode) != "None")
         {
             item.append_child(pugi::node_comment)
                 .set_value(" scale mode cannot be be set in the XRC file. ");

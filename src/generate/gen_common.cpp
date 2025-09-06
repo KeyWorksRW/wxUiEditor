@@ -33,7 +33,7 @@
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr)
 {
-    if (node->isPropValue(prop_class_access, "none"))
+    if (node->is_PropValue(prop_class_access, "none"))
     {
         set_src.insert(include);
     }
@@ -45,7 +45,7 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 
 void ColourCode(Code& code, GenEnum::PropName prop_name)
 {
-    if (!code.hasValue(prop_name))
+    if (!code.HasValue(prop_name))
     {
         code.Add("wxNullColour");
     }
@@ -101,7 +101,7 @@ tt_string GenerateQuotedString(const tt_string& str)
 
 tt_string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
-    if (node->hasValue(prop_name))
+    if (node->HasValue(prop_name))
     {
         return GenerateQuotedString(node->as_string(prop_name));
     }
@@ -132,39 +132,39 @@ static constexpr GenType s_GenParentTypes[] = {
 
 // clang-format on
 
-tt_string GetParentName(Node* node, GenLang language)
+tt_string get_ParentName(Node* node, GenLang language)
 {
-    auto parent = node->getParent();
+    auto parent = node->get_Parent();
     while (parent)
     {
-        if (parent->isSizer())
+        if (parent->is_Sizer())
         {
-            if (parent->isStaticBoxSizer())
+            if (parent->is_StaticBoxSizer())
             {
-                return (tt_string() << parent->getNodeName(language) << "->GetStaticBox()");
+                return (tt_string() << parent->get_NodeName(language) << "->GetStaticBox()");
             }
         }
-        if (parent->isForm())
+        if (parent->is_Form())
         {
             return tt_string("this");
         }
 
         for (auto iter: s_GenParentTypes)
         {
-            if (parent->isType(iter))
+            if (parent->is_Type(iter))
             {
-                tt_string name = parent->getNodeName(language);
-                if (parent->isGen(gen_wxCollapsiblePane))
+                tt_string name = parent->get_NodeName(language);
+                if (parent->is_Gen(gen_wxCollapsiblePane))
                 {
                     name << "->GetPane()";
                 }
                 return name;
             }
         }
-        parent = parent->getParent();
+        parent = parent->get_Parent();
     }
 
-    ASSERT_MSG(parent, tt_string() << node->getNodeName() << " has no parent!");
+    ASSERT_MSG(parent, tt_string() << node->get_NodeName() << " has no parent!");
     return tt_string("internal error");
 }
 
@@ -172,7 +172,7 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
 {
     tt_string all_styles;
 
-    if (node->hasValue(prop_tab_position) &&
+    if (node->HasValue(prop_tab_position) &&
         !node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (all_styles.size())
@@ -180,7 +180,7 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
         all_styles << node->as_string(prop_tab_position);
     }
 
-    if (node->hasValue(prop_orientation) &&
+    if (node->HasValue(prop_orientation) &&
         !node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (all_styles.size())
@@ -188,14 +188,14 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
         all_styles << node->as_string(prop_orientation);
     }
 
-    if (node->isGen(gen_wxRichTextCtrl))
+    if (node->is_Gen(gen_wxRichTextCtrl))
     {
         if (all_styles.size())
             all_styles << '|';
         all_styles << "wxRE_MULTILINE";
     }
 
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
     {
         if (all_styles.size())
         {
@@ -211,14 +211,14 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
         }
     }
 
-    if (node->hasValue(prop_window_style))
+    if (node->HasValue(prop_window_style))
     {
         if (all_styles.size())
             all_styles << '|';
         all_styles << node->as_string(prop_window_style);
     }
 
-    if (node->isGen(gen_wxListView))
+    if (node->is_Gen(gen_wxListView))
     {
         if (all_styles.size())
             all_styles << '|';
@@ -243,13 +243,13 @@ int GetStyleInt(Node* node, const char* prefix)
     GenStyle(node, styles, prefix);
 
     int result = 0;
-    // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
+    // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
     tt_string_vector mstr(styles, '|');
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
-        result |= NodeCreation.getConstantAsInt(iter);
+        result |= NodeCreation.get_ConstantAsInt(iter);
     }
     return result;
 }
@@ -257,13 +257,13 @@ int GetStyleInt(Node* node, const char* prefix)
 int GetBitlistInt(Node* node, GenEnum::PropName prop_name)
 {
     int result = 0;
-    // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
+    // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
     tt_string_vector mstr(node->as_string(prop_name), '|');
     for (auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
-        result |= NodeCreation.getConstantAsInt(iter);
+        result |= NodeCreation.get_ConstantAsInt(iter);
     }
     return result;
 }
@@ -285,8 +285,8 @@ inline const BTN_BMP_TYPES btn_bmp_types[] = {
 bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 {
     bool has_additional_bitmaps =
-        (node->hasValue(prop_disabled_bmp) || node->hasValue(prop_pressed_bmp) ||
-         node->hasValue(prop_focus_bmp) || node->hasValue(prop_current));
+        (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
+         node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
     if (code.size())
         code << '\n';
 
@@ -302,7 +302,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 
     for (auto& iter: btn_bmp_types)
     {
-        if (node->hasValue(iter.prop_name))
+        if (node->HasValue(iter.prop_name))
         {
             bundle_code.clear();
             bool is_code_block = GenerateBundleCode(node->as_string(iter.prop_name), bundle_code);
@@ -323,7 +323,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
                 bundle_code.Replace("\t\t\t", "\t", true);
                 // if has_additional_bitmaps is true, we already have an opening brace
                 code << bundle_code.c_str() + (has_additional_bitmaps ? 1 : 0);
-                code << "\t" << node->getNodeName() << "->" << iter.function_name;
+                code << "\t" << node->get_NodeName() << "->" << iter.function_name;
                 code << "(wxBitmapBundle::FromBitmaps(bitmaps));";
 
                 if (!has_additional_bitmaps)
@@ -335,7 +335,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
             {
                 if (code.size() && !(code.back() == '\n'))
                     code << '\n';
-                code << "\t" << node->getNodeName() << "->" << iter.function_name << "("
+                code << "\t" << node->get_NodeName() << "->" << iter.function_name << "("
                      << bundle_code << ");";
             }
         }
@@ -685,7 +685,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
 void GenFormSettings(Code& code)
 {
     const auto* node = code.node();
-    if (!node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
+    if (!node->is_Gen(gen_PanelForm) && !node->is_Gen(gen_wxToolBar))
     {
         const auto max_size = node->as_wxSize(prop_maximum_size);
         const auto min_size = node->as_wxSize(prop_minimum_size);
@@ -710,7 +710,7 @@ void GenFormSettings(Code& code)
         }
     }
 
-    if (code.hasValue(prop_window_extra_style))
+    if (code.HasValue(prop_window_extra_style))
     {
         code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle() | ");
         code.Add(prop_window_extra_style).EndFunction();
@@ -771,7 +771,7 @@ std::optional<tt_string> GenGetSetCode(Node* node)
 
     if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
-        auto val_data_type = node->getValidatorDataType();
+        auto val_data_type = node->get_ValidatorDataType();
         if (val_data_type.empty())
             return {};
         tt_string code;
@@ -836,9 +836,9 @@ void GenValidatorSettings(Code& code)
     code.Eol(eol_if_needed);
     if (code.is_ruby())
     {
-        if (node->isGen(gen_StaticCheckboxBoxSizer))
+        if (node->is_Gen(gen_StaticCheckboxBoxSizer))
             var_name = "@" + node->as_string(prop_checkbox_var_name);
-        else if (node->isGen(gen_StaticRadioBtnBoxSizer))
+        else if (node->is_Gen(gen_StaticRadioBtnBoxSizer))
             var_name = "@" + node->as_string(prop_radiobtn_var_name);
         else
             var_name.insert(0, "@");
@@ -850,20 +850,20 @@ void GenValidatorSettings(Code& code)
 
     if (code.is_cpp())
     {
-        if (node->isGen(gen_StaticCheckboxBoxSizer))
+        if (node->is_Gen(gen_StaticCheckboxBoxSizer))
             code.Add(prop_checkbox_var_name);
-        else if (node->isGen(gen_StaticRadioBtnBoxSizer))
+        else if (node->is_Gen(gen_StaticRadioBtnBoxSizer))
             code.Add(prop_radiobtn_var_name);
         else
             code.NodeName();
     }
 
-    if (node->isGen(gen_wxRearrangeCtrl))
+    if (node->is_Gen(gen_wxRearrangeCtrl))
         code.Function("GetList()");
 
     code.Function("SetValidator(");
 
-    if (!node->hasProp(prop_validator_data_type))
+    if (!node->HasProp(prop_validator_data_type))
     {
         // Used for things like checkboxes, radio buttons, etc.
         if (code.is_cpp())
@@ -881,7 +881,7 @@ void GenValidatorSettings(Code& code)
     ASSERT(data_type.size())
     if (data_type.empty())
     {  // theoretically impossible
-        FAIL_MSG(tt_string() << "No validator data type for " << node->getNodeName());
+        FAIL_MSG(tt_string() << "No validator data type for " << node->get_NodeName());
         code.Add("wxDefaultValidator").EndFunction();
         return;
     }
@@ -890,7 +890,7 @@ void GenValidatorSettings(Code& code)
     if (style.starts_with('|'))
         style.erase(0, 1);
 
-    auto validator_type = node->getValidatorType();
+    auto validator_type = node->get_ValidatorType();
 
     if (validator_type == "wxGenericValidator")
     {
@@ -1023,7 +1023,7 @@ void GenValidatorSettings(Code& code)
     if (validator_type.is_sameas("wxIntegerValidator") ||
         validator_type.is_sameas("wxFloatingPointValidator"))
     {
-        if (node->hasValue(prop_minValue))
+        if (node->HasValue(prop_minValue))
         {
             if (code.is_cpp())
             {
@@ -1041,7 +1041,7 @@ void GenValidatorSettings(Code& code)
                 code.Eol().NodeName().Str(".get_validator.set_min(").Add(prop_minValue).Str(")");
             }
         }
-        if (node->hasValue(prop_maxValue))
+        if (node->HasValue(prop_maxValue))
         {
             if (code.is_cpp())
             {
@@ -1195,13 +1195,13 @@ void GenToolCode(Code& code)
     const auto* node = code.node();
     code.Eol(eol_if_needed);
     bool need_variable_result =
-        (node->hasValue(prop_var_name) &&
-         ((node->as_string(prop_class_access) != "none") || node->isGen(gen_tool_dropdown) ||
-          (node->isGen(gen_auitool) &&
+        (node->HasValue(prop_var_name) &&
+         ((node->as_string(prop_class_access) != "none") || node->is_Gen(gen_tool_dropdown) ||
+          (node->is_Gen(gen_auitool) &&
            node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
 
     if (node->as_bool(prop_disabled) ||
-        (node->as_string(prop_id) == "wxID_ANY" && node->getInUseEventCount()))
+        (node->as_string(prop_id) == "wxID_ANY" && node->get_InUseEventCount()))
     {
         code.AddAuto().NodeName();
         code += " = ";
@@ -1210,14 +1210,14 @@ void GenToolCode(Code& code)
 
     if (need_variable_result)
     {
-        if (node->isLocal())
+        if (node->is_Local())
         {
             code.AddIfCpp("auto* ");
         }
         code.NodeName().Add(" = ");
     }
 
-    if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
+    if (node->is_Parent(gen_wxToolBar) || node->is_Parent(gen_wxAuiToolBar))
         code.ParentName().Function("AddTool(").as_string(prop_id).Comma();
     else
     {
@@ -1228,7 +1228,7 @@ void GenToolCode(Code& code)
 
     code.QuotedString(prop_label).Comma();
 
-    if (!code.hasValue(prop_bitmap))
+    if (!code.HasValue(prop_bitmap))
     {
         code.Add("wxNullBitmap");
     }
@@ -1246,9 +1246,9 @@ void GenToolCode(Code& code)
         }
     }
 
-    if (!node->hasValue(prop_tooltip) && !node->hasValue(prop_statusbar))
+    if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
-        if (node->isGen(gen_tool_dropdown))
+        if (node->is_Gen(gen_tool_dropdown))
         {
             code.Comma().Add("wxEmptyString").Comma().Add("wxITEM_DROPDOWN");
         }
@@ -1258,10 +1258,10 @@ void GenToolCode(Code& code)
         }
     }
 
-    else if (node->hasValue(prop_tooltip) && !node->hasValue(prop_statusbar))
+    else if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
         code.Comma().QuotedString(prop_tooltip);
-        if (node->isGen(gen_tool_dropdown))
+        if (node->is_Gen(gen_tool_dropdown))
         {
             code.Comma().Add("wxITEM_DROPDOWN");
         }
@@ -1271,12 +1271,12 @@ void GenToolCode(Code& code)
         }
     }
 
-    else if (node->hasValue(prop_statusbar))
+    else if (node->HasValue(prop_statusbar))
     {
         code.Comma().Add("wxNullBitmap").Comma().as_string(prop_kind).Comma();
 
         code.QuotedString(prop_tooltip).Comma().QuotedString(prop_statusbar);
-        if (node->isGen(gen_auitool))
+        if (node->is_Gen(gen_auitool))
         {
             code.Comma();
             code.AddIfCpp("nullptr");
@@ -1291,7 +1291,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
 {
     auto* node = code.node();  // for convenience
     // Note that Ruby always uses a function, and therefore has no need for a list
-    if (!node->hasValue(prop) || code.is_ruby())
+    if (!node->HasValue(prop) || code.is_ruby())
     {
         return false;
     }
@@ -1347,9 +1347,9 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
 
     //////////////// C++ code starts here ////////////////
-    bool use_lambda = (node->hasValue(prop_var_name) &&
-                       (node->isGen(gen_tool_dropdown) ||
-                        (node->isGen(gen_auitool) &&
+    bool use_lambda = (node->HasValue(prop_var_name) &&
+                       (node->is_Gen(gen_tool_dropdown) ||
+                        (node->is_Gen(gen_auitool) &&
                          node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
 
     if (use_lambda)
@@ -1510,9 +1510,9 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
         }
         else
         {
-            if (form->isGen(gen_Images))
+            if (form->is_Gen(gen_Images))
                 pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
-            if (form->isGen(gen_Data))
+            if (form->is_Gen(gen_Data))
                 pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
             else
                 pClassList->emplace_back(form->as_string(prop_class_name));
@@ -1534,7 +1534,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
 bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList,
                            GenLang language)
 {
-    if (Project.getChildCount() == 0)
+    if (Project.get_ChildCount() == 0)
     {
         wxMessageBox("You cannot generate any code until you have added a top level form.",
                      "Code Generation");
@@ -1583,9 +1583,9 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassLi
 void OnGenerateSingleLanguage(GenLang language)
 {
     auto form = wxGetMainFrame()->getSelectedNode();
-    if (form && !form->isForm())
+    if (form && !form->is_Form())
     {
-        form = form->getForm();
+        form = form->get_Form();
     }
     if (!form)
     {
@@ -1661,13 +1661,13 @@ tt_string GatherPerlNodeEvents(Node* node)
 
     auto append_perl_events = [&](Node* node)
     {
-        for (auto& iter: node->getMapEvents())
+        for (auto& iter: node->get_MapEvents())
         {
             // Only add the event if a handler was specified
             if (iter.second.get_value().size())
             {
                 std::string_view event_name = iter.first;
-                if (node->isGen(GenEnum::gen_wxStdDialogButtonSizer))
+                if (node->is_Gen(GenEnum::gen_wxStdDialogButtonSizer))
                 {
                     event_name = "EVT_BUTTON";
                 }
@@ -1686,7 +1686,7 @@ tt_string GatherPerlNodeEvents(Node* node)
     auto rlambda = [&](Node* node, auto&& rlambda) -> void
     {
         append_perl_events(node);
-        if (auto& children = node->getChildNodePtrs(); children.size())
+        if (auto& children = node->get_ChildNodePtrs(); children.size())
         {
             for (auto child: children)
             {
@@ -1695,7 +1695,7 @@ tt_string GatherPerlNodeEvents(Node* node)
         }
     };
 
-    if (node->isForm())
+    if (node->is_Form())
     {
         rlambda(node, rlambda);
     }

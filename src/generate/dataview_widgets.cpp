@@ -63,11 +63,11 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
 {
     auto list = wxStaticCast(wxobject, wxDataViewCtrl);
 
-    size_t count = node->getChildCount();
+    size_t count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->getChild(i);
-        if (childObj->isGen(gen_dataViewColumn))
+        auto childObj = node->get_Child(i);
+        if (childObj->is_Gen(gen_dataViewColumn))
         {
             if (childObj->as_string(prop_type) == "Text")
             {
@@ -77,7 +77,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -91,7 +91,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -105,7 +105,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -119,7 +119,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -133,7 +133,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -147,7 +147,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, N
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -178,8 +178,8 @@ bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int DataViewCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDataViewCtrl");
@@ -217,7 +217,7 @@ std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
             if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -248,11 +248,11 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
 {
     auto list = wxStaticCast(wxobject, wxDataViewListCtrl);
 
-    size_t count = node->getChildCount();
+    size_t count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->getChild(i);
-        if (childObj->isGen(gen_dataViewListColumn))
+        auto childObj = node->get_Child(i);
+        if (childObj->is_Gen(gen_dataViewListColumn))
         {
             if (childObj->as_string(prop_type) == "Text")
             {
@@ -262,7 +262,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -276,7 +276,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -290,7 +290,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -304,7 +304,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
                     childObj->as_int(prop_width),
                     static_cast<wxAlignment>(childObj->as_int(prop_align)),
                     childObj->as_int(prop_flags));
-                if (childObj->hasValue(prop_ellipsize))
+                if (childObj->HasValue(prop_ellipsize))
                 {
                     col->GetRenderer()->EnableEllipsize(
                         static_cast<wxEllipsizeMode>(childObj->as_int(prop_ellipsize)));
@@ -335,8 +335,8 @@ bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int DataViewListCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDataViewListCtrl");
@@ -374,7 +374,7 @@ std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang langua
             if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -432,7 +432,7 @@ std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang langua
             if (!wxGetApp().isCoverageTesting())
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -450,8 +450,8 @@ std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang langua
 
 int DataViewTreeCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDataViewListCtrl");
@@ -474,8 +474,7 @@ void DataViewTreeCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxDataViewXmlHandler");
 }
 
-//////////////////////////////////////////  DataViewColumn
-/////////////////////////////////////////////
+//////////////////////////////////////////  DataViewColumn ///////////////////////////////////////
 
 bool DataViewColumn::ConstructionCode(Code& code)
 {
@@ -496,7 +495,7 @@ bool DataViewColumn::ConstructionCode(Code& code)
         code << ')';
     code.Comma().Add(prop_flags).EndFunction();
 
-    if (code.hasValue(prop_ellipsize))
+    if (code.HasValue(prop_ellipsize))
     {
         code.Eol()
             .NodeName()
@@ -527,7 +526,7 @@ std::optional<tt_string> DataViewColumn::GetWarning(Node* node, GenLang language
         case GEN_LANG_RUBY:
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -555,7 +554,7 @@ bool DataViewListColumn::ConstructionCode(Code& code)
         code << ')';
     code.Comma().Add(prop_flags).EndFunction();
 
-    if (code.hasValue(prop_ellipsize))
+    if (code.HasValue(prop_ellipsize))
     {
         code.Eol()
             .NodeName()
@@ -584,7 +583,7 @@ std::optional<tt_string> DataViewListColumn::GetWarning(Node* node, GenLang lang
         case GEN_LANG_RUBY:
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

@@ -24,7 +24,7 @@ public:
     }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    tt_string_view declName() const noexcept { return GenEnum::map_PropNames[m_name_enum]; }
+    tt_string_view get_DeclName() const noexcept { return GenEnum::map_PropNames[m_name_enum]; }
 
     const tt_string& getDefaultValue() const noexcept { return m_def_value; }
     const tt_string& getDescription() const noexcept { return m_help; }
@@ -32,7 +32,7 @@ public:
     PropName get_name() const noexcept { return m_name_enum; }
     PropType get_type() const noexcept { return m_prop_type; }
 
-    bool isType(PropType type) const noexcept { return (type == m_prop_type); }
+    bool is_Type(PropType type) const noexcept { return (type == m_prop_type); }
     bool isProp(PropName name) const noexcept { return (name == m_name_enum); }
 
     struct Options

@@ -14,19 +14,19 @@
 #include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
-void PropGridPanel::modifyProperty(NodeProperty* prop, tt_string_view str)
+void PropGridPanel::ModifyProperty(NodeProperty* prop, tt_string_view str)
 {
     m_isPropChangeSuspended = true;
     if (prop->get_name() == prop_id)
     {
         tt_string id_string = str;
-        wxWindowID id = static_cast<wxWindowID>(NodeCreation.getConstantAsInt(id_string, -1));
+        wxWindowID id = static_cast<wxWindowID>(NodeCreation.get_ConstantAsInt(id_string, -1));
         if (wxIsStockID(id))
         {
             auto node = prop->getNode();
-            if (node->hasProp(prop_label))
+            if (node->HasProp(prop_label))
             {
-                auto prop_ptr = node->getPropPtr(prop_label);
+                auto prop_ptr = node->get_PropPtr(prop_label);
                 if (prop_ptr->as_string() == prop_ptr->getDefaultValue())
                 {
                     prop_ptr->set_value("");
@@ -44,7 +44,7 @@ void PropGridPanel::modifyProperty(NodeProperty* prop, tt_string_view str)
         }
     }
 
-    if (auto* gen = prop->getNode()->getGenerator(); !gen || !gen->modifyProperty(prop, str))
+    if (auto* gen = prop->getNode()->get_Generator(); !gen || !gen->ModifyProperty(prop, str))
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, str));
     }
@@ -63,7 +63,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
         // Don't allow the user to combine incompatible styles
         if (value.contains("wxFLP_OPEN") && value.contains("wxFLP_SAVE"))
         {
-            auto style_prop = node->getPropPtr(prop_style);
+            auto style_prop = node->get_PropPtr(prop_style);
             auto& old_value = style_prop->as_string();
             if (old_value.contains("wxFLP_OPEN"))
             {
@@ -95,7 +95,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
     }
     else if (node_prop->isProp(prop_generate_languages))
     {
-        modifyProperty(node_prop, value);
+        ModifyProperty(node_prop, value);
         wxGetFrame().FireProjectUpdatedEvent();
         wxGetFrame().UpdateLanguagePanels();
         return;
@@ -104,7 +104,7 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
     {
         value = "0";
     }
-    modifyProperty(node_prop, value);
+    ModifyProperty(node_prop, value);
 }
 
 void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -112,17 +112,17 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
     if (!m_prop_grid->GetPropertyValueAsBool(grid_prop))
     {
         auto node = node_prop->getNode();
-        if (node->isGen(gen_wxStdDialogButtonSizer))
+        if (node->is_Gen(gen_wxStdDialogButtonSizer))
         {
-            auto def_prop = node->getPropPtr(prop_default_button);
-            if (def_prop->as_string() == node_prop->declName())
+            auto def_prop = node->get_PropPtr(prop_default_button);
+            if (def_prop->as_string() == node_prop->get_DeclName())
             {
                 m_prop_grid->SetPropertyValue("default_button", "none");
-                modifyProperty(def_prop, "none");
+                ModifyProperty(def_prop, "none");
             }
         }
     }
-    modifyProperty(node_prop, m_prop_grid->GetPropertyValueAsBool(grid_prop) ? "1" : "0");
+    ModifyProperty(node_prop, m_prop_grid->GetPropertyValueAsBool(grid_prop) ? "1" : "0");
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -144,15 +144,15 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         {
             // If the user is adding a node to a gen_Images node, then be sure that the embed
             // entry form is pointing to the gen_Images node.
-            if (node_prop->getNode()->isGen(gen_embedded_image))
+            if (node_prop->getNode()->is_Gen(gen_embedded_image))
             {
-                embed->form = node_prop->getNode()->getParent();
+                embed->form = node_prop->getNode()->get_Parent();
             }
             // If there is an Images List node and it is set to auto add, then fall through
             // to the section below that adds the image to the Images List node.
-            else if (!Project.getImagesForm() || !Project.getImagesForm()->as_bool(prop_auto_add))
+            else if (!Project.get_ImagesForm() || !Project.get_ImagesForm()->as_bool(prop_auto_add))
             {
-                modifyProperty(node_prop, value);
+                ModifyProperty(node_prop, value);
                 return;
             }
         }
@@ -166,28 +166,28 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     if (value.empty() || node_prop->type() == type_animation || value.starts_with("Art") ||
         value.starts_with("XPM"))
     {
-        modifyProperty(node_prop, value);
+        ModifyProperty(node_prop, value);
         return;  // Don't do anything else for animations, art providers or XPMs
     }
     if (value == "Embed;" || value == "SVG;")
     {
         // Don't do anything else for empty embedded images
-        modifyProperty(node_prop, value);
+        ModifyProperty(node_prop, value);
         return;
     }
 
-    // We do *not* call modifyProperty() until we are certain that we aren't going to add an
+    // We do *not* call ModifyProperty() until we are certain that we aren't going to add an
     // image to a gen_Images node. That's because if we do add it, the GroupUndoActions will
     // handle the modification of the property via an ModifyPropertyAction class.
 
     auto* node = node_prop->getNode();
-    auto* parent = node->getParent();
+    auto* parent = node->get_Parent();
 
-    if (parent->isGen(gen_Images))
+    if (parent->is_Gen(gen_Images))
     {
         auto filename = parts[IndexImage].filename();
         size_t pos = 0;
-        for (const auto& embedded_image: parent->getChildNodePtrs())
+        for (const auto& embedded_image: parent->get_ChildNodePtrs())
         {
             auto& description_a = embedded_image->as_string(prop_bitmap);
             tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
@@ -198,7 +198,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
                 break;
             ++pos;
         }
-        if (pos < parent->getChildCount())
+        if (pos < parent->get_ChildCount())
         {
             auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
@@ -214,10 +214,10 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     }
     else
     {
-        auto image_list_node = Project.getImagesForm();
+        auto image_list_node = Project.get_ImagesForm();
         if (!image_list_node || !image_list_node->as_bool(prop_auto_add))
         {
-            modifyProperty(node_prop, value);
+            ModifyProperty(node_prop, value);
             return;
         }
         auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
@@ -226,7 +226,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             embed->form = image_list_node;
             auto filename = parts[IndexImage].filename();
             size_t pos = 0;
-            for (const auto& embedded_image: image_list_node->getChildNodePtrs())
+            for (const auto& embedded_image: image_list_node->get_ChildNodePtrs())
             {
                 auto& description_a = embedded_image->as_string(prop_bitmap);
                 tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
@@ -240,7 +240,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
             auto group = std::make_shared<GroupUndoActions>("Update bitmap property", node);
 
-            auto new_embedded = NodeCreation.createNode(gen_embedded_image, image_list_node).first;
+            auto new_embedded = NodeCreation.CreateNode(gen_embedded_image, image_list_node).first;
             new_embedded->set_value(prop_bitmap, value);
             auto insert_action = std::make_shared<InsertNodeAction>(
                 new_embedded.get(), image_list_node, tt_empty_cstr, pos);
@@ -259,7 +259,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
     // If we get here, then we didn't find an Images node at all, or it didn't need updating,
     // so just modify the property.
-    modifyProperty(node_prop, value);
+    ModifyProperty(node_prop, value);
 }
 
 void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -268,13 +268,13 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     {
         tt_string newValue =
             grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
-        auto result = Project.GetOutputPath(node_prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
+        auto result = Project.GetOutputPath(node_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
         auto path = result.first;
         if (result.second)  // true if the the base filename was returned
             path.remove_filename();
         newValue.make_relative(path);
         newValue.backslashestoforward();
-        modifyProperty(node_prop, newValue);
+        ModifyProperty(node_prop, newValue);
         return;
     }
 
@@ -289,12 +289,12 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         if (newValue.size())
         {
             newValue.make_absolute();
-            newValue.make_relative(Project.getProjectPath());
+            newValue.make_relative(Project.get_ProjectPath());
             newValue.backslashestoforward();
             grid_prop->SetValueFromString(newValue);
         }
     }
-    modifyProperty(node_prop, newValue);
+    ModifyProperty(node_prop, newValue);
 
     // Review: [Randalphwa - 06-26-2023] The panel should already have been created
     // wxGetFrame().UpdateLanguagePanels();
@@ -305,10 +305,10 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
     auto node = node_prop->getNode();
 
     tt_string value = m_prop_grid->GetPropertyValueAsString(grid_prop).utf8_string();
-    modifyProperty(node_prop, value);
+    ModifyProperty(node_prop, value);
 
     // Update displayed description for the new selection
-    auto propInfo = node_prop->getPropDeclaration();
+    auto propInfo = node_prop->get_PropDeclaration();
 
     tt_string description = GetPropHelp(node_prop);
 
@@ -335,7 +335,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
             tt_string name = node->as_string(prop_var_name);
             bool is_name_changed = false;
             auto access = &value;  // this is just to make the code more readable
-            if (Project.getCodePreference(selected_node) == GEN_LANG_CPLUSPLUS)
+            if (Project.get_CodePreference(selected_node) == GEN_LANG_CPLUSPLUS)
             {
                 // If access is changed to local and the name starts with "m_", then
                 // the "m_" will be stripped off. Conversely, if the name is changed
@@ -345,29 +345,29 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 if (*access == "none" && name.starts_with("m_"))
                 {
                     name.erase(0, 2);
-                    auto final_name = node->getUniqueName(name);
+                    auto final_name = node->get_UniqueName(name);
                     if (final_name.size())
                         name = final_name;
                     is_name_changed = true;
                 }
                 else if (*access != "none" && !name.starts_with("m_") &&
-                         Project.getCodePreference(selected_node) == GEN_LANG_CPLUSPLUS)
+                         Project.get_CodePreference(selected_node) == GEN_LANG_CPLUSPLUS)
                 {
                     name.insert(0, "m_");
-                    auto final_name = node->getUniqueName(name);
+                    auto final_name = node->get_UniqueName(name);
                     if (final_name.size())
                         name = final_name;
                     is_name_changed = true;
                 }
             }
-            else if (Project.getCodePreference(selected_node) == GEN_LANG_PYTHON)
+            else if (Project.get_CodePreference(selected_node) == GEN_LANG_PYTHON)
             {
                 // The convention in Python is to use a leading underscore for local members.
 
                 if (*access == "none" && !name.starts_with("_"))
                 {
                     name.insert(0, "_");
-                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    if (auto final_name = node->get_UniqueName(name); final_name.size())
                     {
                         name = final_name;
                     }
@@ -376,21 +376,21 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 else if (*access != "none" && name.starts_with("_"))
                 {
                     name.erase(0, 1);
-                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    if (auto final_name = node->get_UniqueName(name); final_name.size())
                     {
                         name = final_name;
                     }
                     is_name_changed = true;
                 }
             }
-            else if (Project.getCodePreference(selected_node) == GEN_LANG_RUBY)
+            else if (Project.get_CodePreference(selected_node) == GEN_LANG_RUBY)
             {
                 // The convention in Ruby is to use a leading @ for non-local members.
 
                 if (*access == "none" && name.starts_with("@"))
                 {
                     name.erase(0, 1);
-                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    if (auto final_name = node->get_UniqueName(name); final_name.size())
                     {
                         name = final_name;
                     }
@@ -399,7 +399,7 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                 else if (*access != "none" && !name.starts_with("@"))
                 {
                     name.insert(0, "@");
-                    if (auto final_name = node->getUniqueName(name); final_name.size())
+                    if (auto final_name = node->get_UniqueName(name); final_name.size())
                     {
                         name = final_name;
                     }
@@ -409,10 +409,10 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
 
             if (is_name_changed)
             {
-                auto propChange = selected_node->getPropPtr(prop_var_name);
+                auto propChange = selected_node->get_PropPtr(prop_var_name);
                 auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                 grid_property->SetValueFromString(name);
-                modifyProperty(propChange, name);
+                ModifyProperty(propChange, name);
             }
         }
     }

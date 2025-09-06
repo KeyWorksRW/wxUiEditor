@@ -75,7 +75,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
         parent->FromDIP(wxSize(UserPrefs.get_IconSize(), UserPrefs.get_IconSize()));
 
     wxVector<wxBitmapBundle> bundles;
-    for (auto iter: NodeCreation.getNodeDeclarationArray())
+    for (auto iter: NodeCreation.get_NodeDeclarationArray())
     {
         if (!iter)
         {
@@ -86,7 +86,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent) : wxPanel(parent)
         if (auto bundle = iter->GetBitmapBundle(gen_image_size.x, gen_image_size.y); bundle.IsOk())
         {
             bundles.push_back(bundle);
-            m_iconIdx[iter->getGenName()] = index++;
+            m_iconIdx[iter->get_GenName()] = index++;
         }
     }
     bundles.push_back(GetSvgImage("svg", gen_image_size.x, gen_image_size.y));
@@ -203,15 +203,15 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.getProjectNode()),
-                                     GetImageIndex(Project.getProjectNode()), -1);
-    m_node_tree_map[Project.getProjectNode()] = root;
-    m_tree_node_map[root] = Project.getProjectNode();
+    auto root = m_tree_ctrl->AddRoot(GetDisplayName(Project.get_ProjectNode()),
+                                     GetImageIndex(Project.get_ProjectNode()), -1);
+    m_node_tree_map[Project.get_ProjectNode()] = root;
+    m_tree_node_map[root] = Project.get_ProjectNode();
 
-    AddAllChildren(Project.getProjectNode());
+    AddAllChildren(Project.get_ProjectNode());
 
     // First we expand everything, then we collapse all forms and folders
-    ExpandAllNodes(Project.getProjectNode());
+    ExpandAllNodes(Project.get_ProjectNode());
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -224,9 +224,9 @@ void NavigationPanel::OnProjectUpdated()
         }
     }
 
-    for (const auto& folder: Project.getChildNodePtrs())
+    for (const auto& folder: Project.get_ChildNodePtrs())
     {
-        if (folder->isGen(gen_folder))
+        if (folder->is_Gen(gen_folder))
         {
             if (auto result = m_node_tree_map.find(folder.get()); result != m_node_tree_map.end())
             {
@@ -254,9 +254,9 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         // update itself until we're done, so we lock it before the initial selection event.
 
         m_isSelChangeSuspended = true;
-        m_pMainFrame->getPropPanel()->Lock();
+        m_pMainFrame->get_PropPanel()->Lock();
         m_pMainFrame->SelectNode(iter->second);
-        m_pMainFrame->getPropPanel()->UnLock();
+        m_pMainFrame->get_PropPanel()->UnLock();
 
         // It's possible for Mockup to select a page, so we need to be certain everything is
         // synced after the initial selection.
@@ -264,25 +264,25 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         if (iter->second != m_pMainFrame->getSelectedNode())
             m_pMainFrame->SelectNode(iter->second);
         else
-            m_pMainFrame->getPropPanel()->Create();
+            m_pMainFrame->get_PropPanel()->Create();
 
         // TODO: [Randalphwa - 09-30-2024] Once all generators support isLanguageVersionSupported(),
         // this should be changed to call the generator to determine if the control is
         // supported by the current language.
 
-        if (Project.getCodePreference() == GEN_LANG_PYTHON)
+        if (Project.get_CodePreference() == GEN_LANG_PYTHON)
         {
             if (std::find(unsupported_gen_python.begin(), unsupported_gen_python.end(),
-                          iter->second->getGenName()) != unsupported_gen_python.end())
+                          iter->second->get_GenName()) != unsupported_gen_python.end())
             {
                 wxGetFrame().ShowInfoBarMsg("This control is not supported by wxPython.",
                                             wxICON_INFORMATION);
             }
         }
-        else if (Project.getCodePreference() == GEN_LANG_RUBY)
+        else if (Project.get_CodePreference() == GEN_LANG_RUBY)
         {
             if (std::find(unsupported_gen_ruby.begin(), unsupported_gen_ruby.end(),
-                          iter->second->getGenName()) != unsupported_gen_ruby.end())
+                          iter->second->get_GenName()) != unsupported_gen_ruby.end())
             {
                 wxGetFrame().ShowInfoBarMsg("This control is not supported by wxRuby.",
                                             wxICON_INFORMATION);
@@ -291,7 +291,7 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         else if (Project.as_string(prop_code_preference) == "XRC")
         {
             if (std::find(unsupported_gen_XRC.begin(), unsupported_gen_XRC.end(),
-                          iter->second->getGenName()) != unsupported_gen_XRC.end())
+                          iter->second->get_GenName()) != unsupported_gen_XRC.end())
             {
                 wxGetFrame().ShowInfoBarMsg("This control is not supported by XRC.",
                                             wxICON_INFORMATION);
@@ -325,9 +325,9 @@ void NavigationPanel::OnBeginDrag(wxTreeEvent& event)
     auto* node = getNode(m_drag_node);
     if (node)
     {
-        auto* parent = node->getParent();
-        if (node->isGen(gen_Images) || node->isGen(gen_Data) || parent->isGen(gen_Images) ||
-            parent->isGen(gen_Data))
+        auto* parent = node->get_Parent();
+        if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data) || parent->is_Gen(gen_Images) ||
+            parent->is_Gen(gen_Data))
         {
             event.Veto();
             return;
@@ -374,50 +374,50 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         return;
     }
 
-    if (node_dst->isGen(gen_wxSplitterWindow) && node_dst->getChildCount() > 1)
+    if (node_dst->is_Gen(gen_wxSplitterWindow) && node_dst->get_ChildCount() > 1)
     {
         wxMessageBox("A wxSplitterWindow can't have more than two windows.");
         return;
     }
 
     auto dst_parent = node_dst;
-    while (!dst_parent->isChildAllowed(node_src))
+    while (!dst_parent->is_ChildAllowed(node_src))
     {
-        if (dst_parent->isSizer())
+        if (dst_parent->is_Sizer())
         {
             wxMessageBox(tt_string()
-                         << "You can't drop a " << node_src->declName() << " onto a sizer.");
+                         << "You can't drop a " << node_src->get_DeclName() << " onto a sizer.");
             return;
         }
-        else if (dst_parent->isContainer())
+        else if (dst_parent->is_Container())
         {
-            wxMessageBox(tt_string() << "You can't drop a " << node_src->declName() << " onto a "
-                                     << dst_parent->declName() << '.');
+            wxMessageBox(tt_string() << "You can't drop a " << node_src->get_DeclName()
+                                     << " onto a " << dst_parent->get_DeclName() << '.');
             return;
         }
-        else if (dst_parent->isGen(gen_Project))
+        else if (dst_parent->is_Gen(gen_Project))
         {
             wxMessageBox("Only forms can be dropped onto your project.");
             return;
         }
-        dst_parent = dst_parent->getParent();
+        dst_parent = dst_parent->get_Parent();
         if (!dst_parent)
         {
             wxMessageBox(tt_string()
-                         << node_src->declName() << " can't be dropped onto this target.");
+                         << node_src->get_DeclName() << " can't be dropped onto this target.");
             return;
         }
     }
 
-    if (dst_parent->isGen(gen_wxStdDialogButtonSizer))
+    if (dst_parent->is_Gen(gen_wxStdDialogButtonSizer))
     {
-        wxMessageBox(tt_string() << "You can't drop a " << node_src->declName()
+        wxMessageBox(tt_string() << "You can't drop a " << node_src->get_DeclName()
                                  << " onto a wxStdDialogBtnSizer.");
         return;
     }
 
-    auto src_parent = node_src->getParent();
-    if (dst_parent->isGen(gen_wxGridBagSizer))
+    auto src_parent = node_src->get_Parent();
+    if (dst_parent->is_Gen(gen_wxGridBagSizer))
     {
         if (src_parent == dst_parent)
         {
@@ -429,7 +429,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     else if (src_parent == dst_parent)
     {
         m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(
-            node_src, dst_parent->getChildPosition(node_dst)));
+            node_src, dst_parent->get_ChildPosition(node_dst)));
         return;
     }
 
@@ -445,7 +445,7 @@ void NavigationPanel::OnNodeCreated(CustomEvent& event)
 void NavigationPanel::RefreshParent(Node* parent)
 {
     wxWindowUpdateLocker freeze(this);
-    for (const auto& child: parent->getChildNodePtrs())
+    for (const auto& child: parent->get_ChildNodePtrs())
     {
         EraseAllMaps(child.get());
     }
@@ -455,26 +455,26 @@ void NavigationPanel::RefreshParent(Node* parent)
 
 void NavigationPanel::InsertNode(Node* node)
 {
-    auto node_parent = node->getParent();
+    auto node_parent = node->get_Parent();
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent);
     auto new_item =
-        m_tree_ctrl->InsertItem(tree_parent, node_parent->getChildPosition(node),
+        m_tree_ctrl->InsertItem(tree_parent, node_parent->get_ChildPosition(node),
                                 GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
     m_node_tree_map[node] = new_item;
     m_tree_node_map[new_item] = node;
 
-    if (node->getChildCount())
+    if (node->get_ChildCount())
     {
         AddAllChildren(node);
         ExpandAllNodes(node);
     }
-    else if (node->getParent() && (node->getParent()->isType(type_toolbar) ||
-                                   node->getParent()->isType(type_aui_toolbar)))
+    else if (node->get_Parent() && (node->get_Parent()->is_Type(type_toolbar) ||
+                                    node->get_Parent()->is_Type(type_aui_toolbar)))
     {
         // Insure that the toolbar is expanded when a new item is added to it
-        ChangeExpansion(node->getParent(), false, true);
+        ChangeExpansion(node->get_Parent(), false, true);
     }
 }
 
@@ -483,7 +483,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent.IsOk());
 
-    for (const auto& iter_child: node_parent->getChildNodePtrs())
+    for (const auto& iter_child: node_parent->get_ChildNodePtrs())
     {
         auto node = iter_child.get();
         auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).make_wxString(),
@@ -492,7 +492,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
         m_node_tree_map[node] = new_item;
         m_tree_node_map[new_item] = node;
 
-        if (node->getChildCount())
+        if (node->get_ChildCount())
         {
             AddAllChildren(node);
         }
@@ -501,14 +501,14 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
 
 int NavigationPanel::GetImageIndex(Node* node)
 {
-    auto name = node->getGenName();
-    if (node->isGen(gen_wxBoxSizer))
+    auto name = node->get_GenName();
+    if (node->is_Gen(gen_wxBoxSizer))
     {
-        if (node->isPropValue(prop_orientation, "wxVERTICAL"))
+        if (node->is_PropValue(prop_orientation, "wxVERTICAL"))
             name = gen_VerticalBoxSizer;
     }
 
-    if (node->isGen(gen_embedded_image))
+    if (node->is_Gen(gen_embedded_image))
     {
         if (node->as_string(prop_bitmap).starts_with("SVG"))
         {
@@ -531,17 +531,17 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 tt_string NavigationPanel::GetDisplayName(Node* node) const
 {
     tt_string display_name;
-    if (node->hasValue(prop_label))
+    if (node->HasValue(prop_label))
         display_name = node->as_string(prop_label);
-    else if (node->hasValue(prop_main_label))  // used by wxCommandLinkButton
+    else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
         display_name = node->as_string(prop_main_label);
-    else if (node->hasValue(prop_var_name) && !node->isGen(gen_wxStaticBitmap))
+    else if (node->HasValue(prop_var_name) && !node->is_Gen(gen_wxStaticBitmap))
         display_name = node->as_string(prop_var_name);
-    else if (node->hasValue(prop_class_name))
+    else if (node->HasValue(prop_class_name))
         display_name = node->as_string(prop_class_name);
-    else if (node->isGen(gen_ribbonTool))
+    else if (node->is_Gen(gen_ribbonTool))
         display_name = node->as_string(prop_id);
-    else if (node->isGen(gen_embedded_image))
+    else if (node->is_Gen(gen_embedded_image))
     {
         tt_view_vector mstr(node->as_string(prop_bitmap), ';');
 
@@ -550,11 +550,11 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
             display_name = mstr[IndexImage].filename();
         }
     }
-    else if (node->isGen(gen_wxStaticBitmap))
+    else if (node->is_Gen(gen_wxStaticBitmap))
     {
-        if (!node->hasValue(prop_bitmap))
+        if (!node->HasValue(prop_bitmap))
         {
-            if (node->hasValue(prop_var_name))
+            if (node->HasValue(prop_var_name))
                 display_name = node->as_string(prop_var_name);
         }
         else
@@ -577,7 +577,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
         // Accelerators make the text hard to read, so remove them
         display_name.Replace("&", "", true);
 
-        if (!node->isForm() && display_name.size() > MaxLabelLength)
+        if (!node->is_Form() && display_name.size() > MaxLabelLength)
         {
             display_name.erase(MaxLabelLength);
             display_name << "...";
@@ -585,9 +585,9 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
     }
     else
     {
-        if (node->isGen(gen_Project))
-            display_name << "Project: " << Project.getProjectFile().filename();
-        else if (node->isGen(gen_wxContextMenuEvent))
+        if (node->is_Gen(gen_Project))
+            display_name << "Project: " << Project.get_ProjectFile().filename();
+        else if (node->is_Gen(gen_wxContextMenuEvent))
         {
             display_name = node->as_string(prop_handler_name);
             if (display_name.size() > MaxLabelLength)
@@ -598,7 +598,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
         }
         else
         {
-            display_name << " (" << node->declName() << ")";
+            display_name << " (" << node->get_DeclName() << ")";
         }
     }
 
@@ -614,7 +614,7 @@ void NavigationPanel::ExpandAllNodes(Node* node)
             m_tree_ctrl->Expand(item_it->second);
     }
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
         ExpandAllNodes(child.get());
     }
@@ -632,7 +632,7 @@ void NavigationPanel::EraseAllMaps(Node* node)
     // won't reflect that. To keep the treeview control and our maps in sync, we need to delete
     // children before we delete the actual item.
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
         EraseAllMaps(child.get());
     }
@@ -651,14 +651,14 @@ void NavigationPanel::EraseAllMaps(Node* node)
 void NavigationPanel::OnNodeSelected(CustomEvent& event)
 {
     auto node = event.getNode();
-    if (node->getParent() && node->getParent()->isGen(gen_wxGridBagSizer))
+    if (node->get_Parent() && node->get_Parent()->is_Gen(gen_wxGridBagSizer))
     {
         wxGetFrame().setStatusText(tt_string() << "Row: " << node->as_int(prop_row)
                                                << ", Column: " << node->as_int(prop_column));
     }
     else
     {
-        if (node->hasValue(prop_var_name) &&
+        if (node->HasValue(prop_var_name) &&
             !node->as_string(prop_class_access).starts_with("none"))
             wxGetFrame().setStatusText(node->as_string(prop_var_name));
         else
@@ -676,7 +676,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     else
     {
         FAIL_MSG(tt_string("There is no tree item associated with this object.\n\tClass: ")
-                 << node->declName() << "\n\tName: " << node->as_string(prop_var_name));
+                 << node->get_DeclName() << "\n\tName: " << node->as_string(prop_var_name));
     }
 }
 
@@ -697,10 +697,10 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
     if (prop->isProp(prop_var_name) || prop->isProp(prop_label) || prop->isProp(prop_class_name) ||
         prop->isProp(prop_bitmap))
     {
-        auto class_name = prop->getNode()->declName();
+        auto class_name = prop->getNode()->get_DeclName();
         if (class_name.contains("bookpage"))
         {
-            if (auto it = m_node_tree_map.find(prop->getNode()->getChild(0));
+            if (auto it = m_node_tree_map.find(prop->getNode()->get_Child(0));
                 it != m_node_tree_map.end())
             {
                 UpdateDisplayName(it->second, it->first);
@@ -711,7 +711,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->isProp(prop_id) && prop->getNode()->isGen(gen_ribbonTool))
+    else if (prop->isProp(prop_id) && prop->getNode()->is_Gen(gen_ribbonTool))
     {
         if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
@@ -723,7 +723,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
     {
         if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
-            if (it->first->isGen(gen_VerticalBoxSizer) || it->first->isGen(gen_wxBoxSizer))
+            if (it->first->is_Gen(gen_VerticalBoxSizer) || it->first->is_Gen(gen_wxBoxSizer))
             {
                 auto image_index = GetImageIndex(it->first);
                 m_tree_ctrl->SetItemImage(it->second, image_index);
@@ -737,7 +737,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->isProp(prop_bitmap) && prop->getNode()->isGen(gen_embedded_image))
+    else if (prop->isProp(prop_bitmap) && prop->getNode()->is_Gen(gen_embedded_image))
     {
         if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
         {
@@ -774,16 +774,16 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
             break;
 
         case NavToolbar::id_NavExpand:
-            event.Enable(node->getChildCount() > 0);
+            event.Enable(node->get_ChildCount() > 0);
             break;
 
         case NavToolbar::id_NavCollapse:
-            event.Enable(node->getParent() && node->getParent()->getChildCount() > 0);
+            event.Enable(node->get_Parent() && node->get_Parent()->get_ChildCount() > 0);
             break;
 
         case NavToolbar::id_NavCollExpand:
-            event.Enable((node->getParent() && node->getParent()->getChildCount() > 0) ||
-                         node->getChildCount() > 0);
+            event.Enable((node->get_Parent() && node->get_Parent()->get_ChildCount() > 0) ||
+                         node->get_ChildCount() > 0);
             break;
     }
 }
@@ -832,15 +832,15 @@ void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool ex
 {
     if (include_children)
     {
-        for (const auto& child: node->getChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
-            if (child->getChildCount())
+            if (child->get_ChildCount())
             {
                 ChangeExpansion(child.get(), include_children, expand);
             }
         }
     }
-    if (node->getChildCount())
+    if (node->get_ChildCount())
     {
         if (expand)
         {
@@ -880,10 +880,10 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
 
     wxWindowUpdateLocker freeze(this);
 
-    auto parent = node->getParent();
-    if (parent && parent->getChildCount())
+    auto parent = node->get_Parent();
+    if (parent && parent->get_ChildCount())
     {
-        for (const auto& child: parent->getChildNodePtrs())
+        for (const auto& child: parent->get_ChildNodePtrs())
         {
             ChangeExpansion(child.get(), false, false);
         }
@@ -908,10 +908,10 @@ void NavigationPanel::ExpandCollapse(Node* node)
 {
     wxWindowUpdateLocker freeze(this);
 
-    auto parent = node->getParent();
-    if (parent && parent->getChildCount())
+    auto parent = node->get_Parent();
+    if (parent && parent->get_ChildCount())
     {
-        for (const auto& child: parent->getChildNodePtrs())
+        for (const auto& child: parent->get_ChildNodePtrs())
         {
             if (child.get() != node)
             {

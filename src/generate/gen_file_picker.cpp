@@ -18,7 +18,7 @@
 wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString msg;
-    if (node->hasValue(prop_message))
+    if (node->HasValue(prop_message))
     {
         msg = node->as_wxString(prop_message);
     }
@@ -27,7 +27,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
         msg = wxFileSelectorPromptStr;
     }
     wxString wildcard;
-    if (node->hasValue(prop_wildcard))
+    if (node->HasValue(prop_wildcard))
     {
         wildcard = node->as_wxString(prop_wildcard);
     }
@@ -98,9 +98,9 @@ bool FilePickerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.NodeName().Function("SetFocus(").EndFunction();
         }
@@ -134,8 +134,8 @@ std::optional<tt_string> FilePickerGenerator::GetPropertyDescription(NodePropert
 
 int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFilePickerCtrl");

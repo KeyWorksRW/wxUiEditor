@@ -30,7 +30,7 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     sizer->SetFlexibleDirection(node->as_int(prop_flexible_direction));
     sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->as_int(prop_non_flexible_grow_mode));
 
-    if (node->hasValue(prop_empty_cell_size))
+    if (node->HasValue(prop_empty_cell_size))
     {
         sizer->SetEmptyCellSize(node->as_wxSize(prop_empty_cell_size));
     }
@@ -58,14 +58,14 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         return;
     }
 
-    auto count = node->getChildCount();
+    auto count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
         const wxObject* child;
         if (!is_preview)
-            child = getMockup()->getChild(wxobject, i);
+            child = getMockup()->get_Child(wxobject, i);
         else
-            child = node->getChild(i)->getMockupObject();
+            child = node->get_Child(i)->get_MockupObject();
 
         if (!child)
             continue;  // spacer's don't have objects
@@ -167,7 +167,7 @@ bool GridBagSizerGenerator::ConstructionCode(Code& code)
     code.EndFunction();
 
     Node* node = code.node();
-    if (code.hasValue(prop_empty_cell_size))
+    if (code.HasValue(prop_empty_cell_size))
     {
         code.NodeName().Function("SetEmptyCellSize(").WxSize(prop_empty_cell_size).EndFunction();
     }
@@ -244,18 +244,18 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->getParent();
-    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
-        !parent->isGen(gen_wxPopupTransientWindow))
+    auto parent = code.node()->get_Parent();
+    if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
+        !parent->is_Gen(gen_wxPopupTransientWindow))
     {
         code.Eol(eol_if_needed);
-        if (parent->isGen(gen_wxRibbonPanel))
+        if (parent->is_Gen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(code.node(), code.get_language()) != "this")
+            if (get_ParentName(code.node(), code.get_language()) != "this")
             {
                 code.ValidParentName().Function("SetSizerAndFit(");
             }
@@ -285,7 +285,7 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 {
     auto sizer_flags = sizeritem->getSizerFlags();
 
-    if (sizeritem->isGen(gen_spacer))
+    if (sizeritem->is_Gen(gen_spacer))
     {
         return new wxGBSizerItem(sizeritem->as_int(prop_width), sizeritem->as_int(prop_height),
                                  position, span, sizer_flags.GetFlags(),
@@ -324,7 +324,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->getParent()->isSizer())
+    if (node->get_Parent()->is_Sizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -346,20 +346,20 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     ADD_ITEM_PROP(prop_non_flexible_grow_mode, "nonflexiblegrowmode")
     ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
-    if (node->hasValue(prop_minimum_size))
+    if (node->HasValue(prop_minimum_size))
     {
         item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
-    else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
+    else if (node->get_Parent()->is_Form() && node->get_Parent()->HasValue(prop_minimum_size))
     {
         // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
         // a problem for forms which often can specify their own minimum size. The workaround is to
         // set the minimum size of the parent sizer that we create for most forms.
 
-        item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->get_Parent()->as_string(prop_minimum_size));
     }
 
-    if (node->hasValue(prop_empty_cell_size))
+    if (node->HasValue(prop_empty_cell_size))
     {
         item.append_child("empty_cellsize").text().set(node->as_string(prop_empty_cell_size));
     }

@@ -24,7 +24,7 @@ class EditCodeSingleDialog : public EditStringDialogBase
 public:
     EditCodeSingleDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
     {
-        SetTitle(tt_string() << prop->declName() << " property editor");
+        SetTitle(tt_string() << prop->get_DeclName() << " property editor");
         m_value = prop->as_wxString();
         m_static_hdr_text->Show();
         m_node = prop->getNode();
@@ -46,7 +46,7 @@ public:
         }
         else
         {
-            if (m_node->isPropValue(prop_class_access, "none"))
+            if (m_node->is_PropValue(prop_class_access, "none"))
                 static_text << "auto ";
             static_text << m_node->as_string(prop_var_name) << " = new "
                         << m_node->as_string(prop_class_name);

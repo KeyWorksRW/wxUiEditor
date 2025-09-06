@@ -22,7 +22,7 @@
 
 wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    if (Project.get_CodePreference() == GEN_LANG_RUBY)
     {
         auto* widget = new wxStaticText(
             wxStaticCast(parent, wxWindow), wxID_ANY, "wxBannerWindow not available in wxRuby3",
@@ -32,20 +32,20 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     auto widget = new wxBannerWindow(
         wxStaticCast(parent, wxWindow),
-        (wxDirection) NodeCreation.getConstantAsInt(node->as_string(prop_direction)));
+        (wxDirection) NodeCreation.get_ConstantAsInt(node->as_string(prop_direction)));
 
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
     }
 
-    else if (node->hasValue(prop_start_colour) && node->hasValue(prop_end_colour))
+    else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {
         widget->SetGradient(node->as_wxColour(prop_start_colour),
                             node->as_wxColour(prop_end_colour));
     }
 
-    if (node->hasValue(prop_title) || node->hasValue(prop_message))
+    if (node->HasValue(prop_title) || node->HasValue(prop_message))
     {
         widget->SetText(node->as_wxString(prop_title), node->as_wxString(prop_message));
     }
@@ -76,7 +76,7 @@ bool BannerWindowGenerator::ConstructionCode(Code& code)
 
 bool BannerWindowGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_bitmap))
+    if (code.HasValue(prop_bitmap))
     {
         if (code.is_cpp())
         {
@@ -89,7 +89,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
             PythonBtnBimapCode(code, true);
         }
     }
-    else if (code.hasValue(prop_start_colour) && code.hasValue(prop_end_colour))
+    else if (code.HasValue(prop_start_colour) && code.HasValue(prop_end_colour))
     {
         code.NodeName().Function("SetGradient(");
 
@@ -102,7 +102,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
         code.EndFunction();
     }
 
-    if (code.hasValue(prop_title) || code.hasValue(prop_message))
+    if (code.HasValue(prop_title) || code.HasValue(prop_message))
     {
         code.Eol(eol_if_empty);
         code.NodeName().Function("SetText(").QuotedString(prop_title);
@@ -127,8 +127,8 @@ bool BannerWindowGenerator::GetPythonImports(Node*, std::set<std::string>& set_i
 
 int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBannerWindow");
@@ -137,7 +137,7 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     ADD_ITEM_PROP(prop_title, "title")
     ADD_ITEM_PROP(prop_direction, "direction")
 
-    if (node->hasValue(prop_start_colour) && !node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_start_colour) && !node->HasValue(prop_bitmap))
     {
         item.append_child("gradient-start")
             .text()
@@ -146,7 +146,7 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
                      .ToUTF8()
                      .data());
     }
-    if (node->hasValue(prop_end_colour) && !node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_end_colour) && !node->HasValue(prop_bitmap))
     {
         item.append_child("gradient-end")
             .text()
@@ -169,7 +169,7 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 void BannerWindowGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxBannerWindowXmlHandler");
-    if (node->hasValue(prop_bitmap))
+    if (node->HasValue(prop_bitmap))
     {
         handlers.emplace("wxBitmapXmlHandler");
     }

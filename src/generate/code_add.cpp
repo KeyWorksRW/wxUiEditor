@@ -379,13 +379,13 @@ void Code::AddPublicRubyMembers()
     std::set<tt_string> public_members;
     auto FindPublicMembers = [&](Node* node, auto&& FindPublicMembers) -> void
     {
-        if (node->hasProp(prop_var_name) && node->as_string(prop_class_access) == "public:")
+        if (node->HasProp(prop_var_name) && node->as_string(prop_class_access) == "public:")
         {
-            public_members.insert(tt_string(":") << node->getNodeName(get_language()));
+            public_members.insert(tt_string(":") << node->get_NodeName(get_language()));
         }
-        if (node->getChildCount())
+        if (node->get_ChildCount())
         {
-            for (const auto& child: node->getChildNodePtrs())
+            for (const auto& child: node->get_ChildNodePtrs())
             {
                 FindPublicMembers(child.get(), FindPublicMembers);
             }

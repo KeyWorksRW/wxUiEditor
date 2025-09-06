@@ -25,14 +25,14 @@ wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                       DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER);
 
-    if (node->hasValue(prop_margins))
+    if (node->HasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->hasValue(prop_packing))
+    if (node->HasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->hasValue(prop_separation))
+    if (node->HasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarFormGenerator::OnTool, this);
@@ -51,12 +51,12 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         return;
     }
 
-    auto count = node->getChildCount();
+    auto count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->getChild(i);
+        auto childObj = node->get_Child(i);
         wxToolBarToolBase* added_tool = nullptr;
-        if (childObj->isGen(gen_tool))
+        if (childObj->is_Gen(gen_tool))
         {
             auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bundle.IsOk())
@@ -66,7 +66,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
                                           wxNullBitmap, (wxItemKind) childObj->as_int(prop_kind),
                                           childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
-        else if (childObj->isGen(gen_tool_dropdown))
+        else if (childObj->is_Gen(gen_tool_dropdown))
         {
             auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bundle.IsOk())
@@ -76,11 +76,11 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
                                           wxNullBitmap, wxITEM_DROPDOWN,
                                           childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
-        else if (childObj->isGen(gen_toolSeparator))
+        else if (childObj->is_Gen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
-        else if (childObj->isGen(gen_toolStretchable))
+        else if (childObj->is_Gen(gen_toolStretchable))
         {
             toolbar->AddStretchableSpace();
         }
@@ -88,9 +88,9 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         {
             const wxObject* child;
             if (!is_preview)
-                child = getMockup()->getChild(wxobject, i);
+                child = getMockup()->get_Child(wxobject, i);
             else
-                child = node->getChild(i)->getMockupObject();
+                child = node->get_Child(i)->get_MockupObject();
 
             if (auto control = wxDynamicCast(child, wxControl); control)
             {
@@ -127,12 +127,12 @@ bool ToolBarFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
                                      4);
         code.Add("style=").Style().Comma();
-        size_t name_len = code.hasValue(prop_window_name) ?
+        size_t name_len = code.HasValue(prop_window_name) ?
                               code.node()->as_string(prop_window_name).size() :
                               sizeof("wx.ToolBarNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.ToolBarNameStr");
@@ -157,7 +157,7 @@ bool ToolBarFormGenerator::SettingsCode(Code& code)
     if (code.IsTrue(prop_hidden))
         code.Eol(eol_if_needed).FormFunction("Hide(").EndFunction();
 
-    if (!code.isPropValue(prop_separation, 5))
+    if (!code.is_PropValue(prop_separation, 5))
     {
         code.Eol(eol_if_needed)
             .FormFunction("SetToolSeparation(")
@@ -165,12 +165,12 @@ bool ToolBarFormGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_margins))
+    if (code.HasValue(prop_margins))
     {
         code.FormFunction("SetMargins(").Add(prop_margins).EndFunction();
     }
 
-    if (!code.isPropValue(prop_packing, 1))
+    if (!code.is_PropValue(prop_packing, 1))
     {
         code.FormFunction("SetToolPacking(").Add(prop_packing).EndFunction();
     }
@@ -247,7 +247,7 @@ bool ToolBarFormGenerator::HeaderCode(Code& code)
 
 bool ToolBarFormGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
@@ -291,8 +291,8 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 
 int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolBar");
@@ -341,14 +341,14 @@ wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                       DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
-    if (node->hasValue(prop_margins))
+    if (node->HasValue(prop_margins))
     {
         wxSize margins(node->as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->hasValue(prop_packing))
+    if (node->HasValue(prop_packing))
         widget->SetToolPacking(node->as_int(prop_packing));
-    if (node->hasValue(prop_separation))
+    if (node->HasValue(prop_separation))
         widget->SetToolSeparation(node->as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarGenerator::OnTool, this);
@@ -367,11 +367,11 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         return;
     }
 
-    auto count = node->getChildCount();
+    auto count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->getChild(i);
-        if (childObj->isGen(gen_tool))
+        auto childObj = node->get_Child(i);
+        if (childObj->is_Gen(gen_tool))
         {
             auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bundle.IsOk())
@@ -381,7 +381,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
                              (wxItemKind) childObj->as_int(prop_kind),
                              childObj->as_wxString(prop_help), wxEmptyString, nullptr);
         }
-        else if (childObj->isGen(gen_tool_dropdown))
+        else if (childObj->is_Gen(gen_tool_dropdown))
         {
             auto bundle = childObj->as_wxBitmapBundle(prop_bitmap);
             if (!bundle.IsOk())
@@ -391,11 +391,11 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
                              wxITEM_DROPDOWN, childObj->as_wxString(prop_help), wxEmptyString,
                              nullptr);
         }
-        else if (childObj->isGen(gen_toolSeparator))
+        else if (childObj->is_Gen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
-        else if (childObj->isGen(gen_toolStretchable))
+        else if (childObj->is_Gen(gen_toolStretchable))
         {
             toolbar->AddStretchableSpace();
         }
@@ -403,9 +403,9 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         {
             const wxObject* child;
             if (!is_preview)
-                child = getMockup()->getChild(wxobject, i);
+                child = getMockup()->get_Child(wxobject, i);
             else
-                child = node->getChild(i)->getMockupObject();
+                child = node->get_Child(i)->get_MockupObject();
 
             if (auto control = wxDynamicCast(child, wxControl); control)
             {
@@ -419,7 +419,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
 bool ToolBarGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName();
-    if (code.node()->isParent(gen_wxFrame))
+    if (code.node()->is_Parent(gen_wxFrame))
     {
         code.Str(" = ").FormFunction("CreateToolBar(");
         Node* node = code.node();
@@ -465,7 +465,7 @@ bool ToolBarGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_margins))
+    if (code.HasValue(prop_margins))
     {
         code.Eol().NodeName().Function("SetMargins(").as_string(prop_margins).EndFunction();
     }
@@ -508,8 +508,8 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
 
 int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolBar");

@@ -109,7 +109,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     GenResults results;
 
     // This looks for
-    auto output_type = Project.getOutputType();
+    auto output_type = Project.get_OutputType();
 
     if (output_type == OUTPUT_XRC)
     {
@@ -218,7 +218,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
             results_dlg.Create(this);
             for (auto& iter: results.updated_files)
             {
-                iter.make_relative(Project.getProjectPath());
+                iter.make_relative(Project.get_ProjectPath());
                 results_dlg.m_lb_files->Append(iter);
             }
 
@@ -248,9 +248,9 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    auto languages = Project.getGenerateLanguages();
+    auto languages = Project.get_GenerateLanguages();
 
-    switch (Project.getCodePreference())
+    switch (Project.get_CodePreference())
     {
         case GEN_LANG_CPLUSPLUS:
             gen_base_code = true;

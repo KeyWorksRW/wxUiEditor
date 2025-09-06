@@ -175,7 +175,7 @@ CodeCompare::~CodeCompare()
         }
     }
 
-    if (Project.hasValue(prop_base_directory))
+    if (Project.HasValue(prop_base_directory))
     {
         dir.GetAllFiles(Project.as_string(prop_base_directory).make_wxString(), &files,
                         "~wxue_**.*");
@@ -194,7 +194,7 @@ CodeCompare::~CodeCompare()
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    GenLang language = Project.getCodePreference(wxGetFrame().getSelectedNode());
+    GenLang language = Project.get_CodePreference(wxGetFrame().getSelectedNode());
     wxCommandEvent dummy;
     switch (language)
     {

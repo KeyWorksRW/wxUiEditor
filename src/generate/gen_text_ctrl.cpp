@@ -31,13 +31,13 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 #endif
         widget->SetMaxLength(node->as_int(prop_maxlength));
 
-    if (node->hasValue(prop_auto_complete))
+    if (node->HasValue(prop_auto_complete))
     {
         auto array = node->as_wxArrayString(prop_auto_complete);
         widget->AutoComplete(array);
     }
 
-    if (node->hasValue(prop_hint))
+    if (node->HasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
 #if wxUSE_SPELLCHECK
@@ -65,7 +65,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 #if defined(_WIN32)
     else if (prop->isProp(prop_spellcheck))
     {
-        if (prop->hasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
+        if (prop->HasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
             wxGetFrame().ShowInfoBarMsg(
                 "When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
@@ -78,7 +78,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     }
     else if (prop->isProp(prop_style))
     {
-        if (node->hasValue(prop_spellcheck) && !node->as_string(prop_style).contains("wxTE_RICH2"))
+        if (node->HasValue(prop_spellcheck) && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
             wxGetFrame().ShowInfoBarMsg(
                 "When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
@@ -106,7 +106,7 @@ bool TextCtrlGenerator::ConstructionCode(Code& code)
 
 bool TextCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_hint))
+    if (code.HasValue(prop_hint))
     {
         if (code.is_perl())
         {
@@ -124,9 +124,9 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
         }
@@ -190,7 +190,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_auto_complete))
+    if (code.HasValue(prop_auto_complete))
     {
         if (code.is_cpp())
         {
@@ -202,7 +202,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                 code.Tab().Add("tmp_array.Add(").QuotedString(iter) << ");";
                 code.Eol();
             }
-            code.Tab() << code.node()->getNodeName() << "->AutoComplete(tmp_array);";
+            code.Tab() << code.node()->get_NodeName() << "->AutoComplete(tmp_array);";
             code.Eol() << "}";
             code.EnableAutoLineBreak(true);
         }
@@ -282,9 +282,9 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
     // Only insert validator header files if the validator is being used (which requires a
     // variable name).
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
     {
-        if (auto val_type = node->getValidatorType(); val_type.size())
+        if (auto val_type = node->get_ValidatorType(); val_type.size())
         {
             if (node->as_string(prop_validator_data_type) == "wxFileName")
                 set_hdr.insert("#include <wx/filename.h>");
@@ -301,8 +301,8 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTextCtrl");
@@ -312,11 +312,11 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     GenXrcStylePosSize(node, item);
 
-    if (node->hasValue(prop_value))
+    if (node->HasValue(prop_value))
     {
         item.append_child("value").text().set(node->as_string(prop_value));
     }
-    if (node->hasValue(prop_hint))
+    if (node->HasValue(prop_hint))
     {
         item.append_child("hint").text().set(node->as_string(prop_hint));
     }
@@ -325,12 +325,12 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     if (xrc_flags & xrc::add_comments)
     {
-        if (node->hasValue(prop_auto_complete))
+        if (node->HasValue(prop_auto_complete))
         {
             item.append_child(pugi::node_comment)
                 .set_value(" auto complete cannot be be set in the XRC file. ");
         }
-        if (node->hasValue(prop_spellcheck))
+        if (node->HasValue(prop_spellcheck))
         {
             item.append_child(pugi::node_comment)
                 .set_value(" spell check cannot be be set in the XRC file. ");

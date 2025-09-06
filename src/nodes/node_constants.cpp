@@ -63,12 +63,12 @@
 
 #include "node_creator.h"
 
-// ADD_CONSTANT makes it possible to call NodeCreation.getConstantAsInt(name) and have it return
+// ADD_CONSTANT makes it possible to call NodeCreation.get_ConstantAsInt(name) and have it return
 // it's value (or zero if not defined)
 
 #define ADD_CONSTANT(name) m_map_constants[#name] = name;
 
-void NodeCreator::addAllConstants()
+void NodeCreator::AddAllConstants()
 {
     // Note that this isn't a complete list of constants -- it's just the values that we *think* we
     // might need to be able to switch between string and value.

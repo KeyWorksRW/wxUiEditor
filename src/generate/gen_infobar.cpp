@@ -20,7 +20,7 @@
 
 wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.getCodePreference() == GEN_LANG_RUBY)
+    if (Project.get_CodePreference() == GEN_LANG_RUBY)
     {
         auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
                                         "wxInfoBar not available in wxRuby3", wxDefaultPosition,
@@ -94,17 +94,17 @@ bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxInfoBar");
 
-    if (node->hasValue(prop_show_effect))
+    if (node->HasValue(prop_show_effect))
     {
         item.append_child("showeffect").text().set(node->as_constant(prop_show_effect, "info_"));
     }
-    if (node->hasValue(prop_hide_effect))
+    if (node->HasValue(prop_hide_effect))
     {
         item.append_child("hideeffect").text().set(node->as_constant(prop_hide_effect, "info_"));
     }

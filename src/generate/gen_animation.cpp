@@ -30,7 +30,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
                                                  wxNullAnimation, DlgPoint(node, prop_pos),
                                                  DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
-        if (auto prop = node->getPropPtr(prop_animation); prop)
+        if (auto prop = node->get_PropPtr(prop_animation); prop)
             prop->as_animation(&animation);
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -47,7 +47,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
                                           DlgPoint(node, prop_pos), DlgSize(node, prop_size),
                                           GetStyleInt(node));
         auto animation = widget->CreateAnimation();
-        if (auto prop = node->getPropPtr(prop_animation); prop)
+        if (auto prop = node->get_PropPtr(prop_animation); prop)
             prop->as_animation(&animation);
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -67,7 +67,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         // wxRuby3 1.0.0 doesn't support the generic version of wxAnimationCtrl
         code.AddAuto().NodeName().CreateClass();
         code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
-        if (code.hasValue(prop_animation))
+        if (code.HasValue(prop_animation))
         {
             bool found_embedded = false;
             tt_view_vector parts(code.node()->as_string(prop_animation), ';');
@@ -103,7 +103,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.PosSizeFlags();
     }
 
-    if (code.hasValue(prop_inactive_bitmap))
+    if (code.HasValue(prop_inactive_bitmap))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
         if (code.is_cpp())
@@ -132,7 +132,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.EndFunction();
     }
 
-    if (code.hasValue(prop_animation))
+    if (code.HasValue(prop_animation))
     {
         code.Eol().OpenBrace();
         if (code.is_cpp())
@@ -210,14 +210,14 @@ bool AnimationGenerator::SettingsCode(Code& code)
 
 int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     // wxGenericAnimationCtrl is required to display .ANI files on wxGTK. Since the other platforms
     // effecitvely use wxGenericAnimationCtrl any way (since there are no native implementations of
     // wxAnimationCtrl) this shouldn't make any difference for them.
-    if (node->hasValue(prop_animation) &&
+    if (node->HasValue(prop_animation) &&
         node->as_string(prop_animation).contains(".gif", tt::CASE::either))
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     else
@@ -225,13 +225,13 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     GenXrcStylePosSize(node, item);
 
-    if (node->hasValue(prop_animation))
+    if (node->HasValue(prop_animation))
     {
         tt_string_vector parts(node->as_string(prop_animation), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         item.append_child("animation").text().set(parts[IndexImage]);
     }
-    if (node->hasValue(prop_inactive_bitmap))
+    if (node->HasValue(prop_inactive_bitmap))
     {
         tt_string_vector parts(node->as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
@@ -261,7 +261,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxAnimationCtrlXmlHandler");
-    if (node->hasValue(prop_inactive_bitmap))
+    if (node->HasValue(prop_inactive_bitmap))
     {
         handlers.emplace("wxBitmapXmlHandler");
     }
@@ -271,7 +271,7 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
-    if ((node->hasValue(prop_animation) &&
+    if ((node->HasValue(prop_animation) &&
          !node->as_string(prop_animation).contains(".gif", tt::CASE::either)) ||
         node->as_string(prop_subclass).starts_with("wxGeneric"))
     {

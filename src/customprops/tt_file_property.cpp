@@ -16,7 +16,7 @@
 wxPG_IMPLEMENT_PROPERTY_CLASS(ttFileProperty, wxEditorDialogProperty, TextCtrlAndButton);
 
 ttFileProperty::ttFileProperty(NodeProperty* prop) :
-    wxEditorDialogProperty(prop->declName().make_wxString(), wxPG_LABEL)
+    wxEditorDialogProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL)
 {
     m_prop = prop;
     SetValue(prop->value().make_wxString());
@@ -34,17 +34,17 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
     wxFileName root_path;
     wxString wildcard;
     wxString title;
-    auto* form = m_prop->getNode()->getForm();
+    auto* form = m_prop->getNode()->get_Form();
     auto* folder =
-        form ? form->getFolder() : static_cast<Node*>(nullptr);  // this will usually be a nullptr
+        form ? form->get_Folder() : static_cast<Node*>(nullptr);  // this will usually be a nullptr
 
     switch (m_prop->get_name())
     {
         case prop_base_file:
-            if (folder && folder->hasValue(prop_folder_base_directory))
+            if (folder && folder->HasValue(prop_folder_base_directory))
                 root_path.AssignDir(folder->as_string(prop_folder_base_directory));
-            else if (Project.getProjectNode()->hasValue(prop_base_directory))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_base_directory));
+            else if (Project.get_ProjectNode()->HasValue(prop_base_directory))
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_base_directory));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Base class filename";
@@ -52,10 +52,10 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             break;
 
         case prop_derived_file:
-            if (folder && folder->hasValue(prop_folder_derived_directory))
+            if (folder && folder->HasValue(prop_folder_derived_directory))
                 root_path.AssignDir(folder->as_string(prop_folder_derived_directory));
-            else if (Project.getProjectNode()->hasValue(prop_derived_directory))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_derived_directory));
+            else if (Project.get_ProjectNode()->HasValue(prop_derived_directory))
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_derived_directory));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Derived class filename";
@@ -63,10 +63,10 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             break;
 
         case prop_perl_file:
-            if (folder && folder->hasValue(prop_folder_perl_output_folder))
+            if (folder && folder->HasValue(prop_folder_perl_output_folder))
                 root_path.AssignDir(folder->as_string(prop_folder_perl_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_perl_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_perl_output_folder));
+            else if (Project.get_ProjectNode()->HasValue(prop_perl_output_folder))
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_perl_output_folder));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Perl filename";
@@ -75,10 +75,11 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 
         case prop_python_file:
         case prop_python_combined_file:
-            if (folder && folder->hasValue(prop_folder_python_output_folder))
+            if (folder && folder->HasValue(prop_folder_python_output_folder))
                 root_path.AssignDir(folder->as_string(prop_folder_python_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_python_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_python_output_folder));
+            else if (Project.get_ProjectNode()->HasValue(prop_python_output_folder))
+                root_path.AssignDir(
+                    Project.get_ProjectNode()->as_string(prop_python_output_folder));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Python filename";
@@ -87,10 +88,10 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 
         case prop_ruby_file:
         case prop_ruby_combined_file:
-            if (folder && folder->hasValue(prop_folder_ruby_output_folder))
+            if (folder && folder->HasValue(prop_folder_ruby_output_folder))
                 root_path.AssignDir(folder->as_string(prop_folder_ruby_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_ruby_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_ruby_output_folder));
+            else if (Project.get_ProjectNode()->HasValue(prop_ruby_output_folder))
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_ruby_output_folder));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Ruby filename";
@@ -98,10 +99,10 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             break;
 
         case prop_rust_file:
-            if (folder && folder->hasValue(prop_folder_rust_output_folder))
+            if (folder && folder->HasValue(prop_folder_rust_output_folder))
                 root_path.AssignDir(folder->as_string(prop_folder_rust_output_folder));
-            else if (Project.getProjectNode()->hasValue(prop_rust_output_folder))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_rust_output_folder));
+            else if (Project.get_ProjectNode()->HasValue(prop_rust_output_folder))
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_rust_output_folder));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "Rust filename";
@@ -111,10 +112,10 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         case prop_xrc_file:
         case prop_combined_xrc_file:
         case prop_folder_combined_xrc_file:
-            if (folder && folder->hasValue(prop_folder_xrc_directory))
+            if (folder && folder->HasValue(prop_folder_xrc_directory))
                 root_path.AssignDir(folder->as_string(prop_folder_xrc_directory));
-            else if (Project.getProjectNode()->hasValue(prop_xrc_directory))
-                root_path.AssignDir(Project.getProjectNode()->as_string(prop_xrc_directory));
+            else if (Project.get_ProjectNode()->HasValue(prop_xrc_directory))
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_xrc_directory));
             else
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             title = "XRC filename";
@@ -123,20 +124,20 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 
         case prop_cmake_file:
         case prop_folder_cmake_file:
-            root_path = Project.getProjectPath();
+            root_path = Project.get_ProjectPath();
             title = "CMake filename";
             wildcard = "CMake Files|*.cmake";
             break;
 
         // Currently this is for a wxFrame window
         case prop_subclass_header:
-            root_path = Project.getProjectPath();
+            root_path = Project.get_ProjectPath();
             title = "Subclass Header";
             wildcard = "Header Files|*.h;*.hh;*.hpp;*.hxx";
             break;
 
         case prop_output_file:
-            root_path = Project.getProjectPath();
+            root_path = Project.get_ProjectPath();
             title = "Data output filename";
             wildcard = "C++ Files|*.cpp;*.cc;*.cxx";
             break;
@@ -149,13 +150,13 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             else
             {
                 auto result =
-                    Project.GetOutputPath(m_prop->getNode()->getForm(), GEN_LANG_CPLUSPLUS);
+                    Project.GetOutputPath(m_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
                 if (!result.second)
                     root_path.AssignDir(result.first);
                 else
                     root_path.Assign(result.first);
             }
-            if (m_prop->getNode()->isGen(gen_data_xml))
+            if (m_prop->getNode()->is_Gen(gen_data_xml))
             {
                 title = "XML file";
                 wildcard = "XML/XRC Files|*.xml;*.xrc";
@@ -168,13 +169,13 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             break;
 
         case prop_initial_filename:
-            root_path = Project.getProjectPath();
+            root_path = Project.get_ProjectPath();
             title = "Initial filename";
             wildcard = "All Files|*.*";
             break;
 
         default:
-            FAIL_MSG(tt_string() << "Unknown property type: " << m_prop->declName().substr());
+            FAIL_MSG(tt_string() << "Unknown property type: " << m_prop->get_DeclName().substr());
             break;
 
     }  // switch (m_prop->get_name())

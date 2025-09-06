@@ -20,7 +20,7 @@
 #include "node.h"           // Node class
 #include "utils.h"          // Utility functions that work with properties
 
-// Call g_NodeCreator->getConstantAsInt("wx_define") to get the #defined integer value -- see
+// Call g_NodeCreator->get_ConstantAsInt("wx_define") to get the #defined integer value -- see
 // node_creator.h
 
 // To get the constant, prefix the name with "wxSTC_LEX_"
@@ -177,7 +177,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     // the user specifically requests one.
     scintilla->SetMarginWidth(1, 0);
 
-    if (node->hasValue(prop_stc_lexer) && node->as_string(prop_stc_lexer) != "NULL")
+    if (node->HasValue(prop_stc_lexer) && node->as_string(prop_stc_lexer) != "NULL")
     {
         scintilla->SetLexer(g_stc_lexers.at(node->as_string(prop_stc_lexer)));
     }
@@ -188,11 +188,11 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         scintilla->SetWrapMode(node->as_mockup(prop_stc_wrap_mode, "stc_"));
     }
-    if (node->hasValue(prop_stc_wrap_visual_flag))
+    if (node->HasValue(prop_stc_wrap_visual_flag))
     {
         scintilla->SetWrapVisualFlags(node->as_mockup(prop_stc_wrap_visual_flag, "stc_"));
     }
-    if (node->hasValue(prop_stc_wrap_visual_location))
+    if (node->HasValue(prop_stc_wrap_visual_location))
     {
         scintilla->SetWrapVisualFlagsLocation(
             node->as_mockup(prop_stc_wrap_visual_location, "stc_"));
@@ -201,7 +201,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         scintilla->SetWrapIndentMode(node->as_mockup(prop_stc_wrap_indent_mode, "stc_"));
     }
-    if (node->hasValue(prop_stc_wrap_start_indent))
+    if (node->HasValue(prop_stc_wrap_start_indent))
     {
         scintilla->SetWrapStartIndent(node->as_int(prop_stc_wrap_start_indent));
     }
@@ -262,7 +262,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
             scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
             scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
 
-            if (node->hasValue(prop_fold_marker_colour))
+            if (node->HasValue(prop_fold_marker_colour))
             {
                 scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDER,
                                                node->as_wxColour(prop_fold_marker_colour));
@@ -292,7 +292,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDERSUB, clr_foreground);
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDERTAIL, clr_foreground);
 
-            auto clr_background = node->hasValue(prop_fold_marker_colour) ?
+            auto clr_background = node->HasValue(prop_fold_marker_colour) ?
                                       node->as_wxColour(prop_fold_marker_colour) :
                                       scintilla->StyleGetBackground(wxSTC_STYLE_DEFAULT);
             scintilla->MarkerSetForeground(wxSTC_MARKNUM_FOLDER, clr_background);
@@ -329,11 +329,11 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginType(margin, wxSTC_MARGIN_SYMBOL);
         scintilla->SetMarginMask(margin, wxSTC_MASK_FOLDERS);
         scintilla->SetMarginSensitive(margin, true);
-        if (node->hasValue(prop_automatic_folding))
+        if (node->HasValue(prop_automatic_folding))
         {
             scintilla->SetAutomaticFold(node->as_mockup(prop_automatic_folding, "stc_"));
         }
-        if (node->hasValue(prop_fold_flags))
+        if (node->HasValue(prop_fold_flags))
         {
             scintilla->SetFoldFlags(node->as_mockup(prop_fold_flags, "stc_"));
         }
@@ -363,7 +363,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
         scintilla->SetMarginType(margin, node->as_mockup(prop_custom_type, "stc_"));
 
-        if (node->as_string(prop_custom_type) == "colour" && node->hasValue(prop_custom_colour))
+        if (node->as_string(prop_custom_type) == "colour" && node->HasValue(prop_custom_colour))
         {
             scintilla->SetMarginBackground(margin, node->as_wxColour(prop_custom_colour));
         }
@@ -390,7 +390,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     //////////// Tabs and Indentation settings ////////////
 
-    if (node->hasValue(prop_indentation_guides))
+    if (node->HasValue(prop_indentation_guides))
     {
         scintilla->SetIndentationGuides(node->as_mockup(prop_indentation_guides, "stc_"));
     }
@@ -421,13 +421,13 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginRight(node->as_int(prop_stc_right_margin_width));
     }
 
-    if (node->hasValue(prop_eol_mode))
+    if (node->HasValue(prop_eol_mode))
     {
         scintilla->SetEOLMode(node->as_mockup(prop_eol_mode, "stc_"));
     }
 
     scintilla->SetViewEOL(node->as_bool(prop_view_eol));
-    if (!node->isPropValue(prop_view_whitespace, "invisible"))
+    if (!node->is_PropValue(prop_view_whitespace, "invisible"))
     {
         scintilla->SetViewWhiteSpace(node->as_mockup(prop_view_whitespace, "stc_"));
     }
@@ -436,7 +436,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetTabDrawMode(wxSTC_TD_STRIKEOUT);
     }
 
-    if (node->hasValue(prop_font))
+    if (node->HasValue(prop_font))
     {
         scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, node->as_wxFont(prop_font));
     }
@@ -508,7 +508,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     // easier to identifiy. This is only done for C++ as Python syntax checkers don't like
     code.OpenBrace();
 
-    if (code.hasValue(prop_stc_lexer) && !code.isPropValue(prop_stc_lexer, "NULL"))
+    if (code.HasValue(prop_stc_lexer) && !code.is_PropValue(prop_stc_lexer, "NULL"))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -524,7 +524,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetReadOnly(").True().EndFunction();
     }
 
-    if (code.hasValue(prop_eol_mode))
+    if (code.HasValue(prop_eol_mode))
     {
         code.Eol(eol_if_needed).NodeName();
         if (code.is_ruby())
@@ -543,7 +543,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
     }
 
-    if (!code.isPropValue(prop_view_whitespace, "invisible"))
+    if (!code.is_PropValue(prop_view_whitespace, "invisible"))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -562,7 +562,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     //////////// Wrap category settings ////////////
 
-    if (!code.isPropValue(prop_stc_wrap_mode, "no wrapping"))
+    if (!code.is_PropValue(prop_stc_wrap_mode, "no wrapping"))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -571,7 +571,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_stc_wrap_visual_flag))
+    if (code.HasValue(prop_stc_wrap_visual_flag))
     {
         if (auto result = code.node()->as_constant(prop_stc_wrap_visual_flag, "stc_");
             result.size())
@@ -584,7 +584,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (code.hasValue(prop_stc_wrap_visual_location))
+    if (code.HasValue(prop_stc_wrap_visual_location))
     {
         if (auto result = code.node()->as_constant(prop_stc_wrap_visual_location, "stc_");
             result.size())
@@ -597,7 +597,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (!code.isPropValue(prop_stc_wrap_indent_mode, "fixed"))
+    if (!code.is_PropValue(prop_stc_wrap_indent_mode, "fixed"))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -606,7 +606,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (code.hasValue(prop_stc_wrap_start_indent))
+    if (code.HasValue(prop_stc_wrap_start_indent))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -647,9 +647,9 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     //////////// Margin category settings ////////////
 
     // The default margin is 1, so if that's what it is set to, then don't output any code
-    if (!code.isPropValue(prop_stc_left_margin_width, 1))
+    if (!code.is_PropValue(prop_stc_left_margin_width, 1))
     {
-        if (code.isPropValue(prop_stc_left_margin_width, 5))
+        if (code.is_PropValue(prop_stc_left_margin_width, 5))
         {
             code.AddComment(
                 "Sets text margin scaled appropriately for the current DPI on Windows,");
@@ -671,16 +671,16 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         }
     }
 
-    if (!code.isPropValue(prop_stc_right_margin_width, 1))
+    if (!code.is_PropValue(prop_stc_right_margin_width, 1))
     {
-        if (!code.isPropValue(prop_stc_left_margin_width, 5) &&
-            code.isPropValue(prop_stc_right_margin_width, 5))
+        if (!code.is_PropValue(prop_stc_left_margin_width, 5) &&
+            code.is_PropValue(prop_stc_right_margin_width, 5))
         {
             code.AddComment("Sets text margin scaled appropriately for the current DPI on Windows");
             code.AddComment("5 on wxGTK or wxOSX");
         }
         code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(");
-        if (code.isPropValue(prop_stc_right_margin_width, 5))
+        if (code.is_PropValue(prop_stc_right_margin_width, 5))
         {
             code.Add("wxSizerFlags").ClassMethod("GetDefaultBorder()").EndFunction();
         }
@@ -708,7 +708,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         auto lambda = [&](PropName name)
         {
-            if (code.isPropValue(name, "1"))
+            if (code.is_PropValue(name, "1"))
             {
                 is_margin_1_set = true;
             }
@@ -733,7 +733,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     if (margin.is_sameas("none"))
         margin = "0";
 
-    if (!code.isPropValue(prop_line_margin, "none"))
+    if (!code.is_PropValue(prop_line_margin, "none"))
     {
         int width = node->as_string(prop_line_digits).atoi();
 
@@ -760,7 +760,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             .EndFunction();
     }
 
-    if (!code.isPropValue(prop_fold_margin, "none") && code.IntValue(prop_fold_width) > 0)
+    if (!code.is_PropValue(prop_fold_margin, "none") && code.IntValue(prop_fold_width) > 0)
     {
         code.Eol(eol_if_needed).NodeName().Function("SetProperty(\"fold\", \"1\"").EndFunction();
         code.Eol()
@@ -792,7 +792,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             .True()
             .EndFunction();
 
-        if (node->hasValue(prop_automatic_folding))
+        if (node->HasValue(prop_automatic_folding))
         {
             code.Eol()
                 .NodeName()
@@ -800,7 +800,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                 .AddConstant(prop_automatic_folding, "stc_")
                 .EndFunction();
         }
-        if (node->hasValue(prop_fold_flags))
+        if (node->HasValue(prop_fold_flags))
         {
             code.Eol()
                 .NodeName()
@@ -826,7 +826,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                 symbol_open = "wxSTC_MARK_ARROWDOWN";
             }
 
-            if (node->hasValue(prop_fold_marker_colour))
+            if (node->HasValue(prop_fold_marker_colour))
             {
                 auto lambda = [&](tt_string_view name, const std::string& symbol)
                 {
@@ -877,7 +877,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                 .Add("wxSTC_STYLE_DEFAULT")
                 .EndFunction();
             code.Eol().Str(code.is_cpp() ? "clr_background" : "_clr_background_");
-            if (node->hasValue(prop_fold_marker_colour))
+            if (node->HasValue(prop_fold_marker_colour))
             {
                 code.ColourCode(prop_fold_marker_colour).EndFunction();
             }
@@ -1002,7 +1002,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         code.Eol().NodeName().Function("SetMarginType(").Str(margin);
         code.Comma().AddConstant(prop_custom_type, "stc_").EndFunction();
 
-        if (code.IsEqualTo(prop_custom_type, "colour") && code.hasValue(prop_custom_colour))
+        if (code.IsEqualTo(prop_custom_type, "colour") && code.HasValue(prop_custom_colour))
         {
             code.Eol().NodeName().Function("SetMarginBackground(").Str(margin).Comma();
             code.ColourCode(prop_custom_colour).EndFunction();
@@ -1030,16 +1030,16 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     //////////// Tabs and Indentation settings ////////////
 
-    if (node->hasValue(prop_indentation_guides) &&
-        !code.isPropValue(prop_indentation_guides, "no guides") &&
+    if (node->HasValue(prop_indentation_guides) &&
+        !code.is_PropValue(prop_indentation_guides, "no guides") &&
         // false was what was used in previous versions as well as in some imported values
-        !code.isPropValue(prop_indentation_guides, "false"))
+        !code.is_PropValue(prop_indentation_guides, "false"))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetIndentationGuides(");
         code.AddConstant(prop_indentation_guides, "stc_").EndFunction();
     }
 
-    if (!code.isPropValue(prop_stc_indentation_size, 0))
+    if (!code.is_PropValue(prop_stc_indentation_size, 0))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetIndent(");
         code.AddConstant(prop_stc_indentation_size, "stc_").EndFunction();
@@ -1070,9 +1070,9 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
         }
@@ -1231,7 +1231,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
         // Hack alert! To prevent duplicating the code below, we change the changed_prop pointer.
         if (is_enabled)
         {
-            changed_prop = changed_node->getPropPtr(prop_custom_type);
+            changed_prop = changed_node->get_PropPtr(prop_custom_type);
         }
     }
 
@@ -1269,8 +1269,8 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
 
 int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStyledTextCtrl");

@@ -68,8 +68,8 @@ bool RadioButtonGenerator::SettingsCode(Code& code)
 
 int RadioButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRadioButton");
@@ -120,19 +120,19 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
 
         if (newValue.contains("wxRB_GROUP"))
         {
-            auto parent = node->getParent();
-            auto pos = parent->getChildPosition(node);
-            if (pos > 0 && parent->getChild(pos - 1)->isGen(gen_wxRadioButton) &&
-                parent->getChild(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
+            auto parent = node->get_Parent();
+            auto pos = parent->get_ChildPosition(node);
+            if (pos > 0 && parent->get_Child(pos - 1)->is_Gen(gen_wxRadioButton) &&
+                parent->get_Child(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
                 wxGetFrame().ShowInfoBarMsg(
                     "The previous radio button is also set as the start of a group!",
                     wxICON_INFORMATION);
                 m_info_warning = true;
             }
-            else if (pos + 1 < parent->getChildCount() &&
-                     parent->getChild(pos + 1)->isGen(gen_wxRadioButton) &&
-                     parent->getChild(pos + 1)->as_string(prop_style).contains("wxRB_GROUP"))
+            else if (pos + 1 < parent->get_ChildCount() &&
+                     parent->get_Child(pos + 1)->is_Gen(gen_wxRadioButton) &&
+                     parent->get_Child(pos + 1)->as_string(prop_style).contains("wxRB_GROUP"))
             {
                 wxGetFrame().ShowInfoBarMsg(
                     "The next radio button is also set as the start of a group!",

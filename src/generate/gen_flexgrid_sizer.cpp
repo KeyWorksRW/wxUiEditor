@@ -175,18 +175,18 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->getParent();
-    if (!parent->isSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm) &&
-        !parent->isGen(gen_wxPopupTransientWindow))
+    auto parent = code.node()->get_Parent();
+    if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
+        !parent->is_Gen(gen_wxPopupTransientWindow))
     {
         code.Eol(eol_if_needed);
-        if (parent->isGen(gen_wxRibbonPanel))
+        if (parent->is_Gen(gen_wxRibbonPanel))
         {
             code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(code.node(), code.get_language()) != "this")
+            if (get_ParentName(code.node(), code.get_language()) != "this")
             {
                 code.ValidParentName().Function("SetSizerAndFit(");
             }
@@ -220,7 +220,7 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
 
-    if (node->getParent()->isSizer())
+    if (node->get_Parent()->is_Sizer())
     {
         GenXrcSizerItem(node, object);
         item = object.append_child("object");
@@ -245,17 +245,17 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, siz
 
     ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
-    if (node->hasValue(prop_minimum_size))
+    if (node->HasValue(prop_minimum_size))
     {
         item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
     }
-    else if (node->getParent()->isForm() && node->getParent()->hasValue(prop_minimum_size))
+    else if (node->get_Parent()->is_Form() && node->get_Parent()->HasValue(prop_minimum_size))
     {
         // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
         // a problem for forms which often can specify their own minimum size. The workaround is to
         // set the minimum size of the parent sizer that we create for most forms.
 
-        item.append_child("minsize").text().set(node->getParent()->as_string(prop_minimum_size));
+        item.append_child("minsize").text().set(node->get_Parent()->as_string(prop_minimum_size));
     }
     return result;
 }

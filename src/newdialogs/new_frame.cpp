@@ -183,7 +183,7 @@ void NewFrame::OnCheckMainFrame(wxCommandEvent& /* event unused */)
     }
 }
 
-void NewFrame::createNode()
+void NewFrame::CreateNode()
 {
     auto frame_type = m_choiceFrameType->GetStringSelection();
     auto generator = gen_wxFrame;
@@ -202,33 +202,33 @@ void NewFrame::createNode()
     else if (frame_type == "wxAuiMDIChildFrame")
         generator = gen_wxAuiMDIChildFrame;
 
-    auto form_node = NodeCreation.createNode(generator, nullptr).first;
+    auto form_node = NodeCreation.CreateNode(generator, nullptr).first;
     ASSERT(form_node);
 
     if (m_has_mainframe)
     {
         if (m_has_toolbar)
         {
-            auto bar = NodeCreation.createNode(gen_wxToolBar, form_node.get()).first;
+            auto bar = NodeCreation.CreateNode(gen_wxToolBar, form_node.get()).first;
             ASSERT(bar);
-            form_node->adoptChild(bar);
+            form_node->AdoptChild(bar);
         }
         if (m_has_menu)
         {
-            auto bar = NodeCreation.createNode(gen_wxMenuBar, form_node.get()).first;
+            auto bar = NodeCreation.CreateNode(gen_wxMenuBar, form_node.get()).first;
             ASSERT(bar);
-            form_node->adoptChild(bar);
+            form_node->AdoptChild(bar);
         }
         if (m_has_statusbar)
         {
-            auto bar = NodeCreation.createNode(gen_wxStatusBar, form_node.get()).first;
+            auto bar = NodeCreation.CreateNode(gen_wxStatusBar, form_node.get()).first;
             ASSERT(bar);
-            form_node->adoptChild(bar);
+            form_node->AdoptChild(bar);
         }
     }
 
     form_node->set_value(prop_class_name, m_base_class.utf8_string());
-    if (form_node->as_string(prop_class_name) != form_node->getPropDefaultValue(prop_class_name))
+    if (form_node->as_string(prop_class_name) != form_node->get_PropDefaultValue(prop_class_name))
     {
         UpdateFormClass(form_node.get());
     }
@@ -236,11 +236,11 @@ void NewFrame::createNode()
     auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.getProjectNode();
+        parent_node = Project.get_ProjectNode();
     }
     else
     {
-        parent_node = parent_node->getValidFormParent();
+        parent_node = parent_node->get_ValidFormParent();
     }
 
     wxGetFrame().SelectNode(parent_node);

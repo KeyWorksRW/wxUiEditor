@@ -235,7 +235,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     if (!newValue.IsOk())
         return;
 
-    if (!node->isGen(gen_wxFilePickerCtrl))
+    if (!node->is_Gen(gen_wxFilePickerCtrl))
     {
         newValue.MakeAbsolute();
         newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
@@ -245,7 +245,7 @@ void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
     dir.backslashestoforward();
 
     // Note that on Windows, even though we changed the property to a forward slash, it will still
-    // be displayed with a backslash. However, modifyProperty() will save our forward slash version,
+    // be displayed with a backslash. However, ModifyProperty() will save our forward slash version,
     // so even thought the display isn't correct, it will be stored in the project file correctly.
 
     event.GetProperty()->SetValueFromString(dir.make_wxString());
@@ -277,14 +277,14 @@ void ChangeDerivedDirectory(tt_string& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
-    undo_derived->addProperty(Project.getProjectNode()->getPropPtr(prop_derived_directory), path);
+    undo_derived->addProperty(Project.get_ProjectNode()->get_PropPtr(prop_derived_directory), path);
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
     for (auto& form: forms)
     {
-        if (form->as_bool(prop_use_derived_class) && form->hasValue(prop_derived_file))
+        if (form->as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
         {
             tt_string cur_path = form->as_string(prop_derived_file);
             cur_path.backslashestoforward();
@@ -300,7 +300,7 @@ void ChangeDerivedDirectory(tt_string& path)
 
             cur_path = path;
             cur_path.append_filename(form->as_string(prop_derived_file).filename());
-            undo_derived->addProperty(form->getPropPtr(prop_derived_file), cur_path);
+            undo_derived->addProperty(form->get_PropPtr(prop_derived_file), cur_path);
         }
     }
 
@@ -317,14 +317,14 @@ void ChangeBaseDirectory(tt_string& path)
         path.pop_back();
 
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
-    undo_derived->addProperty(Project.getProjectNode()->getPropPtr(prop_base_directory), path);
+    undo_derived->addProperty(Project.get_ProjectNode()->get_PropPtr(prop_base_directory), path);
 
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
     for (const auto& form: forms)
     {
-        if (form->hasValue(prop_base_file))
+        if (form->HasValue(prop_base_file))
         {
             tt_string cur_path = form->as_string(prop_base_directory);
             cur_path.backslashestoforward();
@@ -340,7 +340,7 @@ void ChangeBaseDirectory(tt_string& path)
 
             cur_path = path;
             cur_path.append_filename(form->as_string(prop_base_file).filename());
-            undo_derived->addProperty(form->getPropPtr(prop_base_file), cur_path);
+            undo_derived->addProperty(form->get_PropPtr(prop_base_file), cur_path);
         }
     }
 

@@ -80,14 +80,14 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetFocus(").EndFunction();
         }
     }
-    if (code.hasValue(prop_contents))
+    if (code.HasValue(prop_contents))
     {
         Node* node = code.node();
         auto contents = node->as_checklist_items(prop_contents);
@@ -129,7 +129,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
             code.CloseBrace();
         }
 
-        if (code.hasValue(prop_selection_string))
+        if (code.HasValue(prop_selection_string))
         {
             code.Eol(eol_if_empty).NodeName().Function("SetStringSelection(");
             code.QuotedString(prop_selection_string).EndFunction();
@@ -152,7 +152,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
 
 int CheckListBoxGenerator::GetRequiredVersion(Node* node)
 {
-    if (node->hasValue(prop_contents))
+    if (node->HasValue(prop_contents))
     {
         return std::max(minRequiredVer + 1, BaseGenerator::GetRequiredVersion(node));
     }
@@ -164,7 +164,7 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
                                         std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checklst.h>", set_src, set_hdr);
-    if (node->hasValue(prop_validator_variable))
+    if (node->HasValue(prop_validator_variable))
         set_src.insert("#include <wx/valgen.h>");
     return true;
 }
@@ -174,13 +174,13 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxCheckListBox");
 
-    if (node->hasValue(prop_contents))
+    if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
         auto array = node->as_checklist_items(prop_contents);
@@ -196,7 +196,7 @@ int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     }
 
     // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
-    if (node->hasValue(prop_selection_string))
+    if (node->HasValue(prop_selection_string))
         item.append_child("value").text().set(node->as_string(prop_selection_string));
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,

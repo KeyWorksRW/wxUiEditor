@@ -21,7 +21,7 @@ wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                      node->as_wxString(prop_value), DlgPoint(node, prop_pos),
                                      DlgSize(node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
 
-    if (node->hasValue(prop_hint))
+    if (node->HasValue(prop_hint))
         widget->SetHint(node->as_wxString(prop_hint));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -40,7 +40,7 @@ bool RichTextCtrlGenerator::ConstructionCode(Code& code)
 
 bool RichTextCtrlGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_hint))
+    if (code.HasValue(prop_hint))
     {
         code.Eol(eol_if_needed)
             .NodeName()
@@ -51,9 +51,9 @@ bool RichTextCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->getForm();
+        auto form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
-        if (!form->isGen(gen_wxDialog) && !form->isType(type_frame_form))
+        if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
             code.Eol(eol_if_needed).NodeName().Function("SetFocus(").EndFunction();
         }
@@ -64,8 +64,8 @@ bool RichTextCtrlGenerator::SettingsCode(Code& code)
 
 int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRichTextCtrl");

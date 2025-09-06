@@ -155,7 +155,7 @@ public:
     void Change() override;
     void Revert() override;
 
-    Node* getParent() { return m_parent.get(); }
+    Node* get_Parent() { return m_parent.get(); }
     Node* getNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }

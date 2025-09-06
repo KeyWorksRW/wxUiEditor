@@ -57,26 +57,26 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
                                 DlgSize(node, prop_size), GetStyleInt(node));
     }
 
-    if (node->hasValue(prop_extra_style))
+    if (node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
-        // Can't use multiview because getConstantAsInt() searches an unordered_map which requires a
-        // std::string to pass to it
+        // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires
+        // a std::string to pass to it
         tt_string_vector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
-            ex_style |= NodeCreation.getConstantAsInt(iter);
+            ex_style |= NodeCreation.get_ConstantAsInt(iter);
         }
 
         widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
     }
 
-    if (node->isPropValue(prop_variant, "small"))
+    if (node->is_PropValue(prop_variant, "small"))
         widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-    else if (node->isPropValue(prop_variant, "mini"))
+    else if (node->is_PropValue(prop_variant, "mini"))
         widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
-    else if (node->isPropValue(prop_variant, "large"))
+    else if (node->is_PropValue(prop_variant, "large"))
         widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
 
     return widget;
@@ -92,7 +92,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
                 "wxPoint& pos, const wxSize& size, long style, const wxString& name)\n";
         code.OpenBrace();
 
-        if (code.hasValue(prop_extra_style))
+        if (code.HasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed)
                 .FormFunction("SetExtraStyle(GetExtraStyle() | ")
@@ -115,7 +115,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         }
 
         code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->hasValue(prop_subclass))
+        if (code.node()->HasValue(prop_subclass))
             code.as_string(prop_subclass);
         else
             code += "wxPropertySheetDialog";
@@ -133,12 +133,12 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         code.Comma().Str("size=").WxSize(prop_size).Comma();
         code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
-        size_t name_len = code.hasValue(prop_window_name) ?
+        size_t name_len = code.HasValue(prop_window_name) ?
                               code.node()->as_string(prop_window_name).size() :
                               sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
             code.QuotedString(prop_window_name);
         else
             code.Str("wx.DialogNameStr");
@@ -172,7 +172,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         // Indent any wrapped lines
         code.Indent(3);
         code.Str(", id = ");
-        if (code.hasValue(prop_id))
+        if (code.HasValue(prop_id))
         {
             code.Add(prop_id);
         }
@@ -194,7 +194,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
             .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
             .Str("style = ")
             .Style();
-        if (code.hasValue(prop_window_name))
+        if (code.HasValue(prop_window_name))
         {
             code.Comma().CheckLineLength(sizeof("name = ") +
                                          code.as_string(prop_window_name).size() + 2);
@@ -241,7 +241,7 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
 {
     if (code.is_python())
     {
-        if (code.hasValue(prop_extra_style))
+        if (code.HasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed)
                 .FormFunction("SetExtraStyle(GetExtraStyle() | ")
@@ -251,7 +251,7 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        if (code.hasValue(prop_extra_style))
+        if (code.HasValue(prop_extra_style))
         {
             code.Eol(eol_if_needed).FormFunction("SetExtraStyle(");
             code.Function("GetExtraStyle").Str(" | ").Add(prop_extra_style);
@@ -262,13 +262,13 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
 
     // Note: variant must be set *after* any font is set, or it will be ignored because a new font
     // was set after the variant modified the original font.
-    if (!code.node()->isPropValue(prop_variant, "normal"))
+    if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
         // code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         code.Eol(eol_if_empty).FormFunction("GetBookCtrl()").Function("SetWindowVariant(");
-        if (code.node()->isPropValue(prop_variant, "small"))
+        if (code.node()->is_PropValue(prop_variant, "small"))
             code.Add("wxWINDOW_VARIANT_SMALL");
-        else if (code.node()->isPropValue(prop_variant, "mini"))
+        else if (code.node()->is_PropValue(prop_variant, "mini"))
             code.Add("wxWINDOW_VARIANT_MINI");
         else
             code.Add("wxWINDOW_VARIANT_LARGE");
@@ -310,13 +310,13 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
         code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
         code.as_string(prop_style);
     else
         code.Str("wxDEFAULT_DIALOG_STYLE");
 
     code.Comma().Str("const wxString &name = ");
-    if (node->hasValue(prop_window_name))
+    if (node->HasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxDialogNameStr");
@@ -345,13 +345,13 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
         code.WxSize(prop_size, no_dpi_scaling);
 
     code.Comma().Eol().Tab().Str("long style = ");
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
         code.Style();
     else
         code.Str("wxDEFAULT_DIALOG_STYLE");
 
     code.Comma().Str("const wxString &name = ");
-    if (node->hasValue(prop_window_name))
+    if (node->HasValue(prop_window_name))
         code.QuotedString(prop_window_name);
     else
         code.Str("wxDialogNameStr");
@@ -364,7 +364,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
 
 bool PropSheetDlgGenerator::BaseClassNameCode(Code& code)
 {
-    if (code.hasValue(prop_subclass))
+    if (code.HasValue(prop_subclass))
     {
         code.as_string(prop_subclass);
     }
@@ -394,7 +394,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     ADD_ITEM_PROP(prop_title, "title")
 
-    if (node->hasValue(prop_style))
+    if (node->HasValue(prop_style))
     {
         if ((xrc_flags & xrc::add_comments) &&
             node->as_string(prop_style).contains("wxWANTS_CHARS"))
@@ -402,7 +402,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
-        if (!node->hasValue(prop_extra_style))
+        if (!node->HasValue(prop_extra_style))
         {
             item.append_child("style").text().set(node->as_string(prop_style));
         }
@@ -414,12 +414,12 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         }
     }
 
-    if (node->hasValue(prop_pos))
+    if (node->HasValue(prop_pos))
         item.append_child("pos").text().set(node->as_string(prop_pos));
-    if (node->hasValue(prop_size))
+    if (node->HasValue(prop_size))
         item.append_child("size").text().set(node->as_string(prop_size));
 
-    if (node->hasValue(prop_center))
+    if (node->HasValue(prop_center))
     {
         if (node->as_string(prop_center).is_sameas("wxVERTICAL") ||
             node->as_string(prop_center).is_sameas("wxHORIZONTAL"))
@@ -440,7 +440,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         }
     }
 
-    if (node->hasValue(prop_icon))
+    if (node->HasValue(prop_icon))
     {
         tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
@@ -473,7 +473,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 void PropSheetDlgGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxPropertySheetDialogXmlHandler");
-    if (node->hasValue(prop_icon))
+    if (node->HasValue(prop_icon))
     {
         handlers.emplace("wxIconXmlHandler");
         handlers.emplace("wxBitmapXmlHandler");

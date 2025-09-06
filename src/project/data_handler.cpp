@@ -47,7 +47,7 @@ void DataHandler::Initialize()
         // doesn't have a matching node.
 
         std::set<tt_string> var_names;
-        for (const auto& node: node_data_list->getChildNodePtrs())
+        for (const auto& node: node_data_list->get_ChildNodePtrs())
         {
             var_names.insert(node->as_string(prop_var_name));
         }
@@ -73,9 +73,9 @@ void DataHandler::Initialize()
 
     auto rlambda = [&](Node* parent, auto&& rlambda) -> void
     {
-        for (const auto& node: parent->getChildNodePtrs())
+        for (const auto& node: parent->get_ChildNodePtrs())
         {
-            if (node->isGen(gen_data_folder))
+            if (node->is_Gen(gen_data_folder))
             {
                 rlambda(node.get(), rlambda);
                 continue;
@@ -91,7 +91,7 @@ void DataHandler::Initialize()
                 if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
                 {
                     // If it's an XML file, then don't continue if xml_condensed has changed
-                    if (!node->isGen(gen_data_xml) ||
+                    if (!node->is_Gen(gen_data_xml) ||
                         node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
                         continue;
                 }
@@ -109,7 +109,7 @@ void DataHandler::Initialize()
 
 bool DataHandler::LoadAndCompress(Node* node)
 {
-    ASSERT(node->isGen(gen_data_string) || node->isGen(gen_data_xml));
+    ASSERT(node->is_Gen(gen_data_string) || node->is_Gen(gen_data_xml));
     m_embedded_data[node->as_string(prop_var_name)] = {};
     auto& embed = m_embedded_data[node->as_string(prop_var_name)];
     embed.array_size = 0;
@@ -123,7 +123,7 @@ bool DataHandler::LoadAndCompress(Node* node)
         return false;
     }
 
-    auto [path, has_base_file] = Project.GetOutputPath(node->getParent(), GEN_LANG_CPLUSPLUS);
+    auto [path, has_base_file] = Project.GetOutputPath(node->get_Parent(), GEN_LANG_CPLUSPLUS);
     if (has_base_file)
     {
         // true if the the base filename was returned, in which case we need to convert the
@@ -132,12 +132,12 @@ bool DataHandler::LoadAndCompress(Node* node)
         path.append(filename);
         filename = path;
         filename.make_absolute();
-        filename.make_relative(Project.getProjectPath());
+        filename.make_relative(Project.get_ProjectPath());
     }
 
     if (!filename.file_exists())
     {
-        auto project_path = Project.getProjectPath();
+        auto project_path = Project.get_ProjectPath();
         project_path.remove_filename();
         project_path.append(filename);
         if (!filename.file_exists())
@@ -155,7 +155,7 @@ bool DataHandler::LoadAndCompress(Node* node)
     }
     embed.filename.backslashestoforward();
 
-    if (node->isGen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
+    if (node->is_Gen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
     {
         pugi::xml_document doc;
         if (auto result =
@@ -224,7 +224,7 @@ bool DataHandler::LoadAndCompress(Node* node)
             size_t compressed_size = memory_stream.TellO();
             auto read_stream = memory_stream.GetOutputStreamBuffer();
 
-            embed.type = node->isGen(gen_data_xml) ? 1 : 0;
+            embed.type = node->is_Gen(gen_data_xml) ? 1 : 0;
             embed.xml_condensed = false;
             embed.array_size = (compressed_size | (org_size << 32));
             embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
@@ -257,7 +257,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
     wxBusyCursor wait;
     Initialize();
 
-    for (const auto& node: code.node()->getChildNodePtrs())
+    for (const auto& node: code.node()->get_ChildNodePtrs())
     {
         if (m_embedded_data.contains(node->as_string(prop_var_name)))
         {
@@ -505,17 +505,17 @@ bool DataHandler::NeedsUtilityHeader() const
 Node* data_list::FindDataList()
 {
     Node* data_node = nullptr;
-    if (Project.getChildCount() > 0)
+    if (Project.get_ChildCount() > 0)
     {
-        if (Project.getChild(0)->isGen(gen_Data))
+        if (Project.get_Child(0)->is_Gen(gen_Data))
         {
-            data_node = Project.getChild(0);
+            data_node = Project.get_Child(0);
         }
         else
         {
-            for (const auto& iter: Project.getChildNodePtrs())
+            for (const auto& iter: Project.get_ChildNodePtrs())
             {
-                if (iter->isGen(gen_Data))
+                if (iter->is_Gen(gen_Data))
                 {
                     data_node = iter.get();
                     break;

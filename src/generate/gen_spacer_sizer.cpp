@@ -19,7 +19,7 @@ bool SpacerGenerator::ConstructionCode(Code& code)
     auto* node = code.node();
     code.ParentName();
 
-    if (node->getParent()->isGen(gen_wxGridBagSizer))
+    if (node->get_Parent()->is_Gen(gen_wxGridBagSizer))
     {
         auto flags = node->getSizerFlags();
 
@@ -47,10 +47,10 @@ bool SpacerGenerator::ConstructionCode(Code& code)
             {
                 code.Function("AddSpacer(").as_string(prop_width);
             }
-            else if (node->getParent()->hasValue(prop_orientation))
+            else if (node->get_Parent()->HasValue(prop_orientation))
             {
                 code.Function("AddSpacer(");
-                if (node->getParent()->as_string(prop_orientation) == "wxVERTICAL")
+                if (node->get_Parent()->as_string(prop_orientation) == "wxVERTICAL")
                 {
                     code.as_string(prop_height);
                 }

@@ -47,7 +47,7 @@ bool ScrolledCanvasGenerator::ConstructionCode(Code& code)
 
 bool ScrolledCanvasGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_scroll_rate_x) || code.hasValue(prop_scroll_rate_y))
+    if (code.HasValue(prop_scroll_rate_x) || code.HasValue(prop_scroll_rate_y))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
         code.as_string(prop_scroll_rate_x).Comma().as_string(prop_scroll_rate_y).EndFunction();
@@ -77,7 +77,7 @@ std::optional<tt_string> ScrolledCanvasGenerator::GetWarning(Node* node, GenLang
         case GEN_LANG_XRC:
             {
                 tt_string msg;
-                if (auto form = node->getForm(); form && form->hasValue(prop_class_name))
+                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -122,7 +122,7 @@ bool ScrolledWindowGenerator::ConstructionCode(Code& code)
 
 bool ScrolledWindowGenerator::SettingsCode(Code& code)
 {
-    if (code.hasValue(prop_scroll_rate_x) || code.hasValue(prop_scroll_rate_y))
+    if (code.HasValue(prop_scroll_rate_x) || code.HasValue(prop_scroll_rate_y))
     {
         code.Eol(eol_if_needed).NodeName().Function("SetScrollRate(");
         code.as_string(prop_scroll_rate_x).Comma().as_string(prop_scroll_rate_y).EndFunction();
@@ -144,8 +144,8 @@ bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int ScrolledWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->getParent()->isSizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                 BaseGenerator::xrc_updated;
+    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                   BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxScrolledWindow");

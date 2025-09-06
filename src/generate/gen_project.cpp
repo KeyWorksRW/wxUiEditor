@@ -35,7 +35,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.getProjectNode());
+            wxGetFrame().PasteNode(Project.get_ProjectNode());
         },
         wxID_PASTE);
 
@@ -54,7 +54,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             NewDialog dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
@@ -63,7 +63,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().createToolNode(gen_folder);
+            wxGetFrame().CreateToolNode(gen_folder);
         },
         NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
@@ -74,7 +74,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             NewFrame dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WINDOW);
@@ -86,7 +86,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             NewWizard dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
@@ -124,7 +124,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.getProjectNode());
+            wxGetFrame().PasteNode(Project.get_ProjectNode());
         },
         wxID_PASTE);
 
@@ -135,7 +135,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
             NewDialog dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
@@ -144,7 +144,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().createToolNode(gen_sub_folder);
+            wxGetFrame().CreateToolNode(gen_sub_folder);
         },
         NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
@@ -155,7 +155,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
             NewFrame dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WINDOW);
@@ -167,7 +167,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
             NewWizard dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);
@@ -186,7 +186,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(Project.getProjectNode());
+            wxGetFrame().PasteNode(Project.get_ProjectNode());
         },
         wxID_PASTE);
 
@@ -197,7 +197,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
             NewDialog dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
@@ -206,7 +206,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().createToolNode(gen_sub_folder);
+            wxGetFrame().CreateToolNode(gen_sub_folder);
         },
         NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
@@ -217,7 +217,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
             NewFrame dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WINDOW);
@@ -229,7 +229,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
             NewWizard dlg(wxGetFrame().getWindow());
             if (dlg.ShowModal() == wxID_OK)
             {
-                dlg.createNode();
+                dlg.CreateNode();
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_WIZARD);

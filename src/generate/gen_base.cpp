@@ -68,47 +68,47 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 {
     tt_string code;
 
-    tt_string class_name(node->declName());
+    tt_string class_name(node->get_DeclName());
 
     if (class_name.starts_with("wx"))
     {
-        if (node->hasValue(prop_subclass))
+        if (node->HasValue(prop_subclass))
         {
-            code << node->as_string(prop_subclass) << "* " << node->getNodeName() << ';';
+            code << node->as_string(prop_subclass) << "* " << node->get_NodeName() << ';';
         }
         else
         {
-            if (node->getGenerator()->IsGeneric(node))
+            if (node->get_Generator()->IsGeneric(node))
             {
-                class_name = node->declName();
+                class_name = node->get_DeclName();
                 class_name.Replace("wx", "wxGeneric");
             }
-            code << class_name << "* " << node->getNodeName() << ';';
+            code << class_name << "* " << node->get_NodeName() << ';';
         }
 
         if (class_name == "wxStdDialogButtonSizer")
         {
-            if (!node->getForm()->isGen(gen_wxDialog) || node->as_bool(prop_Save) ||
+            if (!node->get_Form()->is_Gen(gen_wxDialog) || node->as_bool(prop_Save) ||
                 node->as_bool(prop_ContextHelp))
             {
                 if (node->as_bool(prop_OK))
-                    code << "\n\twxButton* " << node->getNodeName() << "OK;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "OK;";
                 if (node->as_bool(prop_Yes))
-                    code << "\n\twxButton* " << node->getNodeName() << "Yes;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "Yes;";
                 if (node->as_bool(prop_Save))
-                    code << "\n\twxButton* " << node->getNodeName() << "Save;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "Save;";
                 if (node->as_bool(prop_Apply))
-                    code << "\n\twxButton* " << node->getNodeName() << "Apply;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "Apply;";
                 if (node->as_bool(prop_No))
-                    code << "\n\twxButton* " << node->getNodeName() << "No;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "No;";
                 if (node->as_bool(prop_Cancel))
-                    code << "\n\twxButton* " << node->getNodeName() << "Cancel;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "Cancel;";
                 if (node->as_bool(prop_Close))
-                    code << "\n\twxButton* " << node->getNodeName() << "Close;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "Close;";
                 if (node->as_bool(prop_Help))
-                    code << "\n\twxButton* " << node->getNodeName() << "Help;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "Help;";
                 if (node->as_bool(prop_ContextHelp))
-                    code << "\n\twxButton* " << node->getNodeName() << "ContextHelp;";
+                    code << "\n\twxButton* " << node->get_NodeName() << "ContextHelp;";
             }
         }
         else if (class_name == "wxStaticBitmap")
@@ -119,73 +119,73 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
     }
-    else if (node->hasValue(prop_subclass))
+    else if (node->HasValue(prop_subclass))
     {
-        code << node->as_string(prop_subclass) << "* " << node->getNodeName() << ';';
+        code << node->as_string(prop_subclass) << "* " << node->get_NodeName() << ';';
     }
     else if (class_name == "CloseButton")
     {
-        code << "wxBitmapButton* " << node->getNodeName() << ';';
+        code << "wxBitmapButton* " << node->get_NodeName() << ';';
     }
     else if (class_name == "StaticCheckboxBoxSizer")
     {
-        if (node->hasValue(prop_checkbox_var_name))
+        if (node->HasValue(prop_checkbox_var_name))
             code << "wxCheckBox* " << node->as_string(prop_checkbox_var_name) << ';';
 
-        if (!node->isLocal())
+        if (!node->is_Local())
         {
             if (code.size())
                 code << "\n";
-            code << "wxStaticBoxSizer* " << node->getNodeName() << ';';
+            code << "wxStaticBoxSizer* " << node->get_NodeName() << ';';
         }
     }
     else if (class_name == "StaticRadioBtnBoxSizer")
     {
-        if (node->hasValue(prop_radiobtn_var_name))
+        if (node->HasValue(prop_radiobtn_var_name))
             code << "wxRadioButton* " << node->as_string(prop_radiobtn_var_name) << ';';
 
-        if (!node->isLocal())
+        if (!node->is_Local())
         {
             if (code.size())
                 code << "\n";
-            code << "wxStaticBoxSizer* " << node->getNodeName() << ';';
+            code << "wxStaticBoxSizer* " << node->get_NodeName() << ';';
         }
     }
 
     else if (class_name == "propGridItem" || class_name == "propGridCategory")
     {
-        code << "wxPGProperty* " << node->getNodeName() << ';';
+        code << "wxPGProperty* " << node->get_NodeName() << ';';
     }
     else if (class_name == "BookPage")
     {
-        code << "wxPanel* " << node->getNodeName() << ';';
+        code << "wxPanel* " << node->get_NodeName() << ';';
     }
     else if (class_name == "propGridPage")
     {
-        code << "wxPropertyGridPage* " << node->getNodeName() << ';';
+        code << "wxPropertyGridPage* " << node->get_NodeName() << ';';
     }
     else if (class_name == "submenu")
     {
-        code << "wxMenu* " << node->getNodeName() << ';';
+        code << "wxMenu* " << node->get_NodeName() << ';';
     }
     else if (class_name == "Check3State")
     {
-        code << "wxCheckBox* " << node->getNodeName() << ';';
+        code << "wxCheckBox* " << node->get_NodeName() << ';';
     }
     else if (class_name == "tool")
     {
-        class_name = node->getParent()->declName();
+        class_name = node->get_Parent()->get_DeclName();
         if (class_name == "wxAuiToolBar")
         {
-            code << "wxAuiToolBarItem* " << node->getNodeName() << ';';
+            code << "wxAuiToolBarItem* " << node->get_NodeName() << ';';
         }
         else if (class_name == "wxToolBar")
         {
-            code << "wxToolBarToolBase* " << node->getNodeName() << ';';
+            code << "wxToolBarToolBase* " << node->get_NodeName() << ';';
         }
         else if (class_name == "ToolBar")
         {
-            code << "wxToolBarToolBase* " << node->getNodeName() << ';';
+            code << "wxToolBarToolBase* " << node->get_NodeName() << ';';
         }
         else
         {
@@ -194,24 +194,24 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name.is_sameas("CustomControl"))
     {
-        if (auto* node_namespace = node->getFolder();
-            node_namespace && node_namespace->hasValue(prop_folder_namespace))
+        if (auto* node_namespace = node->get_Folder();
+            node_namespace && node_namespace->HasValue(prop_folder_namespace))
         {
             code << node_namespace->as_string(prop_folder_namespace) << "::";
         }
-        else if (node->hasValue(prop_namespace))
+        else if (node->HasValue(prop_namespace))
         {
             code << node->as_string(prop_namespace) << "::";
         }
-        code << node->as_string(prop_class_name) << "* " << node->getNodeName() << ';';
+        code << node->as_string(prop_class_name) << "* " << node->get_NodeName() << ';';
     }
 
     else if (class_name.is_sameas("dataViewColumn") || class_name.is_sameas("dataViewListColumn"))
     {
-        code << "wxDataViewColumn* " << node->getNodeName() << ';';
+        code << "wxDataViewColumn* " << node->get_NodeName() << ';';
     }
 
-    if (node->hasValue(prop_var_comment))
+    if (node->HasValue(prop_var_comment))
     {
         code << "  // " << node->as_string(prop_var_comment);
     }
@@ -223,7 +223,7 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
                                    std::set<std::string>& set_const_ids)
 {
-    for (auto& iter: node->getPropsVector())
+    for (auto& iter: node->get_PropsVector())
     {
         if (iter.type() == type_id)
         {
@@ -239,7 +239,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
         }
     }
 
-    for (const auto& iter: node->getChildNodePtrs())
+    for (const auto& iter: node->get_ChildNodePtrs())
     {
         CollectIDs(iter.get(), set_enum_ids, set_const_ids);
     }
@@ -259,7 +259,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
         return false;
     };
 
-    for (auto& iter: node->getMapEvents())
+    for (auto& iter: node->get_MapEvents())
     {
         // Only add the event if a handler was specified
         if (iter.second.get_value().size())
@@ -268,7 +268,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
             // duplicated even if it is added by both the Node and any container containing the same
             // conditional
 
-            if (node->hasProp(prop_platforms) &&
+            if (node->HasProp(prop_platforms) &&
                 node->as_string(prop_platforms) != "Windows|Unix|Mac")
             {
                 if (!m_map_conditional_events.contains(node->as_string(prop_platforms)))
@@ -286,7 +286,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
 
             // If node_container is non-null, it means the current node is within a container that
             // has a conditional.
-            else if (auto node_container = node->getPlatformContainer(); node_container)
+            else if (auto node_container = node->get_PlatformContainer(); node_container)
             {
                 if (!m_map_conditional_events.contains(node_container->as_string(prop_platforms)))
                 {
@@ -304,7 +304,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
 
             else
             {
-                if (node->getParent()->isGen(gen_wxContextMenuEvent))
+                if (node->get_Parent()->is_Gen(gen_wxContextMenuEvent))
                     m_ctx_menu_events.push_back(&iter.second);
                 else
                     events.push_back(&iter.second);
@@ -312,11 +312,11 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
         }
     }
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
-        if (child->isGen(gen_wxContextMenuEvent))
+        if (child->is_Gen(gen_wxContextMenuEvent))
         {
-            for (const auto& ctx_child: child->getChildNodePtrs())
+            for (const auto& ctx_child: child->get_ChildNodePtrs())
             {
                 CollectEventHandlers(ctx_child.get(), m_ctx_menu_events);
             }
@@ -329,9 +329,9 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
 // This function is called by the thread thrd_collect_img_headers
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
-    for (auto& iter: node->getPropsVector())
+    for (auto& iter: node->get_PropsVector())
     {
-        if (!iter.hasValue())
+        if (!iter.HasValue())
             continue;
 
         auto& value = iter.as_string();
@@ -383,7 +383,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         auto art_dir = Project.ArtDirectory();
                         if (art_dir.size())
                         {
-                            auto output_dir = Project.getBaseDirectory(node, m_language);
+                            auto output_dir = Project.get_BaseDirectory(node, m_language);
                             output_dir.append_filename(path);
                             if (!output_dir.file_exists())
                             {
@@ -391,7 +391,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                                 if (art_dir.file_exists())
                                 {
                                     path = art_dir;
-                                    path.make_relative(Project.getBaseDirectory(node, m_language));
+                                    path.make_relative(Project.get_BaseDirectory(node, m_language));
                                 }
                             }
                         }
@@ -453,7 +453,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 auto art_dir = Project.ArtDirectory();
                 if (art_dir.size())
                 {
-                    auto output_dir = Project.getBaseDirectory(node, m_language);
+                    auto output_dir = Project.get_BaseDirectory(node, m_language);
                     output_dir.append_filename(path);
                     if (!output_dir.file_exists())
                     {
@@ -461,7 +461,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         if (art_dir.file_exists())
                         {
                             path = art_dir;
-                            path.make_relative(Project.getBaseDirectory(node, m_language));
+                            path.make_relative(Project.get_BaseDirectory(node, m_language));
                         }
                     }
                 }
@@ -471,7 +471,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         }
     }
 
-    for (auto& child: node->getChildNodePtrs())
+    for (auto& child: node->get_ChildNodePtrs())
     {
         CollectImageHeaders(child.get(), embedset);
     }
@@ -484,7 +484,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 void BaseCodeGenerator::ParseImageProperties(Node* node)
 {
     ASSERT(node);
-    if (node->isForm() && node->hasValue(prop_icon))
+    if (node->is_Form() && node->HasValue(prop_icon))
     {
         tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
@@ -515,11 +515,11 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         }
     }
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
-        for (auto& iter: child->getPropsVector())
+        for (auto& iter: child->get_PropsVector())
         {
-            if ((iter.type() == type_image || iter.type() == type_animation) && iter.hasValue())
+            if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
                 tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
@@ -603,7 +603,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 }
             }
         }
-        if (child->getChildCount())
+        if (child->get_ChildCount())
         {
             ParseImageProperties(child.get());
         }
@@ -612,14 +612,14 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
 
 void BaseCodeGenerator::AddPersistCode(Node* node)
 {
-    if (node->hasValue(prop_persist_name))
+    if (node->HasValue(prop_persist_name))
     {
         tt_string code("wxPersistentRegisterAndRestore(");
-        code << node->getNodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
+        code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
         m_source->writeLine(code);
     }
 
-    for (const auto& child: node->getChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
         AddPersistCode(child.get());
     }
@@ -637,7 +637,7 @@ void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& cod
 
 void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
 {
-    if (auto generator = node_ctx_menu->getGenerator(); generator)
+    if (auto generator = node_ctx_menu->get_Generator(); generator)
     {
         Code code(node_ctx_menu, m_language);
         if (generator->AfterChildrenCode(code))
@@ -679,13 +679,13 @@ void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
 void BaseCodeGenerator::SetImagesForm()
 {
     m_ImagesForm = nullptr;
-    for (const auto& form: Project.getChildNodePtrs())
+    for (const auto& form: Project.get_ChildNodePtrs())
     {
-        if (form->isGen(gen_folder))
+        if (form->is_Gen(gen_folder))
         {
-            for (const auto& child_form: form->getChildNodePtrs())
+            for (const auto& child_form: form->get_ChildNodePtrs())
             {
-                if (child_form->isGen(gen_Images))
+                if (child_form->is_Gen(gen_Images))
                 {
                     m_ImagesForm = child_form.get();
                     break;
@@ -694,7 +694,7 @@ void BaseCodeGenerator::SetImagesForm()
             break;
         }
 
-        else if (form->isGen(gen_Images))
+        else if (form->is_Gen(gen_Images))
         {
             m_ImagesForm = form.get();
             break;

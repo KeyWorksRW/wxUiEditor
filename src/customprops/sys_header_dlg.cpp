@@ -187,7 +187,7 @@ void SysHeaderDlg::OnInit(wxInitDialogEvent& /* event unused */)
 
     if (m_combo_root->GetCount() < 9)
     {
-        m_combo_root->AppendString(Project.getProjectPath());
+        m_combo_root->AppendString(Project.get_ProjectPath());
 
         // Add all the directories in the $INCLUDE environment variable
         wxString include_path;
@@ -240,7 +240,7 @@ void SysHeaderDlg::OnDirectory(wxCommandEvent& /* event unused */)
 {
     wxDirDialog dlg(this, "Choose directory", wxEmptyString,
                     wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-    dlg.SetPath(Project.getProjectPath());
+    dlg.SetPath(Project.get_ProjectPath());
     if (dlg.ShowModal() != wxID_OK)
         return;
 

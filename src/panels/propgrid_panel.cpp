@@ -164,16 +164,16 @@ int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flag
 void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory& category,
                                   PropNameSet& prop_set, bool is_child_cat)
 {
-    size_t propCount = category.getPropNameCount();
+    size_t propCount = category.get_PropNameCount();
     for (size_t i = 0; i < propCount; i++)
     {
-        auto prop_name = category.getPropName(i);
-        auto prop = node->getPropPtr(prop_name);
+        auto prop_name = category.get_PropName(i);
+        auto prop = node->get_PropPtr(prop_name);
 
         if (!prop)
             continue;
 
-        if (node->getNodeDeclaration()->IsPropHidden(prop_name))
+        if (node->get_NodeDeclaration()->IsPropHidden(prop_name))
             continue;
 
         if (prop_set.find(prop_name) == prop_set.end())
@@ -185,7 +185,7 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
             auto propType = prop->type();
             if (propType != type_option)
             {
-                if (auto gen = node->getGenerator(); gen)
+                if (auto gen = node->get_Generator(); gen)
                 {
                     if (auto result = gen->GetHint(prop); result)
                     {
@@ -257,18 +257,18 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
         {
             MSG_WARNING(tt_string("The property ")
                         << map_PropNames[prop_name] << " appears more than once in "
-                        << node->declName());
+                        << node->get_DeclName());
         }
     }
 
     for (size_t i = 0; i < propCount; i++)
     {
-        ChangeEnableState(node->getPropPtr(category.getPropName(i)));
+        ChangeEnableState(node->get_PropPtr(category.get_PropName(i)));
     }
 
     for (auto& nextCat: category.getCategories())
     {
-        if (!nextCat.getCategoryCount() && !nextCat.getPropNameCount())
+        if (!nextCat.getCategoryCount() && !nextCat.get_PropNameCount())
         {
             continue;
         }
@@ -345,18 +345,18 @@ inline constexpr const char* lst_mouse_events[] = {
 void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& category,
                               EventSet& event_set)
 {
-    auto& eventList = category.getEvents();
+    auto& eventList = category.get_Events();
     for (auto& eventName: eventList)
     {
-        auto event = node->getEvent(eventName);
+        auto event = node->get_Event(eventName);
 
         if (!event)
             continue;
 
-        auto eventInfo = event->getEventInfo();
+        auto eventInfo = event->get_EventInfo();
 
         ASSERT_MSG(event_set.find(eventName) == event_set.end(),
-                   tt_string("Encountered a duplicate event in ") << node->declName());
+                   tt_string("Encountered a duplicate event in ") << node->get_DeclName());
         if (event_set.find(eventName) == event_set.end())
         {
             auto grid_property = new EventStringProperty(event->get_name(), event);
@@ -396,21 +396,21 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
         auto& nextCat = category.getCategories()[i];
         if (nextCat.GetName() == "Keyboard Events")
         {
-            if (node->getNodeDeclaration()->GetGeneratorFlags().contains("no_key_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_key_events"))
                 continue;
         }
         else if (nextCat.GetName() == "Mouse Events")
         {
-            if (node->getNodeDeclaration()->GetGeneratorFlags().contains("no_mouse_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_mouse_events"))
                 continue;
         }
         else if (nextCat.GetName() == "Focus Events")
         {
-            if (node->getNodeDeclaration()->GetGeneratorFlags().contains("no_focus_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_focus_events"))
                 continue;
         }
 
-        if (!nextCat.getCategoryCount() && !nextCat.getEventCount())
+        if (!nextCat.getCategoryCount() && !nextCat.get_EventCount())
         {
             continue;
         }
@@ -440,7 +440,7 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
                 bool has_event { false };
                 for (auto& iter: lst_key_events)
                 {
-                    if (auto event = node->getEvent(iter); event && event->get_value().size())
+                    if (auto event = node->get_Event(iter); event && event->get_value().size())
                     {
                         has_event = true;
                         break;
@@ -456,7 +456,7 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
                 bool has_event { false };
                 for (auto& iter: lst_mouse_events)
                 {
-                    if (auto event = node->getEvent(iter); event && event->get_value().size())
+                    if (auto event = node->get_Event(iter); event && event->get_value().size())
                     {
                         has_event = true;
                         break;
@@ -476,7 +476,7 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
         return;
 
     // Project properties don't have a generator, so always check if generator exists
-    if (auto gen = changed_prop->getNode()->getGenerator(); gen)
+    if (auto gen = changed_prop->getNode()->get_Generator(); gen)
     {
         gen->ChangeEnableState(m_prop_grid, changed_prop);
     }
@@ -541,27 +541,27 @@ void PropGridPanel::ReplaceDerivedName(const tt_string& newValue, NodeProperty* 
 
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
     grid_property->SetValueFromString(drvName.make_wxString());
-    modifyProperty(propType, drvName);
+    ModifyProperty(propType, drvName);
 }
 
 void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
 {
-    auto form_node = node->getForm();
+    auto form_node = node->get_Form();
 
     auto ChangeOutputFile = [&](PropName prop_name)
     {
-        if (form_node->hasValue(prop_name))
+        if (form_node->HasValue(prop_name))
             return;
         if (auto label = GetPropStringName(prop_name); label)
         {
             auto output_filename = CreateBaseFilename(form_node, newValue);
             auto grid_property = m_prop_grid->GetPropertyByLabel(label->make_wxString());
             grid_property->SetValueFromString(output_filename.make_wxString());
-            modifyProperty(form_node->getPropPtr(prop_name), output_filename);
+            ModifyProperty(form_node->get_PropPtr(prop_name), output_filename);
         }
     };
 
-    switch (Project.getCodePreference())
+    switch (Project.get_CodePreference())
     {
         case GEN_LANG_CPLUSPLUS:
             ChangeOutputFile(prop_base_file);
@@ -594,10 +594,10 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
 
 void PropGridPanel::ReplaceDerivedFile(const tt_string& newValue, NodeProperty* propType)
 {
-    auto derived_filename = CreateDerivedFilename(propType->getNode()->getForm(), newValue);
+    auto derived_filename = CreateDerivedFilename(propType->getNode()->get_Form(), newValue);
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
     grid_property->SetValueFromString(derived_filename.make_wxString());
-    modifyProperty(propType, derived_filename);
+    ModifyProperty(propType, derived_filename);
 }
 
 bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
@@ -620,7 +620,7 @@ bool PropGridPanel::IsEventPageShowing()
 tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const
 {
     tt_string description;
-    if (auto gen = prop->getNode()->getGenerator(); gen)
+    if (auto gen = prop->getNode()->get_Generator(); gen)
     {
         // First let the generator specify the description
         if (auto result = gen->GetPropertyDescription(prop); result)
@@ -640,7 +640,7 @@ tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const
         else
         {
             // If we still don't have a description, get whatever was in the XML interface
-            description = prop->getPropDeclaration()->getDescription();
+            description = prop->get_PropDeclaration()->getDescription();
         }
     }
     description.Replace("\\n", "\n", true);

@@ -147,9 +147,9 @@ void NewPropSheet::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewPropSheet::createNode()
+void NewPropSheet::CreateNode()
 {
-    auto form_node = NodeCreation.createNode(gen_wxPropertySheetDialog, nullptr).first;
+    auto form_node = NodeCreation.CreateNode(gen_wxPropertySheetDialog, nullptr).first;
     ASSERT(form_node);
 
     if (m_title.size())
@@ -159,24 +159,24 @@ void NewPropSheet::createNode()
 
     for (int count = 0; count < m_num_tabs; ++count)
     {
-        auto book_page = NodeCreation.createNode(gen_BookPage, form_node.get()).first;
-        form_node->adoptChild(book_page);
+        auto book_page = NodeCreation.CreateNode(gen_BookPage, form_node.get()).first;
+        form_node->AdoptChild(book_page);
 
         tt_string label("Page ");
         label << count + 1;
         book_page->set_value(prop_label, label);
-        auto page_sizer = NodeCreation.createNode(gen_VerticalBoxSizer, book_page.get()).first;
+        auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get()).first;
         page_sizer->set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
-        book_page->adoptChild(page_sizer);
-        auto static_text = NodeCreation.createNode(gen_wxStaticText, page_sizer.get()).first;
-        page_sizer->adoptChild(static_text);
+        book_page->AdoptChild(page_sizer);
+        auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get()).first;
+        page_sizer->AdoptChild(static_text);
         static_text->set_value(prop_label,
                                "TODO: replace this control with something more useful...");
         static_text->set_value(prop_wrap, "200");
     }
 
     form_node->set_value(prop_class_name, m_base_class.utf8_string());
-    if (form_node->as_string(prop_class_name) != form_node->getPropDefaultValue(prop_class_name))
+    if (form_node->as_string(prop_class_name) != form_node->get_PropDefaultValue(prop_class_name))
     {
         UpdateFormClass(form_node.get());
     }
@@ -184,11 +184,11 @@ void NewPropSheet::createNode()
     auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
-        parent_node = Project.getProjectNode();
+        parent_node = Project.get_ProjectNode();
     }
     else
     {
-        parent_node = parent_node->getValidFormParent();
+        parent_node = parent_node->get_ValidFormParent();
     }
 
     wxGetFrame().SelectNode(parent_node);

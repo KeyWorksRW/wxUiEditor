@@ -120,7 +120,7 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
     ImportWinRes dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        Project.appendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
+        Project.AppendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
     }
 }
 

@@ -167,7 +167,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"         // ProjectHandler class
 #include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
+void NewFrame::OnCheckMainFrame(wxCommandEvent& /* event unused */)
 {
     if (m_checkBox_mainframe->GetValue())
     {

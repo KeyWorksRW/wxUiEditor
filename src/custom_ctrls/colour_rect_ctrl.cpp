@@ -18,7 +18,7 @@ ColourRectCtrl::ColourRectCtrl(wxWindow* parent, wxWindowID id, const wxPoint& p
     Bind(wxEVT_PAINT, &ColourRectCtrl::OnPaint, this);
 }
 
-void ColourRectCtrl::OnPaint(wxPaintEvent& WXUNUSED(event))
+void ColourRectCtrl::OnPaint(wxPaintEvent& /* event unused */)
 {
     wxPaintDC dc(this);
     auto size = GetSize();

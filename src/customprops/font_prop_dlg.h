@@ -28,20 +28,20 @@ protected:
 
     void UpdateFontInfo();
     // Handlers for FontPropDlgBase events
-    void OnCustomRadio(wxCommandEvent& WXUNUSED(event)) override;
-    void OnFacename(wxCommandEvent& WXUNUSED(event)) override;
-    void OnFamily(wxCommandEvent& WXUNUSED(event)) override;
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
-    void OnPointSize(wxSpinDoubleEvent& WXUNUSED(event)) override;
-    void OnEditPointSize(wxCommandEvent& WXUNUSED(event)) override;
-    void OnStrikeThrough(wxCommandEvent& WXUNUSED(event)) override;
-    void OnStyle(wxCommandEvent& WXUNUSED(event)) override;
-    void OnSystemRadio(wxCommandEvent& WXUNUSED(event)) override;
-    void OnSymbolSize(wxCommandEvent& WXUNUSED(event)) override;
-    void OnUnderlined(wxCommandEvent& WXUNUSED(event)) override;
-    void OnWeight(wxCommandEvent& WXUNUSED(event)) override;
+    void OnCustomRadio(wxCommandEvent& /* event unused */) override;
+    void OnFacename(wxCommandEvent& /* event unused */) override;
+    void OnFamily(wxCommandEvent& /* event unused */) override;
+    void OnInit(wxInitDialogEvent& /* event unused */) override;
+    void OnPointSize(wxSpinDoubleEvent& /* event unused */) override;
+    void OnEditPointSize(wxCommandEvent& /* event unused */) override;
+    void OnStrikeThrough(wxCommandEvent& /* event unused */) override;
+    void OnStyle(wxCommandEvent& /* event unused */) override;
+    void OnSystemRadio(wxCommandEvent& /* event unused */) override;
+    void OnSymbolSize(wxCommandEvent& /* event unused */) override;
+    void OnUnderlined(wxCommandEvent& /* event unused */) override;
+    void OnWeight(wxCommandEvent& /* event unused */) override;
 
-    void OnOK(wxCommandEvent& WXUNUSED(event)) override;
+    void OnOK(wxCommandEvent& /* event unused */) override;
 
     wxString m_value;
     tt_string m_font_description;

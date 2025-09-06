@@ -133,7 +133,7 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
     }
 }
 
-void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void InsertWidget::OnInit(wxInitDialogEvent& /* event unused */)
 {
     // If no node is selected, then if we limit the list to children, there will
     // be nothing in the list. Instead, uncheck the limit, and disable it.
@@ -149,13 +149,13 @@ void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
     OnNameText(dummy);
 }
 
-void InsertWidget::OnChangeLimit(wxCommandEvent& WXUNUSED(event))
+void InsertWidget::OnChangeLimit(wxCommandEvent& /* event unused */)
 {
     wxCommandEvent dummy;
     OnNameText(dummy);
 }
 
-void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
+void InsertWidget::OnNameText(wxCommandEvent& /* event unused */)
 {
     tt_string name = m_text_name->GetValue().utf8_string();
     m_listbox->Clear();
@@ -215,7 +215,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void InsertWidget::OnListBoxDblClick(wxCommandEvent& WXUNUSED(event))
+void InsertWidget::OnListBoxDblClick(wxCommandEvent& /* event unused */)
 {
     wxCommandEvent event(wxEVT_BUTTON, m_stdBtn->GetAffirmativeButton()->GetId());
     ProcessEvent(event);

@@ -24,7 +24,7 @@ namespace wxue_ctrl
         void SetColour(wxColour clr) { m_clr = clr; }
 
     protected:
-        void OnPaint(wxPaintEvent& WXUNUSED(event));
+        void OnPaint(wxPaintEvent& /* event unused */);
 
     private:
         wxColour m_clr { *wxBLACK };

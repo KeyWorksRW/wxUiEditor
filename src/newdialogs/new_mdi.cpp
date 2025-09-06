@@ -239,9 +239,9 @@ bool NewMdiForm::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewMdiForm::OnViewType(wxCommandEvent& WXUNUSED(event)) {}
+void NewMdiForm::OnViewType(wxCommandEvent& /* event unused */) {}
 
-void NewMdiForm::OnOK(wxCommandEvent& WXUNUSED(event))
+void NewMdiForm::OnOK(wxCommandEvent& /* event unused */)
 {
     if (!Validate() || !TransferDataFromWindow())
         return;

@@ -19,8 +19,8 @@ ID_Property::ID_Property(const wxString& label, NodeProperty* prop) :
 {
 }
 
-bool ID_DialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                    wxPGProperty* WXUNUSED(property))
+bool ID_DialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                    wxPGProperty* /* property unused */)
 {
     IDEditorDlg dlg(wxGetFrame().getWindow());
     dlg.SetNode(m_prop->getNode());

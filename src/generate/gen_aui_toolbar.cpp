@@ -272,7 +272,7 @@ bool AuiToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set
 // REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar
 // item -- the closest equivalent is m_userdata, but that's a long so it won't work for storing a
 // pointer.
-void AuiToolBarFormGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
+void AuiToolBarFormGenerator::OnTool(wxCommandEvent& /* event unused */)
 {
 #if 0
     auto toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
@@ -488,7 +488,7 @@ bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 // REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar
 // item -- the closest equivalent is m_userdata, but that's a long so it won't work for storing a
 // pointer.
-void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
+void AuiToolBarGenerator::OnTool(wxCommandEvent& /* event unused */)
 {
 #if 0
     auto toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);

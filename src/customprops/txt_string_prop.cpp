@@ -51,7 +51,7 @@ public:
 };
 
 bool EditStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
-                                           wxPGProperty* WXUNUSED(property))
+                                           wxPGProperty* /* property unused */)
 {
     EditStringDialog dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

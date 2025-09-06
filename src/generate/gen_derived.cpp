@@ -411,7 +411,7 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
                     m_source->writeLine(tt_string()
                                         << "void " << derived_name << "::" << event_code << '('
                                         << event->getEventInfo()->get_event_class()
-                                        << "& WXUNUSED(event))");
+                                        << "& /* event unused */)");
                     m_source->writeLine("{");
                     m_source->Indent();
                     auto name = event->getEventInfo()->get_name();

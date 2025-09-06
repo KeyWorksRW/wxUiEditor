@@ -186,7 +186,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         m_notebook->SetSelection(m_rust_page);
 }
 
-void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_static_bind_text->SetLabel(wxEmptyString);
 
@@ -388,7 +388,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     FormatBindText();
 }
 
-void EventHandlerDlg::OnUseCppFunction(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUseCppFunction(wxCommandEvent& /* event unused */)
 {
     if (m_cpp_radio_use_function->GetValue())
     {
@@ -416,7 +416,7 @@ void EventHandlerDlg::OnUseCppFunction(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
-void EventHandlerDlg::OnUsePythonFunction(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUsePythonFunction(wxCommandEvent& /* event unused */)
 {
     if (m_py_radio_use_function->GetValue())
     {
@@ -443,7 +443,7 @@ void EventHandlerDlg::OnUsePythonFunction(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
-void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& /* event unused */)
 {
     if (m_ruby_radio_use_function->GetValue())
     {
@@ -470,7 +470,7 @@ void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
-void EventHandlerDlg::OnUseRustFunction(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUseRustFunction(wxCommandEvent& /* event unused */)
 {
     if (m_rust_radio_use_function->GetValue())
     {
@@ -497,7 +497,7 @@ void EventHandlerDlg::OnUseRustFunction(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
-void EventHandlerDlg::OnUseCppLambda(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUseCppLambda(wxCommandEvent& /* event unused */)
 {
     if (m_cpp_radio_use_lambda->GetValue())
     {
@@ -508,7 +508,7 @@ void EventHandlerDlg::OnUseCppLambda(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void EventHandlerDlg::OnUsePythonLambda(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUsePythonLambda(wxCommandEvent& /* event unused */)
 {
     if (m_py_radio_use_lambda->GetValue())
     {
@@ -519,7 +519,7 @@ void EventHandlerDlg::OnUsePythonLambda(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void EventHandlerDlg::OnUseRubyLambda(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnUseRubyLambda(wxCommandEvent& /* event unused */)
 {
     if (m_cpp_radio_use_lambda->GetValue())
     {
@@ -597,7 +597,7 @@ void EventHandlerDlg::OnPageChanged(wxBookCtrlEvent& event)
     FormatBindText();
 }
 
-void EventHandlerDlg::OnChange(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnChange(wxCommandEvent& /* event unused */)
 {
     FormatBindText();
 }
@@ -608,7 +608,7 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnNone(wxCommandEvent& /* event unused */)
 {
     if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
         m_cpp_text_function->SetValue("none");
@@ -622,7 +622,7 @@ void EventHandlerDlg::OnNone(wxCommandEvent& WXUNUSED(event))
         m_rust_text_function->SetValue("none");
 }
 
-void EventHandlerDlg::OnDefault(wxCommandEvent& WXUNUSED(event))
+void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
 {
     tt_string value;
     if (auto default_name = s_EventNames.find(m_event->get_name());

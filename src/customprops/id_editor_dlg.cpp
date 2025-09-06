@@ -292,7 +292,7 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void IDEditorDlg::OnStdChange(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnStdChange(wxCommandEvent& /* event unused */)
 {
     m_result = m_standard_ids->GetStringSelection();
     m_final_id->SetLabel(m_result);
@@ -340,7 +340,7 @@ void IDEditorDlg::OnCustomID(wxCommandEvent& event)
     OnComboSelect(event);
 }
 
-void IDEditorDlg::OnComboSelect(wxCommandEvent& WXUNUSED(event))
+void IDEditorDlg::OnComboSelect(wxCommandEvent& /* event unused */)
 {
     wxString complete_id;
     if (m_radioBtn_Custom->GetValue())

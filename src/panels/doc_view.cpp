@@ -141,7 +141,7 @@ void DocViewPanel::ActivatePage()
     }
 }
 
-void DocViewPanel::OnNodeSelected(CustomEvent& WXUNUSED(event))
+void DocViewPanel::OnNodeSelected(CustomEvent& /* event unused */)
 {
     if (!IsShown())
         return;
@@ -248,12 +248,12 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
 #endif
 }
 
-void DocViewPanel::OnHome(wxCommandEvent& WXUNUSED(event))
+void DocViewPanel::OnHome(wxCommandEvent& /* event unused */)
 {
     ActivatePage();
 }
 
-void DocViewPanel::OnBack(wxCommandEvent& WXUNUSED(event))
+void DocViewPanel::OnBack(wxCommandEvent& /* event unused */)
 {
 #if wxUSE_WEBVIEW
     wxBusyCursor wait;
@@ -262,7 +262,7 @@ void DocViewPanel::OnBack(wxCommandEvent& WXUNUSED(event))
 #endif
 }
 
-void DocViewPanel::OnForward(wxCommandEvent& WXUNUSED(event))
+void DocViewPanel::OnForward(wxCommandEvent& /* event unused */)
 {
 #if wxUSE_WEBVIEW
     wxBusyCursor wait;

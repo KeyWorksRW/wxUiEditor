@@ -30,7 +30,7 @@ EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlD
     SetStcColors(m_scintilla, GEN_LANG_XML, false, false);
 };
 
-void EditHtmlDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void EditHtmlDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_scintilla->AddText(m_value);
 }
@@ -42,14 +42,14 @@ void EditHtmlDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void EditHtmlDialog::OnTextChange(wxStyledTextEvent& WXUNUSED(event))
+void EditHtmlDialog::OnTextChange(wxStyledTextEvent& /* event unused */)
 {
     auto content = m_scintilla->GetText();
     m_htmlWin->SetPage(content);
 }
 
-bool EditHtmlDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                         wxPGProperty* WXUNUSED(property))
+bool EditHtmlDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                         wxPGProperty* /* property unused */)
 {
     EditHtmlDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

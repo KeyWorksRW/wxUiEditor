@@ -20,7 +20,7 @@
 // grammar, it will not be automatically translated by wxWidgets in non-English languages.
 
 bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
-                                               wxVariant& WXUNUSED(invalidValue))
+                                               wxVariant& /* invalidValue unused */)
 {
     auto validation_behaviour = static_cast<int>(m_validationInfo.GetFailureBehavior());
 

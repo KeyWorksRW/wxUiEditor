@@ -19,7 +19,7 @@ FontStringProperty::FontStringProperty(const wxString& label, NodeProperty* prop
 }
 
 bool FontStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
-                                           wxPGProperty* WXUNUSED(property))
+                                           wxPGProperty* /* property unused */)
 {
     FontPropDlg dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

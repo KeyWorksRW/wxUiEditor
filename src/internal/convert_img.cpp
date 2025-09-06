@@ -33,7 +33,7 @@ using namespace wxue_img;
 
 #if defined(_DEBUG)
 
-void MainFrame::OnConvertImageDlg(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnConvertImageDlg(wxCommandEvent& /* event unused */)
 {
     ConvertImageDlg dlg(this);
     dlg.ShowModal();
@@ -105,7 +105,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
     Layout();
 }
 
-void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
+void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
 {
     tt_string file = m_fileOriginal->GetTextCtrlValue();
 
@@ -363,7 +363,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     Layout();
 }
 
-void ConvertImageDlg::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnComboXpmMask(wxCommandEvent& /* event unused */)
 {
     if (!m_ForceXpmMask->GetValue())
     {
@@ -383,7 +383,7 @@ void ConvertImageDlg::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
     Layout();
 }
 
-void ConvertImageDlg::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnComboHdrMask(wxCommandEvent& /* event unused */)
 {
     if (!m_ForceHdrMask->GetValue())
     {
@@ -403,7 +403,7 @@ void ConvertImageDlg::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
     Layout();
 }
 
-void ConvertImageDlg::OnConvert(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnConvert(wxCommandEvent& /* event unused */)
 {
     if (IsHeaderPage())
         ImgageInHeaderOut();
@@ -654,7 +654,7 @@ wxColor ConvertImageDlg::GetHdrTransparencyColor()
     return rgb;
 }
 
-void ConvertImageDlg::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
+void ConvertImageDlg::OnPageChanged(wxBookCtrlEvent& /* event unused */)
 {
     if (!m_orgImage.IsOk())
         return;
@@ -876,7 +876,7 @@ void ConvertImageDlg::OnForceHdrMask(wxCommandEvent& event)
     }
 }
 
-void ConvertImageDlg::OnOutputChange(wxFileDirPickerEvent& WXUNUSED(event))
+void ConvertImageDlg::OnOutputChange(wxFileDirPickerEvent& /* event unused */)
 {
     if (m_fileOriginal->GetPath() != m_lastInputFile)
     {
@@ -945,7 +945,7 @@ void ConvertImageDlg::SetOutputBitmap()
     Layout();
 }
 
-void ConvertImageDlg::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnCheckPngConversion(wxCommandEvent& /* event unused */)
 {
     if (IsHeaderPage())
     {

@@ -185,7 +185,7 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
     }
 }
 
-void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnBrowseDocs(wxCommandEvent& /* event unused */)
 {
     wxString url;
     url = (Project.getLangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
@@ -211,7 +211,7 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
     wxLaunchDefaultBrowser(url);
 }
 
-void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnBrowsePython(wxCommandEvent& /* event unused */)
 {
     if (m_selected_node)
     {
@@ -230,7 +230,7 @@ void MainFrame::OnBrowsePython(wxCommandEvent& WXUNUSED(event))
     wxLaunchDefaultBrowser("https://docs.wxpython.org/index.html");
 }
 
-void MainFrame::OnBrowseRuby(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnBrowseRuby(wxCommandEvent& /* event unused */)
 {
     if (m_selected_node)
     {
@@ -394,7 +394,7 @@ void MainFrame::OnDelete(wxCommandEvent&)
     UpdateFrame();
 }
 
-void MainFrame::OnDifferentProject(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */)
 {
     if (!SaveWarning())
         return;
@@ -461,7 +461,7 @@ void MainFrame::OnDifferentProject(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void MainFrame::OnDuplicate(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnDuplicate(wxCommandEvent& /* event unused */)
 {
     ASSERT(m_selected_node);
     DuplicateNode(m_selected_node.get());
@@ -646,7 +646,7 @@ void MainFrame::OnPaste(wxCommandEvent&)
     }
 }
 
-void MainFrame::OnPreferencesDlg(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnPreferencesDlg(wxCommandEvent& /* event unused */)
 {
     PreferencesDlg dlg(this);
     dlg.ShowModal();
@@ -657,7 +657,7 @@ void MainFrame::OnProjectLoaded()
     UpdateFrame();
 }
 
-void MainFrame::OnReloadProject(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnReloadProject(wxCommandEvent& /* event unused */)
 {
     if (wxMessageBox(
             wxString() << "This will lose any changes you have made since the last save.\n\n"

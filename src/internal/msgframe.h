@@ -35,15 +35,15 @@ protected:
     void UpdateNodeInfo();
 
     // Handlers for MsgFrameBase events
-    void OnClear(wxCommandEvent& WXUNUSED(event)) override;
-    void OnClose(wxCloseEvent& WXUNUSED(event)) override;
-    void OnEvents(wxCommandEvent& WXUNUSED(event)) override;
-    void OnHide(wxCommandEvent& WXUNUSED(event)) override;
-    void OnInfo(wxCommandEvent& WXUNUSED(event)) override;
-    void OnPageChanged(wxAuiNotebookEvent& WXUNUSED(event)) override;
+    void OnClear(wxCommandEvent& /* event unused */) override;
+    void OnClose(wxCloseEvent& /* event unused */) override;
+    void OnEvents(wxCommandEvent& /* event unused */) override;
+    void OnHide(wxCommandEvent& /* event unused */) override;
+    void OnInfo(wxCommandEvent& /* event unused */) override;
+    void OnPageChanged(wxAuiNotebookEvent& /* event unused */) override;
     void OnParent(wxCommandEvent& event) override;
-    void OnSaveAs(wxCommandEvent& WXUNUSED(event)) override;
-    void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;
+    void OnSaveAs(wxCommandEvent& /* event unused */) override;
+    void OnWarnings(wxCommandEvent& /* event unused */) override;
 
 private:
     std::vector<tt_string>* m_pMsgs;

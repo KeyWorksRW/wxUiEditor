@@ -14,7 +14,7 @@
 #include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
 #include "project_handler.h"  // ProjectHandler class
 
-bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
+bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /* property unused */)
 {
     if (m_img_props.type.contains("Art"))
     {

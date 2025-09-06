@@ -156,7 +156,7 @@ void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
     event.Skip();
 }
 
-void EditCustomMockupBase::OnSelect(wxCommandEvent& WXUNUSED(event))
+void EditCustomMockupBase::OnSelect(wxCommandEvent& /* event unused */)
 {
     auto widget_type = m_widget_types->GetStringSelection();
     if (widget_type.StartsWith("wxStaticText"))

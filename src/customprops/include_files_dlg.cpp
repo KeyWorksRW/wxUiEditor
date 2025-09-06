@@ -152,7 +152,7 @@ void IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn)
         FindWindow(GetAffirmativeId())->Enable(m_listbox->GetCount() > 0);
 }
 
-void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     if (m_prop->isProp(prop_relative_require_list))
     {
@@ -186,7 +186,7 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnAdd(wxCommandEvent& /* event unused */)
 {
     if (m_prop->isProp(prop_system_src_includes) || m_prop->isProp(prop_system_hdr_includes))
     {
@@ -274,12 +274,12 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void IncludeFilesDialog::OnItemSelected(wxCommandEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnItemSelected(wxCommandEvent& /* event unused */)
 {
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnMoveUp(wxCommandEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnMoveUp(wxCommandEvent& /* event unused */)
 {
     // Move the currently selected item up one position in the listbox
     int sel = m_listbox->GetSelection();
@@ -292,7 +292,7 @@ void IncludeFilesDialog::OnMoveUp(wxCommandEvent& WXUNUSED(event))
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnMoveDown(wxCommandEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnMoveDown(wxCommandEvent& /* event unused */)
 {
     // Move the currently selected item down one position in the listbox
     int sel = m_listbox->GetSelection();
@@ -305,7 +305,7 @@ void IncludeFilesDialog::OnMoveDown(wxCommandEvent& WXUNUSED(event))
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnRemove(wxCommandEvent& /* event unused */)
 {
     if (int sel = m_listbox->GetSelection(); sel != wxNOT_FOUND)
     {
@@ -319,7 +319,7 @@ void IncludeFilesDialog::OnRemove(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void IncludeFilesDialog::OnSort(wxCommandEvent& WXUNUSED(event))
+void IncludeFilesDialog::OnSort(wxCommandEvent& /* event unused */)
 {
     if (m_listbox->GetCount() < 2)
         return;

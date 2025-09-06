@@ -35,7 +35,7 @@ bool %class%::OnCreate(wxDocument* doc, long flags)
     return true;
 }
 
-void %class%::OnDraw(wxDC* WXUNUSED(dc))
+void %class%::OnDraw(wxDC* /* property unused */dc))
 {
     // nothing to do here, wxTextCtrl draws itself
 }
@@ -127,9 +127,9 @@ public:
     wxTextCtrl* GetText() const { return m_text; }
 
 protected:
-    void OnCopy(wxCommandEvent& WXUNUSED(event)) { m_text->Copy(); }
-    void OnPaste(wxCommandEvent& WXUNUSED(event)) { m_text->Paste(); }
-    void OnSelectAll(wxCommandEvent& WXUNUSED(event)) { m_text->SelectAll(); }
+    void OnCopy(wxCommandEvent& /* event unused */) { m_text->Copy(); }
+    void OnPaste(wxCommandEvent& /* event unused */) { m_text->Paste(); }
+    void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
 
 private:
     wxTextCtrl* m_text;

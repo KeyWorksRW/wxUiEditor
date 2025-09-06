@@ -22,7 +22,7 @@ GrowRowsDialog::GrowRowsDialog(wxWindow* parent, NodeProperty* prop) : GridPrope
     m_prop = prop;
 };
 
-void GrowRowsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void GrowRowsDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_prop_label->SetLabel("Growable Rows");
     m_grid->SetColLabelValue(0, "Row");
@@ -129,13 +129,13 @@ void GrowRowsDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void GrowRowsDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
+void GrowRowsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
 }
 
-void GrowRowsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
+void GrowRowsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
@@ -155,7 +155,7 @@ void GrowRowsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void GrowRowsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
+void GrowRowsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     if (array.empty())
@@ -172,8 +172,8 @@ void GrowRowsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool GrowRowsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                         wxPGProperty* WXUNUSED(property))
+bool GrowRowsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                         wxPGProperty* /* property unused */)
 {
     GrowRowsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

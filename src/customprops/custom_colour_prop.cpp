@@ -63,7 +63,7 @@ private:
 };
 
 bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
-                                           wxPGProperty* WXUNUSED(property))
+                                           wxPGProperty* /* property unused */)
 {
     EditColourDialog dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

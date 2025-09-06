@@ -21,8 +21,8 @@ class EditCustomMockupDialogAdapter : public wxPGEditorDialogAdapter
 public:
     EditCustomMockupDialogAdapter(NodeProperty* prop) : wxPGEditorDialogAdapter(), m_prop(prop) {}
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                      wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                      wxPGProperty* /* property unused */) override;
 
 private:
     NodeProperty* m_prop;

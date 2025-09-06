@@ -36,8 +36,8 @@ public:
 protected:
     int GetNewColumn(int row);
     void OnColumn(wxSpinEvent& event) override;
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
-    void OnOK(wxCommandEvent& WXUNUSED(event)) override;
+    void OnInit(wxInitDialogEvent& /* event unused */) override;
+    void OnOK(wxCommandEvent& /* event unused */) override;
     void OnRow(wxSpinEvent& event) override;
 
 private:

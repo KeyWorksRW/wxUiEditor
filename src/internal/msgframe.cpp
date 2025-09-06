@@ -230,7 +230,7 @@ void MsgFrame::OnClose(wxCloseEvent& event)
     event.Skip();
 }
 
-void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnSaveAs(wxCommandEvent& /* event unused */)
 {
     auto filename = wxSaveFileSelector("Save messages", "txt", wxEmptyString, this);
     if (filename.empty())
@@ -260,17 +260,17 @@ void MsgFrame::Clear()
     m_pMsgs->clear();
 }
 
-void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnClear(wxCommandEvent& /* event unused */)
 {
     Clear();
 }
 
-void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnHide(wxCommandEvent& /* event unused */)
 {
     Hide();
 }
 
-void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnWarnings(wxCommandEvent& /* event unused */)
 {
     if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING))
     {
@@ -286,7 +286,7 @@ void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
     UserPrefs.WriteConfig();
 }
 
-void MsgFrame::OnEvents(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnEvents(wxCommandEvent& /* event unused */)
 {
     if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_EVENT))
     {
@@ -302,7 +302,7 @@ void MsgFrame::OnEvents(wxCommandEvent& WXUNUSED(event))
     UserPrefs.WriteConfig();
 }
 
-void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnInfo(wxCommandEvent& /* event unused */)
 {
     if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO))
     {
@@ -318,7 +318,7 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
     UserPrefs.WriteConfig();
 }
 
-void MsgFrame::OnPageChanged(wxAuiNotebookEvent& WXUNUSED(event))
+void MsgFrame::OnPageChanged(wxAuiNotebookEvent& /* event unused */)
 {
     m_isXrcPage = (m_aui_notebook->GetCurrentPage() == m_page_xrc);
     m_isNodeInfoPage = (m_aui_notebook->GetCurrentPage() == m_page_node);
@@ -405,7 +405,7 @@ void MsgFrame::UpdateNodeInfo()
     }
 }
 
-void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnParent(wxCommandEvent& /* event unused */)
 {
     auto cur_sel = wxGetFrame().getSelectedNode();
     if (cur_sel)

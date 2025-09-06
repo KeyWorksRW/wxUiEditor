@@ -86,16 +86,16 @@ protected:
     void FormatBindText();
 
     // Handlers for EventHandlerDlgBase events
-    void OnChange(wxCommandEvent& WXUNUSED(event)) override;
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    void OnChange(wxCommandEvent& /* event unused */) override;
+    void OnInit(wxInitDialogEvent& /* event unused */) override;
     void OnOK(wxCommandEvent& event) override;
     void OnPageChanged(wxBookCtrlEvent& event) override;
-    void OnUseCppFunction(wxCommandEvent& WXUNUSED(event)) override;
-    void OnUseCppLambda(wxCommandEvent& WXUNUSED(event)) override;
+    void OnUseCppFunction(wxCommandEvent& /* event unused */) override;
+    void OnUseCppLambda(wxCommandEvent& /* event unused */) override;
     void OnUsePythonFunction(wxCommandEvent& event) override;
     void OnUsePythonLambda(wxCommandEvent& event) override;
     void OnUseRubyFunction(wxCommandEvent& event) override;
-    void OnUseRubyLambda(wxCommandEvent& WXUNUSED(event)) override;
+    void OnUseRubyLambda(wxCommandEvent& /* event unused */) override;
     void OnUseRustFunction(wxCommandEvent& event) override;
     void OnDefault(wxCommandEvent& event) override;
     void OnNone(wxCommandEvent& event) override;

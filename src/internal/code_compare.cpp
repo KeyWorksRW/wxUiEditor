@@ -269,7 +269,7 @@ void CodeCompare::OnPython(wxCommandEvent& /* event */)
     OnRadioButton(GEN_LANG_PYTHON);
 }
 
-void CodeCompare::OnRuby(wxCommandEvent& WXUNUSED(event))
+void CodeCompare::OnRuby(wxCommandEvent& /* event unused */)
 {
     OnRadioButton(GEN_LANG_RUBY);
 }

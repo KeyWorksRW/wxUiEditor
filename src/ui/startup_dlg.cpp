@@ -158,19 +158,19 @@ void StartupDlg::OnHyperlink(wxHyperlinkEvent& event)
     EndModal(wxID_OK);
 }
 
-void StartupDlg::OnImport(wxHyperlinkEvent& WXUNUSED(event))
+void StartupDlg::OnImport(wxHyperlinkEvent& /* event unused */)
 {
     m_cmdType = START_CONVERT;
     EndModal(wxID_OK);
 }
 
-void StartupDlg::OnOpen(wxHyperlinkEvent& WXUNUSED(event))
+void StartupDlg::OnOpen(wxHyperlinkEvent& /* event unused */)
 {
     m_cmdType = START_OPEN;
     EndModal(wxID_OK);
 }
 
-void StartupDlg::OnNew(wxHyperlinkEvent& WXUNUSED(event))
+void StartupDlg::OnNew(wxHyperlinkEvent& /* event unused */)
 {
     m_cmdType = START_EMPTY;
     EndModal(wxID_OK);

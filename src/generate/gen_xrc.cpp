@@ -303,7 +303,7 @@ bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList)
     return true;
 }
 
-void MainFrame::OnGenSingleXRC(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
 {
     auto form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->isForm())

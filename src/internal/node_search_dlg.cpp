@@ -193,7 +193,7 @@ Node* FindNodeByGenerator(Node* node, GenEnum::GenName getGenName)
     return nullptr;
 }
 
-void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
 {
     NodeSearchDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK && dlg.GetForm())
@@ -410,7 +410,7 @@ void NodeSearchDlg::FindLabels(Node* node)
     }
 }
 
-void NodeSearchDlg::OnGenerators(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnGenerators(wxCommandEvent& /* event unused */)
 {
     m_map_found.clear();
     m_listbox->Clear();
@@ -437,7 +437,7 @@ void NodeSearchDlg::OnGenerators(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void NodeSearchDlg::OnVariables(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnVariables(wxCommandEvent& /* event unused */)
 {
     m_map_found.clear();
     m_listbox->Clear();
@@ -464,7 +464,7 @@ void NodeSearchDlg::OnVariables(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnLabels(wxCommandEvent& /* event unused */)
 {
     m_map_found.clear();
     m_listbox->Clear();
@@ -491,7 +491,7 @@ void NodeSearchDlg::OnLabels(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void NodeSearchDlg::OnIDs(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnIDs(wxCommandEvent& /* event unused */)
 {
     m_map_found.clear();
     m_listbox->Clear();
@@ -603,7 +603,7 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void NodeSearchDlg::OnSelectLocated(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnSelectLocated(wxCommandEvent& /* event unused */)
 {
     auto name = m_listbox->GetStringSelection().utf8_string();
     if (m_map_found.contains(name))
@@ -621,13 +621,13 @@ void NodeSearchDlg::OnSelectLocated(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void NodeSearchDlg::OnUnused(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnUnused(wxCommandEvent& /* event unused */)
 {
     UnusedGenerators dlg(this);
     dlg.ShowModal();
 }
 
-void NodeSearchDlg::OnSearchText(wxCommandEvent& WXUNUSED(event))
+void NodeSearchDlg::OnSearchText(wxCommandEvent& /* event unused */)
 {
     auto search_text = m_text_search->GetValue().ToStdString();
     for (auto& iter: m_map_found)

@@ -29,7 +29,7 @@ enum
     IMPORT_XRC,
 };
 
-void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
+void ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */)
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -132,7 +132,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     }
 }
 
-void ImportDlg::OnCheckFiles(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnCheckFiles(wxCommandEvent& /* event unused */)
 {
     m_stdBtn->GetAffirmativeButton()->Disable();
 
@@ -184,7 +184,7 @@ void ImportDlg::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnDirectory(wxCommandEvent& /* event unused */)
 {
     wxDirDialog dlg(this, "Choose directory", wxEmptyString,
                     wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
@@ -234,7 +234,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnRecentDir(wxCommandEvent& /* event unused */)
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -308,7 +308,7 @@ void ImportDlg::OnRemove(wxCommandEvent& event)
     }
 }
 
-void ImportDlg::OnCrafter(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnCrafter(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
     m_staticImportList->SetLabel("&Files:");
@@ -321,7 +321,7 @@ void ImportDlg::OnCrafter(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnFormBuilder(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
     m_staticImportList->SetLabel("&Files:");
@@ -334,7 +334,7 @@ void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnDialogBlocks(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnDialogBlocks(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
     m_staticImportList->SetLabel("&Files:");
@@ -347,7 +347,7 @@ void ImportDlg::OnDialogBlocks(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnWindowsResource(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
     m_staticImportList->SetLabel("&Files containing Dialogs or Menus:");
@@ -362,7 +362,7 @@ void ImportDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnWxSmith(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnWxSmith(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
     m_staticImportList->SetLabel("&Files:");
@@ -375,7 +375,7 @@ void ImportDlg::OnWxSmith(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnXRC(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
 
@@ -387,7 +387,7 @@ void ImportDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnWxGlade(wxCommandEvent& /* event unused */)
 {
     m_checkListProjects->Clear();
     m_staticImportList->SetLabel("&Files:");
@@ -400,7 +400,7 @@ void ImportDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void ImportDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnSelectAll(wxCommandEvent& /* event unused */)
 {
     for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
     {
@@ -409,7 +409,7 @@ void ImportDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
     m_stdBtn->GetAffirmativeButton()->Enable();
 }
 
-void ImportDlg::OnSelectNone(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnSelectNone(wxCommandEvent& /* event unused */)
 {
     for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
     {

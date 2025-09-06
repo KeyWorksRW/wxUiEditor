@@ -124,7 +124,7 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
     }
 }
 
-void ImportWinRes::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */)
 {
     if (m_rcFilename.empty())
     {
@@ -178,12 +178,12 @@ void ImportWinRes::ReadRcFile()
     }
 }
 
-void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event))
+void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& /* event unused */)
 {
     ReadRcFile();
 }
 
-void ImportWinRes::OnSelectAll(wxCommandEvent& WXUNUSED(event))
+void ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */)
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -192,7 +192,7 @@ void ImportWinRes::OnSelectAll(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ImportWinRes::OnClearAll(wxCommandEvent& WXUNUSED(event))
+void ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */)
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)

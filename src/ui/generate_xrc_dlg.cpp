@@ -149,7 +149,7 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void GenerateXrcDlg::OnCombinedFile(wxCommandEvent& WXUNUSED(event))
+void GenerateXrcDlg::OnCombinedFile(wxCommandEvent& /* event unused */)
 {
     if (m_radio_combined->GetValue())
     {
@@ -163,7 +163,7 @@ void GenerateXrcDlg::OnCombinedFile(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GenerateXrcDlg::OnSeparateFiles(wxCommandEvent& WXUNUSED(event))
+void GenerateXrcDlg::OnSeparateFiles(wxCommandEvent& /* event unused */)
 {
     if (m_radio_combined->GetValue())
     {
@@ -177,7 +177,7 @@ void GenerateXrcDlg::OnSeparateFiles(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GenerateXrcDlg::OnCombinedFilenameChanged(wxFileDirPickerEvent& WXUNUSED(event))
+void GenerateXrcDlg::OnCombinedFilenameChanged(wxFileDirPickerEvent& /* event unused */)
 {
     m_filename = m_filePicker->GetPath();
     auto btn = FindWindowById(wxID_SAVE);

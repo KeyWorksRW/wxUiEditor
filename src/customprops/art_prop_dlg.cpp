@@ -174,7 +174,7 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     ChangeClient();
 }
 
-void ArtBrowserDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void ArtBrowserDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_choice_client->SetStringSelection(m_client);
     for (long pos = 0; pos < m_list->GetItemCount(); pos++)
@@ -228,7 +228,7 @@ void ArtBrowserDialog::ChangeClient()
     m_list->SetItemState(sel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }
 
-void ArtBrowserDialog::OnChooseClient(wxCommandEvent& WXUNUSED(event))
+void ArtBrowserDialog::OnChooseClient(wxCommandEvent& /* event unused */)
 {
     m_client = m_choice_client->GetStringSelection();
     ChangeClient();

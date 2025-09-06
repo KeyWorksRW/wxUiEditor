@@ -61,7 +61,7 @@ private:
 };
 
 bool EditCodeSingleDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
-                                               wxPGProperty* WXUNUSED(property))
+                                               wxPGProperty* /* property unused */)
 {
     EditCodeSingleDialog dlg(propGrid->GetPanel(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

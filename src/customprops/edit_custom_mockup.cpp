@@ -26,8 +26,8 @@ EditCustomMockupDialog::EditCustomMockupDialog(wxWindow* parent, NodeProperty* p
     m_result = prop->as_wxString();
 };
 
-bool EditCustomMockupDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                                 wxPGProperty* WXUNUSED(property))
+bool EditCustomMockupDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                                 wxPGProperty* /* property unused */)
 {
     EditCustomMockupDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

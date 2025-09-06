@@ -104,7 +104,7 @@ bool OptionsDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "preferences.h"  // Preferences -- Stores user preferences
 
 #if 0
-void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnOptionsDlg(wxCommandEvent& /* event unused */)
 {
     OptionsDlg dlg(this);
     dlg.ShowModal();
@@ -120,7 +120,7 @@ void OptionsDlg::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
+void OptionsDlg::OnAffirmative(wxCommandEvent& /* event unused */)
 {
     TransferDataFromWindow();
 

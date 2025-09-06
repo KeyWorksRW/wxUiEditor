@@ -21,8 +21,8 @@ class EditParamsDialogAdapter : public wxPGEditorDialogAdapter
 public:
     EditParamsDialogAdapter(NodeProperty* prop) : wxPGEditorDialogAdapter(), m_prop(prop) {}
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                      wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                      wxPGProperty* /* property unused */) override;
 
 private:
     NodeProperty* m_prop;
@@ -59,14 +59,14 @@ public:
     };
 
 protected:
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    void OnInit(wxInitDialogEvent& /* event unused */) override;
     void OnOK(wxCommandEvent& event) override;
     void OnCancel(wxCommandEvent& event) override { event.Skip(); }
 
-    void OnNewRow(wxCommandEvent& WXUNUSED(event)) override;
-    void OnDeleteRow(wxCommandEvent& WXUNUSED(event)) override;
-    void OnUndoDelete(wxCommandEvent& WXUNUSED(event)) override;
-    void OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event)) override;
+    void OnNewRow(wxCommandEvent& /* event unused */) override;
+    void OnDeleteRow(wxCommandEvent& /* event unused */) override;
+    void OnUndoDelete(wxCommandEvent& /* event unused */) override;
+    void OnUpdateUI(wxUpdateUIEvent& /* event unused */) override;
 
 private:
     std::vector<tt_string> m_fields;

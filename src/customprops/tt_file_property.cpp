@@ -204,14 +204,14 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
 }
 
 wxString ttFileProperty::ValueToString(wxVariant& value,
-                                       wxPGPropValFormatFlags WXUNUSED(flags)) const
+                                       wxPGPropValFormatFlags /* flags unused */) const
 {
     // auto result = value.GetString();
     return value.GetString();
 }
 
 bool ttFileProperty::StringToValue(wxVariant& variant, const wxString& text,
-                                   wxPGPropValFormatFlags WXUNUSED(flags)) const
+                                   wxPGPropValFormatFlags /* flags unused */) const
 {
     if (auto filename = variant.GetString(); filename != text)
     {

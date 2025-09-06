@@ -85,7 +85,7 @@ bool XrcListDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 
-void XrcListDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
 {
     std::vector<Node*> forms;
     Project.CollectForms(forms);
@@ -120,7 +120,7 @@ void XrcListDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         m_listbox->SetSelection(idx_cur_sel);
 }
 
-void XrcListDlg::OnOK(wxCommandEvent& WXUNUSED(event))
+void XrcListDlg::OnOK(wxCommandEvent& /* event unused */)
 {
     auto idx = m_listbox->GetSelection();
     if (idx == wxNOT_FOUND)

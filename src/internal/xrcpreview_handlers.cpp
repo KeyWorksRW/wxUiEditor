@@ -80,12 +80,12 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     }
 }
 
-void XrcPreview::OnClear(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnClear(wxCommandEvent& /* event unused */)
 {
     m_scintilla->ClearAll();
 }
 
-void XrcPreview::OnGenerate(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
 {
     m_form_node = wxGetMainFrame()->getSelectedNode();
     if (!m_form_node->isForm())
@@ -157,13 +157,13 @@ void XrcPreview::Generate(Node* form_node)
     m_scintilla->ScrollToLine(line);
 }
 
-void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnPreview(wxCommandEvent& /* event unused */)
 {
     auto xrc_text = m_scintilla->GetText().utf8_string();
     PreviewXrc(xrc_text, m_form_node->getGenName(), nullptr);
 }
 
-void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
 {
     pugi::xml_document doc;
     {
@@ -196,7 +196,7 @@ void XrcPreview::OnVerify(wxCommandEvent& WXUNUSED(event))
     wxMessageBox("XML in Contents can be parsed.", "XRC Verification Test", wxOK | wxICON_NONE);
 }
 
-void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
 {
     tt_string path = Project.getProjectPath();
     wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc",
@@ -230,7 +230,7 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
 {
     pugi::xml_document doc;
     {
@@ -277,7 +277,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void XrcPreview::OnCompare(wxCommandEvent& WXUNUSED(event))
+void XrcPreview::OnCompare(wxCommandEvent& /* event unused */)
 {
     if (!m_form_node->isGen(gen_wxDialog) && !m_form_node->isGen(gen_PanelForm))
     {

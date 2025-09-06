@@ -26,7 +26,7 @@ SBarFieldsDialog::SBarFieldsDialog(wxWindow* parent, NodeProperty* prop) :
     m_prop = prop;
 };
 
-void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void SBarFieldsDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_prop_label->SetLabel("StatusBar Fields");
     m_grid->SetColLabelValue(0, "Style");
@@ -122,14 +122,14 @@ void SBarFieldsDialog::OnCancel(wxCommandEvent& event)
     event.Skip();
 }
 
-void SBarFieldsDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
+void SBarFieldsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
     m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size());
 }
 
-void SBarFieldsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
+void SBarFieldsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
@@ -147,7 +147,7 @@ void SBarFieldsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void SBarFieldsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
+void SBarFieldsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     if (array.empty())
@@ -165,7 +165,7 @@ void SBarFieldsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
+void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     if (m_deleted_col_0.size())
@@ -179,8 +179,8 @@ void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool SBarFieldsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                           wxPGProperty* WXUNUSED(property))
+bool SBarFieldsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                           wxPGProperty* /* property unused */)
 {
     SBarFieldsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

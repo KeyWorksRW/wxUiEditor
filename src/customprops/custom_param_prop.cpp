@@ -23,7 +23,7 @@ EditParamsDialog::EditParamsDialog(wxWindow* parent, NodeProperty* prop) :
     m_prop = prop;
 };
 
-void EditParamsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void EditParamsDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_prop_label->SetLabel("Custom Control Parameters");
     m_grid->SetColLabelValue(0, "Parameter");
@@ -83,14 +83,14 @@ void EditParamsDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void EditParamsDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
+void EditParamsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
     m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size() > 0);
 }
 
-void EditParamsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
+void EditParamsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
@@ -116,7 +116,7 @@ void EditParamsDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void EditParamsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
+void EditParamsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     if (array.empty())
@@ -133,7 +133,7 @@ void EditParamsDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void EditParamsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
+void EditParamsDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     if (m_deleted_col_0.size())
@@ -146,8 +146,8 @@ void EditParamsDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool EditParamsDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                           wxPGProperty* WXUNUSED(property))
+bool EditParamsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                           wxPGProperty* /* property unused */)
 {
     EditParamsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

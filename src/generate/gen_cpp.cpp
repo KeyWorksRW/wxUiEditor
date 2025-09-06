@@ -129,7 +129,7 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
-void MainFrame::OnGenSingleCpp(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
 {
     auto form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->isForm())

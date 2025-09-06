@@ -25,7 +25,7 @@ RearrangeDialog::RearrangeDialog(wxWindow* parent, NodeProperty* prop) : GridPro
     m_prop = prop;
 };
 
-void RearrangeDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void RearrangeDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     m_prop_label->SetLabel("Listbox Contents");
     m_grid->SetColLabelValue(0, "Checked");
@@ -88,14 +88,14 @@ void RearrangeDialog::OnCancel(wxCommandEvent& event)
     event.Skip();
 }
 
-void RearrangeDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))
+void RearrangeDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
     m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size());
 }
 
-void RearrangeDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
+void RearrangeDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
@@ -104,7 +104,7 @@ void RearrangeDialog::OnNewRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void RearrangeDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
+void RearrangeDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
     auto array = m_grid->GetSelectedRows();
     if (array.empty())
@@ -122,7 +122,7 @@ void RearrangeDialog::OnDeleteRow(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-void RearrangeDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
+void RearrangeDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
     if (m_deleted_col_0.size())
@@ -136,8 +136,8 @@ void RearrangeDialog::OnUndoDelete(wxCommandEvent& WXUNUSED(event))
     Fit();
 }
 
-bool RearrangeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                          wxPGProperty* WXUNUSED(property))
+bool RearrangeDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                          wxPGProperty* /* property unused */)
 {
     RearrangeDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

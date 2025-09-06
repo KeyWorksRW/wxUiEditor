@@ -215,7 +215,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 
 #include <wx/filedlg.h>
 
-void UnusedGenerators::OnSave(wxCommandEvent& WXUNUSED(event))
+void UnusedGenerators::OnSave(wxCommandEvent& /* event unused */)
 {
     auto filename = wxSaveFileSelector("Save unused", "txt", wxEmptyString, this);
     if (filename.empty())

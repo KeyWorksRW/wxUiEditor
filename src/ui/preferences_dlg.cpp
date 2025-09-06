@@ -545,7 +545,7 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     event.Skip();
 }
 
-void PreferencesDlg::OnFontButton(wxCommandEvent& WXUNUSED(event))
+void PreferencesDlg::OnFontButton(wxCommandEvent& /* event unused */)
 {
     FontPropDlg dlg(this, m_btn_font->GetMainLabel());
     if (dlg.ShowModal() == wxID_OK)
@@ -557,7 +557,7 @@ void PreferencesDlg::OnFontButton(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void PreferencesDlg::OnOK(wxCommandEvent& WXUNUSED(event))
+void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
 {
     if (!Validate() || !TransferDataFromWindow())
     {

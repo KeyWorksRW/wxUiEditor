@@ -19,7 +19,7 @@ EventStringProperty::EventStringProperty(const wxString& label, NodeEvent* event
 }
 
 bool EventStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
-                                            wxPGProperty* WXUNUSED(property))
+                                            wxPGProperty* /* property unused */)
 {
     EventHandlerDlg dlg(propGrid->GetPanel(), m_event);
     if (dlg.ShowModal() == wxID_OK)

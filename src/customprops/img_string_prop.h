@@ -20,8 +20,8 @@ public:
     {
     }
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                      wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                      wxPGProperty* /* property unused */) override;
 
 private:
     ImageProperties& m_img_props;

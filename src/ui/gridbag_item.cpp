@@ -15,7 +15,7 @@
 
 GridBagItem::GridBagItem(wxWindow* parent) : GridBagItemBase(parent) {}
 
-void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void GridBagItem::OnInit(wxInitDialogEvent& /* event unused */)
 {
     if (m_gbsizer)
     {
@@ -51,7 +51,7 @@ void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
     m_infoBar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GridBagItem::OnOK, this, wxID_HIGHEST + 1);
 }
 
-void GridBagItem::OnOK(wxCommandEvent& WXUNUSED(event))
+void GridBagItem::OnOK(wxCommandEvent& /* event unused */)
 {
     m_column = m_spin_column->GetValue();
     m_row = m_spin_row->GetValue();
@@ -66,7 +66,7 @@ void GridBagItem::OnOK(wxCommandEvent& WXUNUSED(event))
     EndModal(wxID_OK);
 }
 
-void GridBagItem::OnColumn(wxSpinEvent& WXUNUSED(event))
+void GridBagItem::OnColumn(wxSpinEvent& /* event unused */)
 {
     if (m_gbsizer)
     {
@@ -120,7 +120,7 @@ void GridBagItem::OnColumn(wxSpinEvent& WXUNUSED(event))
     }
 }
 
-void GridBagItem::OnRow(wxSpinEvent& WXUNUSED(event))
+void GridBagItem::OnRow(wxSpinEvent& /* event unused */)
 {
     auto new_row = m_spin_row->GetValue();
     if (new_row > m_max_row)

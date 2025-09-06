@@ -94,7 +94,7 @@ void FontPropDlg::Initialize()
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void FontPropDlg::OnInit(wxInitDialogEvent& /* event unused */)
 {
     if (!m_custom_font.isDefGuiFont())
     {
@@ -112,37 +112,37 @@ void FontPropDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     }
 }
 
-void FontPropDlg::OnFamily(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnFamily(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnStyle(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnStyle(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnWeight(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnWeight(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnFacename(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnFacename(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnUnderlined(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnUnderlined(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnStrikeThrough(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnStrikeThrough(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnCustomRadio(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnCustomRadio(wxCommandEvent& /* event unused */)
 {
     if (m_radioCustom->GetValue())
     {
@@ -153,7 +153,7 @@ void FontPropDlg::OnCustomRadio(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void FontPropDlg::OnSystemRadio(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnSystemRadio(wxCommandEvent& /* event unused */)
 {
     if (m_radioSystem->GetValue())
     {
@@ -164,12 +164,12 @@ void FontPropDlg::OnSystemRadio(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void FontPropDlg::OnPointSize(wxSpinDoubleEvent& WXUNUSED(event))
+void FontPropDlg::OnPointSize(wxSpinDoubleEvent& /* event unused */)
 {
     UpdateFontInfo();
 }
 
-void FontPropDlg::OnSymbolSize(wxCommandEvent& WXUNUSED(event))
+void FontPropDlg::OnSymbolSize(wxCommandEvent& /* event unused */)
 {
     UpdateFontInfo();
 }

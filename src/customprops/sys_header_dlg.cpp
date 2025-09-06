@@ -153,7 +153,7 @@ void SysHeaderDlg::Initialize(NodeProperty* prop)
     m_prop = prop;
 }
 
-void SysHeaderDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void SysHeaderDlg::OnInit(wxInitDialogEvent& /* event unused */)
 {
     auto config = wxConfig::Get();
     config->SetPath("/preferences/sys_header_dlg");
@@ -203,7 +203,7 @@ void SysHeaderDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     OnRootSelected(dummy);
 }
 
-void SysHeaderDlg::OnRootSelected(wxCommandEvent& WXUNUSED(event))
+void SysHeaderDlg::OnRootSelected(wxCommandEvent& /* event unused */)
 {
     m_check_list_files->Clear();
     tt_string root_path = m_combo_root->GetStringSelection().utf8_string();
@@ -236,7 +236,7 @@ void SysHeaderDlg::OnRootSelected(wxCommandEvent& WXUNUSED(event))
 }
 
 // Called to add a path to the list of root directories
-void SysHeaderDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
+void SysHeaderDlg::OnDirectory(wxCommandEvent& /* event unused */)
 {
     wxDirDialog dlg(this, "Choose directory", wxEmptyString,
                     wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);

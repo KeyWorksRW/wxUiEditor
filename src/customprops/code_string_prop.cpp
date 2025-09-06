@@ -35,7 +35,7 @@ EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeD
     SetStcColors(m_stc, GEN_LANG_CPLUSPLUS);
 };
 
-void EditCodeDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void EditCodeDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
     tt_string lamda = m_value.substr();
     ExpandLambda(lamda);
@@ -56,8 +56,8 @@ void EditCodeDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-bool EditCodeDialogAdapter::DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                                         wxPGProperty* WXUNUSED(property))
+bool EditCodeDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                                         wxPGProperty* /* property unused */)
 {
     EditCodeDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

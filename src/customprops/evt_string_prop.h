@@ -17,8 +17,8 @@ class EventStringDialogAdapter : public wxPGEditorDialogAdapter
 public:
     EventStringDialogAdapter(NodeEvent* event) : wxPGEditorDialogAdapter(), m_event(event) {}
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                      wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                      wxPGProperty* /* property unused */) override;
 
 private:
     NodeEvent* m_event;

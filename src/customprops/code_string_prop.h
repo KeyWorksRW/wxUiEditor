@@ -21,8 +21,8 @@ class EditCodeDialogAdapter : public wxPGEditorDialogAdapter
 public:
     EditCodeDialogAdapter(NodeProperty* prop) : wxPGEditorDialogAdapter(), m_prop(prop) {}
 
-    bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid),
-                      wxPGProperty* WXUNUSED(property)) override;
+    bool DoShowDialog(wxPropertyGrid* /* propGrid unused */,
+                      wxPGProperty* /* property unused */) override;
 
 private:
     NodeProperty* m_prop;
@@ -53,7 +53,7 @@ public:
     const wxString& GetResults() { return m_value; }
 
 protected:
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    void OnInit(wxInitDialogEvent& /* event unused */) override;
     void OnOK(wxCommandEvent& event) override;
 
     wxString m_value;

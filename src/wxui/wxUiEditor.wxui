@@ -5477,12 +5477,13 @@
       </node>
       <node
         class="wxDialog"
-        class_name="NewMdiForm"
+        class_name="NewMdiFormBase"
         title="New MDI Application"
-        base_file="..\newdialogs\new_mdi.cpp"
-        inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@"
-        private_members="1"
-        use_derived_class="0"
+        base_file="new_mdi_base"
+        derived_class_name="NewMdiForm"
+        private_members="0"
+        protected_class_methods="&quot;virtual void VerifyClassName() = 0;&quot;"
+        pure_virtual_functions="1"
         wxEVT_INIT_DIALOG="[](wxInitDialogEvent&amp; event)@@{@@event.Skip();@@}[python:OnInit]">
         <node
           class="wxBoxSizer"

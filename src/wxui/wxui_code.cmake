@@ -21,7 +21,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_dialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_frame.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_mdi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_panel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_propsheet.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_ribbon.cpp
@@ -65,6 +64,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/new_mdi_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
 

@@ -2,16 +2,20 @@
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
     <!-- wxUiEditor visualizers -->
-    <Type Name="NodeDeclaration">
-        <DisplayString>{m_name,s}, {m_gen_type}</DisplayString>
+    <Type Name="NodeDeclaration*">
+        <DisplayString>{m_name,s8}, {m_gen_type}</DisplayString>
     </Type>
 
-    <Type Name="Node">
-        <DisplayString>{*m_declaration}</DisplayString>
+    <Type Name="Node*">
+        <DisplayString>Declaration: {m_declaration} Name: {m_declaration->m_name}</DisplayString>
+    </Type>
+
+    <Type Name="std::shared_ptr<Node>">
+        <DisplayString>{*get()}</DisplayString>
     </Type>
 
     <Type Name="PropDeclaration">
-        <DisplayString>{m_name_str,s}</DisplayString>
+        <DisplayString>{m_name_str,s8}</DisplayString>
     </Type>
 
     <Type Name="NodeProperty">
@@ -21,9 +25,9 @@
     <Type Name="NodeCategory">
         <DisplayString>{m_name}</DisplayString>
         <Expand>
-          <Item Name="properties">m_prop_names</Item>
-          <Item Name="events">m_events</Item>
-          <Item Name="categories">m_categories</Item>
+            <Item Name="properties">m_prop_names</Item>
+            <Item Name="events">m_events</Item>
+            <Item Name="categories">m_categories</Item>
         </Expand>
     </Type>
 
@@ -53,7 +57,7 @@
     </Type>
 
     <Type Name="tt_string_view">
-        <Intrinsic Name="size" Expression="_Mysize" />
+        <Intrinsic Name="size" Expression="_Mysize"/>
         <DisplayString>{_Mydata,[_Mysize]}</DisplayString>
     </Type>
 
@@ -68,7 +72,8 @@
     <!-- pugixml visualizers -->
 
     <Type Name="pugi::xml_node">
-        <DisplayString>name:{_root-&gt;name,s} value:{_root-&gt;value,s} attr:{_root-&gt;first_attribute-&gt;name,s} = {_root-&gt;first_attribute-&gt;value,s}</DisplayString>
+        <DisplayString>name:{_root-&gt;name,s} value:{_root-&gt;value,s} attr:{_root-&gt;first_attribute-&gt;name,s} =
+            {_root-&gt;first_attribute-&gt;value,s}</DisplayString>
         <Expand>
             <Item Name="parent: ">_root-&gt;parent-&gt;name,s</Item>
             <Item Name="1st child: ">_root-&gt;first_child-&gt;name,s</Item>
@@ -84,10 +89,10 @@
     <!-- wxWidgets visualizers -->
 
     <Type Name="wxString">
-        <DisplayString>"{m_impl,sb}"</DisplayString>
-        <StringView>m_impl,sb</StringView>
+        <DisplayString>"{m_impl,s8}"</DisplayString>
+        <StringView>m_impl,s8</StringView>
         <Expand>
-            <Item Name="m_impl">m_impl,sb</Item>
+            <Item Name="m_impl">m_impl,s8</Item>
         </Expand>
     </Type>
 

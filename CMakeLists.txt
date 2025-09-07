@@ -295,6 +295,10 @@ if( MSVC )
     # Manifest is in the resource file
     target_link_options( wxUiEditor PRIVATE "/manifest:no" )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} )
+
+    set_target_properties( wxUiEditor PROPERTIES
+        VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
+    )
 elseif( UNIX )
     target_compile_definitions( wxUiEditor PRIVATE __WXGTK__ )
     target_compile_definitions( check_build PRIVATE __WXGTK__ )

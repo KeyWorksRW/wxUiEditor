@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTextCtrl document class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,7 @@
 
 #include "code.h"  // Code -- Helper class for generating code
 
-inline constexpr const auto txt_TextCtrlViewBlock =
+inline constexpr auto txt_TextCtrlViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
 
 bool %class%::OnCreate(const wxString& path, long flags)
@@ -76,7 +76,7 @@ void %class%::OnTextChange(wxCommandEvent& event)
 }
 )===";
 
-bool TextDocumentGenerator::ConstructionCode(Code& code)
+bool TextDocGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
     {
@@ -93,9 +93,9 @@ bool TextDocumentGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool TextDocumentGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src,
-                                        std::set<std::string>& /* set_hdr */,
-                                        GenLang /* language */)
+bool TextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
+                                   std::set<std::string>& /* set_hdr unused */,
+                                   GenLang /* language unused */)
 {
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");

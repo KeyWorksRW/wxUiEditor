@@ -7,7 +7,7 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
-class TextDocumentGenerator : public BaseGenerator
+class TextDocGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;

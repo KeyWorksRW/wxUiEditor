@@ -5583,10 +5583,9 @@
               flags="wxEXPAND">
               <node
                 class="wxChoice"
-                class_access="none"
-                contents="&quot;wxSplitterWindow&quot; &quot;wxStyledTextCtrl&quot; &quot;wxTextCtrl&quot;"
+                contents="&quot;wxImage&quot; &quot;wxRichTextCtrl&quot; &quot;wxSplitterWindow&quot; &quot;wxStyledTextCtrl&quot; &quot;wxTextCtrl&quot;"
                 selection_string="wxTextCtrl"
-                var_name="choice_view"
+                var_name="m_choice_view_type"
                 get_function="get_view_type"
                 validator_variable="m_view_type"
                 proportion="1"
@@ -5600,9 +5599,8 @@
                 alignment="wxALIGN_CENTER_VERTICAL|" />
               <node
                 class="wxTextCtrl"
-                class_access="none"
                 value="TextViewBase"
-                var_name="view_classname"
+                var_name="m_txtctrl_view_classname"
                 get_function="get_view_class"
                 validator_variable="m_view_class"
                 tooltip="Change this to something unique to your project."

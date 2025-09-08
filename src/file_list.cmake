@@ -193,7 +193,16 @@ set (file_list
 
     generate/mdi/gen_doc_view_app.cpp   # Generates base class for wxDocument/wxView applications
 
+    generate/mdi/gen_doc_image.cpp      # wxImage document class
+    generate/mdi/gen_doc_richtext.cpp   # wxRichTextCtrl document class
+    generate/mdi/gen_doc_splitter.cpp   # wxSplitterWindow document class
+    generate/mdi/gen_doc_scintilla.cpp  # Scintilla document class
     generate/mdi/gen_doc_textctrl.cpp   # wxTextCtrl document class
+
+    generate/mdi/gen_view_image.cpp     # wxImage view class
+    generate/mdi/gen_view_richtext.cpp  # wxRichTextCtrl view class
+    generate/mdi/gen_view_splitter.cpp  # wxSplitterWindow view class
+    generate/mdi/gen_view_scintilla.cpp # wxStyledTextCtrl view class
     generate/mdi/gen_view_textctrl.cpp  # wxTextCtrl view class
 
     generate/mdi/gen_doc_parent_frame.cpp  # wxDocParentFrame generator

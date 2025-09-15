@@ -43,6 +43,8 @@
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 
+#include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
+
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
 #include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
@@ -78,6 +80,8 @@ using namespace GenEnum;
 enum
 {
     IDM_IMPORT_WINRES = START_TESTING_IDS,
+
+    ID_EXPERIMENTAL_MDI_APP,
 
     id_TestSwitch,
     id_CodeDiffDlg,
@@ -189,6 +193,12 @@ MainFrame::MainFrame() :
 
     if (wxGetApp().isTestingMenuEnabled())
     {
+        wxMenuItem* item;
+
+        auto menuExperimental = new wxMenu;
+        menuExperimental->Append(ID_EXPERIMENTAL_MDI_APP, "Experimental MDI App",
+                                 "Create a base Document/View MDI application");
+
         auto menuTesting = new wxMenu;
 
         menuTesting->Append(
@@ -206,7 +216,6 @@ MainFrame::MainFrame() :
                             "Generate all ruby files from current project.");
 
         auto* submenu_xrc = new wxMenu();
-        wxMenuItem* item;
         item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...",
                                    "Dialog with multiple XRC tests");
         item->SetBitmap(bundle_xrc_tests_svg(16, 16));
@@ -244,6 +253,7 @@ MainFrame::MainFrame() :
             },
             id_TestSwitch);
 
+        m_menubar->Append(menuExperimental, "Experimental");
         m_menubar->Append(menuTesting, "Testing");
 
         m_submenu_import_recent = new wxMenu();
@@ -408,6 +418,21 @@ MainFrame::MainFrame() :
 
     if (wxGetApp().isTestingMenuEnabled())
     {
+        // Experimental menu items
+        Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent&)
+            {
+                wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
+                NewMdiForm dlg(this);
+                if (dlg.ShowModal() == wxID_OK)
+                {
+                    dlg.CreateNode();
+                }
+            },
+            ID_EXPERIMENTAL_MDI_APP);
+
+        // Testing menu items
         Bind(
             wxEVT_MENU,
             [this](wxCommandEvent&)

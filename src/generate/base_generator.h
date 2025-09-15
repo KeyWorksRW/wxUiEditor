@@ -82,8 +82,8 @@ public:
     // Called if code needs to be generated before the class definition is generated
     virtual bool PreClassHeaderCode(Code&) { return false; }
 
-    // Generate code to add to a C++ header file -- this is normally the class header
-    // definition
+    // Generate code to add to a C++ header file after the class ctor, enums, constants, and
+    // public members have been added. have been added.
     virtual bool HeaderCode(Code&) { return false; }
 
     // Called to add protected members to the class definition

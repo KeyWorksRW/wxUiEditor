@@ -35,11 +35,17 @@ extern const char* g_xrc_keywords;
 inline const char* lst_widgets_keywords[] = {
 
     "wxArrayInt",
+    "wxAuiMDIParentFrame",
     "wxAuiToolBarItem",
     "wxBitmap",
     "wxBitmapBundle",
     "wxBitmapButton",
+    "wxClassInfo",
     "wxColour",
+    "wxDocChildFrameAny",
+    "wxDocManager",
+    "wxDocParentFrameAny",
+    "wxDocTemplate",
     "wxDocument",
     "wxFileHistory",
     "wxFont",
@@ -63,6 +69,7 @@ inline const char* lst_widgets_keywords[] = {
     "wxToolBarToolBase",
     "wxVector",
     "wxWindow",
+    "wxWindowID",
     "wxZlibInputStream",
 
 };

@@ -5563,7 +5563,7 @@
                 class_access="none"
                 label="wxAuiMDIParentFrame"
                 style="wxRB_GROUP"
-                var_name="radioBtn"
+                var_name="radioBtn_AuiMDIParentFrame"
                 get_function="is_aui_frame"
                 validator_variable="m_aui_frame" />
               <node

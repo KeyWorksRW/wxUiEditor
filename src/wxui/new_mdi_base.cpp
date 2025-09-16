@@ -8,12 +8,10 @@
 // clang-format off
 
 #include <wx/button.h>
-#include <wx/choice.h>
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include <wx/valgen.h>
 #include <wx/valtext.h>
 
@@ -76,10 +74,10 @@ bool NewMdiFormBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* static_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Frame Type");
 
-    auto* radioBtn = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, "wxAuiMDIParentFrame", wxDefaultPosition,
-        wxDefaultSize, wxRB_GROUP);
-    radioBtn->SetValidator(wxGenericValidator(&m_aui_frame));
-    static_box->Add(radioBtn, wxSizerFlags().Border(wxALL));
+    auto* radioBtn_AuiMDIParentFrame = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, "wxAuiMDIParentFrame",
+        wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    radioBtn_AuiMDIParentFrame->SetValidator(wxGenericValidator(&m_aui_frame));
+    static_box->Add(radioBtn_AuiMDIParentFrame, wxSizerFlags().Border(wxALL));
 
     auto* radioBtn_2 = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, "wxDocMDIParentFrame");
     radioBtn_2->SetValue(true);
@@ -90,22 +88,24 @@ bool NewMdiFormBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     auto* static_box_2 = new wxStaticBoxSizer(wxHORIZONTAL, this, "View");
 
-    auto* choice_view = new wxChoice(static_box_2->GetStaticBox(), wxID_ANY);
-    choice_view->Append("wxSplitterWindow");
-    choice_view->Append("wxStyledTextCtrl");
-    choice_view->Append("wxTextCtrl");
+    m_choice_view_type = new wxChoice(static_box_2->GetStaticBox(), wxID_ANY);
+    m_choice_view_type->Append("wxImage");
+    m_choice_view_type->Append("wxRichTextCtrl");
+    m_choice_view_type->Append("wxSplitterWindow");
+    m_choice_view_type->Append("wxStyledTextCtrl");
+    m_choice_view_type->Append("wxTextCtrl");
     m_view_type = "wxTextCtrl";  // set validator variable
-    choice_view->SetValidator(wxGenericValidator(&m_view_type));
-    static_box_2->Add(choice_view, wxSizerFlags(1).Border(wxALL));
+    m_choice_view_type->SetValidator(wxGenericValidator(&m_view_type));
+    static_box_2->Add(m_choice_view_type, wxSizerFlags(1).Border(wxALL));
 
     auto* staticText_11 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Class name:");
     staticText_11->SetToolTip("Change this to something unique to your project.");
     static_box_2->Add(staticText_11, wxSizerFlags().Center().Border(wxALL));
 
-    auto* view_classname = new wxTextCtrl(static_box_2->GetStaticBox(), wxID_ANY, "TextViewBase");
-    view_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_view_class));
-    view_classname->SetToolTip("Change this to something unique to your project.");
-    static_box_2->Add(view_classname, wxSizerFlags(1).Border(wxALL));
+    m_txtctrl_view_classname = new wxTextCtrl(static_box_2->GetStaticBox(), wxID_ANY, "TextViewBase");
+    m_txtctrl_view_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_view_class));
+    m_txtctrl_view_classname->SetToolTip("Change this to something unique to your project.");
+    static_box_2->Add(m_txtctrl_view_classname, wxSizerFlags(1).Border(wxALL));
 
     box_sizer_3->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
 
@@ -189,7 +189,7 @@ bool NewMdiFormBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     // Event handlers
     Bind(wxEVT_BUTTON, &NewMdiFormBase::OnOK, this, wxID_OK);
-    choice_view->Bind(wxEVT_CHOICE, &NewMdiFormBase::OnViewType, this);
+    m_choice_view_type->Bind(wxEVT_CHOICE, &NewMdiFormBase::OnViewType, this);
     Bind(wxEVT_INIT_DIALOG,
         [](wxInitDialogEvent& event)
         {
@@ -207,7 +207,7 @@ bool NewMdiFormBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         [this](wxCommandEvent&)
         {VerifyClassName();
         });
-    view_classname->Bind(wxEVT_TEXT,
+    m_txtctrl_view_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
         });

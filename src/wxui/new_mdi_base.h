@@ -9,10 +9,12 @@
 
 #pragma once
 
+#include <wx/choice.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/infobar.h>
+#include <wx/textctrl.h>
 
 class NewMdiFormBase : public wxDialog
 {
@@ -63,7 +65,9 @@ protected:
 
     // Class member variables
 
+    wxChoice* m_choice_view_type;
     wxInfoBar* m_infoBar;
+    wxTextCtrl* m_txtctrl_view_classname;
 };
 
 // ************* End of generated code ***********

@@ -22,7 +22,7 @@ public:
         Create(parent, id, title, pos, size, style, name);
     }
 
-    void createNode();
+    void CreateNode();
 
 protected:
 

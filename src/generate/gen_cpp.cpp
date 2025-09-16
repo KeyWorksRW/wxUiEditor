@@ -875,6 +875,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
             }
         }
         m_header->writeLine(code);
+        code.clear();
     }
     else
     {
@@ -884,8 +885,11 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
             FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class "
                      "name to derive from.");
         }
-        // The only way this would be valid is if the base class didn't derive from anything.
-        m_header->writeLine(tt_string() << "class " << m_form_node->as_string(prop_class_name));
+        else
+        {
+            // The only way this would be valid is if the base class didn't derive from anything.
+            m_header->writeLine(tt_string() << "class " << m_form_node->as_string(prop_class_name));
+        }
     }
 
     m_header->writeLine("{");
@@ -1003,6 +1007,8 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
             m_header->writeLine();
         }
     }
+
+    // TODO: There are a lot of function calls and section below that expect a protected section.
 
     m_header->Unindent();
     m_header->writeLine("protected:");
@@ -2245,6 +2251,15 @@ void CppCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::strin
 void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
                                               std::set<std::string>& code_lines)
 {
+    if (m_form_node->is_Type(type_DocViewApp))
+    {
+        code_lines.emplace("wxFrame* m_frame;");
+        code_lines.emplace("wxDocManager* m_docManager;");
+        code_lines.emplace("wxMenuBar* m_menuBar;");
+
+        // Don't generate member variables for the Doc/View App node, they are not needed.
+        return;
+    }
     if (auto prop = node->get_PropPtr(prop_class_access); prop)
     {
         if (prop->as_string() != "none")

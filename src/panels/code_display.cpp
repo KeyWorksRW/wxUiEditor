@@ -44,41 +44,6 @@ extern const char* g_xrc_keywords;
 
 const int node_marker = 1;
 
-// clang-format off
-
-// These are base wxWidgets classes that may be in generated code, or in member variables
-// a user adds.
-inline const char* lst_widgets_keywords[] = {
-
-    "wxArrayInt",
-    "wxAuiToolBarItem",
-    "wxBitmap",
-    "wxBitmapBundle",
-    "wxBitmapButton",
-    "wxColour",
-    "wxDocument",
-    "wxFileHistory",
-    "wxFont",
-    "wxGenericAnimationCtrl",
-    "wxIcon",
-    "wxImage",
-    "wxListItem",
-    "wxMemoryInputStream",
-    "wxMenuBar",
-    "wxObject",
-    "wxPoint",
-    "wxSize",
-    "wxSizerFlags",
-    "wxString",
-    "wxToolBar",
-    "wxToolBarToolBase",
-    "wxVector",
-    "wxWindow",
-    "wxZlibInputStream",
-
-};
-// clang-format on
-
 CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
     CodeDisplayBase(parent), m_panel_type(panel_type)
 {

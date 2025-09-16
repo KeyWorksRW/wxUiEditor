@@ -34,7 +34,7 @@ namespace wxue_data
     std::string get_widgets();     // ../xml/widgets.xml
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6183]; // Original size: 39,008 bytes
+    extern const unsigned char bars[6183]; // Original size: 39,004 bytes
     // ../xml/boxes.xml
     extern const unsigned char boxes[2429]; // Original size: 14,336 bytes
     // ../xml/buttons.xml

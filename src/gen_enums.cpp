@@ -617,7 +617,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_DocViewApp, "DocViewApp" },
     { type_wx_document, "wx_document" },
     { type_mdi_menubar, "mdi_menubar" },
-    { type_doc_menubar, "mdi_doc_menubar" },
+    { type_doc_menubar, "doc_menubar" },
     { type_wx_view, "wx_view" },
 
 };

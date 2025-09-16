@@ -1589,8 +1589,14 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
                     parts[1].filename() == form_image_parts[1].filename())
                 {
                     auto embed = GetEmbeddedImage(parts[IndexImage]);
-                    ASSERT(embed);  // should be impossible not to have an embed here
-                    if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
+                    // REVIEW: [Randalphwa - 09-16-2025] This can occur when the art directory is
+                    // changed.
+                    ASSERT(embed);
+                    if (!embed)
+                    {
+                        return name;
+                    }
+                    else if (embed->imgs[0].type == wxBITMAP_TYPE_SVG)
                     {
                         name << "wxue_img::bundle_" << embed->imgs[0].array_name << "(";
 

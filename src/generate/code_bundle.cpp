@@ -380,6 +380,11 @@ void Code::BundleRuby(const tt_string_vector& parts)
         {
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
+            if (!embed)
+            {
+                Add("wxNullBitmap");
+                return;
+            }
             tt_string svg_name;
             if (embed->form != node()->get_Form())
             {

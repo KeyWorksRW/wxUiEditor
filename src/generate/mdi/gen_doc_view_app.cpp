@@ -4,59 +4,44 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include "gen_doc_view_app.h"
 
 #include "code.h"  // Code -- Helper class for generating code
 
-inline constexpr const auto txt_DocViewPreHeader =
-    R"===(// Base class for wxDocument/wxView applications.
-// App class should inherit from this in addition to wxApp.
-
-// In your app's OnRun() function, call this class's Create() function to
-// create the main frame, and then call Show() to display it. Do this before
-// returning wxApp::OnRun();
-
-// In your app's OnExit() function, call this class's PrepForExit() function to
-// save the file history and delete the document manager. Do this before
-// returning wxApp::OnExit();
-
-#include <vector>
-
-class wxFrame;
-class wxDocManager;
-class wxMenuBar;
-class wxDocTemplate;
-
-// Yout application's App class should inherit from this in addition to wxApp, e.g.
-//     class App : public wxApp, public %class%
-)===";
-
-inline constexpr const auto txt_DocViewAppHeader = R"===(
-wxFrame* Create(wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
-    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-    long style = wxDEFAULT_FRAME_STYLE, const wxString& name = wxFrameNameStr);
-
-// Call this from the Application's OnExit() function. It will save the
-// file history and delete the document manager.
-void PrepForExit();
-
-auto GetFrame() const { return m_frame; }
-wxDocManager* GetDocumentManager() const { return m_docManager; }
-wxMenuBar* GetMenuBar() const { return m_menuBar; }
-auto GetDocTemplates() const { return m_docTemplates; }
-
-wxFrame* CreateChildFrame(wxView* view);
-
-bool Show(bool show = true) { return m_frame->Show(show); }
-
-)===";
-
 inline constexpr const auto txt_DocViewAppCppSrc =
-    R"===(wxFrame* %class%::Create(wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style,
-                                const wxString& name)
+    R"===(%class%::%class%() : m_frame(nullptr), m_docManager(nullptr), m_menuBar(nullptr)
 {
     m_docManager = new wxDocManager;
+}
 
+void %class%::AddDocTemplate(const wxString& descr, const wxString& filter, const wxString& dir,
+                                const wxString& ext, const wxString& docTypeName,
+                                const wxString& viewTypeName, wxClassInfo* docClassInfo,
+                                wxClassInfo* viewClassInfo, long flags)
+{
+    new wxDocTemplate(m_docManager, descr, filter, dir, ext, docTypeName, viewTypeName,
+                      docClassInfo, viewClassInfo, flags);
+}
+
+int %class%::OnRun()
+{
+    CreateFrame(wxID_ANY, GetAppDisplayName(), wxDefaultPosition, wxSize(500, 400));
+    ShowFrame();
+
+    return wxApp::OnRun();
+}
+
+int %class%::OnExit()
+{
+    m_docManager->FileHistorySave(*wxConfig::Get());
+    delete m_docManager;
+    return wxApp::OnExit();
+}
+
+wxFrame* %class%::Create(wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style,
+                                const wxString& name)
+{
     %doc_templates%
 
     m_frame = new wxDocParentFrameAny<wxAuiMDIParentFrame>(m_docManager, nullptr, id, title, pos, size, style, name);
@@ -101,15 +86,8 @@ wxFrame* %class%::CreateChildFrame(wxView* view)
     %document_menu%
     m_frame->SetMenuBar(child_frame);
     child_frame->SetMenuBar(menubar);
-    child_frame->SetIcon(wxICON(notepad));
 
     return child_frame;
-}
-
-void %class%::PrepForExit()
-{
-    m_docManager->FileHistorySave(*wxConfig::Get());
-    delete m_docManager;
 }
 )===";
 
@@ -160,6 +138,75 @@ bool DocViewAppGenerator::AfterConstructionCode(Code& code)
     return true;
 }
 
+bool DocViewAppGenerator::BaseClassNameCode(Code& code)
+{
+    code.Str("wxApp");
+    return true;
+}
+
+inline constexpr const auto txt_DocViewPreAppHeader =
+    R"===(// Base class for wxDocument/wxView applications.
+// App class should inherit from this in addition to wxApp.
+
+// In your app's OnRun() function, call this class's Create() function to
+// create the main frame, and then call Show() to display it. Do this before
+// returning wxApp::OnRun();
+
+// In your app's OnExit() function, call this class's PrepForExit() function to
+// save the file history and delete the document manager. Do this before
+// returning wxApp::OnExit();
+
+class wxDocManager;
+class wxDocTemplate;
+class wxFrame;
+class wxMenuBar;
+
+)===";
+
+bool DocViewAppGenerator::PreClassHeaderCode(Code& code)
+{
+    if (code.is_cpp())
+    {
+        code += txt_DocViewPreAppHeader;
+        return true;
+    }
+
+    return false;
+}
+
+inline constexpr const auto txt_DocViewAppHeader =
+    R"===(virtual void AddDocTemplate(const wxString& descr, const wxString& filter,
+                        const wxString& dir, const wxString& ext, const wxString& docTypeName,
+                        const wxString& viewTypeName, wxClassInfo* docClassInfo,
+                        wxClassInfo* viewClassInfo, long flags);
+
+// This will call CreateFrame(), ShowFramte() and then call wxApp::OnRun(). You do not need to
+// override OnRun() in your derived class unless you need to do something additional.
+virtual int OnRun() override;
+
+// This will create a DocManager, add templates to it, hook up a file history to it and
+// create a menu bar and a main frame.
+wxFrame* Create(wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+                long style = wxDEFAULT_FRAME_STYLE, const wxString& name = wxFrameNameStr);
+
+// If you override OnExit() in your derived class, be sure to call this base class's
+// OnExit() function to save the file history and delete the document manager. The base
+// class's OnExit() returns the value from wxApp::OnExit(), so unless you need additional
+// OnExit() processing, you don't need to create your own OnExit() function.
+virtual int OnExit() override;
+
+wxFrame* GetFrame() const { return m_frame; }
+wxDocManager* GetDocumentManager() const { return m_docManager; }
+wxMenuBar* GetMenuBar() const { return m_menuBar; }
+auto GetDocTemplates() const { return m_docTemplates; }
+
+wxFrame* CreateChildFrame(wxView* view);
+
+bool Show(bool show = true) { return m_frame->Show(show); }
+
+)===";
+
 bool DocViewAppGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
@@ -174,41 +221,26 @@ bool DocViewAppGenerator::HeaderCode(Code& code)
     return true;
 }
 
-bool DocViewAppGenerator::PreClassHeaderCode(Code& code)
-{
-    tt_string_vector lines;
-    lines.ReadString(txt_DocViewPreHeader);
-    tt_string class_name = code.node()->as_string(prop_class_name);
-    for (auto& line: lines)
-    {
-        line.Replace("%class%", class_name, true);
-        code.Str(line).Eol();
-    }
-
-    return true;
-}
-
-void DocViewAppGenerator::AddProtectedHdrMembers(std::set<std::string>& code_lines)
-{
-    code_lines.emplace("wxFrame* m_frame { nullptr };");
-    code_lines.emplace("wxDocManager* m_docManager { nullptr };");
-    code_lines.emplace("wxMenuBar* m_menuBar { nullptr };");
-    code_lines.emplace("std::vector<wxDocTemplate*> m_docTemplates;");
-}
-
 bool DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                      std::set<std::string>& /* set_hdr */, GenLang /* language */)
+                                      std::set<std::string>& set_hdr, GenLang language)
 {
-    if (node->as_string(prop_kind) == "AUI")
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        set_src.insert("#include <wx/aui/tabmdi.h");
-    }
-    set_src.insert("#include <wx/config.h");
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/menu.h");
+        if (node->as_string(prop_kind) == "AUI")
+        {
+            set_src.insert("#include <wx/aui/tabmdi.h");
+        }
+        set_src.insert("#include <wx/config.h");
+        set_src.insert("#include <wx/docmdi.h");
+        set_src.insert("#include <wx/menu.h");
 
-    return true;
+        set_hdr.insert("#include <wx/docview.h");
+        set_hdr.insert("#include <vector>");
+
+        return true;
+    }
+
+    return false;
 }
 
 auto foo = wxID_LOWEST;

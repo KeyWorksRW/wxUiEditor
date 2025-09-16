@@ -9,7 +9,7 @@
 
 #include "code.h"  // Code -- Helper class for generating code
 
-inline constexpr auto txt_TextCtrlViewBlock =
+inline constexpr auto txt_RichTextDocBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
 
 bool %class%::OnCreate(const wxString& path, long flags)
@@ -81,7 +81,7 @@ bool RichTextDocGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         tt_string_vector lines;
-        lines.ReadString(txt_TextCtrlViewBlock);
+        lines.ReadString(txt_RichTextDocBlock);
         tt_string class_name = code.node()->get_Parent()->as_string(prop_class_name);
         for (auto& line: lines)
         {

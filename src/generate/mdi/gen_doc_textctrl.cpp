@@ -9,7 +9,7 @@
 
 #include "code.h"  // Code -- Helper class for generating code
 
-inline constexpr auto txt_TextCtrlViewBlock =
+inline constexpr auto txt_TextCtrlDocBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
 
 bool %class%::OnCreate(const wxString& path, long flags)
@@ -37,17 +37,12 @@ bool %class%::DoOpenDocument(const wxString& filename)
 
 bool %class%::DoSaveDocument(const wxString& filename)
 {
-    auto result = GetTextCtrl()->SaveFile(filename);
-    if (auto view = GetFirstView(); view)
-    {
-        wxStaticCast(view, TextEditView)->GetFrame()->SetTitle(wxFileName(filename).Filename());
-    }
-    return result;
+    return GetTextCtrl()->SaveFile(filename);
 }
 
 bool %class%::isModified() const
 {
-    auto text_ctrl = GetTextCtrl();
+    auto* text_ctrl = GetTextCtrl();
     return wxDocument::isModified() || (text_ctrl && text_ctrl->isModified());
 }
 
@@ -55,7 +50,7 @@ void %class%::Modify(bool modified)
 {
     wxDocument::Modify(modified);
 
-    if (auto text_ctrl = GetTextCtrl(); text_ctrl && !modified)
+    if (auto* text_ctrl = GetTextCtrl(); text_ctrl && !modified)
     {
         // This doesn't save the text, it just resets the modified flag.
         text_ctrl->DiscardEdits();
@@ -64,7 +59,7 @@ void %class%::Modify(bool modified)
 
 wxTextCtrl* %class%::GetTextCtrl() const
 {
-    auto view = GetFirstView();
+    auto* view = GetFirstView();
     return view ? wxStaticCast(view, TextEditView)->GetText() : nullptr;
 }
 
@@ -81,25 +76,68 @@ bool TextDocGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         tt_string_vector lines;
-        lines.ReadString(txt_TextCtrlViewBlock);
-        tt_string class_name = code.node()->get_Parent()->as_string(prop_class_name);
+        lines.ReadString(txt_TextCtrlDocBlock);
+        tt_string class_name = code.node()->as_string(prop_class_name);
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
             code.Str(line).Eol();
         }
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool TextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
-                                   std::set<std::string>& /* set_hdr unused */,
-                                   GenLang /* language unused */)
+                                   std::set<std::string>& /* set_hdr unused */, GenLang language)
 {
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/textctrl.h");
+    if (language == GEN_LANG_CPLUSPLUS)
+    {
+        set_src.insert("#include <iostream");
+        return true;
+    }
+
+    return false;
+}
+
+inline constexpr const auto txt_TextCtrlDocHdrBlock =
+    R"===(
+#pragma once
+
+class %class% : public wxDocument
+{
+public:
+    %class%() : wxDocument() { }
+    %class%(const TextEditDocument&) = delete;
+    %class% &operator=(const TextEditDocument&) = delete;
+
+    virtual bool OnCreate(wxDocument* doc, long flags) override;
+
+    virtual bool IsModified() const override;
+    virtual void Modify(bool mod) override;
+protected:
+    virtual bool DoOpenDocument(const wxString& filename) override;
+    virtual bool DoSaveDocument(const wxString& filename) override;
+private:
+    wxTextCtrl* GetTextCtrl() const;
+
+    void OnTextChange(wxCommandEvent& event);
+
+    wxDECLARE_DYNAMIC_CLASS(%class%);
+};
+)===";
+
+bool TextDocGenerator::HeaderCode(Code& code)
+{
+    tt_string_vector lines;
+    lines.ReadString(txt_TextCtrlDocHdrBlock);
+    tt_string class_name = code.node()->as_string(prop_class_name);
+    for (auto& line: lines)
+    {
+        line.Replace("%class%", class_name, true);
+        code.Str(line).Eol();
+    }
 
     return true;
 }

@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "pch.h"
 #include "gen_view_textctrl.h"
 
 #include "code.h"             // Code -- Helper class for generating code
@@ -20,27 +21,38 @@ bool %class%::OnCreate(wxDocument* doc, long flags)
     if (!wxView::OnCreate(doc, flags))
         return false;
 
-    Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_text->Copy(); }, wxID_COPY);
-    Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_text->Paste(); }, wxID_PASTE);
-    Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_text->SelectAll(); }, wxID_SELECTALL);
-
     m_frame = wxGetApp().CreateChildFrame(this);
+    wxASSERT(frame == GetFrame());
     m_text = new wxTextCtrl(m_frame, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-    m_frame->SetTitle(wxFileName(doc->GetFilename()).Filename());
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            GetTextCtrl()->Copy();
+        },
+        wxID_COPY);
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            GetTextCtrl()->Paste();
+        },
+        wxID_PASTE);
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            GetTextCtrl()->SelectAll();
+        },
+        wxID_SELECTALL);
+
     m_frame->Show();
 
     return true;
 }
 
-void %class%::OnDraw(wxDC* /* property unused */dc))
-{
-    // nothing to do here, wxTextCtrl draws itself
-}
-
-bool TextE%class%ditView::OnClose(bool delete_window)
+bool %class%::OnClose(bool delete_window)
 {
     if (!wxView::OnClose(delete_window))
         return false;
@@ -49,9 +61,8 @@ bool TextE%class%ditView::OnClose(bool delete_window)
 
     if (delete_window)
     {
-        m_frame->Destroy();
+        GetFrame()->Destroy();
         SetFrame(nullptr);
-        m_frame = nullptr;
     }
     return true;
 }
@@ -75,44 +86,46 @@ bool TextViewGenerator::ConstructionCode(Code& code)
 }
 
 bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                    std::set<std::string>& /* set_hdr */, GenLang /* language */)
+                                    std::set<std::string>& set_hdr, GenLang language)
 {
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/textctrl.h");
-
-    auto parent = node->get_Parent();
-    for (auto& iter: parent->get_ChildNodePtrs())
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        if (iter.get() == node)
-            continue;
-        if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
-        {
-            tt_string hdr_file = iter->as_string(prop_base_file);
-            if (hdr_file.size())
-            {
-                hdr_file += Project.as_string(prop_header_ext);
-                set_src.insert(tt_string("#include ") << '"' << hdr_file << '"');
-            }
-            else
-            {
-                set_src.insert("// Either the Document class cannot be found, or it doesn't "
-                               "specify a base filename.");
-            }
+        set_src.insert("#include <wx/docmdi.h");
+        set_hdr.insert("#include <wx/docview.h");
+        set_hdr.insert("#include <wx/textctrl.h");
 
-            break;
+        auto parent = node->get_Parent();
+        for (auto& iter: parent->get_ChildNodePtrs())
+        {
+            if (iter.get() == node)
+                continue;
+            if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
+            {
+                tt_string hdr_file = iter->as_string(prop_base_file);
+                if (hdr_file.size())
+                {
+                    hdr_file += Project.as_string(prop_header_ext);
+                    set_src.insert(tt_string("#include ") << '"' << hdr_file << '"');
+                }
+                else
+                {
+                    set_src.insert("// Either the Document class cannot be found, or it doesn't "
+                                   "specify a base filename.");
+                }
+
+                break;
+            }
         }
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 inline constexpr const auto txt_TextCtrlViewHdrBlock =
     R"===(
 #pragma once
-
-#include <wx/docview.h>
-#include <wx/textctrl.h>
 
 // This view uses a standard wxTextCtrl to show its contents
 class %class% : public wxView
@@ -121,20 +134,16 @@ public:
     %class%() : wxView(), m_text(nullptr) {}
 
     virtual bool OnCreate(wxDocument* doc, long flags) override;
-    virtual void OnDraw(wxDC* dc) override;
     virtual bool OnClose(bool deleteWindow = true) override;
 
-    wxTextCtrl* GetText() const { return m_text; }
+    // nothing to do here, wxTextCtrl draws itself
+    virtual void OnDraw(wxDC* /* dc unused */) override {};
 
-protected:
-    void OnCopy(wxCommandEvent& /* event unused */) { m_text->Copy(); }
-    void OnPaste(wxCommandEvent& /* event unused */) { m_text->Paste(); }
-    void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
+    wxTextCtrl* GetTextCtrl() const { return m_text; }
 
 private:
     wxTextCtrl* m_text;
 
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(%class%);
 };
 )===";

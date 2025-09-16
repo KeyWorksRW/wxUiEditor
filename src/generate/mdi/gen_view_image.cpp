@@ -10,7 +10,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "project_handler.h"  // ProjectHandler class
 
-inline constexpr const auto txt_TextCtrlViewBlock =
+inline constexpr const auto txt_ImageViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxView);
 
 %class%::%class%() : wxView(), m_text(NULL) {}
@@ -62,7 +62,7 @@ bool ImageViewGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         tt_string_vector lines;
-        lines.ReadString(txt_TextCtrlViewBlock);
+        lines.ReadString(txt_ImageViewBlock);
         tt_string class_name = code.node()->as_string(prop_class_name);
         for (auto& line: lines)
         {

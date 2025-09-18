@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ImageHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -52,15 +52,6 @@ namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
 }
-
-// Convert a data array into a wxAnimation
-inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxAnimation animation;
-    animation.Load(strm);
-    return animation;
-};
 
 inline tt_string ConvertToLookup(const tt_string& description)
 {
@@ -1163,17 +1154,6 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
                                        embed->base_image().array_size);
             p_animation->Load(stream);
         }
-    }
-    else
-    {
-        // This handles Header files
-        // GetAnimationImage(image, path);
-    }
-
-    if (!p_animation->IsOk())
-    {
-        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif,
-        // sizeof(wxue_img::pulsing_unknown_gif));
     }
 }
 

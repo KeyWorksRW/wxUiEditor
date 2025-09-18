@@ -7,13 +7,16 @@
 
 #pragma once
 
+// ImageHandler is a global class, accessed through ProjectImages. It stores all of the images used
+// in the project, primarily in a map of EmbeddedImage objects.
+
 #include <map>
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
-#include "embed_image.h"  // EmbeddedImage struct
+#include "embed_image.h"  // EmbeddedImage class
 
 class Node;
 class wxAnimation;

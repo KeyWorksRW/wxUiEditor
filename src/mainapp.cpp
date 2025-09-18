@@ -589,10 +589,10 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
         {
             if (generate_type != GEN_LANG_NONE)
             {
-                tt_string_vector log;
-                log.emplace_back(tt_string("Unable to find project file: ")
+                m_cmdline_log.clear();
+                m_cmdline_log.emplace_back(tt_string("Unable to find project file: ")
                                  << filename.utf8_string());
-                log.WriteFile(log_file);
+                m_cmdline_log.WriteFile(log_file);
                 return 1;
             }
         }
@@ -601,14 +601,14 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
         {
             if (!is_project_loaded)
             {
-                tt_string_vector log;
-                log.emplace_back(tt_string("Unable to load project file: ")
+                m_cmdline_log.clear();
+                m_cmdline_log.emplace_back(tt_string("Unable to load project file: ")
                                  << filename.utf8_string());
-                log.WriteFile(log_file);
+                m_cmdline_log.WriteFile(log_file);
                 return 1;
             }
 
-            tt_string_vector log;
+            m_cmdline_log.clear();
             std::vector<tt_string> class_list;
             auto start_time = std::chrono::steady_clock::now();
 
@@ -620,7 +620,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
                     {
                         for (auto& iter: class_list)
                         {
-                            auto& log_msg = log.emplace_back();
+                            auto& log_msg = m_cmdline_log.emplace_back();
                             log_msg << "Needs updating: " << iter;
                         }
                     }
@@ -628,14 +628,14 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
                     {
                         for (auto& iter: results.updated_files)
                         {
-                            auto& log_msg = log.emplace_back();
+                            auto& log_msg = m_cmdline_log.emplace_back();
                             log_msg << "Updated: " << iter;
                         }
                     }
                 }
                 else
                 {
-                    auto& log_msg = log.emplace_back();
+                    auto& log_msg = m_cmdline_log.emplace_back();
                     log_msg << "All " << results.file_count << " generated " << language_type
                             << " files are current";
                 }
@@ -644,7 +644,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
                 {
                     if (iter.contains("Elapsed time"))
                         continue;
-                    auto& log_msg = log.emplace_back();
+                    auto& log_msg = m_cmdline_log.emplace_back();
                     log_msg << iter;
                 }
             };
@@ -672,14 +672,14 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             GenCode(GEN_LANG_RUST);
             GenCode(GEN_LANG_XRC);
 
-            auto& log_msg = log.emplace_back();
+            auto& log_msg = m_cmdline_log.emplace_back();
             auto end_time = std::chrono::steady_clock::now();
             size_t total_elapsed_time =
                 std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time)
                     .count();
 
             log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
-            log.WriteFile(log_file);
+            m_cmdline_log.WriteFile(log_file);
 
             return 0;
         }

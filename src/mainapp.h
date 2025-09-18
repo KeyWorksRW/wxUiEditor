@@ -19,8 +19,8 @@ namespace pugi
 class ImportXML;
 class MainFrame;
 class ProjectSettings;
+class EmbeddedImage;
 
-struct EmbeddedImage;
 struct ImageBundle;
 
 [[maybe_unused]] constexpr const auto ImportProjectVersion = 13;

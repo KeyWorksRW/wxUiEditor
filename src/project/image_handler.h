@@ -7,12 +7,13 @@
 
 #pragma once
 
-#include <filesystem>
 #include <map>
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+
+#include "embed_image.h"  // EmbeddedImage struct
 
 class Node;
 class wxAnimation;
@@ -23,30 +24,6 @@ using NodeSharedPtr = std::shared_ptr<Node>;
 struct ImageBundle
 {
     std::vector<tt_string> lst_filenames;
-};
-
-struct ImageInfo
-{
-    tt_string filename;
-    tt_string array_name;
-    uint64_t array_size;
-    std::unique_ptr<unsigned char[]> array_data;
-    std::filesystem::file_time_type file_time;  // time the file was last modified
-    wxBitmapType type;
-};
-
-struct EmbeddedImage
-{
-    Node* form;  // the form node the image is declared in
-    std::vector<ImageInfo>
-        imgs;     // InitializeEmbedStructure() will always create at least one entry
-    wxSize size;  // dimensions of the first image in the array
-
-    // Note that this will update any file within EmbeddedImage whose file_time has changed
-    // since the file was first loaded.
-    //
-    // size parameter is only used for SVG files
-    wxBitmapBundle get_bundle(wxSize size = { -1, -1 });
 };
 
 class ImageHandler
@@ -72,10 +49,6 @@ public:
     //
     // Returns true if an associated node changed
     bool UpdateEmbedNodes();
-
-    // Call this is the image file has been modified. This will update the array_data and
-    // array_size for the image from the updated image file.
-    static void UpdateEmbeddedImage(EmbeddedImage* embed, size_t index = 0);
 
     wxImage GetImage(const tt_string& description);
 
@@ -144,9 +117,6 @@ protected:
     bool CheckNode(Node* node);
 
     void CollectNodeBundles(Node* node, Node* form);
-
-    // Converts filename to a valid string name and sets EmbeddedImage::array_name
-    void InitializeEmbedStructure(EmbeddedImage* embed, tt_string_view path, Node* form);
 
     // This will update both m_bundles and m_map_embedded
     bool AddNewEmbeddedImage(tt_string path, Node* form);

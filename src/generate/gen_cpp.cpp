@@ -737,7 +737,7 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         std::sort(m_embedded_images.begin(), m_embedded_images.end(),
                   [](const EmbeddedImage* a, const EmbeddedImage* b)
                   {
-                      return (a->imgs[0].array_name.compare(b->imgs[0].array_name) < 0);
+                      return (a->base_image().array_name.compare(b->base_image().array_name) < 0);
                   });
     }
 
@@ -1497,17 +1497,17 @@ void CppCodeGenerator::GenerateCppHandlers()
     {
         for (auto& iter_img: m_embedded_images)
         {
-            if (iter_img->imgs[0].type != wxBITMAP_TYPE_BMP &&
-                iter_img->imgs[0].type != wxBITMAP_TYPE_SVG &&
-                m_type_generated.find(iter_img->imgs[0].type) == m_type_generated.end())
+            if (iter_img->base_image().type != wxBITMAP_TYPE_BMP &&
+                iter_img->base_image().type != wxBITMAP_TYPE_SVG &&
+                m_type_generated.find(iter_img->base_image().type) == m_type_generated.end())
             {
                 m_source->writeLine(tt_string("if (!wxImage::FindHandler(")
-                                    << g_map_types[iter_img->imgs[0].type] << "))");
+                                    << g_map_types[iter_img->base_image().type] << "))");
                 m_source->Indent();
                 m_source->writeLine(tt_string("\twxImage::AddHandler(new ")
-                                    << g_map_handlers[iter_img->imgs[0].type] << ");");
+                                    << g_map_handlers[iter_img->base_image().type] << ");");
                 m_source->Unindent();
-                m_type_generated.insert(iter_img->imgs[0].type);
+                m_type_generated.insert(iter_img->base_image().type);
             }
         }
         m_source->writeLine();
@@ -2453,7 +2453,7 @@ void CppCodeGenerator::WriteImagePreConstruction(Code& code)
     {
         // If the image is in ImagesForm then it's header file will be included which already
         // has the extern declarations.
-        if (iter_array->form == Project.get_ImagesForm())
+        if (iter_array->get_Form() == Project.get_ImagesForm())
             continue;
 
         if (!is_namespace_written)
@@ -2463,11 +2463,13 @@ void CppCodeGenerator::WriteImagePreConstruction(Code& code)
         }
         code.Eol(eol_if_needed)
             .Str("extern const unsigned char ")
-            .Str(iter_array->imgs[0].array_name);
-        code.Str("[").itoa((to_size_t) (iter_array->imgs[0].array_size & 0xFFFFFFFF)).Str("];");
-        if (iter_array->imgs[0].filename.size())
+            .Str(iter_array->base_image().array_name);
+        code.Str("[")
+            .itoa((to_size_t) (iter_array->base_image().array_size & 0xFFFFFFFF))
+            .Str("];");
+        if (iter_array->base_image().filename.size())
         {
-            code.Str("  // ").Str(iter_array->imgs[0].filename);
+            code.Str("  // ").Str(iter_array->base_image().filename);
         }
     }
 
@@ -2659,7 +2661,7 @@ void CppCodeGenerator::WriteImagePostHeader()
     bool is_namespace_written = false;
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form == images_form)
+        if (iter_array->get_Form() == images_form)
             continue;
 
         if (!is_namespace_written)
@@ -2670,13 +2672,14 @@ void CppCodeGenerator::WriteImagePostHeader()
             m_header->Indent();
             is_namespace_written = true;
         }
-        if (iter_array->imgs[0].filename.size())
+        if (iter_array->base_image().filename.size())
         {
-            m_header->writeLine(tt_string("// ") << iter_array->imgs[0].filename);
+            m_header->writeLine(tt_string("// ") << iter_array->base_image().filename);
         }
         m_header->writeLine(tt_string("extern const unsigned char ")
-                            << iter_array->imgs[0].array_name << '['
-                            << (to_size_t) (iter_array->imgs[0].array_size & 0xFFFFFFFF) << "];");
+                            << iter_array->base_image().array_name << '['
+                            << (to_size_t) (iter_array->base_image().array_size & 0xFFFFFFFF)
+                            << "];");
     }
 
     if (is_namespace_written)

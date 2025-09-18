@@ -8,7 +8,7 @@
 #include <vector>
 
 class Code;
-struct EmbeddedImage;
+class EmbeddedImage;
 
 std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size,
                                        GenLang language = GEN_LANG_PYTHON);

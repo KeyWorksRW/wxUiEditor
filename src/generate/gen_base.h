@@ -21,7 +21,7 @@ class ProjectSettings;
 class WriteCode;
 class wxWindow;
 
-struct EmbeddedImage;
+class EmbeddedImage;
 
 // The NodeEvent class is used to store event information specific to what the user has
 // requsted (node containing the event, name of the event handler) along with a pointer to

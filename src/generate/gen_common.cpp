@@ -418,7 +418,7 @@ tt_string GenerateBitmapCode(const tt_string& description)
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
-                name = "wxue_img::" + embed->imgs[0].array_name;
+                name = "wxue_img::" + embed->base_image().array_name;
             }
         }
 
@@ -552,11 +552,11 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             svg_size = GetSizeInfo(parts[IndexSize]);
         }
 
-        tt_string name = "wxue_img::" + embed->imgs[0].array_name;
+        tt_string name = "wxue_img::" + embed->base_image().array_name;
         code << "wxueBundleSVG(" << name << ", "
-             << (to_size_t) (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
-        code << (to_size_t) (embed->imgs[0].array_size >> 32) << ", wxSize(" << svg_size.x << ", "
-             << svg_size.y << "))";
+             << (to_size_t) (embed->base_image().array_size & 0xFFFFFFFF) << ", ";
+        code << (to_size_t) (embed->base_image().array_size >> 32) << ", wxSize(" << svg_size.x
+             << ", " << svg_size.y << "))";
     }
     else
     {
@@ -588,7 +588,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                         return false;
                     }
 
-                    name = "wxue_img::" + embed->imgs[0].array_name;
+                    name = "wxue_img::" + embed->base_image().array_name;
                 }
 
                 code << "wxBitmapBundle::FromBitmap(wxueImage(";
@@ -602,12 +602,12 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     first_function = ProjectImages.GetBundleFuncName(embed);
-                    first_name = "wxue_img::" + embed->imgs[0].array_name;
+                    first_name = "wxue_img::" + embed->base_image().array_name;
                 }
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
                 {
                     second_function = ProjectImages.GetBundleFuncName(embed);
-                    second_name = "wxue_img::" + embed->imgs[0].array_name;
+                    second_name = "wxue_img::" + embed->base_image().array_name;
                 }
                 code << "wxBitmapBundle::FromBitmaps(\n\t\t";
                 if (first_function.size())
@@ -643,7 +643,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
                     if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
                     {
                         function = ProjectImages.GetBundleFuncName(embed);
-                        name = "wxue_img::" + embed->imgs[0].array_name;
+                        name = "wxue_img::" + embed->base_image().array_name;
                     }
                     code << "\tbitmaps.push_back(";
                     if (function.size())
@@ -1123,10 +1123,10 @@ tt_string GenerateIconCode(const tt_string& description)
         }
         else
         {
-            tt_string name = "wxue_img::" + embed->imgs[0].array_name;
+            tt_string name = "wxue_img::" + embed->base_image().array_name;
             code << "SetIcon(wxueBundleSVG(" << name << ", "
-                 << (to_size_t) (embed->imgs[0].array_size & 0xFFFFFFFF) << ", ";
-            code << (to_size_t) (embed->imgs[0].array_size >> 32) << ", wxSize(" << svg_size.x
+                 << (to_size_t) (embed->base_image().array_size & 0xFFFFFFFF) << ", ";
+            code << (to_size_t) (embed->base_image().array_size >> 32) << ", wxSize(" << svg_size.x
                  << ", " << svg_size.y << "))";
         }
 
@@ -1149,7 +1149,7 @@ tt_string GenerateIconCode(const tt_string& description)
                     auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
-                        name = "wxue_img::" + embed->imgs[0].array_name;
+                        name = "wxue_img::" + embed->base_image().array_name;
                     }
                 }
 
@@ -1169,7 +1169,7 @@ tt_string GenerateIconCode(const tt_string& description)
                         auto embed = ProjectImages.GetEmbeddedImage(iter);
                         if (embed)
                         {
-                            name = "wxue_img::" + embed->imgs[0].array_name;
+                            name = "wxue_img::" + embed->base_image().array_name;
                         }
                     }
                     code << "\ticon.CopyFromBitmap(wxueImage(" << name << ", sizeof(" << name
@@ -1374,7 +1374,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
                 auto embed = ProjectImages.GetEmbeddedImage(iter);
                 if (embed)
                 {
-                    name = "wxue_img::" + embed->imgs[0].array_name;
+                    name = "wxue_img::" + embed->base_image().array_name;
                 }
             }
             code.Eol().Str("bitmaps.push_back(wxueImage(") << name << ", sizeof(" << name << ")));";

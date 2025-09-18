@@ -76,7 +76,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
                 if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
                     embed)
                 {
-                    code.Str("get_animation(").Str("$").Str(embed->imgs[0].array_name) += ")";
+                    code.Str("get_animation(").Str("$").Str(embed->base_image().array_name) += ")";
                     found_embedded = true;
                 }
             }
@@ -152,7 +152,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
                 auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
                 if (embed)
                 {
-                    name = "wxue_img::" + embed->imgs[0].array_name;
+                    name = "wxue_img::" + embed->base_image().array_name;
                 }
             }
 
@@ -171,7 +171,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
                 {
                     code.Eol()
                         .Str("stream = io.BytesIO(")
-                        .Str(embed->imgs[0].array_name)
+                        .Str(embed->base_image().array_name)
                         .Str(".GetData())");
                     code.Eol().Str("animate.Load(stream)");
                     found_embedded = true;

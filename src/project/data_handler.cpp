@@ -27,10 +27,6 @@
 #include "utils.h"            // Miscellaneous utility functions
 #include "write_code.h"       // Write code to Scintilla or file
 
-// Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
-bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
-                    size_t compressed_size);
-
 DataHandler& ProjectData = DataHandler::getInstance();
 
 void DataHandler::Initialize()

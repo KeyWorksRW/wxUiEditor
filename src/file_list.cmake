@@ -324,10 +324,11 @@ set (file_list
 
     # Project classes
 
-    project/project_handler.cpp # ProjectHandler class
     project/data_handler.cpp    # DataHandler class
+    project/embed_image.cpp     #  class to manage images stored in the generated code
     project/image_handler.cpp   # ProjectImage class
     project/loadproject.cpp     # Load wxUiEditor project
+    project/project_handler.cpp # ProjectHandler class
     project/saveproject.cpp     # Save a wxUiEditor project file
 
     utils/dlg_msgs.cpp          # wxMessageDialog dialogs

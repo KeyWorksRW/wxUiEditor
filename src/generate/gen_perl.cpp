@@ -381,7 +381,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         // Only write the images that aren't declared in any gen_Images List. Note that
         // this *WILL* result in duplicate images being written to different forms.
-        if (iter->form != m_ImagesForm)
+        if (iter->get_Form() != m_ImagesForm)
         {
             WriteImageConstruction(code);
             m_source->doWrite("\n");  // force an extra line break
@@ -636,18 +636,18 @@ void PerlCodeGenerator::CheckMimeBase64Requirement(Code& code)
     bool svg_import_libs = false;
     for (auto& iter: m_embedded_images)
     {
-        if (iter->form == m_ImagesForm)
+        if (iter->get_Form() == m_ImagesForm)
         {
             if (!images_file_imported)
             {
-                tt_string import_name = iter->form->as_string(prop_perl_file).filename();
+                tt_string import_name = iter->get_Form()->as_string(prop_perl_file).filename();
                 import_name.remove_extension();
                 code.Eol().Str("use ").Str(import_name) << "'";
                 m_source->writeLine(code);
                 code.clear();
                 images_file_imported = true;
             }
-            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
             {
                 if (!svg_import_libs)
                 {
@@ -659,7 +659,7 @@ void PerlCodeGenerator::CheckMimeBase64Requirement(Code& code)
                 }
             }
 
-            if (iter->form != m_ImagesForm)
+            if (iter->get_Form() != m_ImagesForm)
             {
                 // If the image isn't in the images file, then we need to add the base64 version
                 // of the bitmap

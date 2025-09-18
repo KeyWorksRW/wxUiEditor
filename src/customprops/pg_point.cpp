@@ -40,8 +40,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
-                m_org_size.x = embed->size.x;
-                m_org_size.y = embed->size.y;
+                m_org_size = embed->get_wxSize();
             }
         }
         m_value = prop->as_wxString();

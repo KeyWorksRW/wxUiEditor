@@ -116,7 +116,7 @@ void Code::BundlePerl(const tt_string_vector& parts)
             {
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap)"));
+                    CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap)"));
                     AddPerlImageName(embed);
                     *this += ".Bitmap)";
                     is_embed_success = true;
@@ -188,15 +188,15 @@ void Code::BundlePython(const tt_string_vector& parts)
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
             tt_string svg_name;
-            if (embed->form != node()->get_Form())
+            if (embed->get_Form() != node()->get_Form())
             {
-                svg_name = embed->form->as_string(prop_python_file).filename();
+                svg_name = embed->get_Form()->as_string(prop_python_file).filename();
                 svg_name.remove_extension();
-                svg_name << '.' << embed->imgs[0].array_name;
+                svg_name << '.' << embed->base_image().array_name;
             }
             else
             {
-                svg_name = embed->imgs[0].array_name;
+                svg_name = embed->base_image().array_name;
             }
             insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(")
                           << svg_name << "))\n");
@@ -224,7 +224,7 @@ void Code::BundlePython(const tt_string_vector& parts)
             {
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap)"));
+                    CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap)"));
                     AddPythonImageName(embed);
                     *this += ".Bitmap)";
                     is_embed_success = true;
@@ -246,7 +246,7 @@ void Code::BundlePython(const tt_string_vector& parts)
             {
                 if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap"));
+                    CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap"));
                     AddPythonImageName(embed);
 
                     *this += ".Bitmap";
@@ -254,7 +254,7 @@ void Code::BundlePython(const tt_string_vector& parts)
                     if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
                         embed2)
                     {
-                        Comma().CheckLineLength(embed2->imgs[0].array_name.size() +
+                        Comma().CheckLineLength(embed2->base_image().array_name.size() +
                                                 sizeof(".Bitmap)"));
                         AddPythonImageName(embed2);
                         *this += ".Bitmap)";
@@ -291,7 +291,7 @@ void Code::BundlePython(const tt_string_vector& parts)
                     if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]);
                         embed)
                     {
-                        CheckLineLength(embed->imgs[0].array_name.size() + sizeof(".Bitmap"));
+                        CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap"));
                         AddPythonImageName(embed);
 
                         *this += ".Bitmap";
@@ -316,26 +316,26 @@ void Code::BundlePython(const tt_string_vector& parts)
 
 void Code::AddPythonImageName(const EmbeddedImage* embed)
 {
-    if (embed->form->is_Gen(gen_Images))
+    if (embed->get_Form()->is_Gen(gen_Images))
     {
-        tt_string import_name = embed->form->as_string(prop_python_file).filename();
+        tt_string import_name = embed->get_Form()->as_string(prop_python_file).filename();
         import_name.remove_extension();
 
         Str(import_name).Str(".");
     }
-    Str(embed->imgs[0].array_name);
+    Str(embed->base_image().array_name);
 }
 
 void Code::AddPerlImageName(const EmbeddedImage* embed)
 {
-    if (embed->form->is_Gen(gen_Images))
+    if (embed->get_Form()->is_Gen(gen_Images))
     {
-        tt_string import_name = embed->form->as_string(prop_perl_file).filename();
+        tt_string import_name = embed->get_Form()->as_string(prop_perl_file).filename();
         import_name.remove_extension();
 
         Str(import_name).Str(".");
     }
-    Str(embed->imgs[0].array_name);
+    Str(embed->base_image().array_name);
 }
 
 void Code::BundleRuby(const tt_string_vector& parts)
@@ -386,15 +386,15 @@ void Code::BundleRuby(const tt_string_vector& parts)
                 return;
             }
             tt_string svg_name;
-            if (embed->form != node()->get_Form())
+            if (embed->get_Form() != node()->get_Form())
             {
-                svg_name = embed->form->as_string(prop_ruby_file).filename();
+                svg_name = embed->get_Form()->as_string(prop_ruby_file).filename();
                 svg_name.remove_extension();
-                svg_name << ".$" << embed->imgs[0].array_name;
+                svg_name << ".$" << embed->base_image().array_name;
             }
             else
             {
-                svg_name = "$" + embed->imgs[0].array_name;
+                svg_name = "$" + embed->base_image().array_name;
             }
             insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
                           << svg_name << "))\n");
@@ -436,14 +436,14 @@ void Code::BundleRuby(const tt_string_vector& parts)
                     ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                 embed1)
             {
-                Str("wxue_get_bundle(").Str("$").Str(embed1->imgs[0].array_name);
+                Str("wxue_get_bundle    (").Str("$").Str(embed1->base_image().array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
                     if (EmbeddedImage* embed2 =
                             ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
                         embed2)
                     {
-                        Comma().Str("$").Str(embed2->imgs[0].array_name);
+                        Comma().Str("$").Str(embed2->base_image().array_name);
                     }
                     if (bundle->lst_filenames.size() > 2)
                     {
@@ -451,7 +451,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
                                 ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
                             embed3)
                         {
-                            Comma().Str("$").Str(embed3->imgs[0].array_name);
+                            Comma().Str("$").Str(embed3->base_image().array_name);
                         }
                     }
                 }

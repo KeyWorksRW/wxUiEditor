@@ -365,7 +365,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     std::sort(m_embedded_images.begin(), m_embedded_images.end(),
               [](const EmbeddedImage* a, const EmbeddedImage* b)
               {
-                  return (a->imgs[0].array_name.compare(b->imgs[0].array_name) < 0);
+                  return (a->base_image().array_name.compare(b->base_image().array_name) < 0);
               });
 }
 
@@ -383,15 +383,15 @@ void PythonCodeGenerator::GenerateImagesForm()
 
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node)
+        if (iter_array->get_Form() != m_form_node)
             continue;
 
-        if (iter_array->imgs[0].filename.size())
+        if (iter_array->base_image().filename.size())
         {
-            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
+            code.Eol().Str("# ").Str(iter_array->base_image().filename);
         }
-        code.Eol().Str(iter_array->imgs[0].array_name);
-        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
+        code.Eol().Str(iter_array->base_image().array_name);
+        if (iter_array->base_image().type == wxBITMAP_TYPE_SVG)
         {
             code.Str(" = (");
         }
@@ -402,8 +402,9 @@ void PythonCodeGenerator::GenerateImagesForm()
 
         m_source->writeLine(code);
         code.clear();
-        auto encoded = base64_encode(iter_array->imgs[0].array_data.get(),
-                                     iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
+        auto encoded =
+            base64_encode(iter_array->base_image().array_data.get(),
+                          iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
         if (encoded.size())
         {
             encoded.back() += ")";
@@ -429,18 +430,18 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
     bool svg_import_libs = false;
     for (auto& iter: m_embedded_images)
     {
-        if (iter->form == m_ImagesForm)
+        if (iter->get_Form() == m_ImagesForm)
         {
             if (!images_file_imported)
             {
-                tt_string import_name = iter->form->as_string(prop_python_file).filename();
+                tt_string import_name = iter->get_Form()->as_string(prop_python_file).filename();
                 import_name.remove_extension();
                 code.Str("import ").Str(import_name);
                 m_source->writeLine(code);
                 code.clear();
                 images_file_imported = true;
             }
-            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
             {
                 m_source->writeLine("import zlib");
                 m_source->writeLine("import base64");
@@ -449,7 +450,7 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
         }
         else if (!svg_import_libs)
         {
-            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
             {
                 m_source->writeLine("import zlib");
                 m_source->writeLine("import base64");
@@ -462,25 +463,25 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
     bool blank_line_seen = false;
     for (auto& iter: m_embedded_images)
     {
-        if (iter->form != m_ImagesForm && iter->form != m_form_node)
+        if (iter->get_Form() != m_ImagesForm && iter->get_Form() != m_form_node)
         {
             if (!blank_line_seen)
             {
                 m_source->writeLine();
                 blank_line_seen = true;
             }
-            if (iter->form->as_string(prop_python_file).filename().empty())
+            if (iter->get_Form()->as_string(prop_python_file).filename().empty())
             {
                 code.AddComment(tt_string("No filename specified for ")
-                                    << iter->form->get_FormName() << " which contains "
-                                    << iter->imgs[0].array_name,
+                                    << iter->get_Form()->get_FormName() << " which contains "
+                                    << iter->base_image().array_name,
                                 true);
                 code += "# ";
             }
             code.Str("from ")
-                .Str(iter->form->as_string(prop_python_file).filename())
+                .Str(iter->get_Form()->as_string(prop_python_file).filename())
                 .Str(" import ");
-            code.Str(iter->imgs[0].array_name);
+            code.Str(iter->base_image().array_name);
             m_source->writeLine(code);
             code.clear();
         }
@@ -491,7 +492,7 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
     {
         // Only write the images that aren't declared in any gen_Images List. Note that
         // this *WILL* result in duplicate images being written to different forms.
-        if (iter->form == m_form_node)
+        if (iter->get_Form() == m_form_node)
         {
             // This will be true if an image was declared in a different form
             if (blank_line_seen)

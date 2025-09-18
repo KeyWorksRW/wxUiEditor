@@ -140,13 +140,13 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     {
         tt_string image_path(parts[IndexImage]);
         auto* embed = ProjectImages.GetEmbeddedImage(image_path);
-        if (embed && image_path == embed->imgs[0].filename)
+        if (embed && image_path == embed->base_image().filename)
         {
             // If the user is adding a node to a gen_Images node, then be sure that the embed
             // entry form is pointing to the gen_Images node.
             if (node_prop->getNode()->is_Gen(gen_embedded_image))
             {
-                embed->form = node_prop->getNode()->get_Parent();
+                embed->set_Form(node_prop->getNode()->get_Parent());
             }
             // If there is an Images List node and it is set to auto add, then fall through
             // to the section below that adds the image to the Images List node.
@@ -221,9 +221,9 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             return;
         }
         auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-        if (image_list_node && embed && embed->form != image_list_node)
+        if (image_list_node && embed && embed->get_Form() != image_list_node)
         {
-            embed->form = image_list_node;
+            embed->set_Form(image_list_node);
             auto filename = parts[IndexImage].filename();
             size_t pos = 0;
             for (const auto& embedded_image: image_list_node->get_ChildNodePtrs())

@@ -36,7 +36,7 @@ void ImageProperties::InitValues(tt_string_view value)
             auto* embed = ProjectImages.GetEmbeddedImage(image);
             if (embed)
             {
-                m_size = embed->size;
+                m_size = embed->get_wxSize();
             }
             else if (type == "Art" && mstr.size() > IndexImage)
             {

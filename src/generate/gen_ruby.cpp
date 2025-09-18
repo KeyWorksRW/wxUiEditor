@@ -486,7 +486,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         // Only write the images that aren't declared in any gen_Images List. Note that
         // this *WILL* result in duplicate images being written to different forms.
-        if (iter->form != m_ImagesForm)
+        if (iter->get_Form() != m_ImagesForm)
         {
             WriteImageConstruction(code);
             m_source->doWrite("\n");  // force an extra line break
@@ -530,18 +530,18 @@ void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
     bool svg_import_libs = false;
     for (auto& iter: m_embedded_images)
     {
-        if (iter->form == m_ImagesForm)
+        if (iter->get_Form() == m_ImagesForm)
         {
             if (!images_file_imported)
             {
-                tt_string import_name = iter->form->as_string(prop_ruby_file).filename();
+                tt_string import_name = iter->get_Form()->as_string(prop_ruby_file).filename();
                 import_name.remove_extension();
                 code.Str("require_relative '").Str(import_name) << "'";
                 m_source->writeLine(code);
                 code.clear();
                 images_file_imported = true;
             }
-            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
             {
                 if (!m_zlib_requirement_written)
                 {
@@ -563,7 +563,7 @@ void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
         }
         else if (!svg_import_libs)
         {
-            if (iter->imgs[0].type == wxBITMAP_TYPE_SVG)
+            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
             {
                 if (!m_zlib_requirement_written)
                 {
@@ -583,7 +583,7 @@ void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
                 svg_import_libs = true;
             }
 
-            if (iter->form != m_ImagesForm)
+            if (iter->get_Form() != m_ImagesForm)
             {
                 // If the image isn't in the images file, then we need to add the base64 version
                 // of the bitmap
@@ -633,15 +633,15 @@ void RubyCodeGenerator::GenerateImagesForm()
 
     for (auto iter_array: m_embedded_images)
     {
-        if (iter_array->form != m_form_node)
+        if (iter_array->get_Form() != m_form_node)
             continue;
 
-        if (iter_array->imgs[0].filename.size())
+        if (iter_array->base_image().filename.size())
         {
-            code.Eol().Str("# ").Str(iter_array->imgs[0].filename);
+            code.Eol().Str("# ").Str(iter_array->base_image().filename);
         }
-        code.Eol().Str("$").Str(iter_array->imgs[0].array_name);
-        if (iter_array->imgs[0].type == wxBITMAP_TYPE_SVG)
+        code.Eol().Str("$").Str(iter_array->base_image().array_name);
+        if (iter_array->base_image().type == wxBITMAP_TYPE_SVG)
         {
             code.Str(" = (");
         }
@@ -651,8 +651,9 @@ void RubyCodeGenerator::GenerateImagesForm()
         }
         m_source->writeLine(code);
         code.clear();
-        auto encoded = base64_encode(iter_array->imgs[0].array_data.get(),
-                                     iter_array->imgs[0].array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+        auto encoded =
+            base64_encode(iter_array->base_image().array_data.get(),
+                          iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
         if (encoded.size())
         {
             // Remove the trailing '+' character

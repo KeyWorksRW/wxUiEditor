@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ImageHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +38,8 @@ public:
     ImageHandler(ImageHandler const&) = delete;
 
     void operator=(ImageHandler const&) = delete;
+
+    ~ImageHandler() = default;
 
     static ImageHandler& getInstance()
     {

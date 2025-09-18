@@ -19,6 +19,8 @@ class wxPoint;
 class wxSize;
 class wxStyledTextCtrl;
 class Node;
+class wxInputStream;
+class wxOutputStream;
 
 tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue);
 tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue);
@@ -102,3 +104,7 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true
 
 // Call this after creating a wxRibbonBar tool in order to ensure that it has a unique ID/
 void SetUniqueRibbonToolID(Node* node);
+
+// Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
+                    size_t compressed_size);

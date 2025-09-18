@@ -671,3 +671,44 @@ ClassOverrideType GetClassOverrideType(Node* node)
         return ClassOverrideType::None;  // No override specified
     }
 }
+
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
+{
+    size_t buf_size;
+    if (size == tt::npos || size > (64 * 1024))
+        buf_size = (64 * 1024);
+    else
+        buf_size = size;
+
+    auto read_buf = std::make_unique<unsigned char[]>(buf_size);
+    auto read_size = buf_size;
+
+    size_t copied_data = 0;
+    for (;;)
+    {
+        if (size != tt::npos && copied_data + read_size > size)
+            read_size = size - copied_data;
+        inputStream->Read(read_buf.get(), read_size);
+
+        auto actually_read = inputStream->LastRead();
+        outputStream->Write(read_buf.get(), actually_read);
+        if (outputStream->LastWrite() != actually_read)
+        {
+            return false;
+        }
+
+        if (size == tt::npos)
+        {
+            if (inputStream->Eof())
+                break;
+        }
+        else
+        {
+            copied_data += actually_read;
+            if (copied_data >= size)
+                break;
+        }
+    }
+
+    return true;
+}

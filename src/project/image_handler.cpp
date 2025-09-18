@@ -1165,15 +1165,18 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     auto result = doc.load_file_string(path);
     if (!result)
     {
-        // BUGBUG: [Randalphwa - 02-15-2024] If someone edits the SVG file by hand, or uses a tool
-        // that doesn't produce valid XML, then we'll get an error here. We need to let the user
-        // know, but not if code is being generated from a command line, and not if there are a lot
-        // of files with errors.
-        //
-        // tldr; Find a way to collect errors/warnings and present them all at once.
-        wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
-                        wxOK | wxICON_ERROR)
-            .ShowModal();
+        if (!wxGetApp().is_Generating())
+        {
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
+        }
+        else
+        {
+            wxGetApp().get_CmdLineLog().emplace_back(std::string("Error parsing '") +
+                                                     path.filename().ToStdString() + "': " +
+                                                     result.detailed_msg);
+        }
         return false;
     }
 

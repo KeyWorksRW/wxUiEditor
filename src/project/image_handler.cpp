@@ -12,6 +12,7 @@
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
 #include <wx/artprov.h>   // wxArtProvider class
+#include <wx/dirdlg.h>    // wxDirDialog base class
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
@@ -131,7 +132,8 @@ bool ImageHandler::CheckNode(Node* node)
             EmbeddedImage* embed;
             if (embed = FindEmbedded(parts[IndexImage].filename()); !embed)
             {
-                ASSERT_MSG(embed, std::format("Embedded image not found: {}", parts[IndexImage].as_str()));
+                ASSERT_MSG(embed,
+                           std::format("Embedded image not found: {}", parts[IndexImage].as_str()));
                 continue;
             }
 
@@ -1440,6 +1442,38 @@ tt_string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg
         name << "wxue_img::bundle_" << embed->base_image().array_name << "()";
     }
     return name;
+}
+
+bool ImageHandler::ArtFolderChanged()
+{
+    wxFileName path;
+    path.Assign(Project.as_string(prop_art_directory));
+    if (!path.DirExists())
+    {
+        wxMessageDialog(wxGetMainFrame()->getWindow(),
+                        wxString("The specified Art Directory does not exist:\n")
+                            << Project.as_string(prop_art_directory),
+                        "Art Directory Not Found", wxOK | wxICON_ERROR)
+            .ShowModal();
+
+        // If the directory doesn't exist, then we need to reset it. Otherwise on Windows, the
+        // dialog will be for the computer, requiring the user to drill down to where the project
+        // file is.
+        path = *Project.get_wxFileName();
+        path.SetFullName(wxEmptyString);  // clear the project filename
+
+        wxDirDialog dlg(wxGetMainFrame(), wxDirSelectorPromptStr, path.GetPath(),
+                        wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            path = dlg.GetPath();
+            path.MakeRelativeTo(Project.get_ProjectPath());
+            m_project_node->set_value(prop_art_directory, path.GetPath());
+            return true;
+        }
+        return false;
+    }
+    return true;
 }
 
 namespace wxue_img

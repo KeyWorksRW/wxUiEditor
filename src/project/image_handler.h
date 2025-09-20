@@ -118,6 +118,9 @@ public:
     // Returns nullptr if the image is not found
     EmbeddedImage* FindEmbedded(std::string_view);
 
+    // Returns false if the new art folder does not exist.
+    bool ArtFolderChanged();
+
 protected:
     bool CheckNode(Node* node);
 

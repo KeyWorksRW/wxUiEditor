@@ -1,11 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ImageHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+// ImageHandler is a global class, accessed through ProjectImages. It stores all of the images used
+// in the project, primarily in a map of EmbeddedImage objects.
 
 #include <map>
 
@@ -13,7 +16,7 @@
 
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
-#include "embed_image.h"  // EmbeddedImage struct
+#include "embed_image.h"  // EmbeddedImage class
 
 class Node;
 class wxAnimation;
@@ -35,6 +38,8 @@ public:
     ImageHandler(ImageHandler const&) = delete;
 
     void operator=(ImageHandler const&) = delete;
+
+    ~ImageHandler() = default;
 
     static ImageHandler& getInstance()
     {
@@ -112,6 +117,9 @@ public:
 
     // Returns nullptr if the image is not found
     EmbeddedImage* FindEmbedded(std::string_view);
+
+    // Returns false if the new art folder does not exist.
+    bool ArtFolderChanged();
 
 protected:
     bool CheckNode(Node* node);

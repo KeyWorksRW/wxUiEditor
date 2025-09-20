@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ImageHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
 #include <wx/artprov.h>   // wxArtProvider class
+#include <wx/dirdlg.h>    // wxDirDialog base class
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
@@ -52,15 +53,6 @@ namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
 }
-
-// Convert a data array into a wxAnimation
-inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxAnimation animation;
-    animation.Load(strm);
-    return animation;
-};
 
 inline tt_string ConvertToLookup(const tt_string& description)
 {
@@ -137,10 +129,13 @@ bool ImageHandler::CheckNode(Node* node)
                 continue;
             }
 
-            auto* embed = FindEmbedded(parts[IndexImage].filename());
-            ASSERT(embed)
-            if (!embed)
+            EmbeddedImage* embed;
+            if (embed = FindEmbedded(parts[IndexImage].filename()); !embed)
+            {
+                ASSERT_MSG(embed,
+                           std::format("Embedded image not found: {}", parts[IndexImage].as_str()));
                 continue;
+            }
 
             if (node_form->is_Gen(gen_Images))
             {
@@ -152,8 +147,8 @@ bool ImageHandler::CheckNode(Node* node)
             }
             else
             {
-                auto child_pos = m_project_node->get_ChildPosition(embed->get_Form());
-                if (child_pos > node_position)
+                if (auto child_pos = m_project_node->get_ChildPosition(embed->get_Form());
+                    child_pos > node_position)
                 {
                     // The original embed->get_Form() is setup by parsing all of the nodes. However,
                     // code generation may not actually have a file set for a form, in which
@@ -197,7 +192,9 @@ wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description)
         return GetPropertyBitmapBundle(description);
     }
     else
+    {
         return wxue_img::bundle_unknown_svg(32, 32);
+    }
 }
 
 // This gets called by PropertyGrid_Image::RefreshChildren() in pg_image.cpp when an XPM file
@@ -245,11 +242,10 @@ wxImage ImageHandler::GetPropertyBitmap(const tt_string_vector& parts, bool chec
             path = m_project_node->as_string(prop_art_directory);
             path.append_filename(parts[IndexImage]);
         }
-        auto embed = GetEmbeddedImage(path);
-        if (!embed)
+        EmbeddedImage* embed;
+        if (embed = GetEmbeddedImage(path); !embed)
         {
-            bool added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm());
-            if (added)
+            if (bool added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm()); added)
             {
                 embed = GetEmbeddedImage(path);
             }
@@ -1069,8 +1065,7 @@ wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description)
         return wxue_img::bundle_unknown_svg(32, 32);
     }
 
-    auto* embed = FindEmbedded(parts[IndexImage].filename());
-    if (embed)
+    if (auto* embed = FindEmbedded(parts[IndexImage].filename()); embed)
     {
         return embed->get_bundle(parts.size() > 2 ? GetSizeInfo(parts[IndexSize]) : wxDefaultSize);
     }
@@ -1147,11 +1142,10 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
 
     if (parts[IndexType].contains("Embed"))
     {
-        auto embed = GetEmbeddedImage(path);
-        if (!embed)
+        EmbeddedImage* embed;
+        if (embed = GetEmbeddedImage(path); !embed)
         {
-            bool added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm());
-            if (added)
+            if (auto added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm()); added)
             {
                 embed = GetEmbeddedImage(path);
             }
@@ -1164,17 +1158,6 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
             p_animation->Load(stream);
         }
     }
-    else
-    {
-        // This handles Header files
-        // GetAnimationImage(image, path);
-    }
-
-    if (!p_animation->IsOk())
-    {
-        // return GetAnimFromHdr(wxue_img::pulsing_unknown_gif,
-        // sizeof(wxue_img::pulsing_unknown_gif));
-    }
 }
 
 bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
@@ -1182,20 +1165,24 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
     // Run the file through an XML parser so that we can remove content that isn't used, as well as
     // removing line breaks, leading spaces, etc.
     pugi::xml_document doc;
-    auto result = doc.load_file_string(path);
-    if (!result)
+    if (auto result = doc.load_file_string(path); !result)
     {
-        // BUGBUG: [Randalphwa - 02-15-2024] If someone edits the SVG file by hand, or uses a tool
-        // that doesn't produce valid XML, then we'll get an error here. We need to let the user
-        // know, but not if code is being generated from a command line, and not if there are a lot
-        // of files with errors.
-        //
-        // tldr; Find a way to collect errors/warnings and present them all at once.
-        wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
-                        wxOK | wxICON_ERROR)
-            .ShowModal();
+        if (!wxGetApp().is_Generating())
+        {
+            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
+        }
+        else
+        {
+            wxGetApp().get_CmdLineLog().emplace_back(std::string("Error parsing '") +
+                                                     path.filename().ToStdString() +
+                                                     "': " + result.detailed_msg);
+        }
         return false;
     }
+
+    // The InkScape program adds a lot of extra stuff that is not used when rendering the SVG.
 
     auto root = doc.first_child();  // this should be the <svg> element.
     if (root.name() == "svg")
@@ -1231,7 +1218,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string path, Node* form)
 
     if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
     {
-        // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+        FAIL_MSG(tt_string() << "Failed to copy stream data");
         return false;
     }
     save_strem.Close();
@@ -1455,6 +1442,38 @@ tt_string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg
         name << "wxue_img::bundle_" << embed->base_image().array_name << "()";
     }
     return name;
+}
+
+bool ImageHandler::ArtFolderChanged()
+{
+    wxFileName path;
+    path.Assign(Project.as_string(prop_art_directory));
+    if (!path.DirExists())
+    {
+        wxMessageDialog(wxGetMainFrame()->getWindow(),
+                        wxString("The specified Art Directory does not exist:\n")
+                            << Project.as_string(prop_art_directory),
+                        "Art Directory Not Found", wxOK | wxICON_ERROR)
+            .ShowModal();
+
+        // If the directory doesn't exist, then we need to reset it. Otherwise on Windows, the
+        // dialog will be for the computer, requiring the user to drill down to where the project
+        // file is.
+        path = *Project.get_wxFileName();
+        path.SetFullName(wxEmptyString);  // clear the project filename
+
+        wxDirDialog dlg(wxGetMainFrame(), wxDirSelectorPromptStr, path.GetPath(),
+                        wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            path = dlg.GetPath();
+            path.MakeRelativeTo(Project.get_ProjectPath());
+            m_project_node->set_value(prop_art_directory, path.GetPath());
+            return true;
+        }
+        return false;
+    }
+    return true;
 }
 
 namespace wxue_img

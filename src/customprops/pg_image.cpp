@@ -150,8 +150,8 @@ void PropertyGrid_Image::RefreshChildren()
             {
                 if (m_img_props.type != "XPM")
                 {
-                    auto* embed = ProjectImages.FindEmbedded(m_img_props.CombineValues());
-                    if (embed)
+                    if (auto* embed = ProjectImages.FindEmbedded(m_img_props.CombineValues());
+                        embed)
                     {
                         bundle = embed->get_bundle(m_img_props.GetSize());
                     }

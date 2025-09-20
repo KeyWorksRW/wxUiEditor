@@ -7,6 +7,10 @@
 
 #pragma once
 
+// SVG and XPM files only contain a single image. All other image types can contain multiple images,
+// generally with different sizes to support different display resolutions. EmbeddedImage always
+// stores the first image in the file as imgs[0] accessed via base_image().
+
 #include <filesystem>
 #include <vector>
 
@@ -27,6 +31,9 @@ struct ImageInfo
     // SVG and XPM files are stored as zlib-compressed data. All other image types are stored
     // in their original format.
     std::unique_ptr<unsigned char[]> array_data;
+
+    // The lower 32-bits contains the compressed size of array_data. The upper 32-bits contains the
+    // original size of the image file before compression.
     uint64_t array_size;  // size of array_data in bytes
 
     std::filesystem::file_time_type file_time;  // time the file was last modified

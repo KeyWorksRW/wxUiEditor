@@ -7,10 +7,12 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
-class TextDocumentGenerator : public BaseGenerator
+class TextDocGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
+
+    bool HeaderCode(Code&) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;

@@ -9,12 +9,13 @@
 class DocViewAppGenerator : public BaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
-    bool AfterConstructionCode(Code&) override;
-    bool HeaderCode(Code&) override;
-    bool PreClassHeaderCode(Code&) override;
-    void AddProtectedHdrMembers(std::set<std::string>&) override;
+    bool ConstructionCode(Code& code) override;
+    bool AfterConstructionCode(Code& code) override;
+
+    bool BaseClassNameCode(Code& code) override;
+    bool PreClassHeaderCode(Code& code) override;
+    bool HeaderCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     GenLang /* language */) override;
+                     GenLang language) override;
 };

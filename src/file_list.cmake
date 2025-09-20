@@ -189,9 +189,20 @@ set (file_list
 
     # Document Management (MDI)
 
-    generate/mdi/gen_doc_view_app.cpp   # Generates base class for wxDocument/wView applications
+    newdialogs/new_mdi.cpp          # Dialog for creating a new MDI application
 
+    generate/mdi/gen_doc_view_app.cpp   # Generates base class for wxDocument/wxView applications
+
+    generate/mdi/gen_doc_image.cpp      # wxImage document class
+    generate/mdi/gen_doc_richtext.cpp   # wxRichTextCtrl document class
+    generate/mdi/gen_doc_splitter.cpp   # wxSplitterWindow document class
+    generate/mdi/gen_doc_scintilla.cpp  # Scintilla document class
     generate/mdi/gen_doc_textctrl.cpp   # wxTextCtrl document class
+
+    generate/mdi/gen_view_image.cpp     # wxImage view class
+    generate/mdi/gen_view_richtext.cpp  # wxRichTextCtrl view class
+    generate/mdi/gen_view_splitter.cpp  # wxSplitterWindow view class
+    generate/mdi/gen_view_scintilla.cpp # wxStyledTextCtrl view class
     generate/mdi/gen_view_textctrl.cpp  # wxTextCtrl view class
 
     generate/mdi/gen_doc_parent_frame.cpp  # wxDocParentFrame generator
@@ -287,7 +298,6 @@ set (file_list
 
     # (generated) newdialogs/new_dialog.cpp     # Dialog for creating a new project dialog
     # (generated) newdialogs/new_frame.cpp      # Dialog for creating a new project wxFrame
-    # (generated) newdialogs/new_mdi.cpp        # Dialog for creating a new MDI application
     # (generated) newdialogs/new_panel.cpp      # Dialog for creating a new form panel
     # (generated) newdialogs/new_propsheet.cpp  # Dialog for creating a new wxPropertySheetDialog
     # (generated) newdialogs/new_ribbon.cpp     # Dialog for creating a new wxRibbonBar

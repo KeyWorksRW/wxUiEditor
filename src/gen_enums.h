@@ -751,7 +751,20 @@ namespace GenEnum
         gen_DocViewApp,
         gen_MdiFrameMenuBar,
         gen_MdiDocMenuBar,
+
+        // There are, of course, a lot more possibilities, but this should provide enough types that
+        // a user can use them as a template for creating their own document and view classes.
+
+        gen_DocumentImage,
+        gen_DocumentRichTextCtrl,
+        gen_DocumentSplitterWindow,
+        gen_DocumentStyledTextCtrl,
         gen_DocumentTextCtrl,
+
+        gen_ViewImage,
+        gen_ViewRichTextCtrl,
+        gen_ViewSplitterWindow,
+        gen_ViewStyledTextCtrl,
         gen_ViewTextCtrl,
 
         // The following are the rergular generators

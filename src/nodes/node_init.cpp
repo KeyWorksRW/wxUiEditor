@@ -244,8 +244,6 @@ static const ParentChild lstParentChild[] = {
     { type_folder, type_aui_toolbar_form, infinite },
     { type_folder, type_wizard, infinite },
     { type_folder, type_DocViewApp, one },
-    { type_folder, type_wx_document, infinite },
-    { type_folder, type_wx_view, infinite },
     { type_folder, type_propsheetform, infinite },
 
     { type_sub_folder, type_form, infinite },
@@ -259,6 +257,12 @@ static const ParentChild lstParentChild[] = {
     { type_sub_folder, type_aui_toolbar_form, infinite },
     { type_sub_folder, type_wizard, infinite },
     { type_sub_folder, type_propsheetform, infinite },
+
+    // MDI
+    { type_DocViewApp, type_wx_document, infinite },
+    { type_DocViewApp, type_mdi_menubar, one },
+    { type_wx_document, type_doc_menubar, one },
+    { type_wx_document, type_wx_view, infinite },
 
     // Containers
 

@@ -617,7 +617,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_DocViewApp, "DocViewApp" },
     { type_wx_document, "wx_document" },
     { type_mdi_menubar, "mdi_menubar" },
-    { type_doc_menubar, "mdi_doc_menubar" },
+    { type_doc_menubar, "doc_menubar" },
     { type_wx_view, "wx_view" },
 
 };
@@ -697,7 +697,17 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_DocViewApp, "DocViewApp" },
     { gen_MdiFrameMenuBar, "MdiFrameMenuBar" },
     { gen_MdiDocMenuBar, "MdiDocMenuBar" },
+
+    { gen_DocumentImage, "DocumentImage" },
+    { gen_DocumentRichTextCtrl, "DocumentRichTextCtrl" },
+    { gen_DocumentSplitterWindow, "DocumentSplitterWindow" },
+    { gen_DocumentStyledTextCtrl, "DocumentStyledTextCtrl" },
     { gen_DocumentTextCtrl, "DocumentTextCtrl" },
+
+    { gen_ViewImage, "ViewImage" },
+    { gen_ViewRichTextCtrl, "ViewRichTextCtrl" },
+    { gen_ViewSplitterWindow, "ViewSplitterWindow" },
+    { gen_ViewStyledTextCtrl, "ViewStyledTextCtrl" },
     { gen_ViewTextCtrl, "ViewTextCtrl" },
 
     // The following are the regular generators

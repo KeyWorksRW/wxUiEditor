@@ -601,7 +601,7 @@
         <property name="var_name" type="string">m_default_menubar</property>
     </gen>
 
-    <gen class="MdiDocMenuBar" image="wxMenuBar" type="mdi_doc_menubar">
+    <gen class="MdiDocMenuBar" image="wxMenuBar" type="doc_menubar">
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <property name="var_name" type="string">m_doc_menubar</property>

@@ -5477,12 +5477,13 @@
       </node>
       <node
         class="wxDialog"
-        class_name="NewMdiForm"
+        class_name="NewMdiFormBase"
         title="New MDI Application"
-        base_file="..\newdialogs\new_mdi.cpp"
-        inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@"
-        private_members="1"
-        use_derived_class="0"
+        base_file="new_mdi_base"
+        derived_class_name="NewMdiForm"
+        private_members="0"
+        protected_class_methods="&quot;virtual void VerifyClassName() = 0;&quot;"
+        pure_virtual_functions="1"
         wxEVT_INIT_DIALOG="[](wxInitDialogEvent&amp; event)@@{@@event.Skip();@@}[python:OnInit]">
         <node
           class="wxBoxSizer"
@@ -5562,7 +5563,7 @@
                 class_access="none"
                 label="wxAuiMDIParentFrame"
                 style="wxRB_GROUP"
-                var_name="radioBtn"
+                var_name="radioBtn_AuiMDIParentFrame"
                 get_function="is_aui_frame"
                 validator_variable="m_aui_frame" />
               <node
@@ -5582,10 +5583,9 @@
               flags="wxEXPAND">
               <node
                 class="wxChoice"
-                class_access="none"
-                contents="&quot;wxSplitterWindow&quot; &quot;wxStyledTextCtrl&quot; &quot;wxTextCtrl&quot;"
+                contents="&quot;wxImage&quot; &quot;wxRichTextCtrl&quot; &quot;wxSplitterWindow&quot; &quot;wxStyledTextCtrl&quot; &quot;wxTextCtrl&quot;"
                 selection_string="wxTextCtrl"
-                var_name="choice_view"
+                var_name="m_choice_view_type"
                 get_function="get_view_type"
                 validator_variable="m_view_type"
                 proportion="1"
@@ -5599,9 +5599,8 @@
                 alignment="wxALIGN_CENTER_VERTICAL|" />
               <node
                 class="wxTextCtrl"
-                class_access="none"
                 value="TextViewBase"
-                var_name="view_classname"
+                var_name="m_txtctrl_view_classname"
                 get_function="get_view_class"
                 validator_variable="m_view_class"
                 tooltip="Change this to something unique to your project."

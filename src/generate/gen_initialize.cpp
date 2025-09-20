@@ -116,8 +116,17 @@
 #include "mdi/gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
 #include "mdi/gen_mdi_menu.h"      // Menu bar classes for an MDI frame
 
+#include "mdi/gen_doc_image.h"      // wxImage document class
+#include "mdi/gen_doc_richtext.h"   // wxRichTextCtrl document class
+#include "mdi/gen_doc_scintilla.h"  // wxStyledTextCtrl document class
+#include "mdi/gen_doc_splitter.h"   // wxSplitterWindow document class
 #include "mdi/gen_doc_textctrl.h"   // wxTextCtrl document class
-#include "mdi/gen_view_textctrl.h"  // wxTextCtrl view class
+
+#include "mdi/gen_view_image.h"      // wxImage view class
+#include "mdi/gen_view_richtext.h"   // wxRichTextCtrl view class
+#include "mdi/gen_view_scintilla.h"  // wxStyledTextCtrl view class
+#include "mdi/gen_view_splitter.h"   // wxSplitterWindow view class
+#include "mdi/gen_view_textctrl.h"   // wxTextCtrl view class
 
 #include "gen_enums.h"  // Enumerations for generators
 
@@ -294,7 +303,16 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxAuiMDIChildFrame, AuiMDIChildFrame)
 
     SET_GENERATOR(gen_DocViewApp, DocViewAppGenerator)
-    SET_GENERATOR(gen_DocumentTextCtrl, TextDocumentGenerator)
+
+    SET_GENERATOR(gen_DocumentImage, ImageDocGenerator)
+    SET_GENERATOR(gen_ViewImage, ImageViewGenerator)
+    SET_GENERATOR(gen_DocumentRichTextCtrl, RichTextDocGenerator)
+    SET_GENERATOR(gen_ViewRichTextCtrl, RichTextViewGenerator)
+    SET_GENERATOR(gen_DocumentSplitterWindow, SplitterDocGenerator)
+    SET_GENERATOR(gen_ViewSplitterWindow, SplitterViewGenerator)
+    SET_GENERATOR(gen_DocumentStyledTextCtrl, ScintillaDocGenerator)
+    SET_GENERATOR(gen_ViewStyledTextCtrl, ScintillaViewGenerator)
+    SET_GENERATOR(gen_DocumentTextCtrl, TextDocGenerator)
     SET_GENERATOR(gen_ViewTextCtrl, TextViewGenerator)
 
     SET_GENERATOR(gen_Project, ProjectGenerator)

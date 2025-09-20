@@ -53,9 +53,6 @@
     #include <wx/debug.h>  // Misc debug functions and macros
 #endif
 
-// included here so that C5054 gets disabled
-// #include <wx/propgrid/propgridpagestate.h>
-
 #include <wx/gdicmn.h>  // Common GDI classes, types and declarations
 #include <wx/msgdlg.h>  // common header and base class for wxMessageDialog
 #include <wx/string.h>  // wxString class
@@ -120,7 +117,7 @@ constexpr int START_IMPORT_FILE_IDS = wxID_HIGHEST  + 5000;
 
 // clang-format on
 
-enum class MoveDirection
+enum class MoveDirection : std::uint8_t
 {
     Up = 1,
     Down,
@@ -132,7 +129,7 @@ enum class MoveDirection
 // supports a single language at a time, and passing in multiple languages will cause it to fail to
 // generate any language. As bit flags, this can be used by generators to indicate which languages
 // the generator supports.
-enum GenLang
+enum GenLang : std::uint16_t
 {
     GEN_LANG_NONE = 0,
     GEN_LANG_CPLUSPLUS = 1,
@@ -144,20 +141,21 @@ enum GenLang
     // These should always be the last languages in the list.
     GEN_LANG_XRC = 1 << 6,
     GEN_LANG_XML = 1 << 7,
+    GEN_LANG_RESERVED1 = 1 << 8,  // Reserved for future use
 };
 
 // Used to index fields in a bitmap property
-enum PropIndex
+enum PropIndex : std::uint8_t
 {
     IndexType = 0,
-    IndexImage,
+    IndexImage = 1,
     IndexArtID = IndexImage,
-    IndexSize,
+    IndexSize = 2,
 };
 
 namespace xrc
 {
-    enum
+    enum : std::uint8_t
     {
         all_unsupported = 0,
         min_size_supported = 1 << 0,
@@ -165,7 +163,7 @@ namespace xrc
         hidden_supported = 1 << 2,
     };
 
-    enum
+    enum : std::uint8_t
     {
         no_flags = 0,
         add_comments = 1 << 0,  // add comments prop_var_comment comments
@@ -244,12 +242,12 @@ void MSG_ERROR(const std::string& msg);
             {                                                             \
                 wxTrap();                                                 \
             }                                                             \
-            op;                                                           \
+            (op);                                                         \
         }                                                                 \
         struct wxDummyCheckStruct /* just to force a semicolon */
 
-    #define CHECK_MSG(cond, rc, msg) CHECK2_MSG(cond, return rc, msg)
-    #define CHECK(cond, rc)          CHECK2_MSG(cond, return rc, (const char*) nullptr)
+    #define CHECK_MSG(cond, rc, msg) CHECK2_MSG(cond, return (rc), msg)
+    #define CHECK(cond, rc)          CHECK2_MSG(cond, return (rc), (const char*) nullptr)
     #define CHECK2(cond, op)         CHECK2_MSG(cond, op, (const char*) nullptr)
     #define CHECK_RET(cond, msg)     CHECK2_MSG(cond, return, msg)
 

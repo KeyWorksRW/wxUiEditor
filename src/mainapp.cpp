@@ -591,7 +591,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             {
                 m_cmdline_log.clear();
                 m_cmdline_log.emplace_back(tt_string("Unable to find project file: ")
-                                 << filename.utf8_string());
+                                           << filename.utf8_string());
                 m_cmdline_log.WriteFile(log_file);
                 return 1;
             }
@@ -603,7 +603,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             {
                 m_cmdline_log.clear();
                 m_cmdline_log.emplace_back(tt_string("Unable to load project file: ")
-                                 << filename.utf8_string());
+                                           << filename.utf8_string());
                 m_cmdline_log.WriteFile(log_file);
                 return 1;
             }

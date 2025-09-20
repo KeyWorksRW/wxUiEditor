@@ -95,7 +95,6 @@ void NewMdiForm::CreateNode()
         return;
     }
 
-
     auto frame_menu = NodeCreation.CreateNode(gen_MdiFrameMenuBar, app_node.get()).first;
     ASSERT(frame_menu);
 

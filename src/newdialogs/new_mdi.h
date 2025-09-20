@@ -25,8 +25,7 @@ public:
     void CreateNode();
 
 protected:
-
-void VerifyClassName() override;
+    void VerifyClassName() override;
 
     // Event handlers
 

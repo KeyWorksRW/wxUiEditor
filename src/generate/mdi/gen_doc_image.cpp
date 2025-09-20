@@ -94,8 +94,8 @@ bool ImageDocGenerator::ConstructionCode(Code& code)
 }
 
 bool ImageDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
-                                   std::set<std::string>& /* set_hdr unused */,
-                                   GenLang /* language unused */)
+                                    std::set<std::string>& /* set_hdr unused */,
+                                    GenLang /* language unused */)
 {
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");

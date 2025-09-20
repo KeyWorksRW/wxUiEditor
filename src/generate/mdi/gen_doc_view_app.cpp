@@ -144,7 +144,9 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
             {
                 if (!doc_child->is_Type(type_wx_view))
                     continue;
-                code_templates.Str("CLASSINFO(").Str(doc_child->as_string(prop_derived_class_name)).Str(")");
+                code_templates.Str("CLASSINFO(")
+                    .Str(doc_child->as_string(prop_derived_class_name))
+                    .Str(")");
                 break;
             }
             code_templates.EndFunction();

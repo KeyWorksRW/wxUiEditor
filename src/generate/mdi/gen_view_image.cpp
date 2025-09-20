@@ -75,7 +75,7 @@ bool ImageViewGenerator::ConstructionCode(Code& code)
 }
 
 bool ImageViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                    std::set<std::string>& /* set_hdr */, GenLang /* language */)
+                                     std::set<std::string>& /* set_hdr */, GenLang /* language */)
 {
     set_src.insert("#include <wx/docmdi.h");
     set_src.insert("#include <wx/docview.h");

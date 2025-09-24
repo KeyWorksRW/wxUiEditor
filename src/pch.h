@@ -64,6 +64,10 @@
     #pragma warning(pop)
 #endif
 
+#if !(wxUSE_UNICODE_UTF8 && wxUSE_UTF8_LOCALE_ONLY)
+    #error "wxUSE_UNICODE_UTF8 and wxUSE_UTF8_LOCALE_ONLY must be enabled for this project."
+#endif
+
 // Without this, a huge number of #included wxWidgets header files will generate the warning
 #pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
 

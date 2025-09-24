@@ -19,9 +19,9 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
+void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
 {
-    if (auto panel = wxGetFrame().GetFirstCodePanel(); panel)
+    if (auto* panel = wxGetFrame().GetFirstCodePanel(); panel)
     {
         CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().getSelectedNode());
         panel->OnNodeSelected(custom_event);
@@ -30,9 +30,9 @@ void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
 
 void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
 {
-    if (auto it = m_event_map.find(event.GetProperty()); it != m_event_map.end())
+    if (auto iter = m_event_map.find(event.GetProperty()); iter != m_event_map.end())
     {
-        NodeEvent* evt = it->second;
+        NodeEvent* evt = iter->second;
         wxString handler = event.GetPropertyValue();
         auto value = ConvertEscapeSlashes(handler.utf8_string());
         value.trim(tt::TRIM::both);
@@ -54,10 +54,12 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         return;
     }
 
-    auto prop = event.GetNodeProperty();
-    auto grid_property = m_prop_grid->GetPropertyByLabel(prop->get_DeclName().make_wxString());
-    if (!grid_property)
+    auto* prop = event.GetNodeProperty();
+    auto* grid_property = m_prop_grid->GetPropertyByLabel(prop->get_DeclName().make_wxString());
+    if (grid_property == nullptr)
+    {
         return;
+    }
 
     switch (prop->type())
     {
@@ -93,10 +95,12 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
         case type_bitlist:
             {
-                auto value = prop->as_string();
+                auto value = prop->as_wxString();
                 value.Replace("|", ", ", true);
                 if (value == "0")
+                {
                     value = "";
+                }
                 grid_property->SetValueFromString(value);
             }
             break;
@@ -104,7 +108,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         case type_wxPoint:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
-                auto aux = prop->as_string();
+                auto aux = prop->as_wxString();
                 aux.Replace(",", ";");
                 grid_property->SetValueFromString(aux);
             }
@@ -113,7 +117,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         case type_wxSize:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
-                auto aux = prop->as_string();
+                auto aux = prop->as_wxString();
                 aux.Replace(",", ";");
                 grid_property->SetValueFromString(aux);
             }
@@ -131,7 +135,8 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         default:
-            grid_property->SetValueFromString(prop->as_string(), wxPGPropValFormatFlags::FullValue);
+            grid_property->SetValueFromString(prop->as_wxString(),
+                                              wxPGPropValFormatFlags::FullValue);
     }
     m_prop_grid->Refresh();
 }
@@ -140,8 +145,8 @@ void PropGridPanel::OnEventGridExpand(wxPropertyGridEvent& event)
 {
     m_expansion_map[event.GetPropertyName().utf8_string()] = event.GetProperty()->IsExpanded();
 
-    auto grid_property = m_prop_grid->GetProperty(event.GetProperty()->GetName());
-    if (grid_property)
+    if (auto* grid_property = m_prop_grid->GetProperty(event.GetProperty()->GetName());
+        grid_property)
     {
         if (event.GetProperty()->IsExpanded())
         {
@@ -158,7 +163,7 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
 {
     if (event.GetNodeProperty()->isProp(prop_border))
     {
-        auto info = wxGetFrame().GetPropInfoBar();
+        auto* info = wxGetFrame().GetPropInfoBar();
         info->Dismiss();
         if (event.GetNodeProperty()->as_string() == "wxBORDER_RAISED")
         {
@@ -168,11 +173,11 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
     }
     else if (event.GetNodeProperty()->isProp(prop_focus))
     {
-        auto node = event.getNode();
-        auto form = node->get_Form();
+        auto* node = event.getNode();
+        auto* form = node->get_Form();
         auto list = form->FindAllChildProperties(prop_focus);
         size_t count = 0;
-        for (auto iter: list)
+        for (auto* iter: list)
         {
             if (iter->as_bool())
             {
@@ -194,7 +199,7 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
              event.GetNodeProperty()->isProp(prop_minimum_size) ||
              event.GetNodeProperty()->isProp(prop_maximum_size))
     {
-        auto node = event.getNode();
+        auto* node = event.getNode();
         auto new_size = node->as_wxSize(prop_size);
         auto min_size = node->as_wxSize(prop_minimum_size);
         auto max_size = node->as_wxSize(prop_maximum_size);
@@ -233,19 +238,21 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
 
 void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 {
-    auto property = event.GetProperty();
+    auto* property = event.GetProperty();
 
-    auto it = m_property_map.find(property);
-    if (it == m_property_map.end())
+    auto iter = m_property_map.find(property);
+    if (iter == m_property_map.end())
     {
         property = property->GetParent();
-        it = m_property_map.find(property);
+        iter = m_property_map.find(property);
     }
 
-    if (it == m_property_map.end())
+    if (iter == m_property_map.end())
+    {
         return;
+    }
 
-    auto prop = it->second;
+    auto* prop = iter->second;
     if (prop->get_name() == prop_code_preference)
     {
         // TODO: [Randalphwa - 10-23-2024] Either code preferences should only show
@@ -257,7 +264,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         auto grid_iterator = m_prop_grid->GetCurrentPage()->GetIterator(wxPG_ITERATE_CATEGORIES);
         while (!grid_iterator.AtEnd())
         {
-            auto grid_property = grid_iterator.GetProperty();
+            auto* grid_property = grid_iterator.GetProperty();
             if (grid_property->GetLabel().Contains("C++"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "C++")
@@ -332,7 +339,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         // preferred language, clearing any previously selected language. We can't just use
         // the property, because the dialog needs to know if inherited C++ code should be
         // written.
-        auto config = wxConfig::Get();
+        auto* config = wxConfig::Get();
         config->Write("GenCode", 0);
 
         wxGetFrame().FireProjectUpdatedEvent();
@@ -341,15 +348,14 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         return;
     }
 
-    auto node = prop->getNode();
+    auto* node = prop->getNode();
 
     switch (prop->type())
     {
         case type_float:
             {
                 double val = m_prop_grid->GetPropertyValueAsDouble(property);
-
-                ModifyProperty(prop, DoubleToStr(val));
+                ModifyProperty(prop, wxString() << val);
                 break;
             }
 
@@ -364,7 +370,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_statbar_fields:
         case type_checklist_item:
             {
-                ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property).utf8_string());
+                ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
                 break;
             }
 
@@ -377,7 +383,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_edit_escapes:
             {
                 auto value = ConvertEscapeSlashes(
-                    m_prop_grid->GetPropertyValueAsString(property).utf8_string());
+                    m_prop_grid->GetPropertyValueAsString(property).ToStdString());
                 ModifyProperty(prop, value);
             }
             break;
@@ -392,16 +398,18 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is
                 // partially clipped. Adding a trailing space prevents this clipping.
 
-                if (m_currentSel->is_Gen(gen_wxRadioBox) && newValue.size())
+                if (m_currentSel->is_Gen(gen_wxRadioBox) && !newValue.empty())
                 {
-                    size_t result;
+                    size_t result = 0;
                     for (size_t pos = 0; pos < newValue.size();)
                     {
                         result = newValue.find("\" \"", pos);
                         if (tt::is_found(result))
                         {
                             if (newValue.at(result - 1) != ' ')
+                            {
                                 newValue.insert(result, 1, ' ');
+                            }
                             pos = result + 3;
                         }
                         else
@@ -414,7 +422,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (tt::is_found(result))
                     {
                         if (newValue.at(result - 1) != ' ')
+                        {
                             newValue.insert(result, 1, ' ');
+                        }
                     }
                     ModifyProperty(prop, newValue);
                     break;
@@ -473,9 +483,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         // the default name
                         auto new_name = prop->get_PropDeclaration()->getDefaultValue();
                         auto final_name = node->get_UniqueName(new_name);
-                        newValue = final_name.size() ? final_name : new_name;
+                        newValue = final_name.empty() ? new_name : final_name;
 
-                        auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
+                        auto* grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                         grid_property->SetValueFromString(newValue.make_wxString());
                     }
                 }
@@ -484,15 +494,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 if (prop->isProp(prop_class_name))
                 {
-                    if (auto selected_node = wxGetFrame().getSelectedNode();
-                        selected_node && selected_node->is_Form())
+                    if (auto* selected_node = wxGetFrame().getSelectedNode();
+                        (selected_node != nullptr) && selected_node->is_Form())
                     {
                         CheckOutputFile(newValue, selected_node);
 
                         if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
                         {
                             if (!selected_node->as_bool(prop_use_derived_class))
+                            {
                                 return;
+                            }
 
                             if (!selected_node->HasValue(prop_derived_class_name))
                             {
@@ -512,8 +524,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
     if (node->is_Gen(gen_wxContextMenuEvent))
     {
-        auto event_prop = node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU");
-        if (event_prop)
+        if (auto* event_prop = node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU");
+            event_prop != nullptr)
         {
             event_prop->set_value(node->as_string(prop_handler_name));
         }
@@ -521,7 +533,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
     ChangeEnableState(prop);
 
-    if (auto gen = prop->getNode()->get_Generator(); gen)
+    if (auto* gen = prop->getNode()->get_Generator(); gen)
     {
         auto result = gen->isLanguagePropSupported(prop->getNode(), Project.get_CodePreference(),
                                                    prop->get_name());
@@ -544,8 +556,7 @@ void PropGridPanel::OnPropertyGridExpand(wxPropertyGridEvent& event)
 {
     m_expansion_map[event.GetPropertyName().utf8_string()] = event.GetProperty()->IsExpanded();
 
-    auto egProp = m_event_grid->GetProperty(event.GetProperty()->GetName());
-    if (egProp)
+    if (auto* egProp = m_event_grid->GetProperty(event.GetProperty()->GetName()); egProp)
     {
         if (event.GetProperty()->IsExpanded())
         {
@@ -561,22 +572,24 @@ void PropGridPanel::OnPropertyGridExpand(wxPropertyGridEvent& event)
 // Only process property changes that we may need to cancel here.
 void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 {
-    auto property = event.GetProperty();
+    auto* property = event.GetProperty();
 
-    auto it = m_property_map.find(property);
-    if (it == m_property_map.end())
+    auto iter = m_property_map.find(property);
+    if (iter == m_property_map.end())
     {
         property = property->GetParent();
-        it = m_property_map.find(property);
+        iter = m_property_map.find(property);
     }
 
-    if (it == m_property_map.end())
+    if (iter == m_property_map.end())
+    {
         return;
+    }
 
-    auto prop = it->second;
-    auto node = prop->getNode();
-    auto generator = node->get_Generator();
-    if (generator)
+    auto* prop = iter->second;
+    auto* node = prop->getNode();
+
+    if (auto* generator = node->get_Generator(); generator)
     {
         if (!generator->AllowPropertyChange(&event, prop, node))
         {
@@ -604,8 +617,7 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 
 void PropGridPanel::OnPropertyGridItemSelected(wxPropertyGridEvent& event)
 {
-    auto property = event.GetProperty();
-    if (property)
+    if (auto* property = event.GetProperty(); property)
     {
         if (m_notebook_parent->GetSelection() == 0)
         {

@@ -42,9 +42,11 @@ extern std::map<GenLang, std::string> s_lang_category_prefix;
 void PropGridPanel::Create()
 {
     if (m_locked)
+    {
         return;
+    }
 
-    if (auto node = wxGetFrame().getSelectedNode(); node)
+    if (auto* node = wxGetFrame().getSelectedNode(); node)
     {
         wxWindowUpdateLocker freeze(this);
 
@@ -80,7 +82,7 @@ void PropGridPanel::Create()
 
         tt_string lang_created;
 
-        if (auto declaration = node->get_NodeDeclaration(); declaration)
+        if (auto* declaration = node->get_NodeDeclaration(); declaration)
         {
             // These sets are used to prevent trying to add a duplicate property or event to the
             // property grid. In Debug builds, attempting to do so will generate an assert message
@@ -106,7 +108,9 @@ void PropGridPanel::Create()
                 {
                     auto* info_base = declaration->GetBaseClass(i);
                     if (info_base->is_Gen(gen_sizer_child))
+                    {
                         continue;
+                    }
                     if (!lang_found)
                     {
                         // There are a few forms like gen_wxDialog which have have a category
@@ -132,8 +136,10 @@ void PropGridPanel::Create()
                                                    prop_set);
                             }
                             else
+                            {
                                 CreateEventCategory(info_base->get_DeclName(), node, info_base,
                                                     event_set);
+                            }
                             continue;
                         }
                     }
@@ -170,7 +176,9 @@ void PropGridPanel::Create()
                 {
                     auto* info_base = declaration->GetBaseClass(lang_start);
                     if (info_base->is_Gen(gen_sizer_child))
+                    {
                         continue;
+                    }
                     if (!info_base->get_DeclName().is_sameas("Window Events"))
                     {
                         if (info_base->get_DeclName().is_sameprefix(lang_prefix))
@@ -194,12 +202,16 @@ void PropGridPanel::Create()
                 {
                     auto* info_base = declaration->GetBaseClass(i);
                     if (info_base->is_Gen(gen_sizer_child))
+                    {
                         continue;
+                    }
                     if (!info_base->get_DeclName().is_sameas("Window Events"))
                     {
                         if ((node->is_Form() || node->is_Gen(gen_Project)) &&
                             info_base->get_DeclName().is_sameprefix(lang_prefix))
+                        {
                             continue;  // already added above
+                        }
                         CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
                     }
                     CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
@@ -208,9 +220,11 @@ void PropGridPanel::Create()
             if (node->is_Spacer())
             {
                 if (node->is_Parent(gen_wxGridBagSizer))
+                {
                     CreateLayoutCategory(node);
+                }
             }
-            else if (node->get_Parent() && node->get_Parent()->is_Sizer())
+            else if ((node->get_Parent() != nullptr) && node->get_Parent()->is_Sizer())
             {
                 CreateLayoutCategory(node);
             }
@@ -245,12 +259,16 @@ void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node,
     auto& category = declaration->GetCategory();
 
     if (!category.getCategoryCount() && !category.get_EventCount())
+    {
         return;
+    }
 
     if (category.GetName() == "wxWindow")
     {
         if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
+        {
             return;
+        }
     }
 
     auto id =

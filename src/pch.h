@@ -99,6 +99,11 @@
 #include <map>  // IWYU pragma: keep
 
 #include <string>
+#include <string_view>  // IWYU pragma: keep
+#include <vector>       // IWYU pragma: keep
+
+// ttwx namespace functions, classes, and declarations
+#include "ttwx.h"  // IWYU pragma: keep
 
 #include "tt_string.h"  // tt_string -- std::string with additional methods
 

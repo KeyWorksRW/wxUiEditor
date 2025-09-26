@@ -2,6 +2,9 @@ Checks:
     -readability-implicit-bool-conversion,
     -cppcoreguidelines-owning-memory,
 
+# A lot of the enums utilize assignments at the end to indicate overflow, or special use case
+    -readability-enum-initial-value,
+
     clang-diagnostic-*,
     bugprone-*,
     misc-*,

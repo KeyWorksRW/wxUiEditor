@@ -1,18 +1,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeDeclaration class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
+#include <string>
 #include <wx/bmpbndl.h>  // Declaration of wxBitmapBundle class.
 #include <wx/image.h>    // wxImage class
 
 #include <map>
 #include <optional>
 #include <set>
+#include <utility>
 
 #include "category.h"    // NodeCategory -- Node property categories
 #include "gen_enums.h"   // Enumerations for generators
@@ -38,80 +40,83 @@ class NodeDeclaration
 public:
     NodeDeclaration(tt_string_view class_name, NodeType* type);
 
+    NodeDeclaration(const NodeDeclaration&) = delete;
+    auto operator=(const NodeDeclaration&) -> NodeDeclaration& = delete;
+    NodeDeclaration(NodeDeclaration&&) = delete;
+    auto operator=(NodeDeclaration&&) -> NodeDeclaration& = delete;
+
     // This will delete m_generator which was created by NodeCreator::InitGenerators()
     ~NodeDeclaration();
 
-    NodeCategory& GetCategory() { return m_category; }
+    auto GetCategory() -> NodeCategory& { return m_category; }
 
-    size_t get_PropertyCount() const { return m_properties.size(); }
-    size_t get_EventCount() const { return m_events.size(); }
+    [[nodiscard]] auto get_PropertyCount() const -> size_t { return m_properties.size(); }
+    [[nodiscard]] auto get_EventCount() const -> size_t { return m_events.size(); }
 
-    PropDeclaration* get_PropDeclaration(size_t idx) const;
+    [[nodiscard]] auto get_PropDeclaration(size_t idx) const -> PropDeclaration*;
 
-    const NodeEventInfo* get_EventInfo(tt_string_view name) const;
-    const NodeEventInfo* get_EventInfo(size_t idx) const;
+    [[nodiscard]] auto get_EventInfo(tt_string_view name) const -> const NodeEventInfo*;
+    [[nodiscard]] auto get_EventInfo(size_t idx) const -> const NodeEventInfo*;
 
-    auto& GetPropInfoMap() { return m_properties; }
-    auto& GetEventInfoMap() { return m_events; }
+    auto GetPropInfoMap() -> auto& { return m_properties; }
+    auto GetEventInfoMap() -> auto& { return m_events; }
 
-    NodeType* get_NodeType() const { return m_type; }
+    [[nodiscard]] auto get_NodeType() const -> NodeType* { return m_type; }
+    [[nodiscard]] auto get_GenName() const noexcept -> GenName { return m_gen_name; }
+    [[nodiscard]] auto get_GenType() const noexcept -> GenType { return m_gen_type; }
 
-    GenType get_GenType() const noexcept { return m_gen_type; }
-    GenName get_GenName() const noexcept { return m_gen_name; }
+    [[nodiscard]] auto is_Type(GenType type) const noexcept -> bool { return (type == m_gen_type); }
+    [[nodiscard]] auto is_Gen(GenName name) const noexcept -> bool { return (name == m_gen_name); }
 
-    bool is_Type(GenType type) const noexcept { return (type == m_gen_type); }
-    bool is_Gen(GenName name) const noexcept { return (name == m_gen_name); }
+    [[nodiscard]] auto get_DeclName() const noexcept -> std::string_view { return m_name; }
 
-    tt_string_view get_DeclName() const noexcept { return tt_string_view(m_name); }
-
-    size_t AddBaseClass(NodeDeclaration* base)
+    auto AddBaseClass(NodeDeclaration* base) -> size_t
     {
         m_base.emplace_back(base);
         return m_base.size() - 1;
     }
 
-    bool isSubclassOf(GenName class_name) const;
+    [[nodiscard]] auto isSubclassOf(GenName class_name) const -> bool;
 
-    NodeDeclaration* GetBaseClass(size_t idx, bool inherited = true) const;
+    [[nodiscard]] auto GetBaseClass(size_t idx, bool inherited = true) const -> NodeDeclaration*;
 
     void GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited = true) const;
 
-    size_t GetBaseClassCount(bool inherited = true) const;
-    bool hasBaseClasses() const { return m_base.size(); }
+    [[nodiscard]] auto GetBaseClassCount(bool inherited = true) const -> size_t;
+    [[nodiscard]] auto hasBaseClasses() const -> bool { return !m_base.empty(); }
 
     void SetBundleFunction(std::function<wxBitmapBundle(int width, int height)> func)
     {
-        m_bundle_function = func;
+        m_bundle_function = std::move(func);
     }
-    void SetImage(wxImage image) { m_image = image; }
-    wxImage GetImage() const { return m_image; }
-    wxBitmapBundle GetBitmapBundle(int width, int height) const;
+    void SetImage(wxImage image) { m_image = std::move(image); }
+    [[nodiscard]] auto GetImage() const -> wxImage;
+    [[nodiscard]] auto GetBitmapBundle(int width, int height) const -> wxBitmapBundle;
 
     void SetGenerator(BaseGenerator* generator) { m_generator = generator; }
-    BaseGenerator* get_Generator() const { return m_generator; }
+    [[nodiscard]] auto get_Generator() const -> BaseGenerator* { return m_generator; }
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
-    // no_win_events, no_key_events, no_mouse_events, no_focus_events
-    const tt_string& GetGeneratorFlags() { return m_internal_flags; }
+    auto GetGeneratorFlags() -> const std::string& { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
-    ptrdiff_t get_AllowableChildren(GenType child_gen_type) const;
+    [[nodiscard]] auto get_AllowableChildren(GenType child_gen_type) const -> ptrdiff_t;
 
     void SetOverRideDefValue(GenEnum::PropName prop_name, std::string_view new_value)
     {
         m_override_def_values[prop_name] = new_value;
     }
-    std::optional<tt_string> GetOverRideDefValue(GenEnum::PropName prop_name);
+    auto GetOverRideDefValue(GenEnum::PropName prop_name) -> std::optional<tt_string>;
 
     void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
-    bool IsPropHidden(GenEnum::PropName prop_name)
+    auto IsPropHidden(GenEnum::PropName prop_name) -> bool
     {
-        return (m_hide_properties.find(prop_name) != m_hide_properties.end());
+        return (m_hide_properties.contains(prop_name));
     }
 
 private:
-    tt_string m_internal_flags;
+    std::string m_internal_flags;
 
     wxImage m_image;  // The node's image, primarily used in the navigation pane
 

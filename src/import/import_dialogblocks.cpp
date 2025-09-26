@@ -655,7 +655,7 @@ GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* par
     }
     if (get_GenName == gen_wxPanel)
     {
-        if (parent->get_DeclName().contains("book"))
+        if (parent->get_DeclName().find("book") != std::string_view::npos)
             get_GenName = gen_BookPage;
     }
     else if (get_GenName == gen_wxWindow)

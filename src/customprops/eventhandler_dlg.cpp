@@ -126,7 +126,9 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
             }
             // Remove any trailing space, if there are any keywords
             if (keywords.size() && keywords.back() == ' ')
+            {
                 keywords.pop_back();
+            }
             m_cpp_stc_lambda->SetKeyWords(1, keywords);
         }
 
@@ -157,13 +159,17 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
                 }
 
                 if (!iter->get_DeclName().starts_with("wx"))
+                {
                     continue;
-                else if (iter->get_DeclName().is_sameas("wxContextMenuEvent") ||
-                         iter->get_DeclName() == "wxTreeCtrlBase" ||
-                         iter->get_DeclName().starts_with("wxRuby") ||
-                         iter->get_DeclName().starts_with("wxPython"))
+                }
+                if (iter->get_DeclName() == "wxContextMenuEvent" ||
+                    iter->get_DeclName() == "wxTreeCtrlBase" ||
+                    iter->get_DeclName().starts_with("wxRuby") ||
+                    iter->get_DeclName().starts_with("wxPython"))
+                {
                     continue;
-                wxRuby_keywords << ' ' << iter->get_DeclName().subview(2);
+                }
+                wxRuby_keywords << ' ' << iter->get_DeclName().substr(2);
             }
             m_ruby_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) wxRuby_keywords.c_str());
         }
@@ -260,7 +266,9 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
                     {
                         tt_string lamda = value.substr(pos + 1);
                         if (lamda.back() == '}')
+                        {
                             lamda.pop_back();
+                        }
                         ExpandLambda(lamda);
 
                         m_cpp_stc_lambda->AddTextRaw(lamda.c_str());
@@ -611,15 +619,25 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
 void EventHandlerDlg::OnNone(wxCommandEvent& /* event unused */)
 {
     if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
+    {
         m_cpp_text_function->SetValue("none");
+    }
     else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
+    {
         m_perl_text_function->SetValue("none");
+    }
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
+    {
         m_py_text_function->SetValue("none");
+    }
     else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
+    {
         m_ruby_text_function->SetValue("none");
+    }
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
+    {
         m_rust_text_function->SetValue("none");
+    }
 }
 
 void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
@@ -636,15 +654,25 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
     }
 
     if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
+    {
         m_cpp_text_function->SetValue(value);
+    }
     else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
+    {
         m_perl_text_function->SetValue(value);
+    }
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
+    {
         m_py_text_function->SetValue(ConvertToSnakeCase(value.ToStdString()).make_wxString());
+    }
     else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
+    {
         m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+    }
     else if (m_is_rust_enabled && m_notebook->GetCurrentPage() == m_rust_bookpage)
+    {
         m_rust_text_function->SetValue(value);
+    }
 }
 
 void EventHandlerDlg::FormatBindText()
@@ -652,13 +680,21 @@ void EventHandlerDlg::FormatBindText()
     auto page = m_notebook->GetSelection();
     GenLang language;
     if (m_is_cpp_enabled && page == EVENT_PAGE_CPP)
+    {
         language = GEN_LANG_CPLUSPLUS;
+    }
     else if (m_is_python_enabled && page == m_python_page)
+    {
         language = GEN_LANG_PYTHON;
+    }
     else if (m_is_ruby_enabled && page == m_ruby_page)
+    {
         language = GEN_LANG_RUBY;
+    }
     else
+    {
         return;
+    }
 
     Code handler(m_event->getNode(), language);
 
@@ -674,15 +710,21 @@ void EventHandlerDlg::FormatBindText()
         {
             handler << m_event->get_name() += ", ";
             if (m_check_capture_this->GetValue())
+            {
                 handler += "[this](";
+            }
             else
+            {
                 handler += "[](";
+            }
 
             // Note that we have to double the '&' character since it is being sent to a static
             // text control that will think it is an accelerator.
             handler << m_event->get_EventInfo()->get_event_class() << "&&";
             if (m_check_include_event->GetValue())
+            {
                 handler += " event";
+            }
 
             // We don't display the code's body in the static text control since it's visible
             // in the control below and it's almost certainly going to be too long to fit in
@@ -695,7 +737,7 @@ void EventHandlerDlg::FormatBindText()
         if (m_py_radio_use_function->GetValue())
         {
             auto value = m_py_text_function->GetValue().utf8_string();
-            handler.Add(m_event->get_name()) << ", self." += value;
+            handler.Add(m_event->get_name()) << ", &self." += value;
         }
         else
         {
@@ -719,9 +761,13 @@ void EventHandlerDlg::FormatBindText()
         {
             auto value = m_ruby_text_function->GetValue().utf8_string();
             if (m_event->getNode()->is_Form())
+            {
                 handler.Str(event_name).Str("(:") << value << ')';
+            }
             else
+            {
                 handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << value << ')';
+            }
             m_static_bind_text->SetLabel(handler.make_wxString());
             return;
         }
@@ -743,9 +789,13 @@ void EventHandlerDlg::FormatBindText()
     {
         code << "Bind(" << handler << ", ";
         if (m_event->getNode()->as_string(prop_id) != "wxID_ANY")
+        {
             code.as_string(prop_id).EndFunction();
+        }
         else
+        {
             code.NodeName(m_event->getNode()).Function("GetId()").EndFunction();
+        }
     }
     else if (m_event->getNode()->is_Gen(gen_ribbonTool))
     {

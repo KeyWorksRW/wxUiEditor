@@ -215,18 +215,20 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     if (get_GenName == gen_wxPanel)
     {
-        if (!parent)
+        if (parent == nullptr)
         {
             // This gets called when pasting a formbuilder node from the clipboard
-            auto owner = wxGetFrame().getSelectedNode();
+            auto* owner = wxGetFrame().getSelectedNode();
             while (owner->get_GenType() == type_sizer)
+            {
                 owner = owner->get_Parent();
-            if (owner->get_DeclName().contains("book"))
+            }
+            if (owner->get_DeclName().find("book") != std::string_view::npos)
             {
                 get_GenName = gen_BookPage;
             }
         }
-        else if (parent->get_DeclName().contains("book"))
+        else if (parent->get_DeclName().find("book") != std::string_view::npos)
         {
             get_GenName = gen_BookPage;
         }
@@ -238,7 +240,9 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             if (iter.attribute("name").as_view() == "style")
             {
                 if (iter.text().as_sview().contains("wxCHK_3STATE"))
+                {
                     get_GenName = gen_Check3State;
+                }
                 break;
             }
         }

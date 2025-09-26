@@ -396,17 +396,20 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
         auto& nextCat = category.getCategories()[i];
         if (nextCat.GetName() == "Keyboard Events")
         {
-            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_key_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_key_events") !=
+                std::string::npos)
                 continue;
         }
         else if (nextCat.GetName() == "Mouse Events")
         {
-            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_mouse_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_mouse_events") !=
+                std::string::npos)
                 continue;
         }
         else if (nextCat.GetName() == "Focus Events")
         {
-            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_focus_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_focus_events") !=
+                std::string::npos)
                 continue;
         }
 

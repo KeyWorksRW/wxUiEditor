@@ -121,7 +121,8 @@ void PropGridPanel::Create()
 
                         for (auto& iter: s_lang_category_prefix)
                         {
-                            if (info_base->get_DeclName().contains(iter.second))
+                            if (info_base->get_DeclName().find(iter.second) !=
+                                std::string_view::npos)
                             {
                                 lang_found = true;
                                 lang_start = i;  // save this for the for loop used later
@@ -130,7 +131,7 @@ void PropGridPanel::Create()
                         }
                         if (!lang_found)
                         {
-                            if (!info_base->get_DeclName().is_sameas("Window Events"))
+                            if (!(info_base->get_DeclName() == "Window Events"))
                             {
                                 CreatePropCategory(info_base->get_DeclName(), node, info_base,
                                                    prop_set);
@@ -147,7 +148,7 @@ void PropGridPanel::Create()
                     // We get here if we've seen a language category, so we check to see if it
                     // is the preferred language, and if so, create it now and break out of the
                     // loop.
-                    if (info_base->get_DeclName().is_sameprefix(lang_prefix))
+                    if (info_base->get_DeclName().starts_with(lang_prefix))
                     {
                         CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
 
@@ -156,7 +157,7 @@ void PropGridPanel::Create()
                         // language is C++.
 
                         if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
-                            info_base->get_DeclName().contains("Settings"))
+                            info_base->get_DeclName().find("Settings") != std::string_view::npos)
                         {
                             info_base = declaration->GetBaseClass(++i);
                             CreatePropCategory(info_base->get_DeclName(), node, info_base,
@@ -179,12 +180,13 @@ void PropGridPanel::Create()
                     {
                         continue;
                     }
-                    if (!info_base->get_DeclName().is_sameas("Window Events"))
+                    if (!(info_base->get_DeclName() == "Window Events"))
                     {
-                        if (info_base->get_DeclName().is_sameprefix(lang_prefix))
+                        if (info_base->get_DeclName().starts_with(lang_prefix))
                         {
                             if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
-                                info_base->get_DeclName().contains("Settings"))
+                                info_base->get_DeclName().find("Settings") !=
+                                    std::string_view::npos)
                             {
                                 lang_start +=
                                     2;  // skip over Header Settings and Derived Class Settings
@@ -205,10 +207,10 @@ void PropGridPanel::Create()
                     {
                         continue;
                     }
-                    if (!info_base->get_DeclName().is_sameas("Window Events"))
+                    if (!(info_base->get_DeclName() == "Window Events"))
                     {
                         if ((node->is_Form() || node->is_Gen(gen_Project)) &&
-                            info_base->get_DeclName().is_sameprefix(lang_prefix))
+                            info_base->get_DeclName().starts_with(lang_prefix))
                         {
                             continue;  // already added above
                         }
@@ -258,34 +260,35 @@ void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node,
 {
     auto& category = declaration->GetCategory();
 
-    if (!category.getCategoryCount() && !category.get_EventCount())
+    if ((category.getCategoryCount() == 0U) && (category.get_EventCount() == 0U))
     {
         return;
     }
 
     if (category.GetName() == "wxWindow")
     {
-        if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
+        if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_win_events") !=
+            std::string::npos)
         {
             return;
         }
     }
 
-    auto id =
+    auto* id_prop =
         m_event_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 
     AddEvents(name, node, category, event_set);
 
-    if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
-        it != m_expansion_map.end())
+    if (auto idx = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
+        idx != m_expansion_map.end())
     {
-        if (it->second)
+        if (idx->second)
         {
-            m_event_grid->Expand(id);
+            m_event_grid->Expand(id_prop);
         }
         else
         {
-            m_event_grid->Collapse(id);
+            m_event_grid->Collapse(id_prop);
         }
     }
 }
@@ -317,17 +320,19 @@ static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
 void PropGridPanel::CreateLayoutCategory(Node* node)
 {
-    auto id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
+    auto* id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
     if (!node->is_Parent(gen_wxGridBagSizer))
     {
         for (auto iter: lst_LayoutProps)
         {
-            auto prop = node->get_PropPtr(iter);
-            if (!prop)
+            auto* prop = node->get_PropPtr(iter);
+            if (prop == nullptr)
+            {
                 continue;
+            }
 
-            auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            auto* id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto description = GetPropHelp(prop);
             m_prop_grid->SetPropertyHelpString(id_prop, description);
@@ -339,9 +344,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             }
         }
 
-        if (auto prop = node->get_PropPtr(prop_proportion); prop)
+        if (auto* prop = node->get_PropPtr(prop_proportion); prop)
         {
-            auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            auto* id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto description = GetPropHelp(prop);
             m_prop_grid->SetPropertyHelpString(id_prop, description);
@@ -353,11 +358,13 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     {
         for (auto iter: lst_GridBagProps)
         {
-            auto prop = node->get_PropPtr(iter);
-            if (!prop)
+            auto* prop = node->get_PropPtr(iter);
+            if (prop == nullptr)
+            {
                 continue;
+            }
 
-            auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            auto* id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto description = GetPropHelp(prop);
             m_prop_grid->SetPropertyHelpString(id_prop, description);
@@ -369,9 +376,13 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     m_prop_grid->Expand(id);
 
     if (UserPrefs.is_DarkMode())
+    {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#1d677c"));
+    }
     else
+    {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
+    }
 }
 
 wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
@@ -492,7 +503,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     {
         case type_bitlist:
             {
-                auto propInfo = prop->get_PropDeclaration();
+                auto* propInfo = prop->get_PropDeclaration();
 
                 wxPGChoices bit_flags;
                 int index = 0;
@@ -504,7 +515,9 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         // currently generate
                         if (iter.name != "C++" && iter.name != "Perl" && iter.name != "Python" &&
                             iter.name != "Ruby" && iter.name != "XRC")
+                        {
                             continue;
+                        }
                         bit_flags.Add(iter.name.make_wxString(), 1 << index++);
                     }
                 }
@@ -548,7 +561,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_option:
         case type_editoption:
             {
-                auto propInfo = prop->get_PropDeclaration();
+                auto* propInfo = prop->get_PropDeclaration();
 
                 auto value = prop->as_string();
                 const tt_string* pHelp = nullptr;
@@ -563,7 +576,9 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         // currently generate
                         if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" &&
                             iter.name != "XRC")
+                        {
                             continue;
+                        }
                         constants.Add(iter.name, i++);
                         if (iter.name == value)
                         {
@@ -608,7 +623,9 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 if (pHelp)
                 {
                     if (description.size())
+                    {
                         description << "\n\n";
+                    }
                     description << *pHelp;
                 }
 
@@ -834,28 +851,42 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->Collapse(id);
         }
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#304869"));
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
+        }
     }
     else if (name.contains("Validator"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
+        }
 
         // It's going to be rare to want a validator for these classes, so collapse the validator
         // for them
         if (node->is_Gen(gen_wxButton) || node->is_Gen(gen_wxStaticText))
+        {
             m_prop_grid->Collapse(id);
+        }
     }
     else if (name.contains("C++"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#000099"));
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));  // Light blue
+        }
         if (Project.get_CodePreference(node) != GEN_LANG_CPLUSPLUS)
         {
             m_prop_grid->Collapse(id);
@@ -864,9 +895,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     else if (name.contains("wxPerl"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
+        }
         if (Project.get_CodePreference(node) != GEN_LANG_PERL)
         {
             m_prop_grid->Collapse(id);
@@ -875,9 +910,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     else if (name.contains("wxPython"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#009900"));
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
+        }
         if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
         {
             m_prop_grid->Collapse(id);
@@ -886,9 +925,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     else if (name.contains("wxRuby"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e0b3d"));
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
+        }
         if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
         {
             m_prop_grid->Collapse(id);
@@ -897,9 +940,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     else if (name.contains("wxRust"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
+        }
         if (Project.get_CodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
@@ -908,9 +955,13 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
     else if (name.contains("XRC"))
     {
         if (UserPrefs.is_DarkMode())
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#00b35c"));  // Gainsboro
+        }
         else
+        {
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffe6"));  // Mint Cream
+        }
         if (Project.get_CodePreference(node) != GEN_LANG_XRC)
         {
             m_prop_grid->Collapse(id);

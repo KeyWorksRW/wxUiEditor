@@ -531,7 +531,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node*
             auto owner = wxGetFrame().getSelectedNode();
             while (owner->get_GenType() == type_sizer)
                 owner = owner->get_Parent();
-            if (owner->get_DeclName().contains("book"))
+            if (owner->get_DeclName().find("book") != std::string_view::npos)
             {
                 return gen_BookPage;
             }
@@ -540,7 +540,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node*
                 return gen_PanelForm;
             }
         }
-        else if (parent->get_DeclName().contains("book"))
+        else if (tt::is_found(parent->get_DeclName().find("book")))
             return gen_BookPage;
         else if (parent->is_Gen(gen_Project))
             return gen_PanelForm;

@@ -1,7 +1,8 @@
     # -*,
     # -clang-analyzer-*,
-    # -readability-implicit-bool-conversion,
     # -modernize-use-trailing-return-type,
+
+    -readability-implicit-bool-conversion,
 
 Checks:
     clang-diagnostic-*,

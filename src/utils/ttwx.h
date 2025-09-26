@@ -40,17 +40,17 @@ namespace ttwx
     // These functions are provided for convenience since they cast a char to unsigned char before
     // calling the std:: library function.
 
-    inline auto is_alnum(char character) -> bool { return std::isalnum(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_alpha(char character) -> bool { return std::isalpha(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_blank(char character) -> bool { return std::isblank(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_cntrl(char character) -> bool { return std::iscntrl(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_digit(char character) -> bool { return std::isdigit(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_graph(char character) -> bool { return std::isgraph(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_lower(char character) -> bool { return std::islower(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_print(char character) -> bool { return std::isprint(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_punctuation(char character) -> bool { return std::ispunct(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_upper(char character) -> bool { return std::isupper(static_cast<unsigned char>(character)) != 0; }
-    inline auto is_whitespace(char character) -> bool { return std::isspace(static_cast<unsigned char>(character)) != 0; }
+    inline auto is_alnum(char character) -> bool { return std::isalnum(static_cast<unsigned char>(character)); }
+    inline auto is_alpha(char character) -> bool { return std::isalpha(static_cast<unsigned char>(character)); }
+    inline auto is_blank(char character) -> bool { return std::isblank(static_cast<unsigned char>(character)); }
+    inline auto is_cntrl(char character) -> bool { return std::iscntrl(static_cast<unsigned char>(character)); }
+    inline auto is_digit(char character) -> bool { return std::isdigit(static_cast<unsigned char>(character)); }
+    inline auto is_graph(char character) -> bool { return std::isgraph(static_cast<unsigned char>(character)); }
+    inline auto is_lower(char character) -> bool { return std::islower(static_cast<unsigned char>(character)); }
+    inline auto is_print(char character) -> bool { return std::isprint(static_cast<unsigned char>(character)); }
+    inline auto is_punctuation(char character) -> bool { return std::ispunct(static_cast<unsigned char>(character)); }
+    inline auto is_upper(char character) -> bool { return std::isupper(static_cast<unsigned char>(character)); }
+    inline auto is_whitespace(char character) -> bool { return std::isspace(static_cast<unsigned char>(character)); }
 
     // clang-format on
 

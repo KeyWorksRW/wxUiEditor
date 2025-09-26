@@ -13,7 +13,7 @@
 
 namespace GenEnum
 {
-    enum PropType
+    enum PropType : std::uint8_t
     {
 
         type_animation,
@@ -74,9 +74,9 @@ namespace GenEnum
         type_unknown,
 
     };
-    extern std::map<std::string_view, PropType, std::less<>> umap_PropTypes;
+    extern const std::map<std::string_view, PropType, std::less<>> umap_PropTypes;
 
-    enum PropName
+    enum PropName : std::uint16_t
     {
         prop_template_description,
         prop_template_directory,
@@ -564,27 +564,29 @@ namespace GenEnum
         prop_unknown = prop_name_array_size,
         prop_processed  // special value used by some importers
     };
-    extern std::map<GenEnum::PropName, const char*> map_PropNames;
-    extern std::map<GenEnum::PropName, const char*> map_PropHelp;
+    extern const std::map<GenEnum::PropName, std::string_view> map_PropNames;
+    extern const std::map<GenEnum::PropName, std::string_view> map_PropHelp;
     extern std::map<std::string_view, GenEnum::PropName, std::less<>> rmap_PropNames;
-    inline GenEnum::PropName FindProp(std::string_view name)
+    inline auto FindProp(std::string_view name) -> GenEnum::PropName
     {
         if (auto result = rmap_PropNames.find(name); result != rmap_PropNames.end())
+        {
             return result->second;
-        else
-            return prop_unknown;
+        }
+        return prop_unknown;
     }
 
     // Given a prop_ name, this will return the actual string used in the XRC file.
     inline std::optional<tt_string_view> GetPropStringName(PropName prop_name)
     {
         if (auto result = map_PropNames.find(prop_name); result != map_PropNames.end())
+        {
             return result->second;
-        else
-            return {};
+        }
+        return {};
     }
 
-    enum GenType
+    enum GenType : std::uint8_t
     {
 
         type_aui_tool,
@@ -671,9 +673,9 @@ namespace GenEnum
         gen_type_array_size,
         gen_type_unknown = gen_type_array_size
     };
-    extern std::map<GenType, std::string_view> map_GenTypes;
+    extern const std::map<GenType, std::string_view> map_GenTypes;
 
-    enum GenName
+    enum GenName : std::uint8_t
     {
 
         // Note that this list not only includes all the top level generators, but also the
@@ -926,10 +928,10 @@ namespace GenEnum
         gen_svg_embedded_image,
 
     };
-    extern std::map<GenEnum::GenName, const char*> map_GenNames;
+    extern const std::map<GenEnum::GenName, std::string_view> map_GenNames;
 
 }  // namespace GenEnum
 
-extern std::map<GenEnum::PropName, const char*> map_PropMacros;
+extern const std::map<GenEnum::PropName, std::string_view> map_PropMacros;
 extern std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
 extern std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;

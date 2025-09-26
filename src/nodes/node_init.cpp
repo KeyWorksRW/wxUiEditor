@@ -795,7 +795,9 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             }
         }
 
-        auto prop_info = new PropDeclaration(prop_name, property_type, def_value, description);
+        auto prop_info =
+            new PropDeclaration(prop_name, property_type, PropDeclaration::DefaultValue(def_value),
+                                PropDeclaration::HelpText(description));
         node_declaration->GetPropInfoMap()[name] = prop_info;
         if (elem_prop.attribute("hide").as_bool())
         {
@@ -821,15 +823,17 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         // class_access property. Rather than add this to all the XML generator specifications, we
         // simply insert it here if it doesn't exist.
 
-        if (tt::is_sameas(name, map_PropNames[prop_var_name]) &&
+        if (tt::is_sameas(name, map_PropNames.at(prop_var_name)) &&
             !node_declaration->is_Gen(gen_data_string) && !node_declaration->is_Gen(gen_data_xml))
         {
             category.addProperty(prop_var_comment);
             prop_info = new PropDeclaration(
-                prop_var_comment, type_string_edit_single, tt_empty_cstr,
-                "Comment to add to the variable name in the generated header file "
-                "if the class access is set to protected or public");
-            node_declaration->GetPropInfoMap()[map_PropNames[prop_var_comment]] = prop_info;
+                prop_var_comment, type_string_edit_single,
+                PropDeclaration::DefaultValue(tt_empty_cstr),
+                PropDeclaration::HelpText(
+                    "Comment to add to the variable name in the generated header file "
+                    "if the class access is set to protected or public"));
+            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_var_comment))] = prop_info;
 
             category.addProperty(prop_class_access);
             tt_string access("protected:");
@@ -843,9 +847,9 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             }
 
             prop_info = new PropDeclaration(
-                prop_class_access, type_option, access,
-                "Determines the type of access your inherited class has to this item.");
-            node_declaration->GetPropInfoMap()[map_PropNames[prop_class_access]] = prop_info;
+                prop_class_access, type_option, PropDeclaration::DefaultValue(access),
+                PropDeclaration::HelpText("Determines the type of access your inherited class has to this item."));
+            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_class_access))] = prop_info;
 
             auto& opts = prop_info->getOptions();
 

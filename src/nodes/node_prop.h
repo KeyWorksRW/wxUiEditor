@@ -162,7 +162,7 @@ public:
     operator wxSize() const { return as_size(); }
 
     bool isDefaultValue() const;
-    const tt_string& getDefaultValue() const noexcept { return m_declaration->getDefaultValue(); }
+    std::string_view getDefaultValue() const noexcept { return m_declaration->getDefaultValue(); }
 
     // Returns false if the property is empty. For size and point properties, returns false
     // if the default value is used. For image properties, returns true if a filename is

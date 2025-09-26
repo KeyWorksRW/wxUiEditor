@@ -370,15 +370,15 @@ void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
 {
     if (changed_prop->isProp(prop_stock_id))
     {
-        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_label]); pg_setting)
+        if (auto pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_label))); pg_setting)
         {
             pg_setting->Enable(changed_prop->value() == "none");
         }
-        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_help]); pg_setting)
+        if (auto pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_help))); pg_setting)
         {
             pg_setting->Enable(changed_prop->value() == "none");
         }
-        if (auto pg_setting = prop_grid->GetProperty(map_PropNames[prop_id]); pg_setting)
+        if (auto pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_id))); pg_setting)
         {
             pg_setting->Enable(changed_prop->value() == "none");
         }

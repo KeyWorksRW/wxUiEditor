@@ -1247,7 +1247,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                     {
                         MSG_INFO(tt_string()
                                  << node->get_DeclName() << " doesn't have a property called "
-                                 << GenEnum::map_PropNames[prop_name]);
+                                 << GenEnum::map_PropNames.at(prop_name));
                     }
                 }
             }
@@ -1332,7 +1332,7 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
         else
         {
             MSG_ERROR(tt_string("Json sets value, but ")
-                      << map_GenNames[node->get_GenName()] << " doesn't support that property!");
+                      << map_GenNames.at(node->get_GenName()) << " doesn't support that property!");
         }
     }
     else if (auto& colour = FindValue(value, "colour"); !colour.IsNull())

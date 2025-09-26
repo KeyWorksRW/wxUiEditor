@@ -483,7 +483,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         // the default name
                         auto new_name = prop->get_PropDeclaration()->getDefaultValue();
                         auto final_name = node->get_UniqueName(new_name);
-                        newValue = final_name.empty() ? new_name : final_name;
+                        newValue = final_name.empty() ? std::string(new_name) : final_name;
 
                         auto* grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                         grid_property->SetValueFromString(newValue.make_wxString());

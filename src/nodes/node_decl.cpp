@@ -15,7 +15,7 @@ NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) :
 {
 
 
-    m_name = GenEnum::map_GenNames[m_gen_name];
+    m_name = GenEnum::map_GenNames.at(m_gen_name);
 }
 
 NodeDeclaration::~NodeDeclaration()

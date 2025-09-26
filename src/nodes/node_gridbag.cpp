@@ -101,7 +101,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     // row/column needs to be incremented, which has to be done recursively.
 
     tt_string undo_str;
-    undo_str << "Insert " << map_GenNames[new_node->get_GenName()];
+    undo_str << "Insert " << map_GenNames.at(new_node->get_GenName());
 
     // Unlike a normal undo command, this one will simply make a copy of the current gbsizer and the
     // current selection.
@@ -280,7 +280,7 @@ void GridBag::MoveLeft(Node* node)
 {
     auto gbsizer = node->get_Parent();
     tt_string undo_str;
-    undo_str << "Decrease column of " << map_GenNames[node->get_GenName()];
+    undo_str << "Decrease column of " << map_GenNames.at(node->get_GenName());
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
@@ -331,7 +331,7 @@ void GridBag::MoveRight(Node* node)
     auto gbsizer = node->get_Parent();
 
     tt_string undo_str;
-    undo_str << "Increase column of " << map_GenNames[node->get_GenName()];
+    undo_str << "Increase column of " << map_GenNames.at(node->get_GenName());
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);

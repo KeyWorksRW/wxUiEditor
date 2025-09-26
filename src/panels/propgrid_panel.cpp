@@ -237,16 +237,20 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
             if (prop_name == prop_unchecked_bitmap)
                 m_prop_grid->Collapse(pg);
 
-            if (auto it = m_expansion_map.find(map_PropNames[prop_name]);
-                it != m_expansion_map.end())
+            auto prop_name_iter = map_PropNames.find(prop_name);
+            if (prop_name_iter != map_PropNames.end())
             {
-                if (it->second)
+                if (auto it = m_expansion_map.find(std::string(prop_name_iter->second));
+                    it != m_expansion_map.end())
                 {
-                    m_prop_grid->Expand(pg);
-                }
-                else
-                {
-                    m_prop_grid->Collapse(pg);
+                    if (it->second)
+                    {
+                        m_prop_grid->Expand(pg);
+                    }
+                    else
+                    {
+                        m_prop_grid->Collapse(pg);
+                    }
                 }
             }
 
@@ -256,7 +260,7 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
         else
         {
             MSG_WARNING(tt_string("The property ")
-                        << map_PropNames[prop_name] << " appears more than once in "
+                        << map_PropNames.at(prop_name) << " appears more than once in "
                         << node->get_DeclName());
         }
     }

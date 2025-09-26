@@ -193,7 +193,7 @@ bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
 
 /*
  * The wxWidgets class is determined via the proxy-type attribute. This will have a "wb"
- * prefix, which is replaced with "wx", and a "Proxy" suffix, which is removed. In most cases,
+ * prefix, which is replaced with "wx" and a "Proxy" suffix, which is removed. In most cases,
  * this will then be the same names as proxy-Base class, but if not it means the user wants the
  * base class to be a derived class that they have created.
  */
@@ -490,7 +490,7 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
                 }
             }
         }
-        else if (tt::contains(map_GenTypes[parent->get_GenType()], "book"))
+        else if (tt::contains(map_GenTypes.at(parent->get_GenType()), "book"))
         {
             if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
             {
@@ -508,10 +508,10 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
     {
         auto msg = GatherErrorDetails(child_xml, get_GenName);
         ASSERT_MSG(node, tt_string("Unable to create ")
-                             << map_GenNames[get_GenName] << " as child of "
-                             << map_GenNames[parent->get_GenName()] << "\n"
-                             << msg);
-        m_errors.emplace(tt_string("Unable to create ") << map_GenNames[get_GenName]);
+                     << map_GenNames.at(get_GenName) << " as child of "
+                     << map_GenNames.at(parent->get_GenName()) << "\n"
+                     << msg);
+        m_errors.emplace(tt_string("Unable to create ") << map_GenNames.at(get_GenName));
         return;
     }
 
@@ -578,10 +578,10 @@ void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
     {
         auto msg = GatherErrorDetails(child_xml, gen_CustomControl);
         ASSERT_MSG(node, tt_string("Unable to create ")
-                             << map_GenNames[gen_CustomControl] << " as child of "
-                             << map_GenNames[parent->get_GenName()] << "\n"
+                             << map_GenNames.at(gen_CustomControl) << " as child of "
+                             << map_GenNames.at(parent->get_GenName()) << "\n"
                              << msg);
-        m_errors.emplace(tt_string("Unable to create ") << map_GenNames[gen_CustomControl]);
+        m_errors.emplace(tt_string("Unable to create ") << map_GenNames.at(gen_CustomControl));
         return;
     }
 
@@ -1802,7 +1802,7 @@ tt_string DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::Ge
     {
         tt_string msg = "Name: ";
         if (get_GenName != gen_unknown)
-            msg << map_GenNames[get_GenName];
+            msg << map_GenNames.at(get_GenName);
         else
             msg << "Unknown gen_name";
         if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)

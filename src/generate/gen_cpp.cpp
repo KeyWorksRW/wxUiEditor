@@ -208,7 +208,7 @@ static void GenCppForm(GenData& gen_data, Node* form)
         if (form->HasValue(prop_class_name))
             msg += form->as_string(prop_class_name);
         else
-            msg += map_GenNames[form->get_GenName()];
+            msg += map_GenNames.at(form->get_GenName());
         msg += '\n';
         gen_data.AddResultMsg(msg);
         return;
@@ -248,11 +248,11 @@ static void GenCppForm(GenData& gen_data, Node* form)
             if (form->is_Gen(gen_Images))
             {
                 // While technically this is a "form" it doesn't have the usual properties set
-                gen_data.AddClassName(GenEnum::map_GenNames[gen_Images]);
+                gen_data.AddClassName(GenEnum::map_GenNames.at(gen_Images));
             }
             else if (form->is_Gen(gen_Data))
             {
-                gen_data.AddClassName(GenEnum::map_GenNames[gen_Data]);
+                gen_data.AddClassName(GenEnum::map_GenNames.at(gen_Data));
             }
             else
             {

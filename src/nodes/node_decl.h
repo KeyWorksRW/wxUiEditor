@@ -141,5 +141,5 @@ private:
 
     GenName m_gen_name;
     GenType m_gen_type;
-    const char* m_name;  // this points into GenEnum::map_GenNames
+    std::string_view m_name;  // this points into GenEnum::map_GenNames
 };

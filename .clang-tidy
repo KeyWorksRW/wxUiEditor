@@ -1,10 +1,7 @@
-    # -*,
-    # -clang-analyzer-*,
-    # -modernize-use-trailing-return-type,
-
-    -readability-implicit-bool-conversion,
-
 Checks:
+    -readability-implicit-bool-conversion,
+    -cppcoreguidelines-owning-memory,
+
     clang-diagnostic-*,
     bugprone-*,
     misc-*,

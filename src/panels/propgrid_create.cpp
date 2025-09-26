@@ -36,6 +36,7 @@
 #include "../customprops/sizer_grow_rows.h"     // Property editor for Growable Sizer Columns
 #include "../customprops/tt_file_property.h"    // ttFileProperty -- Property editor for file names
 #include "../customprops/txt_string_prop.h"     // dialog for editing single-line strings
+#include "wx/string.h"
 
 extern std::map<GenLang, std::string> s_lang_category_prefix;
 
@@ -518,14 +519,14 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         {
                             continue;
                         }
-                        bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                        bit_flags.Add(wxString(iter.name), 1 << index++);
                     }
                 }
                 else
                 {
                     for (auto& iter: propInfo->getOptions())
                     {
-                        bit_flags.Add(iter.name.make_wxString(), 1 << index++);
+                        bit_flags.Add(wxString(iter.name), 1 << index++);
                     }
                 }
 
@@ -546,7 +547,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                             {
                                 if (iter.help.size())
                                 {
-                                    wxString description = iter.help;
+                                    wxString description(iter.help);
                                     description.Replace("\\n", "\n", true);
                                     m_prop_grid->SetPropertyHelpString(id, description);
                                 }
@@ -564,7 +565,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 auto* propInfo = prop->get_PropDeclaration();
 
                 auto value = prop->as_string();
-                const tt_string* pHelp = nullptr;
+                std::string_view help_text = {};
 
                 wxPGChoices constants;
                 int i = 0;
@@ -579,10 +580,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         {
                             continue;
                         }
-                        constants.Add(iter.name, i++);
+                        constants.Add(wxString(iter.name), i++);
                         if (iter.name == value)
                         {
-                            pHelp = &iter.help;
+                            help_text = iter.help;
                         }
                     }
                 }
@@ -590,10 +591,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 {
                     for (auto& iter: propInfo->getOptions())
                     {
-                        constants.Add(iter.name, i++);
+                        constants.Add(wxString(iter.name), i++);
                         if (iter.name == value)
                         {
-                            pHelp = &iter.help;
+                            help_text = iter.help;
                         }
                     }
                 }
@@ -620,13 +621,13 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 {
                     description << "\n\n" << value;
                 }
-                if (pHelp)
+                if (!help_text.empty())
                 {
                     if (description.size())
                     {
                         description << "\n\n";
                     }
-                    description << *pHelp;
+                    description << help_text;
                 }
 
                 new_pg_property->SetHelpString(description.make_wxString());

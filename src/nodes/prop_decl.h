@@ -15,6 +15,8 @@ using namespace GenEnum;
 class PropDeclaration
 {
 public:
+    // These structs are more cumbersome to use, but prevent accidentally switching the order of the
+    // parameters when creating a PropDeclaration object.
     struct DefaultValue
     {
         std::string_view value;
@@ -31,15 +33,11 @@ public:
     {
     }
 
-    // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    [[nodiscard]] auto get_DeclName() const noexcept -> std::string_view
+    // Returns a std::string_view to the name. Use get_name() if you want the enum value.
+    [[nodiscard]] auto get_DeclName() const -> std::string_view
     {
         ASSERT(map_PropNames.contains(m_name_enum));
-        if (map_PropNames.contains(m_name_enum))
-        {
-            return map_PropNames.at(m_name_enum);
-        }
-        return {};
+        return map_PropNames.at(m_name_enum);
     }
 
     [[nodiscard]] auto getDefaultValue() const noexcept -> const std::string_view&
@@ -59,10 +57,8 @@ public:
 
     struct Options
     {
-        // REVIEW: [Randalphwa - 08-27-2023] Once *ALL* properties are created via generators,
-        // these can be changed to std::string_view
-        tt_string name;
-        tt_string help;
+        std::string_view name;
+        std::string_view help;
     };
 
     auto getOptions() -> std::vector<Options>& { return m_options; }
@@ -74,6 +70,5 @@ private:
     GenEnum::PropType m_prop_type;
     GenEnum::PropName m_name_enum;  // enumeration value for the name
 
-    // This gets used to setup wxPGProperty, so both key and value need to be a wxString
     std::vector<Options> m_options;
 };

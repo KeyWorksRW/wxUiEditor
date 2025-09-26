@@ -323,7 +323,7 @@ namespace
     {
         for (auto& iter: propInfo->getOptions())
         {
-            if (iter.name == value)
+            if (iter.name == value.ToStdString())
             {
                 if (iter.help.empty())
                 {
@@ -331,7 +331,7 @@ namespace
                 }
                 else
                 {
-                    description += "\n\n" + value + "\n" + iter.help;
+                    description += "\n\n" + value + "\n" + std::string(iter.help);
                 }
                 break;
             }

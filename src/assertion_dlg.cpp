@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Assertion Dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,32 +13,39 @@
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
 
-static std::mutex g_mutexAssert;
+namespace
+{
+    std::mutex g_mutexAssert;
+}
 
 // Note that this returns bool allowing the ASSERT macro to call wxTrap in the caller's code rather
 // than trapping in this function and then having to step out of this function to get to the
 // function that threw the assert.
 
-bool AssertionDlg(const char* filename, const char* function, int line, const char* cond,
-                  const std::string& msg)
+auto AssertionDlg(const char* filename, const char* function, int line, const char* cond,
+                  const wxString& msg) -> bool
 {
     // This is in case additional message processing results in an assert while this one is already
     // being displayed.
     std::unique_lock<std::mutex> classLock(g_mutexAssert);
 
-    tt_string str;
+    wxString str;
 
     if (cond)
+    {
         str << "Expression: " << cond << "\n\n";
+    }
     if (!msg.empty())
-        str << "Comment: " << msg << "\n\n";
+    {
+        str << "Comment: " << wxString(msg) << "\n\n";
+    }
 
     str << "File: " << filename << "\n";
     str << "Function: " << function << "\n";
     str << "Line: " << line << "\n\n";
     str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
 
-    wxMessageDialog dlg(nullptr, str.make_wxString(), "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
     dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
 
     auto answer = dlg.ShowModal();
@@ -47,13 +54,13 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
     {
         return true;
     }
-    else if (answer == wxID_CANCEL)
+    if (answer == wxID_CANCEL)
     {
         std::quick_exit(2);
     }
     else
     {
-        if (auto frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
+        if (auto* frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
         {
             if (wxGetApp().isTestingMenuEnabled())
             {
@@ -83,9 +90,13 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     wxString str;
 
     if (cond.size())
+    {
         str << "Expression: " << cond << "\n\n";
+    }
     if (msg.size())
+    {
         str << "Comment: " << msg << "\n\n";
+    }
 
     str << "File: " << filename << "\n";
     str << "Function: " << function << "\n";
@@ -107,7 +118,7 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     }
     else
     {
-        if (auto frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
+        if (auto* frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
         {
             if (wxGetApp().isTestingMenuEnabled())
             {

@@ -7,8 +7,10 @@
 
 #pragma once
 
-#include "gen_enums.h"  // Enumerations for generators
 #include <string_view>
+
+#include "gen_enums.h"      // Enumerations for generators
+
 using namespace GenEnum;
 
 // class PropDeclaration : public PropChildDeclaration
@@ -37,6 +39,7 @@ public:
     [[nodiscard]] auto get_DeclName() const -> std::string_view
     {
         ASSERT(map_PropNames.contains(m_name_enum));
+        ASSERT_MSG(!map_PropNames.at(m_name_enum).empty(), "map_PropNames contains an empty name");
         return map_PropNames.at(m_name_enum);
     }
 
@@ -57,8 +60,8 @@ public:
 
     struct Options
     {
-        std::string_view name;
-        std::string_view help;
+        std::string name;
+        std::string help;
     };
 
     auto getOptions() -> std::vector<Options>& { return m_options; }

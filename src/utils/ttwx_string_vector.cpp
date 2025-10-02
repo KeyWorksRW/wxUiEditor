@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   ttwx::ViewVector class
+// Purpose:   ttwx::StringVector class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ttwx_view_vector.h"
+#include "ttwx_string_vector.h"
 
 #include <cstddef>
 #include <filesystem>
@@ -58,7 +58,7 @@ namespace
     }
 }  // namespace
 
-void ttwx::ViewVector::SetString(std::string_view str, std::string_view separator, TRIM trim)
+void ttwx::StringVector::SetString(std::string_view str, std::string_view separator, TRIM trim)
 {
     clear();
     if (trim == TRIM::both || trim == TRIM::left)
@@ -128,7 +128,7 @@ void ttwx::ViewVector::SetString(std::string_view str, std::string_view separato
     }
 }
 
-void ttwx::ViewVector::SetString(std::string_view str,
+void ttwx::StringVector::SetString(std::string_view str,
                                  const std::vector<std::string_view>& separators, TRIM trim)
 {
     clear();
@@ -210,7 +210,7 @@ namespace
 
 }  // namespace
 
-auto ttwx::ViewVector::ReadFile(std::string_view filename) -> bool
+auto ttwx::StringVector::ReadFile(std::string_view filename) -> bool
 {
     m_filename = filename;
 
@@ -241,21 +241,27 @@ auto ttwx::ViewVector::ReadFile(std::string_view filename) -> bool
         string_buffer.remove_prefix(3);
     }
     SetString(string_buffer, lineSeparators);
+    m_buffer.clear();
+    m_buffer.shrink_to_fit();
 
     return true;
 }
 
-void ttwx::ViewVector::ReadString(std::string_view str)
+void ttwx::StringVector::ReadString(std::string_view str)
 {
     if (!str.empty())
     {
         m_buffer.assign(str);
         std::vector<std::string_view> lineSeparators = { "\r\n", "\r", "\n" };
         SetString(m_buffer, lineSeparators);
+
+        // WARNING! str probably points to m_buffer, so it will be invalid after the clear().
+        m_buffer.clear();
+        m_buffer.shrink_to_fit();
     }
 }
 
-auto ttwx::ViewVector::is_sameas(const ttwx::ViewVector& other) const -> bool
+auto ttwx::StringVector::is_sameas(const ttwx::StringVector& other) const -> bool
 {
     if (size() != other.size())
     {

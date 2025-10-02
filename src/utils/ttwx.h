@@ -35,6 +35,15 @@
 
 namespace ttwx
 {
+    // These are used by StringVector and ViewVector classes
+    enum class TRIM : std::uint8_t
+    {
+        right,
+        left,
+        both,
+        none
+    };
+
     // clang-format off
 
     // These functions are provided for convenience since they cast a char to unsigned char before

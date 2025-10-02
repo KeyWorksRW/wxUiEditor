@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   ttwx::ViewVector class
+// Purpose:   ttwx::StringVector class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -7,13 +7,19 @@
 
 #pragma once  // NOLINT(#pragma once in main file)
 
-// This class can be used to separate a string into multiple string_view entries based on a
-// separator, or it can can be used to read a line-oriented file into memory and then create a
-// vector of string_views, one for each line. Since it derives from std::vector, you can use
-// standard vector methods to iterate through the entries, std::find_if, std::ranges::find_if, etc.
+// This class can be used to separate a string into multiple wxString entries based on a separator,
+// or it can can be used to read a line-oriented file into memory and then create a vector of
+// wxStrings, one for each line. Since it derives from std::vector, you can use standard vector
+// methods to iterate through the entries, std::find_if, std::ranges::find_if, etc.
 
-// Note that if you need to add, remove, or modify entries, you should consider using
-// ttwx::StringVector instead, which duplicates the strings into std::string entries.
+// There already exists a wxTextFile class, however it is limited to files only, and because it is
+// not derived from std::vector, you cannot use standard vector methods such as interating through
+// the entries, std::find_if, std::ranges::find_if, etc.
+
+// Note that unless you need to add, remove, or modify entries, you should consider using
+// ttwx::ViewVector instead, which does not duplicate the strings, but instead creates a vector of
+// std::string_view entries that reference the original string. This makes ttwx::ViewVector much
+// more memory efficient, and faster to create.
 
 #if !wxUSE_UNICODE_UTF8 || !wxUSE_UTF8_LOCALE_ONLY
     #error "This code requires both wxUSE_UNICODE_UTF8 and wxUSE_UTF8_LOCALE_ONLY to be enabled."
@@ -41,16 +47,16 @@
 
 namespace ttwx
 {
-    class ViewVector : public std::vector<std::string_view>
+    class StringVector : public std::vector<std::string>
     {
     public:
-        ViewVector() = default;
+        StringVector() = default;
 
-        ViewVector(std::string_view str, std::string_view separator = ";", TRIM trim = TRIM::none)
+        StringVector(std::string_view str, std::string_view separator = ";", TRIM trim = TRIM::none)
         {
             SetString(str, separator, trim);
         }
-        ViewVector(std::string_view str, char separator = ';', TRIM trim = TRIM::none)
+        StringVector(std::string_view str, char separator = ';', TRIM trim = TRIM::none)
         {
             SetString(str, separator, trim);
         }
@@ -108,10 +114,7 @@ namespace ttwx
 
         void ReadString(const wxString& str) { ReadString(get_View(str)); }
 
-        [[nodiscard]] auto is_sameas(const ttwx::ViewVector& other) const -> bool;
-
-        // Returns the string storing the entire file.
-        [[nodiscard]] auto GetBuffer() const -> const std::string& { return m_buffer; }
+        [[nodiscard]] auto is_sameas(const ttwx::StringVector& other) const -> bool;
 
     private:
         // This will be the filename passed to ReadFile()

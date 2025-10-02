@@ -28,8 +28,9 @@ set (file_list
 
     ui/startup_dlg.cpp    # Dialog to display if wxUiEditor is launched with no arguments
 
-    utils/ttwx.cpp              # ttwx namespace functions and declarations
-    utils/ttwx_view_vector.cpp  # ttwx::ViewVector class
+    utils/ttwx.cpp                # ttwx namespace functions and declarations
+    utils/ttwx_view_vector.cpp    # ttwx::ViewVector class
+    utils/ttwx_string_vector.cpp  # ttwx::StringVector class
 
     tt/tt.cpp               # tt namespace functions
     tt/tt_string.cpp        # std::string with additional methods

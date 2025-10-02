@@ -16,7 +16,7 @@ auto ttwx::find_oneof(const wxString& src, const std::string& group, size_t src_
 {
     if (group.empty())
     {
-        return tt::npos;
+        return std::string::npos;
     }
 
     for (; src_start < src.size(); ++src_start)
@@ -26,7 +26,7 @@ auto ttwx::find_oneof(const wxString& src, const std::string& group, size_t src_
             break;
         }
     }
-    return (src_start < src.size() ? src_start : tt::npos);
+    return (src_start < src.size() ? src_start : std::string::npos);
 }
 
 auto ttwx::find_nonspace(std::string_view str) noexcept -> std::string_view
@@ -206,7 +206,7 @@ auto ttwx::extract_substring(std::string_view src, wxString& dest, size_t start)
 
     // start by finding the first non-whitespace character
     size_t pos = start;
-    while (pos < src.length() && tt::is_whitespace(src[pos]))
+    while (pos < src.length() && ttwx::is_whitespace(src[pos]))
     {
         ++pos;
     }

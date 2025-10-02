@@ -110,7 +110,7 @@ private:
 
     MainFrame* m_frame { nullptr };
 
-    int m_ProjectVersion;
+    int m_ProjectVersion { 15 };
     bool m_isMainFrameClosing { false };
     // bool m_isProject_updated { false };
     bool m_TestingMenuEnabled { false };

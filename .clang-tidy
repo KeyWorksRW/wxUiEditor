@@ -8,7 +8,8 @@ Checks: >
   modernize-*,
   cppcoreguidelines-*,
   -readability-implicit-bool-conversion,
-  -readability-enum-initial-value
+  -readability-enum-initial-value,
+  -cppcoreguidelines-owning-memory
 
 FormatStyle: file
 

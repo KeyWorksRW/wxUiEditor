@@ -98,9 +98,10 @@ void FindGenerators(Node* node,
         return;
     if (!node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
     {
-        if (!used.contains(map_GenNames[node->get_GenName()]))
+        auto genNameIter = map_GenNames.find(node->get_GenName());
+        if (genNameIter != map_GenNames.end() && !used.contains(genNameIter->second))
         {
-            used.emplace(map_GenNames[node->get_GenName()]);
+            used.emplace(genNameIter->second);
         }
     }
     if (node->get_ChildCount())

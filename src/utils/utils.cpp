@@ -23,7 +23,7 @@ tt_string DoubleToStr(double val)
 {
     tt_string result;
 
-    std::array<char, 20> str;
+    std::array<char, 20> str {};
     if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), val); ec == std::errc())
     {
         result.assign(str.data(), ptr);

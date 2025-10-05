@@ -9,6 +9,7 @@
 #include <string>
 
 #include <format>
+#include <string_view>
 
 #include "tt.h"
 
@@ -265,9 +266,22 @@ bool tt::is_sameas(std::string_view str1, std::string_view str2, CASE checkcase)
 int tt::atoi(std::string_view str) noexcept
 {
     if (str.empty())
+    {
         return 0;
+    }
 
+#if defined(_DEBUG)
+    std::string_view original = str;
+    (void) original;
+#endif  // _DEBUG
     str = find_nonspace(str);
+    // ASSERT_MSG(!str.empty(), "non-empty string that doesn't have non-empty spaces -- shouldn't be
+    // possible");
+
+    if (str.empty())
+    {
+        return 0;
+    }
 
     int total = 0;
     size_t pos = 0;

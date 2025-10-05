@@ -1,21 +1,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains the declarations for a node (properties, events, etc.)
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "node_decl.h"
 
-#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+// BaseGenerator -- Base widget generator class
+#include "base_generator.h"  // IWYU pragma: keep
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
 NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) :
-    m_type(type), m_category(class_name)
+    m_type(type), m_category(class_name), m_gen_name(rmap_GenNames[class_name]),
+    m_gen_type(type->get_GenType()), m_name(GenEnum::map_GenNames.at(m_gen_name))
 {
-    m_gen_name = rmap_GenNames[class_name];
-    m_gen_type = type->get_GenType();
-    m_name = GenEnum::map_GenNames[m_gen_name];
 }
 
 NodeDeclaration::~NodeDeclaration()
@@ -23,7 +22,7 @@ NodeDeclaration::~NodeDeclaration()
     delete m_generator;
 }
 
-PropDeclaration* NodeDeclaration::get_PropDeclaration(size_t idx) const
+auto NodeDeclaration::get_PropDeclaration(size_t idx) const -> PropDeclaration*
 {
     ASSERT(idx < m_properties.size());
 

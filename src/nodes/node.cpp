@@ -472,12 +472,12 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> Node::as_bmp_combo_items(PropName name)
         return std::vector<NODEPROP_BMP_COMBO_ITEM>();
 }
 
-const tt_string& Node::get_PropDefaultValue(PropName name)
+std::string_view Node::get_PropDefaultValue(PropName name)
 {
     auto prop = get_PropPtr(name);
 
     ASSERT_MSG(prop, tt_string(get_NodeName())
-                         << " doesn't have the property " << map_PropNames[name]);
+                         << " doesn't have the property " << map_PropNames.at(name));
 
     if (prop)
         return prop->getDefaultValue();
@@ -717,7 +717,7 @@ std::pair<NodeSharedPtr, int> Node::CreateChildNode(GenName name, bool verify_la
 #endif  // _WIN32
 
         tt_string undo_str;
-        undo_str << "insert " << map_GenNames[name];
+        undo_str << "insert " << map_GenNames.at(name);
         frame.PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     }
@@ -762,7 +762,7 @@ std::pair<NodeSharedPtr, int> Node::CreateChildNode(GenName name, bool verify_la
                 {
                     wxMessageBox(tt_string()
                                  << "You can only add " << (to_size_t) max_children << ' '
-                                 << map_GenNames[name] << " as a child of " << get_DeclName());
+                                 << map_GenNames.at(name) << " as a child of " << get_DeclName());
                 }
 
                 return { nullptr, Node::invalid_child_count };
@@ -784,15 +784,15 @@ std::pair<NodeSharedPtr, int> Node::CreateChildNode(GenName name, bool verify_la
 
                 auto insert_pos = parent->FindInsertionPos(this);
                 tt_string undo_str;
-                undo_str << "insert " << map_GenNames[name];
+                undo_str << "insert " << map_GenNames.at(name);
                 frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent,
                                                                         undo_str, insert_pos));
             }
         }
         else
         {
-            wxMessageBox(tt_string() << "You cannot add " << map_GenNames[name] << " as a child of "
-                                     << get_DeclName());
+            wxMessageBox(tt_string() << "You cannot add " << map_GenNames.at(name)
+                                     << " as a child of " << get_DeclName());
             return { nullptr, Node::invalid_child };
         }
     }

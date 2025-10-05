@@ -66,9 +66,6 @@ wxIMPLEMENT_APP(App);
 
 #endif  // _WIN32 && defined(_DEBUG)
 
-void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
-                        const wxString& cond, const wxString& msg);
-
 tt_string tt_empty_cstr;
 
 #if defined(_WIN32)

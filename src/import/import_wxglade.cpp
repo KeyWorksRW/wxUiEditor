@@ -308,7 +308,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
                 }
             }
         }
-        MSG_INFO(tt_string() << "Unable to create " << map_GenNames[get_GenName]
+        MSG_INFO(tt_string() << "Unable to create " << map_GenNames.at(get_GenName)
                              << " as a child of " << parent->get_DeclName());
         return NodeSharedPtr();
     }

@@ -283,7 +283,7 @@ void NodeSearchDlg::FindGenerators(Node* node)
 
     if (!node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
     {
-        if (!m_map_found.contains(map_GenNames[node->get_GenName()]))
+        if (!m_map_found.contains(std::string(map_GenNames.at(node->get_GenName()))))
         {
             std::set<Node*> list;
             if (!node->is_Form())
@@ -302,11 +302,11 @@ void NodeSearchDlg::FindGenerators(Node* node)
                     list.emplace(Project.get_ProjectNode());
                 }
             }
-            m_map_found[map_GenNames[node->get_GenName()]] = list;
+            m_map_found[std::string(map_GenNames.at(node->get_GenName()))] = list;
         }
         else if (!node->is_Form())
         {
-            auto& list = m_map_found.at(map_GenNames[node->get_GenName()]);
+            auto& list = m_map_found.at(std::string(map_GenNames.at(node->get_GenName())));
             list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
         }
     }

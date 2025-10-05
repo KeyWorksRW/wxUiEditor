@@ -13,7 +13,7 @@
 
 using namespace GenEnum;
 
-std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes = {
+const std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes = {
 
     { "animation", type_animation },
     { "bitlist", type_bitlist },
@@ -56,7 +56,7 @@ std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes = {
 
 };
 
-std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
+const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
 
     { prop_template_description, "template_description" },
     { prop_template_directory, "template_directory" },
@@ -539,7 +539,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
-std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
+const std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
 
     { type_aui_tool, "aui_tool" },
     { type_aui_toolbar, "aui_toolbar" },
@@ -622,7 +622,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
 
 };
 
-std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
+const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
 
     { gen_AUI, "AUI" },  // This is always the first one, set to a value of 0
 
@@ -863,7 +863,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 };
 std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
 
-std::map<GenEnum::PropName, const char*> map_PropMacros = {
+const std::map<GenEnum::PropName, std::string_view> map_PropMacros = {
 
     { prop_id, "${id}" },
     { prop_pos, "${pos}" },
@@ -893,7 +893,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
 // These can be used for any type of property. The generator can override this using
 // GetPropertyDescription(). If neither this map or the generator supply a description, it
 // will be retrieved from the XML interface file.
-std::map<GenEnum::PropName, const char*> GenEnum::map_PropHelp = {
+const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropHelp = {
 
     // Use \\n to add a line break
 

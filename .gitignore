@@ -54,8 +54,13 @@ src/version.rc
 *.tiff
 *.tmp
 *.ttBld
-*.txt
 *.zip
+
+# Always allow CMakeLists.txt files
+# Ignore other .txt files
+*.txt
+!CMakeLists.txt
+!**/CMakeLists.txt
 
 wxWidgets/src/osx/carbon/*.in
 wxWidgets/src/osx/iphone/*.in

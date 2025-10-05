@@ -618,14 +618,16 @@ void ChangeParentAction::Revert()
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
 
-AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) : m_pos(pos)
+AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) :
+    m_old_selected(wxGetFrame().getSelectedNodePtr()), m_old_pos(m_parent->get_ChildPosition(node)),
+    m_pos(pos)
 {
-    m_old_selected = wxGetFrame().getSelectedNodePtr();
     m_node = node->get_SharedPtr();
     m_parent = parent->get_SharedPtr();
-    m_old_pos = m_parent->get_ChildPosition(node);
 
-    m_undo_string << "Append " << map_GenNames[node->get_GenName()];
+    ASSERT(map_GenNames.contains(node->get_GenName()));
+
+    m_undo_string << "Append " << std::string(map_GenNames.at(node->get_GenName()));
 
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;

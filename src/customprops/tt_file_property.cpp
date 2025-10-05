@@ -16,7 +16,7 @@
 wxPG_IMPLEMENT_PROPERTY_CLASS(ttFileProperty, wxEditorDialogProperty, TextCtrlAndButton);
 
 ttFileProperty::ttFileProperty(NodeProperty* prop) :
-    wxEditorDialogProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL)
+    wxEditorDialogProperty(wxString(prop->get_DeclName()), wxPG_LABEL)
 {
     m_prop = prop;
     SetValue(prop->value().make_wxString());

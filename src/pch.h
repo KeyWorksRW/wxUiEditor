@@ -64,6 +64,10 @@
     #pragma warning(pop)
 #endif
 
+#if !(wxUSE_UNICODE_UTF8 && wxUSE_UTF8_LOCALE_ONLY)
+    #error "wxUSE_UNICODE_UTF8 and wxUSE_UTF8_LOCALE_ONLY must be enabled for this project."
+#endif
+
 // Without this, a huge number of #included wxWidgets header files will generate the warning
 #pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
 
@@ -95,6 +99,11 @@
 #include <map>  // IWYU pragma: keep
 
 #include <string>
+#include <string_view>  // IWYU pragma: keep
+#include <vector>       // IWYU pragma: keep
+
+// ttwx namespace functions, classes, and declarations
+#include "ttwx.h"  // IWYU pragma: keep
 
 #include "tt_string.h"  // tt_string -- std::string with additional methods
 

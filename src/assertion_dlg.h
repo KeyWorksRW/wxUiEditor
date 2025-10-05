@@ -12,6 +12,8 @@
 
 auto AssertionDlg(const char* filename, const char* function, int line, const char* cond,
                   const wxString& msg) -> bool;
+void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
+                        const wxString& cond, const wxString& msg);
 
 // The advantage of using ASSERT over wxASSERT is that ASSERT allows the macro to execute wxTrap in
 // the caller's code, so that you don't have to step out of the assertion function to get back to

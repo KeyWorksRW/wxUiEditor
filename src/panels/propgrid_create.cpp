@@ -393,105 +393,105 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     switch (type)
     {
         case type_id:
-            return new ID_Property(prop->get_DeclName().make_wxString(), prop);
+            return new ID_Property(wxString(prop->get_DeclName()), prop);
 
         case type_int:
-            return new wxIntProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxIntProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                      prop->as_int());
 
         case type_uint:
-            return new wxUIntProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxUIntProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                       prop->as_int());
 
         case type_statbar_fields:
             // This includes a button that triggers a dialog to edit the fields.
-            return new SBarFieldsProperty(prop->get_DeclName().make_wxString(), prop);
+            return new SBarFieldsProperty(wxString(prop->get_DeclName()), prop);
 
         case type_checklist_item:
             // This includes a button that triggers a dialog to edit the fields.
-            return new RearrangeProperty(prop->get_DeclName().make_wxString(), prop);
+            return new RearrangeProperty(wxString(prop->get_DeclName()), prop);
 
         case type_string_code_grow_columns:
-            return new GrowColumnsProperty(prop->get_DeclName().make_wxString(), prop);
+            return new GrowColumnsProperty(wxString(prop->get_DeclName()), prop);
 
         case type_string_code_grow_rows:
-            return new GrowRowsProperty(prop->get_DeclName().make_wxString(), prop);
+            return new GrowRowsProperty(wxString(prop->get_DeclName()), prop);
 
         case type_string_code_cstm_param:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditParamProperty(prop->get_DeclName().make_wxString(), prop);
+            return new EditParamProperty(wxString(prop->get_DeclName()), prop);
 
         case type_string_code_single:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCodeSingleProperty(prop->get_DeclName().make_wxString(), prop);
+            return new EditCodeSingleProperty(wxString(prop->get_DeclName()), prop);
 
         case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
-            return new wxStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                         prop->as_escape_text().make_wxString());
 
         case type_string:
-            return new wxStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                         prop->as_wxString());
 
         case type_string_edit_escapes:
             // This includes a button that triggers a small text editor dialog
             // This doubles the backslash in escaped characters: \n, \t, \r, and \.
-            return new wxLongStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxLongStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                             prop->as_escape_text().make_wxString());
 
         case type_string_edit:
             // This includes a button that triggers a small text editor dialog
-            return new wxLongStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxLongStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                             prop->as_wxString());
 
         case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditStringProperty(prop->get_DeclName().make_wxString(), prop);
+            return new EditStringProperty(wxString(prop->get_DeclName()), prop);
 
         case type_code_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCodeProperty(prop->get_DeclName().make_wxString(), prop);
+            return new EditCodeProperty(wxString(prop->get_DeclName()), prop);
 
         case type_custom_mockup:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditCustomMockupProperty(prop->get_DeclName().make_wxString(), prop);
+            return new EditCustomMockupProperty(wxString(prop->get_DeclName()), prop);
 
         case type_html_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
-            return new EditHtmlProperty(prop->get_DeclName().make_wxString(), prop);
+            return new EditHtmlProperty(wxString(prop->get_DeclName()), prop);
 
         case type_include_files:
             // This includes a button that triggers a custom dialog
-            return new IncludeFilesProperty(prop->get_DeclName().make_wxString(), prop);
+            return new IncludeFilesProperty(wxString(prop->get_DeclName()), prop);
 
         case type_bool:
-            return new wxBoolProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxBoolProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                       prop->as_string() == "1");
 
         case type_wxPoint:
-            return new CustomPointProperty(prop->get_DeclName().make_wxString(), prop,
+            return new CustomPointProperty(wxString(prop->get_DeclName()), prop,
                                            CustomPointProperty::type_point);
 
         case type_wxSize:
-            return new CustomPointProperty(prop->get_DeclName().make_wxString(), prop,
+            return new CustomPointProperty(wxString(prop->get_DeclName()), prop,
                                            CustomPointProperty::type_size);
 
         case type_wxFont:
             // This includes a button that triggers a custom font selector dialog
-            return new FontStringProperty(prop->get_DeclName().make_wxString(), prop);
+            return new FontStringProperty(wxString(prop->get_DeclName()), prop);
 
         case type_path:
-            return new DirectoryProperty(prop->get_DeclName().make_wxString(), prop);
+            return new DirectoryProperty(wxString(prop->get_DeclName()), prop);
 
         case type_animation:
-            return new PropertyGrid_Animation(prop->get_DeclName().make_wxString(), prop);
+            return new PropertyGrid_Animation(wxString(prop->get_DeclName()), prop);
 
         case type_image:
-            return new PropertyGrid_Image(prop->get_DeclName().make_wxString(), prop);
+            return new PropertyGrid_Image(wxString(prop->get_DeclName()), prop);
 
         case type_float:
-            return new wxFloatProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxFloatProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                        prop->as_float());
 
         default:
@@ -530,17 +530,19 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     }
                 }
 
-                int val = GetBitlistValue(prop->as_string(), bit_flags);
-                new_pg_property = new wxFlagsProperty(prop->get_DeclName().make_wxString(),
-                                                      wxPG_LABEL, bit_flags, val);
+                int val = GetBitlistValue(prop->as_wxString(), bit_flags);
+                ASSERT_MSG(!prop->get_DeclName().empty(),
+                           "Property with empty name found in CreatePGProperty()");
+                new_pg_property =
+                    new wxFlagsProperty(wxString(prop->get_DeclName()), wxPG_LABEL, bit_flags, val);
 
-                wxFlagsProperty* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
+                auto* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
                 if (flagsProp)
                 {
                     for (size_t i = 0; i < flagsProp->GetItemCount(); i++)
                     {
-                        auto id = flagsProp->Item(static_cast<unsigned int>(i));
-                        auto& label = id->GetLabel();
+                        auto* item = flagsProp->Item(static_cast<unsigned int>(i));
+                        const auto& label = item->GetLabel();
                         for (auto& iter: propInfo->getOptions())
                         {
                             if (iter.name == label.ToStdString())
@@ -549,7 +551,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                                 {
                                     wxString description(iter.help);
                                     description.Replace("\\n", "\n", true);
-                                    m_prop_grid->SetPropertyHelpString(id, description);
+                                    m_prop_grid->SetPropertyHelpString(item, description);
                                 }
                                 break;
                             }
@@ -601,12 +603,12 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 if (type == type_editoption)
                 {
-                    new_pg_property = new wxEditEnumProperty(prop->get_DeclName().make_wxString(),
+                    new_pg_property = new wxEditEnumProperty(wxString(prop->get_DeclName()),
                                                              wxPG_LABEL, constants);
                 }
                 else
                 {
-                    new_pg_property = new wxEnumProperty(prop->get_DeclName().make_wxString(),
+                    new_pg_property = new wxEnumProperty(wxString(prop->get_DeclName()),
                                                          wxPG_LABEL, constants);
                 }
 
@@ -637,7 +639,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_wxColour:
             {
                 auto value = prop->as_string();
-                return new EditColourProperty(prop->get_DeclName().make_wxString(), prop);
+                return new EditColourProperty(wxString(prop->get_DeclName()), prop);
             }
 
         case type_file:
@@ -667,7 +669,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         break;
                 }
 
-                new_pg_property = new wxFileProperty(prop->get_DeclName().make_wxString(),
+                new_pg_property = new wxFileProperty(wxString(prop->get_DeclName()),
                                                      wxPG_LABEL, prop->as_string());
 
                 switch (prop->get_name())
@@ -739,7 +741,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_stringlist:
             {
-                new_pg_property = new wxArrayStringProperty(prop->get_DeclName().make_wxString(),
+                new_pg_property = new wxArrayStringProperty(wxString(prop->get_DeclName()),
                                                             wxPG_LABEL, prop->as_wxArrayString());
                 if (prop->value().size() > 0 && prop->value()[0] != '"')
                 {
@@ -756,7 +758,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_stringlist_semi:
             {
-                new_pg_property = new wxArrayStringProperty(prop->get_DeclName().make_wxString(),
+                new_pg_property = new wxArrayStringProperty(wxString(prop->get_DeclName()),
                                                             wxPG_LABEL, prop->as_wxArrayString());
                 wxVariant delimiter(";");
                 new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, delimiter);
@@ -765,7 +767,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_stringlist_escapes:
             {
-                new_pg_property = new wxArrayStringProperty(prop->get_DeclName().make_wxString(),
+                new_pg_property = new wxArrayStringProperty(wxString(prop->get_DeclName()),
                                                             wxPG_LABEL, prop->as_wxArrayString());
                 wxVariant var_quote("\"");
                 new_pg_property->SetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
@@ -773,12 +775,12 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             return new_pg_property;
 
         case type_uintpairlist:
-            return new wxStringProperty(prop->get_DeclName().make_wxString(), wxPG_LABEL,
+            return new wxStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
                                         prop->as_string());
 
         default:  // Unknown property
             {
-                new_pg_property = new wxStringProperty(prop->get_DeclName().make_wxString(),
+                new_pg_property = new wxStringProperty(wxString(prop->get_DeclName()),
                                                        wxPG_LABEL, prop->as_string());
                 new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING,
                                               wxVariant(true, "true"));

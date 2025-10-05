@@ -55,7 +55,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
     }
 
     auto* prop = event.GetNodeProperty();
-    auto* grid_property = m_prop_grid->GetPropertyByLabel(prop->get_DeclName().make_wxString());
+    auto* grid_property = m_prop_grid->GetPropertyByLabel(wxString(prop->get_DeclName()));
     if (grid_property == nullptr)
     {
         return;

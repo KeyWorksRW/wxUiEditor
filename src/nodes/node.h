@@ -175,7 +175,7 @@ public:
         }
         if (map_GenTypes.contains(get_GenType()))
         {
-            return (map_GenTypes.at(get_GenType()).find( "book") != std::string_view::npos);
+            return (map_GenTypes.at(get_GenType()).find("book") != std::string_view::npos);
         }
         return false;
     }
@@ -322,12 +322,13 @@ public:
             return 0;
     }
 
-    const tt_string& as_string(PropName name) const
+    auto as_string(PropName name) const -> const tt_string&
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        {
             return m_properties[result->second].as_string();
-        else
-            return tt_empty_cstr;
+        }
+        return tt_empty_cstr;
     }
 
     const std::string& as_std(PropName name) const

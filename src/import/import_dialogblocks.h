@@ -17,11 +17,16 @@ class DialogBlocks : public ImportXML
 {
 public:
     DialogBlocks();
-    ~DialogBlocks() {};
+    virtual ~DialogBlocks() = default;
+
+    DialogBlocks(const DialogBlocks&) = delete;
+    auto operator=(const DialogBlocks&) -> DialogBlocks& = delete;
+    DialogBlocks(DialogBlocks&&) = delete;
+    auto operator=(DialogBlocks&&) -> DialogBlocks& = delete;
 
     bool Import(const tt_string& filename, bool write_doc = true) override;
 
-    int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
+    [[nodiscard]] auto GetLanguage() const -> int override { return GEN_LANG_CPLUSPLUS; }
 
 protected:
     // Sets validator variable name and variable handler type
@@ -34,15 +39,15 @@ protected:
     void SetNodeVarname(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // Sets pos and size
-    void SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    void SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedPtr& new_node) const;
 
     // Sets disabled and hidden states for a node
     void SetNodeState(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
-    bool CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent);
-    bool CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent);
+    auto CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent) -> bool;
+    auto CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent) -> bool;
     void CreateChildNode(pugi::xml_node& child_node, Node* parent);
-    void CreateCustomNode(pugi::xml_node& child_node, Node* parent);
+    void CreateCustomNode(pugi::xml_node& child_xml, Node* parent);
 
     // Process all the style-like attributes for the current node
     void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
@@ -56,13 +61,13 @@ protected:
 
     // This will try to determine the generator to use based on either "proxy-Base class" or
     // "proxy-type" attributes.
-    GenEnum::GenName FindGenerator(pugi::xml_node& node, Node* parent);
+    auto FindGenerator(pugi::xml_node& node, Node* parent) -> GenEnum::GenName;
 
     // Most strings in a DialogBlocks project are quoted, but some are not. This will return
     // the string without quotes.
-    tt_string ExtractQuotedString(pugi::xml_node& str_node);
+    auto ExtractQuotedString(pugi::xml_node& str_xml) -> wxString;
 
-    tt_string GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName);
+    auto GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName) -> wxString;
 
 private:
     bool m_use_enums { true };

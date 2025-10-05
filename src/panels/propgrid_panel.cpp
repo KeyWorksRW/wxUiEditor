@@ -142,8 +142,15 @@ void PropGridPanel::SaveDescBoxHeight()
     config->Write("event_height", m_event_grid->GetDescBoxHeight());
     config->SetPath("/");
 }
-int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags)
+
+// static method
+auto PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int
 {
+    if (strVal.IsEmpty())
+    {
+        return 0;
+    }
+
     wxStringTokenizer strTok(strVal, " |");
     int value = 0;
     while (strTok.HasMoreTokens())

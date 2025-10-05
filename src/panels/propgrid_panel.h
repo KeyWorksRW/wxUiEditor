@@ -94,7 +94,7 @@ protected:
     void ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
     void ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
 
-    auto GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int;
+    static auto GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int;
 
     void AllowIdChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
 

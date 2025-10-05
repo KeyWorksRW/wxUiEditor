@@ -129,7 +129,7 @@ void ttwx::StringVector::SetString(std::string_view str, std::string_view separa
 }
 
 void ttwx::StringVector::SetString(std::string_view str,
-                                 const std::vector<std::string_view>& separators, TRIM trim)
+                                   const std::vector<std::string_view>& separators, TRIM trim)
 {
     clear();
     if (trim == TRIM::both || trim == TRIM::left)

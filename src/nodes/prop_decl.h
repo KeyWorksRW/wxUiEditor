@@ -9,7 +9,7 @@
 
 #include <string_view>
 
-#include "gen_enums.h"      // Enumerations for generators
+#include "gen_enums.h"  // Enumerations for generators
 
 using namespace GenEnum;
 

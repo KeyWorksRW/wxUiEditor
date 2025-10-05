@@ -275,7 +275,8 @@ int tt::atoi(std::string_view str) noexcept
     (void) original;
 #endif  // _DEBUG
     str = find_nonspace(str);
-    // ASSERT_MSG(!str.empty(), "non-empty string that doesn't have non-empty spaces -- shouldn't be possible");
+    // ASSERT_MSG(!str.empty(), "non-empty string that doesn't have non-empty spaces -- shouldn't be
+    // possible");
 
     if (str.empty())
     {

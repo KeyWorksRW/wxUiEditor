@@ -791,8 +791,8 @@ std::pair<NodeSharedPtr, int> Node::CreateChildNode(GenName name, bool verify_la
         }
         else
         {
-            wxMessageBox(tt_string() << "You cannot add " << map_GenNames.at(name) << " as a child of "
-                                     << get_DeclName());
+            wxMessageBox(tt_string() << "You cannot add " << map_GenNames.at(name)
+                                     << " as a child of " << get_DeclName());
             return { nullptr, Node::invalid_child };
         }
     }

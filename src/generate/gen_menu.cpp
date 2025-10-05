@@ -112,7 +112,8 @@ void MenuGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
 {
     if (changed_prop->isProp(prop_stock_id))
     {
-        if (auto pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_label))); pg_setting)
+        if (auto* pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_label)));
+            pg_setting)
         {
             pg_setting->Enable(changed_prop->as_string() == "none");
         }

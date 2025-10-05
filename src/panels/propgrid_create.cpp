@@ -396,12 +396,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             return new ID_Property(wxString(prop->get_DeclName()), prop);
 
         case type_int:
-            return new wxIntProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
-                                     prop->as_int());
+            return new wxIntProperty(wxString(prop->get_DeclName()), wxPG_LABEL, prop->as_int());
 
         case type_uint:
-            return new wxUIntProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
-                                      prop->as_int());
+            return new wxUIntProperty(wxString(prop->get_DeclName()), wxPG_LABEL, prop->as_int());
 
         case type_statbar_fields:
             // This includes a button that triggers a dialog to edit the fields.
@@ -608,8 +606,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 }
                 else
                 {
-                    new_pg_property = new wxEnumProperty(wxString(prop->get_DeclName()),
-                                                         wxPG_LABEL, constants);
+                    new_pg_property =
+                        new wxEnumProperty(wxString(prop->get_DeclName()), wxPG_LABEL, constants);
                 }
 
                 new_pg_property->SetValueFromString(value);
@@ -669,8 +667,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                         break;
                 }
 
-                new_pg_property = new wxFileProperty(wxString(prop->get_DeclName()),
-                                                     wxPG_LABEL, prop->as_string());
+                new_pg_property = new wxFileProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
+                                                     prop->as_string());
 
                 switch (prop->get_name())
                 {
@@ -780,8 +778,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         default:  // Unknown property
             {
-                new_pg_property = new wxStringProperty(wxString(prop->get_DeclName()),
-                                                       wxPG_LABEL, prop->as_string());
+                new_pg_property = new wxStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
+                                                       prop->as_string());
                 new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING,
                                               wxVariant(true, "true"));
 

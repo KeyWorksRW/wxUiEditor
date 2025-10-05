@@ -56,8 +56,8 @@ public:
     void set_value(const wxSize& size);
     void set_value(const char* val) { m_value.assign(val); }
     void set_value(std::string_view val) { m_value.assign(val); }
-    void set_value(tt_string val) { m_value.assign(val); }
-    void set_value(std::string val) { m_value.assign(val); }
+    void set_value(const tt_string& val) { m_value.assign(val); }
+    void set_value(const std::string& val) { m_value.assign(val); }
 
     tt_string convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const;
     tt_string convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& fields) const;
@@ -162,22 +162,37 @@ public:
     operator wxSize() const { return as_size(); }
 
     [[nodiscard]] auto isDefaultValue() const -> bool;
-    [[nodiscard]] auto getDefaultValue() const noexcept -> std::string_view { return m_declaration->getDefaultValue(); }
+    [[nodiscard]] auto getDefaultValue() const noexcept -> std::string_view
+    {
+        return m_declaration->getDefaultValue();
+    }
 
     // Returns false if the property is empty. For size and point properties, returns false
     // if the default value is used. For image properties, returns true if a filename is
     // specified. For window style, returns true if at least one option is specified.
     [[nodiscard]] auto HasValue() const -> bool;
 
-    [[nodiscard]] auto get_PropDeclaration() const -> const PropDeclaration* { return m_declaration; }
+    [[nodiscard]] auto get_PropDeclaration() const -> const PropDeclaration*
+    {
+        return m_declaration;
+    }
 
     auto getNode() -> Node* { return m_node; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    [[nodiscard]] auto get_DeclName() const noexcept -> std::string_view { return m_declaration->get_DeclName(); }
+    [[nodiscard]] auto get_DeclName() const noexcept -> std::string_view
+    {
+        return m_declaration->get_DeclName();
+    }
 
-    [[nodiscard]] auto isProp(PropName name) const noexcept -> bool { return m_declaration->isProp(name); }
-    [[nodiscard]] auto is_Type(PropType type) const noexcept -> bool { return m_declaration->is_Type(type); }
+    [[nodiscard]] auto isProp(PropName name) const noexcept -> bool
+    {
+        return m_declaration->isProp(name);
+    }
+    [[nodiscard]] auto is_Type(PropType type) const noexcept -> bool
+    {
+        return m_declaration->is_Type(type);
+    }
 
     [[nodiscard]] auto type() const noexcept -> PropType { return m_declaration->get_type(); }
     [[nodiscard]] auto get_name() const noexcept -> PropName { return m_declaration->get_name(); }
@@ -185,7 +200,10 @@ public:
     auto get_PropDeclaration() -> PropDeclaration* { return m_declaration; }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    [[nodiscard]] auto get_PropSize() const -> size_t { return sizeof(*this) + (m_value.size() + 1); }
+    [[nodiscard]] auto get_PropSize() const -> size_t
+    {
+        return sizeof(*this) + (m_value.size() + 1);
+    }
 
 private:
     PropDeclaration* m_declaration;

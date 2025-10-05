@@ -29,10 +29,10 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     #define ASSERT_MSG(cond, msg)
     #define FAIL_MSG(msg)
 #else  // not defined(NDEBUG) && !defined(INTERNAL_TESTING)
-    #define ASSERT(cond)                                                      \
+    #define ASSERT(cond)                                                                 \
         if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, wxEmptyString)) \
-        {                                                                     \
-            wxTrap();                                                         \
+        {                                                                                \
+            wxTrap();                                                                    \
         }
 
     #define ASSERT_MSG(cond, msg)                                                \
@@ -43,9 +43,9 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
 
 // Leave this as a MACRO so that it doesn't require a semicolon at the end of the line when it is
 // used.
-    #define FAIL_MSG(msg)                                              \
+    #define FAIL_MSG(msg)                                                \
         if (AssertionDlg(__FILE__, __func__, __LINE__, "failed", (msg))) \
-        {                                                              \
-            wxTrap();                                                  \
+        {                                                                \
+            wxTrap();                                                    \
         }
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)

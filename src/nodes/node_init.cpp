@@ -833,7 +833,8 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
                 PropDeclaration::HelpText(
                     "Comment to add to the variable name in the generated header file "
                     "if the class access is set to protected or public"));
-            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_var_comment))] = prop_info;
+            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_var_comment))] =
+                prop_info;
 
             category.addProperty(prop_class_access);
             tt_string access("protected:");
@@ -848,8 +849,10 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
 
             prop_info = new PropDeclaration(
                 prop_class_access, type_option, PropDeclaration::DefaultValue(access),
-                PropDeclaration::HelpText("Determines the type of access your inherited class has to this item."));
-            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_class_access))] = prop_info;
+                PropDeclaration::HelpText(
+                    "Determines the type of access your inherited class has to this item."));
+            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_class_access))] =
+                prop_info;
 
             auto& opts = prop_info->getOptions();
 

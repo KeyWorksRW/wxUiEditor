@@ -43,11 +43,11 @@ public:
         return map_PropNames.at(m_name_enum);
     }
 
-    [[nodiscard]] auto getDefaultValue() const noexcept -> const std::string_view&
+    [[nodiscard]] auto getDefaultValue() const noexcept -> const std::string&
     {
         return m_def_value;
     }
-    [[nodiscard]] auto getDescription() const noexcept -> const std::string_view& { return m_help; }
+    [[nodiscard]] auto getDescription() const noexcept -> const std::string& { return m_help; }
 
     [[nodiscard]] auto get_name() const noexcept -> PropName { return m_name_enum; }
     [[nodiscard]] auto get_type() const noexcept -> PropType { return m_prop_type; }
@@ -67,8 +67,8 @@ public:
     auto getOptions() -> std::vector<Options>& { return m_options; }
 
 private:
-    std::string_view m_def_value;
-    std::string_view m_help;
+    std::string m_def_value;
+    std::string m_help;
 
     GenEnum::PropType m_prop_type;
     GenEnum::PropName m_name_enum;  // enumeration value for the name

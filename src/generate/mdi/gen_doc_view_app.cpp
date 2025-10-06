@@ -4,10 +4,10 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include "gen_doc_view_app.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"                // Code -- Helper class for generating code
+#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
 
 inline constexpr const auto txt_DocViewAppCppSrc =
     R"===(%class%::%class%() : m_frame(nullptr), m_docManager(nullptr), m_menuBar(nullptr)
@@ -105,7 +105,7 @@ wxFrame* %class%::CreateChildFrame(wxView* view)
 }
 )===";
 
-bool DocViewAppGenerator::ConstructionCode(Code& code)
+auto DocViewAppGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -157,19 +157,34 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
         }
         code_templates.Unindent();
 
-        tt_string_vector lines;
-        lines.ReadString(txt_DocViewAppCppSrc);
-        tt_string class_name = code.node()->as_string(prop_class_name);
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_DocViewAppCppSrc));
+        auto class_name = code.node()->as_string(prop_class_name);
 
         bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
         for (auto& line: lines)
         {
-            line.Replace("%doc_templates%", code_templates, false);
-            line.Replace("%class%", class_name, true);
+            auto replace_in_line = [&line](std::string_view search, std::string_view replace,
+                                           bool all) -> void
+            {
+                for (auto pos = line.find(search, 0); pos != std::string::npos;
+                     pos = line.find(search, pos + replace.length()))
+                {
+                    line.replace(pos, search.length(), replace);
+                    if (!all)
+                    {
+                        break;
+                    }
+                }
+            };
+
+            replace_in_line("%doc_templates%", code_templates, false);
+            replace_in_line("%class%", class_name, true);
+
             if (is_mdi)
             {
-                line.Replace("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
-                line.Replace("wxAuiMDIParentFrame", "wxMDIParentFrame", true);
+                replace_in_line("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
+                replace_in_line("wxAuiMDIParentFrame", "wxMDIParentFrame", true);
             }
             code.Str(line).Eol();
         }

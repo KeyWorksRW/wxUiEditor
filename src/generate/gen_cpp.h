@@ -60,7 +60,7 @@ protected:
 
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void CollectIncludes(Node* node, std::set<std::string>& set_src,
+    void CollectIncludes(Node* form, std::set<std::string>& set_src,
                          std::set<std::string>& set_hdr);
 
     // Recursive function for generating all include files needed by any nodes in the form

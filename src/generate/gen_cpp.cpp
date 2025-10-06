@@ -62,35 +62,46 @@ const std::map<wxBitmapType, std::string_view> g_map_types = {
     { wxBITMAP_TYPE_WEBP, "wxBITMAP_TYPE_WEBP" }
 };
 
-struct GenData
+namespace
 {
-    GenData(GenResults& results, std::vector<tt_string>* pClassList)
+    class GenData
     {
-        this->presults = &results;
-        this->pClassList = pClassList;
-    }
-
-    GenResults* presults { nullptr };
-    std::vector<tt_string>* pClassList { nullptr };
-    tt_string source_ext;
-    tt_string header_ext;
-
-    void AddUpdateFilename(tt_string& path) { presults->updated_files.emplace_back(path); };
-
-    void AddResultMsg(tt_string& msg) { presults->msgs.emplace_back(msg); };
-
-    void UpdateFileCount() { presults->file_count += 1; };
-
-    void AddClassName(const tt_string& class_name)
-    {
-        if (pClassList)
+    public:
+        GenData(GenResults& results, std::vector<tt_string>* pClassList) :
+            pClassList(pClassList), m_results(&results)
         {
-            pClassList->emplace_back(class_name);
         }
-    };
-};
 
-static void GenCppForm(GenData& gen_data, Node* form);
+        tt_string source_ext;
+        tt_string header_ext;
+        std::vector<tt_string>* pClassList;
+
+        void AddUpdateFilename(tt_string& path) const
+        {
+            m_results->updated_files.emplace_back(path);
+        };
+
+        void AddResultMsg(tt_string& msg) const { m_results->msgs.emplace_back(msg); };
+
+        void UpdateFileCount() const { m_results->file_count += 1; };
+
+        void AddClassName(const tt_string& class_name) const
+        {
+            if (pClassList)
+            {
+                pClassList->emplace_back(class_name);
+            }
+        };
+
+    private:
+        GenResults* m_results { nullptr };
+    };
+}  // namespace
+
+namespace
+{
+    void GenCppForm(GenData& gen_data, Node* form);
+}
 
 // clang-format off
 
@@ -198,9 +209,13 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
     if (results.updated_files.size())
     {
         if (results.updated_files.size() == 1)
+        {
             msg << "1 file was updated";
+        }
         else
+        {
             msg << results.updated_files.size() << " files were updated";
+        }
         msg << '\n';
     }
     else
@@ -220,118 +235,124 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
     wxMessageBox(msg, "C++ Code Generation", wxOK | wxICON_INFORMATION);
 }
 
-static void GenCppForm(GenData& gen_data, Node* form)
+namespace
 {
-    // These are just defined for convenience.
-    tt_string& source_ext = gen_data.source_ext;
-    tt_string& header_ext = gen_data.header_ext;
 
-    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
-    if (!has_base_file)
+    void GenCppForm(GenData& gen_data, Node* form)
     {
-        tt_string msg("No filename specified for ");
-        if (form->HasValue(prop_class_name))
-            msg += form->as_string(prop_class_name);
-        else
-            msg += map_GenNames.at(form->get_GenName());
-        msg += '\n';
-        gen_data.AddResultMsg(msg);
-        return;
-    }
+        // These are just defined for convenience.
+        tt_string& source_ext = gen_data.source_ext;
+        tt_string& header_ext = gen_data.header_ext;
 
-    CppCodeGenerator codegen(form);
-
-    path.replace_extension(header_ext);
-    auto h_cw = std::make_unique<FileCodeWriter>(path);
-    codegen.SetHdrWriteCode(h_cw.get());
-
-    path.replace_extension(source_ext);
-    auto cpp_cw = std::make_unique<FileCodeWriter>(path);
-    codegen.SetSrcWriteCode(cpp_cw.get());
-
-    codegen.GenerateClass();
-
-    path.replace_extension(header_ext);
-
-    int flags = flag_no_ui;
-    if (gen_data.pClassList)
-        flags |= flag_test_only;
-    if (form->as_bool(prop_no_closing_brace))
-        flags |= flag_add_closing_brace;
-    auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
-    if (form->as_bool(prop_no_closing_brace))
-        flags = flags & ~flag_add_closing_brace;
-
-    if (retval > 0)
-    {
-        if (!gen_data.pClassList)
+        auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+        if (!has_base_file)
         {
-            gen_data.AddUpdateFilename(path);
+            tt_string msg("No filename specified for ");
+            if (form->HasValue(prop_class_name))
+                msg += form->as_string(prop_class_name);
+            else
+                msg += map_GenNames.at(form->get_GenName());
+            msg += '\n';
+            gen_data.AddResultMsg(msg);
+            return;
         }
-        else
+
+        CppCodeGenerator codegen(form);
+
+        path.replace_extension(header_ext);
+        auto h_cw = std::make_unique<FileCodeWriter>(path);
+        codegen.SetHdrWriteCode(h_cw.get());
+
+        path.replace_extension(source_ext);
+        auto cpp_cw = std::make_unique<FileCodeWriter>(path);
+        codegen.SetSrcWriteCode(cpp_cw.get());
+
+        codegen.GenerateClass();
+
+        path.replace_extension(header_ext);
+
+        int flags = flag_no_ui;
+        if (gen_data.pClassList)
+            flags |= flag_test_only;
+        if (form->as_bool(prop_no_closing_brace))
+            flags |= flag_add_closing_brace;
+        auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
+        if (form->as_bool(prop_no_closing_brace))
+            flags = flags & ~flag_add_closing_brace;
+
+        if (retval > 0)
         {
-            if (form->is_Gen(gen_Images))
+            if (!gen_data.pClassList)
             {
-                // While technically this is a "form" it doesn't have the usual properties set
-                gen_data.AddClassName(GenEnum::map_GenNames.at(gen_Images));
-            }
-            else if (form->is_Gen(gen_Data))
-            {
-                gen_data.AddClassName(GenEnum::map_GenNames.at(gen_Data));
+                gen_data.AddUpdateFilename(path);
             }
             else
             {
-                gen_data.AddClassName(form->as_string(prop_class_name));
+                if (form->is_Gen(gen_Images))
+                {
+                    // While technically this is a "form" it doesn't have the usual properties set
+                    gen_data.AddClassName(GenEnum::map_GenNames.at(gen_Images));
+                }
+                else if (form->is_Gen(gen_Data))
+                {
+                    gen_data.AddClassName(GenEnum::map_GenNames.at(gen_Data));
+                }
+                else
+                {
+                    gen_data.AddClassName(form->as_string(prop_class_name));
+                }
+                return;
             }
-            return;
         }
-    }
-    else if (retval < 0)
-    {
-        gen_data.AddResultMsg(tt_string() << "Cannot create or write to the file " << path << '\n');
-    }
-    else  // retval == result::exists)
-    {
-        gen_data.UpdateFileCount();
-    }
-
-    path.replace_extension(source_ext);
-    retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
-
-    if (retval > 0)
-    {
-        if (!gen_data.pClassList)
+        else if (retval < 0)
         {
-            gen_data.AddUpdateFilename(path);
+            gen_data.AddResultMsg(tt_string()
+                                  << "Cannot create or write to the file " << path << '\n');
         }
-        else
+        else  // retval == result::exists)
         {
-            if (form->is_Gen(gen_Images))
+            gen_data.UpdateFileCount();
+        }
+
+        path.replace_extension(source_ext);
+        retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
+
+        if (retval > 0)
+        {
+            if (!gen_data.pClassList)
             {
-                // While technically this is a "form" it doesn't have the usual properties set
-                gen_data.AddClassName("Images List");
-            }
-            else if (form->is_Gen(gen_Data))
-            {
-                gen_data.AddClassName("Data List");
+                gen_data.AddUpdateFilename(path);
             }
             else
             {
-                gen_data.AddClassName(form->as_string(prop_class_name));
+                if (form->is_Gen(gen_Images))
+                {
+                    // While technically this is a "form" it doesn't have the usual properties set
+                    gen_data.AddClassName("Images List");
+                }
+                else if (form->is_Gen(gen_Data))
+                {
+                    gen_data.AddClassName("Data List");
+                }
+                else
+                {
+                    gen_data.AddClassName(form->as_string(prop_class_name));
+                }
+                return;
             }
-            return;
+        }
+
+        else if (retval < 0)
+        {
+            gen_data.AddResultMsg(tt_string()
+                                  << "Cannot create or write to the file " << path << '\n');
+        }
+        else  // retval == result::exists
+        {
+            gen_data.UpdateFileCount();
         }
     }
-
-    else if (retval < 0)
-    {
-        gen_data.AddResultMsg(tt_string() << "Cannot create or write to the file " << path << '\n');
-    }
-    else  // retval == result::exists
-    {
-        gen_data.UpdateFileCount();
-    }
-}
+}  // namespace
 
 bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
@@ -372,12 +393,12 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
     tt_string source_ext(".cpp");
     tt_string header_ext(".h");
 
-    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto& extProp = Project.as_string(prop_header_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
@@ -396,9 +417,10 @@ bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList)
     }
 
     if (pClassList)
+    {
         return pClassList->size() > 0;
-    else
-        return results.updated_files.size() > 0;
+    }
+    return results.updated_files.size() > 0;
 }
 
 void CppCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names,
@@ -460,7 +482,9 @@ void CppCodeGenerator::GenCppImageFunctions()
     {
         m_source->writeLine();
         if (m_NeedSVGFunction)
+        {
             m_source->writeLine("#include <wx/bmpbndl.h>  // wxBitmapBundle class", indent::none);
+        }
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
     }
 
@@ -579,10 +603,12 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
     }
 
     // First output all the wxWidget header files
-    for (auto& iter: hdr_includes)
+    for (const auto& iter: hdr_includes)
     {
         if (tt::contains(iter, "<wx"))
-            m_header->writeLine((tt_string&) iter);
+        {
+            m_header->writeLine(iter);
+        }
     }
 
     m_header->writeLine();
@@ -602,10 +628,12 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
     }
 
     // Now output all the other header files (this will include forward class declarations)
-    for (auto& iter: hdr_includes)
+    for (const auto& iter: hdr_includes)
     {
         if (!tt::contains(iter, "<wx"))
-            m_header->writeLine((tt_string&) iter);
+        {
+            m_header->writeLine(iter);
+        }
     }
 
     m_header->writeLine();
@@ -657,10 +685,7 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
                     m_header->writeLine(list[idx]);
                     break;
                 }
-                else
-                {
-                    m_header->writeLine(list[idx]);
-                }
+                m_header->writeLine(list[idx]);
             }
         }
     }
@@ -760,9 +785,10 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     if (m_embedded_images.size())
     {
         std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-                  [](const EmbeddedImage* a, const EmbeddedImage* b)
+                  [](const EmbeddedImage* image_a, const EmbeddedImage* image_b)
                   {
-                      return (a->base_image().array_name.compare(b->base_image().array_name) < 0);
+                      return (image_a->base_image().array_name.compare(
+                                  image_b->base_image().array_name) < 0);
                   });
     }
 
@@ -770,7 +796,7 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     {
         if (!img_include_set.empty())
         {
-            for (auto& iter: img_include_set)
+            for (const auto& iter: img_include_set)
             {
                 m_source->writeLine(iter.c_str());
             }
@@ -796,7 +822,7 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         GenerateImagesForm();
         return;
     }
-    else if (m_form_node->is_Gen(gen_Data))
+    if (m_form_node->is_Gen(gen_Data))
     {
         thrd_need_img_func.join();
         GenerateDataForm();
@@ -864,7 +890,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         return;
     }
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
 
     // This may result in two blank lines, but without it there may be a case where there is no
@@ -886,7 +912,9 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
 
     code.Str("class ");
     if (m_form_node->HasValue(prop_class_decoration))
+    {
         code.as_string(prop_class_decoration) += " ";
+    }
     code.as_string(prop_class_name) += " : public ";
     if (generator->BaseClassNameCode(code))
     {
@@ -937,7 +965,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         code.clear();
         BeginPlatformCode(code, member.first);
         m_header->writeLine(code);
-        for (auto& member_code: member.second)
+        for (const auto& member_code: member.second)
         {
             m_header->writeLine(member_code);
         }
@@ -953,25 +981,37 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         {
             code.Eol(eol_if_needed).Str("static const int form_id = ");
             if (m_form_node->as_string(prop_id).size())
+            {
                 code.as_string(prop_id) += ";";
+            }
             else
+            {
                 code.Str("wxID_ANY;");
+            }
         }
         if (m_form_node->HasProp(prop_style))
         {
             code.Eol(eol_if_needed).Str("static const int form_style = ");
             if (m_form_node->as_string(prop_style).size())
+            {
                 code.as_string(prop_style) += ";";
+            }
             else
+            {
                 code.Str("0;");
+            }
         }
         else if (m_form_node->HasProp(prop_window_style))
         {
             code.Eol(eol_if_needed).Str("static const int form_style = ");
             if (m_form_node->as_string(prop_window_style).size())
+            {
                 code.as_string(prop_window_style) += ";";
+            }
             else
+            {
                 code.Str("0;");
+            }
         }
         if (m_form_node->HasProp(prop_pos))
         {
@@ -989,9 +1029,13 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         {
             code.Eol(eol_if_needed).Str("static const wxString form_title() { return ");
             if (m_form_node->HasValue(prop_title))
+            {
                 code.Str("wxString::FromUTF8(\"").as_string(prop_title) += "\"); }";
+            }
             else
+            {
                 code.Str("wxEmptyString; }");
+            }
         }
 
         if (code.size())
@@ -1083,7 +1127,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
             code.clear();
             BeginPlatformCode(code, member.first);
             m_header->writeLine(code);
-            for (auto& code_line: member.second)
+            for (const auto& code_line: member.second)
             {
                 m_header->writeLine(code_line);
             }
@@ -1111,7 +1155,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         code.clear();
         BeginPlatformCode(code, member.first);
         m_header->writeLine(code);
-        for (auto& code_line: member.second)
+        for (const auto& code_line: member.second)
         {
             m_header->writeLine(code_line);
         }
@@ -1162,9 +1206,13 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     std::set<std::string> src_includes;
     std::set<std::string> hdr_includes;
     if (Project.as_string(prop_help_provider) != "none")
+    {
         src_includes.insert("#include <wx/cshelp.h>");
+    }
     if (Project.as_bool(prop_internationalize))
+    {
         hdr_includes.insert("#include <wx/intl.h>");
+    }
 
     // This will almost always be needed, and it in turn includes a bunch of other files like
     // string.h which are also almost always needed.
@@ -1205,7 +1253,9 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     if (m_form_node->HasValue(prop_cpp_conditional))
     {
         if (!m_form_node->as_string(prop_cpp_conditional).starts_with("#"))
+        {
             code.Str("#if ");
+        }
         code.Str(m_form_node->as_string(prop_cpp_conditional));
         m_source->writeLine(code);
         m_source->writeLine();
@@ -1225,7 +1275,7 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the
     // header set.
 
-    if (auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
+    if (const auto& hdr_extension = Project.as_string(prop_header_ext); hdr_extension.size())
     {
         m_header_ext = hdr_extension;
     }
@@ -1278,10 +1328,12 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
         m_source->writeLine();
     }
 
-    for (auto& iter: src_includes)
+    for (const auto& iter: src_includes)
     {
         if (tt::contains(iter, "<wx"))
-            m_source->writeLine((tt_string&) iter);
+        {
+            m_source->writeLine(iter);
+        }
     }
 
     m_source->writeLine();
@@ -1307,7 +1359,9 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     for (auto& iter: src_includes)
     {
         if (!tt::contains(iter, "<wx"))
-            m_source->writeLine((tt_string&) iter);
+        {
+            m_source->writeLine(iter);
+        }
     }
 
     m_source->writeLine();
@@ -1417,7 +1471,9 @@ void CppCodeGenerator::GenerateCppClassConstructor()
         for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
             if (child->is_Gen(gen_wxContextMenuEvent))
+            {
                 continue;
+            }
             GenConstruction(child.get());
         }
 
@@ -1482,7 +1538,9 @@ void CppCodeGenerator::GenerateCppClassConstructor()
         for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
             if (child->is_Gen(gen_wxContextMenuEvent))
+            {
                 continue;
+            }
             GenConstruction(child.get());
         }
 
@@ -1530,13 +1588,13 @@ void CppCodeGenerator::GenerateCppHandlers()
         {
             if (iter_img->base_image().type != wxBITMAP_TYPE_BMP &&
                 iter_img->base_image().type != wxBITMAP_TYPE_SVG &&
-                m_type_generated.find(iter_img->base_image().type) == m_type_generated.end())
+                !m_type_generated.contains(iter_img->base_image().type))
             {
                 m_source->writeLine(tt_string("if (!wxImage::FindHandler(")
-                                    << g_map_types[iter_img->base_image().type] << "))");
+                                    << g_map_types.at(iter_img->base_image().type) << "))");
                 m_source->Indent();
                 m_source->writeLine(tt_string("\twxImage::AddHandler(new ")
-                                    << g_map_handlers[iter_img->base_image().type] << ");");
+                                    << g_map_handlers.at(iter_img->base_image().type) << ");");
                 m_source->Unindent();
                 m_type_generated.insert(iter_img->base_image().type);
             }
@@ -1577,10 +1635,10 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_CPLUSPLUS);
-    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
-        return (EventHandlerDlg::GetCppValue(a->get_value()) <
-                EventHandlerDlg::GetCppValue(b->get_value()));
+        return (EventHandlerDlg::GetCppValue(event_a->get_value()) <
+                EventHandlerDlg::GetCppValue(event_b->get_value()));
     };
 
     // Sort events by function name
@@ -1598,7 +1656,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
 
         if (has_base_file && path.extension().empty())
         {
-            if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+            if (const auto& extProp = Project.as_string(prop_source_ext); extProp.size())
             {
                 path += extProp;
             }
@@ -1612,8 +1670,8 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
         // don't generate them again.
         if (has_base_file && org_file.ReadFile(path))
         {
-            size_t line_index;
-            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            size_t line_index = 0;
+            for (; line_index < org_file.size(); ++line_index)
             {
                 if (org_file[line_index].is_sameprefix(cpp_rust_end_cmt_line))
                 {
@@ -1641,11 +1699,13 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
             auto handler = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's
             if (handler.starts_with("["))
+            {
                 continue;
+            }
 
             tt_string set_code;
             set_code << "void " << m_form_node->get_NodeName() << "::" << handler;
-            for (auto& iter: code_lines)
+            for (const auto& iter: code_lines)
             {
                 if (iter.starts_with(set_code))
                 {
@@ -1655,7 +1715,9 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
                 }
             }
             if (set_code.empty())
+            {
                 continue;
+            }
 
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
@@ -1695,12 +1757,14 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
             auto handler = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's
             if (handler.empty() || handler.starts_with("["))
+            {
                 continue;
+            }
 
             // The user's declaration will typically include the event parameter, often
             tt_string set_code;
             set_code << "void " << m_form_node->get_NodeName() << "::" << handler << '(';
-            for (auto& iter: code_lines)
+            for (const auto& iter: code_lines)
             {
                 if (iter.starts_with(set_code))
                 {
@@ -1710,7 +1774,9 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
                 }
             }
             if (set_code.empty())
+            {
                 continue;
+            }
 
             // Add it to our set of handled events in case the user specified
             // the same event handler for multiple events.
@@ -1720,7 +1786,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
             code.Str(event_function) << event->get_EventInfo()->get_event_class() << "& event)";
             code.Eol().OpenBrace();
 #if defined(_DEBUG)
-            auto& dbg_event_name = event->get_name();
+            const auto& dbg_event_name = event->get_name();
             wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
             if (event->get_name() == "CloseButtonClicked")
@@ -1756,7 +1822,7 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
 {
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
-    if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
+    if (const auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
         if (auto val_data_type = node->get_ValidatorDataType(); val_data_type.size())
         {
@@ -1771,7 +1837,9 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
                 {
                     prop = node->get_PropPtr(prop_initial_state);
                     if (prop && prop->as_string() == "wxCHK_CHECKED")
+                    {
                         bState = true;
+                    }
                 }
                 code << " { " << (bState ? "true" : "false") << " };";
             }
@@ -1779,13 +1847,19 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
                      val_data_type.contains("long") || val_data_type.contains("double") ||
                      val_data_type.contains("float"))
             {
-                auto prop = node->get_PropPtr(prop_value);
+                auto* prop = node->get_PropPtr(prop_value);
                 if (!prop)
+                {
                     prop = node->get_PropPtr(prop_initial);
+                }
                 if (!prop)
+                {
                     prop = node->get_PropPtr(prop_selection);
+                }
                 if (!prop)
+                {
                     prop = node->get_PropPtr(prop_position);
+                }
                 if (prop && prop->as_string().size())
                 {
                     code << " { " << prop->as_string() << " };";
@@ -1797,7 +1871,7 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
             }
             else if (val_data_type == "wxString" || val_data_type == "wxFileName")
             {
-                auto& value = node->as_string(prop_value);
+                const auto& value = node->as_string(prop_value);
                 if (value.size())
                 {
                     code << " { " << GenerateQuotedString(value) << " };";
@@ -1831,7 +1905,7 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
             }
             // If node_container is non-null, it means the current node is within a container
             // that has a conditional.
-            else if (auto node_container = node->get_PlatformContainer(); node_container)
+            else if (auto* node_container = node->get_PlatformContainer(); node_container)
             {
                 if (!m_map_protected.contains(node_container->as_string(prop_platforms)))
                 {
@@ -1859,7 +1933,9 @@ void CppCodeGenerator::GenCppEnumIds(Node* class_node)
     ASSERT(m_language == GEN_LANG_CPLUSPLUS);
 
     if (!class_node->as_bool(prop_generate_ids))
+    {
         return;
+    }
 
     std::set<std::string> set_enum_ids;
     std::set<std::string> set_const_ids;
@@ -1867,13 +1943,17 @@ void CppCodeGenerator::GenCppEnumIds(Node* class_node)
 
     if (set_const_ids.size())
     {
-        for (auto& iter: set_const_ids)
+        for (const auto& iter: set_const_ids)
         {
-            tt_string id = "static const int ";
+            const std::string new_id = "static const int ";
             if (iter.starts_with("self."))
-                m_header->write(id + (iter.c_str() + (sizeof("self.") - 1)));
+            {
+                m_header->write(new_id + iter.substr(sizeof("self.") - 1));
+            }
             else
-                m_header->write(id + iter);
+            {
+                m_header->write(new_id + iter);
+            }
             m_header->writeLine(";");
         }
         m_header->writeLine();
@@ -1886,18 +1966,26 @@ void CppCodeGenerator::GenCppEnumIds(Node* class_node)
         m_header->Indent();
 
         size_t item = 0;
-        for (auto& iter: set_enum_ids)
+        for (const auto& iter: set_enum_ids)
         {
             if (iter.starts_with("self."))
-                m_header->write(iter.c_str() + (sizeof("self.") - 1));
+            {
+                m_header->write(iter.substr(sizeof("self.") - 1));
+            }
             else
+            {
                 m_header->write(iter);
+            }
             if (item == 0)
             {
                 if (class_node->HasValue(prop_initial_enum_string))
+                {
                     m_header->write(" = " + class_node->as_string(prop_initial_enum_string));
+                }
                 else
+                {
                     m_header->write(" = wxID_HIGHEST + 1", true);
+                }
             }
 
             if (item < set_enum_ids.size() - 1)
@@ -1927,7 +2015,9 @@ void CppCodeGenerator::GenHdrEvents()
             auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
             if (event_code.contains("[") || event_code.contains("::"))
+            {
                 continue;
+            }
 
             tt_string code;
 
@@ -1985,7 +2075,9 @@ void CppCodeGenerator::GenHdrEvents()
             auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
             if (event_code.contains("[") || event_code.contains("::"))
+            {
                 continue;
+            }
 
             tt_string code;
 
@@ -2026,7 +2118,7 @@ void CppCodeGenerator::GenHdrEvents()
                 m_header->writeLine("// Event handlers");
                 m_header->writeLine();
             }
-            for (auto& iter: code_lines)
+            for (const auto& iter: code_lines)
             {
                 m_header->writeLine(iter.subview());
             }
@@ -2035,9 +2127,9 @@ void CppCodeGenerator::GenHdrEvents()
 
     if (m_map_conditional_events.size())
     {
-        auto sort_events_by_handler = [](NodeEvent* a, NodeEvent* b)
+        auto sort_events_by_handler = [](NodeEvent* event_a, NodeEvent* event_b)
         {
-            return (a->get_value() < b->get_value());
+            return (event_a->get_value() < event_b->get_value());
         };
 
         if (m_events.empty() && m_ctx_menu_events.empty())
@@ -2066,7 +2158,9 @@ void CppCodeGenerator::GenHdrEvents()
                 auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
                 // Ignore lambda's and functions in another class
                 if (event_code.contains("[") || event_code.contains("::"))
+                {
                     continue;
+                }
 
                 if (m_form_node->as_bool(prop_use_derived_class))
                 {
@@ -2111,7 +2205,9 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     // tt_string file;
     m_baseFullPath = path;
     if (has_base_file)
+    {
         m_baseFullPath.remove_filename();
+    }
 
     m_header->writeLine("#pragma once");
     m_header->writeLine();
@@ -2285,7 +2381,7 @@ void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
         // Don't generate member variables for the Doc/View App node, they are not needed.
         return;
     }
-    if (auto prop = node->get_PropPtr(prop_class_access); prop)
+    if (auto* prop = node->get_PropPtr(prop_class_access); prop)
     {
         if (prop->as_string() != "none")
         {
@@ -2393,7 +2489,7 @@ void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
                     }
                     // If node_container is non-null, it means the current node is within a
                     // container that has a conditional.
-                    else if (auto node_container = node->get_PlatformContainer(); node_container)
+                    else if (auto* node_container = node->get_PlatformContainer(); node_container)
                     {
                         if (perm == Permission::Public)
                         {
@@ -2455,8 +2551,6 @@ void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
     {
         CollectMemberVariables(child.get(), perm, code_lines);
     }
-
-    return;
 }
 
 void CppCodeGenerator::CollectIncludes(Node* form, std::set<std::string>& set_src,
@@ -2472,7 +2566,7 @@ void CppCodeGenerator::CollectIncludes(Node* form, std::set<std::string>& set_sr
 
     // If an include is going to be generated in the header file, then don't also generate it
     // in the src file.
-    for (auto& iter: set_hdr)
+    for (const auto& iter: set_hdr)
     {
         if (auto pos = set_src.find(iter); pos != set_src.end())
         {
@@ -2489,12 +2583,14 @@ void CppCodeGenerator::WriteImagePreConstruction(Code& code)
     code.clear();
 
     bool is_namespace_written = false;
-    for (auto iter_array: m_embedded_images)
+    for (const auto* iter_array: m_embedded_images)
     {
         // If the image is in ImagesForm then it's header file will be included which already
         // has the extern declarations.
         if (iter_array->get_Form() == Project.get_ImagesForm())
+        {
             continue;
+        }
 
         if (!is_namespace_written)
         {
@@ -2531,12 +2627,16 @@ void CppCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>
     // set. Once all processing is done, if this header was also used by a component with
     // non-local access, then it will be removed from the source set.
     if (node->is_PropValue(prop_class_access, "none"))
+    {
         isAddToSrc = true;
+    }
 
-    auto generator = node->get_NodeDeclaration()->get_Generator();
+    auto* generator = node->get_NodeDeclaration()->get_Generator();
     ASSERT(generator);
     if (!generator)
+    {
         return;
+    }
 
     generator->GetIncludes(node, set_src, set_hdr, m_language);
 
@@ -2694,15 +2794,19 @@ void CppCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
 
 void CppCodeGenerator::WriteImagePostHeader()
 {
-    auto images_form = Project.get_ImagesForm();
+    auto* images_form = Project.get_ImagesForm();
     if (!images_form)
+    {
         return;
+    }
 
     bool is_namespace_written = false;
-    for (auto iter_array: m_embedded_images)
+    for (const auto* iter_array: m_embedded_images)
     {
         if (iter_array->get_Form() == images_form)
+        {
             continue;
+        }
 
         if (!is_namespace_written)
         {

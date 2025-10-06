@@ -1524,42 +1524,32 @@ void CppCodeGenerator::GenerateCppClassConstructor()
         }
     }
     if (m_form_node->is_Gen(gen_wxDialog) || m_form_node->is_Type(type_frame_form) ||
-        m_form_node->is_Gen(gen_PanelForm) || m_form_node->is_Gen(gen_DocViewApp) ||
-        m_form_node->is_Gen(gen_wxPropertySheetDialog))
+        m_form_node->is_Gen(gen_PanelForm) || m_form_node->is_Gen(gen_wxPropertySheetDialog))
     {
         m_source->writeLine("\nreturn true;");
     }
 
     m_source->Unindent();
+    if (m_form_node->is_Gen(gen_DocViewApp))
+    {
+        m_source->SetLastLineBlank();
+    }
     m_source->writeLine("}");
 
     if (m_form_node->is_Gen(gen_DocViewApp))
     {
-        for (const auto& child: m_form_node->get_ChildNodePtrs())
+        code.clear();
+        if (generator->AfterConstructionCode(code))
         {
-            if (child->is_Gen(gen_wxContextMenuEvent))
-            {
-                continue;
-            }
-            GenConstruction(child.get());
+            m_source->writeLine();
+            m_source->writeLine(code);
         }
 
         code.clear();
-        if (generator->AfterChildrenCode(code))
-        {
-            if (code.size())
-            {
-                m_source->writeLine();
-                m_source->writeLine(code);
-            }
-        }
     }
-
-    code.clear();
-    if (generator->AfterConstructionCode(code))
+    else
     {
-        m_source->writeLine();
-        m_source->writeLine(code);
+        code.clear();
     }
 
     Node* node_ctx_menu = nullptr;

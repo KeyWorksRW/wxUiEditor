@@ -22,46 +22,9 @@
 
 using namespace GenEnum;
 
-std::map<wxBitmapType, std::string> g_map_handlers;
-std::map<wxBitmapType, std::string> g_map_types;
-
-#define ADD_TYPE(name) g_map_types[name] = #name;
-
-BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node)
+BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node) :
+    m_form_node(form_node), m_language(language)
 {
-    m_language = language;
-    m_form_node = form_node;
-
-    if (g_map_types.empty())
-    {
-        ADD_TYPE(wxBITMAP_TYPE_BMP);  // We include this, but the handler is always loaded
-        ADD_TYPE(wxBITMAP_TYPE_ICO);
-        ADD_TYPE(wxBITMAP_TYPE_CUR);
-        ADD_TYPE(wxBITMAP_TYPE_XPM);
-        ADD_TYPE(wxBITMAP_TYPE_ICO_RESOURCE);
-#ifndef __WXOSX__
-        ADD_TYPE(wxBITMAP_TYPE_TIFF);
-#endif
-        ADD_TYPE(wxBITMAP_TYPE_GIF);
-        ADD_TYPE(wxBITMAP_TYPE_PNG);
-        ADD_TYPE(wxBITMAP_TYPE_JPEG);
-        ADD_TYPE(wxBITMAP_TYPE_PNM);
-        ADD_TYPE(wxBITMAP_TYPE_ANI);
-        ADD_TYPE(wxBITMAP_TYPE_WEBP);
-
-        g_map_handlers[wxBITMAP_TYPE_ICO] = "wxICOHandler";
-        g_map_handlers[wxBITMAP_TYPE_CUR] = "wxCURHandler";
-        g_map_handlers[wxBITMAP_TYPE_XPM] = "wxXPMHandler";
-#ifndef __WXOSX__
-        g_map_handlers[wxBITMAP_TYPE_TIFF] = "wxTIFFHandler";
-#endif
-        g_map_handlers[wxBITMAP_TYPE_GIF] = "wxGIFHandler";
-        g_map_handlers[wxBITMAP_TYPE_PNG] = "wxPNGHandler";
-        g_map_handlers[wxBITMAP_TYPE_JPEG] = "wxJPEGHandler";
-        g_map_handlers[wxBITMAP_TYPE_PNM] = "wxPNMHandler";
-        g_map_handlers[wxBITMAP_TYPE_ANI] = "wxANIHandler";
-        g_map_handlers[wxBITMAP_TYPE_WEBP] = "wxWEBPHandler";
-    }
 }
 
 tt_string BaseCodeGenerator::GetDeclaration(Node* node)

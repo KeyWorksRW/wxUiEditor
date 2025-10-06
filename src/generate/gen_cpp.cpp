@@ -34,8 +34,33 @@ using namespace code;
 
 extern const char* cpp_rust_end_cmt_line;  // "// ************* End of generated code"
 
-extern std::map<wxBitmapType, std::string> g_map_handlers;
-extern std::map<wxBitmapType, std::string> g_map_types;
+const std::map<wxBitmapType, std::string_view> g_map_handlers = {
+    { wxBITMAP_TYPE_ICO, "wxICOHandler" },   { wxBITMAP_TYPE_CUR, "wxCURHandler" },
+    { wxBITMAP_TYPE_XPM, "wxXPMHandler" },
+#ifndef __WXOSX__
+    { wxBITMAP_TYPE_TIFF, "wxTIFFHandler" },
+#endif
+    { wxBITMAP_TYPE_GIF, "wxGIFHandler" },   { wxBITMAP_TYPE_PNG, "wxPNGHandler" },
+    { wxBITMAP_TYPE_JPEG, "wxJPEGHandler" }, { wxBITMAP_TYPE_PNM, "wxPNMHandler" },
+    { wxBITMAP_TYPE_ANI, "wxANIHandler" },   { wxBITMAP_TYPE_WEBP, "wxWEBPHandler" }
+};
+
+const std::map<wxBitmapType, std::string_view> g_map_types = {
+    { wxBITMAP_TYPE_BMP, "wxBITMAP_TYPE_BMP" },
+    { wxBITMAP_TYPE_ICO, "wxBITMAP_TYPE_ICO" },
+    { wxBITMAP_TYPE_CUR, "wxBITMAP_TYPE_CUR" },
+    { wxBITMAP_TYPE_XPM, "wxBITMAP_TYPE_XPM" },
+    { wxBITMAP_TYPE_ICO_RESOURCE, "wxBITMAP_TYPE_ICO_RESOURCE" },
+#ifndef __WXOSX__
+    { wxBITMAP_TYPE_TIFF, "wxBITMAP_TYPE_TIFF" },
+#endif
+    { wxBITMAP_TYPE_GIF, "wxBITMAP_TYPE_GIF" },
+    { wxBITMAP_TYPE_PNG, "wxBITMAP_TYPE_PNG" },
+    { wxBITMAP_TYPE_JPEG, "wxBITMAP_TYPE_JPEG" },
+    { wxBITMAP_TYPE_PNM, "wxBITMAP_TYPE_PNM" },
+    { wxBITMAP_TYPE_ANI, "wxBITMAP_TYPE_ANI" },
+    { wxBITMAP_TYPE_WEBP, "wxBITMAP_TYPE_WEBP" }
+};
 
 struct GenData
 {

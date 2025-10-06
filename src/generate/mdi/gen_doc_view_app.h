@@ -9,13 +9,13 @@
 class DocViewAppGenerator : public BaseGenerator
 {
 public:
-    bool ConstructionCode(Code& code) override;
-    bool AfterConstructionCode(Code& code) override;
+    auto ConstructionCode(Code& code) -> bool override;
+    auto AfterConstructionCode(Code& code) -> bool override;
 
-    bool BaseClassNameCode(Code& code) override;
-    bool PreClassHeaderCode(Code& code) override;
-    bool HeaderCode(Code& code) override;
+    auto BaseClassNameCode(Code& code) -> bool override;
+    auto PreClassHeaderCode(Code& code) -> bool override;
+    auto HeaderCode(Code& code) -> bool override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     GenLang language) override;
+    auto GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     GenLang language) -> bool override;
 };

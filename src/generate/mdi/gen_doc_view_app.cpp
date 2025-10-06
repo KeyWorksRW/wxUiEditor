@@ -115,7 +115,9 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
         for (auto& child: code.node()->get_ChildNodePtrs())
         {
             if (!child->is_Type(type_wx_document))
+            {
                 continue;
+            }
             code_templates.Indent();
 
             code_templates.Eol()
@@ -143,7 +145,9 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
             for (auto& doc_child: child->get_ChildNodePtrs())
             {
                 if (!doc_child->is_Type(type_wx_view))
+                {
                     continue;
+                }
                 code_templates.Str("CLASSINFO(")
                     .Str(doc_child->as_string(prop_derived_class_name))
                     .Str(")");
@@ -174,7 +178,7 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool DocViewAppGenerator::AfterConstructionCode(Code& code)
+auto DocViewAppGenerator::AfterConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -197,7 +201,7 @@ bool DocViewAppGenerator::AfterConstructionCode(Code& code)
     return true;
 }
 
-bool DocViewAppGenerator::BaseClassNameCode(Code& code)
+auto DocViewAppGenerator::BaseClassNameCode(Code& code) -> bool
 {
     code.Str("wxApp");
     return true;
@@ -222,7 +226,7 @@ class wxMenuBar;
 
 )===";
 
-bool DocViewAppGenerator::PreClassHeaderCode(Code& code)
+auto DocViewAppGenerator::PreClassHeaderCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -266,7 +270,7 @@ bool Show(bool show = true) { return m_frame->Show(show); }
 
 )===";
 
-bool DocViewAppGenerator::HeaderCode(Code& code)
+auto DocViewAppGenerator::HeaderCode(Code& code) -> bool
 {
     tt_string_vector lines;
     lines.ReadString(txt_DocViewAppHeader);
@@ -301,5 +305,3 @@ bool DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
     return false;
 }
-
-auto foo = wxID_LOWEST;

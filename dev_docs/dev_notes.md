@@ -16,6 +16,8 @@ When you create a Debug build, there will be an additional `Testing` and `Intern
 
 ## Strings
 
+Unfortunately, the names don't reflect this, but it's import to know that wxString::utf8_string() creates a _copy_ while wxString::ToStdString() creates a _reference_. That means that if you call a function with a `std::stringview` parameter, you can pass it `wxString::ToStdString()`. It also works for functions expecting `tt_string_view` since that class is derived from `std::string_view`.
+
 Internally strings are normally placed into `tt_string` or `tt_stringview` classes. These classes inherit from `std::string` and `std::string_view` respectively, and provide additional functionality common across both of these classes. Note that the wxWidgets library is built as UTF8 even on Windows (new option in wxWidgets 3.3).
 
 ### Debugging macros

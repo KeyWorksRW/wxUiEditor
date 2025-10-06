@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Assertion Dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +11,9 @@
 // wxUiEditor that would benefit from using std::source_location.
 
 auto AssertionDlg(const char* filename, const char* function, int line, const char* cond,
-                  const std::string& msg) -> bool;
+                  const wxString& msg) -> bool;
+void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
+                        const wxString& cond, const wxString& msg);
 
 // The advantage of using ASSERT over wxASSERT is that ASSERT allows the macro to execute wxTrap in
 // the caller's code, so that you don't have to step out of the assertion function to get back to
@@ -27,10 +29,10 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
     #define ASSERT_MSG(cond, msg)
     #define FAIL_MSG(msg)
 #else  // not defined(NDEBUG) && !defined(INTERNAL_TESTING)
-    #define ASSERT(cond)                                                      \
-        if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, "")) \
-        {                                                                     \
-            wxTrap();                                                         \
+    #define ASSERT(cond)                                                                 \
+        if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, wxEmptyString)) \
+        {                                                                                \
+            wxTrap();                                                                    \
         }
 
     #define ASSERT_MSG(cond, msg)                                                \
@@ -41,9 +43,9 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
 
 // Leave this as a MACRO so that it doesn't require a semicolon at the end of the line when it is
 // used.
-    #define FAIL_MSG(msg)                                              \
-        if (AssertionDlg(__FILE__, __func__, __LINE__, "failed", msg)) \
-        {                                                              \
-            wxTrap();                                                  \
+    #define FAIL_MSG(msg)                                                \
+        if (AssertionDlg(__FILE__, __func__, __LINE__, "failed", (msg))) \
+        {                                                                \
+            wxTrap();                                                    \
         }
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)

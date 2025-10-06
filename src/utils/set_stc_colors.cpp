@@ -131,7 +131,7 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 }
 
                 if (!iter->get_DeclName().starts_with("wx") ||
-                    iter->get_DeclName().is_sameas("wxContextMenuEvent"))
+                    iter->get_DeclName() == "wxContextMenuEvent")
                     continue;
                 widget_keywords << ' ' << iter->get_DeclName();
             }
@@ -227,13 +227,17 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 }
 
                 if (!iter->get_DeclName().starts_with("wx"))
+                {
                     continue;
-                else if (iter->get_DeclName().is_sameas("wxContextMenuEvent") ||
-                         iter->get_DeclName() == "wxTreeCtrlBase" ||
-                         iter->get_DeclName().starts_with("wxRuby") ||
-                         iter->get_DeclName().starts_with("wxPython"))
+                }
+                if (iter->get_DeclName() == "wxContextMenuEvent" ||
+                    iter->get_DeclName() == "wxTreeCtrlBase" ||
+                    iter->get_DeclName().starts_with("wxRuby") ||
+                    iter->get_DeclName().starts_with("wxPython"))
+                {
                     continue;
-                wxPerl_keywords << ' ' << iter->get_DeclName().subview(2);
+                }
+                wxPerl_keywords << ' ' << iter->get_DeclName().substr(2);
             }
 
             // Unfortunately, PERL_LEXER only supports one set of keywords so we have to combine the
@@ -298,10 +302,10 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 }
 
                 if (!iter->get_DeclName().starts_with("wx") ||
-                    iter->get_DeclName().is_sameas("wxContextMenuEvent"))
+                    iter->get_DeclName() == "wxContextMenuEvent")
                     continue;
                 // wxPython_keywords << " wx." << iter->get_DeclName().subview(2);
-                wxPython_keywords << ' ' << iter->get_DeclName().subview(2);
+                wxPython_keywords << ' ' << iter->get_DeclName().substr(2);
             }
 
             // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -371,12 +375,16 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 }
 
                 if (!iter->get_DeclName().starts_with("wx"))
+                {
                     continue;
-                else if (iter->get_DeclName().is_sameas("wxContextMenuEvent") ||
-                         iter->get_DeclName() == "wxTreeCtrlBase" ||
-                         iter->get_DeclName().starts_with("wxRuby"))
+                }
+                if (iter->get_DeclName() == "wxContextMenuEvent" ||
+                    iter->get_DeclName() == "wxTreeCtrlBase" ||
+                    iter->get_DeclName().starts_with("wxRuby"))
+                {
                     continue;
-                wxRuby_keywords << ' ' << iter->get_DeclName().subview(2);
+                }
+                wxRuby_keywords << ' ' << iter->get_DeclName().substr(2);
             }
 
             // Unfortunately, RUBY_LEXER only supports one set of keywords so we have to combine the
@@ -443,23 +451,29 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             for (auto iter: lst_widgets_keywords)
             {
                 if (widget_keywords.size())
+                {
                     widget_keywords << ' ' << iter;
+                }
                 else
+                {
                     widget_keywords = iter;
+                }
             }
 
-            for (auto iter: NodeCreation.get_NodeDeclarationArray())
+            for (auto* iter: NodeCreation.get_NodeDeclarationArray())
             {
-                if (!iter)
+                if (iter == nullptr)
                 {
                     // This will happen if there is an enumerated value but no generator for it
                     continue;
                 }
 
                 if (!iter->get_DeclName().starts_with("wx") ||
-                    iter->get_DeclName().is_sameas("wxContextMenuEvent"))
+                    iter->get_DeclName() == "wxContextMenuEvent")
+                {
                     continue;
-                widget_keywords << ' ' << iter->get_DeclName().view_substr(2);
+                }
+                widget_keywords << ' ' << iter->get_DeclName().substr(2);
             }
             widget_keywords << " wxAuiToolBarItem wxToolBarToolBase";
 

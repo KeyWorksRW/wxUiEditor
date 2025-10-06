@@ -13,8 +13,9 @@
 
 #include "base_generator.h"
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // Common component functions
+#include "code.h"        // Code -- Helper class for generating code
+#include "gen_common.h"  // Common component functions
+#include "gen_enums.h"
 #include "lambdas.h"          // Functions for formatting and storage of lamda events
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "mockup_parent.h"    // Top-level MockUp Parent window
@@ -420,12 +421,14 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
 tt_string getClassHelpName(Node* node)
 {
-    tt_string class_name(map_GenNames[node->get_GenName()]);
+    ASSERT(map_GenNames.contains(node->get_GenName()));
+    tt_string class_name(map_GenNames.at(node->get_GenName()));
     if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
         {
-            class_name = map_GenNames[node->get_Parent()->get_GenName()];
+            ASSERT(map_GenNames.contains(node->get_Parent()->get_GenName()));
+            class_name = map_GenNames.at(node->get_Parent()->get_GenName());
         }
         else if (class_name == "PanelForm")
             class_name = "wxPanel";
@@ -500,16 +503,17 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
     tt_string url = GetPythonHelpText(node);
     if (url.empty())
     {
-        auto class_name = map_GenNames[node->get_GenName()];
-        if (tt::is_sameas(class_name, "auitool_spacer"))
+        ASSERT(map_GenNames.contains(node->get_GenName()));
+        auto class_name = map_GenNames.at(node->get_GenName());
+        if (class_name == "auitool_spacer")
         {
             url = "wx.aui.AuiToolBar.html?highlight=addspacer#wx.aui.AuiToolBar.AddSpacer";
         }
-        else if (tt::is_sameas(class_name, "auitool_label"))
+        else if (class_name == "auitool_label")
         {
             url = "wx.aui.AuiToolBar.html?highlight=addlabel#wx.aui.AuiToolBar.AddLabel";
         }
-        else if (tt::is_sameas(class_name, "spacer"))
+        else if (class_name == "spacer")
         {
             url = "wx.Sizer.html?highlight=addspacer#wx.Sizer.AddSpacer";
         }
@@ -524,16 +528,17 @@ tt_string BaseGenerator::GetRubyURL(Node* node)
     tt_string url = GetRubyHelpText(node);
     if (url.empty())
     {
-        auto class_name = map_GenNames[node->get_GenName()];
-        if (tt::is_sameas(class_name, "auitool_spacer"))
+        ASSERT(map_GenNames.contains(node->get_GenName()));
+        auto class_name = map_GenNames.at(node->get_GenName());
+        if (class_name == "auitool_spacer")
         {
             url = "Wx/AUI/AuiToolBar.html#add_spacer-instance_method";
         }
-        else if (tt::is_sameas(class_name, "auitool_spacer"))
+        else if (class_name == "auitool_label")
         {
             url = "Wx/AUI/AuiToolBar.html#add_label-instance_method";
         }
-        else if (tt::is_sameas(class_name, "spacer"))
+        else if (class_name == "spacer")
         {
             url = "Wx/Sizer.html#add_spacer-instance_method";
         }
@@ -994,9 +999,12 @@ PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, P
                              std::string_view help, std::string_view def_value)
 {
     auto& properties = declaration->GetPropInfoMap();
-    auto prop_info = new PropDeclaration(prop_name, type, def_value, help);
+    auto prop_info =
+        new PropDeclaration(prop_name, type, PropDeclaration::DefaultValue { def_value },
+                            PropDeclaration::HelpText { help });
     declaration->GetCategory().addProperty(prop_name);
-    properties[map_PropNames[prop_name]] = prop_info;
+    ASSERT(map_PropNames.contains(prop_name));
+    properties[std::string(map_PropNames.at(prop_name))] = prop_info;
     return prop_info;
 }
 

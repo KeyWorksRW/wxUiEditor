@@ -553,7 +553,7 @@ void MainFrame::CreateToolNode(GenName name)
                 break;
 
             default:
-                wxMessageBox(tt_string() << "Unable to create " << map_GenNames[name]
+                wxMessageBox(tt_string() << "Unable to create " << map_GenNames.at(name)
                                          << " as a child of " << m_selected_node->get_DeclName());
         }
     }

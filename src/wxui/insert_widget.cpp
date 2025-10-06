@@ -198,9 +198,9 @@ void InsertWidget::OnNameText(wxCommandEvent& /* event unused */)
             continue;
         }
 
-        if (name.empty() || iter->get_DeclName().contains(name, tt::CASE::either))
+        if (name.empty() || iter->get_DeclName().find(name) != std::string_view::npos)
         {
-            m_listbox->AppendString(iter->get_DeclName().make_wxString());
+            m_listbox->AppendString(wxString(iter->get_DeclName()));
         }
     }
 

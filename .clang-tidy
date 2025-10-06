@@ -1,23 +1,21 @@
-    # -*,
-    # -clang-analyzer-*,
-    # -readability-implicit-bool-conversion,
-    # -modernize-use-trailing-return-type,
-
-Checks:
-    clang-diagnostic-*,
-    bugprone-*,
-    misc-*,
-    performance-*,
-    portability-*,
-    readability-*,
-    modernize-*,
-    cppcoreguidelines-*,
-    readability-implicit-bool-conversion,
-    modernize-use-trailing-return-type,
-
-# Generates way too many invalid warnings
-
-# Between running two compilers and CodeQL, this probably isn't going to be useful
-# clang-analyzer-*,
+Checks: >
+  clang-diagnostic-*,
+  bugprone-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  modernize-*,
+  cppcoreguidelines-*,
+  -readability-implicit-bool-conversion,
+  -readability-enum-initial-value,
+  -cppcoreguidelines-owning-memory
 
 FormatStyle: file
+
+# Generates way too many invalid warnings
+#  -readability-implicit-bool-conversion,
+#  -readability-enum-initial-value
+
+# Between running two compilers and CodeQL, this probably isn't going to be useful
+# clang-analyzer-*

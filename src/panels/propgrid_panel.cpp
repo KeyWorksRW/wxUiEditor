@@ -142,8 +142,15 @@ void PropGridPanel::SaveDescBoxHeight()
     config->Write("event_height", m_event_grid->GetDescBoxHeight());
     config->SetPath("/");
 }
-int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags)
+
+// static method
+auto PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int
 {
+    if (strVal.IsEmpty())
+    {
+        return 0;
+    }
+
     wxStringTokenizer strTok(strVal, " |");
     int value = 0;
     while (strTok.HasMoreTokens())
@@ -237,16 +244,20 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
             if (prop_name == prop_unchecked_bitmap)
                 m_prop_grid->Collapse(pg);
 
-            if (auto it = m_expansion_map.find(map_PropNames[prop_name]);
-                it != m_expansion_map.end())
+            auto prop_name_iter = map_PropNames.find(prop_name);
+            if (prop_name_iter != map_PropNames.end())
             {
-                if (it->second)
+                if (auto it = m_expansion_map.find(std::string(prop_name_iter->second));
+                    it != m_expansion_map.end())
                 {
-                    m_prop_grid->Expand(pg);
-                }
-                else
-                {
-                    m_prop_grid->Collapse(pg);
+                    if (it->second)
+                    {
+                        m_prop_grid->Expand(pg);
+                    }
+                    else
+                    {
+                        m_prop_grid->Collapse(pg);
+                    }
                 }
             }
 
@@ -256,7 +267,7 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
         else
         {
             MSG_WARNING(tt_string("The property ")
-                        << map_PropNames[prop_name] << " appears more than once in "
+                        << map_PropNames.at(prop_name) << " appears more than once in "
                         << node->get_DeclName());
         }
     }
@@ -396,17 +407,20 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
         auto& nextCat = category.getCategories()[i];
         if (nextCat.GetName() == "Keyboard Events")
         {
-            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_key_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_key_events") !=
+                std::string::npos)
                 continue;
         }
         else if (nextCat.GetName() == "Mouse Events")
         {
-            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_mouse_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_mouse_events") !=
+                std::string::npos)
                 continue;
         }
         else if (nextCat.GetName() == "Focus Events")
         {
-            if (node->get_NodeDeclaration()->GetGeneratorFlags().contains("no_focus_events"))
+            if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_focus_events") !=
+                std::string::npos)
                 continue;
         }
 

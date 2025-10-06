@@ -215,18 +215,20 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     if (get_GenName == gen_wxPanel)
     {
-        if (!parent)
+        if (parent == nullptr)
         {
             // This gets called when pasting a formbuilder node from the clipboard
-            auto owner = wxGetFrame().getSelectedNode();
+            auto* owner = wxGetFrame().getSelectedNode();
             while (owner->get_GenType() == type_sizer)
+            {
                 owner = owner->get_Parent();
-            if (owner->get_DeclName().contains("book"))
+            }
+            if (owner->get_DeclName().find("book") != std::string_view::npos)
             {
                 get_GenName = gen_BookPage;
             }
         }
-        else if (parent->get_DeclName().contains("book"))
+        else if (parent->get_DeclName().find("book") != std::string_view::npos)
         {
             get_GenName = gen_BookPage;
         }
@@ -238,7 +240,9 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             if (iter.attribute("name").as_view() == "style")
             {
                 if (iter.text().as_sview().contains("wxCHK_3STATE"))
+                {
                     get_GenName = gen_Check3State;
+                }
                 break;
             }
         }
@@ -249,14 +253,19 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
 
     auto newobject = NodeCreation.CreateNode(get_GenName, parent).first;
-    if (!newobject && parent && tt::contains(map_GenTypes[parent->get_GenType()], "book"))
+    if (!newobject && parent)
     {
-        if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
+        auto it = map_GenTypes.find(parent->get_GenType());
+        if (it != map_GenTypes.end() && tt::contains(it->second, "book"))
         {
-            if (newobject = NodeCreation.CreateNode(get_GenName, page_ctrl.get()).first; newobject)
+            if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
             {
-                page_ctrl->AdoptChild(newobject);
-                parent->AdoptChild(page_ctrl);
+                if (newobject = NodeCreation.CreateNode(get_GenName, page_ctrl.get()).first;
+                    newobject)
+                {
+                    page_ctrl->AdoptChild(newobject);
+                    parent->AdoptChild(page_ctrl);
+                }
             }
         }
     }
@@ -410,8 +419,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 else if (!xml_prop.text().empty())
                 {
                     prop_ptr->set_value(xml_prop.text().as_view());
-                    if (prop_ptr->get_PropDeclaration()->get_DeclName().contains("colour") ||
-                        prop_ptr->get_PropDeclaration()->get_DeclName().contains("color"))
+                    if (prop_ptr->get_PropDeclaration()->get_DeclName().find("colour") !=
+                            std::string_view::npos ||
+                        prop_ptr->get_PropDeclaration()->get_DeclName().find("color") !=
+                            std::string_view::npos)
                     {
                         // Convert old style into #RRGGBB
                         prop_ptr->set_value(prop_ptr->as_color().GetAsString(wxC2S_HTML_SYNTAX));
@@ -701,7 +712,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     return newobject;
 }
 
-void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop_name,
+void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view prop_name,
                                    tt_string_view class_name, Node* newobject, Node* parent)
 {
     if (set_ignore_flags.contains(prop_name))
@@ -726,13 +737,13 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, tt_string_view prop
     }
 
     // This will be caused by a spacer item which isn't actually a widget, so has no access property
-    else if (prop_name == map_PropNames[prop_class_access])
+    else if (prop_name == map_PropNames.at(prop_class_access))
     {
         return;
     }
 
     // The label property in a wxMenuBar is not supported (since it can't actually be used)
-    else if (prop_name == map_PropNames[prop_label])
+    else if (prop_name == map_PropNames.at(prop_label))
     {
         return;
     }

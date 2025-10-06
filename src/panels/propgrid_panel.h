@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class for node properties and events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +32,7 @@ class PropGridPanel : public wxPanel
 public:
     PropGridPanel(wxWindow* parent, MainFrame* frame);
 
-    bool IsEventPageShowing();
+    auto IsEventPageShowing() -> bool;
 
     void RestoreDescBoxHeight();
     void SaveDescBoxHeight();
@@ -49,11 +49,11 @@ public:
     void OnNodePropChange(CustomEvent& event);
 
 protected:
-    tt_string GetPropHelp(NodeProperty* prop) const;
-    wxString GetCategoryDisplayName(const wxString& original);
+    auto GetPropHelp(NodeProperty* prop) const -> tt_string;
+    auto GetCategoryDisplayName(const wxString& original) -> wxString;
 
     // Called to determine if a property should be displayed or not
-    bool IsPropAllowed(Node* node, NodeProperty* prop);
+    auto IsPropAllowed(Node* node, NodeProperty* prop) -> bool;
 
     // Called after a property has been changed. Used to display info-bar notification if
     // needed.
@@ -76,7 +76,7 @@ protected:
     // file is empty, then create a suggested file name based on the class name.
     void CheckOutputFile(const tt_string& formName, Node* node);
 
-    wxPGProperty* CreatePGProperty(NodeProperty* prop);
+    auto CreatePGProperty(NodeProperty* prop) -> wxPGProperty*;
 
     // Called after a property has been modified, this checks to see if various property
     // items need to be enabled or disabled based on the current value of the changed
@@ -85,7 +85,8 @@ protected:
 
     void ReselectItem();
 
-    void ModifyProperty(NodeProperty* prop, tt_string_view str);
+    // void ModifyProperty(NodeProperty* prop, tt_string_view str);
+    void ModifyProperty(NodeProperty* prop, const wxString& str);
 
     void ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
     void ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
@@ -93,7 +94,7 @@ protected:
     void ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
     void ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
 
-    int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
+    static auto GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int;
 
     void AllowIdChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
 

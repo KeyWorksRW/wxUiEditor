@@ -169,8 +169,15 @@ public:
     bool is_Sizer() const noexcept { return (is_Type(type_sizer) || is_Type(type_gbsizer)); }
     bool is_Container() const noexcept
     {
-        return (is_Type(type_container) || is_Type(type_propsheetform) || is_Type(type_panel) ||
-                tt::contains(map_GenTypes[get_GenType()], "book"));
+        if (is_Type(type_container) || is_Type(type_propsheetform) || is_Type(type_panel))
+        {
+            return true;
+        }
+        if (map_GenTypes.contains(get_GenType()))
+        {
+            return (map_GenTypes.at(get_GenType()).find("book") != std::string_view::npos);
+        }
+        return false;
     }
 
     // Returns true if access property == none or there is no access property
@@ -248,7 +255,7 @@ public:
     // Returns nullptr if the property doesn't exist.
     tt_string* get_PropValuePtr(PropName name);
 
-    const tt_string& get_PropDefaultValue(PropName name);
+    std::string_view get_PropDefaultValue(PropName name);
 
     // Sets value only if the property exists, returns false if it doesn't exist.
     template <typename T>
@@ -315,12 +322,13 @@ public:
             return 0;
     }
 
-    const tt_string& as_string(PropName name) const
+    auto as_string(PropName name) const -> const tt_string&
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        {
             return m_properties[result->second].as_string();
-        else
-            return tt_empty_cstr;
+        }
+        return tt_empty_cstr;
     }
 
     const std::string& as_std(PropName name) const

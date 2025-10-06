@@ -1511,9 +1511,9 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
         else
         {
             if (form->is_Gen(gen_Images))
-                pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+                pClassList->emplace_back(GenEnum::map_GenNames.at(gen_Images));
             if (form->is_Gen(gen_Data))
-                pClassList->emplace_back(GenEnum::map_GenNames[gen_Data]);
+                pClassList->emplace_back(GenEnum::map_GenNames.at(gen_Data));
             else
                 pClassList->emplace_back(form->as_string(prop_class_name));
             return true;

@@ -698,7 +698,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
         prop->isProp(prop_bitmap))
     {
         auto class_name = prop->getNode()->get_DeclName();
-        if (class_name.contains("bookpage"))
+        if (class_name.find("bookpage") != std::string_view::npos)
         {
             if (auto it = m_node_tree_map.find(prop->getNode()->get_Child(0));
                 it != m_node_tree_map.end())

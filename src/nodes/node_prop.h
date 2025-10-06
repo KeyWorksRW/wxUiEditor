@@ -56,8 +56,8 @@ public:
     void set_value(const wxSize& size);
     void set_value(const char* val) { m_value.assign(val); }
     void set_value(std::string_view val) { m_value.assign(val); }
-    void set_value(tt_string val) { m_value.assign(val); }
-    void set_value(std::string val) { m_value.assign(val); }
+    void set_value(const tt_string& val) { m_value.assign(val); }
+    void set_value(const std::string& val) { m_value.assign(val); }
 
     tt_string convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const;
     tt_string convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& fields) const;
@@ -118,38 +118,38 @@ public:
     auto as_raw_ptr() { return &m_value; }
 
     void as_animation(wxAnimation* p_animation) const;
-    wxBitmap as_bitmap() const;
-    wxColour as_color() const;
-    wxFont as_font() const;
-    FontProperty as_font_prop() const;
-    wxPoint as_point() const;
-    wxSize as_size() const;
-    wxArrayString as_wxArrayString() const;
+    [[nodiscard]] auto as_bitmap() const -> wxBitmap;
+    [[nodiscard]] auto as_color() const -> wxColour;
+    [[nodiscard]] auto as_font() const -> wxFont;
+    [[nodiscard]] auto as_font_prop() const -> FontProperty;
+    [[nodiscard]] auto as_point() const -> wxPoint;
+    [[nodiscard]] auto as_size() const -> wxSize;
+    [[nodiscard]] auto as_wxArrayString() const -> wxArrayString;
 
     // Unless separator is set, assumes all values are within quotes,
     // or separated by semi-colons.
     //
     // Specify separator to use a specific character as the separator
-    std::vector<tt_string> as_ArrayString(char separator = 0) const;
+    [[nodiscard]] auto as_ArrayString(char separator = 0) const -> std::vector<tt_string>;
 
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
-    wxString as_wxString() const { return m_value.make_wxString(); }
+    [[nodiscard]] auto as_wxString() const -> wxString { return m_value.make_wxString(); }
 
-    wxBitmapBundle as_bitmap_bundle() const;
+    [[nodiscard]] auto as_bitmap_bundle() const -> wxBitmapBundle;
 
-    const tt_string& as_string() const { return m_value; }
+    [[nodiscard]] auto as_string() const -> const tt_string& { return m_value; }
 
     // Converts friendly name to wxWidgets constant
-    const tt_string& as_constant(std::string_view prefix);
+    auto as_constant(std::string_view prefix) -> const tt_string&;
 
     // Converts friendly name to wxWidgets constant, and then returns the integer value of
     // that constant.
-    int as_mockup(std::string_view prefix) const;
+    [[nodiscard]] auto as_mockup(std::string_view prefix) const -> int;
 
-    auto as_vector() const -> std::vector<tt_string>;
+    [[nodiscard]] auto as_vector() const -> std::vector<tt_string>;
 
     // This first doubles the backslash in escaped characters (\\n, \\t, \\r, and \\)
-    tt_string as_escape_text() const;
+    [[nodiscard]] auto as_escape_text() const -> tt_string;
 
     operator bool() const { return (as_int() != 0); }
     operator int() const { return as_int(); }
@@ -161,31 +161,49 @@ public:
     operator wxPoint() const { return as_point(); }
     operator wxSize() const { return as_size(); }
 
-    bool isDefaultValue() const;
-    const tt_string& getDefaultValue() const noexcept { return m_declaration->getDefaultValue(); }
+    [[nodiscard]] auto isDefaultValue() const -> bool;
+    [[nodiscard]] auto getDefaultValue() const noexcept -> std::string_view
+    {
+        return m_declaration->getDefaultValue();
+    }
 
     // Returns false if the property is empty. For size and point properties, returns false
     // if the default value is used. For image properties, returns true if a filename is
     // specified. For window style, returns true if at least one option is specified.
-    bool HasValue() const;
+    [[nodiscard]] auto HasValue() const -> bool;
 
-    const PropDeclaration* get_PropDeclaration() const { return m_declaration; }
+    [[nodiscard]] auto get_PropDeclaration() const -> const PropDeclaration*
+    {
+        return m_declaration;
+    }
 
-    Node* getNode() { return m_node; }
+    auto getNode() -> Node* { return m_node; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    tt_string_view get_DeclName() const noexcept { return m_declaration->get_DeclName(); }
+    [[nodiscard]] auto get_DeclName() const noexcept -> std::string_view
+    {
+        return m_declaration->get_DeclName();
+    }
 
-    bool isProp(PropName name) const noexcept { return m_declaration->isProp(name); }
-    bool is_Type(PropType type) const noexcept { return m_declaration->is_Type(type); }
+    [[nodiscard]] auto isProp(PropName name) const noexcept -> bool
+    {
+        return m_declaration->isProp(name);
+    }
+    [[nodiscard]] auto is_Type(PropType type) const noexcept -> bool
+    {
+        return m_declaration->is_Type(type);
+    }
 
-    PropType type() const noexcept { return m_declaration->get_type(); }
-    PropName get_name() const noexcept { return m_declaration->get_name(); }
+    [[nodiscard]] auto type() const noexcept -> PropType { return m_declaration->get_type(); }
+    [[nodiscard]] auto get_name() const noexcept -> PropName { return m_declaration->get_name(); }
 
-    PropDeclaration* get_PropDeclaration() { return m_declaration; }
+    auto get_PropDeclaration() -> PropDeclaration* { return m_declaration; }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    size_t get_PropSize() const { return sizeof(*this) + (m_value.size() + 1); }
+    [[nodiscard]] auto get_PropSize() const -> size_t
+    {
+        return sizeof(*this) + (m_value.size() + 1);
+    }
 
 private:
     PropDeclaration* m_declaration;

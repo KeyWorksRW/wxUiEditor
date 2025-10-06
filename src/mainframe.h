@@ -188,7 +188,7 @@ public:
 
     // Display the text in a specific field of the status bar -- the default is the field
     // that aligns with the PropertyGrid panel.
-    void setStatusField(const tt_string text, int position = -1);
+    void setStatusField(const std::string& text, int position = -1);
 
     const wxSize& GetMenuDpiSize() { return m_dpi_menu_size; }
     const wxSize& GetRibbonDpiSize() { return m_dpi_ribbon_size; }

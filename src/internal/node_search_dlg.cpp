@@ -166,9 +166,12 @@ Node* FindNodeByClassName(Node* node_start, const std::string& classname)
             child_form->as_string(prop_class_name) == classname)
             return child_form.get();
 
-        if (child_form->is_Gen(gen_folder) || child_form->is_Gen(gen_sub_folder))
+        if (child_form->is_Gen(gen_folder) || child_form->is_Gen(gen_sub_folder) ||
+            child_form->is_Type(type_DocViewApp) || child_form->is_Type(GenEnum::type_wx_document))
         {
-            if (auto result = FindNodeByClassName(child_form.get(), classname); result)
+            // Doc/View applications and Documents have additional child forms that need to
+            // be included in addition to folders and sub-folders
+            if (auto* result = FindNodeByClassName(child_form.get(), classname); result)
             {
                 return result;
             }

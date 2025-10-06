@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base class for XML importing
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,28 +19,31 @@
 class ImportXML
 {
 public:
-    virtual bool Import(const tt_string& filename, bool write_doc = true) = 0;
+    virtual ~ImportXML() = default;
+
+    virtual auto Import(const tt_string& filename, bool write_doc = true) -> bool = 0;
 
     // Valid return ONLY if Import specified with write_doc == true, and parsing worked.
-    pugi::xml_document& GetDocument() { return m_docOut; }
+    auto GetDocument() -> pugi::xml_document& { return m_docOut; }
 
-    NodeSharedPtr GetProjectPtr() { return m_project; }
+    auto GetProjectPtr() -> NodeSharedPtr { return m_project; }
 
     auto GetErrors() { return m_errors; }
 
     // Returns a GEN_LANG_* value -- default is GEN_LANG_NONE
-    virtual int GetLanguage() const { return m_language; }
+    [[nodiscard]] virtual auto GetLanguage() const -> int { return m_language; }
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.
-    static tt_string_view GetCorrectEventName(tt_string_view name);
+    static auto GetCorrectEventName(tt_string_view name) -> tt_string_view;
 
     // Only call this from an XRC importer (e.g., wxSMITH)
-    NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
+    auto CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr)
+        -> NodeSharedPtr;
 
     // Caller should return true if it is able to handle this unknown property
-    virtual bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
-                                       Node* /* parent */)
+    virtual auto HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                                       Node* /* parent */) -> bool
     {
         return false;
     }
@@ -48,8 +51,8 @@ public:
     // Caller should return true if it is able to handle this known property. This is used
     // when the property name is knonwn, but it's actually the wrong property for the node
     // type. E.g., prop_border for a sizer really should be prop_border_size.
-    virtual bool HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
-                                      Node* /* parent */, GenEnum::PropName /* wxue_prop */)
+    virtual auto HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                                      Node* /* parent */, GenEnum::PropName /* wxue_prop */) -> bool
     {
         return false;
     }
@@ -60,8 +63,8 @@ public:
 protected:
     void ProcessFont(const pugi::xml_node& xml_obj, Node* node);
     void ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent);
-    std::optional<pugi::xml_document> LoadDocFile(const tt_string& file);
-    GenEnum::GenName ConvertToGenName(const tt_string& object_name, Node* parent);
+    auto LoadDocFile(const tt_string& file) -> std::optional<pugi::xml_document>;
+    auto ConvertToGenName(const tt_string& object_name, Node* parent) -> GenEnum::GenName;
 
     void ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop);
     void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
@@ -73,10 +76,10 @@ protected:
     void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 
     // Returns prop_unknown if the property name has no equivalent in wxUiEditor
-    GenEnum::PropName MapPropName(std::string_view name) const;
+    [[nodiscard]] auto MapPropName(std::string_view name) const -> GenEnum::PropName;
 
     // Returns gen_unknown if the property name has not equivalent in wxUiEditor
-    GenEnum::GenName MapClassName(std::string_view name) const;
+    [[nodiscard]] auto MapClassName(std::string_view name) const -> GenEnum::GenName;
 
     pugi::xml_document m_docOut;
     tt_string m_importProjectFile;

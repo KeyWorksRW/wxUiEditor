@@ -331,6 +331,15 @@ public:
         return tt_empty_cstr;
     }
 
+    auto as_view(PropName name) const -> std::string_view
+    {
+        if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        {
+            return m_properties[result->second].as_view();
+        }
+        return {};
+    }
+
     const std::string& as_std(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

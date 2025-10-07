@@ -9,18 +9,13 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "code.h"            // Code -- Helper class for generating code
+#include "gen_common.h"      // Common component functions
 #include "utils.h"           // Miscellaneous utilities
 #include "write_code.h"      // Write code to Scintilla or file
-#include "gen_common.h"       // Common component functions
 
 void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
                                               std::set<std::string>& code_lines)
 {
-    if (auto *generator = node->get_Generator(); generator)
-    {
-        generator->CollectMemberVariables(node, code_lines);
-    }
-
     if (auto* prop = node->get_PropPtr(prop_class_access); prop)
     {
         if (prop->as_string() != "none")
@@ -164,6 +159,11 @@ void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
 
     if (perm == Permission::Protected)
     {
+        if (auto* generator = node->get_Generator(); generator)
+        {
+            generator->CollectMemberVariables(node, code_lines);
+        }
+
         // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
         if (node->HasValue(prop_checkbox_var_name) || node->HasValue(prop_radiobtn_var_name))
         {

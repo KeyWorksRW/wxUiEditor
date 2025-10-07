@@ -139,8 +139,6 @@ inline constexpr const auto txt_TextCtrlViewHdrBlock =
     wxTextCtrl* GetTextCtrl() const { return m_text; }
 
 private:
-    wxTextCtrl* m_text;
-
     wxDECLARE_DYNAMIC_CLASS(%class%);
 )===";
 
@@ -170,4 +168,9 @@ auto TextViewGenerator::BaseClassNameCode(Code& code) -> bool
     }
 
     return true;
+}
+auto TextViewGenerator::CollectMemberVariables(Node* /* node unused */,
+                                               std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("wxTextCtrl* m_text;");
 }

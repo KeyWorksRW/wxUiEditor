@@ -14,6 +14,8 @@ public:
 
     auto HeaderCode(Code& code) -> bool override;
     auto BaseClassNameCode(Code& code) -> bool override;
+    auto CollectMemberVariables(Node* /* node unused */,
+                                std::set<std::string>& /* code_lines unused */) -> void override;
 
     auto GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang language) -> bool override;

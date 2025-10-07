@@ -13,14 +13,15 @@ Checks: >
   -cppcoreguidelines-owning-memory,
   -bugprone-recursive-function
 
-# There are a lot of recursive calls that are automatically limited by the Node depth,
-# so warning about recursive-function is not helpful. Hence -bugprone-recursive-function
-
 FormatStyle: file
 
 # Generates way too many invalid warnings
 #  -readability-implicit-bool-conversion,
 #  -readability-enum-initial-value
+
+# There are a lot of recursive calls that are automatically limited by the Node depth,
+# so warning about recursive-function is not helpful. Hence
+# -bugprone-recursive-function
 
 # Between running two compilers and CodeQL, this probably isn't going to be useful
 # clang-analyzer-*

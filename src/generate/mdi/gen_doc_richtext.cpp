@@ -97,9 +97,9 @@ bool RichTextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::st
                                        std::set<std::string>& /* set_hdr unused */,
                                        GenLang /* language unused */)
 {
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/textctrl.h");
+    set_src.insert("#include <wx/docmdi.h>");
+    set_src.insert("#include <wx/docview.h>");
+    set_src.insert("#include <wx/textctrl.h>");
 
     return true;
 }

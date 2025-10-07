@@ -19,6 +19,22 @@
 #include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
+// Look for search string in line, and if found, replace with replace_with string. If all
+// is true, replace all instances, otherwise only the first instance is replaced.
+auto utils::replace_in_line(std::string& line, std::string_view search,
+                            std::string_view replace_with, bool all) -> void
+{
+    for (auto pos = line.find(search, 0); pos != std::string::npos;
+         pos = line.find(search, pos + replace_with.length()))
+    {
+        line.replace(pos, search.length(), replace_with);
+        if (!all)
+        {
+            break;
+        }
+    }
+}
+
 tt_string DoubleToStr(double val)
 {
     tt_string result;

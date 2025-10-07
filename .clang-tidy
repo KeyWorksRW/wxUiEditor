@@ -7,9 +7,14 @@ Checks: >
   readability-*,
   modernize-*,
   cppcoreguidelines-*,
+
   -readability-implicit-bool-conversion,
   -readability-enum-initial-value,
-  -cppcoreguidelines-owning-memory
+  -cppcoreguidelines-owning-memory,
+  -bugprone-recursive-function
+
+# There are a lot of recursive calls that are automatically limited by the Node depth,
+# so warning about recursive-function is not helpful. Hence -bugprone-recursive-function
 
 FormatStyle: file
 

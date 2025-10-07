@@ -112,7 +112,7 @@ enum : std::uint16_t
 
 };
 
-const char* txtEmptyProject = "Empty Project";
+std::string_view txtEmptyProject = "Empty Project";
 constexpr int MAX_HISTORY_FILES = 9;
 
 MainFrame::MainFrame() :

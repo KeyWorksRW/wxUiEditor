@@ -73,7 +73,7 @@ namespace
     void GenCppForm(GenData& gen_data, Node* form);
 }
 
-extern const char* cpp_rust_end_cmt_line;  // "// ************* End of generated code"
+extern std::string_view cpp_rust_end_cmt_line;  // "// ************* End of generated code"
 
 const std::map<wxBitmapType, std::string_view> g_map_handlers = {
     { wxBITMAP_TYPE_ICO, "wxICOHandler" },   { wxBITMAP_TYPE_CUR, "wxCURHandler" },
@@ -167,7 +167,7 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
 {
-    auto form = wxGetMainFrame()->getSelectedNode();
+    auto *form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->is_Form())
     {
         form = form->get_Form();
@@ -181,7 +181,7 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
     GenResults results;
     GenData gen_data(results, nullptr);
 
-    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_source_ext); extProp.size())
     {
         gen_data.source_ext = extProp;
     }
@@ -190,7 +190,7 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
         gen_data.source_ext = ".cpp";
     }
 
-    if (auto& extProp = Project.as_string(prop_header_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_header_ext); extProp.size())
     {
         gen_data.header_ext = extProp;
     }
@@ -248,10 +248,11 @@ namespace
         if (!has_base_file)
         {
             tt_string msg("No filename specified for ");
-            if (form->HasValue(prop_class_name))
+            if (form->HasValue(prop_class_name)) {
                 msg += form->as_string(prop_class_name);
-            else
+            } else {
                 msg += map_GenNames.at(form->get_GenName());
+}
             msg += '\n';
             gen_data.AddResultMsg(msg);
             return;
@@ -272,13 +273,16 @@ namespace
         path.replace_extension(header_ext);
 
         int flags = flag_no_ui;
-        if (gen_data.pClassList)
+        if (gen_data.pClassList) {
             flags |= flag_test_only;
-        if (form->as_bool(prop_no_closing_brace))
+}
+        if (form->as_bool(prop_no_closing_brace)) {
             flags |= flag_add_closing_brace;
+}
         auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
-        if (form->as_bool(prop_no_closing_brace))
+        if (form->as_bool(prop_no_closing_brace)) {
             flags = flags & ~flag_add_closing_brace;
+}
 
         if (retval > 0)
         {
@@ -707,7 +711,7 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
                                              std::thread* thrd_get_events)
 {
     tt_string file;
-    if (auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
+    if (const auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
     {
         tt_cwd cwd(true);
         Project.ChangeDir();
@@ -877,7 +881,7 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     }
 
     // Now output all the other header files (this will include derived_class header files)
-    for (auto& iter: src_includes)
+    for (const auto& iter: src_includes)
     {
         if (!tt::contains(iter, "<wx"))
         {

@@ -28,7 +28,7 @@
 using namespace code;
 using namespace GenEnum;
 
-extern const char* cpp_rust_end_cmt_line;  // "// ************* End of generated code"
+extern std::string_view cpp_rust_end_cmt_line;  // "// ************* End of generated code"
 
 // clang-format off
 

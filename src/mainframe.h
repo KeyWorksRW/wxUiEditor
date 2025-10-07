@@ -448,4 +448,4 @@ inline MainFrame* wxGetMainFrame()
     return wxGetApp().getMainFrame();
 }
 
-extern const char* txtEmptyProject;  // "Empty Project"
+extern std::string_view txtEmptyProject;  // "Empty Project"

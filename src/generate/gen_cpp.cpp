@@ -1174,6 +1174,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
     }
 
     m_header->Unindent();
+
     if (not m_form_node->as_bool(prop_no_closing_brace))
     {
         m_header->writeLine("};");
@@ -2369,6 +2370,11 @@ void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
         code_lines.emplace("wxMenuBar* m_menuBar;");
 
         // Don't generate member variables for the Doc/View App node, they are not needed.
+        return;
+    }
+    if (m_form_node->is_Gen(gen_ViewTextCtrl))
+    {
+        code_lines.emplace("wxTextCtrl* m_text;");
         return;
     }
     if (auto* prop = node->get_PropPtr(prop_class_access); prop)

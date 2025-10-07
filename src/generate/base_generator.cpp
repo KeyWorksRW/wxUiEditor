@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,8 +32,8 @@ MockupParent* BaseGenerator::getMockup()
 
 void BaseGenerator::OnLeftClick(wxMouseEvent& event)
 {
-    auto wxobject = event.GetEventObject();
-    auto node = wxGetFrame().getMockup()->getNode(wxobject);
+    auto* wxobject = event.GetEventObject();
+    auto* node = wxGetFrame().getMockup()->getNode(wxobject);
 
     if (wxGetFrame().getSelectedNode() != node)
     {
@@ -47,9 +47,11 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
 {
     tt_string newValue = event->GetPropertyValue().GetString().utf8_string();
     if (newValue.empty())
+    {
         return true;
+    }
 
-    auto form = node->get_Form();
+    auto* form = node->get_Form();
     if (node->is_Gen(gen_wxMenuItem))
     {
         form = node->get_Parent();
@@ -165,13 +167,15 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
     if (prop->isProp(prop_alignment))
     {
-        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
+        {
             return true;
+        }
 
-        auto parent = node->get_Parent();
+        auto* parent = node->get_Parent();
         if (newValue == "wxALIGN_TOP" || newValue == "wxALIGN_BOTTOM" ||
             newValue == "wxALIGN_CENTER_VERTICAL")
         {
@@ -183,7 +187,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                 event->Veto();
                 return false;
             }
-            else if (node->as_string(prop_flags).contains("wxEXPAND"))
+            if (node->as_string(prop_flags).contains("wxEXPAND"))
             {
                 event->SetValidationFailureMessage(
                     "You can't set vertical alignment if the wxEXPAND flag is set.");
@@ -202,7 +206,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                 event->Veto();
                 return false;
             }
-            else if (node->as_string(prop_flags).contains("wxEXPAND"))
+            if (node->as_string(prop_flags).contains("wxEXPAND"))
             {
                 event->SetValidationFailureMessage(
                     "You can't set horizontal alignment if the wxEXPAND flag is set.");
@@ -213,11 +217,13 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     }
     else if (prop->isProp(prop_flags))
     {
-        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
+        {
             return true;
+        }
 
         // Remove the original flags so that all we are checking is the changed flag.
         if (node->HasValue(prop_flags))
@@ -232,7 +238,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             if (node->HasValue(prop_alignment))
             {
-                auto& alignment = node->as_string(prop_alignment);
+                const auto& alignment = node->as_string(prop_alignment);
                 if (alignment.contains("wxALIGN_LEFT") || alignment.contains("wxALIGN_RIGHT") ||
                     alignment.contains("wxALIGN_CENTER_HORIZONTAL") ||
                     alignment.contains("wxALIGN_TOP") || alignment.contains("wxALIGN_BOTTOM") ||
@@ -250,11 +256,13 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     else if (prop->isProp(prop_var_name) || prop->isProp(prop_validator_variable) ||
              prop->isProp(prop_checkbox_var_name) || prop->isProp(prop_radiobtn_var_name))
     {
-        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
+        {
             return true;
+        }
 
         if (!isValidVarName(newValue, Project.get_CodePreference()))
         {
@@ -274,49 +282,73 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             {
                 if (node->HasValue(prop_validator_variable) &&
                     newValue.is_sameas(node->as_string(prop_validator_variable)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_radiobtn_var_name) &&
                          newValue.is_sameas(node->as_string(prop_radiobtn_var_name)))
+                {
                     is_duplicate = true;
+                }
             }
             else if (prop->isProp(prop_validator_variable))
             {
                 if (node->HasValue(prop_var_name) &&
                     newValue.is_sameas(node->as_string(prop_var_name)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_radiobtn_var_name) &&
                          newValue.is_sameas(node->as_string(prop_radiobtn_var_name)))
+                {
                     is_duplicate = true;
+                }
             }
             else if (prop->isProp(prop_checkbox_var_name))
             {
                 if (node->HasValue(prop_var_name) &&
                     newValue.is_sameas(node->as_string(prop_var_name)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_validator_variable) &&
                          newValue.is_sameas(node->as_string(prop_validator_variable)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_radiobtn_var_name) &&
                          newValue.is_sameas(node->as_string(prop_radiobtn_var_name)))
+                {
                     is_duplicate = true;
+                }
             }
             else if (prop->isProp(prop_radiobtn_var_name))
             {
                 if (node->HasValue(prop_var_name) &&
                     newValue.is_sameas(node->as_string(prop_var_name)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_validator_variable) &&
                          newValue.is_sameas(node->as_string(prop_validator_variable)))
+                {
                     is_duplicate = true;
+                }
                 else if (node->HasValue(prop_checkbox_var_name) &&
                          newValue.is_sameas(node->as_string(prop_checkbox_var_name)))
+                {
                     is_duplicate = true;
+                }
             }
         }
 
@@ -335,11 +367,13 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     }
     else if (prop->isProp(prop_class_name) && prop->getNode()->is_Form())
     {
-        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
+        {
             return true;
+        }
 
         std::vector<Node*> forms;
         Project.CollectForms(forms);
@@ -350,7 +384,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             {
                 continue;
             }
-            else if (iter->as_string(prop_class_name).is_sameas(newValue))
+            if (iter->as_string(prop_class_name).is_sameas(newValue))
             {
                 event->SetValidationFailureMessage(
                     "The name you have chosen is already in use by another class.");
@@ -362,10 +396,10 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     else if (prop->isProp(prop_label) && (prop->getNode()->is_Gen(gen_propGridItem) ||
                                           prop->getNode()->is_Gen(gen_propGridCategory)))
     {
-        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
-        tt_string final_name(newValue);
+        const tt_string& final_name(newValue);
         auto result = node->get_UniqueName(final_name, prop_label);
         if (!newValue.is_sameas(result))
         {
@@ -377,7 +411,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     }
     else if (prop->isProp(prop_get_function) || prop->isProp(prop_set_function))
     {
-        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
 
@@ -392,8 +426,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                     event->Veto();
                     return false;
                 }
-                else if (check_node->HasValue(prop_set_function) &&
-                         check_node->as_string(prop_set_function) == newValue)
+                if (check_node->HasValue(prop_set_function) &&
+                    check_node->as_string(prop_set_function) == newValue)
                 {
                     event->SetValidationFailureMessage("This function name is already in use.");
                     event->Veto();
@@ -401,78 +435,71 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                 }
             }
 
-            for (auto& iter: check_node->get_ChildNodePtrs())
-            {
-                if (!rlambda(iter.get(), rlambda))
-                    return false;
-            }
-            return true;
+            return std::ranges::all_of(check_node->get_ChildNodePtrs(),
+                                       [&](const auto& iter)
+                                       {
+                                           return rlambda(iter.get(), rlambda);
+                                       });
         };
 
-        if (auto form = node->get_Form(); form)
+        if (auto* form = node->get_Form(); form)
         {
             if (!rlambda(form, rlambda))
+            {
                 return false;
+            }
         }
     }
 
     return true;
 }
 
-tt_string getClassHelpName(Node* node)
+namespace
 {
-    ASSERT(map_GenNames.contains(node->get_GenName()));
-    tt_string class_name(map_GenNames.at(node->get_GenName()));
-    if (!class_name.starts_with("wx"))
+    const std::map<std::string_view, std::string_view> map_org_widgets = {
+        { "BookPage", "wxBookPage" },
+        { "PanelForm", "wxPanel" },
+        { "RibbonBar", "wxRibbonBar" },
+        { "PopupMenu", "wxMenu" },
+        { "ToolBar", "wxToolBar" },
+        { "AuiToolBar", "wxAuiToolBar" },
+        { "auitool", "wxAuiToolBarItem" },
+        { "StaticCheckboxBoxSizer", "wxStaticBoxSizer" },
+        { "StaticRadioBtnBoxSizer", "wxStaticBoxSizer" },
+        { "Check3State", "wxCheckBox" },
+        { "MenuBar", "wxMenuBar" },
+        { "propGridCategory", "wxPropertyCategory" },
+        { "propGridItem", "wxPGProperty" },
+        { "propGridPage", "wxPropertyGridPage" },
+        { "submenu", "wxMenu" },
+        { "tool", "wxToolBarToolBase" },
+        { "tool_dropdown", "wxToolBarToolBase" },
+    };
+
+    auto getClassHelpName(Node* node) -> std::string
     {
-        if (class_name == "BookPage")
+        ASSERT(map_GenNames.contains(node->get_GenName()));
+        std::string class_name(map_GenNames.at(node->get_GenName()));
+        if (!class_name.starts_with("wx"))
         {
-            ASSERT(map_GenNames.contains(node->get_Parent()->get_GenName()));
-            class_name = map_GenNames.at(node->get_Parent()->get_GenName());
+            if (auto iter = map_org_widgets.find(class_name); iter != map_org_widgets.end())
+            {
+                class_name = iter->second;
+            }
         }
-        else if (class_name == "PanelForm")
-            class_name = "wxPanel";
-        else if (class_name == "RibbonBar")
-            class_name = "wxRibbonBar";
-        else if (class_name == "PopupMenu")
-            class_name = "wxMenu";
-        else if (class_name == "ToolBar")
-            class_name = "wxToolBar";
-        else if (class_name == "AuiToolBar")
-            class_name = "wxAuiToolBar";
-        else if (class_name == "auitool")
-            class_name = "wxAuiToolBarItem";
-        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-            class_name = "wxStaticBoxSizer";
-        else if (class_name == "Check3State")
-            class_name = "wxCheckBox";
-        else if (class_name == "MenuBar")
-            class_name = "wxMenuBar";
-        else if (class_name == "propGridCategory")
-            class_name = "wxPropertyCategory";
-        else if (class_name == "propGridItem")
-            class_name = "wxPGProperty";
-        else if (class_name == "propGridPage")
-            class_name = "wxPropertyGridPage";
-        else if (class_name == "submenu")
-            class_name = "wxMenu";
-        else if (class_name == "tool" || class_name == "tool_dropdown")
-            class_name = "wxToolBarToolBase";
-        else
-            class_name.clear();  // Don't return a non-wxWidgets class name
+
+        return class_name;
     }
+}  // namespace
 
-    return class_name;
-}
-
-tt_string BaseGenerator::GetHelpText(Node* node)
+auto BaseGenerator::GetHelpText(Node* node) -> tt_string
 {
-    tt_string class_name = getClassHelpName(node);
+    auto class_name = getClassHelpName(node);
 
 #if defined(_DEBUG)
     if (class_name.size())
     {
-        class_name << " (" << GetHelpURL(node) << ')';
+        class_name += " (" + GetHelpURL(node) + ')';
     }
 #endif  // _DEBUG
 
@@ -594,11 +621,11 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
     // auto changed_node = changed_prop->getNode();
     if (changed_prop->isProp(prop_alignment))
     {
-        if (auto pg_parent = prop_grid->GetProperty("alignment"); pg_parent)
+        if (auto* pg_parent = prop_grid->GetProperty("alignment"); pg_parent)
         {
             for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
             {
-                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                if (auto* pg_setting = pg_parent->Item(idx); pg_setting)
                 {
                     auto label = pg_setting->GetLabel();
                     if (label == "wxALIGN_LEFT")
@@ -641,29 +668,29 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
     }
     else if (changed_prop->isProp(prop_use_derived_class))
     {
-        if (auto pg_setting = prop_grid->GetProperty("private_members"); pg_setting)
+        if (auto* pg_setting = prop_grid->GetProperty("private_members"); pg_setting)
         {
             pg_setting->Enable(!changed_prop->as_bool());
         }
 
-        if (auto pg_setting = prop_grid->GetProperty("pure_virtual_functions"); pg_setting)
+        if (auto* pg_setting = prop_grid->GetProperty("pure_virtual_functions"); pg_setting)
         {
             pg_setting->Enable(changed_prop->as_bool());
         }
 
-        if (auto pg_setting = prop_grid->GetProperty("derived_class_name"); pg_setting)
+        if (auto* pg_setting = prop_grid->GetProperty("derived_class_name"); pg_setting)
         {
             pg_setting->Enable(changed_prop->as_bool());
         }
 
-        if (auto pg_setting = prop_grid->GetProperty("derived_file"); pg_setting)
+        if (auto* pg_setting = prop_grid->GetProperty("derived_file"); pg_setting)
         {
             pg_setting->Enable(changed_prop->as_bool());
         }
     }
     else if (changed_prop->isProp(prop_python_use_xrc))
     {
-        if (auto pg_setting = prop_grid->GetProperty("python_xrc_file"); pg_setting)
+        if (auto* pg_setting = prop_grid->GetProperty("python_xrc_file"); pg_setting)
         {
             pg_setting->Enable(changed_prop->as_bool());
         }
@@ -676,7 +703,7 @@ bool BaseGenerator::VerifyProperty(NodeProperty* prop)
 
     if (prop->isProp(prop_alignment))
     {
-        auto value = prop->as_raw_ptr();
+        auto* value = prop->as_raw_ptr();
         if (value->contains("wxALIGN_LEFT") &&
             (value->contains("wxALIGN_RIGHT") || value->contains("wxALIGN_CENTER_HORIZONTAL")))
         {
@@ -726,117 +753,118 @@ std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
         return tt_string(
             !prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
-    else if (prop->isProp(prop_derived_file) && !prop->HasValue())
+    if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
         return tt_string(
             !prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
-    else if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
+    if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
     {
         return tt_string(
             !prop->getNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
-    else if (set_output_files.contains(prop->get_PropDeclaration()->get_name()) &&
-             !prop->HasValue())
+    if (set_output_files.contains(prop->get_PropDeclaration()->get_name()) && !prop->HasValue())
     {
         return tt_string("change class_name to auto-fill");
     }
-    else
-    {
-        return {};
-    }
-}
 
-// clang-format off
+    return {};
+}
 
 // non-sorted order is critical!
 
-static std::vector<std::pair<const char*, const char*>> prefix_pair = {
-
-    { "bag", "_bag" },
-    { "bar", "_bar" },
-    { "bitmap", "_bitmap" },
-    { "bookpage", "book_ctrl_base" },
-    { "box", "_box" },
-    { "bundle", "_bundle" },  // just in case we want to add help for this
-    { "button", "_button" },
-    { "colour", "_colour" },
-    { "column", "_column" },
-    { "combo", "_combo" },
-    { "ctrl", "_ctrl" },
-    { "dialog", "_dialog" },  // stddialog becomes std_dialog
-    { "double", "_double" },
-    { "event", "_event" },
-    { "grid", "_grid" },
-    { "item", "_item" },
-    { "list", "_list" },
-    { "line", "_line" },
-    { "manager", "_manager" },
-    { "menu", "_menu" },
-    { "notebook", "_notebook" },
-    { "page", "_page" },
-    { "pane", "_pane" },
-    { "picker", "_picker" },
-    { "simple", "_simple" },
-    { "sizer", "_sizer" },
-    { "text", "_text" },
-    { "tool_bar", "_tool_bar" },  // not that bar will already have been changed to _bar
-    { "tree", "_tree" },
-    { "validator", "_validator" },
-    { "view", "_view" },
-    { "window", "_window" },
-
-};
-// clang-format on
-
-tt_string BaseGenerator::GetHelpURL(Node* node)
+namespace
 {
-    tt_string class_name = getClassHelpName(node);
+    const std::vector<std::pair<std::string_view, std::string_view>> prefix_pair = {
+
+        { "bag", "_bag" },
+        { "bar", "_bar" },
+        { "bitmap", "_bitmap" },
+        { "bookpage", "book_ctrl_base" },
+        { "box", "_box" },
+        { "bundle", "_bundle" },  // just in case we want to add help for this
+        { "button", "_button" },
+        { "colour", "_colour" },
+        { "column", "_column" },
+        { "combo", "_combo" },
+        { "ctrl", "_ctrl" },
+        { "dialog", "_dialog" },  // stddialog becomes std_dialog
+        { "double", "_double" },
+        { "event", "_event" },
+        { "grid", "_grid" },
+        { "item", "_item" },
+        { "list", "_list" },
+        { "line", "_line" },
+        { "manager", "_manager" },
+        { "menu", "_menu" },
+        { "notebook", "_notebook" },
+        { "page", "_page" },
+        { "pane", "_pane" },
+        { "picker", "_picker" },
+        { "simple", "_simple" },
+        { "sizer", "_sizer" },
+        { "text", "_text" },
+        { "tool_bar", "_tool_bar" },  // not that bar will already have been changed to _bar
+        { "tree", "_tree" },
+        { "validator", "_validator" },
+        { "view", "_view" },
+        { "window", "_window" },
+
+    };
+
+    const std::map<std::string_view, std::string_view> map_convert_classname = {
+        { "contextmenuevent", "context_menu_event" },
+        { "activityindicator", "activity_indicator" },
+        { "simplehtmllistbox", "simple_html_list_box" },
+        { "propertysheetdialog", "property_sheet_dialog" },
+        { "toolbartoolbase", "tool_bar_tool_base" },
+        { "docparentframe", "doc_parent_frame" },
+        { "docmdiparentframe", "doc_m_d_i_parent_frame" },
+        { "auimdiparentframe", "aui_m_d_i_parent_frame" },
+    };
+
+    const std::map<std::string_view, std::string_view> map_convert_nonwx_classname = {
+        { "BookPage", "book_ctrl_base" },
+        { "dataViewColumn", "data_view_ctrl" },
+        { "dataViewListColumn", "data_view_list_ctrl" },
+        { "PanelForm", "panel" },
+        { "PopupMenu", "menu" },
+        { "propGridPage", "property_grid_page" },
+        { "RibbonBar", "ribbon_bar" },
+        { "RibbonToolBar", "ribbon_tool_bar" },
+        { "spacer", "sizer" },
+        { "StaticCheckboxBoxSizer", "static_box_sizer" },
+        { "StaticRadioBtnBoxSizer", "static_box_sizer" },
+        { "ToolBar", "tool_bar" },
+        { "AuiToolBar", "aui_tool_bar" },
+        { "TreeListCtrlColumn", "tree_list_ctrl" }
+    };
+
+}  // namespace
+
+auto BaseGenerator::GetHelpURL(Node* node) -> tt_string
+{
+    std::string class_name = getClassHelpName(node);
 
     if (class_name.starts_with("wx"))
     {
         class_name.erase(0, 2);
-        class_name.MakeLower();
-
-        if (class_name == "contextmenuevent")
+        std::ranges::transform(class_name, class_name.begin(),
+                               [](unsigned char character)
+                               {
+                                   return static_cast<char>(std::tolower(character));
+                               });
+        if (auto iter = map_convert_classname.find(class_name); iter != map_convert_classname.end())
         {
-            class_name = "context_menu_event";
-        }
-        else if (class_name == "activityindicator")
-        {
-            class_name = "activity_indicator";
-        }
-        else if (class_name == "simplehtmllistbox")
-        {
-            class_name = "simple_html_list_box";
-        }
-        else if (class_name == "propertysheetdialog")
-        {
-            class_name = "property_sheet_dialog";
-        }
-        else if (class_name == "toolbartoolbase")
-        {
-            class_name = "tool_bar_tool_base";
-        }
-        else if (class_name == "docparentframe")
-        {
-            class_name = "doc_parent_frame";
-        }
-        else if (class_name == "docmdiparentframe")
-        {
-            class_name = "doc_m_d_i_parent_frame";
-        }
-        else if (class_name == "auimdiparentframe")
-        {
-            class_name = "aui_m_d_i_parent_frame";
+            class_name = iter->second;
         }
         else
         {
             for (const auto& [key, value]: prefix_pair)
             {
-                if (!class_name.starts_with(key))
+                if (auto pos = class_name.find(key); pos != std::string::npos)
                 {
-                    class_name.Replace(key, value);
+                    class_name.replace(pos, key.length(), value);
                 }
             }
         }
@@ -846,99 +874,49 @@ tt_string BaseGenerator::GetHelpURL(Node* node)
         return url;
     }
 
-    // REVIEW: [Randalphwa - 07-23-2023] some of these are now being handled by getClassHelpName()
-    // and will therefore never make it this far.
-
-    else if (class_name == "BookPage")
+    if (auto iter = map_convert_nonwx_classname.find(class_name);
+        iter != map_convert_nonwx_classname.end())
     {
-        return tt_string("wx_book_ctrl_base.html");
-    }
-    else if (class_name == "dataViewColumn")
-    {
-        return tt_string("wx_data_view_ctrl.html");
-    }
-    else if (class_name == "dataViewListColumn")
-    {
-        return tt_string("wx_data_view_list_ctrl.html");
-    }
-    else if (class_name == "PanelForm")
-    {
-        return tt_string("wx_panel.html");
-    }
-    else if (class_name == "PopupMenu" || class_name == "submenu")
-    {
-        return tt_string("wx_menu.html");
-    }
-    else if (class_name == "propGridPage")
-    {
-        return tt_string("wx_property_grid_page.html");
-    }
-    else if (class_name == "RibbonBar")
-    {
-        return tt_string("wx_ribbon_bar.html");
-    }
-    else if (class_name == "RibbonToolBar")
-    {
-        return tt_string("wx_ribbon_tool_bar.html");
-    }
-    else if (class_name == "spacer")
-    {
-        return tt_string("wx_sizer.html");
-    }
-    else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-    {
-        return tt_string("wx_static_box_sizer.html");
-    }
-    else if (class_name == "ToolBar")
-    {
-        return tt_string("wx_tool_bar.html");
-    }
-    else if (class_name == "AuiToolBar")
-    {
-        return tt_string("wx_aui_tool_bar.html");
-    }
-    else if (class_name == "TreeListCtrlColumn")
-    {
-        return tt_string("wx_tree_list_ctrl.html");
+        return { iter->second };
     }
 
-    return tt_string();
+    return {};
 }
 
-// clang-format off
+namespace
+{
+    // These are the control types that cannot have their parent changed
+    const auto parentless_types = {
 
-// These are the control types that cannot have their parent changed
-static const auto parentless_types = {
+        type_aui_tool,
+        type_bookpage,
+        type_ctx_menu,
+        type_data_list,
+        type_data_string,
+        type_dataviewcolumn,
+        type_dataviewlistcolumn,
+        type_embed_image,
+        type_images,
+        type_menu,
+        type_menubar,
+        type_menubar_form,
+        type_menuitem,
+        type_page,
+        type_ribbonbar,
+        type_ribbonbar_form,
+        type_ribbonbutton,
+        type_ribbonbuttonbar,
+        type_ribbongallery,
+        type_ribbongalleryitem,
+        type_ribbonpage,
+        type_ribbonpanel,
+        type_ribbontool,
+        type_ribbontoolbar,
+        type_tool,
+        type_wizardpagesimple
 
-    type_aui_tool,
-    type_bookpage,
-    type_ctx_menu,
-    type_data_list,
-    type_data_string,
-    type_dataviewcolumn,
-    type_dataviewlistcolumn,
-    type_embed_image,
-    type_images,
-    type_menu,
-    type_menubar,
-    type_menubar_form,
-    type_menuitem,
-    type_page,
-    type_ribbonbar,
-    type_ribbonbar_form,
-    type_ribbonbutton,
-    type_ribbonbuttonbar,
-    type_ribbongallery,
-    type_ribbongalleryitem,
-    type_ribbonpage,
-    type_ribbonpanel,
-    type_ribbontool,
-    type_ribbontoolbar,
-    type_tool,
-    type_wizardpagesimple
-
-};
-// clang-format on
+    };
+}  // namespace
 
 bool BaseGenerator::CanChangeParent(Node* node)
 {
@@ -947,18 +925,19 @@ bool BaseGenerator::CanChangeParent(Node* node)
         return false;
     }
 
-    for (auto& iter: parentless_types)
+    if (!std::ranges::all_of(parentless_types,
+                             [&](const auto& iter)
+                             {
+                                 return !node->is_Type(iter);
+                             }))
     {
-        if (node->is_Type(iter))
-        {
-            return false;
-        }
+        return false;
     }
 
     return true;
 }
 
-int BaseGenerator::GetRequiredVersion(Node* node)
+auto BaseGenerator::GetRequiredVersion(Node* node) -> int
 {
     if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
@@ -972,8 +951,8 @@ int BaseGenerator::GetRequiredVersion(Node* node)
     return minRequiredVer;
 }
 
-std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenLang language,
-                                                                GenEnum::PropName prop)
+auto BaseGenerator::isLanguagePropSupported(Node* node, GenLang language, GenEnum::PropName prop)
+    -> std::optional<tt_string>
 {
     if (prop == prop_persist && node->as_bool(prop))
     {
@@ -995,11 +974,11 @@ std::optional<tt_string> BaseGenerator::isLanguagePropSupported(Node* node, GenL
     return {};
 }
 
-PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type,
-                             std::string_view help, std::string_view def_value)
+auto DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type,
+                 std::string_view help, std::string_view def_value) -> PropDeclaration*
 {
     auto& properties = declaration->GetPropInfoMap();
-    auto prop_info =
+    auto* prop_info =
         new PropDeclaration(prop_name, type, PropDeclaration::DefaultValue { def_value },
                             PropDeclaration::HelpText { help });
     declaration->GetCategory().addProperty(prop_name);
@@ -1016,41 +995,44 @@ void DeclAddOption(PropDeclaration* prop_info, std::string_view name, std::strin
     opt.help = help;
 }
 
-// var_names for these generators will default to "none" for class access
-// inline const GenName set_no_class_access[] = {
-constexpr auto set_no_class_access = frozen::make_set<GenName>({
+namespace
+{
+    // var_names for these generators will default to "none" for class access
+    // inline const GenName set_no_class_access[] = {
+    constexpr auto set_no_class_access = frozen::make_set<GenName>({
 
-    gen_BookPage,
-    gen_CloseButton,
-    gen_StaticCheckboxBoxSizer,
-    gen_StaticRadioBtnBoxSizer,
-    gen_TextSizer,
-    gen_VerticalBoxSizer,
-    gen_auitool,
-    gen_auitool_label,
-    gen_separator,
-    gen_submenu,
-    gen_tool,
-    gen_tool_dropdown,
-    gen_wxBoxSizer,
-    gen_wxFlexGridSizer,
-    gen_wxGridBagSizer,
-    gen_wxGridSizer,
-    gen_wxMenuItem,
-    gen_wxPanel,
-    gen_wxRibbonButtonBar,
-    gen_wxRibbonGallery,
-    gen_wxRibbonPage,
-    gen_wxRibbonPanel,
-    gen_wxRibbonToolBar,
-    gen_wxStaticBitmap,
-    gen_wxStaticBoxSizer,
-    gen_wxStaticLine,
-    gen_wxStdDialogButtonSizer,
-    gen_wxWizardPageSimple,
-    gen_wxWrapSizer,
+        gen_BookPage,
+        gen_CloseButton,
+        gen_StaticCheckboxBoxSizer,
+        gen_StaticRadioBtnBoxSizer,
+        gen_TextSizer,
+        gen_VerticalBoxSizer,
+        gen_auitool,
+        gen_auitool_label,
+        gen_separator,
+        gen_submenu,
+        gen_tool,
+        gen_tool_dropdown,
+        gen_wxBoxSizer,
+        gen_wxFlexGridSizer,
+        gen_wxGridBagSizer,
+        gen_wxGridSizer,
+        gen_wxMenuItem,
+        gen_wxPanel,
+        gen_wxRibbonButtonBar,
+        gen_wxRibbonGallery,
+        gen_wxRibbonPage,
+        gen_wxRibbonPanel,
+        gen_wxRibbonToolBar,
+        gen_wxStaticBitmap,
+        gen_wxStaticBoxSizer,
+        gen_wxStaticLine,
+        gen_wxStdDialogButtonSizer,
+        gen_wxWizardPageSimple,
+        gen_wxWrapSizer,
 
-});
+    });
+}  // namespace
 
 void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_value)
 {
@@ -1080,4 +1062,9 @@ void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name,
 {
     declaration->GetCategory().addEvent(evt_name);
     declaration->GetEventInfoMap()[evt_name] = new NodeEventInfo(evt_name, event_class, help);
+}
+
+auto BaseGenerator::IsGeneric(Node* /*unused*/) -> bool
+{
+    return false;
 }

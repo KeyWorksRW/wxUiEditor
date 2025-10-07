@@ -191,10 +191,30 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
     code.clear();
     if (generator->HeaderCode(code))
     {
-        m_header->writeLine(code);
+        // MDI View classes need to have most of the code start with 4 spaces so that they can add a
+        // non-indented "private:" section followed by wxDECLARE_DYNAMIC_CLASS().
+        if (m_form_node->is_Type(type_wx_view))
+        {
+            if (auto save_indentation = m_header->get_Indentation(); save_indentation > 0)
+            {
+                m_header->Unindent();
+                m_header->writeLine(code);
+                m_header->Indent();
+            }
+            else
+            {
+                m_header->Indent();
+            }
+        }
+        else
+        {
+            m_header->writeLine(code);
+        }
     }
-
-    m_header->SetLastLineBlank();
+    else
+    {
+        m_header->SetLastLineBlank();
+    }
 
     GenCppValidatorFunctions(m_form_node);
     m_header->writeLine();
@@ -219,7 +239,8 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         }
     }
 
-    // TODO: There are a lot of function calls and section below that expect a protected section.
+    // TODO: There are a lot of function calls and section below that expect a protected
+    // section.
 
     m_header->Unindent();
     m_header->writeLine("protected:");
@@ -506,8 +527,8 @@ void CppCodeGenerator::GenHdrEvents()
 void CppCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names,
                                        size_t& indent)
 {
-    // namespace_prop can be a single or multiple namespaces separated by either :: or ;. Replace
-    // both separator types with a single ':' character.
+    // namespace_prop can be a single or multiple namespaces separated by either :: or ;.
+    // Replace both separator types with a single ':' character.
     namespace_prop.Replace("::", ":");
     namespace_prop.Replace(";", ":");
     names.SetString(namespace_prop, ':');
@@ -657,7 +678,8 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
         {
             tt_view_vector list(iter, '\n');
 
-            // See gen_custom_ctrl.cpp -- GetIncludes(). Format is namespace name\n{\nclass name;\n}
+            // See gen_custom_ctrl.cpp -- GetIncludes(). Format is namespace name\n{\nclass
+            // name;\n}
             m_header->writeLine(list[0]);
             m_header->writeLine(list[1]);
             m_header->Indent();

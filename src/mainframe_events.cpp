@@ -5,7 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include <wx/aboutdlg.h>     // declaration of wxAboutDialog class
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/clipbrd.h>      // wxClipboad class and clipboard functions

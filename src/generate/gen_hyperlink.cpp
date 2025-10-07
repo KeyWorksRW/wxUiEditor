@@ -5,7 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include <wx/hyperlink.h>  // Hyperlink control
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes

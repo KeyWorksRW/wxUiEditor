@@ -4,7 +4,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include "gen_doc_view_app.h"
 
 #include "code.h"                // Code -- Helper class for generating code

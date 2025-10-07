@@ -5,16 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-#include <set>
-
 #include "gen_cpp.h"
-// #include "gen_cpp_private.h"  // GenData -- Private shared gen_cpp structures/functions
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "code.h"            // Code -- Helper class for generating code
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "utils.h"           // Miscellaneous utilities
 #include "write_code.h"      // Write code to Scintilla or file
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions

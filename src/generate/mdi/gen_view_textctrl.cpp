@@ -5,11 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include "gen_view_textctrl.h"
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "project_handler.h"  // ProjectHandler class
+#include "code.h"                // Code -- Helper class for generating code
+#include "project_handler.h"     // ProjectHandler class
+#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
+#include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_TextCtrlViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxView);
@@ -68,16 +69,16 @@ bool %class%::OnClose(bool delete_window)
 }
 )===";
 
-bool TextViewGenerator::ConstructionCode(Code& code)
+auto TextViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        tt_string_vector lines;
-        lines.ReadString(txt_TextCtrlViewBlock);
-        tt_string class_name = code.node()->as_string(prop_class_name);
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_TextCtrlViewBlock));
+        auto class_name = code.node()->as_view(prop_class_name);
         for (auto& line: lines)
         {
-            line.Replace("%class%", class_name, true);
+            utils::replace_in_line(line, "%class%", class_name, true);
             code.Str(line).Eol();
         }
     }
@@ -90,15 +91,17 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        set_src.insert("#include <wx/docmdi.h");
-        set_hdr.insert("#include <wx/docview.h");
-        set_hdr.insert("#include <wx/textctrl.h");
+        set_src.insert("#include <wx/docmdi.h>");
+        set_hdr.insert("#include <wx/docview.h>");
+        set_hdr.insert("#include <wx/textctrl.h>");
 
-        auto parent = node->get_Parent();
+        auto* parent = node->get_Parent();
         for (auto& iter: parent->get_ChildNodePtrs())
         {
             if (iter.get() == node)
+            {
                 continue;
+            }
             if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
             {
                 tt_string hdr_file = iter->as_string(prop_base_file);
@@ -125,19 +128,13 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 inline constexpr const auto txt_TextCtrlViewHdrBlock =
     R"===(
-#pragma once
+    %class%() : m_text(nullptr) {}
 
-// This view uses a standard wxTextCtrl to show its contents
-class %class% : public wxView
-{
-public:
-    %class%() : wxView(), m_text(nullptr) {}
-
-    virtual bool OnCreate(wxDocument* doc, long flags) override;
-    virtual bool OnClose(bool deleteWindow = true) override;
+    bool OnCreate(wxDocument* doc, long flags) override;
+    bool OnClose(bool deleteWindow = true) override;
 
     // nothing to do here, wxTextCtrl draws itself
-    virtual void OnDraw(wxDC* /* dc unused */) override {};
+    void OnDraw(wxDC* /* dc unused */) override {};
 
     wxTextCtrl* GetTextCtrl() const { return m_text; }
 
@@ -145,18 +142,31 @@ private:
     wxTextCtrl* m_text;
 
     wxDECLARE_DYNAMIC_CLASS(%class%);
-};
 )===";
 
-bool TextViewGenerator::HeaderCode(Code& code)
+auto TextViewGenerator::HeaderCode(Code& code) -> bool
 {
-    tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlViewHdrBlock);
-    tt_string class_name = code.node()->as_string(prop_class_name);
+    ttwx::StringVector lines;
+    lines.ReadString(std::string_view(txt_TextCtrlViewHdrBlock));
+    auto class_name = code.node()->as_view(prop_class_name);
     for (auto& line: lines)
     {
-        line.Replace("%class%", class_name, true);
+        utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
+    }
+
+    return true;
+}
+
+auto TextViewGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxView";
     }
 
     return true;

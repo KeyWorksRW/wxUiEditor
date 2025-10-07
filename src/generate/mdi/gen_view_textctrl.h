@@ -10,10 +10,11 @@
 class TextViewGenerator : public BaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
+    auto ConstructionCode(Code& code) -> bool override;
 
-    bool HeaderCode(Code&) override;
+    auto HeaderCode(Code& code) -> bool override;
+    auto BaseClassNameCode(Code& code) -> bool override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     GenLang language) override;
+    auto GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     GenLang language) -> bool override;
 };

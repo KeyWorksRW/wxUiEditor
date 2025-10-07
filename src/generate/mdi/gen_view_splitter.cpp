@@ -108,7 +108,7 @@ bool SplitterViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-inline constexpr const auto txt_TextCtrlViewHdrBlock =
+inline constexpr const auto txt_SplitterViewHdrBlock =
     R"===(
 #pragma once
 
@@ -143,7 +143,7 @@ private:
 bool SplitterViewGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlViewHdrBlock);
+    lines.ReadString(txt_SplitterViewHdrBlock);
     tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {

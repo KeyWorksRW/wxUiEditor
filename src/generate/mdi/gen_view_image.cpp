@@ -107,7 +107,7 @@ bool ImageViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-inline constexpr const auto txt_TextCtrlViewHdrBlock =
+inline constexpr const auto txt_ImageViewHdrBlock =
     R"===(
 #pragma once
 
@@ -142,7 +142,7 @@ private:
 bool ImageViewGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlViewHdrBlock);
+    lines.ReadString(txt_ImageViewHdrBlock);
     tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {

@@ -108,7 +108,7 @@ bool ScintillaViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     return true;
 }
 
-inline constexpr const auto txt_TextCtrlViewHdrBlock =
+inline constexpr const auto txt_ScintillaViewHdrBlock =
     R"===(
 #pragma once
 
@@ -143,7 +143,7 @@ private:
 bool ScintillaViewGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlViewHdrBlock);
+    lines.ReadString(txt_ScintillaViewHdrBlock);
     tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {

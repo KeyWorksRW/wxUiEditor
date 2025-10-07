@@ -16,20 +16,11 @@
 void CppCodeGenerator::CollectMemberVariables(Node* node, Permission perm,
                                               std::set<std::string>& code_lines)
 {
-    if (m_form_node->is_Type(type_DocViewApp))
+    if (auto *generator = node->get_Generator(); generator)
     {
-        code_lines.emplace("wxFrame* m_frame;");
-        code_lines.emplace("wxDocManager* m_docManager;");
-        code_lines.emplace("wxMenuBar* m_menuBar;");
+        generator->CollectMemberVariables(node, code_lines);
+    }
 
-        // Don't generate member variables for the Doc/View App node, they are not needed.
-        return;
-    }
-    if (m_form_node->is_Gen(gen_ViewTextCtrl))
-    {
-        code_lines.emplace("wxTextCtrl* m_text;");
-        return;
-    }
     if (auto* prop = node->get_PropPtr(prop_class_access); prop)
     {
         if (prop->as_string() != "none")

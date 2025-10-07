@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -224,6 +224,15 @@ public:
     // be called *after* the property is set, so the generator can query the property's
     // current value.
     virtual std::optional<tt_string> isLanguagePropSupported(Node*, GenLang, GenEnum::PropName);
+
+    // Allows a generator, such as the MDI forms to specify additional member variables that should
+    // be collected and added to the class declaration. These will either be protected: or private:
+    // depending on the private_members property of the form.
+    virtual auto CollectMemberVariables(Node* /* node unused */,
+                                        std::set<std::string>& /* code_lines unused */) -> void
+    {
+        // Default does nothing
+    }
 };
 
 PropDeclaration* DeclAddProp(NodeDeclaration* declaration, PropName prop_name, PropType type,

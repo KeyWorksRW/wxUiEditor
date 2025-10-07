@@ -66,6 +66,8 @@ public:
     // Derived class provides this to write text to whatever output device is being used
     virtual void doWrite(tt_string_view code) = 0;
 
+    [[nodiscard]] auto get_Indentation() const { return m_indent; }
+
 protected:
     void WriteCodeLine(tt_string_view code, size_t indentation);
 

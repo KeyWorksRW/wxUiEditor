@@ -103,3 +103,17 @@ bool RichTextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::st
 
     return true;
 }
+
+auto RichTextDocGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxDocument";
+    }
+
+    return true;
+}

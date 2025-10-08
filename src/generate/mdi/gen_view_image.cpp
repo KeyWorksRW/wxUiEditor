@@ -109,16 +109,7 @@ bool ImageViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 inline constexpr const auto txt_ImageViewHdrBlock =
     R"===(
-#pragma once
-
-#include <wx/docview.h>
-#include <wx/textctrl.h>
-
-// This view uses a standard wxTextCtrl to show its contents
-class %class% : public wxView
-{
-public:
-    %class%() : wxView(), m_text(nullptr) {}
+    %class%() : wxView(), m_canvas(nullptr) {}
 
     virtual bool OnCreate(wxDocument* doc, long flags) override;
     virtual void OnDraw(wxDC* dc) override;
@@ -132,9 +123,6 @@ protected:
     void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
 
 private:
-    wxTextCtrl* m_text;
-
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(%class%);
 };
 )===";
@@ -151,4 +139,24 @@ bool ImageViewGenerator::HeaderCode(Code& code)
     }
 
     return true;
+}
+
+auto ImageViewGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxView";
+    }
+
+    return true;
+}
+
+auto ImageViewGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("ImageCanvas* m_canvas;");
 }

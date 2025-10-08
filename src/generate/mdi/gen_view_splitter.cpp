@@ -110,20 +110,11 @@ bool SplitterViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 inline constexpr const auto txt_SplitterViewHdrBlock =
     R"===(
-#pragma once
+    %class%() : wxView(), m_splitter(nullptr) {}
 
-#include <wx/docview.h>
-#include <wx/textctrl.h>
-
-// This view uses a standard wxTextCtrl to show its contents
-class %class% : public wxView
-{
-public:
-    %class%() : wxView(), m_text(nullptr) {}
-
-    virtual bool OnCreate(wxDocument* doc, long flags) override;
-    virtual void OnDraw(wxDC* dc) override;
-    virtual bool OnClose(bool deleteWindow = true) override;
+    bool OnCreate(wxDocument* doc, long flags) override;
+    void OnDraw(wxDC* dc) override;
+    bool OnClose(bool deleteWindow = true) override;
 
     wxTextCtrl* GetText() const { return m_text; }
 
@@ -133,14 +124,11 @@ protected:
     void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
 
 private:
-    wxTextCtrl* m_text;
-
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(%class%);
 };
 )===";
 
-bool SplitterViewGenerator::HeaderCode(Code& code)
+auto SplitterViewGenerator::HeaderCode(Code& code) -> bool
 {
     tt_string_vector lines;
     lines.ReadString(txt_SplitterViewHdrBlock);
@@ -152,4 +140,24 @@ bool SplitterViewGenerator::HeaderCode(Code& code)
     }
 
     return true;
+}
+
+auto SplitterViewGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxView";
+    }
+
+    return true;
+}
+
+auto SplitterViewGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                   std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("wxSplitterWindow* m_splitter;");
 }

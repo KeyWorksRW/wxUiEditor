@@ -169,8 +169,9 @@ auto TextViewGenerator::BaseClassNameCode(Code& code) -> bool
 
     return true;
 }
+
 auto TextViewGenerator::CollectMemberVariables(Node* /* node unused */,
                                                std::set<std::string>& code_lines) -> void
 {
-    code_lines.insert("wxTextCtrl* m_text;");
+    code_lines.insert("wxTextCtrl* m_text;  // NOLINT (protected member variable)");
 }

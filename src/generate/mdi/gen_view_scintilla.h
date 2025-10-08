@@ -10,10 +10,13 @@
 class ScintillaViewGenerator : public BaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
+    auto ConstructionCode(Code& /*unused*/) -> bool override;
 
-    bool HeaderCode(Code&) override;
+    auto HeaderCode(Code& /*unused*/) -> bool override;
+    auto BaseClassNameCode(Code& code) -> bool override;
+    auto CollectMemberVariables(Node* /* node unused */,
+                                std::set<std::string>& /* code_lines unused */) -> void override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     GenLang /* language */) override;
+    auto GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     GenLang /* language */) -> bool override;
 };

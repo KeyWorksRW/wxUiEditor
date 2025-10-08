@@ -103,3 +103,17 @@ bool ScintillaDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::s
 
     return true;
 }
+
+auto ScintillaDocGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxDocument";
+    }
+
+    return true;
+}

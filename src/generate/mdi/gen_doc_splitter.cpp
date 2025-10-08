@@ -103,3 +103,17 @@ bool SplitterDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::st
 
     return true;
 }
+
+auto SplitterDocGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxDocument";
+    }
+
+    return true;
+}

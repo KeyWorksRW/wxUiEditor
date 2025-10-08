@@ -166,7 +166,7 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
 {
-    auto *form = wxGetMainFrame()->getSelectedNode();
+    auto* form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->is_Form())
     {
         form = form->get_Form();
@@ -247,11 +247,14 @@ namespace
         if (!has_base_file)
         {
             tt_string msg("No filename specified for ");
-            if (form->HasValue(prop_class_name)) {
+            if (form->HasValue(prop_class_name))
+            {
                 msg += form->as_string(prop_class_name);
-            } else {
+            }
+            else
+            {
                 msg += map_GenNames.at(form->get_GenName());
-}
+            }
             msg += '\n';
             gen_data.AddResultMsg(msg);
             return;
@@ -272,16 +275,19 @@ namespace
         path.replace_extension(header_ext);
 
         int flags = flag_no_ui;
-        if (gen_data.pClassList) {
+        if (gen_data.pClassList)
+        {
             flags |= flag_test_only;
-}
-        if (form->as_bool(prop_no_closing_brace)) {
+        }
+        if (form->as_bool(prop_no_closing_brace))
+        {
             flags |= flag_add_closing_brace;
-}
+        }
         auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
-        if (form->as_bool(prop_no_closing_brace)) {
+        if (form->as_bool(prop_no_closing_brace))
+        {
             flags = flags & ~flag_add_closing_brace;
-}
+        }
 
         if (retval > 0)
         {

@@ -125,7 +125,7 @@ public:
     virtual void OnDraw(wxDC* dc) override;
     virtual bool OnClose(bool deleteWindow = true) override;
 
-    wxTextCtrl* GetText() const { return m_text; }
+    wxRichTextCtrl* GetText() const { return m_text; }
 
 protected:
     void OnCopy(wxCommandEvent& /* event unused */) { m_text->Copy(); }
@@ -133,9 +133,6 @@ protected:
     void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
 
 private:
-    wxTextCtrl* m_text;
-
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(%class%);
 };
 )===";
@@ -152,4 +149,24 @@ bool RichTextViewGenerator::HeaderCode(Code& code)
     }
 
     return true;
+}
+
+auto RichTextViewGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxView";
+    }
+
+    return true;
+}
+
+auto RichTextViewGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                   std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("wxRichTextCtrl * m_text;");
 }

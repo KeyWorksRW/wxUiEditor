@@ -11,7 +11,7 @@
 #include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr const auto txt_DocViewAppCppSrc =
-    R"===(%class%::%class%() : m_frame(nullptr), m_docManager(nullptr), m_menuBar(nullptr)
+    R"===(%class%::%class%() : m_docManager(nullptr), m_frame(nullptr), m_menuBar(nullptr)
 {
     m_docManager = new wxDocManager;
 }
@@ -238,18 +238,20 @@ auto DocViewAppGenerator::PreClassHeaderCode(Code& code) -> bool
 }
 
 inline constexpr const auto txt_DocViewAppHeader =
-    R"===(virtual void AddDocTemplate(const wxString& descr, const wxString& filter,
+    R"===(%class%();
+
+virtual void AddDocTemplate(const wxString& descr, const wxString& filter,
                         const wxString& dir, const wxString& ext, const wxString& docTypeName,
                         const wxString& viewTypeName, wxClassInfo* docClassInfo,
                         wxClassInfo* viewClassInfo, long flags);
 
 // This will call CreateFrame(), ShowFrame() and then call wxApp::OnRun(). You do not need to
 // override OnRun() in your derived class unless you need to do something additional.
-virtual int OnRun() override;
+int OnRun() override;
 
 // This will create a DocManager, add templates to it, hook up a file history to it and
 // create a menu bar and a main frame.
-virtual wxFrame* CreateFrame(wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+wxFrame* CreateFrame(wxWindowID win_id = wxID_ANY, const wxString& title = wxEmptyString,
                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE, const wxString& name = wxFrameNameStr);
 
@@ -257,12 +259,11 @@ virtual wxFrame* CreateFrame(wxWindowID id = wxID_ANY, const wxString& title = w
 // OnExit() function to save the file history and delete the document manager. The base
 // class's OnExit() returns the value from wxApp::OnExit(), so unless you need additional
 // OnExit() processing, you don't need to create your own OnExit() function.
-virtual int OnExit() override;
+int OnExit() override;
 
 wxFrame* GetFrame() const { return m_frame; }
 wxDocManager* GetDocumentManager() const { return m_docManager; }
 wxMenuBar* GetMenuBar() const { return m_menuBar; }
-auto GetDocTemplates() const { return m_docTemplates; }
 
 virtual wxFrame* CreateChildFrame(wxView* view);
 
@@ -282,6 +283,14 @@ auto DocViewAppGenerator::HeaderCode(Code& code) -> bool
     }
 
     return true;
+}
+
+auto DocViewAppGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                 std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("wxFrame* m_frame;");
+    code_lines.insert("wxDocManager* m_docManager;");
+    code_lines.insert("wxMenuBar* m_menuBar;");
 }
 
 auto DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,

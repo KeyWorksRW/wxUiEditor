@@ -8,7 +8,6 @@
 #include "gen_cpp.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "code.h"            // Code -- Helper class for generating code
 #include "gen_common.h"      // Common component functions
 #include "utils.h"           // Miscellaneous utilities
 #include "write_code.h"      // Write code to Scintilla or file

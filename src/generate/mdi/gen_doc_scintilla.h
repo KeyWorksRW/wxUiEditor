@@ -11,6 +11,7 @@ class ScintillaDocGenerator : public BaseGenerator
 {
 public:
     bool ConstructionCode(Code&) override;
+    auto BaseClassNameCode(Code& code) -> bool override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;

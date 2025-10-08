@@ -5,7 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_enums.h"
 #include "gen_results.h"      // Code generation file writing functions
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
@@ -120,6 +121,12 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
                 else
                 {
                     forms.push_back(child.get());
+                }
+                if (child->is_Type(type_DocViewApp) || child->is_Type(GenEnum::type_wx_document))
+                {
+                    // Doc/View applications and Documents have additional child forms that need to
+                    // be included.
+                    CollectForms(forms, derived_forms, child.get(), CollectForms);
                 }
             }
             else

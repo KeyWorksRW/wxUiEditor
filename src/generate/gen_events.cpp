@@ -23,13 +23,13 @@
 
 using namespace code;
 
-extern const char* cpp_rust_end_cmt_line;          // "// ************* End of generated code"
-extern const char* perl_begin_cmt_block;           // "=pod" -- must be written with no indentation
-extern const char* perl_end_cmt_block;             // "=cut" -- must be written with no indentation
-extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-extern const char* python_triple_quote;            // "\"\"\"";
-extern const char* ruby_begin_cmt_block;           // "=begin";
-extern const char* ruby_end_cmt_block;             // "=end";
+extern std::string_view cpp_rust_end_cmt_line;  // "// ************* End of generated code"
+extern const char* perl_begin_cmt_block;        // "=pod" -- must be written with no indentation
+extern const char* perl_end_cmt_block;          // "=cut" -- must be written with no indentation
+extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern const char* python_triple_quote;                 // "\"\"\"";
+extern const char* ruby_begin_cmt_block;                // "=begin";
+extern const char* ruby_end_cmt_block;                  // "=end";
 
 /////////////////////////////////////////// Default generator event code
 //////////////////////////////////////////////

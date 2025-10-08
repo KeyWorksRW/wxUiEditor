@@ -78,9 +78,9 @@ bool RichTextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
                                         std::set<std::string>& /* set_hdr */,
                                         GenLang /* language */)
 {
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/textctrl.h");
+    set_src.insert("#include <wx/docmdi.h>");
+    set_src.insert("#include <wx/docview.h>");
+    set_src.insert("#include <wx/textctrl.h>");
 
     auto parent = node->get_Parent();
     for (auto& iter: parent->get_ChildNodePtrs())
@@ -108,7 +108,7 @@ bool RichTextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-inline constexpr const auto txt_TextCtrlViewHdrBlock =
+inline constexpr const auto txt_RichTextCtrlViewHdrBlock =
     R"===(
 #pragma once
 
@@ -125,7 +125,7 @@ public:
     virtual void OnDraw(wxDC* dc) override;
     virtual bool OnClose(bool deleteWindow = true) override;
 
-    wxTextCtrl* GetText() const { return m_text; }
+    wxRichTextCtrl* GetText() const { return m_text; }
 
 protected:
     void OnCopy(wxCommandEvent& /* event unused */) { m_text->Copy(); }
@@ -133,9 +133,6 @@ protected:
     void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
 
 private:
-    wxTextCtrl* m_text;
-
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(%class%);
 };
 )===";
@@ -143,7 +140,7 @@ private:
 bool RichTextViewGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlViewHdrBlock);
+    lines.ReadString(txt_RichTextCtrlViewHdrBlock);
     tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {
@@ -152,4 +149,24 @@ bool RichTextViewGenerator::HeaderCode(Code& code)
     }
 
     return true;
+}
+
+auto RichTextViewGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxView";
+    }
+
+    return true;
+}
+
+auto RichTextViewGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                   std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("wxRichTextCtrl * m_text;");
 }

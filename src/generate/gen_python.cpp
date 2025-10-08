@@ -5,7 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include <wx/artprov.h>
 
 #include <set>
@@ -45,7 +44,7 @@ R"===(##########################################################################
 
 // clang-format on
 
-extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 
 const char* python_triple_quote = "\"\"\"";
 

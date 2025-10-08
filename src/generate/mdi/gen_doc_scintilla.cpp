@@ -97,9 +97,23 @@ bool ScintillaDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::s
                                         std::set<std::string>& /* set_hdr unused */,
                                         GenLang /* language unused */)
 {
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/textctrl.h");
+    set_src.insert("#include <wx/docmdi.h>");
+    set_src.insert("#include <wx/docview.h>");
+    set_src.insert("#include <wx/textctrl.h>");
+
+    return true;
+}
+
+auto ScintillaDocGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxDocument";
+    }
 
     return true;
 }

@@ -187,10 +187,7 @@ namespace xrc
     };
 }  // namespace xrc
 
-// When chaniging txtVersion, you also need to change the version in wxUiEditor.rc and
-// wxUiEditor.exe.manifest and ../CMakeLists.txt
-
-inline constexpr const char* txtAppname = "wxUiEditor";
+// When chaniging you also need to manually change it in wxUiEditor.exe.manifest
 
 // This is the highest project number supported by this build of wxUiEditor. It should be
 // updated after every release, if there are any changes to the project format that might

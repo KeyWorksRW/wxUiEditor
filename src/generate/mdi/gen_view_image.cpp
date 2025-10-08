@@ -77,9 +77,9 @@ bool ImageViewGenerator::ConstructionCode(Code& code)
 bool ImageViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      std::set<std::string>& /* set_hdr */, GenLang /* language */)
 {
-    set_src.insert("#include <wx/docmdi.h");
-    set_src.insert("#include <wx/docview.h");
-    set_src.insert("#include <wx/textctrl.h");
+    set_src.insert("#include <wx/docmdi.h>");
+    set_src.insert("#include <wx/docview.h>");
+    set_src.insert("#include <wx/textctrl.h>");
 
     auto parent = node->get_Parent();
     for (auto& iter: parent->get_ChildNodePtrs())
@@ -107,18 +107,9 @@ bool ImageViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-inline constexpr const auto txt_TextCtrlViewHdrBlock =
+inline constexpr const auto txt_ImageViewHdrBlock =
     R"===(
-#pragma once
-
-#include <wx/docview.h>
-#include <wx/textctrl.h>
-
-// This view uses a standard wxTextCtrl to show its contents
-class %class% : public wxView
-{
-public:
-    %class%() : wxView(), m_text(nullptr) {}
+    %class%() : wxView(), m_canvas(nullptr) {}
 
     virtual bool OnCreate(wxDocument* doc, long flags) override;
     virtual void OnDraw(wxDC* dc) override;
@@ -132,9 +123,6 @@ protected:
     void OnSelectAll(wxCommandEvent& /* event unused */) { m_text->SelectAll(); }
 
 private:
-    wxTextCtrl* m_text;
-
-    wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(%class%);
 };
 )===";
@@ -142,7 +130,7 @@ private:
 bool ImageViewGenerator::HeaderCode(Code& code)
 {
     tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlViewHdrBlock);
+    lines.ReadString(txt_ImageViewHdrBlock);
     tt_string class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {
@@ -151,4 +139,24 @@ bool ImageViewGenerator::HeaderCode(Code& code)
     }
 
     return true;
+}
+
+auto ImageViewGenerator::BaseClassNameCode(Code& code) -> bool
+{
+    if (code.HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxView";
+    }
+
+    return true;
+}
+
+auto ImageViewGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                std::set<std::string>& code_lines) -> void
+{
+    code_lines.insert("ImageCanvas* m_canvas;");
 }

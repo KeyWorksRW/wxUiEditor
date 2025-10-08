@@ -93,13 +93,16 @@ void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
         if (child->is_Form())
         {
             forms.push_back(child.get());
-        }
-        else
-        {
-            if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
+            if (child->is_Type(type_DocViewApp) || child->is_Type(GenEnum::type_wx_document))
             {
+                // Doc/View applications and Documents have additional child forms that need to
+                // be included in addition to folders and sub-folders
                 CollectForms(forms, child.get());
             }
+        }
+        if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
+        {
+            CollectForms(forms, child.get());
         }
     }
 }

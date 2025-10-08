@@ -138,6 +138,7 @@ public:
     [[nodiscard]] auto as_bitmap_bundle() const -> wxBitmapBundle;
 
     [[nodiscard]] auto as_string() const -> const tt_string& { return m_value; }
+    [[nodiscard]] auto as_view() const -> std::string_view { return m_value; }
 
     // Converts friendly name to wxWidgets constant
     auto as_constant(std::string_view prefix) -> const tt_string&;

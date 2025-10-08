@@ -560,6 +560,8 @@ public:
     // Note that it takes a copy of the lambda string since it needs to modify it.
     Code& ExpandEventLambda(tt_string lambda);
 
+    [[nodiscard]] auto get_Indentation() const { return m_indent; }
+
 protected:
     void InsertLineBreak(size_t cur_pos);
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis

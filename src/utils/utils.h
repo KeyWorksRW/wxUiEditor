@@ -22,6 +22,16 @@ class Node;
 class wxInputStream;
 class wxOutputStream;
 
+// Newer functions should be placed in the utils namespace
+
+namespace utils
+{
+    // Look for search string in line, and if found, replace with replace_with string. If all
+    // is true, replace all instances, otherwise only the first instance is replaced.
+    auto replace_in_line(std::string& line, std::string_view search, std::string_view replace_with,
+                         bool all) -> void;
+}  // namespace utils
+
 tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue);
 tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue);
 tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue);

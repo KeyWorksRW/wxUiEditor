@@ -4,13 +4,14 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
 #include "gen_doc_view_app.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"                // Code -- Helper class for generating code
+#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
+#include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr const auto txt_DocViewAppCppSrc =
-    R"===(%class%::%class%() : m_frame(nullptr), m_docManager(nullptr), m_menuBar(nullptr)
+    R"===(%class%::%class%() : m_docManager(nullptr), m_frame(nullptr), m_menuBar(nullptr)
 {
     m_docManager = new wxDocManager;
 }
@@ -43,7 +44,6 @@ wxFrame* %class%::CreateFrame(wxWindowID id, const wxString& title, const wxPoin
                                 const wxString& name)
 {
     %doc_templates%
-
     m_frame = new wxDocParentFrameAny<wxAuiMDIParentFrame>(m_docManager, nullptr, id, title, pos, size, style, name);
 
     auto menuFile = new wxMenu;
@@ -65,12 +65,10 @@ wxFrame* %class%::CreateFrame(wxWindowID id, const wxString& title, const wxPoin
     m_frame->SetMenuBar(m_menuBar);
 
     return m_frame;
-
 )===";
 
 inline constexpr const auto txt_DocViewAppAfterCtor =
-    R"===(
-wxFrame* %class%::CreateChildFrame(wxView* view)
+    R"===(wxFrame* %class%::CreateChildFrame(wxView* view)
 {
     auto doc = view->GetDocument();
     auto child_frame = new wxDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame>(
@@ -97,15 +95,15 @@ wxFrame* %class%::CreateChildFrame(wxView* view)
     menuEdit->Append(wxID_SELECTALL);
 
     auto menubar = new wxMenuBar;
-    %document_menu%
+    m_menuBar->Append(menuFile, wxGetStockLabel(wxID_FILE));
+    m_menuBar->Append(menuEdit, wxGetStockLabel(wxID_EDIT));
     m_frame->SetMenuBar(child_frame);
-    child_frame->SetMenuBar(menubar);
 
     return child_frame;
 }
 )===";
 
-bool DocViewAppGenerator::ConstructionCode(Code& code)
+auto DocViewAppGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -115,7 +113,9 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
         for (auto& child: code.node()->get_ChildNodePtrs())
         {
             if (!child->is_Type(type_wx_document))
+            {
                 continue;
+            }
             code_templates.Indent();
 
             code_templates.Eol()
@@ -143,7 +143,9 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
             for (auto& doc_child: child->get_ChildNodePtrs())
             {
                 if (!doc_child->is_Type(type_wx_view))
+                {
                     continue;
+                }
                 code_templates.Str("CLASSINFO(")
                     .Str(doc_child->as_string(prop_derived_class_name))
                     .Str(")");
@@ -153,19 +155,20 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
         }
         code_templates.Unindent();
 
-        tt_string_vector lines;
-        lines.ReadString(txt_DocViewAppCppSrc);
-        tt_string class_name = code.node()->as_string(prop_class_name);
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_DocViewAppCppSrc));
+        auto class_name = code.node()->as_string(prop_class_name);
 
         bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
         for (auto& line: lines)
         {
-            line.Replace("%doc_templates%", code_templates, false);
-            line.Replace("%class%", class_name, true);
+            utils::replace_in_line(line, "%doc_templates%", code_templates, false);
+            utils::replace_in_line(line, "%class%", class_name, true);
+
             if (is_mdi)
             {
-                line.Replace("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
-                line.Replace("wxAuiMDIParentFrame", "wxMDIParentFrame", true);
+                utils::replace_in_line(line, "wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
+                utils::replace_in_line(line, "wxAuiMDIParentFrame", "wxMDIParentFrame", true);
             }
             code.Str(line).Eol();
         }
@@ -174,7 +177,7 @@ bool DocViewAppGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool DocViewAppGenerator::AfterConstructionCode(Code& code)
+auto DocViewAppGenerator::AfterConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -185,6 +188,7 @@ bool DocViewAppGenerator::AfterConstructionCode(Code& code)
         for (auto& line: lines)
         {
             line.Replace("%class%", class_name, true);
+            line.Replace("%document_menu%", code.node()->get_NodeName(GEN_LANG_CPLUSPLUS), true);
             if (is_mdi)
             {
                 line.Replace("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
@@ -197,7 +201,7 @@ bool DocViewAppGenerator::AfterConstructionCode(Code& code)
     return true;
 }
 
-bool DocViewAppGenerator::BaseClassNameCode(Code& code)
+auto DocViewAppGenerator::BaseClassNameCode(Code& code) -> bool
 {
     code.Str("wxApp");
     return true;
@@ -222,7 +226,7 @@ class wxMenuBar;
 
 )===";
 
-bool DocViewAppGenerator::PreClassHeaderCode(Code& code)
+auto DocViewAppGenerator::PreClassHeaderCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -234,18 +238,20 @@ bool DocViewAppGenerator::PreClassHeaderCode(Code& code)
 }
 
 inline constexpr const auto txt_DocViewAppHeader =
-    R"===(virtual void AddDocTemplate(const wxString& descr, const wxString& filter,
+    R"===(%class%();
+
+virtual void AddDocTemplate(const wxString& descr, const wxString& filter,
                         const wxString& dir, const wxString& ext, const wxString& docTypeName,
                         const wxString& viewTypeName, wxClassInfo* docClassInfo,
                         wxClassInfo* viewClassInfo, long flags);
 
 // This will call CreateFrame(), ShowFrame() and then call wxApp::OnRun(). You do not need to
 // override OnRun() in your derived class unless you need to do something additional.
-virtual int OnRun() override;
+int OnRun() override;
 
 // This will create a DocManager, add templates to it, hook up a file history to it and
 // create a menu bar and a main frame.
-virtual wxFrame* CreateFrame(wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+wxFrame* CreateFrame(wxWindowID win_id = wxID_ANY, const wxString& title = wxEmptyString,
                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE, const wxString& name = wxFrameNameStr);
 
@@ -253,12 +259,11 @@ virtual wxFrame* CreateFrame(wxWindowID id = wxID_ANY, const wxString& title = w
 // OnExit() function to save the file history and delete the document manager. The base
 // class's OnExit() returns the value from wxApp::OnExit(), so unless you need additional
 // OnExit() processing, you don't need to create your own OnExit() function.
-virtual int OnExit() override;
+int OnExit() override;
 
 wxFrame* GetFrame() const { return m_frame; }
 wxDocManager* GetDocumentManager() const { return m_docManager; }
 wxMenuBar* GetMenuBar() const { return m_menuBar; }
-auto GetDocTemplates() const { return m_docTemplates; }
 
 virtual wxFrame* CreateChildFrame(wxView* view);
 
@@ -266,40 +271,47 @@ bool Show(bool show = true) { return m_frame->Show(show); }
 
 )===";
 
-bool DocViewAppGenerator::HeaderCode(Code& code)
+auto DocViewAppGenerator::HeaderCode(Code& code) -> bool
 {
-    tt_string_vector lines;
-    lines.ReadString(txt_DocViewAppHeader);
-    tt_string class_name = code.node()->as_string(prop_class_name);
+    ttwx::StringVector lines;
+    lines.ReadString(std::string_view(txt_DocViewAppHeader));
+    auto class_name = code.node()->as_string(prop_class_name);
     for (auto& line: lines)
     {
-        line.Replace("%class%", class_name, true);
+        utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
     }
 
     return true;
 }
 
-bool DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                      std::set<std::string>& set_hdr, GenLang language)
+auto DocViewAppGenerator::CollectMemberVariables(Node* /* node unused */,
+                                                 std::set<std::string>& code_lines) -> void
 {
+    code_lines.insert("wxFrame* m_frame;");
+    code_lines.insert("wxDocManager* m_docManager;");
+    code_lines.insert("wxMenuBar* m_menuBar;");
+}
+
+auto DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr, GenLang language) -> bool
+{
+    set_hdr.insert("#include <wx/app.h>");
+
     if (language == GEN_LANG_CPLUSPLUS)
     {
         if (node->as_string(prop_kind) == "AUI")
         {
-            set_src.insert("#include <wx/aui/tabmdi.h");
+            set_src.insert("#include <wx/aui/tabmdi.h>");
         }
-        set_src.insert("#include <wx/config.h");
-        set_src.insert("#include <wx/docmdi.h");
-        set_src.insert("#include <wx/menu.h");
+        set_src.insert("#include <wx/config.h>");
+        set_src.insert("#include <wx/docmdi.h>");
+        set_src.insert("#include <wx/menu.h>");
 
-        set_hdr.insert("#include <wx/docview.h");
-        set_hdr.insert("#include <vector>");
+        set_hdr.insert("#include <wx/docview.h>");
 
         return true;
     }
 
     return false;
 }
-
-auto foo = wxID_LOWEST;

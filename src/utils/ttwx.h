@@ -95,6 +95,9 @@ namespace ttwx
         return stepover(std::string_view(str.ToStdString()));
     }
 
+    // Only use for non-UTF-8 strings -- otherwise use wxString::MakeLower()
+    auto MakeLower(std::string& str) -> std::string&;
+
     template <typename T>
     // Converts a numeric value into a string.
     auto itoa(T value) -> std::string

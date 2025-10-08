@@ -9,7 +9,8 @@ Checks: >
   cppcoreguidelines-*,
   -readability-implicit-bool-conversion,
   -readability-enum-initial-value,
-  -cppcoreguidelines-owning-memory
+  -cppcoreguidelines-owning-memory,
+  -misc-no-recursion
 
 FormatStyle: file
 

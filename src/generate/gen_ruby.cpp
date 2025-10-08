@@ -82,7 +82,7 @@ end
 
 // clang-format on
 
-extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 
 // This *must* be written on a line by itself with *no* indentation.
 const char* ruby_begin_cmt_block = "=begin";

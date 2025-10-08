@@ -71,7 +71,7 @@ void %class%::OnTextChange(wxCommandEvent& event)
 }
 )===";
 
-bool TextDocGenerator::ConstructionCode(Code& code)
+auto TextDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -89,8 +89,9 @@ bool TextDocGenerator::ConstructionCode(Code& code)
     return false;
 }
 
-bool TextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
+auto TextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
                                    std::set<std::string>& /* set_hdr unused */, GenLang language)
+    -> bool
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
@@ -128,7 +129,7 @@ private:
 };
 )===";
 
-bool TextDocGenerator::HeaderCode(Code& code)
+auto TextDocGenerator::HeaderCode(Code& code) -> bool
 {
     tt_string_vector lines;
     lines.ReadString(txt_TextCtrlDocHdrBlock);

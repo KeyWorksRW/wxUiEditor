@@ -92,7 +92,7 @@ sub wxue_get_bundle {
 
 // clang-format on
 
-extern const char* python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 
 // extern constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>;
 

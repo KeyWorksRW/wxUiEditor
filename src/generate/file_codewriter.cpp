@@ -41,8 +41,8 @@ R"===(# ************* End of generated code ***********
 # ***********************************************
 )===";
 
-const char* cpp_rust_end_cmt_line = "// ************* End of generated code";
-const char* python_perl_ruby_end_cmt_line = "# ************* End of generated code";
+std::string_view cpp_rust_end_cmt_line = "// ************* End of generated code";
+std::string_view python_perl_ruby_end_cmt_line = "# ************* End of generated code";
 
 // clang-format on
 

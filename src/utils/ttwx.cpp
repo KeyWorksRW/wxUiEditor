@@ -8,6 +8,8 @@
 #include <wx/filename.h>
 #include <wx/string.h>
 
+#include <algorithm>
+
 // Place this *before* including <string> and <string_view> in order
 // to report an error if the compiler doesn't support C++17.
 #include "ttwx.h"
@@ -270,4 +272,15 @@ auto ttwx::extract_substring(std::string_view src, wxString& dest, size_t start)
 
     dest = (src.substr(startPos, pos - startPos));
     return pos;
+}
+
+// Only use for non-UTF-8 strings -- otherwise use wxString::MakeLower()
+auto ttwx::MakeLower(std::string& str) -> std::string&
+{
+    std::ranges::transform(str, str.begin(),
+                           [](unsigned char character)
+                           {
+                               return static_cast<char>(std::tolower(character));
+                           });
+    return str;
 }

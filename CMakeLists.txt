@@ -42,6 +42,7 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 # Shared libs should *never* be used for a Release build! For Debug builds, static libraries
 # generally reduce link and startup debugger times.
 option( BUILD_SHARED_LIBS "Build with wxWidgets shared libraries" OFF )
+option( BUILD_TESTING "Build tests" OFF )
 
 if( BUILD_SHARED_LIBS )
     message( NOTICE "Building with wxWidgets shared libraries" )

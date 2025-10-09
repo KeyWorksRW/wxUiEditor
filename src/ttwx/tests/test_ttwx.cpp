@@ -627,7 +627,7 @@ TEST_CASE("ttwx::back_slashesto_forward", "[ttwx]")
 {
     SECTION("Convert backslashes to forward slashes")
     {
-        wxString path = "C:\\Users\\Name\\file.txt";
+        wxString path = R"(C:\Users\Name\file.txt)";
         ttwx::back_slashesto_forward(path);
         REQUIRE(path == "C:/Users/Name/file.txt");
     }
@@ -665,7 +665,7 @@ TEST_CASE("ttwx::forward_slashesto_back", "[ttwx]")
 
     SECTION("No forward slashes")
     {
-        wxString path = "C:\\Users\\Name\\file.txt";
+        wxString path = R"(C:\Users\Name\file.txt)";
         ttwx::forward_slashesto_back(path);
         REQUIRE(path == "C:\\Users\\Name\\file.txt");
     }

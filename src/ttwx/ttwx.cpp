@@ -222,9 +222,13 @@ auto ttwx::extract_substring(std::string_view src, wxString& dest, size_t start)
     // based on the opening character, determine what the matching end character should be
     char chEnd = 0;
     char chBegin = src[pos];
-    if (chBegin == '`' || chBegin == '\'')
+    if (chBegin == '\'')
     {
         chEnd = '\'';
+    }
+    else if (chBegin == '`')
+    {
+        chEnd = '`';
     }
     else if (chBegin == '"')
     {

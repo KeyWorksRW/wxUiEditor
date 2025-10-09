@@ -2,89 +2,68 @@
 
 This directory contains Catch2 unit tests for the ttwx namespace functions.
 
-## Test File
-
-- `test_ttwx.cpp` - Comprehensive tests for all functions in `ttwx.cpp`
-
-## Functions Tested
-
-The following functions from the ttwx namespace are tested:
-
-1. **String Search Functions**
-   - `find_oneof()` - Find any one of the characters in a group
-   - `find_nonspace()` - Find the next non-whitespace character
-   - `find_extension()` - Extract file extension from a path
-
-2. **Path Manipulation Functions**
-   - `replace_extension()` - Replace or add file extension
-   - `find_filename()` - Extract filename from a path
-   - `append_filename()` - Append filename to a path
-   - `append_folder_name()` - Append folder name to a path
-
-3. **String Extraction**
-   - `extract_substring()` - Extract a quoted or bracketed substring
-   - `create_substring()` - Helper that returns the extracted substring
-
-4. **String Conversion**
-   - `MakeLower()` - Convert string to lowercase (non-UTF-8)
-   - `atoi()` - Convert string to integer (supports hex with 0x prefix)
-   - `itoa()` - Convert numeric value to string
-
-5. **Character Classification**
-   - `is_alnum()`, `is_alpha()`, `is_digit()`, `is_whitespace()`, etc.
-   - `is_found()` - Check if a position was found (not -1)
-
-6. **Path Utilities**
-   - `back_slashesto_forward()` - Convert backslashes to forward slashes
-   - `forward_slashesto_back()` - Convert forward slashes to backslashes
-   - `add_trailing_slash()` - Ensure path ends with a slash
-
-## Building and Running Tests
-
 ### Configure CMake
-The tests are automatically included when CMake is configured. Catch2 is fetched via FetchContent.
 
-```bash
-# From the build directory
-ninja -f build-Debug.ninja
-```
+Catch2 is fetched via FetchContent.
 
-### Build the Tests
-```bash
-# Build the test executable
-cmake --build . --target test_ttwx
-```
+- BUILD_TESTING option must be set to ON (default is off) when configuring CMake
 
-### Run the Tests
+## Build the Test
 
-**Using CTest:**
-```
-cd build
-ctest -C Debug -R test_ttwx --output-on-failure
-```
+`cmake --build build --config Debug --target wxUiEditor`
 
-**Direct Execution:**
-```bash
+Because BUILD_TESTING is on, both wxUiEditor.exe and test_ttwx.exe will be built.
+
+## Run the Test
+
+### Direct Execution
+```cmd
 # Windows
-bin\Debug\test_ttwx.exe
+build\bin\Debug\test_ttwx.exe
 
-# Unix/Linux/Mac
-bin/test_ttwx.exe
+# Linux/Mac
+build/bin/test_ttwx
 ```
 
-**Run Specific Tests:**
+## Useful Test Commands
+
+### List all available tests
 ```bash
-# Run tests matching a tag
-bin\Debug\test_ttwx.exe [ttwx]
-
-# Run specific test case
-bin\Debug\test_ttwx.exe "ttwx::find_oneof"
+test_ttwx --list-tests
 ```
 
-**List All Tests:**
+### Run a specific test case
 ```bash
-bin\Debug\test_ttwx.exe --list-tests
+test_ttwx "ttwx::atoi"
 ```
+
+### Run tests with a specific tag
+```bash
+test_ttwx [ttwx]
+```
+
+### Show successful tests too
+```bash
+test_ttwx -s
+```
+
+### Get help
+```bash
+test_ttwx --help
+```
+
+## Expected Results
+If all tests pass, you should see output like:
+```
+===============================================================================
+All tests passed (XXX assertions in YY test cases)
+```
+
+If any test fails, Catch2 will show:
+- The test case name
+- The file and line number
+- The expression that failed
+- The actual vs expected values
 
 ## Test Coverage
 

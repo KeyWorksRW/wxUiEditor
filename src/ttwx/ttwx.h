@@ -162,18 +162,19 @@ namespace ttwx
     // wxString for a file/path name while still allowing some common path manipulations.
 
     auto find_extension(std::string_view str) -> std::string_view;
-    inline auto find_extension(const wxString& str) -> std::string_view
-    {
-        return find_extension(std::string_view(str.ToStdString()));
+    template <typename T>
+    auto find_extension(const T& str) -> std::string_view
+    requires (std::is_same_v<T, wxString>) {
+        return find_extension(std::string_view(str));
     }
-
     // Replaces any existing extension with a new extension, or appends the extension if the
     // name doesn't currently have an extension.
     void replace_extension(wxString& str, std::string_view new_extension);
 
     auto find_filename(std::string_view str) noexcept -> std::string_view;
-    inline auto find_filename(const wxString& str) noexcept -> std::string_view
-    {
+    template <typename T>
+    auto find_filename(const T& str) -> std::string_view
+    requires (std::is_same_v<T, wxString>) {
         return find_filename(std::string_view(str.ToStdString()));
     }
 

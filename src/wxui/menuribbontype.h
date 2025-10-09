@@ -16,6 +16,7 @@ class MenuRibbonType : public wxMenu
 {
 public:
     MenuRibbonType();
+
 protected:
 };
 

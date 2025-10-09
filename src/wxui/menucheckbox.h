@@ -16,6 +16,7 @@ class MenuCheckbox : public wxMenu
 {
 public:
     MenuCheckbox();
+
 protected:
 };
 

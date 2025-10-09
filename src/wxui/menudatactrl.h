@@ -16,6 +16,7 @@ class MenuDataCtrl : public wxMenu
 {
 public:
     MenuDataCtrl();
+
 protected:
 };
 

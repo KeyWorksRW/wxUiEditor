@@ -16,6 +16,7 @@ class MenuListbox : public wxMenu
 {
 public:
     MenuListbox();
+
 protected:
 };
 

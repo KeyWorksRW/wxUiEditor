@@ -16,6 +16,7 @@ class MenuSpin : public wxMenu
 {
 public:
     MenuSpin();
+
 protected:
 };
 

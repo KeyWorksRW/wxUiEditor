@@ -16,6 +16,7 @@ class MenuStaticSizer : public wxMenu
 {
 public:
     MenuStaticSizer();
+
 protected:
 };
 

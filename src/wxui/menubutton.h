@@ -16,6 +16,7 @@ class MenuButton : public wxMenu
 {
 public:
     MenuButton();
+
 protected:
 };
 

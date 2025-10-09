@@ -16,6 +16,7 @@ class MenuCombobox : public wxMenu
 {
 public:
     MenuCombobox();
+
 protected:
 };
 

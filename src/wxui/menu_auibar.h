@@ -16,6 +16,7 @@ class MenuAuiBar : public wxMenu
 {
 public:
     MenuAuiBar();
+
 protected:
 };
 

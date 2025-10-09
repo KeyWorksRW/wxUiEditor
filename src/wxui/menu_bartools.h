@@ -16,6 +16,7 @@ class MenuBarTools : public wxMenu
 {
 public:
     MenuBarTools();
+
 protected:
 };
 

@@ -306,11 +306,16 @@
 	</gen>
 -->
 
+	<!-- This is only used in the Project class -->
 	<gen class="C++" type="interface">
 		<property name="wxWidgets_version" type="option"
 			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
 			<option name="3.2.0"/>
-			<option name="3.3.0"/> 3.2.0 </property>
+			<option name="3.3.0"/>3.2.0</property>
+		<property name="minimum_compiler" type="option"
+			help="The minimum compiler standard required for the generated code. This will affect some of the code that is generated.">
+			<option name="11"/>
+			<option name="17"/>11</property>
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file."/>
 		<property name="derived_directory" type="path"
@@ -329,6 +334,9 @@
 		<property name="cpp_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			110</property>
+		<property name="trailing_return_type" type="bool"
+			help="If checked, this will generate functions with a trailing return type instead of a leading return type.">
+			0</property>
 		<property name="local_pch_file" type="file"
 			help="The filename of a local precompiled header file. The file will be included in quotes."/>
 		<property name="src_preamble" type="code_edit"

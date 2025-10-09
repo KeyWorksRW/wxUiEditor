@@ -355,6 +355,7 @@ target_include_directories( wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
     ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/src/ttwx
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
@@ -374,6 +375,7 @@ target_include_directories( check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
     ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/src/ttwx
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate

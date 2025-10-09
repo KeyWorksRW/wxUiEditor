@@ -448,6 +448,20 @@ set (doc_list
 
 )
 
+set ( ttwx_files
+    ttwx/tests/QUICK_START.md
+    ttwx/tests/README.md
+    ttwx/tests/test_ttwx.cpp
+    ttwx/tests/CMakeLists.txt
+
+    ttwx/ttwx.cpp
+    ttwx/ttwx.h
+    ttwx/ttwx_view_vector.cpp
+    ttwx/ttwx_view_vector.h
+    ttwx/ttwx_string_vector.cpp
+    ttwx/ttwx_string_vector.h
+)
+
 set (xml_list
 
     # interface declarations

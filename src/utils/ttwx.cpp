@@ -9,6 +9,7 @@
 #include <wx/string.h>
 
 #include <algorithm>
+#include <charconv>
 
 // Place this *before* including <string> and <string_view> in order
 // to report an error if the compiler doesn't support C++17.
@@ -283,4 +284,60 @@ auto ttwx::MakeLower(std::string& str) -> std::string&
                                return static_cast<char>(std::tolower(character));
                            });
     return str;
+}
+
+constexpr int hex_base = 16;
+constexpr int dec_base = 10;
+
+// Unlike std::stoi, this accepts a std::string_view, returns 0 instead of throwing exceptions, and
+// handles hexadecimal numbers beginning with 0x or 0X.
+auto ttwx::atoi(std::string_view str) noexcept -> int
+{
+    if (str.empty())
+    {
+        return 0;
+    }
+
+#if defined(_DEBUG)
+    std::string_view original = str;
+    (void) original;
+#endif  // _DEBUG
+    str = find_nonspace(str);
+    // ASSERT_MSG(!str.empty(), "non-empty string that doesn't have non-empty spaces -- shouldn't be
+    // possible");
+
+    if (str.empty())
+    {
+        return 0;
+    }
+    bool negative = false;
+    if (str[0] == '-')
+    {
+        negative = true;
+        str.remove_prefix(1);
+    }
+    else if (str[0] == '+')
+    {
+        // we always default to positive, but handle the + sign if it is present
+        str.remove_prefix(1);
+    }
+
+    int base = dec_base;
+    if (str.size() > 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+    {
+        base = hex_base;
+        str.remove_prefix(2);
+    }
+
+    int value = 0;
+    const char* begin = str.data();
+    const char* end =
+        begin + str.size();  // NOLINT (pointer-arithmetic) // cppcheck-suppress pointerArithmetic
+    auto result = std::from_chars(begin, end, value, base);
+    if (result.ec == std::errc())  // means that at least some conversion was done
+    {
+        return (negative ? -value : value);
+    }
+
+    return 0;
 }

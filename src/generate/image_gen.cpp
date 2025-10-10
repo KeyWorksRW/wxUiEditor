@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for generating embedded images
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -34,8 +34,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
     {
         // The images form contains global images, so no need to generate code for them here.
         // if (iter_array->get_Form() == images_form)
-        if (iter_array->get_Form() != m_form_node)
+        if (iter_array->get_Form() != m_form_node) {
             continue;
+}
 
         if (code.is_cpp())
         {
@@ -173,15 +174,17 @@ std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
 // clang-format on
 
-std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size,
-                                       GenLang language)
+auto base64_encode(unsigned char const* data, size_t data_size,
+                                       GenLang language) -> std::vector<std::string>
 {
     size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
-    if (language == GEN_LANG_RUBY)
+    if (language == GEN_LANG_RUBY) {
         tab_quote_prefix = 6;  // 2 for tab, 2 for quotes, 2 for " +" suffix
+}
     GenEnum::PropName prop = prop_python_line_length;
-    if (auto result = map_lang_to_prop.find(language); result != map_lang_to_prop.end())
+    if (auto result = map_lang_to_prop.find(language); result != map_lang_to_prop.end()) {
         prop = result->second;
+}
 
     size_t line_length = Project.as_size_t(prop) - tab_quote_prefix;
 
@@ -196,15 +199,25 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
     std::string line;
     line.reserve(line_length + 4);
-    unsigned char char_array_3[3];
-    unsigned char char_array_4[4];
+    std::array<unsigned char, 3> char_array_3{};
+    std::array<unsigned char, 4> char_array_4{};
+
+    constexpr unsigned char MASK_FC = 0xfc;
+    constexpr unsigned char MASK_03 = 0x03;
+    constexpr unsigned char MASK_F0 = 0xf0;
+    constexpr unsigned char MASK_0F = 0x0f;
+    constexpr unsigned char MASK_C0 = 0xc0;
+    constexpr unsigned char MASK_3F = 0x3f;
+    constexpr int SHIFT_2 = 2;
+    constexpr int SHIFT_4 = 4;
+    constexpr int SHIFT_6 = 6;
 
     auto a3_to_a4 = [&]()
     {
-        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-        char_array_4[3] = char_array_3[2] & 0x3f;
+        char_array_4[0] = (char_array_3[0] & MASK_FC) >> SHIFT_2;
+        char_array_4[1] = ((char_array_3[0] & MASK_03) << SHIFT_4) + ((char_array_3[1] & MASK_F0) >> SHIFT_4);
+        char_array_4[2] = ((char_array_3[1] & MASK_0F) << SHIFT_2) + ((char_array_3[2] & MASK_C0) >> SHIFT_6);
+        char_array_4[3] = char_array_3[2] & MASK_3F;
     };
 
     std::string line_begin = "\tb\"";
@@ -225,15 +238,16 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
     size_t a3_pos = 0;
     for (size_t idx = 0; idx < data_size; ++idx)
     {
-        char_array_3[a3_pos++] = data[idx];
+        char_array_3.at(a3_pos) = data[idx];
+        ++a3_pos;
         if (a3_pos == 3)
         {
             a3_to_a4();
 
-            line += base64_chars[char_array_4[0]];
-            line += base64_chars[char_array_4[1]];
-            line += base64_chars[char_array_4[2]];
-            line += base64_chars[char_array_4[3]];
+            line += base64_chars.at(char_array_4.at(0));
+            line += base64_chars.at(char_array_4.at(1));
+            line += base64_chars.at(char_array_4.at(2));
+            line += base64_chars.at(char_array_4.at(3));
 
             a3_pos = 0;
             line_pos += 4;
@@ -251,14 +265,14 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
     {
         for (size_t index = a3_pos; index < 3; index++)
         {
-            char_array_3[index] = '\0';
+            char_array_3.at(index) = '\0';
         }
 
         a3_to_a4();
 
         for (size_t a4_pos = 0; a4_pos < a3_pos + 1; a4_pos++)
         {
-            line += base64_chars[char_array_4[a4_pos]];
+            line += base64_chars.at(char_array_4.at(a4_pos));
         }
         while (a3_pos++ < 3)
         {
@@ -309,7 +323,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         }
     }
 
-    auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+    auto *embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
     if (!embed)
     {
         MSG_WARNING(tt_string() << parts[IndexImage] << " not embedded!");
@@ -338,7 +352,7 @@ static void GenerateSVGBundle(Code& code, const tt_string_vector& parts, bool ge
         }
         return;
     }
-    else if (code.is_python())
+    if (code.is_python())
     {
         tt_string svg_name;
 
@@ -466,7 +480,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         }
     }
 
-    auto bundle = ProjectImages.GetPropertyImageBundle(parts);
+    const auto *bundle = ProjectImages.GetPropertyImageBundle(parts);
     if (!bundle || !bundle->lst_filenames.size())
     {
         MSG_WARNING(tt_string("Missing bundle for ") << parts[IndexImage]);
@@ -474,7 +488,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         return;
     }
 
-    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+    auto *embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
     if (!embed)
     {
         FAIL_MSG(tt_string("Missing embed for ") << bundle->lst_filenames[0]);
@@ -518,7 +532,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
         return;
     }
 
-    else if (code.is_perl())
+    if (code.is_perl())
     {
         code.Str("wxue_get_bundle(").Str("$").Str(embed->base_image().array_name);
         if (bundle->lst_filenames.size() > 1)
@@ -616,7 +630,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             name = "wxue_img::" + embed->base_image().array_name;
             code << name << ", sizeof(" << name << ")), wxueImage(";
 
-            if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            if (auto *embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
                 name = "wxue_img::" + embed2->base_image().array_name;
                 name.remove_extension();
@@ -632,7 +646,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             code.CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap)"));
             code.AddPythonImageName(embed);
             code += ".Bitmap";
-            if (auto embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            if (auto *embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
             {
                 code.Comma().CheckLineLength(embed2->base_image().array_name.size() +
                                              sizeof(".Bitmap)"));
@@ -667,14 +681,14 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
             code.Eol().Str("[&]()");
             code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
 
-            for (auto& iter: bundle->lst_filenames)
+            for (const auto& iter: bundle->lst_filenames)
             {
                 tt_string name_img(iter.filename());
                 name_img.remove_extension();
                 name_img.Replace(".", "_", true);
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto embed_img = ProjectImages.GetEmbeddedImage(iter);
+                    auto *embed_img = ProjectImages.GetEmbeddedImage(iter);
                     if (embed_img)
                     {
                         name_img = "wxue_img::" + embed_img->base_image().array_name;
@@ -693,7 +707,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
 
             code += "wx.BitmapBundle.FromBitmaps([ ";
             bool needs_comma = false;
-            for (auto& iter: bundle->lst_filenames)
+            for (const auto& iter: bundle->lst_filenames)
             {
                 if (needs_comma)
                 {
@@ -702,7 +716,7 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
                 }
 
                 bool is_embed_success = false;
-                if (auto embed_img = ProjectImages.GetEmbeddedImage(iter); embed_img)
+                if (auto *embed_img = ProjectImages.GetEmbeddedImage(iter); embed_img)
                 {
                     code.AddPythonImageName(embed_img);
                     code += ".Bitmap";
@@ -718,8 +732,9 @@ static void GenerateEmbedBundle(Code& code, const tt_string_vector& parts, bool 
                     name.backslashestoforward();
 
                     code.Str("wx.Bitmap(").QuotedString(name);
-                    if (is_xpm)
+                    if (is_xpm) {
                         code.Comma().Str("wx.BITMAP_TYPE_XPM");
+}
                     code += ")";
                     needs_comma = true;
                 }

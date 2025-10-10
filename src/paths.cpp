@@ -21,7 +21,9 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
     wxFileName newValue;
     newValue.AssignDir(event.GetPropertyValue().GetString());
     if (!newValue.IsOk())
+    {
         return;
+    }
 
     newValue.MakeAbsolute();
     newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());

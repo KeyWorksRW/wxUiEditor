@@ -436,7 +436,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
                     ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                 embed1)
             {
-                Str("wxue_get_bundle    (").Str("$").Str(embed1->base_image().array_name);
+                Str("wxue_get_bundle(").Str("$").Str(embed1->base_image().array_name);
                 if (bundle->lst_filenames.size() > 1)
                 {
                     if (EmbeddedImage* embed2 =

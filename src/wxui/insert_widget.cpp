@@ -193,7 +193,7 @@ void InsertWidget::OnNameText(wxCommandEvent& /* event unused */)
         {
             continue;
         }
-        else if (iter->get_GenName() == gen_Images && Project.get_ImagesForm())
+        if (iter->get_GenName() == gen_Images && Project.get_ImagesForm())
         {
             continue;
         }

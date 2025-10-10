@@ -42,6 +42,7 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 # Shared libs should *never* be used for a Release build! For Debug builds, static libraries
 # generally reduce link and startup debugger times.
 option( BUILD_SHARED_LIBS "Build with wxWidgets shared libraries" OFF )
+option( BUILD_TESTING "Build tests" OFF )
 
 if( BUILD_SHARED_LIBS )
     message( NOTICE "Building with wxWidgets shared libraries" )
@@ -243,6 +244,22 @@ FetchContent_MakeAvailable( wxWidgets )
 message( NOTICE "wxWidgets has been fetched and configured." )
 message( STATUS "wxWidgets sources: " ${wxWidgets_SOURCE_DIR} )
 
+include( FetchContent )
+
+message( STATUS "Fetching Catch2..." )
+
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.5.4
+)
+
+message( NOTICE "Configuring Catch2  (this may take awhile) ..." )
+
+FetchContent_MakeAvailable( Catch2 )
+
+message( NOTICE "Catch2 has been fetched and configured." )
+
 # ###################### Libraries and Executables #######################
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
@@ -355,6 +372,7 @@ target_include_directories( wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
     ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/src/ttwx
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
@@ -374,6 +392,7 @@ target_include_directories( check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
     ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/src/ttwx
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
@@ -393,6 +412,12 @@ endforeach()
 target_link_libraries( wxUiEditor PRIVATE ${wxWidgets_LIBRARIES} ${SYSTEM_LIBS} )
 
 # ###################### Testing #######################
+
+# Enable testing
+enable_testing()
+
+# Add ttwx tests subdirectory
+add_subdirectory( src/ttwx/tests )
 
 # include( tests/app_tests.cmake )  # This will set ${wxue_generated_code} with list of generated files
 

@@ -98,6 +98,16 @@ namespace ttwx
     // Only use for non-UTF-8 strings -- otherwise use wxString::MakeLower()
     auto MakeLower(std::string& str) -> std::string&;
 
+    // Unlike std::stoi, ttwx::atoi accepts a std::string_view, returns 0 instead of throwing
+    // exceptions, and handles hexadecimal numbers beginning with 0x or 0X.
+
+    // Converts a string into an integer.
+    //
+    // If string begins with '0x' it is assumed to be hexadecimal and is converted.
+    // String may begin with a '-' or '+' to indicate the sign of the integer.
+    // Returns 0 if the string is empty or doesn't contain any digits.
+    auto atoi(std::string_view str) noexcept -> int;
+
     template <typename T>
     // Converts a numeric value into a string.
     auto itoa(T value) -> std::string
@@ -152,17 +162,20 @@ namespace ttwx
     // wxString for a file/path name while still allowing some common path manipulations.
 
     auto find_extension(std::string_view str) -> std::string_view;
-    inline auto find_extension(const wxString& str) -> std::string_view
+    template <typename T>
+    auto find_extension(const T& str) -> std::string_view
+        requires(std::is_same_v<T, wxString>)
     {
-        return find_extension(std::string_view(str.ToStdString()));
+        return find_extension(std::string_view(str));
     }
-
     // Replaces any existing extension with a new extension, or appends the extension if the
     // name doesn't currently have an extension.
     void replace_extension(wxString& str, std::string_view new_extension);
 
     auto find_filename(std::string_view str) noexcept -> std::string_view;
-    inline auto find_filename(const wxString& str) noexcept -> std::string_view
+    template <typename T>
+    auto find_filename(const T& str) -> std::string_view
+        requires(std::is_same_v<T, wxString>)
     {
         return find_filename(std::string_view(str.ToStdString()));
     }
@@ -194,8 +207,8 @@ namespace ttwx
 
         SaveCwd(const SaveCwd&) = default;
         SaveCwd(SaveCwd&&) = delete;
-        SaveCwd& operator=(const SaveCwd&) = default;
-        SaveCwd& operator=(SaveCwd&&) = delete;
+        auto operator=(const SaveCwd&) -> SaveCwd& = default;
+        auto operator=(SaveCwd&&) -> SaveCwd& = delete;
 
         [[nodiscard]] auto get_SavedCwd() const -> const wxString& { return m_saved_cwd; }
 

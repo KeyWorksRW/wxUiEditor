@@ -336,7 +336,7 @@ TEST_CASE("StringVector vector operations", "[StringVector]")
         vec.SetString(std::string_view("one;two;three"), ';');
 
         size_t count = 0;
-        for (const auto& str : vec)
+        for (const auto& str: vec)
         {
             REQUIRE_FALSE(str.empty());
             count++;

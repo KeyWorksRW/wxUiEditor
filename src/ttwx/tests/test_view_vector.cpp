@@ -362,7 +362,7 @@ TEST_CASE("ViewVector vector operations", "[ViewVector]")
         vec.SetString(std::string_view(source), ';');
 
         size_t count = 0;
-        for (const auto& view : vec)
+        for (const auto& view: vec)
         {
             REQUIRE_FALSE(view.empty());
             count++;

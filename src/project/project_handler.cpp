@@ -62,7 +62,7 @@ void ProjectHandler::set_ProjectPath(const wxFileName* path)
     m_art_path->Clear();
 }
 
-void ProjectHandler::set_ProjectFile(std::string_view  file)
+void ProjectHandler::set_ProjectFile(std::string_view file)
 {
     ASSERT(m_project_path);
     m_project_path->Assign(wxString(file));

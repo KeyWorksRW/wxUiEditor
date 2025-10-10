@@ -98,6 +98,6 @@
 // ttwx namespace functions, classes, and declarations
 #include "ttwx.h"  // IWYU pragma: keep
 
-#define ASSERT(cond) wxASSERT_MSG(cond, "Assertion failed")
+#define ASSERT(cond)          wxASSERT_MSG(cond, "Assertion failed")
 #define ASSERT_MSG(cond, msg) wxASSERT_MSG(cond, msg)
-#define FAIL_MSG(msg) wxFAIL_MSG(msg)
+#define FAIL_MSG(msg)         wxFAIL_MSG(msg)

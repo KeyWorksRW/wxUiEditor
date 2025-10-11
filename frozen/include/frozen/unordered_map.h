@@ -24,7 +24,6 @@
 #define FROZEN_LETITGO_UNORDERED_MAP_H
 
 #include "frozen/bits/basic_types.h"
-#include "frozen/bits/constexpr_assert.h"
 #include "frozen/bits/elsa.h"
 #include "frozen/bits/exceptions.h"
 #include "frozen/bits/pmh.h"
@@ -84,14 +83,14 @@ public:
       , items_{items}
       , tables_{
             bits::make_pmh_tables<storage_size>(
-                items_, hash, bits::GetKey{}, default_prg_t{})} {}
+                items_, hash, equal, bits::GetKey{}, default_prg_t{})} {}
   explicit constexpr unordered_map(container_type items)
-      : unordered_map{items, Hash{}, KeyEqual{}} {}
+      : unordered_map{items, Hash{}, KeyEqual{}} {
+      }
 
   constexpr unordered_map(std::initializer_list<value_type> items,
                           Hash const & hash, KeyEqual const & equal)
       : unordered_map{container_type{items}, hash, equal} {
-        constexpr_assert(items.size() == N, "Inconsistent initializer_list size and type size argument");
       }
 
   constexpr unordered_map(std::initializer_list<value_type> items)
@@ -111,69 +110,41 @@ public:
   constexpr size_type max_size() const { return N; }
 
   /* lookup */
-  template <class KeyType, class Hasher, class Equal>
-  constexpr std::size_t count(KeyType const &key, Hasher const &hash, Equal const &equal) const {
-    return find(key, hash, equal) != end();
-  }
   template <class KeyType>
   constexpr std::size_t count(KeyType const &key) const {
-    return count(key, hash_function(), key_eq());
+    return find(key) != end();
   }
 
-  template <class KeyType, class Hasher, class Equal>
-  constexpr Value const &at(KeyType const &key, Hasher const &hash, Equal const &equal) const {
-    return at_impl(*this, key, hash, equal);
-  }
-  template <class KeyType, class Hasher, class Equal>
-  constexpr Value &at(KeyType const &key, Hasher const &hash, Equal const &equal) {
-    return at_impl(*this, key, hash, equal);
-  }
   template <class KeyType>
   constexpr Value const &at(KeyType const &key) const {
-    return at(key, hash_function(), key_eq());
+    return at_impl(*this, key);
   }
   template <class KeyType>
   constexpr Value &at(KeyType const &key) {
-    return at(key, hash_function(), key_eq());
+    return at_impl(*this, key);
   }
 
-  template <class KeyType, class Hasher, class Equal>
-  constexpr const_iterator find(KeyType const &key, Hasher const &hash, Equal const &equal) const {
-    return find_impl(*this, key, hash, equal);
-  }
-  template <class KeyType, class Hasher, class Equal>
-  constexpr iterator find(KeyType const &key, Hasher const &hash, Equal const &equal) {
-    return find_impl(*this, key, hash, equal);
-  }
   template <class KeyType>
   constexpr const_iterator find(KeyType const &key) const {
-    return find(key, hash_function(), key_eq());
+    return find_impl(*this, key, hash_function(), key_eq());
   }
   template <class KeyType>
   constexpr iterator find(KeyType const &key) {
-    return find(key, hash_function(), key_eq());
+    return find_impl(*this, key, hash_function(), key_eq());
   }
-  
+
   template <class KeyType>
   constexpr bool contains(KeyType const &key) const {
     return this->find(key) != this->end();
   }
 
-  template <class KeyType, class Hasher, class Equal>
-  constexpr std::pair<const_iterator, const_iterator> equal_range(KeyType const &key, Hasher const &hash, Equal const &equal) const {
-    return equal_range_impl(*this, key, hash, equal);
-  }
-  template <class KeyType, class Hasher, class Equal>
-  constexpr std::pair<iterator, iterator> equal_range(KeyType const &key, Hasher const &hash, Equal const &equal) {
-    return equal_range_impl(*this, key, hash, equal);
-  }
   template <class KeyType>
   constexpr std::pair<const_iterator, const_iterator> equal_range(KeyType const &key) const {
-    return equal_range(key, hash_function(), key_eq());
+    return equal_range_impl(*this, key);
   }
   template <class KeyType>
   constexpr std::pair<iterator, iterator> equal_range(KeyType const &key) {
-    return equal_range(key, hash_function(), key_eq());
+    return equal_range_impl(*this, key);
   }
 
   /* bucket interface */
@@ -185,9 +156,9 @@ public:
   constexpr const key_equal& key_eq() const { return static_cast<KeyEqual const&>(*this); }
 
 private:
-  template <class This, class KeyType, class Hasher, class Equal>
-  static inline constexpr auto& at_impl(This&& self, KeyType const &key, Hasher const &hash, Equal const &equal) {
-    auto it = self.find(key, hash, equal);
+  template <class This, class KeyType>
+  static inline constexpr auto& at_impl(This&& self, KeyType const &key) {
+    auto it = self.find(key);
     if (it != self.end())
       return it->second;
     else
@@ -204,9 +175,9 @@ private:
       return self.items_.end();
   }
 
-  template <class This, class KeyType, class Hasher, class Equal>
-  static inline constexpr auto equal_range_impl(This&& self, KeyType const &key, Hasher const &hash, Equal const &equal) {
-    auto const it = self.find(key, hash, equal);
+  template <class This, class KeyType>
+  static inline constexpr auto equal_range_impl(This&& self, KeyType const &key) {
+    auto const it = self.find(key);
     if (it != self.end())
       return std::make_pair(it, it + 1);
     else

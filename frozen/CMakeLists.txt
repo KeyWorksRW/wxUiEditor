@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 #
 # Here we check whether frozen is being configured in isolation or as a component
 # of a larger proeject. To do so, we query whether the `PROJECT_NAME` CMake
@@ -113,7 +113,7 @@ if(frozen.installation)
   # directory. Source file permissions preserved.
   #
   install(DIRECTORY include/
-    DESTINATION include
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     USE_SOURCE_PERMISSIONS
     FILES_MATCHING PATTERN "*.h")
 
@@ -126,17 +126,21 @@ if(frozen.installation)
   # generate a CMake configuration file for consumption by CMake's `find_package`
   # intrinsic
   #
+  if(${CMAKE_VERSION} VERSION_GREATER "3.14")
+    set(OPTIONAL_ARCH_INDEPENDENT "ARCH_INDEPENDENT")
+  endif()
   write_basic_package_version_file("frozenConfigVersion.cmake"
     VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
+    COMPATIBILITY SameMajorVersion
+    ${OPTIONAL_ARCH_INDEPENDENT})
 
   install(FILES "${PROJECT_BINARY_DIR}/frozenConfigVersion.cmake"
-    DESTINATION share/cmake/frozen)
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/frozen")
 
   install(EXPORT frozenConfig
     FILE frozenConfig.cmake
     NAMESPACE frozen::
-    DESTINATION share/cmake/frozen)
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/frozen")
 
   #
   # Rudimentary CPack support.

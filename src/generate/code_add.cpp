@@ -95,7 +95,7 @@ Code& Code::Add(tt_string_view text)
             if (text == "wxEmptyString")
             {
                 // wxRuby prefers ('') for an empty string instead of the expected Wx::empty_string
-                *this += "('')";
+                *this += "''";
                 return *this;
             }
             else if (text == "wxDefaultCoord")

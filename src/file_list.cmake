@@ -420,6 +420,9 @@ set( doc_list
     ../dev_docs/generators.md
     ../dev_docs/windows_res.md
     ../dev_docs/node_classes.md
+
+    ../.github/copilot-instructions.md
+    ../Claude.md
 )
 
 set( ttwx_files

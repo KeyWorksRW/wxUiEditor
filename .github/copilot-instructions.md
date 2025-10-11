@@ -34,7 +34,12 @@
 ## Library Function Usage
 - When implementing functionality, first prefer functions from the C++ Standard Library (`std::`).
 - If no suitable standard library function exists, use functions from the wxWidgets library.
-- If neither provides the needed functionality, use functions from the `ttwx::` namespace (defined in `utils/ttwx.h`).
+- If neither provides the needed functionality, use functions from the `ttwx::` namespace (defined in `src/ttwx/ttwx.h`).
+- When creating or modifying an immutable version of std::set, std::unordered_set, std::map and std::unordered_map use one of the frozen versions from the library ./frozen/include/frozen (be sure to include the appropriate header file).
+- For immutable containers, use the corresponding frozen type from `./frozen/include/frozen` (such as `frozen::set`, `frozen::unordered_set`, `frozen::map`, or `frozen::unordered_map`).
+- Always include the required frozen header file when using these containers.
+- Prefer `constexpr` or `constinit` for frozen containers whenever possible.
+- For searching, consider the Boyer-Moore or Knuth-Morris-Pratt algorithms from the frozen library if they are faster than `std::search`.
 
 # Project coding standards for Perl
 
@@ -43,6 +48,7 @@
 - Use PascalCase for package names.
 - Use PascalCase for Wx:: method names.
 - Use UPPER_SNAKE_CASE for constants.
+- Begin wxWidgets functions with Wx:
 
 ## Code Structure
 - Use 4 spaces for indentation.
@@ -56,6 +62,7 @@
 - Use PascalCase for package names.
 - Use PascalCase for wx. method names.
 - Use UPPER_SNAKE_CASE for constants.
+- Begin wxWidgets functions with wx.
 
 ## Code Structure
 - Use 4 spaces for indentation.
@@ -69,6 +76,7 @@
 - Use PascalCase for class names.
 - Use PascalCase for Wx:: method names.
 - Use UPPER_SNAKE_CASE for constants.
+- Begin wxWidgets functions with Wx:
 
 ## Code Structure
 - Use 2 spaces for indentation.

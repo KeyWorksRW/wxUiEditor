@@ -686,8 +686,8 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
             Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ";";
         }
     }
-#endif
     else
+#endif
     {
         if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
         {

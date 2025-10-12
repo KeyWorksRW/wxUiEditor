@@ -58,9 +58,13 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     {
         CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
         if (is_perl())
+        {
             *this << "wxDefaultPosition";
+        }
         else
+        {
             *this << m_language_wxPrefix << "DefaultPosition";
+        }
         return *this;
     }
 
@@ -91,8 +95,8 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     return *this;
 }
 
-Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
-                         tt_string_view def_style)
+auto Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
+                        tt_string_view def_style) -> Code&
 {
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
     auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
@@ -105,7 +109,9 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
         Pos(prop_pos, pos_scaling).Comma().WxSize(prop_size, size_scaling).Comma();
         Style();
         if (uses_def_validator)
+        {
             Comma().Add("wxDefaultValidator");
+        }
         Comma();
         if (is_ruby())
         {
@@ -118,18 +124,28 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
     // This could be done as a single if statement, but it is easier to read this way.
     bool style_needed = false;
     if ((m_node->HasValue(prop_style) && m_node->as_string(prop_style) != def_style))
+    {
         style_needed = true;
+    }
     else if (m_node->HasValue(prop_window_style))
+    {
         style_needed = true;
+    }
     else if (m_node->HasValue(prop_orientation) &&
              !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
              !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
+    {
         style_needed = true;
+    }
     else if (m_node->HasValue(prop_tab_position) &&
              !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    {
         style_needed = true;
+    }
     else if (m_node->is_Gen(gen_wxRichTextCtrl) || m_node->is_Gen(gen_wxListView))
+    {
         style_needed = true;
+    }
 
     // Do we need a style and/or a default validator?
     if (style_needed)
@@ -140,7 +156,9 @@ Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator
         {
             erase(size() - def_style.size());
             if (back() == '|')
+            {
                 pop_back();
+            }
         }
     }
     else if (m_node->as_wxSize(prop_size) != wxDefaultSize)
@@ -167,42 +185,53 @@ Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validato
         Pos().Comma().WxSize().Comma();
         Style(nullptr, force_style);
         if (uses_def_validator)
+        {
             Comma().Add("wxDefaultValidator");
+        }
         Comma();
         QuotedString(prop_window_name).EndFunction();
         return *this;
     }
-    else
-    {
-        Comma();
-        Pos().Comma().WxSize().Comma().Style(nullptr, force_style);
-    }
+
+    Comma();
+    Pos().Comma().WxSize().Comma().Style(nullptr, force_style);
+
     EndFunction();
     return *this;
 }
 
-Code& Code::Style(const char* prefix, tt_string_view force_style)
+auto Code::Style(const char* prefix, tt_string_view force_style) -> Code&
 {
+    auto add_separator = [this](bool& style_set)
+    {
+        if (style_set)
+        {
+            *this += '|';
+        }
+    };
+
     bool style_set = false;
+
     if (force_style.size())
     {
         Add(force_style);
         style_set = true;
     }
 
+    // Add tab position style
     if (m_node->HasValue(prop_tab_position) &&
         !m_node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
-        if (style_set)
-            *this += '|';
+        add_separator(style_set);
         style_set = true;
         as_string(prop_tab_position);
     }
+
+    // Add orientation style
     if (m_node->HasValue(prop_orientation) &&
         !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
-        if (style_set)
-            *this += '|';
+        add_separator(style_set);
         style_set = true;
         as_string(prop_orientation);
     }
@@ -212,16 +241,16 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
 
     if (m_node->is_Gen(gen_wxRichTextCtrl))
     {
-        if (style_set)
-            *this += '|';
+        add_separator(style_set);
         style_set = true;
         AddConstant("wxRE_MULTILINE");
     }
 
+    // Process style property
     if (m_node->HasValue(prop_style))
     {
-        if (style_set)
-            *this += '|';
+        add_separator(style_set);
+
         if (prefix)
         {
             if (is_cpp())
@@ -235,9 +264,12 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                 for (auto& iter: multistr)
                 {
                     if (iter.empty())
+                    {
                         continue;
-                    if (style_set)
-                        *this += '|';
+                    }
+
+                    add_separator(style_set);
+
                     if (iter.is_sameprefix("wx"))
                     {
                         if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
@@ -256,7 +288,9 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
                         }
                     }
                     else
+                    {
                         *this += iter;
+                    }
                     style_set = true;
                 }
             }
@@ -271,8 +305,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
 
     if (m_node->HasValue(prop_window_style))
     {
-        if (style_set)
-            *this += '|';
+        add_separator(style_set);
         style_set = true;
         AddConstant(m_node->as_string(prop_window_style));
         cur_pos = size();
@@ -280,8 +313,7 @@ Code& Code::Style(const char* prefix, tt_string_view force_style)
 
     if (m_node->is_Gen(gen_wxListView))
     {
-        if (style_set)
-            *this += '|';
+        add_separator(style_set);
         style_set = true;
         as_string(prop_mode);
         cur_pos = size();

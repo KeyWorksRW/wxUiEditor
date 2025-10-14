@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <array>
+
 #include <wx/button.h>
 #include <wx/cshelp.h>  // Context-sensitive help support classes
 #include <wx/sizer.h>
@@ -322,6 +324,59 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
     return true;
 }
 
+namespace
+{
+    void AddXrcButton(pugi::xml_node& parent_item, const char* button_id, Node* node,
+                      const char* default_name)
+    {
+        auto button_parent = parent_item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+        button.append_attribute("name").set_value(button_id);
+
+        if (node->is_PropValue(prop_default_button, default_name))
+        {
+            button.append_child("default").text().set(1);
+        }
+    }
+
+    void AddXrcContextHelpButton(pugi::xml_node& parent_item)
+    {
+        auto button_parent = parent_item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+        button.append_attribute("name").set_value("wxID_CONTEXT_HELP");
+        button.append_child("label").text().set("?");
+    }
+
+    auto SetupXrcItemWithStaticLine(Node* node, pugi::xml_node& object) -> pugi::xml_node
+    {
+        object.append_attribute("class").set_value("sizeritem");
+        object.append_child("flag").text().set("wxLEFT|wxRIGHT|wxTOP|wxEXPAND");
+        object.append_child("border").text().set("5");
+
+        auto item = object.append_child("object");
+        item.append_attribute("class").set_value("wxBoxSizer");
+        item.append_child("orient").text().set("wxVERTICAL");
+
+        item = item.append_child("object");
+        item.append_attribute("class").set_value("sizeritem");
+        item.append_child("flag").text().set("wxBOTTOM|wxEXPAND");
+        item.append_child("border").text().set("5");
+
+        item = item.append_child("object");
+        item.append_attribute("class").set_value("wxStaticLine");
+
+        item = object.parent().append_child("object");
+        GenXrcSizerItem(node, item);
+        return item.append_child("object");
+    }
+}  // namespace
+
 auto StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
                                                  size_t /* xrc_flags */) -> int
 {
@@ -338,26 +393,7 @@ auto StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obj
 
         if (node->as_bool(prop_static_line))
         {
-            object.append_attribute("class").set_value("sizeritem");
-            object.append_child("flag").text().set("wxLEFT|wxRIGHT|wxTOP|wxEXPAND");
-            object.append_child("border").text().set("5");
-
-            item = object.append_child("object");
-            item.append_attribute("class").set_value("wxBoxSizer");
-            item.append_child("orient").text().set("wxVERTICAL");
-
-            item = item.append_child("object");
-            item.append_attribute("class").set_value("sizeritem");
-            item.append_child("flag").text().set("wxBOTTOM|wxEXPAND");
-            item.append_child("border").text().set("5");
-
-            item = item.append_child("object");
-            item.append_attribute("class").set_value("wxStaticLine");
-            // item.append_child("size").text().set("20,-1");
-
-            item = object.parent().append_child("object");
-            GenXrcSizerItem(node, item);
-            item = item.append_child("object");
+            item = SetupXrcItemWithStaticLine(node, object);
         }
         else
         {
@@ -377,111 +413,47 @@ auto StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obj
     // BUGBUG: [Randalphwa - 08-06-2023] Need to set min size if specified
 
     // You can only have one of: Ok, Yes, Save
-    if (node->as_bool(prop_OK) || node->as_bool(prop_Yes) || node->as_bool(prop_Save))
+    if (node->as_bool(prop_OK))
     {
-        auto button_parent = item.append_child("object");
-        button_parent.append_attribute("class").set_value("button");
-
-        auto button = button_parent.append_child("object");
-        button.append_attribute("class").set_value("wxButton");
-
-        if (node->as_bool(prop_OK))
-        {
-            button.append_attribute("name").set_value("wxID_OK");
-            if (node->is_PropValue(prop_default_button, "OK"))
-            {
-                button.append_child("default").text().set(1);
-            }
-        }
-        else if (node->as_bool(prop_Yes))
-        {
-            button.append_attribute("name").set_value("wxID_YES");
-            if (node->is_PropValue(prop_default_button, "Yes"))
-            {
-                button.append_child("default").text().set(1);
-            }
-        }
-        else if (node->as_bool(prop_Save))
-        {
-            button.append_attribute("name").set_value("wxID_SAVE");
-            if (node->is_PropValue(prop_default_button, "Save"))
-            {
-                button.append_child("default").text().set(1);
-            }
-        }
+        AddXrcButton(item, "wxID_OK", node, "OK");
+    }
+    else if (node->as_bool(prop_Yes))
+    {
+        AddXrcButton(item, "wxID_YES", node, "Yes");
+    }
+    else if (node->as_bool(prop_Save))
+    {
+        AddXrcButton(item, "wxID_SAVE", node, "Save");
     }
 
     if (node->as_bool(prop_No))
     {
-        auto button_parent = item.append_child("object");
-        button_parent.append_attribute("class").set_value("button");
-
-        auto button = button_parent.append_child("object");
-        button.append_attribute("class").set_value("wxButton");
-
-        button.append_attribute("name").set_value("wxID_NO");
-        if (node->is_PropValue(prop_default_button, "No"))
-        {
-            button.append_child("default").text().set(1);
-        }
+        AddXrcButton(item, "wxID_NO", node, "No");
     }
 
     // You can only have one of: Cancel, Close
-    if (node->as_bool(prop_Cancel) || node->as_bool(prop_Close))
+    if (node->as_bool(prop_Cancel))
     {
-        auto button_parent = item.append_child("object");
-        button_parent.append_attribute("class").set_value("button");
-
-        auto button = button_parent.append_child("object");
-        button.append_attribute("class").set_value("wxButton");
-
-        if (node->as_bool(prop_Cancel))
-        {
-            button.append_attribute("name").set_value("wxID_CANCEL");
-            if (node->is_PropValue(prop_default_button, "Cancel"))
-            {
-                button.append_child("default").text().set(1);
-            }
-        }
-        else if (node->as_bool(prop_Close))
-        {
-            button.append_attribute("name").set_value("wxID_CLOSE");
-            if (node->is_PropValue(prop_default_button, "Close"))
-            {
-                button.append_child("default").text().set(1);
-            }
-        }
+        AddXrcButton(item, "wxID_CANCEL", node, "Cancel");
+    }
+    else if (node->as_bool(prop_Close))
+    {
+        AddXrcButton(item, "wxID_CLOSE", node, "Close");
     }
 
     if (node->as_bool(prop_Apply))
     {
-        auto button_parent = item.append_child("object");
-        button_parent.append_attribute("class").set_value("button");
-
-        auto button = button_parent.append_child("object");
-        button.append_attribute("class").set_value("wxButton");
-
-        button.append_attribute("name").set_value("wxID_APPLY");
+        AddXrcButton(item, "wxID_APPLY", node, "Apply");
     }
 
     // You can only have one of: Help, ContextHelp
-    if (node->as_bool(prop_Help) || node->as_bool(prop_ContextHelp))
+    if (node->as_bool(prop_Help))
     {
-        auto button_parent = item.append_child("object");
-        button_parent.append_attribute("class").set_value("button");
-
-        auto button = button_parent.append_child("object");
-        button.append_attribute("class").set_value("wxButton");
-
-        if (node->as_bool(prop_Help))
-        {
-            button.append_attribute("name").set_value("wxID_HELP");
-        }
-        else if (node->as_bool(prop_ContextHelp))
-        {
-            button.append_attribute("name").set_value("wxID_CONTEXT_HELP");
-            button.append_child("label").text().set("?");
-        }
+        AddXrcButton(item, "wxID_HELP", node, "Help");
+    }
+    else if (node->as_bool(prop_ContextHelp))
+    {
+        AddXrcContextHelpButton(item);
     }
 
     return result;
@@ -493,209 +465,205 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node unused */,
     handlers.emplace("wxStdDialogButtonSizerXmlHandler");
 }
 
+namespace
+{
+    [[nodiscard]] auto GetEventCodeForLanguage(GenLang language, std::string_view value)
+        -> std::string
+    {
+        switch (language)
+        {
+            case GEN_LANG_CPLUSPLUS:
+                return EventHandlerDlg::GetCppValue(value);
+            case GEN_LANG_PYTHON:
+                return EventHandlerDlg::GetPythonValue(value);
+            case GEN_LANG_RUBY:
+                return EventHandlerDlg::GetRubyValue(value);
+            case GEN_LANG_PERL:
+                return EventHandlerDlg::GetPerlValue(value);
+            case GEN_LANG_RUST:
+                return EventHandlerDlg::GetRustValue(value);
+            default:
+                FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(language)
+                                     << " (" << language << ")");
+                return EventHandlerDlg::GetCppValue(value);
+        }
+    }
+
+    const std::array<std::pair<std::string_view, std::string_view>, 10> button_suffix_map = { {
+        { "OKButton", "_ok" },
+        { "YesButton", "_yes" },
+        { "SaveButton", "_save" },
+        { "NoButton", "_no" },
+        { "CancelButton", "_cancel" },
+        { "CloseButton", "_close" },
+        { "HelpButton", "_help" },
+        { "ContextHelpButton", "_ctx_help" },
+        { "ApplyButton", "_apply" },
+    } };
+
+    [[nodiscard]] auto GetButtonIdSuffix(std::string_view event_name) -> std::string_view
+    {
+        for (const auto& [prefix, suffix]: button_suffix_map)
+        {
+            if (event_name.starts_with(prefix))
+            {
+                return suffix;
+            }
+        }
+        return {};
+    }
+
+    const std::array<std::pair<std::string_view, std::string_view>, 10> button_id_map = { {
+        { "OKButton", "wxID_OK" },
+        { "YesButton", "wxID_YES" },
+        { "SaveButton", "wxID_SAVE" },
+        { "ApplyButton", "wxID_APPLY" },
+        { "NoButton", "wxID_NO" },
+        { "CancelButton", "wxID_CANCEL" },
+        { "CloseButton", "wxID_CLOSE" },
+        { "HelpButton", "wxID_HELP" },
+        { "ContextHelpButton", "wxID_CONTEXT_HELP" },
+    } };
+
+    [[nodiscard]] auto GetButtonIdConstant(std::string_view event_name) -> std::string_view
+    {
+        for (const auto& [prefix, id_btn]: button_id_map)
+        {
+            if (event_name.starts_with(prefix))
+            {
+                return id_btn;
+            }
+        }
+        return {};
+    }
+
+    void GenerateHandlerCode(Code& handler, const Code& code, const std::string& event_code,
+                             NodeEvent* event, const std::string& class_name, std::string& comma)
+    {
+        if (event_code.find('[') != std::string::npos || event_code.find("::") != std::string::npos)
+        {
+            // BUGBUG: [Randalphwa - 08-19-2025] Why aren't we supporting Python and Ruby lambdas
+            // like we do in gen_events.cpp
+            if (!code.is_cpp())
+            {
+                return;
+            }
+            handler << event->get_name() << ',' << event->get_value();
+            handler.GetCode().Replace("[", "\n\t[");
+            comma = ",\n\t";
+            ExpandLambda(handler.GetCode());
+        }
+        else if (event_code.find("::") != std::string::npos)
+        {
+            // REVIEW: [Randalphwa - 08-19-2025] This needs to be updated to match the code in
+            // gen_events.cpp
+            handler.Add(event->get_name()) << ", ";
+            if (event->get_value()[0] != '&' && handler.is_cpp())
+            {
+                handler << '&';
+            }
+            handler << event->get_value();
+        }
+        else
+        {
+            if (code.is_cpp())
+            {
+                handler << "&" << class_name << "::" << event_code << ", this";
+            }
+            else if (code.is_python())
+            {
+                handler.Add("self.") << event_code;
+            }
+            else if (code.is_ruby())
+            {
+                handler << event_code;
+            }
+        }
+    }
+
+    void GenerateEventBinding(Code& code, tt_string_view event_name, const tt_string& handler_code,
+                              const std::string& comma)
+    {
+        if (code.is_python())
+        {
+            code.Add("self.");
+        }
+
+        if (code.is_ruby() && (event_name == "wxEVT_BUTTON" || event_name == "wxEVT_UPDATE_UI"))
+        {
+            code.Str(event_name == "wxEVT_BUTTON" ? "evt_button(" : "evt_update_ui(");
+        }
+        else if (code.is_perl())
+        {
+            event_name.remove_prefix(2);  // remove "wx" prefix
+            code.Str(event_name).Str("($self, ");
+        }
+        else
+        {
+            code.Add("Bind(").Add(event_name) << comma << handler_code << comma;
+        }
+    }
+
+    void AddButtonIdentifier(Code& code, NodeEvent* event)
+    {
+        const auto& event_name = event->get_name();
+        const auto is_script_lang =
+            (code.m_language == GEN_LANG_PERL || code.m_language == GEN_LANG_PYTHON ||
+             code.m_language == GEN_LANG_RUBY);
+
+        if (is_script_lang)
+        {
+            const auto suffix = GetButtonIdSuffix(event_name);
+            if (!suffix.empty())
+            {
+                code.NodeName(event->getNode()).Add(suffix);
+            }
+        }
+        else
+        {
+            const auto id_constant = GetButtonIdConstant(event_name);
+            if (!id_constant.empty())
+            {
+                code.Add(id_constant);
+            }
+        }
+    }
+
+    void FinalizeEventCode(Code& code, const tt_string& event_code, const tt_string& handler_code)
+    {
+        if (code.is_ruby())
+        {
+            code.Str(".get_id").Comma().Str(":") << handler_code;
+        }
+        else if (code.is_python())
+        {
+            code.Comma() << handler_code;
+        }
+        else if (code.is_perl())
+        {
+            code.Replace("}", "");
+            code.Str("}->GetId(), $self->can('") << event_code << "')";
+        }
+    }
+}  // namespace
+
 void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
                                              const std::string& class_name)
 {
     Code handler(event->getNode(), code.m_language);
-    tt_string event_code;
-    switch (code.m_language)
-    {
-        case GEN_LANG_CPLUSPLUS:
-            event_code = EventHandlerDlg::GetCppValue(event->get_value());
-            break;
-        case GEN_LANG_PYTHON:
-            event_code = EventHandlerDlg::GetPythonValue(event->get_value());
-            break;
-        case GEN_LANG_RUBY:
-            event_code = EventHandlerDlg::GetRubyValue(event->get_value());
-            break;
-
-        case GEN_LANG_PERL:
-            event_code = EventHandlerDlg::GetPerlValue(event->get_value());
-            break;
-
-        case GEN_LANG_RUST:
-            event_code = EventHandlerDlg::GetRustValue(event->get_value());
-            break;
-
-        default:
-            FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(code.m_language)
-                                 << " (" << code.m_language << ")");
-            event_code = EventHandlerDlg::GetCppValue(event->get_value());
-            break;
-    }
+    const auto event_code = GetEventCodeForLanguage(code.m_language, event->get_value());
 
     // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on
     // it's own line, so we use a string for this to allow the lambda processing code to replace it.
     std::string comma(", ");
-    if (event_code.contains("["))
-    {
-        // BUGBUG: [Randalphwa - 08-19-2025] Why aren't we supporting Python and Ruby lambdas like
-        // we do in gen_events.cpp
+    GenerateHandlerCode(handler, code, event_code, event, class_name, comma);
 
-        if (!code.is_cpp())
-        {
-            return;
-        }
-        handler << event->get_name() << ',' << event->get_value();
-        // Put the lambda expression on it's own line
-        handler.GetCode().Replace("[", "\n\t[");
-        comma = ",\n\t";
-        ExpandLambda(handler.GetCode());
-    }
-    else if (event_code.contains("::"))
-    {
-        // REVIEW: [Randalphwa - 08-19-2025] This needs to be updated to match the code in
-        // gen_events.cpp
-        handler.Add(event->get_name()) << ", ";
-        if (event->get_value()[0] != '&' && handler.is_cpp())
-        {
-            handler << '&';
-        }
-        handler << event->get_value();
-    }
-    else
-    {
-        if (code.is_cpp())
-        {
-            handler << "&" << class_name << "::" << event_code << ", this";
-        }
-        else if (code.is_python())
-        {
-            handler.Add("self.") << event_code;
-        }
-        else if (code.is_ruby())
-        {
-            handler << event_code;
-        }
-    }
-
-    tt_string_view event_name =
+    const tt_string_view event_name =
         (event->get_EventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" :
                                                                          "wxEVT_UPDATE_UI");
-    if (code.is_python())
-    {
-        code.Add("self.");
-    }
-    if (code.is_ruby() && (event_name == "wxEVT_BUTTON" || event_name == "wxEVT_UPDATE_UI"))
-    {
-        if (event_name == "wxEVT_BUTTON")
-        {
-            code.Str("evt_button(");
-        }
-        else
-        {
-            code.Str("evt_update_ui(");
-        }
-    }
-    else if (code.is_perl())
-    {
-        // remove "wx" prefix
-        event_name.remove_prefix(2);
-        code.Str(event_name).Str("($self, ");
-
-        // code.NodeName().Str("->GetId(), $self->can('") << event_code << "'));";
-    }
-    else
-    {
-        code.Add("Bind(").Add(event_name) << comma << handler.GetCode() << comma;
-    }
-
-    if (code.m_language == GEN_LANG_PERL || code.m_language == GEN_LANG_PYTHON ||
-        code.m_language == GEN_LANG_RUBY)
-    {
-        if (event->get_name().starts_with("OKButton"))
-        {
-            code.NodeName(event->getNode()).Add("_ok");
-        }
-        else if (event->get_name().starts_with("YesButton"))
-        {
-            code.NodeName(event->getNode()).Add("_yes");
-        }
-        else if (event->get_name().starts_with("SaveButton"))
-        {
-            code.NodeName(event->getNode()).Add("_save");
-        }
-        else if (event->get_name().starts_with("NoButton"))
-        {
-            code.NodeName(event->getNode()).Add("_no");
-        }
-        else if (event->get_name().starts_with("CancelButton"))
-        {
-            code.NodeName(event->getNode()).Add("_cancel");
-        }
-        else if (event->get_name().starts_with("CloseButton"))
-        {
-            code.NodeName(event->getNode()).Add("_close");
-        }
-        else if (event->get_name().starts_with("HelpButton"))
-        {
-            code.NodeName(event->getNode()).Add("_help");
-        }
-        else if (event->get_name().starts_with("ContextHelpButton"))
-        {
-            code.NodeName(event->getNode()).Add("_ctx_help");
-        }
-        else if (event->get_name().starts_with("ApplyButton"))
-        {
-            code.NodeName(event->getNode()).Add("_apply");
-        }
-    }
-    else
-    {
-        if (event->get_name().starts_with("OKButton"))
-        {
-            code.Add("wxID_OK");
-        }
-        else if (event->get_name().starts_with("YesButton"))
-        {
-            code.Add("wxID_YES");
-        }
-        else if (event->get_name().starts_with("SaveButton"))
-        {
-            code.Add("wxID_SAVE");
-        }
-        else if (event->get_name().starts_with("ApplyButton"))
-        {
-            code.Add("wxID_APPLY");
-        }
-        else if (event->get_name().starts_with("NoButton"))
-        {
-            code.Add("wxID_NO");
-        }
-        else if (event->get_name().starts_with("CancelButton"))
-        {
-            code.Add("wxID_CANCEL");
-        }
-        else if (event->get_name().starts_with("CloseButton"))
-        {
-            code.Add("wxID_CLOSE");
-        }
-        else if (event->get_name().starts_with("HelpButton"))
-        {
-            code.Add("wxID_HELP");
-        }
-        else if (event->get_name().starts_with("ContextHelpButton"))
-        {
-            code.Add("wxID_CONTEXT_HELP");
-        }
-    }
-
-    if (code.is_ruby())
-    {
-        code.Str(".get_id").Comma().Str(":") << handler.GetCode();
-    }
-    else if (code.is_python())
-    {
-        code.Comma() << handler.GetCode();
-    }
-    else if (code.is_perl())
-    {
-        // Remove the closing brace after {stdBtn, and instead add it after the full stdBtn variable
-        // name
-        code.Replace("}", "");
-        code.Str("}->GetId(), $self->can('") << event_code << "')";
-    }
+    GenerateEventBinding(code, event_name, handler.GetCode(), comma);
+    AddButtonIdentifier(code, event);
+    FinalizeEventCode(code, event_code, handler.GetCode());
     code.EndFunction();
 }
 

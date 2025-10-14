@@ -1,5 +1,5 @@
 ./src/import/rapidjson
 ./src/pugixml
-./src/pugixml
 ./src/tests
+./src/xml
 ./src/art_src

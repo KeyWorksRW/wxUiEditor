@@ -6,6 +6,28 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 This is a multi-language project that includes C++, Perl, Python, and Ruby components. The project uses wxWidgets for GUI functionality across multiple languages.
 
+## Project-Specific Guidelines
+
+### Node Class and NodeProperty
+- `Node` class is declared in `nodes/node.h`
+- Prefer passing `Node*` to functions rather than `NodeSharedPtr`
+- `NodeProperty` class (used in all Nodes) is declared in `nodes/node_prop`
+- Prefer using `NodeProperty::as_view()` instead of `NodeProperty::as_string()`
+- Prefer using `Node::as_view()` when Node or NodeSharedPtr is available
+
+### Generator Classes
+- All generator classes derive from the base interface in `generate/base_generator.h`
+
+### File and Code Restrictions
+- `file_list.cmake` lists the files in the project and cannot be edited
+- Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block." and "// DO NOT EDIT THIS COMMENT BLOCK!"
+
+### String Conversions
+- Prefer using `wxString::ToStdString()` which creates a reference instead of `wxString::utf8_string()` which creates a copy, unless a copy is required
+
+### Debug Checks
+- The `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros are the preferred macros for debug checks declared in assertion_dlg.h
+
 ## Language-Specific Coding Standards
 
 ### C++ Standards
@@ -64,6 +86,7 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Packages: `PascalCase`
 - Wx:: methods: `PascalCase`
 - Constants: `UPPER_SNAKE_CASE`
+- Begin wxWidgets functions with Wx:
 
 **Code Style:**
 - Indentation: 4 spaces
@@ -76,6 +99,7 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Variables/Functions: `snake_case`
 - Packages: `PascalCase`
 - wx. methods: `PascalCase`
+- Begin wxWidgets functions with wx.
 - Constants: `UPPER_SNAKE_CASE`
 
 **Code Style:**
@@ -89,7 +113,9 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Variables/Functions: `snake_case`
 - Classes: `PascalCase`
 - Wx:: methods: `PascalCase`
+- Begin wxWidgets functions with Wx:
 - Constants: `UPPER_SNAKE_CASE`
+- Use a leading `_` for an unused parameter, e.g. `_event`.
 
 **Code Style:**
 - Indentation: 2 spaces

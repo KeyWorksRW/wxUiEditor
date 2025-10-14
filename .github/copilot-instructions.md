@@ -1,84 +1,121 @@
-# Project coding standards for C++
+# Guidance for AI Coding in wxUiEditor
+
+This repository contains C++, Perl, Python, and Ruby code using wxWidgets for GUI functionality. Follow these standards and priorities for all code contributions.
+
+## Project Overview
+
+- Multi-language project: C++, Perl, Python, Ruby
+- GUI: wxWidgets (all languages)
+
+## Key Files and Directories
+- `src/ttwx/ttwx.h`: Project-specific C++ utilities
+- `./frozen/include/frozen`: Immutable container library
+
+# C++ Coding Standards
 
 ## Naming Conventions
-- Use snake_case for variable names.
-- Use PascalCase for class names, method names, and function names.
-- Use UPPER_SNAKE_CASE for constants.
+- Variables: snake_case
+- Classes/Methods/Functions: PascalCase
+- Constants: UPPER_SNAKE_CASE
+- Enum types: PascalCase (singular, e.g., Color)
+- Enum values: snake_case
 
-## Code Structure
-- Use 4 spaces for indentation.
-- Limit lines to 100 characters.
-- Use blank lines to separate logical sections of code.
+## Code Style
+- Indentation: 4 spaces
+- Line length: 100 characters maximum
+- Use blank lines to separate logical code sections
 
 ## Function Declarations
-- Use a trailing return type for all function declarations.
-- Functions returning a bool should always have a [[nodiscard]] prefix.
+- Always use trailing return type syntax
+- Functions returning bool must have [[nodiscard]] attribute
 
-## Enum Declarations
-- When creating an enum, use a `std::` type (e.g., `std::uint8_t`) to reduce size.
-- Use `enum class` instead of traditional enums for type safety.
-- Use singular names for enum types (e.g., `Color` instead of `Colors`).
-- Use PascalCase for enum type names and snake_case for enum values.
+## Enum Guidelines
+- Use enum class for type safety (never traditional enums)
+- Specify underlying type using std:: types (e.g., std::uint8_t)
 
 ## Conditionals
-- Always use braces around any statements that are part of a conditional, even for single statements.
-- Do not follow a conditional with an else statement if the last statement of the conditional would prevent the else from being executed (e.g., return, throw, break).
+- Always use braces for conditional statements, even single-line statements
+- Do not use else after a conditional that exits (return, throw, break)
 
 ## Modern C++ Features
-- Prefer using `auto` for variable declarations when the type is obvious or improves readability.
-- Use `constexpr` for compile-time constants and functions where possible.
-- Favor range-based for loops over traditional for loops when iterating containers.
-- Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) instead of raw pointers for resource management.
-- Use structured bindings and concepts where appropriate to improve code clarity and safety.
+- Prefer auto for variable declarations when type is obvious
+- Use constexpr for compile-time constants and functions
+- Use range-based for loops over traditional loops when iterating containers
+- Use smart pointers (std::unique_ptr, std::shared_ptr) instead of raw pointers
+- Use structured bindings and concepts for clarity and safety
 
-## Library Function Usage
-- When implementing functionality, first prefer functions from the C++ Standard Library (`std::`).
-- If no suitable standard library function exists, use functions from the wxWidgets library.
-- If neither provides the needed functionality, use functions from the `ttwx::` namespace (defined in `src/ttwx/ttwx.h`).
-- When creating or modifying an immutable version of std::set, std::unordered_set, std::map and std::unordered_map use one of the frozen versions from the library ./frozen/include/frozen (be sure to include the appropriate header file).
-- For immutable containers, use the corresponding frozen type from `./frozen/include/frozen` (such as `frozen::set`, `frozen::unordered_set`, `frozen::map`, or `frozen::unordered_map`).
-- Always include the required frozen header file when using these containers.
-- Prefer `constexpr` or `constinit` for frozen containers whenever possible.
-- For searching, consider the Boyer-Moore or Knuth-Morris-Pratt algorithms from the frozen library if they are faster than `std::search`.
+## Library Priority (in order)
+1. C++ Standard Library (std::) – Always check here first
+2. wxWidgets library – Use when standard library doesn't provide functionality
+3. ttwx:: namespace (from src/ttwx/ttwx.h) – Project-specific utilities
+4. Frozen containers (from ./frozen/include/frozen) – For immutable collections
 
-# Project coding standards for Perl
+## Immutable Containers
+- Use frozen library types for immutable versions of: std::set, std::unordered_set, std::map, std::unordered_map
+- Corresponding frozen types: frozen::set, frozen::unordered_set, frozen::map, frozen::unordered_map
+- Always include the appropriate frozen header file
+- Prefer constexpr or constinit for frozen containers
+
+## String Searching
+- Consider Boyer-Moore or Knuth-Morris-Pratt algorithms from frozen library if faster than std::search
+
+## String Conversions
+- Prefer wxString::ToStdString() (reference) over wxString::utf8_string() (copy), unless a copy is required
+
+## Debug Checks
+- Use ASSERT, ASSERT_MSG, and FAIL_MSG macros from assertion_dlg.h for debug checks
+
+# Perl Coding Standards
 
 ## Naming Conventions
-- Use snake_case for variable names.
-- Use PascalCase for package names.
-- Use PascalCase for Wx:: method names.
-- Use UPPER_SNAKE_CASE for constants.
+- Variables: snake_case
+- Packages: PascalCase
+- Wx:: methods: PascalCase
+- Constants: UPPER_SNAKE_CASE
 - Begin wxWidgets functions with Wx:
 
-## Code Structure
-- Use 4 spaces for indentation.
-- Limit lines to 100 characters.
-- Use blank lines to separate logical sections of code.
+## Code Style
+- Indentation: 4 spaces
+- Line length: 100 characters maximum
+- Use blank lines to separate logical code sections
 
-# Project coding standards for Python
+# Python Coding Standards
 
 ## Naming Conventions
-- Use snake_case for variable and function names.
-- Use PascalCase for package names.
-- Use PascalCase for wx. method names.
-- Use UPPER_SNAKE_CASE for constants.
+- Variables/Functions: snake_case
+- Packages: PascalCase
+- wx. methods: PascalCase
+- Constants: UPPER_SNAKE_CASE
 - Begin wxWidgets functions with wx.
 
-## Code Structure
-- Use 4 spaces for indentation.
-- Limit lines to 90 characters.
-- Use blank lines to separate logical sections of code.
+## Code Style
+- Indentation: 4 spaces
+- Line length: 90 characters maximum
+- Use blank lines to separate logical code sections
 
-# Project coding standards for Ruby
+# Ruby Coding Standards
 
 ## Naming Conventions
-- Use snake_case for variable and function names.
-- Use PascalCase for class names.
-- Use PascalCase for Wx:: method names.
-- Use UPPER_SNAKE_CASE for constants.
+- Variables/Functions: snake_case
+- Classes: PascalCase
+- Wx:: methods: PascalCase
+- Constants: UPPER_SNAKE_CASE
 - Begin wxWidgets functions with Wx:
+- Use a leading _ for an unused parameter, e.g. _event
 
-## Code Structure
-- Use 2 spaces for indentation.
-- Limit lines to 80 characters.
-- Use blank lines to separate logical sections of code.
+## Code Style
+- Indentation: 2 spaces
+- Line length: 80 characters maximum
+- Use blank lines to separate logical code sections
+
+# Important Reminders
+
+- Always check if Standard Library provides needed functionality before using external libraries
+- Include appropriate frozen headers when using immutable containers
+- Validate that enum classes use explicit underlying types
+- Ensure all bool-returning functions have [[nodiscard]] attribute
+- Verify conditionals use braces even for single statements
+- Do not edit any code between the comment block "// Do not edit any code above the 'End of generated code' comment block." and "// DO NOT EDIT THIS COMMENT BLOCK!"
+- For Node and NodeProperty classes, prefer as_view() methods
+- All generator classes derive from generate/base_generator.h
+- file_list.cmake cannot be edited

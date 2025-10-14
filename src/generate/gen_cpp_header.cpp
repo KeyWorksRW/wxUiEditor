@@ -355,7 +355,7 @@ void CppCodeGenerator::GenHdrEvents()
         {
             auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
-            if (event_code.contains("[") || event_code.contains("::"))
+            if (event_code.find("[") != std::string::npos || event_code.find("::") != std::string::npos)
             {
                 continue;
             }
@@ -415,7 +415,7 @@ void CppCodeGenerator::GenHdrEvents()
         {
             auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
             // Ignore lambda's and functions in another class
-            if (event_code.contains("[") || event_code.contains("::"))
+            if (event_code.find("[") != std::string::npos || event_code.find("::") != std::string::npos)
             {
                 continue;
             }
@@ -498,7 +498,7 @@ void CppCodeGenerator::GenHdrEvents()
             {
                 auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
                 // Ignore lambda's and functions in another class
-                if (event_code.contains("[") || event_code.contains("::"))
+                if (event_code.find("[") != std::string::npos || event_code.find("::") != std::string::npos)
                 {
                     continue;
                 }

@@ -406,7 +406,7 @@ void EventHandlerDlg::OnUseCppFunction(wxCommandEvent& /* event unused */)
 
         auto value = GetCppValue(m_value.utf8_string());
 
-        if (value.empty() || value.contains("["))
+        if (value.empty() || value.find("[") != std::string::npos)
         {
             if (auto default_name = s_EventNames.find(m_event->get_name());
                 default_name != s_EventNames.end())
@@ -1012,7 +1012,7 @@ void EventHandlerDlg::Update_m_value()
 
 // This is a static function
 
-tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
+auto EventHandlerDlg::GetCppValue(std::string_view  value) -> std::string
 {
     if (auto pos = value.find("[python:"); pos != tt::npos)
     {
@@ -1031,8 +1031,7 @@ tt_string EventHandlerDlg::GetCppValue(tt_string_view value)
         value.remove_suffix(value.size() - pos);
     }
 
-    tt_string result(value);
-    return result;
+    return std::string(value);
 }
 
 // This is a static function

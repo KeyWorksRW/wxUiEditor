@@ -34,6 +34,150 @@ namespace
         return node->get_Form()->is_Gen(gen_wxDialog) &&
                (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp));
     }
+
+    void BuildDialogButtonFlags(Node* node, tt_string& flags, std::string_view def_btn_name)
+    {
+        auto AddBitFlag = [&](tt_string_view flag)
+        {
+            if (flags.size())
+            {
+                flags << '|';
+            }
+            flags << flag;
+        };
+
+        if (node->as_bool(prop_OK))
+        {
+            AddBitFlag("wxOK");
+        }
+        else if (node->as_bool(prop_Yes))
+        {
+            AddBitFlag("wxYES");
+        }
+
+        if (node->as_bool(prop_No))
+        {
+            AddBitFlag("wxNO");
+        }
+
+        if (node->as_bool(prop_Cancel))
+        {
+            AddBitFlag("wxCANCEL");
+        }
+        else if (node->as_bool(prop_Close))
+        {
+            AddBitFlag("wxCLOSE");
+        }
+
+        if (node->as_bool(prop_Apply))
+        {
+            AddBitFlag("wxAPPLY");
+        }
+
+        if (node->as_bool(prop_Help))
+        {
+            AddBitFlag("wxHELP");
+        }
+
+        if (def_btn_name != "OK" && def_btn_name != "Yes")
+        {
+            AddBitFlag("wxNO_DEFAULT");
+        }
+    }
+
+    void SetDefaultButton(Code& code, std::string_view def_btn_name)
+    {
+        if (def_btn_name == "Close" || def_btn_name == "Cancel")
+        {
+            code.Eol()
+                .NodeName()
+                .Function("GetCancelButton()")
+                .Function("SetDefault(")
+                .EndFunction();
+        }
+        else if (def_btn_name == "Apply")
+        {
+            code.Eol()
+                .NodeName()
+                .Function("GetApplyButton()")
+                .Function("SetDefault(")
+                .EndFunction();
+        }
+    }
+
+    auto GenerateButtonName(const Code& code, std::string_view var_name) -> tt_string
+    {
+        tt_string btn_name;
+        if (code.is_cpp())
+        {
+            btn_name = var_name;
+        }
+        else
+        {
+            if (code.is_perl())
+            {
+                btn_name = "$self->{";
+                btn_name += code.node()->get_NodeName(GEN_LANG_PERL);
+                btn_name += "_";
+            }
+            else
+            {
+                btn_name = "_";
+            }
+            for (const auto& character: var_name)
+            {
+                btn_name += static_cast<char>(std::tolower(character));
+            }
+            if (code.is_perl())
+            {
+                btn_name += "}";
+            }
+        }
+        return btn_name;
+    }
+
+    void AddContextHelpButton(Code& code, std::string_view button_id)
+    {
+        code.Eol().NodeName().Function("AddButton(");
+        code.CreateClass(false, "wxContextHelpButton", false);
+        code.FormParent().Comma().Add(button_id).Str(")").EndFunction();
+    }
+
+    void AddNamedButton(Code& code, std::string_view btn_name, std::string_view button_id,
+                        std::string_view var_name, std::string_view def_btn_name)
+    {
+        code.Eol();
+        if (!code.is_perl())
+        {
+            code.NodeName();
+        }
+        code.Str(btn_name).CreateClass(false, "wxButton");
+        code.FormParent().Comma().Add(button_id).EndFunction();
+
+        code.Eol().NodeName().Function("AddButton(");
+        if (!code.is_perl())
+        {
+            code.NodeName();
+        }
+        code.Str(btn_name).EndFunction();
+
+        if (def_btn_name == var_name)
+        {
+            code.Eol();
+            if (!code.is_perl())
+            {
+                code.NodeName();
+            }
+            code.Str(btn_name).Function("SetDefault(").EndFunction();
+        }
+    }
+
+    void AddSimpleButton(Code& code, std::string_view button_id)
+    {
+        code.Eol().NodeName().Function("AddButton(");
+        code.CreateClass(false, "wxButton", false);
+        code.FormParent().Comma().Add(button_id).Str(")").EndFunction();
+    }
 }  // namespace
 
 auto StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject*
@@ -119,16 +263,7 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
 {
     code.AddAuto();
 
-    Node* node = code.node();  // purely for convenience
-
-    // Unfortunately, the CreateStdDialogButtonSizer() code does not support a wxID_SAVE or
-    // wxID_CONTEXT_HELP button even though wxStdDialogButtonSizer does support it. Worse,
-    // CreateStdDialogButtonSizer() calls Realize() which means if you add a button afterwards, then
-    // it will not be positioned correctly. You can't call Realize() twice without hitting assertion
-    // errors in debug builds, and in release builds, the Save button is positioned incorrectly.
-    // Unfortunately that means we have to add the buttons one at a time if a Save button is
-    // specified.
-
+    Node* node = code.node();
     const auto& def_btn_name = node->as_string(prop_default_button);
 
     if (CanUseCreateStdDialogButtonSizer(node))
@@ -136,71 +271,10 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
         code.NodeName().Assign().FormFunction("CreateStdDialogButtonSizer(");
 
         tt_string flags;
-
-        auto AddBitFlag = [&](tt_string_view flag)
-        {
-            if (flags.size())
-            {
-                flags << '|';
-            }
-            flags << flag;
-        };
-
-        if (node->as_bool(prop_OK))
-        {
-            AddBitFlag("wxOK");
-        }
-        else if (node->as_bool(prop_Yes))
-        {
-            AddBitFlag("wxYES");
-        }
-
-        if (node->as_bool(prop_No))
-        {
-            AddBitFlag("wxNO");
-        }
-
-        if (node->as_bool(prop_Cancel))
-        {
-            AddBitFlag("wxCANCEL");
-        }
-        else if (node->as_bool(prop_Close))
-        {
-            AddBitFlag("wxCLOSE");
-        }
-
-        if (node->as_bool(prop_Apply))
-        {
-            AddBitFlag("wxAPPLY");
-        }
-
-        if (node->as_bool(prop_Help))
-        {
-            AddBitFlag("wxHELP");
-        }
-
-        if (def_btn_name != "OK" && def_btn_name != "Yes")
-        {
-            AddBitFlag("wxNO_DEFAULT");
-        }
+        BuildDialogButtonFlags(node, flags, def_btn_name);
 
         code.Add(flags).EndFunction();
-        if (def_btn_name == "Close" || def_btn_name == "Cancel")
-        {
-            code.Eol()
-                .NodeName()
-                .Function("GetCancelButton()")
-                .Function("SetDefault(")
-                .EndFunction();
-        }
-        else if (def_btn_name == "Apply")
-        {
-            code.Eol()
-                .NodeName()
-                .Function("GetApplyButton()")
-                .Function("SetDefault(")
-                .EndFunction();
-        }
+        SetDefaultButton(code, def_btn_name);
 
         return true;
     }
@@ -214,77 +288,21 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
         code.EndFunction();
     }
 
-    auto lambda_AddButton = [&](std::string_view var_name, std::string_view id)
+    auto lambda_AddButton = [&](std::string_view var_name, std::string_view button_id)
     {
-        if (id == "wxID_CONTEXT_HELP")
+        if (button_id == "wxID_CONTEXT_HELP")
         {
-            code.Eol().NodeName().Function("AddButton(");
-            code.CreateClass(false, "wxContextHelpButton", false);
-            code.FormParent().Comma().Add(id).Str(")").EndFunction();
+            AddContextHelpButton(code, button_id);
             return;
         }
         if (!code.is_local_var() || def_btn_name == var_name)
         {
-            tt_string btn_name;
-            if (code.is_cpp())
-            {
-                // For Python, Ruby, and Perl, we use the variable name as the button name
-                btn_name = var_name;
-            }
-            else
-            {
-                // For non-C++ languages, we convert the variable name to lower case and prepend an
-                // underscore.
-                if (code.is_perl())
-                {
-                    btn_name = "$self->{";
-                    btn_name += code.node()->get_NodeName(GEN_LANG_PERL);
-                    btn_name += "_";
-                }
-                else
-                {
-                    btn_name = "_";
-                }
-                for (const auto& character: var_name)
-                {
-                    btn_name += static_cast<char>(std::tolower(character));
-                }
-                if (code.is_perl())
-                {
-                    btn_name += "}";
-                }
-            }
-
-            code.Eol();
-            // In Perl, the variable name is in {} brackets, so we had to add the underscore
-            // and suffix id above, so the btn_name is now complete.
-            if (!code.is_perl())
-            {
-                code.NodeName();
-            }
-            code.Str(btn_name).CreateClass(false, "wxButton");
-            code.FormParent().Comma().Add(id).EndFunction();
-            code.Eol().NodeName().Function("AddButton(");
-            if (!code.is_perl())
-            {
-                code.NodeName();
-            }
-            code.Str(btn_name).EndFunction();
-            if (def_btn_name == var_name)
-            {
-                code.Eol();
-                if (!code.is_perl())
-                {
-                    code.NodeName();
-                }
-                code.Str(btn_name).Function("SetDefault(").EndFunction();
-            }
+            const auto btn_name = GenerateButtonName(code, var_name);
+            AddNamedButton(code, btn_name, button_id, var_name, def_btn_name);
         }
         else
         {
-            code.Eol().NodeName().Function("AddButton(");
-            code.CreateClass(false, "wxButton", false);
-            code.FormParent().Comma().Add(id).Str(")").EndFunction();
+            AddSimpleButton(code, button_id);
         }
     };
 
@@ -638,7 +656,7 @@ namespace
                 }
             }
 
-            if (const auto suffix = GetButtonIdSuffix(event_name); !suffix.empty())
+            if (auto suffix = GetButtonIdSuffix(event_name); !suffix.empty())
             {
                 code.NodeName(event->getNode()).Add(suffix);
             }

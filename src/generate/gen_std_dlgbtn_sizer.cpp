@@ -24,6 +24,18 @@
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
+namespace
+{
+    auto CanUseCreateStdDialogButtonSizer(Node* node) -> bool
+    {
+        // The CreateStdDialogButtonSizer() code does not support a wxID_SAVE or
+        // wxID_CONTEXT_HELP button even though wxStdDialogButtonSizer does support it.
+
+        return node->get_Form()->is_Gen(gen_wxDialog) &&
+               (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp));
+    }
+}  // namespace
+
 auto StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject*
 {
     auto* dlg = wxDynamicCast(parent, wxDialog);
@@ -119,8 +131,7 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
 
     const auto& def_btn_name = node->as_string(prop_default_button);
 
-    if (node->get_Form()->is_Gen(gen_wxDialog) &&
-        (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp)))
+    if (CanUseCreateStdDialogButtonSizer(node))
     {
         code.NodeName().Assign().FormFunction("CreateStdDialogButtonSizer(");
 
@@ -234,9 +245,9 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
                 {
                     btn_name = "_";
                 }
-                for (const auto& ch: var_name)
+                for (const auto& character: var_name)
                 {
-                    btn_name += static_cast<char>(std::tolower(ch));
+                    btn_name += static_cast<char>(std::tolower(character));
                 }
                 if (code.is_perl())
                 {
@@ -581,8 +592,8 @@ namespace
         }
     }
 
-    void GenerateEventBinding(Code& code, tt_string_view event_name, const tt_string& handler_code,
-                              const std::string& comma)
+    void GenerateEventBinding(Code& code, std::string_view event_name,
+                              const std::string& handler_code, const std::string& comma)
     {
         if (code.is_python())
         {
@@ -604,7 +615,8 @@ namespace
         }
     }
 
-    void AddButtonIdentifier(Code& code, NodeEvent* event)
+    // Returns true if the Bind code is complete, false if more needs to be added
+    [[nodiscard]] auto AddButtonIdentifier(Code& code, NodeEvent* event) -> bool
     {
         const auto& event_name = event->get_name();
         const auto is_script_lang =
@@ -613,8 +625,20 @@ namespace
 
         if (is_script_lang)
         {
-            const auto suffix = GetButtonIdSuffix(event_name);
-            if (!suffix.empty())
+            if (CanUseCreateStdDialogButtonSizer(code.node()))
+            {
+                if (code.is_python())
+                {
+                    code.Str("self");
+                    if (const auto id_btn = GetButtonIdConstant(event_name); !id_btn.empty())
+                    {
+                        code.Comma().Add(id_btn);
+                    }
+                    return true;
+                }
+            }
+
+            if (const auto suffix = GetButtonIdSuffix(event_name); !suffix.empty())
             {
                 code.NodeName(event->getNode()).Add(suffix);
             }
@@ -625,11 +649,13 @@ namespace
             if (!id_constant.empty())
             {
                 code.Add(id_constant);
+                return true;
             }
         }
+        return false;
     }
 
-    void FinalizeEventCode(Code& code, const tt_string& event_code, const tt_string& handler_code)
+    void FinalizeEventCode(Code& code, const std::string& event_code, const Code& handler_code)
     {
         if (code.is_ruby())
         {
@@ -658,12 +684,14 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
     std::string comma(", ");
     GenerateHandlerCode(handler, code, event_code, event, class_name, comma);
 
-    const tt_string_view event_name =
+    std::string_view event_name =
         (event->get_EventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" :
                                                                          "wxEVT_UPDATE_UI");
     GenerateEventBinding(code, event_name, handler.GetCode(), comma);
-    AddButtonIdentifier(code, event);
-    FinalizeEventCode(code, event_code, handler.GetCode());
+    if (!AddButtonIdentifier(code, event))
+    {
+        FinalizeEventCode(code, event_code, handler);
+    }
     code.EndFunction();
 }
 

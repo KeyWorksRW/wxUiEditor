@@ -643,22 +643,45 @@ namespace
 
         if (is_script_lang)
         {
-            if (CanUseCreateStdDialogButtonSizer(code.node()))
+            if (CanUseCreateStdDialogButtonSizer(event->getNode()))
             {
+                if (code.is_perl())
+                {
+                    const auto id_constant = GetButtonIdConstant(event_name);
+                    code.Add(id_constant);
+                    auto event_code = GetEventCodeForLanguage(code.m_language, event->get_value());
+                    code.Comma().Str("$self->can('") << event_code << "')";
+                    return true;
+                }
                 if (code.is_python())
                 {
                     code.Str("self");
                     if (const auto id_btn = GetButtonIdConstant(event_name); !id_btn.empty())
                     {
-                        code.Comma().Add(id_btn);
+                        code.Comma().Str("id=").Add(id_btn);
+                    }
+                    return true;
+                }
+                if (code.is_ruby())
+                {
+                    code.Str("self");
+                    if (const auto id_btn = GetButtonIdConstant(event_name); !id_btn.empty())
+                    {
+                        code.Str(", ").Add(id_btn);
                     }
                     return true;
                 }
             }
-
-            if (auto suffix = GetButtonIdSuffix(event_name); !suffix.empty())
+            else
             {
-                code.NodeName(event->getNode()).Add(suffix);
+                code.NodeName(event->getNode()).Add(GetButtonIdSuffix(event_name));
+                if (code.is_perl())
+                {
+                    code.Replace("}", "");
+                    auto event_code = GetEventCodeForLanguage(code.m_language, event->get_value());
+                    code.Str("}->GetId(), $self->can('") << event_code << "')";
+                    return true;
+                }
             }
         }
         else

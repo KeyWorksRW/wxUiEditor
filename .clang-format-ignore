@@ -3,3 +3,5 @@
 ./src/tests
 ./src/xml
 ./src/art_src
+
+./src/version.h

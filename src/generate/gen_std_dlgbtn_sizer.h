@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStdDialogButtonSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,16 +12,18 @@
 class StdDialogButtonSizerGenerator : public BaseGenerator
 {
 public:
-    wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    auto CreateMockup(Node* node, wxObject* parent) -> wxObject* override;
 
-    bool ConstructionCode(Code&) override;
+    auto ConstructionCode(Code& code) -> bool override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     GenLang /* language */) override;
-    void GenEvent(Code&, NodeEvent*, const std::string&) override;
+    auto GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     GenLang /* language */) -> bool override;
+    void GenEvent(Code& code, NodeEvent* event, const std::string& class_name) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+    auto GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+        -> int override;
+    void RequiredHandlers(Node* node, std::set<std::string>& /* handlers */) override;
 
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
+    auto GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
+        -> bool override;
 };

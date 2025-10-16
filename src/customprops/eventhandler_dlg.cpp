@@ -1012,7 +1012,7 @@ void EventHandlerDlg::Update_m_value()
 
 // This is a static function
 
-auto EventHandlerDlg::GetCppValue(std::string_view  value) -> std::string
+auto EventHandlerDlg::GetCppValue(std::string_view value) -> std::string
 {
     if (auto pos = value.find("[python:"); pos != tt::npos)
     {

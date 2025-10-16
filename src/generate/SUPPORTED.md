@@ -196,7 +196,7 @@ The following tables indicate whether or not code is being generated in a specif
 
 | Function                   | C++ | Perl | Python | Ruby | XRC | file                     |
 | -------------------------- | --- | ---- | ------ | ---- | --- | ------------------------ |
-| CreateSeparatedSizer       | yes | no   | yes    | yes  | ---  | gen_std_dlgbtn_sizer.cpp |
+| CreateSeparatedSizer       | yes | no   | yes    | yes  | --- | gen_std_dlgbtn_sizer.cpp |
 | CreateStdDialogButtonSizer | yes | yes  | yes    | yes  | --- | gen_std_dlgbtn_sizer.cpp |
 | FromDIP                    | yes | no   | yes    | yes  | yes | ---                      |
 | GetControlSizer            | yes | ---  | no     | ???  | --- | gen_choicebook.cpp       |

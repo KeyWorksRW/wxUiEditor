@@ -403,7 +403,7 @@ set( debug_files
 
 set( doc_list
 
-    generate/SUPPORTED.md
+    generate/SUPPORTED.md  # Columns for all languages and whether they support a class
     ../CHANGELOG.md
     ../README.md
     ../docs/build_notes.md

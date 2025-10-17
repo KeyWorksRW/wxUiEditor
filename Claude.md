@@ -23,7 +23,9 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block." and "// DO NOT EDIT THIS COMMENT BLOCK!"
 
 ### String Conversions
-- Prefer using `wxString::ToStdString()` which creates a reference instead of `wxString::utf8_string()` which creates a copy, unless a copy is required
+- **Always use `wxString::ToStdString()`** for converting `wxString` to `std::string` or `std::string_view`. This method returns a reference to a string object.
+- Only use `wxString::utf8_string()` in rare cases where you specifically need UTF-8 encoded behavior that `ToStdString()` doesn't provide.
+- When passing to a function expecting `std::string_view`, use `ToStdString()` as the view will bind to the returned string object.
 
 ### Debug Checks
 - The `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros are the preferred macros for debug checks declared in assertion_dlg.h

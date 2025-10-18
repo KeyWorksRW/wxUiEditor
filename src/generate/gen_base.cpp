@@ -309,12 +309,15 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         if (auto* embed = ProjectImages.GetEmbeddedImage(idx_image); embed)
                         {
                             bool is_found = false;
-                            for (auto* pimage: m_embedded_images)
                             {
-                                if (pimage == embed)
+                                std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
+                                for (auto* pimage: m_embedded_images)
                                 {
-                                    is_found = true;
-                                    break;
+                                    if (pimage == embed)
+                                    {
+                                        is_found = true;
+                                        break;
+                                    }
                                 }
                             }
                             if (!is_found)
@@ -327,6 +330,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                                         embed->UpdateImage(embed->base_image());
                                         embed->base_image().file_time = file_time;
                                     }
+                                    std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
                                     m_embedded_images.emplace_back(embed);
                                 }
                                 else
@@ -382,27 +386,39 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                     if (!embed)
                     {
                         if (!ProjectImages.AddEmbeddedImage(parts[IndexImage], m_form_node))
+                        {
                             continue;
+                        }
                         embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
                         if (!embed)
+                        {
                             continue;
+                        }
                     }
                     else
                     {
                         bool is_found = false;
-                        for (auto& pimage: m_embedded_images)
                         {
-                            if (pimage == embed)
+                            std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
+                            for (auto& pimage: m_embedded_images)
                             {
-                                is_found = true;
-                                break;
+                                if (pimage == embed)
+                                {
+                                    is_found = true;
+                                    break;
+                                }
                             }
                         }
                         if (is_found)
+                        {
                             continue;  // we already have this image
+                        }
                     }
 
-                    m_embedded_images.emplace_back(embed);
+                    {
+                        std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
+                        m_embedded_images.emplace_back(embed);
+                    }
                 }
             }
             else if (value.starts_with("Header") || value.starts_with("XPM"))

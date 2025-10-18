@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <set>
 
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
@@ -179,5 +180,8 @@ protected:
     bool m_NeedHeaderFunction { false };     // Set when Header type is used
     bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
     bool m_NeedSVGFunction { false };        // Set when SVG image type is used
-    bool m_NeedImageFunction { false };      // Set when Embed type is used
+    bool m_NeedImageFunction { false };
+
+private:
+    std::mutex m_embedded_images_mutex;  // Protects m_embedded_images from concurrent access
 };

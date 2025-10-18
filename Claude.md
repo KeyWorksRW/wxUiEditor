@@ -19,8 +19,7 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - All generator classes derive from the base interface in `generate/base_generator.h`
 
 ### File and Code Restrictions
-- `file_list.cmake` lists the files in the project and cannot be edited
-- Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block." and "// DO NOT EDIT THIS COMMENT BLOCK!"
+- Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block.
 
 ### String Conversions
 - **Always use `wxString::ToStdString()`** for converting `wxString` to `std::string` or `std::string_view`. This method returns a reference to a string object.
@@ -65,6 +64,7 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Use range-based for loops over traditional loops when iterating containers
 - Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) instead of raw pointers
 - Use structured bindings and concepts for clarity and safety
+- Prefer C++20 ranges library algorithms over manual loops when applicable
 
 **Library Priority (in order):**
 1. C++ Standard Library (`std::`) - Always check here first

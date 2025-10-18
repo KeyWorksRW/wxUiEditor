@@ -14,6 +14,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "common_strings.h"   // Common strings used in code generation
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
@@ -43,10 +44,6 @@ R"===(##########################################################################
 )===";
 
 // clang-format on
-
-extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-
-const char* python_triple_quote = "\"\"\"";
 
 static void GatherImportModules(std::set<std::string>& imports, Node* node)
 {

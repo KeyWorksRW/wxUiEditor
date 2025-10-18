@@ -14,6 +14,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "common_strings.h"   // Common strings used in code generation
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
@@ -92,8 +93,6 @@ sub wxue_get_bundle {
 
 // clang-format on
 
-extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-
 // extern constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>;
 
 // If the node contains the specified property, then the string contains all
@@ -103,12 +102,6 @@ constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::str
     { prop_bitmap, "wxNullBitmap" },
 
 });
-
-// This *MUST* be written without any indendation
-const char* perl_begin_cmt_block = "=pod";
-
-// This *MUST* be written without any indendation
-const char* perl_end_cmt_block = "=cut";
 
 PerlCodeGenerator::PerlCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_PERL, form_node)
 {

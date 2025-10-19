@@ -5,12 +5,15 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/artprov.h>
-
+#include <algorithm>
+#include <array>
 #include <set>
 #include <thread>
 
+#include <wx/artprov.h>
+
 #include "gen_python.h"
+#include "gen_script_common.h"  // Common functions for generating Script Languages
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
@@ -45,26 +48,34 @@ R"===(##########################################################################
 
 // clang-format on
 
-static void GatherImportModules(std::set<std::string>& imports, Node* node)
+namespace
 {
-    if (auto* gen = node->get_Generator(); gen)
+
+    void GatherImportModules(std::set<std::string>& imports, Node* node)
     {
-        gen->GetPythonImports(node, imports);
+        if (auto* gen = node->get_Generator(); gen)
+        {
+            gen->GetPythonImports(node, imports);
+        }
+        for (auto& child: node->get_ChildNodePtrs())
+        {
+            GatherImportModules(imports, child.get());
+        }
     }
-    for (auto& child: node->get_ChildNodePtrs())
-    {
-        GatherImportModules(imports, child.get());
-    }
-}
+
+}  // anonymous namespace
 
 PythonCodeGenerator::PythonCodeGenerator(Node* form_node) :
     BaseCodeGenerator(GEN_LANG_PYTHON, form_node)
 {
 }
 
-void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 {
-    Code code(m_form_node, GEN_LANG_PYTHON);
+    m_language = language;
+    m_panel_type = panel_type;
+    ASSERT(m_language == GEN_LANG_PYTHON);
+    Code code(m_form_node, m_language);
 
     m_embedded_images.clear();
     SetImagesForm();
@@ -106,25 +117,14 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     if (!m_form_node->is_Gen(gen_Images))
+    {
         m_source->writeLine("import wx\n");
+    }
 
     if (m_form_node->is_Gen(gen_Images))
     {
         thrd_get_events.join();
-        try
-        {
-            thrd_collect_img_headers.join();
-        }
-        catch (const std::system_error& err)
-        {
-#if defined(_DEBUG)
-            MSG_ERROR(err.what());
-#else
-            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()),
-                                      "Internal Thread Error", wxICON_ERROR | wxOK);
-            dlg_error.ShowModal();
-#endif  // _DEBUG
-        }
+        ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
 
         GenerateImagesForm();
         return;
@@ -171,22 +171,22 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
     // set to highest wx
     auto id_value = 1;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
         if (!iter.starts_with("self."))
         {
             m_source->writeLine(tt_string() << iter << " = wx.ID_HIGHEST + " << id_value++);
         }
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
         if (!iter.starts_with("self."))
         {
             if (tt::contains(iter, " wx"))
             {
-                tt_string id = iter;
-                id.Replace(" wx", " wx.", true, tt::CASE::exact);
-                m_source->writeLine(id);
+                wxString wx_id = iter;
+                wx_id.Replace(" wx", " wx.", true);
+                m_source->writeLine(wx_id.ToStdString());
             }
             else
             {
@@ -195,20 +195,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    try
-    {
-        thrd_collect_img_headers.join();
-    }
-    catch (const std::system_error& err)
-    {
-#if defined(_DEBUG)
-        MSG_ERROR(err.what());
-#else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
-                                  wxICON_ERROR | wxOK);
-        dlg_error.ShowModal();
-#endif  // _DEBUG
-    }
+    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
 
     if (m_embedded_images.size())
     {
@@ -253,7 +240,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_header->writeLine();
     }
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -263,7 +250,7 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->Indent();
 
         id_value = 1;
-        for (auto& iter: m_set_enum_ids)
+        for (const auto& iter: m_set_enum_ids)
         {
             if (iter.starts_with("self."))
             {
@@ -301,7 +288,9 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 
@@ -358,11 +347,12 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     m_source->ResetIndent();
     m_header->ResetIndent();
 
-    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-              [](const EmbeddedImage* a, const EmbeddedImage* b)
-              {
-                  return (a->base_image().array_name.compare(b->base_image().array_name) < 0);
-              });
+    std::ranges::sort(
+        m_embedded_images,
+        [](const EmbeddedImage* image_a, const EmbeddedImage* image_b)
+        {
+            return (image_a->base_image().array_name.compare(image_b->base_image().array_name) < 0);
+        });
 }
 
 void PythonCodeGenerator::GenerateImagesForm()
@@ -377,10 +367,12 @@ void PythonCodeGenerator::GenerateImagesForm()
 
     Code code(m_form_node, GEN_LANG_PYTHON);
 
-    for (auto iter_array: m_embedded_images)
+    for (const auto* iter_array: m_embedded_images)
     {
         if (iter_array->get_Form() != m_form_node)
+        {
             continue;
+        }
 
         if (iter_array->base_image().filename.size())
         {
@@ -515,10 +507,10 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_PYTHON);
-    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
-        return (EventHandlerDlg::GetPythonValue(a->get_value()) <
-                EventHandlerDlg::GetPythonValue(b->get_value()));
+        return (EventHandlerDlg::GetPythonValue(event_a->get_value()) <
+                EventHandlerDlg::GetPythonValue(event_b->get_value()));
     };
 
     // Sort events by function name
@@ -550,8 +542,8 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
         // don't generate them again.
         if (has_base_file && org_file.ReadFile(path))
         {
-            size_t line_index;
-            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            size_t line_index = 0;
+            for (; line_index < org_file.size(); ++line_index)
             {
                 if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
                 {
@@ -578,17 +570,23 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
             auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
             // Ignore lambda's
             if (python_handler.starts_with("[python:lambda]"))
+            {
                 continue;
+            }
 
             tt_string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "def " << python_handler << "(self, _):";
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
             set_code << "def " << python_handler << "(self, event):";
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
 
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
@@ -625,22 +623,28 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
             auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
             // Ignore lambda's
             if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
+            {
                 continue;
+            }
 
             tt_string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "def " << python_handler << "(self, _):";
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
             set_code.Replace("_)", "event)");
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
 #if defined(_DEBUG)
-            auto& dbg_event_name = event->get_name();
+            const auto& dbg_event_name = event->get_name();
             wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
             if (event->get_name() == "CloseButtonClicked")
@@ -686,7 +690,7 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
 
 bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 {
-    auto& description = code.node()->as_string(prop);
+    const auto& description = code.node()->as_string(prop);
     ASSERT_MSG(description.size(), "PythonBitmapList called with empty description");
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -696,7 +700,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         return false;
     }
 
-    auto bundle = ProjectImages.GetPropertyImageBundle(description);
+    const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -708,7 +712,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     code += "bitmaps = [ ";
     bool needs_comma = false;
-    for (auto& iter: bundle->lst_filenames)
+    for (const auto& iter: bundle->lst_filenames)
     {
         if (needs_comma)
         {
@@ -719,7 +723,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         bool is_embed_success = false;
         if (parts[IndexType].starts_with("Embed"))
         {
-            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+            if (auto* embed = ProjectImages.GetEmbeddedImage(iter); embed)
             {
                 code.AddPythonImageName(embed);
                 code += ".Bitmap";
@@ -737,7 +741,9 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
             code.Str("wx.Bitmap(").QuotedString(name);
             if (is_xpm)
+            {
                 code.Comma().Str("wx.BITMAP_TYPE_XPM");
+            }
             code += ")";
             needs_comma = true;
         }
@@ -754,17 +760,17 @@ struct BTN_BMP_TYPES
     const char* function_name;
 };
 
-inline const BTN_BMP_TYPES btn_bmp_types[] = {
+inline const std::array<BTN_BMP_TYPES, 5> btn_bmp_types = { {
     { prop_bitmap, "SetBitmap" },
     { prop_disabled_bmp, "SetBitmapDisabled" },
     { prop_pressed_bmp, "SetBitmapPressed" },
     { prop_focus_bmp, "SetBitmapFocus" },
     { prop_current, "SetBitmapCurrent" },
-};
+} };
 
 void PythonBtnBimapCode(Code& code, bool is_single)
 {
-    for (auto& iter: btn_bmp_types)
+    for (const auto& iter: btn_bmp_types)
     {
         code.Eol(eol_if_needed);
         if (code.HasValue(iter.prop_name))
@@ -795,8 +801,12 @@ tt_string MakePythonPath(Node* node)
     auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_PYTHON);
 
     if (path.empty())
+    {
         path = "./";
+    }
     else if (has_base_file)
+    {
         path.remove_filename();
+    }
     return path;
 }

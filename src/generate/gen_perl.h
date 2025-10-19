@@ -15,7 +15,8 @@ public:
     PerlCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
+    void GenerateClass(GenLang language = GEN_LANG_PERL,
+                       PANEL_PAGE panel_type = NOT_PANEL) override;
 
 protected:
     // This will collect all potential use statements, sort and separate the, and write them

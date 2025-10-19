@@ -16,7 +16,8 @@ public:
     RubyCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
+    void GenerateClass(GenLang language = GEN_LANG_RUBY,
+                       PANEL_PAGE panel_type = NOT_PANEL) override;
 
 protected:
     // This function simply generates unhandled event handlers in a multi-string comment.
@@ -39,7 +40,6 @@ private:
     auto WriteHelperFunctions() -> void;
     auto WriteEmbeddedImages(Code& code) -> void;
     auto WriteRuboCopFooter() -> void;
-    static auto JoinThreadSafely(std::thread& thread) -> void;
 
     // Helper methods for WriteImageRequireStatements
     struct ImageFromImagesParameters

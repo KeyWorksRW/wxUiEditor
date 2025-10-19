@@ -12,6 +12,7 @@
 #include <thread>
 
 #include "gen_ruby.h"
+#include "gen_script_common.h"  // Common functions for generating Script Languages
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
@@ -112,29 +113,6 @@ auto RubyCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set
 
     return { std::move(thrd_get_events), std::move(thrd_need_img_func),
              std::move(thrd_collect_img_headers) };
-}
-
-auto RubyCodeGenerator::JoinThreadSafely(std::thread& thread) -> void
-{
-    if (!thread.joinable())
-    {
-        return;
-    }
-
-    try
-    {
-        thread.join();
-    }
-    catch (const std::system_error& err)
-    {
-#if defined(_DEBUG)
-        MSG_ERROR(err.what());
-#else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
-                                  wxICON_ERROR | wxOK);
-        dlg_error.ShowModal();
-#endif  // _DEBUG
-    }
 }
 
 auto RubyCodeGenerator::WriteSourceHeader() -> void
@@ -445,9 +423,12 @@ auto RubyCodeGenerator::WriteRuboCopFooter() -> void
     }
 }
 
-void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 {
-    Code code(m_form_node, GEN_LANG_RUBY);
+    m_language = language;
+    m_panel_type = panel_type;
+    ASSERT(m_language == GEN_LANG_RUBY);
+    Code code(m_form_node, m_language);
 
     m_embedded_images.clear();
     m_NeedAnimationFunction = false;
@@ -492,7 +473,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine();
 
         thrd_get_events.join();
-        JoinThreadSafely(thrd_collect_img_headers);
+        ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
         thrd_need_img_func.join();
         GenerateImagesForm();
         return;
@@ -510,7 +491,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     WriteRelativeRequires(forms);
     WriteIDConstants();
 
-    JoinThreadSafely(thrd_collect_img_headers);
+    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
 
     if (m_embedded_images.size())
     {

@@ -5,12 +5,14 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
 #include <set>
 #include <thread>
 
 #include <frozen/map.h>
 
 #include "gen_perl.h"
+#include "gen_script_common.h"  // Common functions for generating Script Languages
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
@@ -107,9 +109,12 @@ PerlCodeGenerator::PerlCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LA
 {
 }
 
-void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 {
-    Code code(m_form_node, GEN_LANG_PERL);
+    m_language = language;
+    m_panel_type = panel_type;
+    ASSERT(m_language == GEN_LANG_PERL);
+    Code code(m_form_node, m_language);
 
     m_embedded_images.clear();
 
@@ -143,7 +148,9 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         {
             tt_string class_name = m_form_node->as_string(prop_class_name);
             if (class_name.ends_with("Base"))
+            {
                 class_name.erase(class_name.size() - 4);
+            }
             code.Replace("MainFrame", class_name);
         }
         m_header->writeLine(code);
@@ -168,7 +175,9 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     code.Str("use Wx;").Eol();
     code.Str("package ").NodeName();
     if (code.ends_with("Base"))
+    {
         code.erase(code.size() - 4);
+    }
     code.Str(";").Eol();
 
     m_source->writeLine(code);
@@ -195,20 +204,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         "use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
     m_source->writeLine("use strict;");
 
-    try
-    {
-        thrd_collect_img_headers.join();
-    }
-    catch (const std::system_error& err)
-    {
-#if defined(_DEBUG)
-        MSG_ERROR(err.what());
-#else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
-                                  wxICON_ERROR | wxOK);
-        dlg_error.ShowModal();
-#endif  // _DEBUG
-    }
+    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
 
     if (m_form_node->is_Gen(gen_Images))
     {
@@ -219,23 +215,23 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         return;
     }
 
-    else if (m_embedded_images.size())
+    if (m_embedded_images.size())
     {
         CheckMimeBase64Requirement(code);
     }
 
     int id_value = wxID_HIGHEST;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
         m_source->writeLine(tt_string() << '$' << iter << " = " << id_value++);
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
         if (tt::contains(iter, " wx"))
         {
-            tt_string id = '$' + iter;
-            id.Replace(" wx", " wx.", true, tt::CASE::exact);
-            m_source->writeLine(id);
+            wxString wx_id = '$' + iter;
+            wx_id.Replace(" wx", " wx.", true);
+            m_source->writeLine(wx_id.ToStdString());
         }
         else
         {
@@ -243,7 +239,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         }
     }
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -253,7 +249,7 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->Indent();
 
         id_value = wxID_HIGHEST;
-        for (auto& iter: m_set_enum_ids)
+        for (const auto& iter: m_set_enum_ids)
         {
             m_source->writeLine(tt_string() << '@' << iter << id_value++);
         }
@@ -290,7 +286,9 @@ void PerlCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 
@@ -407,7 +405,7 @@ void PerlCodeGenerator::WriteUsageStatements()
 
     if (m_use_classes.size())
     {
-        for (auto& iter: m_use_packages)
+        for (const auto& iter: m_use_packages)
         {
             m_source->writeLine(iter);
         }
@@ -416,7 +414,7 @@ void PerlCodeGenerator::WriteUsageStatements()
 
     if (m_use_expands.size())
     {
-        for (auto& iter: m_use_expands)
+        for (const auto& iter: m_use_expands)
         {
             m_source->writeLine(iter);
         }
@@ -425,7 +423,7 @@ void PerlCodeGenerator::WriteUsageStatements()
 
     if (m_use_constants.size())
     {
-        for (auto& iter: m_use_constants)
+        for (const auto& iter: m_use_constants)
         {
             m_source->writeLine(iter);
         }
@@ -458,14 +456,14 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_PERL);
-    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
-        return (EventHandlerDlg::GetPerlValue(a->get_value()) <
-                EventHandlerDlg::GetPerlValue(b->get_value()));
+        return (EventHandlerDlg::GetPerlValue(event_a->get_value()) <
+                EventHandlerDlg::GetPerlValue(event_b->get_value()));
     };
 
     // Sort events by function name
-    std::sort(events.begin(), events.end(), sort_event_handlers);
+    std::ranges::sort(events, sort_event_handlers);
 
     bool found_user_handlers = false;
     if (m_panel_type == NOT_PANEL)
@@ -482,8 +480,8 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
         // don't generate them again.
         if (has_base_file && org_file.ReadFile(path))
         {
-            size_t line_index;
-            for (line_index = 0; line_index < org_file.size(); ++line_index)
+            size_t line_index = 0;
+            for (; line_index < org_file.size(); ++line_index)
             {
                 if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
                 {
@@ -510,17 +508,23 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
             auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
             // Ignore lambda's
             if (handler.starts_with("[perl:lambda]"))
+            {
                 continue;
+            }
 
             tt_string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "sub " << handler << " {";
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
             set_code << "sub " << handler << " {";
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
 
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
@@ -555,21 +559,25 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
             auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
             // Ignore lambda's
             if (handler.empty() || handler.starts_with("[perl:lambda]"))
+            {
                 continue;
+            }
 
             tt_string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "sub " << handler << " {";
 
-            if (code_lines.find(set_code) != code_lines.end())
+            if (code_lines.contains(set_code))
+            {
                 continue;
+            }
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
             code.Tab().Str("my ($self, $event) = @_;").Eol();
 #if defined(_DEBUG)
-            auto& dbg_event_name = event->get_name();
+            const auto& dbg_event_name = event->get_name();
             wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
             if (event->get_name() == "CloseButtonClicked")
@@ -701,7 +709,7 @@ void PerlCodeGenerator::InitializeUsageStatements()
     if (m_art_ids.size())
     {
         tt_string art_ids;
-        for (auto& iter: m_art_ids)
+        for (const auto& iter: m_art_ids)
         {
             if (art_ids.empty())
             {
@@ -782,18 +790,26 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
     {
         std::set<std::string> imports;
         gen->GetImports(node, imports, GEN_LANG_PERL);
-        for (auto& iter: imports)
+        for (const auto& iter: imports)
         {
             if (iter.starts_with("use Wx qw[:"))
+            {
                 m_use_expands.emplace(iter);
+            }
             else if (iter.starts_with("use Wx::"))
+            {
                 m_use_packages.emplace(iter);
+            }
             else if (iter.starts_with("use Wx "))
+            {
                 m_use_constants.emplace(iter);
+            }
             else
+            {
                 m_use_classes.emplace(iter);
+            }
         }
-        for (auto& iter: map_perl_constants)
+        for (const auto& iter: map_perl_constants)
         {
             if (node->HasProp(iter.first))
             {
@@ -812,30 +828,33 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
     }
 }
 
-tt_string MakePerlPath(Node* node)
+auto MakePerlPath(Node* node) -> tt_string
 {
     auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_PERL);
 
     if (path.empty())
+    {
         path = "./";
+    }
     else if (has_base_file)
+    {
         path.remove_filename();
+    }
     return path;
 }
 
 bool HasPerlMapConstant(std::string_view value)
 {
-    for (auto& iter: map_perl_constants)
-    {
-        if (tt::contains(iter.second, value))
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(map_perl_constants,
+                               [&](const auto& iter)
+                               {
+                                   return tt::contains(iter.second, value);
+                               });
 }
 
-bool PerlBitmapList(Code& code, GenEnum::PropName prop)
+auto PerlBitmapList(Code& code, GenEnum::PropName prop) -> bool
 {
-    auto& description = code.node()->as_string(prop);
+    const auto& description = code.node()->as_string(prop);
     ASSERT_MSG(description.size(), "PerlBitmapList called with empty description");
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -845,7 +864,7 @@ bool PerlBitmapList(Code& code, GenEnum::PropName prop)
         return false;
     }
 
-    auto bundle = ProjectImages.GetPropertyImageBundle(description);
+    const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -857,7 +876,7 @@ bool PerlBitmapList(Code& code, GenEnum::PropName prop)
 
     code += "bitmaps = [ ";
     bool needs_comma = false;
-    for (auto& iter: bundle->lst_filenames)
+    for (const auto& iter: bundle->lst_filenames)
     {
         if (needs_comma)
         {
@@ -868,7 +887,7 @@ bool PerlBitmapList(Code& code, GenEnum::PropName prop)
         bool is_embed_success = false;
         if (parts[IndexType].starts_with("Embed"))
         {
-            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+            if (auto* embed = ProjectImages.GetEmbeddedImage(iter); embed)
             {
                 code.AddPerlImageName(embed);
                 code += ".Bitmap";
@@ -886,7 +905,9 @@ bool PerlBitmapList(Code& code, GenEnum::PropName prop)
 
             code.Str("Wx::Bitmap->new(").QuotedString(name);
             if (is_xpm)
+            {
                 code.Comma().Str("wxBITMAP_TYPE_XPM");
+            }
             code += ")";
             needs_comma = true;
         }

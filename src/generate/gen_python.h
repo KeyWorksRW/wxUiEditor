@@ -13,7 +13,8 @@ public:
     PythonCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
+    void GenerateClass(GenLang language = GEN_LANG_PYTHON,
+                       PANEL_PAGE panel_type = NOT_PANEL) override;
 
 protected:
     // This function simply generates unhandled event handlers in a multi-string comment.

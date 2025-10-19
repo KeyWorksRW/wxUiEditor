@@ -251,8 +251,10 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
 
 XrcCodeGenerator::XrcCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_XRC, form_node) {}
 
-void XrcCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 {
+    m_language = language;
+    ASSERT(m_language == GEN_LANG_XRC);
     m_panel_type = panel_type;
 
     m_header->Clear();

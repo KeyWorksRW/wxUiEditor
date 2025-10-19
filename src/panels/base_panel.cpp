@@ -349,7 +349,7 @@ void BasePanel::GenerateBaseClass()
     switch (m_panel_type)
     {
         case GEN_LANG_CPLUSPLUS:
-            code_generator->GenerateClass(panel_page);
+            code_generator->GenerateClass(GEN_LANG_CPLUSPLUS, panel_page);
 
             m_derived_src_panel->Clear();
             code_generator->SetSrcWriteCode(m_derived_src_panel);
@@ -360,23 +360,23 @@ void BasePanel::GenerateBaseClass()
             break;
 
         case GEN_LANG_PERL:
-            code_generator->GenerateClass(panel_page);
+            code_generator->GenerateClass(GEN_LANG_PERL, panel_page);
             break;
 
         case GEN_LANG_PYTHON:
-            code_generator->GenerateClass(panel_page);
+            code_generator->GenerateClass(GEN_LANG_PYTHON, panel_page);
             break;
 
         case GEN_LANG_RUBY:
-            code_generator->GenerateClass(panel_page);
+            code_generator->GenerateClass(GEN_LANG_RUBY, panel_page);
             break;
 
         case GEN_LANG_RUST:
-            code_generator->GenerateClass(panel_page);
+            code_generator->GenerateClass(GEN_LANG_RUST, panel_page);
             break;
 
         case GEN_LANG_XRC:
-            code_generator->GenerateClass(panel_page);
+            code_generator->GenerateClass(GEN_LANG_XRC, panel_page);
             break;
 
         default:

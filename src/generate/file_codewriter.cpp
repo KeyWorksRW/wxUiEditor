@@ -11,7 +11,8 @@
 
 #include "file_codewriter.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"            // Code -- Helper class for generating code
+#include "common_strings.h"  // Common strings used in code generation
 #include "gen_enums.h"
 #include "mainapp.h"         // App -- Main application class
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
@@ -42,7 +43,6 @@ R"===(# ************* End of generated code ***********
 )===";
 
 std::string_view cpp_rust_end_cmt_line = "// ************* End of generated code";
-std::string_view python_perl_ruby_end_cmt_line = "# ************* End of generated code";
 
 // clang-format on
 

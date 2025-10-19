@@ -15,11 +15,12 @@ public:
     CppCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
+    void GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
+                       PANEL_PAGE panel_type = NOT_PANEL) override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
-    int GenerateDerivedClass(Node* project, Node* form_node,
-                             PANEL_PAGE panel_type = NOT_PANEL) override;
+    auto GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL)
+        -> int override;
 
 protected:
     void GenerateCppClassHeader(bool class_namespace = false);

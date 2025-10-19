@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ and Python events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,9 +14,9 @@
 #include "gen_base.h"
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
-#include "base_generator.h"                   // BaseGenerator -- Base Generator class
 #include "base_generator.h"                   // BaseGenerator -- Base widget generator class
 #include "code.h"                             // Code -- Helper class for generating code
+#include "common_strings.h"                   // Common strings used in code generation
 #include "file_codewriter.h"                  // FileCodeWriter -- Classs to write code to disk
 #include "lambdas.h"         // Functions for formatting and storage of lamda events
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
@@ -24,12 +24,6 @@
 using namespace code;
 
 extern std::string_view cpp_rust_end_cmt_line;  // "// ************* End of generated code"
-extern const char* perl_begin_cmt_block;        // "=pod" -- must be written with no indentation
-extern const char* perl_end_cmt_block;          // "=cut" -- must be written with no indentation
-extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-extern const char* python_triple_quote;                 // "\"\"\"";
-extern const char* ruby_begin_cmt_block;                // "=begin";
-extern const char* ruby_end_cmt_block;                  // "=end";
 
 /////////////////////////////////////////// Default generator event code
 //////////////////////////////////////////////

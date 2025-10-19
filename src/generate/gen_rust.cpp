@@ -48,9 +48,11 @@ RustCodeGenerator::RustCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LA
 {
 }
 
-void RustCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 {
-    Code code(m_form_node, GEN_LANG_RUST);
+    m_language = language;
+    ASSERT(m_language == GEN_LANG_RUST);
+    Code code(m_form_node, m_language);
 
     m_embedded_images.clear();
     SetImagesForm();

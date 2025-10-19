@@ -7,13 +7,16 @@
 
 #include <wx/artprov.h>
 
+#include <algorithm>
 #include <set>
 #include <thread>
 
 #include "gen_ruby.h"
+#include "gen_script_common.h"  // Common functions for generating Script Languages
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "common_strings.h"   // Common strings used in code generation
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
@@ -82,14 +85,6 @@ end
 
 // clang-format on
 
-extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-
-// This *must* be written on a line by itself with *no* indentation.
-const char* ruby_begin_cmt_block = "=begin";
-
-// This *must* be written on a line by itself with *no* indentation.
-const char* ruby_end_cmt_block = "=end";
-
 #if defined(_DEBUG)
 // clang-format off
 static const std::vector<tt_string> disable_list = {
@@ -106,41 +101,22 @@ RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LA
 {
 }
 
-void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+auto RubyCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set)
+    -> std::tuple<std::thread, std::thread, std::thread>
 {
-    Code code(m_form_node, GEN_LANG_RUBY);
+    auto thrd_get_events = std::thread(&RubyCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                       std::ref(m_events));
+    auto thrd_need_img_func =
+        std::thread(&RubyCodeGenerator::ParseImageProperties, this, m_form_node);
+    auto thrd_collect_img_headers = std::thread(&RubyCodeGenerator::CollectImageHeaders, this,
+                                                m_form_node, std::ref(img_include_set));
 
-    m_embedded_images.clear();
+    return { std::move(thrd_get_events), std::move(thrd_need_img_func),
+             std::move(thrd_collect_img_headers) };
+}
 
-    m_NeedAnimationFunction = false;
-    m_NeedImageFunction = false;
-    m_NeedSVGFunction = false;
-
-    SetImagesForm();
-    std::set<std::string> img_include_set;
-
-    std::thread thrd_get_events(&RubyCodeGenerator::CollectEventHandlers, this, m_form_node,
-                                std::ref(m_events));
-    std::thread thrd_need_img_func(&RubyCodeGenerator::ParseImageProperties, this, m_form_node);
-    std::thread thrd_collect_img_headers(&RubyCodeGenerator::CollectImageHeaders, this, m_form_node,
-                                         std::ref(img_include_set));
-
-    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
-    if (panel_type != NOT_PANEL)
-    {
-        ProjectImages.UpdateEmbedNodes();
-    }
-
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
-
-    m_panel_type = panel_type;
-
-    m_header->Clear();
-    m_source->Clear();
-    m_source->SetTabToSpaces(2);
-    m_source->SetLastLineBlank();
-
+auto RubyCodeGenerator::WriteSourceHeader() -> void
+{
 #if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
 #else
@@ -156,7 +132,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         if (Project.as_bool(prop_disable_rubo_cop))
         {
 #if defined(_DEBUG)
-            for (auto& iter: disable_list)
+            for (const auto& iter: disable_list)
             {
                 m_source->writeLine("# rubocop:disable " + iter);
             }
@@ -174,49 +150,10 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     m_source->writeLine(
         "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+}
 
-    m_set_enum_ids.clear();
-    m_set_const_ids.clear();
-    // Do this early to give thrd_get_events and thrd_collect_img_headers a chance to run
-    // before we need to join (finish) them.
-    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
-
-    if (m_form_node->is_Gen(gen_Images))
-    {
-        m_source->writeLine();
-        m_source->writeLine("require 'base64'");
-        m_source->writeLine("require 'stringio'");
-        m_source->writeLine();
-
-        thrd_get_events.join();
-        try
-        {
-            thrd_collect_img_headers.join();
-        }
-        catch (const std::system_error& err)
-        {
-#if defined(_DEBUG)
-            MSG_ERROR(err.what());
-#else
-            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()),
-                                      "Internal Thread Error", wxICON_ERROR | wxOK);
-            dlg_error.ShowModal();
-#endif  // _DEBUG
-        }
-
-        thrd_need_img_func.join();
-        GenerateImagesForm();
-        return;
-    }
-
-    m_header->writeLine(
-        "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-    m_header->writeLine(tt_string("# Sample inherited class from ")
-                        << m_form_node->as_string(prop_class_name));
-    m_header->writeLine();
-
-    std::set<std::string> imports;
-
+auto RubyCodeGenerator::WriteImports(std::set<std::string>& imports) -> void
+{
     auto GatherImportModules = [&](Node* node, auto&& GatherImportModules) -> void
     {
         if (auto* gen = node->get_Generator(); gen)
@@ -237,7 +174,10 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
     m_source->writeLine();
     m_header->writeLine();
+}
 
+auto RubyCodeGenerator::WriteRelativeRequires(const std::vector<Node*>& forms) -> void
+{
     if (m_form_node->HasValue(prop_relative_require_list))
     {
         tt_string_vector list;
@@ -255,7 +195,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     if (m_form_node->is_Type(type_frame_form) && m_form_node->as_bool(prop_import_all_dialogs))
     {
-        for (auto& form: forms)
+        for (const auto& form: forms)
         {
             if ((form->is_Gen(gen_wxDialog) || form->is_Gen(gen_wxWizard)) &&
                 form->HasValue(prop_ruby_file))
@@ -266,64 +206,32 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             }
         }
     }
+}
 
+auto RubyCodeGenerator::WriteIDConstants() -> void
+{
     int id_value = wxID_HIGHEST;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
         m_source->writeLine(tt_string() << '$' << iter << " = " << id_value++);
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
         if (tt::contains(iter, " wx"))
         {
-            tt_string id = '$' + iter;
-            id.Replace(" wx", " Wx::", true, tt::CASE::exact);
-            m_source->writeLine(id);
+            wxString wx_id = '$' + iter;
+            wx_id.Replace(" wx", " Wx::", true);
+            m_source->writeLine(wx_id.ToStdString());
         }
         else
         {
             m_source->writeLine('$' + iter);
         }
     }
+}
 
-    try
-    {
-        thrd_collect_img_headers.join();
-    }
-    catch (const std::system_error& err)
-    {
-#if defined(_DEBUG)
-        MSG_ERROR(err.what());
-#else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
-                                  wxICON_ERROR | wxOK);
-        dlg_error.ShowModal();
-#endif  // _DEBUG
-    }
-
-    if (m_embedded_images.size())
-    {
-        WriteImageRequireStatements(code);
-    }
-
-    m_source->writeLine();
-    m_header->writeLine();
-    m_header->writeLine(tt_string("requires '") << m_form_node->as_string(prop_ruby_file) << "'\n");
-    m_header->writeLine();
-
-    if (m_form_node->HasValue(prop_ruby_insert))
-    {
-        tt_string convert(m_form_node->as_string(prop_ruby_insert));
-        convert.Replace("@@", "\n", tt::REPLACE::all);
-        tt_string_vector lines(convert, '\n', tt::TRIM::right);
-        for (auto& line: lines)
-        {
-            m_source->doWrite(line);
-            m_source->doWrite("\n");
-        }
-        m_source->doWrite("\n");
-    }
-
+auto RubyCodeGenerator::WriteInheritedClass() -> void
+{
     tt_string inherit_name = m_form_node->as_string(prop_ruby_inherit_name);
     if (inherit_name.empty())
     {
@@ -343,8 +251,11 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_header->Unindent();
         m_header->writeLine();
     }
+}
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+auto RubyCodeGenerator::GenerateConstructionCode(Code& code) -> void
+{
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -378,7 +289,9 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 
@@ -417,18 +330,17 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     rlambda(m_form_node, rlambda);
 
-    // Timer code must be created before the events, otherwise the timer variable won't exist
-    // when the event is created.
-
     code.clear();
     if (TimerGenerator::StartIfChildTimer(m_form_node, code))
     {
         m_source->writeLine(code);
         m_source->writeLine();
     }
+}
 
-    // Delay calling join() for as long as possible to increase the chance that the thread will
-    // have already completed.
+auto RubyCodeGenerator::GenerateEventHandlers([[maybe_unused]] Code& code,
+                                              std::thread& thrd_get_events) -> void
+{
     thrd_get_events.join();
     if (m_events.size())
     {
@@ -451,9 +363,10 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
     m_header->ResetIndent();
     m_header->writeLine("end", indent::none);
+}
 
-    thrd_need_img_func.join();
-
+auto RubyCodeGenerator::WriteHelperFunctions() -> void
+{
     if (m_NeedImageFunction)
     {
         m_source->doWrite("\n");  // force an extra line break
@@ -463,23 +376,15 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     if (m_NeedAnimationFunction)
     {
         if (!m_NeedImageFunction)
+        {
             m_source->doWrite("\n");  // force an extra line break
+        }
         m_source->writeLine(txt_ruby_get_animation, indent::auto_keep_whitespace);
     }
+}
 
-    if (m_form_node->is_Gen(gen_wxWizard))
-    {
-        code.clear();
-        // see for an example C:\rwCode\wxRuby3\samples\dialogs\wizard.rb
-        // w = MyWizard.new(self)
-        // w.run_wizard(w.get_page_area_sizer.get_item(0).get_window)
-    }
-
-    // Make certain indentation is reset after all construction code is written
-    m_source->ResetIndent();
-
-    m_header->ResetIndent();
-
+auto RubyCodeGenerator::WriteEmbeddedImages(Code& code) -> void
+{
     code.clear();
     // Now write any embedded images that aren't declared in the gen_Images List
     for (auto& iter: m_embedded_images)
@@ -494,7 +399,10 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             break;
         }
     }
+}
 
+auto RubyCodeGenerator::WriteRuboCopFooter() -> void
+{
 #if !defined(_DEBUG)
     if (m_panel_type == NOT_PANEL)
 #endif  // _DEBUG
@@ -503,7 +411,7 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         {
             m_source->writeLine();
 #if defined(_DEBUG)
-            for (auto& iter: disable_list)
+            for (const auto& iter: disable_list)
             {
                 m_source->writeLine("# rubocop:enable " + iter);
             }
@@ -513,6 +421,187 @@ void RubyCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             m_source->writeLine();
         }
     }
+}
+
+void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+{
+    m_language = language;
+    m_panel_type = panel_type;
+    ASSERT(m_language == GEN_LANG_RUBY);
+    Code code(m_form_node, m_language);
+
+    m_embedded_images.clear();
+    m_NeedAnimationFunction = false;
+    m_NeedImageFunction = false;
+    m_NeedSVGFunction = false;
+
+    SetImagesForm();
+
+    // Start threads early to process in background
+    std::set<std::string> img_include_set;
+    auto [thrd_get_events, thrd_need_img_func, thrd_collect_img_headers] =
+        InitializeThreads(img_include_set);
+
+    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
+    if (panel_type != NOT_PANEL)
+    {
+        ProjectImages.UpdateEmbedNodes();
+    }
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    m_panel_type = panel_type;
+
+    m_header->Clear();
+    m_source->Clear();
+    m_source->SetTabToSpaces(2);
+    m_source->SetLastLineBlank();
+
+    WriteSourceHeader();
+
+    m_set_enum_ids.clear();
+    m_set_const_ids.clear();
+    // Do this early to give threads a chance to run before we need to join them.
+    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
+
+    if (m_form_node->is_Gen(gen_Images))
+    {
+        m_source->writeLine();
+        m_source->writeLine("require 'base64'");
+        m_source->writeLine("require 'stringio'");
+        m_source->writeLine();
+
+        thrd_get_events.join();
+        ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
+        thrd_need_img_func.join();
+        GenerateImagesForm();
+        return;
+    }
+
+    m_header->writeLine(
+        "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+    m_header->writeLine(tt_string("# Sample inherited class from ")
+                        << m_form_node->as_string(prop_class_name));
+    m_header->writeLine();
+
+    std::set<std::string> imports;
+    WriteImports(imports);
+
+    WriteRelativeRequires(forms);
+    WriteIDConstants();
+
+    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
+
+    if (m_embedded_images.size())
+    {
+        WriteImageRequireStatements(code);
+    }
+
+    m_source->writeLine();
+    m_header->writeLine();
+    m_header->writeLine(tt_string("requires '") << m_form_node->as_string(prop_ruby_file) << "'\n");
+    m_header->writeLine();
+
+    if (m_form_node->HasValue(prop_ruby_insert))
+    {
+        tt_string convert(m_form_node->as_string(prop_ruby_insert));
+        convert.Replace("@@", "\n", tt::REPLACE::all);
+        tt_string_vector lines(convert, '\n', tt::TRIM::right);
+        for (auto& line: lines)
+        {
+            m_source->doWrite(line);
+            m_source->doWrite("\n");
+        }
+        m_source->doWrite("\n");
+    }
+
+    WriteInheritedClass();
+    GenerateConstructionCode(code);
+    GenerateEventHandlers(code, thrd_get_events);
+
+    thrd_need_img_func.join();
+
+    WriteHelperFunctions();
+
+    if (m_form_node->is_Gen(gen_wxWizard))
+    {
+        code.clear();
+        // see for an example C:\rwCode\wxRuby3\samples\dialogs\wizard.rb
+        // w = MyWizard.new(self)
+        // w.run_wizard(w.get_page_area_sizer.get_item(0).get_window)
+    }
+
+    // Make certain indentation is reset after all construction code is written
+    m_source->ResetIndent();
+    m_header->ResetIndent();
+
+    WriteEmbeddedImages(code);
+    WriteRuboCopFooter();
+}
+
+auto RubyCodeGenerator::WriteSVGRequirements() -> void
+{
+    if (!m_zlib_requirement_written)
+    {
+        m_zlib_requirement_written = true;
+        m_source->writeLine("require 'zlib'");
+    }
+    if (!m_base64_requirement_written)
+    {
+        m_base64_requirement_written = true;
+        m_source->writeLine("require 'base64'");
+    }
+    if (!m_stringio_requirement_written)
+    {
+        m_stringio_requirement_written = true;
+        m_source->writeLine("require 'stringio'");
+    }
+}
+
+auto RubyCodeGenerator::WriteImagesFileImport(Code& code, Node* form) -> void
+{
+    tt_string import_name = form->as_string(prop_ruby_file).filename();
+    import_name.remove_extension();
+    code.Str("require_relative '").Str(import_name) << "'";
+    m_source->writeLine(code);
+    code.clear();
+}
+
+auto RubyCodeGenerator::ProcessImageFromImagesForm(const ImageFromImagesParameters& params) -> void
+{
+    if (!(*params.images_file_imported))
+    {
+        WriteImagesFileImport(*params.code, params.iter->get_Form());
+        *params.images_file_imported = true;
+    }
+
+    if (params.iter->base_image().type == wxBITMAP_TYPE_SVG)
+    {
+        WriteSVGRequirements();
+        *params.svg_import_libs = true;
+    }
+}
+
+auto RubyCodeGenerator::ProcessExternalImage(const EmbeddedImage* iter, bool svg_import_libs)
+    -> void
+{
+    if (iter->base_image().type == wxBITMAP_TYPE_SVG && !svg_import_libs)
+    {
+        WriteSVGRequirements();
+    }
+
+    if (!m_base64_requirement_written)
+    {
+        m_base64_requirement_written = true;
+        m_source->writeLine("require 'base64'");
+    }
+
+    // At this point we know that some method is required, but until we have
+    // processed all the images, we won't know if the images file is required.
+    // The images file provides it's own function for loading images, so we can
+    // use that if it's available.
+    m_NeedImageFunction = true;
 }
 
 void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
@@ -525,100 +614,38 @@ void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
     }
     m_source->writeLine();
 
-    // First see if we need to import the gen_Images List
     bool images_file_imported = false;
     bool svg_import_libs = false;
+
     for (auto& iter: m_embedded_images)
     {
         if (iter->get_Form() == m_ImagesForm)
         {
-            if (!images_file_imported)
-            {
-                tt_string import_name = iter->get_Form()->as_string(prop_ruby_file).filename();
-                import_name.remove_extension();
-                code.Str("require_relative '").Str(import_name) << "'";
-                m_source->writeLine(code);
-                code.clear();
-                images_file_imported = true;
-            }
-            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
-            {
-                if (!m_zlib_requirement_written)
-                {
-                    m_zlib_requirement_written = true;
-                    m_source->writeLine("require 'zlib'");
-                }
-                if (!m_base64_requirement_written)
-                {
-                    m_base64_requirement_written = true;
-                    m_source->writeLine("require 'base64'");
-                }
-                if (!m_stringio_requirement_written)
-                {
-                    m_stringio_requirement_written = true;
-                    m_source->writeLine("require 'stringio'");
-                }
-                svg_import_libs = true;
-            }
+            ProcessImageFromImagesForm(
+                ImageFromImagesParameters { .iter = iter,
+                                            .images_file_imported = &images_file_imported,
+                                            .svg_import_libs = &svg_import_libs,
+                                            .code = &code });
         }
-        else if (!svg_import_libs)
-        {
-            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
-            {
-                if (!m_zlib_requirement_written)
-                {
-                    m_zlib_requirement_written = true;
-                    m_source->writeLine("require 'zlib'");
-                }
-                if (!m_base64_requirement_written)
-                {
-                    m_base64_requirement_written = true;
-                    m_source->writeLine("require 'base64'");
-                }
-                if (!m_stringio_requirement_written)
-                {
-                    m_stringio_requirement_written = true;
-                    m_source->writeLine("require 'stringio'");
-                }
-                svg_import_libs = true;
-            }
-
-            if (iter->get_Form() != m_ImagesForm)
-            {
-                // If the image isn't in the images file, then we need to add the base64 version
-                // of the bitmap
-                if (!m_base64_requirement_written)
-                {
-                    m_base64_requirement_written = true;
-                    m_source->writeLine("require 'base64'");
-                }
-
-                // At this point we know that some method is required, but until we have
-                // processed all the images, we won't know if the images file is required.
-                // The images file provides it's own function for loading images, so we can
-                // use that if it's available.
-                m_NeedImageFunction = true;
-            }
-        }
-    }  // end of for (auto& iter: m_embedded_images)
-
-    if (m_NeedImageFunction)
-    {
-        if (images_file_imported)
-            // The images file supplies the function we need
-            m_NeedImageFunction = false;
         else
         {
-            // We have to provide our own method, and that requires this library
-            if (!m_stringio_requirement_written)
-            {
-                // No further check for this is needed
-                // m_stringio_requirement_written = true;
-                m_source->writeLine("require 'stringio'");
-            }
+            ProcessExternalImage(iter, svg_import_libs);
         }
     }
+
+    if (m_NeedImageFunction && images_file_imported)
+    {
+        // The images file supplies the function we need
+        m_NeedImageFunction = false;
+    }
+    else if (m_NeedImageFunction && !m_stringio_requirement_written)
+    {
+        // We have to provide our own method, and that requires this library
+        m_source->writeLine("require 'stringio'");
+    }
 }
+
+constexpr std::uint32_t MAX_UINT32 = 0xFFFFFFFF;
 
 void RubyCodeGenerator::GenerateImagesForm()
 {
@@ -631,10 +658,12 @@ void RubyCodeGenerator::GenerateImagesForm()
 
     Code code(m_form_node, GEN_LANG_RUBY);
 
-    for (auto iter_array: m_embedded_images)
+    for (const auto* iter_array: m_embedded_images)
     {
         if (iter_array->get_Form() != m_form_node)
+        {
             continue;
+        }
 
         if (iter_array->base_image().filename.size())
         {
@@ -653,7 +682,7 @@ void RubyCodeGenerator::GenerateImagesForm()
         code.clear();
         auto encoded =
             base64_encode(iter_array->base_image().array_data.get(),
-                          iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
+                          iter_array->base_image().array_size & MAX_UINT32, GEN_LANG_RUBY);
         if (encoded.size())
         {
             // Remove the trailing '+' character
@@ -666,6 +695,38 @@ void RubyCodeGenerator::GenerateImagesForm()
     }
 
     m_source->writeLine();
+}
+
+auto RubyCodeGenerator::CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
+    -> bool
+{
+    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GEN_LANG_RUBY, m_panel_type,
+                                                      code_lines, "def ");
+}
+
+auto RubyCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void
+{
+    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GEN_LANG_RUBY);
+}
+
+auto RubyCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& undefined_handlers) -> void
+{
+    ScriptCommon::GenerateEventHandlerBody(event, undefined_handlers, GEN_LANG_RUBY);
+}
+
+auto RubyCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers) -> void
+{
+    if (undefined_handlers.size())
+    {
+        m_source->writeLine(code, indent::none);
+        m_source->writeLine(ruby_begin_cmt_block, indent::none);
+        m_source->writeLine(undefined_handlers);
+        m_source->writeLine("end", indent::none);
+        m_source->writeLine(ruby_end_cmt_block, indent::none);
+
+        m_header->writeLine("# Event handler functions");
+        m_header->writeLine(undefined_handlers);
+    }
 }
 
 void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
@@ -681,14 +742,14 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_RUBY);
-    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
-        return (EventHandlerDlg::GetRubyValue(a->get_value()) <
-                EventHandlerDlg::GetRubyValue(b->get_value()));
+        return (EventHandlerDlg::GetRubyValue(event_a->get_value()) <
+                EventHandlerDlg::GetRubyValue(event_b->get_value()));
     };
 
     // Sort events by function name
-    std::sort(events.begin(), events.end(), sort_event_handlers);
+    std::ranges::sort(events, sort_event_handlers);
 
     bool inherited_class = m_form_node->HasValue(prop_ruby_inherit_name);
     if (!inherited_class)
@@ -701,54 +762,8 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
         m_header->writeLine();
     }
 
-    bool found_user_handlers = false;
-    if (m_panel_type == NOT_PANEL)
-    {
-        tt_view_vector org_file;
-        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_RUBY);
-
-        if (has_base_file && path.extension().empty())
-        {
-            path += ".rb";
-        }
-
-        // If the user has defined any event handlers, add them to the code_lines set so we
-        // don't generate them again.
-        if (has_base_file && org_file.ReadFile(path))
-        {
-            size_t line_index;
-            for (line_index = 0; line_index < org_file.size(); ++line_index)
-            {
-                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
-                {
-                    break;
-                }
-            }
-            for (++line_index; line_index < org_file.size(); ++line_index)
-            {
-                auto def = org_file[line_index].view_nonspace();
-                if (org_file[line_index].view_nonspace().starts_with("def "))
-                {
-                    code_lines.emplace(def);
-                    found_user_handlers = true;
-                }
-            }
-        }
-    }
-
-    if (found_user_handlers)
-    {
-        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below "
-                 "the comment block, or "
-                 "to your inherited class.");
-        code.Eol().Eol();
-    }
-    else
-    {
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your "
-                 "inherited class.");
-        code.Eol().Eol();
-    }
+    bool found_user_handlers = CollectExistingEventHandlers(code_lines);
+    GenerateEventHandlerComment(found_user_handlers, code);
 
     Code undefined_handlers(m_form_node, GEN_LANG_RUBY);
     for (auto& event: events)
@@ -756,55 +771,29 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
         auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
         // Ignore lambda's
         if (ruby_handler.empty() || ruby_handler.starts_with("[ruby:lambda]"))
+        {
             continue;
+        }
 
-        tt_string set_code;
+        wxString set_code;
         set_code << "def " << ruby_handler << "(event)";
-        if (code_lines.find(set_code) != code_lines.end())
+        if (code_lines.contains(set_code.ToStdString()))
+        {
             continue;
+        }
         code_lines.emplace(set_code);
 
-        undefined_handlers.Str(set_code).Eol();
-        if (event->get_name() == "CloseButtonClicked")
-        {
-            undefined_handlers.Tab().Str("end_modal(Wx::ID_CLOSE)");
-        }
-        else if (event->get_name() == "YesButtonClicked")
-        {
-            undefined_handlers.Tab().Str("end_modal(Wx::ID_YES)");
-        }
-        else if (event->get_name() == "NoButtonClicked")
-        {
-            undefined_handlers.Tab().Str("end_modal(Wx::ID_NO)");
-        }
-        else
-        {
-            undefined_handlers.Tab().Str("event.skip");
-        }
+        undefined_handlers.Str(set_code.ToStdString()).Eol();
+        GenerateEventHandlerBody(event, undefined_handlers);
         undefined_handlers.Eol().Unindent();
         undefined_handlers.Str("end").Eol();
     }
 
-    if (undefined_handlers.size())
-    {
-        m_source->writeLine(code, indent::none);
-        m_source->writeLine(ruby_begin_cmt_block, indent::none);
-        m_source->writeLine(undefined_handlers);
-        m_source->writeLine("end", indent::none);
-        m_source->writeLine(ruby_end_cmt_block, indent::none);
-
-        m_header->writeLine("# Event handler functions");
-        m_header->writeLine(undefined_handlers);
-    }
+    WriteEventHandlers(code, undefined_handlers);
     m_header->Unindent();
 }
 
-tt_string MakeRubyPath(Node* node)
+auto MakeRubyPath(Node* node) -> tt_string
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_RUBY);
-    if (path.empty())
-        path = "./";
-    else if (has_base_file)
-        path.remove_filename();
-    return path;
+    return ScriptCommon::MakeScriptPath(node, GEN_LANG_RUBY);
 }

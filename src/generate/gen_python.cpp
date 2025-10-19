@@ -5,15 +5,19 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/artprov.h>
-
+#include <algorithm>
+#include <array>
 #include <set>
 #include <thread>
 
+#include <wx/artprov.h>
+
 #include "gen_python.h"
+#include "gen_script_common.h"  // Common functions for generating Script Languages
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "common_strings.h"   // Common strings used in code generation
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
@@ -44,56 +48,41 @@ R"===(##########################################################################
 
 // clang-format on
 
-extern std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-
-const char* python_triple_quote = "\"\"\"";
-
-static void GatherImportModules(std::set<std::string>& imports, Node* node)
+namespace
 {
-    if (auto* gen = node->get_Generator(); gen)
+
+    void GatherImportModules(std::set<std::string>& imports, Node* node)
     {
-        gen->GetPythonImports(node, imports);
+        if (auto* gen = node->get_Generator(); gen)
+        {
+            gen->GetPythonImports(node, imports);
+        }
+        for (auto& child: node->get_ChildNodePtrs())
+        {
+            GatherImportModules(imports, child.get());
+        }
     }
-    for (auto& child: node->get_ChildNodePtrs())
-    {
-        GatherImportModules(imports, child.get());
-    }
-}
+
+}  // anonymous namespace
 
 PythonCodeGenerator::PythonCodeGenerator(Node* form_node) :
     BaseCodeGenerator(GEN_LANG_PYTHON, form_node)
 {
 }
 
-void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+auto PythonCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set)
+    -> std::tuple<std::thread, std::thread>
 {
-    Code code(m_form_node, GEN_LANG_PYTHON);
+    auto thrd_get_events = std::thread(&PythonCodeGenerator::CollectEventHandlers, this,
+                                       m_form_node, std::ref(m_events));
+    auto thrd_collect_img_headers = std::thread(&PythonCodeGenerator::CollectImageHeaders, this,
+                                                m_form_node, std::ref(img_include_set));
 
-    m_embedded_images.clear();
-    SetImagesForm();
-    std::set<std::string> img_include_set;
-    m_baseFullPath = MakePythonPath(m_form_node);
+    return { std::move(thrd_get_events), std::move(thrd_collect_img_headers) };
+}
 
-    std::thread thrd_get_events(&PythonCodeGenerator::CollectEventHandlers, this, m_form_node,
-                                std::ref(m_events));
-    std::thread thrd_collect_img_headers(&PythonCodeGenerator::CollectImageHeaders, this,
-                                         m_form_node, std::ref(img_include_set));
-
-    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
-    if (panel_type != NOT_PANEL)
-    {
-        ProjectImages.UpdateEmbedNodes();
-    }
-
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
-
-    m_panel_type = panel_type;
-
-    m_header->Clear();
-    m_source->Clear();
-    m_source->SetLastLineBlank();
-
+auto PythonCodeGenerator::WriteSourceHeader() -> void
+{
     if (m_panel_type == NOT_PANEL)
     {
         m_source->writeLine(txt_PoundCmtBlock);
@@ -109,36 +98,13 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     }
 
     if (!m_form_node->is_Gen(gen_Images))
-        m_source->writeLine("import wx\n");
-
-    if (m_form_node->is_Gen(gen_Images))
     {
-        thrd_get_events.join();
-        try
-        {
-            thrd_collect_img_headers.join();
-        }
-        catch (const std::system_error& err)
-        {
-#if defined(_DEBUG)
-            MSG_ERROR(err.what());
-#else
-            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()),
-                                      "Internal Thread Error", wxICON_ERROR | wxOK);
-            dlg_error.ShowModal();
-#endif  // _DEBUG
-        }
-
-        GenerateImagesForm();
-        return;
+        m_source->writeLine("import wx\n");
     }
+}
 
-    m_header->writeLine(tt_string("# Sample inherited class from ")
-                        << m_form_node->as_string(prop_class_name));
-    m_header->writeLine();
-    m_header->writeLine("import wx");
-
-    std::set<std::string> imports;
+auto PythonCodeGenerator::WriteImports(std::set<std::string>& imports) -> void
+{
     GatherImportModules(imports, m_form_node);
 
     for (const auto& import: imports)
@@ -146,7 +112,10 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine(import);
         m_header->writeLine(import);
     }
+}
 
+auto PythonCodeGenerator::WriteImportList() -> void
+{
     if (m_form_node->HasValue(prop_python_import_list))
     {
         tt_string_vector list;
@@ -168,28 +137,32 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             m_source->writeLine();
         }
     }
+}
 
+auto PythonCodeGenerator::WriteIDConstants() -> void
+{
     m_set_enum_ids.clear();
     m_set_const_ids.clear();
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
+
     // set to highest wx
     auto id_value = 1;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
         if (!iter.starts_with("self."))
         {
             m_source->writeLine(tt_string() << iter << " = wx.ID_HIGHEST + " << id_value++);
         }
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
         if (!iter.starts_with("self."))
         {
             if (tt::contains(iter, " wx"))
             {
-                tt_string id = iter;
-                id.Replace(" wx", " wx.", true, tt::CASE::exact);
-                m_source->writeLine(id);
+                wxString wx_id = iter;
+                wx_id.Replace(" wx", " wx.", true);
+                m_source->writeLine(wx_id.ToStdString());
             }
             else
             {
@@ -197,44 +170,18 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             }
         }
     }
+}
 
-    try
-    {
-        thrd_collect_img_headers.join();
-    }
-    catch (const std::system_error& err)
-    {
-#if defined(_DEBUG)
-        MSG_ERROR(err.what());
-#else
-        wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()), "Internal Thread Error",
-                                  wxICON_ERROR | wxOK);
-        dlg_error.ShowModal();
-#endif  // _DEBUG
-    }
+auto PythonCodeGenerator::WriteInheritedClass() -> void
+{
+    m_header->writeLine(tt_string("# Sample inherited class from ")
+                        << m_form_node->as_string(prop_class_name));
+    m_header->writeLine();
+    m_header->writeLine("import wx");
 
-    if (m_embedded_images.size())
-    {
-        WriteImageImportStatements(code);
-    }
-
-    m_source->writeLine();
     m_header->writeLine();
     m_header->writeLine(tt_string("import ") << m_form_node->as_string(prop_python_file) << "\n");
     m_header->writeLine();
-
-    if (m_form_node->HasValue(prop_python_insert))
-    {
-        tt_string convert(m_form_node->as_string(prop_python_insert));
-        convert.Replace("@@", "\n", tt::REPLACE::all);
-        tt_string_vector lines(convert, '\n', tt::TRIM::right);
-        for (auto& line: lines)
-        {
-            m_source->doWrite(line);
-            m_source->doWrite("\n");
-        }
-        m_source->doWrite("\n");
-    }
 
     tt_string inherit_name = m_form_node->as_string(prop_python_inherit_name);
     if (inherit_name.empty())
@@ -255,8 +202,27 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_header->Unindent();
         m_header->writeLine();
     }
+}
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+auto PythonCodeGenerator::WriteInsertCode() -> void
+{
+    if (m_form_node->HasValue(prop_python_insert))
+    {
+        tt_string convert(m_form_node->as_string(prop_python_insert));
+        convert.Replace("@@", "\n", tt::REPLACE::all);
+        tt_string_vector lines(convert, '\n', tt::TRIM::right);
+        for (auto& line: lines)
+        {
+            m_source->doWrite(line);
+            m_source->doWrite("\n");
+        }
+        m_source->doWrite("\n");
+    }
+}
+
+auto PythonCodeGenerator::GenerateConstructionCode(Code& code) -> void
+{
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -265,8 +231,8 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->Indent();
         m_source->Indent();
 
-        id_value = 1;
-        for (auto& iter: m_set_enum_ids)
+        auto id_value = 1;
+        for (const auto& iter: m_set_enum_ids)
         {
             if (iter.starts_with("self."))
             {
@@ -304,7 +270,9 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 
@@ -317,14 +285,12 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
             m_source->writeLine(code);
         }
     }
+}
 
-    // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is
-    // in C++. See
-    // https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
-
+auto PythonCodeGenerator::GenerateEventHandlers(Code& code, std::thread& thrd_get_events) -> void
+{
     // Timer code must be created before the events, otherwise the timer variable won't exist
     // when the event is created.
-
     code.clear();
     if (TimerGenerator::StartIfChildTimer(m_form_node, code))
     {
@@ -345,7 +311,10 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->Indent();
         GenUnhandledEvents(m_events);
     }
+}
 
+auto PythonCodeGenerator::WriteWizardComment(Code& code) -> void
+{
     if (m_form_node->is_Gen(gen_wxWizard))
     {
         code.clear();
@@ -356,16 +325,83 @@ void PythonCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         code.Eol().Str(python_triple_quote).Eol().Eol();
         m_source->writeLine(code);
     }
+}
+
+void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+{
+    m_language = language;
+    m_panel_type = panel_type;
+    ASSERT(m_language == GEN_LANG_PYTHON);
+    Code code(m_form_node, m_language);
+
+    m_embedded_images.clear();
+    SetImagesForm();
+    std::set<std::string> img_include_set;
+    m_baseFullPath = MakePythonPath(m_form_node);
+
+    // Start threads early to process in background
+    auto [thrd_get_events, thrd_collect_img_headers] = InitializeThreads(img_include_set);
+
+    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
+    if (panel_type != NOT_PANEL)
+    {
+        ProjectImages.UpdateEmbedNodes();
+    }
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    m_panel_type = panel_type;
+
+    m_header->Clear();
+    m_source->Clear();
+    m_source->SetLastLineBlank();
+
+    WriteSourceHeader();
+
+    if (m_form_node->is_Gen(gen_Images))
+    {
+        thrd_get_events.join();
+        ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
+
+        GenerateImagesForm();
+        return;
+    }
+
+    std::set<std::string> imports;
+    WriteImports(imports);
+    WriteImportList();
+    WriteIDConstants();
+
+    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
+
+    if (m_embedded_images.size())
+    {
+        WriteImageImportStatements(code);
+    }
+
+    m_source->writeLine();
+    WriteInheritedClass();
+    WriteInsertCode();
+    GenerateConstructionCode(code);
+
+    // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is
+    // in C++. See
+    // https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
+
+    GenerateEventHandlers(code, thrd_get_events);
+    WriteWizardComment(code);
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
     m_header->ResetIndent();
 
-    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-              [](const EmbeddedImage* a, const EmbeddedImage* b)
-              {
-                  return (a->base_image().array_name.compare(b->base_image().array_name) < 0);
-              });
+    std::ranges::sort(
+        m_embedded_images,
+        [](const EmbeddedImage* image_a, const EmbeddedImage* image_b)
+        {
+            return (image_a->base_image().array_name.compare(image_b->base_image().array_name) < 0);
+        });
 }
 
 void PythonCodeGenerator::GenerateImagesForm()
@@ -380,10 +416,12 @@ void PythonCodeGenerator::GenerateImagesForm()
 
     Code code(m_form_node, GEN_LANG_PYTHON);
 
-    for (auto iter_array: m_embedded_images)
+    for (const auto* iter_array: m_embedded_images)
     {
         if (iter_array->get_Form() != m_form_node)
+        {
             continue;
+        }
 
         if (iter_array->base_image().filename.size())
         {
@@ -424,9 +462,17 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
     }
     m_source->writeLine();
 
-    // First see if we need to import the gen_Images List
     bool images_file_imported = false;
     bool svg_import_libs = false;
+    WriteImagesFormImport(code, images_file_imported, svg_import_libs);
+
+    bool blank_line_seen = WriteExternalImageImports(code);
+    WriteEmbeddedImageImports(code, blank_line_seen);
+}
+
+auto PythonCodeGenerator::WriteImagesFormImport(Code& code, bool& images_file_imported,
+                                                bool& svg_import_libs) -> void
+{
     for (auto& iter: m_embedded_images)
     {
         if (iter->get_Form() == m_ImagesForm)
@@ -457,8 +503,10 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
             }
         }
     }
+}
 
-    // Now write any embedded images that are declared in a different form
+auto PythonCodeGenerator::WriteExternalImageImports(Code& code) -> bool
+{
     bool blank_line_seen = false;
     for (auto& iter: m_embedded_images)
     {
@@ -485,8 +533,11 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
             code.clear();
         }
     }
+    return blank_line_seen;
+}
 
-    // Now write any embedded images that aren't declared in the gen_Images List
+auto PythonCodeGenerator::WriteEmbeddedImageImports(Code& code, bool blank_line_seen) -> void
+{
     for (auto& iter: m_embedded_images)
     {
         // Only write the images that aren't declared in any gen_Images List. Note that
@@ -505,6 +556,121 @@ void PythonCodeGenerator::WriteImageImportStatements(Code& code)
     }
 }
 
+auto PythonCodeGenerator::CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
+    -> bool
+{
+    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GEN_LANG_PYTHON, m_panel_type,
+                                                      code_lines, "def ");
+}
+
+auto PythonCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void
+{
+    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GEN_LANG_PYTHON);
+}
+
+auto PythonCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& code) -> void
+{
+#if defined(_DEBUG)
+    const auto& dbg_event_name = event->get_name();
+    wxUnusedVar(dbg_event_name);
+#endif  // _DEBUG
+    ScriptCommon::GenerateEventHandlerBody(event, code, GEN_LANG_PYTHON);
+}
+
+auto PythonCodeGenerator::CheckIfAllEventsImplemented(
+    EventVector& events, const std::unordered_set<std::string>& code_lines,
+    bool found_user_handlers) -> bool
+{
+    if (!found_user_handlers)
+    {
+        return false;
+    }
+
+    for (auto& event: events)
+    {
+        auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+        // Ignore lambda's
+        if (python_handler.starts_with("[python:lambda]"))
+        {
+            continue;
+        }
+
+        tt_string set_code;
+        // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+        // an unused parameter.
+        set_code << "def " << python_handler << "(self, _):";
+        if (code_lines.contains(set_code))
+        {
+            continue;
+        }
+        set_code.clear();
+        set_code << "def " << python_handler << "(self, event):";
+        if (code_lines.contains(set_code))
+        {
+            continue;
+        }
+
+        // At least one event wasn't implemented
+        return false;
+    }
+    return true;
+}
+
+auto PythonCodeGenerator::GenerateUndefinedHandlers(EventVector& events,
+                                                    std::unordered_set<std::string>& code_lines,
+                                                    Code& undefined_handlers) -> void
+{
+    for (auto& event: events)
+    {
+        auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
+        // Ignore lambda's
+        if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
+        {
+            continue;
+        }
+
+        tt_string set_code;
+        // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
+        // an unused parameter.
+        set_code << "def " << python_handler << "(self, _):";
+        if (code_lines.contains(set_code))
+        {
+            continue;
+        }
+        set_code.Replace("_)", "event)");
+        if (code_lines.contains(set_code))
+        {
+            continue;
+        }
+        code_lines.emplace(set_code);
+
+        undefined_handlers.Str(set_code).Eol();
+        GenerateEventHandlerBody(event, undefined_handlers);
+    }
+}
+
+auto PythonCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers,
+                                             bool found_user_handlers,
+                                             bool is_all_events_implemented) -> void
+{
+    if (found_user_handlers && !is_all_events_implemented)
+    {
+        m_header->writeLine("# Unimplemented Event handler functions");
+    }
+    else
+    {
+        m_header->writeLine("# Event handler functions");
+    }
+    m_header->writeLine(undefined_handlers);
+
+    if (!is_all_events_implemented)
+    {
+        m_source->writeLine(code);
+        code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
+        m_source->writeLine(code);
+    }
+}
+
 void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
 {
     ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
@@ -518,10 +684,10 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::unordered_set<std::string> code_lines;
 
     Code code(m_form_node, GEN_LANG_PYTHON);
-    auto sort_event_handlers = [](NodeEvent* a, NodeEvent* b)
+    auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
-        return (EventHandlerDlg::GetPythonValue(a->get_value()) <
-                EventHandlerDlg::GetPythonValue(b->get_value()));
+        return (EventHandlerDlg::GetPythonValue(event_a->get_value()) <
+                EventHandlerDlg::GetPythonValue(event_b->get_value()));
     };
 
     // Sort events by function name
@@ -538,158 +704,35 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
         m_header->writeLine();
     }
 
-    bool found_user_handlers = false;
-    if (m_panel_type == NOT_PANEL)
+    bool found_user_handlers = CollectExistingEventHandlers(code_lines);
+    bool is_all_events_implemented =
+        CheckIfAllEventsImplemented(events, code_lines, found_user_handlers);
+
+    if (is_all_events_implemented)
     {
-        tt_view_vector org_file;
-        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PYTHON);
-
-        if (has_base_file && path.extension().empty())
-        {
-            path += ".py";
-        }
-
-        // If the user has defined any event handlers, add them to the code_lines set so we
-        // don't generate them again.
-        if (has_base_file && org_file.ReadFile(path))
-        {
-            size_t line_index;
-            for (line_index = 0; line_index < org_file.size(); ++line_index)
-            {
-                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
-                {
-                    break;
-                }
-            }
-            for (++line_index; line_index < org_file.size(); ++line_index)
-            {
-                auto def = org_file[line_index].view_nonspace();
-                if (org_file[line_index].view_nonspace().starts_with("def "))
-                {
-                    code_lines.emplace(def);
-                    found_user_handlers = true;
-                }
-            }
-        }
+        // If the user has defined all the event handlers, then we don't need to output anything
+        // else.
+        return;
     }
 
-    bool is_all_events_implemented = true;
-    if (found_user_handlers)
-    {
-        for (auto& event: events)
-        {
-            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
-            // Ignore lambda's
-            if (python_handler.starts_with("[python:lambda]"))
-                continue;
-
-            tt_string set_code;
-            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
-            // an unused parameter.
-            set_code << "def " << python_handler << "(self, _):";
-            if (code_lines.find(set_code) != code_lines.end())
-                continue;
-            set_code << "def " << python_handler << "(self, event):";
-            if (code_lines.find(set_code) != code_lines.end())
-                continue;
-
-            // At least one event wasn't implemented, so stop looking for more
-            is_all_events_implemented = false;
-
-            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them "
-                     "below the comment block, or "
-                     "to your inherited class.");
-            code.Eol().Str(python_triple_quote).Eol();
-            break;
-        }
-        if (is_all_events_implemented)
-        {
-            // If the user has defined all the event handlers, then we don't need to output anything
-            // else.
-            return;
-        }
-    }
-    else
-    {
-        // The user hasn't defined their own event handlers in this module
-        is_all_events_implemented = false;
-
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your "
-                 "inherited class.");
-        code.Eol().Str(python_triple_quote).Eol();
-    }
+    GenerateEventHandlerComment(found_user_handlers, code);
     m_source->writeLine(code);
 
     code.clear();
-    if (!is_all_events_implemented)
-    {
-        for (auto& event: events)
-        {
-            auto python_handler = EventHandlerDlg::GetPythonValue(event->get_value());
-            // Ignore lambda's
-            if (python_handler.empty() || python_handler.starts_with("[python:lambda]"))
-                continue;
+    Code undefined_handlers(m_form_node, GEN_LANG_PYTHON);
+    GenerateUndefinedHandlers(events, code_lines, undefined_handlers);
 
-            tt_string set_code;
-            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
-            // an unused parameter.
-            set_code << "def " << python_handler << "(self, _):";
-            if (code_lines.find(set_code) != code_lines.end())
-                continue;
-            set_code.Replace("_)", "event)");
-            if (code_lines.find(set_code) != code_lines.end())
-                continue;
-            code_lines.emplace(set_code);
-
-            code.Str(set_code).Eol();
-#if defined(_DEBUG)
-            auto& dbg_event_name = event->get_name();
-            wxUnusedVar(dbg_event_name);
-#endif  // _DEBUG
-            if (event->get_name() == "CloseButtonClicked")
-            {
-                code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
-            }
-            else if (event->get_name() == "YesButtonClicked")
-            {
-                code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
-            }
-            else if (event->get_name() == "NoButtonClicked")
-            {
-                code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
-            }
-            else
-            {
-                code.Tab().Str("event.Skip()").Eol().Eol();
-            }
-        }
-    }
-
-    if (found_user_handlers && !is_all_events_implemented)
-    {
-        m_header->writeLine("# Unimplemented Event handler functions");
-    }
-    else
-    {
-        m_header->writeLine("# Event handler functions");
-    }
-    m_header->writeLine(code);
+    WriteEventHandlers(code, undefined_handlers, found_user_handlers, is_all_events_implemented);
 
     if (!inherited_class)
     {
         m_header->Unindent();
     }
-
-    if (!is_all_events_implemented)
-    {
-        code.Eol(eol_if_needed).Str(python_triple_quote).Eol().Eol();
-        m_source->writeLine(code);
-    }
 }
 
 bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 {
-    auto& description = code.node()->as_string(prop);
+    const auto& description = code.node()->as_string(prop);
     ASSERT_MSG(description.size(), "PythonBitmapList called with empty description");
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -699,7 +742,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         return false;
     }
 
-    auto bundle = ProjectImages.GetPropertyImageBundle(description);
+    const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -711,7 +754,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     code += "bitmaps = [ ";
     bool needs_comma = false;
-    for (auto& iter: bundle->lst_filenames)
+    for (const auto& iter: bundle->lst_filenames)
     {
         if (needs_comma)
         {
@@ -722,7 +765,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
         bool is_embed_success = false;
         if (parts[IndexType].starts_with("Embed"))
         {
-            if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+            if (auto* embed = ProjectImages.GetEmbeddedImage(iter); embed)
             {
                 code.AddPythonImageName(embed);
                 code += ".Bitmap";
@@ -740,7 +783,9 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
             code.Str("wx.Bitmap(").QuotedString(name);
             if (is_xpm)
+            {
                 code.Comma().Str("wx.BITMAP_TYPE_XPM");
+            }
             code += ")";
             needs_comma = true;
         }
@@ -757,17 +802,17 @@ struct BTN_BMP_TYPES
     const char* function_name;
 };
 
-inline const BTN_BMP_TYPES btn_bmp_types[] = {
+inline const std::array<BTN_BMP_TYPES, 5> btn_bmp_types = { {
     { prop_bitmap, "SetBitmap" },
     { prop_disabled_bmp, "SetBitmapDisabled" },
     { prop_pressed_bmp, "SetBitmapPressed" },
     { prop_focus_bmp, "SetBitmapFocus" },
     { prop_current, "SetBitmapCurrent" },
-};
+} };
 
 void PythonBtnBimapCode(Code& code, bool is_single)
 {
-    for (auto& iter: btn_bmp_types)
+    for (const auto& iter: btn_bmp_types)
     {
         code.Eol(eol_if_needed);
         if (code.HasValue(iter.prop_name))
@@ -795,11 +840,5 @@ void PythonBtnBimapCode(Code& code, bool is_single)
 
 tt_string MakePythonPath(Node* node)
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_PYTHON);
-
-    if (path.empty())
-        path = "./";
-    else if (has_base_file)
-        path.remove_filename();
-    return path;
+    return ScriptCommon::MakeScriptPath(node, GEN_LANG_PYTHON);
 }

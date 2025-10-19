@@ -19,13 +19,16 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - All generator classes derive from the base interface in `generate/base_generator.h`
 
 ### File and Code Restrictions
-- `file_list.cmake` lists the files in the project and cannot be edited
-- Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block." and "// DO NOT EDIT THIS COMMENT BLOCK!"
+- Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block.
 
 ### String Conversions
 - **Always use `wxString::ToStdString()`** for converting `wxString` to `std::string` or `std::string_view`. This method returns a reference to a string object.
 - Only use `wxString::utf8_string()` in rare cases where you specifically need UTF-8 encoded behavior that `ToStdString()` doesn't provide.
 - When passing to a function expecting `std::string_view`, use `ToStdString()` as the view will bind to the returned string object.
+
+### Code Formatting
+
+After modifying any C++ code files, always run the "Format Document" command on each modified file to ensure consistent formatting. Use the VSCode command `editor.action.formatDocument` on files you've changed.
 
 ### Debug Checks
 - The `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros are the preferred macros for debug checks declared in assertion_dlg.h
@@ -65,6 +68,7 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Use range-based for loops over traditional loops when iterating containers
 - Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) instead of raw pointers
 - Use structured bindings and concepts for clarity and safety
+- Prefer C++20 ranges library algorithms over manual loops when applicable
 
 **Library Priority (in order):**
 1. C++ Standard Library (`std::`) - Always check here first
@@ -77,9 +81,6 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 - Corresponding frozen types: `frozen::set`, `frozen::unordered_set`, `frozen::map`, `frozen::unordered_map`
 - Always include the appropriate frozen header file
 - Prefer `constexpr` or `constinit` for frozen containers
-
-**String Searching:**
-- Consider Boyer-Moore or Knuth-Morris-Pratt algorithms from frozen library if faster than `std::search`
 
 ### Perl Standards
 

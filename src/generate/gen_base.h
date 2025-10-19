@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <set>
 
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
@@ -50,11 +51,11 @@ public:
     BaseCodeGenerator(GenLang language, Node* form_node);
     virtual ~BaseCodeGenerator() = default;
 
-    void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
-    void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
+    void SetHdrWriteCode(WriteCode* code_to_write) { m_header = code_to_write; }
+    void SetSrcWriteCode(WriteCode* code_to_write) { m_source = code_to_write; }
 
     // All language generators must implement this method.
-    virtual void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) = 0;
+    virtual void GenerateClass(GenLang language, PANEL_PAGE panel_type = NOT_PANEL) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
     virtual int GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
@@ -179,5 +180,8 @@ protected:
     bool m_NeedHeaderFunction { false };     // Set when Header type is used
     bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
     bool m_NeedSVGFunction { false };        // Set when SVG image type is used
-    bool m_NeedImageFunction { false };      // Set when Embed type is used
+    bool m_NeedImageFunction { false };
+
+private:
+    std::mutex m_embedded_images_mutex;  // Protects m_embedded_images from concurrent access
 };

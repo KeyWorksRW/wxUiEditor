@@ -15,9 +15,21 @@ public:
     PerlCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(PANEL_PAGE panel_type = NOT_PANEL) override;
+    void GenerateClass(GenLang language = GEN_LANG_PERL,
+                       PANEL_PAGE panel_type = NOT_PANEL) override;
 
 protected:
+    // Helper methods to break down GenerateClass complexity
+    [[nodiscard]] auto InitializeThreads(std::set<std::string>& img_include_set)
+        -> std::tuple<std::thread, std::thread, std::thread>;
+    auto WriteSourceHeader() -> void;
+    auto WriteIDConstants() -> void;
+    auto WriteSampleFrameApp(Code& code) -> void;
+    auto GenerateConstructionCode(Code& code) -> void;
+    auto GenerateEventHandlers(Code& code, std::thread& thrd_get_events) -> void;
+    auto WriteHelperFunctions() -> void;
+    auto WriteEmbeddedImages(Code& code) -> void;
+
     // This will collect all potential use statements, sort and separate the, and write them
     // to m_source.
     void WriteUsageStatements();
@@ -28,9 +40,25 @@ protected:
     // This function simply generates unhandled event handlers in a multi-string comment.
     void GenUnhandledEvents(EventVector& events);
 
+    // Helper methods for GenUnhandledEvents
+    [[nodiscard]] auto CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
+        -> bool;
+    static auto GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void;
+    static auto GenerateEventHandlerBody(NodeEvent* event, Code& undefined_handlers) -> void;
+    auto WriteEventHandlers(Code& code, Code& undefined_handlers) -> void;
+
     void CheckMimeBase64Requirement(Code& code);
 
+    // Helper methods for CheckMimeBase64Requirement
+    auto ProcessImageFromImagesForm(Code& code, bool& images_file_imported, bool& svg_import_libs,
+                                    const EmbeddedImage* iter) -> void;
+    auto ProcessExternalImage(const EmbeddedImage* iter, bool svg_import_libs) -> void;
+
     void InitializeUsageStatements();
+
+    // Helper methods for ParseNodesForUsage
+    auto ProcessNodeProperties(Node* node) -> void;
+    auto ProcessNodeImports(Node* node) -> void;
 
 private:
     bool m_base64_requirement_written { false };

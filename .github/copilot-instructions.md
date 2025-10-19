@@ -43,6 +43,7 @@ This repository contains C++, Perl, Python, and Ruby code using wxWidgets for GU
 - Use range-based for loops over traditional loops when iterating containers
 - Use smart pointers (std::unique_ptr, std::shared_ptr) instead of raw pointers
 - Use structured bindings and concepts for clarity and safety
+- Prefer C++20 ranges library algorithms over manual loops when applicable
 
 ## Library Priority (in order)
 1. C++ Standard Library (std::) – Always check here first
@@ -60,10 +61,14 @@ This repository contains C++, Perl, Python, and Ruby code using wxWidgets for GU
 - Consider Boyer-Moore or Knuth-Morris-Pratt algorithms from frozen library if faster than std::search
 
 ## String Conversions
-- Prefer wxString::ToStdString() (reference) over wxString::utf8_string() (copy), unless a copy is required
+- **Always use `wxString::ToStdString()`** for converting `wxString` to `std::string` or `std::string_view`.
+- Prefer wxString::ToStdString() wxString::utf8_string() (copy)
 
 ## Debug Checks
 - Use ASSERT, ASSERT_MSG, and FAIL_MSG macros from assertion_dlg.h for debug checks
+
+## File and Code Restrictions
+- Do not edit any code between the comment block "// Do not edit any code above the "End of generated code" comment block.
 
 # Perl Coding Standards
 
@@ -118,4 +123,3 @@ This repository contains C++, Perl, Python, and Ruby code using wxWidgets for GU
 - Do not edit any code between the comment block "// Do not edit any code above the 'End of generated code' comment block." and "// DO NOT EDIT THIS COMMENT BLOCK!"
 - For Node and NodeProperty classes, prefer as_view() methods
 - All generator classes derive from generate/base_generator.h
-- file_list.cmake cannot be edited

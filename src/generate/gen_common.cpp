@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <array>
+
 #include <wx/artprov.h>
 
 #include "gen_common.h"
@@ -274,13 +276,13 @@ struct BTN_BMP_TYPES
     const char* function_name;
 };
 
-inline const BTN_BMP_TYPES btn_bmp_types[] = {
+inline const std::array<BTN_BMP_TYPES, 5> btn_bmp_types = { {
     { prop_bitmap, "SetBitmap" },
     { prop_disabled_bmp, "SetBitmapDisabled" },
     { prop_pressed_bmp, "SetBitmapPressed" },
     { prop_focus_bmp, "SetBitmapFocus" },
     { prop_current, "SetBitmapCurrent" },
-};
+} };
 
 bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 {
@@ -1461,27 +1463,27 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
     switch (language)
     {
         case GEN_LANG_CPLUSPLUS:
-            code_generator->GenerateClass();
+            code_generator->GenerateClass(GEN_LANG_CPLUSPLUS);
             break;
 
         case GEN_LANG_PERL:
-            code_generator->GenerateClass();
+            code_generator->GenerateClass(GEN_LANG_PERL);
             break;
 
         case GEN_LANG_PYTHON:
-            code_generator->GenerateClass();
+            code_generator->GenerateClass(GEN_LANG_PYTHON);
             break;
 
         case GEN_LANG_RUBY:
-            code_generator->GenerateClass();
+            code_generator->GenerateClass(GEN_LANG_RUBY);
             break;
 
         case GEN_LANG_RUST:
-            code_generator->GenerateClass();
+            code_generator->GenerateClass(GEN_LANG_RUST);
             break;
 
         case GEN_LANG_XRC:
-            code_generator->GenerateClass();
+            code_generator->GenerateClass(GEN_LANG_XRC);
             break;
 
         default:

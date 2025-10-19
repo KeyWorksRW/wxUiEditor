@@ -329,27 +329,27 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 switch (language)
                 {
                     case GEN_LANG_CPLUSPLUS:
-                        code_generator->GenerateClass();
+                        code_generator->GenerateClass(GEN_LANG_CPLUSPLUS);
                         break;
 
                     case GEN_LANG_PERL:
-                        code_generator->GenerateClass();
+                        code_generator->GenerateClass(GEN_LANG_PERL);
                         break;
 
                     case GEN_LANG_PYTHON:
-                        code_generator->GenerateClass();
+                        code_generator->GenerateClass(GEN_LANG_PYTHON);
                         break;
 
                     case GEN_LANG_RUBY:
-                        code_generator->GenerateClass();
+                        code_generator->GenerateClass(GEN_LANG_RUBY);
                         break;
 
                     case GEN_LANG_RUST:
-                        code_generator->GenerateClass();
+                        code_generator->GenerateClass(GEN_LANG_RUST);
                         break;
 
                     case GEN_LANG_XRC:
-                        code_generator->GenerateClass();
+                        code_generator->GenerateClass(GEN_LANG_XRC);
                         break;
 
                     default:
@@ -422,28 +422,28 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                     switch (language)
                     {
                         case GEN_LANG_CPLUSPLUS:
-                            new_code_generator->GenerateClass();
+                            new_code_generator->GenerateClass(GEN_LANG_CPLUSPLUS);
                             break;
 
                         case GEN_LANG_PERL:
-                            new_code_generator->GenerateClass();
+                            new_code_generator->GenerateClass(GEN_LANG_PERL);
                             break;
 
                         case GEN_LANG_PYTHON:
-                            new_code_generator->GenerateClass();
+                            new_code_generator->GenerateClass(GEN_LANG_PYTHON);
                             break;
 
                         case GEN_LANG_RUBY:
                             cpp_cw->SetTabToSpaces(2);
-                            new_code_generator->GenerateClass();
+                            new_code_generator->GenerateClass(GEN_LANG_RUBY);
                             break;
 
                         case GEN_LANG_RUST:
-                            new_code_generator->GenerateClass();
+                            new_code_generator->GenerateClass(GEN_LANG_RUST);
                             break;
 
                         case GEN_LANG_XRC:
-                            new_code_generator->GenerateClass();
+                            new_code_generator->GenerateClass(GEN_LANG_XRC);
                             break;
 
                         default:

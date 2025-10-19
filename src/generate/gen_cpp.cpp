@@ -532,8 +532,10 @@ CppCodeGenerator::CppCodeGenerator(Node* form_node) :
 {
 }
 
-void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+void CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 {
+    m_language = language;
+    m_panel_type = panel_type;
     ASSERT(m_language == GEN_LANG_CPLUSPLUS)
     if (m_form_node->is_Gen(gen_Data))
     {
@@ -541,7 +543,7 @@ void CppCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         return;
     }
 
-    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+    Code code(m_form_node, m_language);
 
     m_ctx_menu_events.clear();
     m_embedded_images.clear();

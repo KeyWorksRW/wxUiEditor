@@ -108,6 +108,7 @@ set( file_list
     generate/gen_python.cpp        # Generate wxPython code
     generate/gen_ruby.cpp          # Generate wxRuby3 code
     generate/gen_rust.cpp          # Generate wxRust code
+    generate/gen_script_common.cpp # Common functions for generating Script Languages
     generate/gen_xrc.cpp           # Generate XRC
 
     # Generators are responsible for displaying the widget in the Mockup window,

@@ -376,6 +376,7 @@ target_include_directories( wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/generate/writers
     ${CMAKE_CURRENT_LIST_DIR}/src/mockup
     ${CMAKE_CURRENT_LIST_DIR}/src/project
     ${CMAKE_CURRENT_LIST_DIR}/src/utils

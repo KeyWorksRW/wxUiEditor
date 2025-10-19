@@ -73,21 +73,21 @@ set( file_list
     custom_ctrls/kw_color_picker.cpp # kwColourPickerCtrl -- Modified version of wxColourPickerCtrl
 
     # Code generation modules
-    generate/common_strings.cpp    # Common strings used by code generators
-    generate/code.cpp              # Code -- Helper class for generating code
-    generate/code_add.cpp          # Code::Add...() functions
-    generate/code_bundle.cpp       # Code::Bundle() functions
-    generate/code_gen.cpp          # Code::Gen...() functions
-    generate/code_pos_style.cpp    # Code::Pose...()/Style() functions
+    generate/writers/common_strings.cpp    # Common strings used by code generators
+    generate/writers/code.cpp              # Code -- Helper class for generating code
+    generate/writers/code_add.cpp          # Code::Add...() functions
+    generate/writers/code_bundle.cpp       # Code::Bundle() functions
+    generate/writers/code_gen.cpp          # Code::Gen...() functions
+    generate/writers/code_pos_style.cpp    # Code::Pose...()/Style() functions
 
-    generate/file_codewriter.cpp   # FileCodeWriter -- Class to write code to disk
-    generate/gen_base.cpp          # BaseCodeGenerator -- Generate Src and Hdr files for Base and Derived Class
-    generate/gen_codefiles.cpp     # Generate code functions
-    generate/gen_construction.cpp  # Top level Object construction code
-    generate/gen_cmake.cpp         # Auto-generate a .cmake file
-    generate/gen_events.cpp        # Generate events for all languages
-    generate/write_code.cpp        # Write code to Scintilla or file
-    generate/image_gen.cpp         # Functions for generating embedded images
+    generate/writers/file_codewriter.cpp   # FileCodeWriter -- Class to write code to disk
+    generate/writers/gen_base.cpp          # BaseCodeGenerator -- Generate Src and Hdr files for Base and Derived Class
+    generate/writers/gen_codefiles.cpp     # Generate code functions
+    generate/writers/gen_construction.cpp  # Top level Object construction code
+    generate/writers/gen_cmake.cpp         # Auto-generate a .cmake file
+    generate/writers/gen_events.cpp        # Generate events for all languages
+    generate/writers/write_code.cpp        # Write code to Scintilla or file
+    generate/writers/image_gen.cpp         # Functions for generating embedded images
 
     generate/base_generator.cpp    # BaseGenerator -- Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes
@@ -100,16 +100,16 @@ set( file_list
     # ############################ begin generators ##############################
 
     # Code generation output languages
-    generate/gen_cpp.cpp           # Generate C++ code
-    generate/gen_cpp_header.cpp    # Generate C++ code header content
-    generate/gen_cpp_variables.cpp # C++ code generation variable and validator functions
-    generate/gen_derived.cpp       # Generate C++ Derived code
-    generate/gen_perl.cpp          # Generate wxPerl code
-    generate/gen_python.cpp        # Generate wxPython code
-    generate/gen_ruby.cpp          # Generate wxRuby3 code
-    generate/gen_rust.cpp          # Generate wxRust code
-    generate/gen_script_common.cpp # Common functions for generating Script Languages
-    generate/gen_xrc.cpp           # Generate XRC
+    generate/writers/gen_cpp.cpp           # Generate C++ code
+    generate/writers/gen_cpp_header.cpp    # Generate C++ code header content
+    generate/writers/gen_cpp_variables.cpp # C++ code generation variable and validator functions
+    generate/writers/gen_derived.cpp       # Generate C++ Derived code
+    generate/writers/gen_perl.cpp          # Generate wxPerl code
+    generate/writers/gen_python.cpp        # Generate wxPython code
+    generate/writers/gen_ruby.cpp          # Generate wxRuby3 code
+    generate/writers/gen_rust.cpp          # Generate wxRust code
+    generate/writers/gen_script_common.cpp # Common functions for generating Script Languages
+    generate/writers/gen_xrc.cpp           # Generate XRC
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object

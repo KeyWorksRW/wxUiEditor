@@ -1,7 +1,7 @@
 ./src/import/rapidjson
 ./src/pugixml
-./src/tests
 ./src/xml
 ./src/art_src
+./src/generate/archived
 
 ./src/version.h

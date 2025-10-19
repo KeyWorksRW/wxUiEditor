@@ -29,7 +29,7 @@
 #include "dlg_msgs.h"    // wxMessageDialog dialogs
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "gen_enums.h"
-#include "generate/gen_xrc.h"   // Generate XRC file
+#include "gen_xrc.h"            // Generate XRC file
 #include "mainapp.h"            // App -- Main application class
 #include "mainframe.h"          // MainFrame -- Main window frame
 #include "node.h"               // Node class

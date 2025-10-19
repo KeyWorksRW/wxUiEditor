@@ -700,83 +700,18 @@ void RubyCodeGenerator::GenerateImagesForm()
 auto RubyCodeGenerator::CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
     -> bool
 {
-    if (m_panel_type != NOT_PANEL)
-    {
-        return false;
-    }
-
-    tt_view_vector org_file;
-    auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_RUBY);
-
-    if (has_base_file && path.extension().empty())
-    {
-        path += ".rb";
-    }
-
-    // If the user has defined any event handlers, add them to the code_lines set so we
-    // don't generate them again.
-    if (!has_base_file || !org_file.ReadFile(path))
-    {
-        return false;
-    }
-
-    bool found_user_handlers = false;
-    size_t line_index = 0;
-    for (; line_index < org_file.size(); ++line_index)
-    {
-        if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
-        {
-            break;
-        }
-    }
-
-    for (++line_index; line_index < org_file.size(); ++line_index)
-    {
-        auto def = org_file[line_index].view_nonspace();
-        if (def.starts_with("def "))
-        {
-            code_lines.emplace(def);
-            found_user_handlers = true;
-        }
-    }
-
-    return found_user_handlers;
+    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GEN_LANG_RUBY, m_panel_type,
+                                                      code_lines, "def ");
 }
 
 auto RubyCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void
 {
-    if (found_user_handlers)
-    {
-        code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them below "
-                 "the comment block, or "
-                 "to your inherited class.");
-    }
-    else
-    {
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your "
-                 "inherited class.");
-    }
-    code.Eol().Eol();
+    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GEN_LANG_RUBY);
 }
 
 auto RubyCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& undefined_handlers) -> void
 {
-    if (event->get_name() == "CloseButtonClicked")
-    {
-        undefined_handlers.Tab().Str("end_modal(Wx::ID_CLOSE)");
-    }
-    else if (event->get_name() == "YesButtonClicked")
-    {
-        undefined_handlers.Tab().Str("end_modal(Wx::ID_YES)");
-    }
-    else if (event->get_name() == "NoButtonClicked")
-    {
-        undefined_handlers.Tab().Str("end_modal(Wx::ID_NO)");
-    }
-    else
-    {
-        undefined_handlers.Tab().Str("event.skip");
-    }
+    ScriptCommon::GenerateEventHandlerBody(event, undefined_handlers, GEN_LANG_RUBY);
 }
 
 auto RubyCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers) -> void
@@ -860,14 +795,5 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
 
 auto MakeRubyPath(Node* node) -> tt_string
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_RUBY);
-    if (path.empty())
-    {
-        path = "./";
-    }
-    else if (has_base_file)
-    {
-        path.remove_filename();
-    }
-    return path;
+    return ScriptCommon::MakeScriptPath(node, GEN_LANG_RUBY);
 }

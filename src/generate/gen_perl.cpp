@@ -109,54 +109,22 @@ PerlCodeGenerator::PerlCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LA
 {
 }
 
-void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+auto PerlCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set)
+    -> std::tuple<std::thread, std::thread, std::thread>
 {
-    m_language = language;
-    m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_PERL);
-    Code code(m_form_node, m_language);
+    auto thrd_get_events = std::thread(&PerlCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                       std::ref(m_events));
+    auto thrd_need_img_func =
+        std::thread(&PerlCodeGenerator::ParseImageProperties, this, m_form_node);
+    auto thrd_collect_img_headers = std::thread(&PerlCodeGenerator::CollectImageHeaders, this,
+                                                m_form_node, std::ref(img_include_set));
 
-    m_embedded_images.clear();
+    return { std::move(thrd_get_events), std::move(thrd_need_img_func),
+             std::move(thrd_collect_img_headers) };
+}
 
-    SetImagesForm();
-    std::set<std::string> img_include_set;
-
-    std::thread thrd_get_events(&PerlCodeGenerator::CollectEventHandlers, this, m_form_node,
-                                std::ref(m_events));
-    std::thread thrd_need_img_func(&PerlCodeGenerator::ParseImageProperties, this, m_form_node);
-    std::thread thrd_collect_img_headers(&PerlCodeGenerator::CollectImageHeaders, this, m_form_node,
-                                         std::ref(img_include_set));
-
-    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
-    if (panel_type != NOT_PANEL)
-    {
-        ProjectImages.UpdateEmbedNodes();
-    }
-
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
-
-    m_panel_type = panel_type;
-
-    m_header->Clear();
-    m_source->Clear();
-
-    if (m_form_node->is_Type(type_frame_form))
-    {
-        code += txt_perl_frame_app;
-        if (m_form_node->HasValue(prop_class_name))
-        {
-            tt_string class_name = m_form_node->as_string(prop_class_name);
-            if (class_name.ends_with("Base"))
-            {
-                class_name.erase(class_name.size() - 4);
-            }
-            code.Replace("MainFrame", class_name);
-        }
-        m_header->writeLine(code);
-        code.clear();
-    }
-
+auto PerlCodeGenerator::WriteSourceHeader() -> void
+{
     m_source->SetLastLineBlank();
 
 #if !defined(_DEBUG)
@@ -164,14 +132,20 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 #else
     if (m_panel_type != NOT_PANEL)
     {
-        m_source->writeLine("-- The following comment block is only displayed in a _DEBUG build, "
+        m_source->writeLine("# The following comment block is only displayed in a _DEBUG build, "
                             "or when written to a file.\n\n");
     }
 #endif  // _DEBUG
     {
         m_source->writeLine(txt_PoundCmtBlock);
+
+        if (Project.HasValue(prop_perl_project_preamble))
+        {
+            WritePropSourceCode(Project.get_ProjectNode(), prop_perl_project_preamble);
+        }
     }
 
+    Code code(m_form_node, m_language);
     code.Str("use Wx;").Eol();
     code.Str("package ").NodeName();
     if (code.ends_with("Base"))
@@ -181,45 +155,11 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     code.Str(";").Eol();
 
     m_source->writeLine(code);
-    code.clear();
-
-    if (Project.HasValue(prop_perl_project_preamble))
-    {
-        WritePropSourceCode(Project.get_ProjectNode(), prop_perl_project_preamble);
-    }
-
     m_source->writeLine();
+}
 
-    InitializeUsageStatements();
-    WriteUsageStatements();
-
-    m_set_enum_ids.clear();
-    m_set_const_ids.clear();
-    // Do this early to give thrd_get_events and thrd_collect_img_headers a chance to run before we
-    // need to join (finish) them.
-    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
-
-    m_source->writeLine();
-    m_source->writeLine(
-        "use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
-    m_source->writeLine("use strict;");
-
-    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
-
-    if (m_form_node->is_Gen(gen_Images))
-    {
-        m_source->writeLine("use MIME::Base64;");
-        thrd_get_events.join();
-        thrd_need_img_func.join();
-        GenerateImagesForm();
-        return;
-    }
-
-    if (m_embedded_images.size())
-    {
-        CheckMimeBase64Requirement(code);
-    }
-
+auto PerlCodeGenerator::WriteIDConstants() -> void
+{
     int id_value = wxID_HIGHEST;
     for (const auto& iter: m_set_enum_ids)
     {
@@ -238,7 +178,29 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
             m_source->writeLine('$' + iter);
         }
     }
+}
 
+auto PerlCodeGenerator::WriteSampleFrameApp(Code& code) -> void
+{
+    if (m_form_node->is_Type(type_frame_form))
+    {
+        code += txt_perl_frame_app;
+        if (m_form_node->HasValue(prop_class_name))
+        {
+            tt_string class_name = m_form_node->as_string(prop_class_name);
+            if (class_name.ends_with("Base"))
+            {
+                class_name.erase(class_name.size() - 4);
+            }
+            code.Replace("MainFrame", class_name);
+        }
+        m_header->writeLine(code);
+        code.clear();
+    }
+}
+
+auto PerlCodeGenerator::GenerateConstructionCode(Code& code) -> void
+{
     auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
@@ -248,7 +210,7 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         m_source->Indent();
         m_source->Indent();
 
-        id_value = wxID_HIGHEST;
+        int id_value = wxID_HIGHEST;
         for (const auto& iter: m_set_enum_ids)
         {
             m_source->writeLine(tt_string() << '@' << iter << id_value++);
@@ -313,7 +275,10 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         m_source->writeLine(code);
         m_source->writeLine();
     }
+}
 
+auto PerlCodeGenerator::GenerateEventHandlers(Code& code, std::thread& thrd_get_events) -> void
+{
     // Delay calling join() for as long as possible to increase the chance that the thread will
     // have already completed.
     thrd_get_events.join();
@@ -343,29 +308,18 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         code.Eol().Str("# Run() function to launch the wizard").Eol();
         m_source->writeLine(code);
     }
+}
 
-    // Make certain indentation is reset after all construction code is written
-    m_source->ResetIndent();
-    m_source->writeLine("\treturn $self;", indent::none);
-    m_source->writeLine("}\n\n", indent::none);
-
-    thrd_need_img_func.join();
+auto PerlCodeGenerator::WriteHelperFunctions() -> void
+{
     if (m_NeedImageFunction)
     {
         m_source->writeLine(txt_perl_get_bundle, indent::auto_keep_whitespace);
     }
+}
 
-    // Only add this when writing to disk. Otherwise, it needs to be added after
-    // the comment block, and only if there is no user code after the comment
-    // block. This is to ensure that the user can add event handlers that are
-    // part of the package.
-    if (panel_type != NOT_PANEL)
-    {
-        m_source->writeLine("1;", indent::none);
-    }
-
-    m_header->ResetIndent();
-
+auto PerlCodeGenerator::WriteEmbeddedImages(Code& code) -> void
+{
     code.clear();
     // Now write any embedded images that aren't declared in the gen_Images List
     for (auto& iter: m_embedded_images)
@@ -380,15 +334,95 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
             break;
         }
     }
+}
 
-    // TODO: [Randalphwa - 07-13-2023] If we use embedded images, we need to write them out here.
-#if 0
-    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-              [](const EmbeddedImage* a, const EmbeddedImage* b)
-              {
-                  return (a->array_name.compare(b->array_name) < 0);
-              });
-#endif
+void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+{
+    m_language = language;
+    m_panel_type = panel_type;
+    ASSERT(m_language == GEN_LANG_PERL);
+    Code code(m_form_node, m_language);
+
+    m_embedded_images.clear();
+
+    SetImagesForm();
+
+    // Start threads early to process in background
+    std::set<std::string> img_include_set;
+    auto [thrd_get_events, thrd_need_img_func, thrd_collect_img_headers] =
+        InitializeThreads(img_include_set);
+
+    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
+    if (panel_type != NOT_PANEL)
+    {
+        ProjectImages.UpdateEmbedNodes();
+    }
+
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    m_panel_type = panel_type;
+
+    m_header->Clear();
+    m_source->Clear();
+
+    WriteSampleFrameApp(code);
+    WriteSourceHeader();
+
+    InitializeUsageStatements();
+    WriteUsageStatements();
+
+    m_set_enum_ids.clear();
+    m_set_const_ids.clear();
+    // Do this early to give threads a chance to run before we need to join them.
+    BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
+
+    m_source->writeLine();
+    m_source->writeLine(
+        "use utf8;");  // required since C++, wxPython, and wxRuby use utf8 by default
+    m_source->writeLine("use strict;");
+
+    ScriptCommon::JoinThreadSafely(thrd_collect_img_headers);
+
+    if (m_form_node->is_Gen(gen_Images))
+    {
+        m_source->writeLine("use MIME::Base64;");
+        thrd_get_events.join();
+        thrd_need_img_func.join();
+        GenerateImagesForm();
+        return;
+    }
+
+    if (m_embedded_images.size())
+    {
+        CheckMimeBase64Requirement(code);
+    }
+
+    WriteIDConstants();
+    GenerateConstructionCode(code);
+    GenerateEventHandlers(code, thrd_get_events);
+
+    // Make certain indentation is reset after all construction code is written
+    m_source->ResetIndent();
+    m_source->writeLine("\treturn $self;", indent::none);
+    m_source->writeLine("}\n\n", indent::none);
+
+    thrd_need_img_func.join();
+
+    WriteHelperFunctions();
+
+    // Only add this when writing to disk. Otherwise, it needs to be added after
+    // the comment block, and only if there is no user code after the comment
+    // block. This is to ensure that the user can add event handlers that are
+    // part of the package.
+    if (panel_type != NOT_PANEL)
+    {
+        m_source->writeLine("1;", indent::none);
+    }
+
+    m_header->ResetIndent();
+
+    WriteEmbeddedImages(code);
 }
 
 void PerlCodeGenerator::WriteUsageStatements()
@@ -443,6 +477,42 @@ void PerlCodeGenerator::GenerateImagesForm()
 
 // This function simply generates unhandled event handlers in a multi-string comment.
 
+auto PerlCodeGenerator::CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
+    -> bool
+{
+    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GEN_LANG_PERL, m_panel_type,
+                                                      code_lines, "sub ");
+}
+
+auto PerlCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void
+{
+    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GEN_LANG_PERL);
+}
+
+auto PerlCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& undefined_handlers) -> void
+{
+    ScriptCommon::GenerateEventHandlerBody(event, undefined_handlers, GEN_LANG_PERL);
+}
+
+auto PerlCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers) -> void
+{
+    if (undefined_handlers.size())
+    {
+        m_source->writeLine(code);
+
+        m_source->ResetIndent();
+        m_source->writeLine(perl_begin_cmt_block);
+        m_source->Indent();
+        m_source->writeLine(undefined_handlers);
+        m_source->Unindent();
+        m_source->writeLine(perl_end_cmt_block);
+        m_source->Indent();
+
+        m_header->writeLine(code);
+        m_header->writeLine(undefined_handlers);
+    }
+}
+
 void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
 {
     ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
@@ -465,41 +535,9 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
     // Sort events by function name
     std::ranges::sort(events, sort_event_handlers);
 
-    bool found_user_handlers = false;
-    if (m_panel_type == NOT_PANEL)
-    {
-        tt_view_vector org_file;
-        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
+    bool found_user_handlers = CollectExistingEventHandlers(code_lines);
 
-        if (has_base_file && path.extension().empty())
-        {
-            path += ".pl";
-        }
-
-        // If the user has defined any event handlers, add them to the code_lines set so we
-        // don't generate them again.
-        if (has_base_file && org_file.ReadFile(path))
-        {
-            size_t line_index = 0;
-            for (; line_index < org_file.size(); ++line_index)
-            {
-                if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
-                {
-                    break;
-                }
-            }
-            for (++line_index; line_index < org_file.size(); ++line_index)
-            {
-                auto handler = org_file[line_index].view_nonspace();
-                if (org_file[line_index].view_nonspace().starts_with("sub "))
-                {
-                    code_lines.emplace(handler);
-                    found_user_handlers = true;
-                }
-            }
-        }
-    }
-
+    // Check if all events are already implemented
     bool is_all_events_implemented = true;
     if (found_user_handlers)
     {
@@ -513,116 +551,104 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
             }
 
             tt_string set_code;
-            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
-            // an unused parameter.
             set_code << "sub " << handler << " {";
-            if (code_lines.contains(set_code))
+            if (!code_lines.contains(set_code))
             {
-                continue;
+                // At least one event wasn't implemented
+                is_all_events_implemented = false;
+                break;
             }
-            set_code << "sub " << handler << " {";
-            if (code_lines.contains(set_code))
-            {
-                continue;
-            }
-
-            // At least one event wasn't implemented, so stop looking for more
-            is_all_events_implemented = false;
-
-            code.Str("# Unimplemented Event handler functions\n# Copy any listed and paste them "
-                     "below the comment block, or "
-                     "to your inherited class.");
-            break;
         }
+
         if (is_all_events_implemented)
         {
-            // If the user has defined all the event handlers, then we don't need to output anything
-            // else.
+            // All event handlers are defined, nothing to generate
             return;
         }
     }
     else
     {
-        // The user hasn't defined their own event handlers in this module
         is_all_events_implemented = false;
-
-        code.Str("# Event handler functions\n# Add these below the comment block, or to your "
-                 "inherited class.");
     }
-    m_source->writeLine(code);
 
-    code.clear();
-    if (!is_all_events_implemented)
+    GenerateEventHandlerComment(found_user_handlers, code);
+
+    Code undefined_handlers(m_form_node, GEN_LANG_PERL);
+    for (auto& event: events)
     {
-        for (auto& event: events)
+        auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
+        // Ignore lambda's
+        if (handler.empty() || handler.starts_with("[perl:lambda]"))
         {
-            auto handler = EventHandlerDlg::GetPerlValue(event->get_value());
-            // Ignore lambda's
-            if (handler.empty() || handler.starts_with("[perl:lambda]"))
-            {
-                continue;
-            }
+            continue;
+        }
 
-            tt_string set_code;
-            // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
-            // an unused parameter.
-            set_code << "sub " << handler << " {";
+        tt_string set_code;
+        set_code << "sub " << handler << " {";
 
-            if (code_lines.contains(set_code))
-            {
-                continue;
-            }
-            code_lines.emplace(set_code);
+        if (code_lines.contains(set_code))
+        {
+            continue;
+        }
+        code_lines.emplace(set_code);
 
-            code.Str(set_code).Eol();
-            code.Tab().Str("my ($self, $event) = @_;").Eol();
+        undefined_handlers.Str(set_code).Eol();
+        undefined_handlers.Tab().Str("my ($self, $event) = @_;").Eol();
 #if defined(_DEBUG)
-            const auto& dbg_event_name = event->get_name();
-            wxUnusedVar(dbg_event_name);
+        const auto& dbg_event_name = event->get_name();
+        wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
-            if (event->get_name() == "CloseButtonClicked")
-            {
-                code.Tab().Str("$self->EndModal(wxID_CLOSE);").Eol();
-            }
-            else if (event->get_name() == "YesButtonClicked")
-            {
-                code.Tab().Str("$self->EndModal(wxID_YES);").Eol();
-            }
-            else if (event->get_name() == "NoButtonClicked")
-            {
-                code.Tab().Str("$self->EndModal(wxID_NO);").Eol();
-            }
-            else
-            {
-                code.Tab().Str("$event->Skip();").Eol();
-            }
-            code.Str("}").Eol();
+        GenerateEventHandlerBody(event, undefined_handlers);
+        undefined_handlers.Eol();
+        undefined_handlers.Str("}").Eol();
+    }
+
+    WriteEventHandlers(code, undefined_handlers);
+}
+
+auto PerlCodeGenerator::ProcessImageFromImagesForm(Code& code, bool& images_file_imported,
+                                                   bool& svg_import_libs, const EmbeddedImage* iter)
+    -> void
+{
+    if (!images_file_imported)
+    {
+        tt_string import_name = iter->get_Form()->as_string(prop_perl_file).filename();
+        import_name.remove_extension();
+        code.Eol().Str("use ").Str(import_name) << "'";
+        m_source->writeLine(code);
+        code.clear();
+        images_file_imported = true;
+    }
+
+    if (iter->base_image().type == wxBITMAP_TYPE_SVG)
+    {
+        if (!svg_import_libs)
+        {
+            // TODO: [Randalphwa - 05-29-2025] Currently, wxPerl does not support SVG
+            // files. We could take advantage of wxLunaSVG and convert the SVG files to
+            // PNG -- in fact we could even generate multiple resolution PNG files.
+
+            // svg_import_libs = true;
         }
     }
+}
 
-    // Write the unimplemented event handlers to the source file without the
-    // comment block to make it easier for the user to cut and paste and/or add
-    // them to an inherited class.
-    if (found_user_handlers && !is_all_events_implemented)
+auto PerlCodeGenerator::ProcessExternalImage([[maybe_unused]] const EmbeddedImage* iter,
+                                             [[maybe_unused]] bool svg_import_libs) -> void
+{
+    // If the image isn't in the images file, then we need to add the base64 version
+    // of the bitmap
+    if (!m_base64_requirement_written)
     {
-        m_header->writeLine("# Unimplemented Event handler functions");
+        m_source->writeLine("use MIME::Base64;");
+        m_base64_requirement_written = true;
     }
-    else
-    {
-        m_header->writeLine("# Event handler functions");
-    }
-    m_header->writeLine(code);
 
-    if (!is_all_events_implemented)
-    {
-        m_source->ResetIndent();
-        m_source->writeLine(perl_begin_cmt_block);
-        m_source->Indent();
-        m_source->writeLine(code);
-        m_source->Unindent();
-        m_source->writeLine(perl_end_cmt_block);
-        m_source->Indent();
-    }
+    // At this point we know that some method is required, but until we have
+    // processed all the images, we won't know if the images file is required. The
+    // images file provides it's own function for loading images, so we can use that
+    // if it's available.
+    m_NeedImageFunction = true;
 }
 
 void PerlCodeGenerator::CheckMimeBase64Requirement(Code& code)
@@ -633,51 +659,22 @@ void PerlCodeGenerator::CheckMimeBase64Requirement(Code& code)
     {
         return;
     }
+
     bool images_file_imported = false;
     bool svg_import_libs = false;
+
     for (auto& iter: m_embedded_images)
     {
         if (iter->get_Form() == m_ImagesForm)
         {
-            if (!images_file_imported)
-            {
-                tt_string import_name = iter->get_Form()->as_string(prop_perl_file).filename();
-                import_name.remove_extension();
-                code.Eol().Str("use ").Str(import_name) << "'";
-                m_source->writeLine(code);
-                code.clear();
-                images_file_imported = true;
-            }
-            if (iter->base_image().type == wxBITMAP_TYPE_SVG)
-            {
-                if (!svg_import_libs)
-                {
-                    // TODO: [Randalphwa - 05-29-2025] Currently, wxPerl does not support SVG
-                    // files. We could take advantage of wxLunaSVG and convert the SVG files to
-                    // PNG -- in fact we could even generate multiple resolution PNG files.
-
-                    // svg_import_libs = true;
-                }
-            }
-
-            if (iter->get_Form() != m_ImagesForm)
-            {
-                // If the image isn't in the images file, then we need to add the base64 version
-                // of the bitmap
-                if (!m_base64_requirement_written)
-                {
-                    m_source->writeLine("use MIME::Base64;");
-                    m_base64_requirement_written = true;
-                }
-
-                // At this point we know that some method is required, but until we have
-                // processed all the images, we won't know if the images file is required. The
-                // images file provides it's own function for loading images, so we can use that
-                // if it's available.
-                m_NeedImageFunction = true;
-            }
+            ProcessImageFromImagesForm(code, images_file_imported, svg_import_libs, iter);
         }
-    }  // end of for (auto& iter: m_embedded_images)
+
+        if (iter->get_Form() != m_ImagesForm)
+        {
+            ProcessExternalImage(iter, svg_import_libs);
+        }
+    }
 
     if (m_NeedImageFunction)
     {
@@ -708,6 +705,7 @@ void PerlCodeGenerator::InitializeUsageStatements()
 
     if (m_art_ids.size())
     {
+        constexpr auto art_provider_overhead = 15;  // Space needed for "use Wx::ArtProvider qw();"
         tt_string art_ids;
         for (const auto& iter: m_art_ids)
         {
@@ -720,7 +718,7 @@ void PerlCodeGenerator::InitializeUsageStatements()
                 art_ids += ' ';
             }
             art_ids += iter;
-            if (art_ids.size() > (Project.as_size_t(prop_perl_line_length) - 15))
+            if (art_ids.size() > (Project.as_size_t(prop_perl_line_length) - art_provider_overhead))
             {
                 art_ids += ");";
                 m_use_packages.emplace(art_ids);
@@ -735,20 +733,8 @@ void PerlCodeGenerator::InitializeUsageStatements()
     }
 }
 
-void PerlCodeGenerator::ParseNodesForUsage(Node* node)
+auto PerlCodeGenerator::ProcessNodeProperties(Node* node) -> void
 {
-    if (node->is_Sizer())
-    {
-        m_use_expands.emplace("use Wx qw[:sizer];");
-
-        // Now recurse through any children and their children
-        for (auto& child: node->get_ChildNodePtrs())
-        {
-            ParseNodesForUsage(child.get());
-        }
-        return;
-    }
-
     if (node->HasValue(prop_window_style) || node->HasValue(prop_window_extra_style) ||
         (node->HasValue(prop_variant) && node->as_string(prop_variant) != "normal"))
     {
@@ -778,6 +764,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
             m_use_expands.emplace("use Wx qw[:systemsettings];");
         }
     }
+
     if (node->HasValue(prop_foreground_colour) || node->HasValue(prop_background_colour))
     {
         if (node->as_string(prop_foreground_colour).contains("wxSYS") ||
@@ -786,40 +773,66 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
             m_use_expands.emplace("use Wx qw[:systemsettings];");
         }
     }
-    if (auto* gen = node->get_Generator(); gen)
+}
+
+auto PerlCodeGenerator::ProcessNodeImports(Node* node) -> void
+{
+    auto* gen = node->get_Generator();
+    if (!gen)
     {
-        std::set<std::string> imports;
-        gen->GetImports(node, imports, GEN_LANG_PERL);
-        for (const auto& iter: imports)
+        return;
+    }
+
+    std::set<std::string> imports;
+    gen->GetImports(node, imports, GEN_LANG_PERL);
+    for (const auto& iter: imports)
+    {
+        if (iter.starts_with("use Wx qw[:"))
         {
-            if (iter.starts_with("use Wx qw[:"))
-            {
-                m_use_expands.emplace(iter);
-            }
-            else if (iter.starts_with("use Wx::"))
-            {
-                m_use_packages.emplace(iter);
-            }
-            else if (iter.starts_with("use Wx "))
-            {
-                m_use_constants.emplace(iter);
-            }
-            else
-            {
-                m_use_classes.emplace(iter);
-            }
+            m_use_expands.emplace(iter);
         }
-        for (const auto& iter: map_perl_constants)
+        else if (iter.starts_with("use Wx::"))
         {
-            if (node->HasProp(iter.first))
-            {
-                tt_string constants("use Wx qw(");
-                constants += iter.second;
-                constants += ");";
-                m_use_constants.emplace(constants);
-            }
+            m_use_packages.emplace(iter);
+        }
+        else if (iter.starts_with("use Wx "))
+        {
+            m_use_constants.emplace(iter);
+        }
+        else
+        {
+            m_use_classes.emplace(iter);
         }
     }
+
+    for (const auto& iter: map_perl_constants)
+    {
+        if (node->HasProp(iter.first))
+        {
+            tt_string constants("use Wx qw(");
+            constants += iter.second;
+            constants += ");";
+            m_use_constants.emplace(constants);
+        }
+    }
+}
+
+void PerlCodeGenerator::ParseNodesForUsage(Node* node)
+{
+    if (node->is_Sizer())
+    {
+        m_use_expands.emplace("use Wx qw[:sizer];");
+
+        // Now recurse through any children and their children
+        for (auto& child: node->get_ChildNodePtrs())
+        {
+            ParseNodesForUsage(child.get());
+        }
+        return;
+    }
+
+    ProcessNodeProperties(node);
+    ProcessNodeImports(node);
 
     // Now recurse through any children and their children
     for (auto& child: node->get_ChildNodePtrs())
@@ -830,17 +843,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
 
 auto MakePerlPath(Node* node) -> tt_string
 {
-    auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_PERL);
-
-    if (path.empty())
-    {
-        path = "./";
-    }
-    else if (has_base_file)
-    {
-        path.remove_filename();
-    }
-    return path;
+    return ScriptCommon::MakeScriptPath(node, GEN_LANG_PERL);
 }
 
 bool HasPerlMapConstant(std::string_view value)

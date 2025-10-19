@@ -21,4 +21,4 @@ const std::string_view perl_begin_cmt_block = "=pod";
 // This *MUST* be written without any indendation
 const std::string_view perl_end_cmt_block = "=cut";
 
-const std::string_view  python_triple_quote = "\"\"\"";
+const std::string_view python_triple_quote = R"(""")";

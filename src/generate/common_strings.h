@@ -31,7 +31,8 @@ extern const std::string_view ruby_end_cmt_block;
  *
  * Example value: "# ************* End of generated code"
  */
-extern const std::string_view python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
+extern const std::string_view
+    python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
 /**
  * @var perl_begin_cmt_block
  * @brief Perl begin comment block marker ("=pod").
@@ -55,4 +56,4 @@ extern const std::string_view perl_end_cmt_block;
  * This constant can be used when generating or parsing Python code that requires
  * triple quotes (""" ... """) for multi-line strings or docstrings.
  */
-extern const std::string_view python_triple_quote;  // "\"\"\"";
+extern const std::string_view python_triple_quote;  // R"(""")";

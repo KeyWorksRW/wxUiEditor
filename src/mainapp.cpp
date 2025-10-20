@@ -26,7 +26,10 @@
 #include "preferences.h"           // Set/Get wxUiEditor preferences
 #include "project_handler.h"       // ProjectHandler class
 #include "utils.h"                 // Utility functions that work with properties
+#include "verify_codegen.h"        // VerifyCodeGen -- Verify that code generation did not change
 #include "version.h"               // Version numbers and other constants
+
+#include "frozen/set.h"  // frozen::set
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
@@ -158,6 +161,17 @@ int App::OnRun()
     parser.AddLongOption("gen_xrc", "generate XRC files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
+    parser.AddLongSwitch("verify_cpp", "verify generating C++ files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_perl", "verify generating Perl files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_python", "verify generating Python files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_ruby", "verify generating Ruby files did not change",
+                         wxCMD_LINE_HIDDEN);
+
+    parser.AddLongSwitch("verify_all", "verify generating all language files did not change",
+                         wxCMD_LINE_HIDDEN);
 
     // Just a quick way to generate perl, python, and ruby
     parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING,
@@ -191,7 +205,7 @@ int App::OnRun()
 #endif
     if (auto result = parser.FoundSwitch("test_menu"); result != wxCMD_SWITCH_NOT_FOUND)
     {
-        m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON ? true : false);
+        m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON);
     }
 #if defined(_DEBUG)
     m_TestingMenuEnabled = true;
@@ -205,6 +219,25 @@ int App::OnRun()
 
         // Use our own assertion handler
         wxSetAssertHandler(ttAssertionHandler);
+    }
+
+    bool is_verify_mode = false;
+    constexpr frozen::set<std::string_view, 5> verify_options = { "verify_cpp", "verify_perl",
+                                                                  "verify_python", "verify_ruby",
+                                                                  "verify_all" };
+
+    for (const auto& opt: verify_options)
+    {
+        if (parser.Found(wxString(opt)))
+        {
+            is_verify_mode = true;
+            break;
+        }
+    }
+
+    if (is_verify_mode)
+    {
+        return VerifyCodeGen(parser, is_project_loaded);
     }
 
     // A positive return value means code generation was for command-line only
@@ -246,10 +279,10 @@ int App::OnRun()
             switch (start_dlg.GetCommandType())
             {
                 case StartupDlg::START_MRU:
-                    if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui",
+                    if (!start_dlg.GetProjectFile().extension().is_sameas(PROJECT_FILE_EXTENSION,
                                                                           tt::CASE::either) &&
-                        !start_dlg.GetProjectFile().extension().is_sameas(".wxue",
-                                                                          tt::CASE::either))
+                        !start_dlg.GetProjectFile().extension().is_sameas(
+                            PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
                     {
                         is_project_loaded = Project.ImportProject(start_dlg.GetProjectFile());
                     }
@@ -273,9 +306,10 @@ int App::OnRun()
                         // wxSmith resources -- so it would actually make sense to process it since
                         // we can combine all of those resources into our single project file.
 
-                        wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString,
-                                            wxEmptyString,
-                                            "wxUiEditor Project File (*.wxui)|*.wxui"
+                        wxFileDialog dialog(
+                            nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
+                            wxString::FromUTF8(
+                                std::format("wxUiEditor Project File (*{})|{}"
                                             "|wxCrafter Project File (*.wxcp)|*.wxcp"
                                             "|DialogBlocks Project File (*.fjd)|*.fjd"
                                             "|wxFormBuilder Project File (*.fbp)|*.fbp"
@@ -283,13 +317,17 @@ int App::OnRun()
                                             "|wxSmith File (*.wxs)|*.wxs"
                                             "|XRC File (*.xrc)|*.xrc"
                                             "|Windows Resource File (*.rc)|*.rc||",
-                                            wxFD_OPEN);
+                                            PROJECT_FILE_EXTENSION, PROJECT_FILE_EXTENSION)
+                                    .c_str()),
+                            wxFD_OPEN);
 
                         if (dialog.ShowModal() == wxID_OK)
                         {
                             tt_string filename = dialog.GetPath().utf8_string();
-                            if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
-                                !filename.extension().is_sameas(".wxue", tt::CASE::either))
+                            if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
+                                                                tt::CASE::either) &&
+                                !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
+                                                                tt::CASE::either))
                             {
                                 is_project_loaded = Project.ImportProject(filename);
                             }
@@ -540,7 +578,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
         {
             wxDir dir;
             dir.Open("./");
-            if (!dir.GetFirst(&filename, "*.wxui", wxDIR_FILES))
+            if (!dir.GetFirst(&filename, "*" + std::string(PROJECT_FILE_EXTENSION), wxDIR_FILES))
             {
                 wxMessageBox("No project file found in current directory. Filenane is required if "
                              "switch is used.",
@@ -570,8 +608,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
                 if (wxGetApp().isTestingMenuEnabled())
                     results.StartClock();
             }
-            if (!tt_filename.extension().is_sameas(".wxui", tt::CASE::either) &&
-                !tt_filename.extension().is_sameas(".wxue", tt::CASE::either))
+            if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) &&
+                !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
             {
                 is_project_loaded =
                     Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);

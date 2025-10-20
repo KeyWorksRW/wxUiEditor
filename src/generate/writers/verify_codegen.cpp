@@ -56,8 +56,7 @@ namespace
     {
         wxDir dir;
         dir.Open("./");
-        if (!dir.GetFirst(&filename, "*" + std::string(PROJECT_FILE_EXTENSION),
-                          wxDIR_FILES))
+        if (!dir.GetFirst(&filename, "*" + std::string(PROJECT_FILE_EXTENSION), wxDIR_FILES))
         {
             wxMessageBox("No project file found in current directory. Filenane is required if "
                          "switch is used.",

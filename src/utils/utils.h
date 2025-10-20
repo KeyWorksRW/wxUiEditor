@@ -13,6 +13,10 @@
 
 #include "gen_enums.h"  // Enumerations for generators
 
+// Default project file extension (also accepts ".wxue" for legacy reasons)
+inline constexpr std::string_view PROJECT_FILE_EXTENSION = ".wxui";
+inline constexpr std::string_view PROJECT_LEGACY_FILE_EXTENSION = ".wxue";
+
 class wxColour;
 class wxImage;
 class wxPoint;

@@ -66,17 +66,20 @@ public:
     bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
 
     // Determines whether the testing menu is enabled
-    bool isTestingMenuEnabled() const noexcept { return m_TestingMenuEnabled; }
+    auto isTestingMenuEnabled() const noexcept -> bool { return m_TestingMenuEnabled; }
+    void set_TestingMenuEnabled(bool value) noexcept { m_TestingMenuEnabled = value; }
 
     // Determines whether the testing switch is enabled
     bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
     void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
 
     // Returns true if --verbose is specified on the command line.
-    bool isVerboseCodeGen() const noexcept { return m_is_verbose_codegen; }
+    auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }
+    void set_VerboseCodeGen(bool value) noexcept { m_is_verbose_codegen = value; }
 
     // Returns true if code is being generated from the command line.
-    bool is_Generating() const noexcept { return m_is_generating; }
+    auto is_Generating() const noexcept -> bool { return m_is_generating; }
+    void set_Generating(bool value) noexcept { m_is_generating = value; }
 
     // Add warning or error messages to this if is_Generating() is true (which means code is
     // being generated from the command line).
@@ -135,6 +138,28 @@ private:
 };
 
 DECLARE_APP(App)
+
+// Temporarily disables the testing menu for the scope of this object.
+// Restores the previous state in the destructor.
+class DisableTestingMenuScope
+{
+public:
+    DisableTestingMenuScope() : m_was_enabled(wxGetApp().isTestingMenuEnabled())
+    {
+        wxGetApp().set_TestingMenuEnabled(false);
+    }
+
+    ~DisableTestingMenuScope() { wxGetApp().set_TestingMenuEnabled(m_was_enabled); }
+
+    // Delete copy and move constructors
+    DisableTestingMenuScope(const DisableTestingMenuScope&) = delete;
+    auto operator=(const DisableTestingMenuScope&) -> DisableTestingMenuScope& = delete;
+    DisableTestingMenuScope(DisableTestingMenuScope&&) = delete;
+    auto operator=(DisableTestingMenuScope&&) -> DisableTestingMenuScope& = delete;
+
+private:
+    bool m_was_enabled;
+};
 
 // Do *NOT* use this before wxGetApp() has been initialized.
 // This test is available in release builds with the testing menu enabled.

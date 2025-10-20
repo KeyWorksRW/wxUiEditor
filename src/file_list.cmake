@@ -110,6 +110,7 @@ set( file_list
     generate/writers/gen_rust.cpp          # Generate wxRust code
     generate/writers/gen_script_common.cpp # Common functions for generating Script Languages
     generate/writers/gen_xrc.cpp           # Generate XRC
+    generate/writers/verify_codegen.cpp    # Verify that code generation did not change
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object

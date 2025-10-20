@@ -28,7 +28,12 @@ This is a multi-language project that includes C++, Perl, Python, and Ruby compo
 
 ### Code Formatting
 
-After modifying any C++ code files, always run the "Format Document" command on each modified file to ensure consistent formatting. Use the VSCode command `editor.action.formatDocument` on files you've changed.
+After modifying any C++ code files, always format them using clang-format:
+```bash
+clang-format -i
+```
+
+Run this command for each modified C++ file to ensure consistent formatting.
 
 ### Debug Checks
 - The `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros are the preferred macros for debug checks declared in assertion_dlg.h

@@ -44,7 +44,7 @@ bool BoxSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().Add(prop_orientation).EndFunction();
 
-    auto min_size = code.m_node->as_wxSize(prop_minimum_size);
+    auto min_size = code.node()->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -68,7 +68,7 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
         }
     }
 
-    auto parent = code.m_node->get_Parent();
+    auto parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {

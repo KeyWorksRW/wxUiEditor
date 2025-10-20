@@ -42,7 +42,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
         child->set_Parent(menu_node_ptr.get());
         if (auto gen = child->get_NodeDeclaration()->get_Generator(); gen)
         {
-            Code child_code(child.get(), code.m_language);
+            Code child_code(child.get(), code.get_language());
             if (gen->ConstructionCode(child_code))
             {
                 code.Eol() += child_code;
@@ -61,7 +61,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
             {
                 if (auto gen = grandchild->get_NodeDeclaration()->get_Generator(); gen)
                 {
-                    Code child_code(grandchild.get(), code.m_language);
+                    Code child_code(grandchild.get(), code.get_language());
                     if (gen->ConstructionCode(child_code))
                     {
                         code.Eol() += child_code;
@@ -80,7 +80,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
                         if (auto gen = great_grandchild->get_NodeDeclaration()->get_Generator();
                             gen)
                         {
-                            Code child_code(great_grandchild.get(), code.m_language);
+                            Code child_code(great_grandchild.get(), code.get_language());
                             if (gen->ConstructionCode(child_code))
                             {
                                 code.Eol() += child_code;

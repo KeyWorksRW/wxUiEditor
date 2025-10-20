@@ -91,10 +91,10 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
         auto child_node = NodeCreation.MakeCopy(child);
         node_menu->AdoptChild(child_node);
         auto* save_node = code.node();
-        code.m_node = child_node.get();
+        code.set_node(child_node.get());
         code.Eol(eol_if_needed);
         GenCtxConstruction(code);
-        code.m_node = save_node;
+        code.set_node(save_node);
     }
     code.Eol().Eol();
     m_CtxMenuEvents.clear();
@@ -114,7 +114,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
     {
         if (auto generator = iter->getNode()->get_NodeDeclaration()->get_Generator(); generator)
         {
-            Code event_code(iter->getNode(), code.m_language);
+            Code event_code(iter->getNode(), code.get_language());
             if (generator->GenEvent(event_code, iter,
                                     code.node()->get_ParentName(code.get_language()).as_str());
                 event_code.size())

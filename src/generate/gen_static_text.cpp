@@ -89,13 +89,13 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
     else
         code.CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.m_node->as_bool(prop_markup) && !code.is_perl())
+    if (code.node()->as_bool(prop_markup) && !code.is_perl())
     {
         code.EmptyString();
     }
     else
     {
-        auto& label = code.m_node->as_string(prop_label);
+        auto& label = code.node()->as_string(prop_label);
         if (label.size())
         {
             code.QuotedString(prop_label);
@@ -113,7 +113,7 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
 
 bool StaticTextGenerator::SettingsCode(Code& code)
 {
-    if (code.m_node->as_bool(prop_markup) && code.m_node->as_int(prop_wrap) <= 0)
+    if (code.node()->as_bool(prop_markup) && code.node()->as_int(prop_wrap) <= 0)
     {
         if (code.is_perl())
         {

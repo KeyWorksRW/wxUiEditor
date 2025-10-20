@@ -39,8 +39,8 @@ bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
         {
             if (iter->as_bool(prop_auto_start))
             {
-                auto save_node = code.m_node;
-                code.m_node = iter.get();
+                auto save_node = code.node();
+                code.set_node(iter.get());
                 if (code.is_ruby() || code.is_python())
                 {
                     code.Eol().NodeName().CreateClass();
@@ -54,7 +54,7 @@ bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
 
                 code.Eol().NodeName().VariableMethod("Start(").as_string(prop_interval).Comma();
                 code.TrueFalseIf(prop_one_shot).EndFunction();
-                code.m_node = save_node;
+                code.set_node(save_node);
                 return true;
             }
             break;

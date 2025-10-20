@@ -145,7 +145,7 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
     {
         if (auto child_generator = child_node->get_Generator(); child_generator)
         {
-            Code gen_code(child_node, code.m_language);
+            Code gen_code(child_node, code.get_language());
             if (child_generator->ConstructionCode(gen_code))
             {
                 code += gen_code.GetCode();

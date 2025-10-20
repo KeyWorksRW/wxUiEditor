@@ -638,8 +638,8 @@ namespace
     {
         const auto& event_name = event->get_name();
         const auto is_script_lang =
-            (code.m_language == GEN_LANG_PERL || code.m_language == GEN_LANG_PYTHON ||
-             code.m_language == GEN_LANG_RUBY);
+            (code.get_language() == GEN_LANG_PERL || code.get_language() == GEN_LANG_PYTHON ||
+             code.get_language() == GEN_LANG_RUBY);
 
         if (is_script_lang)
         {
@@ -649,7 +649,7 @@ namespace
                 {
                     const auto id_constant = GetButtonIdConstant(event_name);
                     code.Add(id_constant);
-                    auto event_code = GetEventCodeForLanguage(code.m_language, event->get_value());
+                    auto event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
                     code.Comma().Str("$self->can('") << event_code << "')";
                     return true;
                 }
@@ -678,7 +678,7 @@ namespace
                 if (code.is_perl())
                 {
                     code.Replace("}", "");
-                    auto event_code = GetEventCodeForLanguage(code.m_language, event->get_value());
+                    auto event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
                     code.Str("}->GetId(), $self->can('") << event_code << "')";
                     return true;
                 }
@@ -717,8 +717,8 @@ namespace
 void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
                                              const std::string& class_name)
 {
-    Code handler(event->getNode(), code.m_language);
-    const auto event_code = GetEventCodeForLanguage(code.m_language, event->get_value());
+    Code handler(event->getNode(), code.get_language());
+    const auto event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
 
     // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on
     // it's own line, so we use a string for this to allow the lambda processing code to replace it.

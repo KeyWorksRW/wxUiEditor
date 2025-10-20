@@ -43,25 +43,25 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         !generator || !generator->isLanguageVersionSupported(code.get_language()).first)
         return;  // Current language does not support this node
 
-    Code handler(event->getNode(), code.m_language);
+    Code handler(event->getNode(), code.get_language());
     tt_string event_code;
-    if (code.m_language == GEN_LANG_CPLUSPLUS)
+    if (code.get_language() == GEN_LANG_CPLUSPLUS)
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
     }
-    else if (code.m_language == GEN_LANG_PERL)
+    else if (code.get_language() == GEN_LANG_PERL)
     {
         event_code = EventHandlerDlg::GetPerlValue(event->get_value());
     }
-    else if (code.m_language == GEN_LANG_PYTHON)
+    else if (code.get_language() == GEN_LANG_PYTHON)
     {
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
     }
-    else if (code.m_language == GEN_LANG_RUBY)
+    else if (code.get_language() == GEN_LANG_RUBY)
     {
         event_code = EventHandlerDlg::GetRubyValue(event->get_value());
     }
-    else if (code.m_language == GEN_LANG_RUST)
+    else if (code.get_language() == GEN_LANG_RUST)
     {
         event_code = EventHandlerDlg::GetRustValue(event->get_value());
     }
@@ -229,7 +229,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     // With lambdas, line breaks have already been added
     code.EnableAutoLineBreak(is_lambda ? false : true);
 
-    // Do *NOT* assume that code.m_node is the same as event->getNode()!
+    // Do *NOT* assume that code.node() is the same as event->getNode()!
 
     if (event->getNode()->is_StaticBoxSizer())
     {

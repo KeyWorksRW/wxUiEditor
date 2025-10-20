@@ -846,7 +846,7 @@ auto MakePerlPath(Node* node) -> tt_string
     return ScriptCommon::MakeScriptPath(node, GEN_LANG_PERL);
 }
 
-bool HasPerlMapConstant(std::string_view value)
+[[nodiscard]] auto HasPerlMapConstant(std::string_view value) -> bool
 {
     return std::ranges::any_of(map_perl_constants,
                                [&](const auto& iter)

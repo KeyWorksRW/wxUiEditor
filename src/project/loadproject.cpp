@@ -756,52 +756,115 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
     return new_node;
 }
 
-bool ProjectHandler::ImportProject(tt_string& file, bool allow_ui)
+#include <frozen/map.h>
+
+namespace
+{
+    enum class ImportFileType : std::uint8_t
+    {
+        wxcp,
+        fbp,
+        rc_dlg,
+        wxs_xrc,
+        wxg,
+        pjd,
+        unknown
+    };
+
+    constexpr auto import_file_types =
+        frozen::make_map<std::string_view, ImportFileType>({ { "wxcp", ImportFileType::wxcp },
+                                                             { "fbp", ImportFileType::fbp },
+                                                             { "rc", ImportFileType::rc_dlg },
+                                                             { "dlg", ImportFileType::rc_dlg },
+                                                             { "wxs", ImportFileType::wxs_xrc },
+                                                             { "xrc", ImportFileType::wxs_xrc },
+                                                             { "wxg", ImportFileType::wxg },
+                                                             { "pjd", ImportFileType::pjd } });
+
+    [[nodiscard]] auto GetImportFileType(std::string_view ext) -> ImportFileType
+    {
+        if (ext.empty())
+        {
+            return ImportFileType::unknown;
+        }
+
+        const auto* result = import_file_types.find(ext);
+        return (result != import_file_types.end()) ? result->second : ImportFileType::unknown;
+    }
+
+    [[nodiscard]] auto GetLexerType(ImportFileType type) -> int
+    {
+        switch (type)
+        {
+            case ImportFileType::wxcp:
+                return wxSTC_LEX_JSON;
+            case ImportFileType::fbp:
+            case ImportFileType::wxs_xrc:
+            case ImportFileType::wxg:
+            case ImportFileType::pjd:
+                return wxSTC_LEX_XML;
+            case ImportFileType::rc_dlg:
+                return wxSTC_LEX_CPP;
+            default:
+                return wxSTC_LEX_XML;
+        }
+    }
+}  // namespace
+
+[[nodiscard]] auto ProjectHandler::ImportProject(std::string_view file, bool allow_ui) -> bool
 {
     // Importers will change the file extension, so make a copy here
-    tt_string import_file = file;
+    auto import_file = wxFileName(wxString(file));
+    auto file_type = GetImportFileType(import_file.GetExt().ToStdString());
+
+    tt_string import_path(import_file.GetFullPath().ToStdString());
     bool result = false;
-    if (file.has_extension(".wxcp"))
+
+    switch (file_type)
     {
-        WxCrafter crafter;
-        result = Import(crafter, file);
-        if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
-            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+        case ImportFileType::wxcp:
+            {
+                WxCrafter crafter;
+                result = Import(crafter, import_path);
+                break;
+            }
+        case ImportFileType::fbp:
+            {
+                FormBuilder formbuilder;
+                result = Import(formbuilder, import_path);
+                break;
+            }
+        case ImportFileType::rc_dlg:
+            {
+                WinResource winres;
+                result = Import(winres, import_path);
+                break;
+            }
+        case ImportFileType::wxs_xrc:
+            {
+                WxSmith smith;
+                result = Import(smith, import_path);
+                break;
+            }
+        case ImportFileType::wxg:
+            {
+                WxGlade glade;
+                result = Import(glade, import_path);
+                break;
+            }
+        case ImportFileType::pjd:
+            {
+                DialogBlocks dialogblocks;
+                result = Import(dialogblocks, import_path);
+                break;
+            }
+        case ImportFileType::unknown:
+            return false;
     }
-    else if (file.has_extension(".fbp"))
+
+    if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
     {
-        FormBuilder fb;
-        result = Import(fb, file);
-        if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
-            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-    }
-    else if (file.has_extension(".rc") || file.has_extension(".dlg"))
-    {
-        WinResource winres;
-        result = Import(winres, file);
-        if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
-            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
-    }
-    else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
-    {
-        WxSmith smith;
-        result = Import(smith, file);
-        if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
-            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-    }
-    else if (file.has_extension(".wxg"))
-    {
-        WxGlade glade;
-        result = Import(glade, file);
-        if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
-            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-    }
-    else if (file.has_extension(".pjd"))
-    {
-        DialogBlocks db;
-        result = Import(db, file);
-        if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
-            wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+        wxGetFrame().getImportPanel()->SetImportFile(file, GetLexerType(file_type));
     }
 
     return result;
@@ -946,7 +1009,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         FinalImportCheck(project_node.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
-        file.replace_extension(".wxui");
+        file.replace_extension(std::string(PROJECT_FILE_EXTENSION));
         Project.set_ProjectFile(file);
         ProjectImages.CollectBundles();
 
@@ -1089,7 +1152,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         FinalImportCheck(project.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
-        file.replace_extension(".wxui");
+        file.replace_extension(std::string(PROJECT_FILE_EXTENSION));
         Project.set_ProjectFile(file);
 
         if (allow_ui)
@@ -1116,7 +1179,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     FinalImportCheck(project.get());
     // Calling this will also initialize the ProjectImage class
     Project.Initialize(project);
-    file.replace_extension(".wxui");
+    file.replace_extension(std::string(PROJECT_FILE_EXTENSION));
     Project.set_ProjectFile(file);
 
     tt_string imported_from;

@@ -74,19 +74,19 @@ extern const view_map g_map_ruby_prefix;
 
 // Returns true if value exists in one of the use Wx qw(...) declarations.
 // If true, then the constant is available without modification.
-bool HasPerlMapConstant(std::string_view value);
+[[nodiscard]] auto HasPerlMapConstant(std::string_view value) -> bool;
 
 class Code : public tt_string
 {
 public:
-    Node* m_node;
-    GenLang m_language;
+    static constexpr int DEFAULT_BREAK_LENGTH = 80;
+    static constexpr int MIN_BREAK_LENGTH = 10;
 
     Code(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
     void Init(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
 
     auto GetCode() -> tt_string& { return *this; }
-    auto GetView() const -> tt_string_view { return *this; }
+    [[nodiscard]] auto GetView() const -> tt_string_view { return *this; }
 
     void clear()
     {
@@ -94,12 +94,13 @@ public:
         if (m_auto_break)
         {
             m_break_at = m_break_length;
-            m_minium_length = 10;
+            m_minium_length = MIN_BREAK_LENGTH;
         }
         else
         {
-            m_break_at = 100000;  // initialize this high enough that no line will break unless
-                                  // SetBreakAt() is called
+            // initialize this high enough that no line will break unless
+            // SetBreakAt() is called
+            m_break_at = 100000;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
         }
     }
 
@@ -115,6 +116,8 @@ public:
     [[nodiscard]] auto IntValue(GenEnum::PropName prop_name) const -> int;
 
     [[nodiscard]] auto node() const -> Node* { return m_node; }
+    void set_node(Node* node) { m_node = node; }
+
     [[nodiscard]] auto get_language() const -> GenLang { return m_language; }
 
     [[nodiscard]] auto HasValue(GenEnum::PropName prop_name) const -> bool;
@@ -231,7 +234,7 @@ public:
     void UpdateBreakAt()
     {
         m_break_at = size() + m_break_length;
-        m_minium_length = size() + 10;
+        m_minium_length = size() + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
     }
 
     // Equivalent to calling node->prop_as_string(prop_name).size()
@@ -597,7 +600,7 @@ protected:
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis
     auto SizerFlagsFunction(tt_string_view function_name) -> Code&;
 
-    auto GetLanguagePrefix(std::string_view candidate, GenLang language) -> std::string_view;
+    static auto GetLanguagePrefix(std::string_view candidate, GenLang language) -> std::string_view;
 
     void OpenFontBrace();
     void CloseFontBrace();
@@ -637,13 +640,23 @@ protected:
     void AddClassNameForLanguage(const std::string& class_name);
     void AddSubclassParams();
 
+    // Helper methods for WxSize() - called internally to reduce complexity
+    auto WxSize_Ruby(wxSize size, size_t cur_pos, bool size_scaling) -> Code&;
+    auto WxSize_Perl(wxSize size, size_t cur_pos, bool size_scaling) -> Code&;
+    auto WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&;
+
 private:
+    Node* m_node;
+    GenLang m_language;
+
     // This is changed on a per-language basis in Code::Init()
     tt_string m_language_wxPrefix { "wx" };
 
-    size_t m_break_length { 80 };
-    size_t m_break_at { 80 };       // this should be the same as m_break_length
-    size_t m_minium_length { 10 };  // if the line is shorter than this, don't break it
+    size_t m_break_length { DEFAULT_BREAK_LENGTH };
+    size_t m_break_at { DEFAULT_BREAK_LENGTH };  // this should be the same as m_break_length
+    size_t m_minium_length {
+        MIN_BREAK_LENGTH  // if the line is shorter than this, don't break it
+    };
 
     int m_indent { 0 };
     int m_indent_size { 4 };  // amount of spaces to assume tab size is set to,  default: 4

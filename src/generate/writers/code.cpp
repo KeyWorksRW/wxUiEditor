@@ -80,7 +80,6 @@ const view_map g_map_python_prefix
     { "wxRichTextCtrl",         "wx.richtext."},
     { "wxStyledTextCtrl",       "wx.stc."},
     { "wxTimePickerCtrl",       "wx.adv."},
-    { "wxStyledTextCtrl",       "wx.stc."},
     { "wxWebView",              "wx.html2."},
     { "wxWizard",               "wx.adv."},
     { "wxWizardPageSimple",     "wx.adv."},
@@ -117,7 +116,6 @@ const view_map g_map_python_prefix
     { "wxHLB_MULTIPLE", "wx.html."},
 
     { "wxHW_SCROLLBAR_AUTO", "wx.html."},
-    { "wxHW_NO_SELECTION", "wx.html."},
     { "wxHW_NO_SELECTION", "wx.html."},
 
     { "wxEVT_PG_CHANGED", "wx.propgrid." },
@@ -257,9 +255,6 @@ static const view_map s_short_rust_map
 
 auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> std::string_view
 {
-    // Currently not declared static, but may be in the future
-    [[maybe_unused]] auto* self = this;
-
     // Lambda to find a matching prefix in a map
     auto find_prefix_match = [](const view_map& map,
                                 std::string_view candidate) -> std::optional<std::string_view>
@@ -325,78 +320,117 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
     return {};
 }
 
-Code::Code(Node* node, GenLang language)
+Code::Code(Node* node, GenLang language)  // NOLINT (doesn't initialize all members) //
+                                          // cppcheck-suppress uninitMemberVar
 {
     Init(node, language);
 }
+
+namespace
+{
+    constexpr size_t MIN_VALID_LINE_LENGTH = 50;  // NOLINT (magic number)
+    constexpr size_t RUST_LINE_LENGTH = 100;      // NOLINT (magic number)
+    constexpr size_t XRC_LINE_LENGTH = 500;       // NOLINT (magic number)
+    constexpr size_t DEFAULT_LINE_LENGTH = 90;    // NOLINT (magic number)
+
+    [[nodiscard]] inline auto get_line_break_length(GenLang language) -> size_t
+    {
+        switch (language)
+        {
+            case GEN_LANG_CPLUSPLUS:
+                return Project.as_size_t(prop_cpp_line_length);
+            case GEN_LANG_PERL:
+                return Project.as_size_t(prop_perl_line_length);
+            case GEN_LANG_PYTHON:
+                return Project.as_size_t(prop_python_line_length);
+            case GEN_LANG_RUBY:
+                return Project.as_size_t(prop_ruby_line_length);
+            case GEN_LANG_RUST:
+                return RUST_LINE_LENGTH;
+            case GEN_LANG_XRC:
+                return XRC_LINE_LENGTH;
+            default:
+                return DEFAULT_LINE_LENGTH;
+        }
+    }
+
+    [[nodiscard]] inline auto get_language_prefix(GenLang language) -> std::string_view
+    {
+        switch (language)
+        {
+            case GEN_LANG_CPLUSPLUS:
+            case GEN_LANG_XRC:
+                return "wx";
+            case GEN_LANG_PERL:
+            case GEN_LANG_RUBY:
+                return "Wx::";
+            case GEN_LANG_PYTHON:
+            case GEN_LANG_RUST:
+                return "wx.";
+            default:
+                return "wx";
+        }
+    }
+
+    [[nodiscard]] inline auto get_indent_size(GenLang language) -> int
+    {
+        switch (language)
+        {
+            case GEN_LANG_PERL:
+                return 4;
+            case GEN_LANG_RUBY:
+                return 2;
+            default:
+                return 4;
+        }
+    }
+
+    [[nodiscard]] inline auto get_line_offset(GenLang language) -> size_t
+    {
+        switch (language)
+        {
+            case GEN_LANG_PYTHON:
+            case GEN_LANG_RUBY:
+                return 2;  // Two tabs
+            default:
+                return 1;  // One tab
+        }
+    }
+}  // namespace
 
 void Code::Init(Node* node, GenLang language)
 {
     m_node = node;
     m_language = language;
-    if (language == GEN_LANG_CPLUSPLUS)
+
+    const auto indent_size = get_indent_size(language);
+    if (indent_size != 4)
     {
-        m_language_wxPrefix = "wx";
-        m_break_length = Project.as_size_t(prop_cpp_line_length);
-        // Always assume C++ code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_PERL)
-    {
-        m_indent_size = 4;
-        m_language_wxPrefix = "Wx::";
-        m_break_length = Project.as_size_t(prop_perl_line_length);
-        // Always assume Perl code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_PYTHON)
-    {
-        m_language_wxPrefix = "wx.";
-        m_break_length = Project.as_size_t(prop_python_line_length);
-        // Always assume Python code has two tabs at the beginning of the line
-        m_break_length -= (static_cast<size_t>(m_indent_size * 2));
-    }
-    else if (language == GEN_LANG_RUBY)
-    {
-        m_indent_size = 2;
-        m_language_wxPrefix = "Wx::";
-        m_break_length = Project.as_size_t(prop_ruby_line_length);
-        // Always assume Ruby code has two tabs at the beginning of the line
-        m_break_length -= (static_cast<size_t>(m_indent_size * 2));
-    }
-    else if (language == GEN_LANG_RUST)
-    {
-        m_language_wxPrefix = "wx.";
-        m_break_length = 100;
-        // Always assume Rust code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
-    }
-    else if (language == GEN_LANG_XRC)
-    {
-        m_language_wxPrefix = "wx";
-        m_break_length = 500;  // XRC files are XML, so we don't need to break lines.
-        m_break_length -= m_indent_size;
+        m_indent_size = indent_size;
     }
 
-    else
+    m_language_wxPrefix = get_language_prefix(language);
+    m_break_length = get_line_break_length(language);
+
+    const auto line_offset = get_line_offset(language);
+    m_break_length -= (static_cast<size_t>(m_indent_size * line_offset));
+
+    if (m_break_length < MIN_VALID_LINE_LENGTH)
     {
-        FAIL_MSG("Unknown language");
-        m_language_wxPrefix = "wx";
-        m_break_length = 90;
-        // Always assume code has one tab at the beginning of the line
-        m_break_length -= m_indent_size;
+        FAIL_MSG("Configured line length is too short");
     }
+
     m_break_at = m_break_length;
 
     // Reserve large enough for multiple lines -- goal is to avoid multiple reallocations
-    reserve(256);
+    reserve(256);  // NOLINT (magic number) // cppcheck-suppress constLiteral
 }
 
-Code& Code::CheckLineLength(size_t next_str_size)
+auto Code::CheckLineLength(size_t next_str_size) -> Code&
 {
     if (m_indent)
     {
-        next_str_size += (m_indent * m_indent_size);
+        next_str_size += (static_cast<size_t>(m_indent * m_indent_size));
     }
 
     if (m_auto_break && size() > m_minium_length && size() + next_str_size > m_break_at)
@@ -410,7 +444,7 @@ Code& Code::CheckLineLength(size_t next_str_size)
     return *this;
 }
 
-Code& Code::CheckLineLength(GenEnum::PropName next_prop_name)
+auto Code::CheckLineLength(GenEnum::PropName next_prop_name) -> Code&
 {
     return CheckLineLength(m_node->as_string(next_prop_name).size());
 }
@@ -438,11 +472,13 @@ Code& Code::Eol(int flag)
     else
     {
         if (size() && back() == ' ')
+        {
             pop_back();
+        }
         *this += '\n';
     }
 
-#if 0
+#if 0  // NOLINT (always false) // cppcheck-suppress constConditionTrueFalse
     // REVIEW: [Randalphwa - 08-26-2024] m_within_braces is no longer set to true in OpenBrace()
     if (m_within_braces && is_cpp() && size() && back() != '\t')
     {
@@ -464,7 +500,7 @@ Code& Code::Eol(int flag)
     if (m_auto_break)
     {
         m_break_at = size() + m_break_length;
-        m_minium_length = size() + 10;
+        m_minium_length = size() + MIN_BREAK_LENGTH;
     }
     return *this;
 }
@@ -574,7 +610,7 @@ void Code::InsertLineBreak(size_t cur_pos)
         insert(cur_pos, "\n");
     }
     m_break_at = cur_pos + m_break_length;
-    m_minium_length = cur_pos + 10;
+    m_minium_length = cur_pos + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
 }
 
 Code& Code::Tab(int tabs)
@@ -611,7 +647,7 @@ auto Code::as_string(PropName prop_name) -> Code&
     return Add(m_node->as_string(prop_name));
 }
 
-Code& Code::TrueFalseIf(GenEnum::PropName prop_name)
+auto Code::TrueFalseIf(GenEnum::PropName prop_name) -> Code&
 {
     if (m_node->as_bool(prop_name))
     {
@@ -620,63 +656,79 @@ Code& Code::TrueFalseIf(GenEnum::PropName prop_name)
     return False();
 }
 
+namespace
+{
+    void add_function_no_operator_with_wx(Code& code, tt_string_view text)
+    {
+        if (code.is_ruby())
+        {
+            code << "Wx::" << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
+        }
+        else
+        {
+            code << "wx." << text.substr(sizeof("wx") - 1);
+        }
+    }
+
+    void add_function_with_operator_ruby(Code& code, tt_string_view text)
+    {
+        // Check for a preceeding empty "()" and remove it if found
+        if (code.ends_with("())"))
+        {
+            code.resize(code.size() - 2);
+        }
+
+        code << '.';
+        if (text.is_sameprefix("wx"))
+        {
+            code << "Wx::" << text.substr(sizeof("wx") - 1);
+        }
+        else
+        {
+            code += ConvertToSnakeCase(text);
+        }
+    }
+
+    void add_function_with_operator_python(Code& code, tt_string_view text)
+    {
+        code << '.';
+        if (text.is_sameprefix("wx"))
+        {
+            code << "wx." << text.substr(sizeof("wx") - 1);
+        }
+        else
+        {
+            code += text;
+        }
+    }
+}  // namespace
+
 auto Code::Function(tt_string_view text, bool add_operator) -> Code&
 {
     if (!add_operator)
     {
         if (text.is_sameprefix("wx") && (is_python() || is_ruby() || is_perl()))
         {
-            if (is_ruby())
-            {
-                *this << m_language_wxPrefix << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
-            }
-            else
-            {
-                *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
-            }
+            add_function_no_operator_with_wx(*this, text);
         }
         else
         {
             *this += text;
         }
     }
-    else
+    else if (is_cpp() || is_perl())
     {
-        if (is_cpp() || is_perl())
-        {
-            *this << "->" << text;
-        }
-        else if (is_ruby())
-        {
-            // Check for a preceeding empty "()" and remove it if found
-            if (ends_with("())"))
-            {
-                resize(size() - 2);
-            }
-
-            *this << '.';
-            if (text.is_sameprefix("wx"))
-            {
-                *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
-            }
-            else
-            {
-                *this += ConvertToSnakeCase(text);
-            }
-        }
-        else if (is_python())
-        {
-            *this << '.';
-            if (text.is_sameprefix("wx"))
-            {
-                *this << m_language_wxPrefix << text.substr(sizeof("wx") - 1);
-            }
-            else
-            {
-                *this += text;
-            }
-        }
+        *this << "->" << text;
     }
+    else if (is_ruby())
+    {
+        add_function_with_operator_ruby(*this, text);
+    }
+    else if (is_python())
+    {
+        add_function_with_operator_python(*this, text);
+    }
+
     return *this;
 }
 
@@ -702,7 +754,7 @@ auto Code::ClassMethod(tt_string_view function_name) -> Code&
     return *this;
 }
 
-Code& Code::VariableMethod(tt_string_view function_name)
+auto Code::VariableMethod(tt_string_view function_name) -> Code&
 {
     if (is_perl())
     {
@@ -724,7 +776,7 @@ Code& Code::VariableMethod(tt_string_view function_name)
     return *this;
 }
 
-Code& Code::FormFunction(tt_string_view text)
+auto Code::FormFunction(tt_string_view text) -> Code&
 {
     if (is_python())
     {
@@ -765,7 +817,7 @@ auto Code::FormParent() -> Code&
     return *this;
 }
 
-Code& Code::Class(tt_string_view text)
+auto Code::Class(tt_string_view text) -> Code&
 {
     if (is_cpp())
     {
@@ -797,7 +849,7 @@ Code& Code::Class(tt_string_view text)
     return *this;
 }
 
-Code& Code::Object(tt_string_view class_name)
+auto Code::Object(tt_string_view class_name) -> Code&
 {
     if (is_cpp())
     {
@@ -965,7 +1017,7 @@ void Code::AddSubclassParams()
     }
 }
 
-Code& Code::Assign(tt_string_view class_name)
+auto Code::Assign(tt_string_view class_name) -> Code&
 {
     *this += " = ";
     if (class_name.empty())
@@ -1008,7 +1060,7 @@ auto Code::EndFunction() -> Code&
     return *this;
 }
 
-Code& Code::NodeName(Node* node)
+auto Code::NodeName(Node* node) -> Code&
 {
     if (!node)
     {
@@ -1061,7 +1113,7 @@ Code& Code::NodeName(Node* node)
     return *this;
 }
 
-Code& Code::VarName(tt_string_view var_name, bool class_access)
+auto Code::VarName(tt_string_view var_name, bool class_access) -> Code&
 {
     if (is_cpp())
     {
@@ -1120,96 +1172,103 @@ Code& Code::VarName(tt_string_view var_name, bool class_access)
     return *this;
 }
 
-Code& Code::ParentName()
+auto Code::ParentName() -> Code&
 {
     NodeName(m_node->get_Parent());
     return *this;
 }
 
-bool Code::is_local_var() const
+[[nodiscard]] auto Code::is_local_var() const -> bool
 {
     return m_node->is_Local();
 }
 
-auto Code::HasValue(GenEnum::PropName prop_name) const -> bool
+[[nodiscard]] auto Code::HasValue(GenEnum::PropName prop_name) const -> bool
 {
     return m_node->HasValue(prop_name);
 }
 
-auto Code::IntValue(GenEnum::PropName prop_name) const -> int
+[[nodiscard]] auto Code::IntValue(GenEnum::PropName prop_name) const -> int
 {
     return m_node->as_int(prop_name);
 }
 
-auto Code::PropContains(GenEnum::PropName prop_name, tt_string_view text) const -> bool
+[[nodiscard]] auto Code::PropContains(GenEnum::PropName prop_name, tt_string_view text) const
+    -> bool
 {
     return m_node->as_string(prop_name).contains(text);
 }
 
-size_t Code::PropSize(GenEnum::PropName prop_name) const
+[[nodiscard]] auto Code::PropSize(GenEnum::PropName prop_name) const -> size_t
 {
     return m_node->as_string(prop_name).size();
 }
 
-// clang-format off
+namespace
+{
+    // clang-format off
 
-// List of valid component parent types
-static constexpr std::array<GenType, 16> s_GenParentTypes = {
-    type_aui_toolbar,
-    type_auinotebook,
-    type_bookpage,
-    type_choicebook,
-    type_container,
-    type_listbook,
-    type_notebook,
-    type_panel,
-    type_propgridpage,
-    type_ribbonbar,
-    type_ribbonbar_form,
-    type_ribbonpanel,
-    type_simplebook,
-    type_splitter,
-    type_toolbar,
-    type_wizardpagesimple
-};
+    // List of valid component parent types
+    constexpr std::array<GenType, 16> s_GenParentTypes = {
+        type_aui_toolbar,
+        type_auinotebook,
+        type_bookpage,
+        type_choicebook,
+        type_container,
+        type_listbook,
+        type_notebook,
+        type_panel,
+        type_propgridpage,
+        type_ribbonbar,
+        type_ribbonbar_form,
+        type_ribbonpanel,
+        type_simplebook,
+        type_splitter,
+        type_toolbar,
+        type_wizardpagesimple
+    };
 
-// clang-format on
+    // clang-format on
+
+    void add_form_parent_name(Code& code)
+    {
+        if (code.is_cpp())
+        {
+            code += "this";
+        }
+        else if (code.is_perl())
+        {
+            code += "$self";
+        }
+        else
+        {
+            code += "self";
+        }
+    }
+}  // namespace
 
 auto Code::ValidParentName() -> Code&
 {
     auto* parent = m_node->get_Parent();
     while (parent)
     {
-        if (parent->is_Sizer())
+        if (parent->is_Sizer() && parent->is_StaticBoxSizer())
         {
-            if (parent->is_StaticBoxSizer())
+            NodeName(parent);
+            if (is_ruby())
             {
-                NodeName(parent);
-                if (is_ruby())
-                {
-                    Function("GetStaticBox");
-                }
-                else
-                {
-                    Function("GetStaticBox()");
-                }
-                return *this;
-            }
-        }
-        else if (parent->is_Form())
-        {
-            if (is_cpp())
-            {
-                *this += "this";
-            }
-            else if (is_perl())
-            {
-                *this += "$self";
+                Function("GetStaticBox");
             }
             else
             {
-                *this += "self";
+                Function("GetStaticBox()");
             }
+            return *this;
+        }
+
+        if (parent->is_Form())
+        {
+            add_form_parent_name(*this);
             return *this;
         }
 
@@ -1255,6 +1314,87 @@ auto Code::QuotedString(GenEnum::PropName prop_name) -> Code&
     return QuotedString(m_node->as_string(prop_name));
 }
 
+namespace
+{
+    void process_escaped_char(Code& code, char chr, bool& has_escape)
+    {
+        switch (chr)
+        {
+            case '"':
+                code += "\\\"";
+                has_escape = true;
+                break;
+
+            case '\'':
+                code += "\\'";
+                has_escape = true;
+                break;
+
+            case '\\':
+                code += "\\\\";
+                has_escape = true;
+                break;
+
+            case '\t':
+                code += "\\t";
+                has_escape = true;
+                break;
+
+            case '\n':
+                code += "\\n";
+                has_escape = true;
+                break;
+
+            case '\r':
+                code += "\\r";
+                has_escape = true;
+                break;
+
+            default:
+                code += chr;
+                break;
+        }
+    }
+
+    [[nodiscard]] inline auto has_utf8_char(tt_string_view text) -> bool
+    {
+        return std::ranges::any_of(text,
+                                   [](auto iter)
+                                   {
+                                       return iter < 0;
+                                   });
+    }
+
+    void add_quote_closing(Code& code, bool has_escape, size_t begin_quote, bool has_utf_char)
+    {
+        if (code.is_ruby())
+        {
+            code += '\'';
+        }
+        else if (code.is_perl())
+        {
+            if (has_escape)
+            {
+                code += '"';
+                code.at(begin_quote) = '"';
+            }
+            else
+            {
+                code += '\'';
+            }
+        }
+        else
+        {
+            code += '"';
+        }
+
+        if (has_utf_char)
+        {
+            code += ')';
+        }
+    }
+}  // namespace
+
 auto Code::QuotedString(tt_string_view text) -> Code&
 {
     auto cur_pos = this->size();
@@ -1267,116 +1407,35 @@ auto Code::QuotedString(tt_string_view text) -> Code&
         }
         else
         {
-            // REVIEW: [Randalphwa - 08-12-2023] Need to verify this for each language. I'm
-            // dubious this is correct for all languages.
             Function("wxGetTranslation");
         }
     }
 
-    // This is only used by C++, but we need to know if it was set in order to generate closing
-    // parenthesis.
-    bool has_utf_char = false;
-    if (is_cpp())
+    bool has_utf_char = is_cpp() && has_utf8_char(text);
+    if (has_utf_char)
     {
-        for (auto iter: text)
-        {
-            if (iter < 0)
-            {
-                has_utf_char = true;
-                break;
-            }
-        }
-
-        if (has_utf_char)
-        {
-            *this += "wxString::FromUTF8(";
-        }
+        *this += "wxString::FromUTF8(";
     }
-
-    // bool text_has_single_quote = (text.find('\'') != tt::npos);
 
     auto begin_quote = this->size();
     bool has_escape = false;
 
-    if (is_ruby())
+    if (is_ruby() || is_perl())
     {
-        *this += '\'';
-    }
-    else if (is_perl())
-    {
-        // Perl should use single-quotes if there are no escape characters, otherwise it should use
-        // double-quotes.
         *this += '\'';
     }
     else
     {
         *this += '"';
     }
+
     for (auto chr: text)
     {
-        switch (chr)
-        {
-            case '"':
-                *this += "\\\"";
-                has_escape = true;
-                break;
-
-            // This generally isn't needed for C++, but is needed for other languages
-            case '\'':
-                *this += "\\'";
-                has_escape = true;
-                break;
-
-            case '\\':
-                *this += "\\\\";
-                has_escape = true;
-                break;
-
-            case '\t':
-                *this += "\\t";
-                has_escape = true;
-                break;
-
-            case '\n':
-                *this += "\\n";
-                has_escape = true;
-                break;
-
-            case '\r':
-                *this += "\\r";
-                has_escape = true;
-                break;
-
-            default:
-                *this += chr;
-                break;
-        }
-    }
-    if (is_ruby())
-    {
-        *this += '\'';
-    }
-    else if (is_perl())
-    {
-        if (has_escape)
-        {
-            *this += '"';
-            at(begin_quote) = '"';
-        }
-        else
-        {
-            *this += '\'';
-        }
-    }
-    else
-    {
-        *this += '"';
+        process_escaped_char(*this, chr, has_escape);
     }
 
-    if (has_utf_char)
-    {
-        *this += ')';
-    }
+    add_quote_closing(*this, has_escape, begin_quote, has_utf_char);
+
     if (Project.as_bool(prop_internationalize))
     {
         *this += ')';
@@ -1394,6 +1453,32 @@ auto Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling) -> Code&
     return WxSize(m_node->as_wxSize(prop_name), enable_dpi_scaling);
 }
 
+namespace
+{
+    void add_scaled_size_ruby(Code& code, wxSize size)
+    {
+        code.FormFunction("FromDIP(");
+        code.Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+        code += ')';
+    }
+
+    void add_unscaled_size_ruby(Code& code, wxSize size)
+    {
+        code.Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
+    }
+
+    void add_scaled_size_perl(Code& code, wxSize size)
+    {
+        code.FormFunction("FromDIP->new(");
+        code.Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << "))";
+    }
+
+    void add_unscaled_size_perl(Code& code, wxSize size)
+    {
+        code.Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << ')';
+    }
+}  // namespace
+
 auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
 {
     auto cur_pos = this->size();
@@ -1401,71 +1486,73 @@ auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
 
     if (is_ruby())
     {
-        if (size == wxDefaultSize)
-        {
-            CheckLineLength((sizeof("Wx::DEFAULT_SIZE") - 1));
-            *this += "Wx::DEFAULT_SIZE";
-            return *this;
-        }
-
-        if (size_scaling)
-        {
-            CheckLineLength(sizeof(", from_DIP(Wx::Size.new(999, 999))"));
-        }
-        else
-        {
-            CheckLineLength(sizeof("Wx::Size.new(999, 999)"));
-        }
-
-        if (size_scaling)
-        {
-            FormFunction("FromDIP(");
-            Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
-            *this += ')';
-        }
-        else
-        {
-            Class("Wx::Size.new(").itoa(size.x).Comma().itoa(size.y) << ')';
-        }
-
-        if (m_auto_break && this->size() > m_break_at)
-        {
-            InsertLineBreak(cur_pos);
-        }
-
-        return *this;
+        return WxSize_Ruby(size, cur_pos, size_scaling);
     }
     if (is_perl())
     {
-        if (size == wxDefaultSize)
-        {
-            CheckLineLength((sizeof("wxDefaultSize") - 1));
-            *this += "wxDefaultSize";
-            return *this;
-        }
+        return WxSize_Perl(size, cur_pos, size_scaling);
+    }
+    return WxSize_Other(size, cur_pos, size_scaling);
+}
 
-        if (size_scaling)
-        {
-            CheckLineLength(sizeof(", $self->FromDIP->new(Wx::Size->new(999, 999))"));
-            FormFunction("FromDIP->new(");
-            Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << "))";
-        }
-        else
-        {
-            CheckLineLength(sizeof("Wx::Size->new(999, 999)"));
-            Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << ')';
-        }
-
-        if (m_auto_break && this->size() > m_break_at)
-        {
-            InsertLineBreak(cur_pos);
-        }
-
+auto Code::WxSize_Ruby(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
+{
+    if (size == wxDefaultSize)
+    {
+        CheckLineLength((sizeof("Wx::DEFAULT_SIZE") - 1));
+        *this += "Wx::DEFAULT_SIZE";
         return *this;
     }
 
-    // The following code is for non-Ruby languages
+    if (size_scaling)
+    {
+        CheckLineLength(sizeof(", from_DIP(Wx::Size.new(999, 999))"));
+        add_scaled_size_ruby(*this, size);
+    }
+    else
+    {
+        CheckLineLength(sizeof("Wx::Size.new(999, 999)"));
+        add_unscaled_size_ruby(*this, size);
+    }
 
+    if (m_auto_break && this->size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
+    return *this;
+}
+
+auto Code::WxSize_Perl(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
+{
+    if (size == wxDefaultSize)
+    {
+        CheckLineLength((sizeof("wxDefaultSize") - 1));
+        *this += "wxDefaultSize";
+        return *this;
+    }
+
+    if (size_scaling)
+    {
+        CheckLineLength(sizeof(", $self->FromDIP->new(Wx::Size->new(999, 999))"));
+        add_scaled_size_perl(*this, size);
+    }
+    else
+    {
+        CheckLineLength(sizeof("Wx::Size->new(999, 999)"));
+        add_unscaled_size_perl(*this, size);
+    }
+
+    if (m_auto_break && this->size() > m_break_at)
+    {
+        InsertLineBreak(cur_pos);
+    }
+
+    return *this;
+}
+
+auto Code::WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
+{
     if (size == wxDefaultSize)
     {
         CheckLineLength((sizeof("DefaultSize") - 1) + m_language_wxPrefix.size());
@@ -1482,20 +1569,10 @@ auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
 
     if (size_scaling)
     {
-        if (is_cpp())
-        {
-            CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
-            FormFunction("FromDIP(");
-            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-            *this += ')';
-        }
-        else if (is_python())
-        {
-            CheckLineLength(sizeof("self.FromDIP(wxSize(999, 999))"));
-            FormFunction("FromDIP(");
-            Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
-            *this += ')';
-        }
+        CheckLineLength(sizeof("FromDIP(wxSize(999, 999))"));
+        FormFunction("FromDIP(");
+        Class("wxSize(").itoa(size.x).Comma().itoa(size.y) << ')';
+        *this += ')';
     }
     else
     {
@@ -1511,7 +1588,7 @@ auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
     return *this;
 }
 
-Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
+auto Code::WxPoint(wxPoint position, int enable_dpi_scaling) -> Code&
 {
     auto cur_pos = this->size();
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
@@ -1560,6 +1637,7 @@ Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
         CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
         if (is_perl())
         {
+            // Perl uses wxDefaultPosition
             *this << "wxDefaultPosition";
         }
         else
@@ -1600,7 +1678,7 @@ Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
     return *this;
 }
 
-bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
+[[nodiscard]] auto Code::IsDefaultPosSizeFlags(tt_string_view def_style) const -> bool
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -1643,7 +1721,7 @@ bool Code::IsDefaultPosSizeFlags(tt_string_view def_style) const
     return true;
 }
 
-int Code::WhatParamsNeeded(tt_string_view default_style) const
+[[nodiscard]] auto Code::WhatParamsNeeded(tt_string_view default_style) const -> int
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -1702,11 +1780,14 @@ auto Code::SizerFlagsFunction(tt_string_view function_name) -> Code&
     return *this;
 }
 
-Code& Code::BorderSize(GenEnum::PropName prop_name)
+constexpr int DEFAULT_BORDER_SIZE = 5;
+
+auto Code::BorderSize(GenEnum::PropName prop_name) -> Code&
 {
     int border_size = m_node->as_int(prop_name);
     bool is_scalable_border =
-        (border_size > 0 && border_size != 5 && border_size != 10 && border_size != 15);
+        (border_size > 0 && border_size != DEFAULT_BORDER_SIZE &&
+         border_size != DEFAULT_BORDER_SIZE * 2 && border_size != DEFAULT_BORDER_SIZE * 3);
     if ((prop_name == prop_border_size && m_node->as_bool(prop_scale_border_size)) &&
         is_scalable_border)
     {
@@ -1745,7 +1826,7 @@ auto Code::ColourCode(GenEnum::PropName prop_name) -> Code&
 auto Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling) const -> bool
 {
     if (enable_dpi_scaling == code::no_dpi_scaling ||
-        tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either) == true)
+        tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either))
     {
         return false;
     }
@@ -1782,7 +1863,6 @@ auto Code::BeginConditional() -> Code&
 auto Code::EndConditional() -> Code&
 {
     if (is_cpp() || is_perl())
-
     {
         *this << ')';
     }
@@ -1867,6 +1947,7 @@ auto Code::ExpandEventLambda(tt_string lambda) -> Code&
             Eol();
         }
         Unindent(1);
+
         // The caller will be adding a comma, which should appear after the closing brace
         while (back() == '\t')
         {

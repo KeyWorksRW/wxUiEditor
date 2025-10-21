@@ -239,15 +239,7 @@ const view_map g_map_perl_prefix
 {
 };
 
-const view_map g_map_rust_prefix
-{
-};
-
 static const view_map s_short_perl_map
-{
-};
-
-static const view_map s_short_rust_map
 {
 };
 
@@ -305,9 +297,6 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
             }
             break;
 
-        case GEN_LANG_RUST:
-            return "wx::";
-
         case GEN_LANG_CPLUSPLUS:
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
             return {};
@@ -329,7 +318,6 @@ Code::Code(Node* node, GenLang language)  // NOLINT (doesn't initialize all memb
 namespace
 {
     constexpr size_t MIN_VALID_LINE_LENGTH = 50;  // NOLINT (magic number)
-    constexpr size_t RUST_LINE_LENGTH = 100;      // NOLINT (magic number)
     constexpr size_t XRC_LINE_LENGTH = 500;       // NOLINT (magic number)
     constexpr size_t DEFAULT_LINE_LENGTH = 90;    // NOLINT (magic number)
 
@@ -345,8 +333,6 @@ namespace
                 return Project.as_size_t(prop_python_line_length);
             case GEN_LANG_RUBY:
                 return Project.as_size_t(prop_ruby_line_length);
-            case GEN_LANG_RUST:
-                return RUST_LINE_LENGTH;
             case GEN_LANG_XRC:
                 return XRC_LINE_LENGTH;
             default:
@@ -365,7 +351,6 @@ namespace
             case GEN_LANG_RUBY:
                 return "Wx::";
             case GEN_LANG_PYTHON:
-            case GEN_LANG_RUST:
                 return "wx.";
             default:
                 return "wx";
@@ -507,14 +492,14 @@ Code& Code::Eol(int flag)
 
 Code& Code::OpenBrace(bool all_languages)
 {
-    if (!all_languages && !is_cpp() && !is_perl() && !is_rust())
+    if (!all_languages && !is_cpp() && !is_perl())
     {
         return *this;
     }
 
-    if (is_cpp() || is_perl() || is_rust())
+    if (is_cpp() || is_perl())
     {
-        // Perl and Rust place the brace at the end of the function. wxUiEditor
+        // Perl place the brace at the end of the function. wxUiEditor
         // follows CppCoreGuidelines and places the brace on the next line for
         // C++ code.
         if (is_cpp())
@@ -544,7 +529,7 @@ Code& Code::OpenBrace(bool all_languages)
 
 auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
 {
-    if (!all_languages && !is_cpp() && !is_perl() && !is_rust())
+    if (!all_languages && !is_cpp() && !is_perl())
     {
         return *this;
     }
@@ -556,7 +541,7 @@ auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
     }
     Unindent();
 
-    if (is_cpp() || is_perl() || is_rust())
+    if (is_cpp() || is_perl())
     {
         m_within_braces = false;
         Eol();
@@ -802,7 +787,7 @@ auto Code::FormParent() -> Code&
     {
         *this += "this";
     }
-    else if (is_python() || is_ruby() || is_rust())
+    else if (is_python() || is_ruby())
     {
         *this += "self";
     }
@@ -994,10 +979,6 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
     {
         *this += ".new";
     }
-    else if (is_rust())
-    {
-        *this += "::new";
-    }
 }
 
 void Code::AddSubclassParams()
@@ -1053,7 +1034,7 @@ auto Code::EndFunction() -> Code&
         *this += ')';
     }
 
-    if (is_cpp() || is_perl() || is_rust())
+    if (is_cpp() || is_perl())
     {
         *this += ';';
     }

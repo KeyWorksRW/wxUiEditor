@@ -78,9 +78,6 @@ public:
     int get_PerlLineLength() const { return m_perl_line_length; }
     void set_PerlLineLength(int length) { m_perl_line_length = length; }
 
-    int get_RustLineLength() const { return m_rust_line_length; }
-    void set_RustLineLength(int length) { m_rust_line_length = length; }
-
     int get_IconSize() const { return m_icon_size; }
     void set_IconSize(int size) { m_icon_size = size; }
 
@@ -138,17 +135,6 @@ public:
     void set_PerlNumberColour(const wxColour& colour) { m_colour_perl_number = colour; }
     const wxColour& get_PerlStringColour() const { return m_colour_perl_string; }
     void set_PerlStringColour(const wxColour& colour) { m_colour_perl_string = colour; }
-
-    const wxColour& get_RustColour() const { return m_colour_rust; }
-    void set_RustColour(const wxColour& colour) { m_colour_rust = colour; }
-    const wxColour& get_RustCommentColour() const { return m_colour_rust_comment; }
-    void set_RustCommentColour(const wxColour& colour) { m_colour_rust_comment = colour; }
-    const wxColour& get_RustKeywordColour() const { return m_colour_rust_keyword; }
-    void set_RustKeywordColour(const wxColour& colour) { m_colour_rust_keyword = colour; }
-    const wxColour& get_RustNumberColour() const { return m_colour_rust_number; }
-    void set_RustNumberColour(const wxColour& colour) { m_colour_rust_number = colour; }
-    const wxColour& get_RustStringColour() const { return m_colour_rust_string; }
-    void set_RustStringColour(const wxColour& colour) { m_colour_rust_string = colour; }
 
     const wxColour& get_XrcAttributeColour() const { return m_colour_xrc_attribute; }
     void set_XrcAttributeColour(const wxColour& colour) { m_colour_xrc_attribute = colour; }
@@ -219,7 +205,6 @@ private:
     tt_string m_python_version { "4.2" };
     tt_string m_ruby_version { "1.2" };
     tt_string m_perl_version { "3.2" };
-    tt_string m_rust_version { "3.0" };
 
     tt_string m_code_display_font;
 
@@ -246,12 +231,6 @@ private:
     wxColour m_colour_perl_number { wxColour("#FF0000") };
     wxColour m_colour_perl_string { wxColour("#008000") };
 
-    wxColour m_colour_rust { wxColour("#FF00FF") };
-    wxColour m_colour_rust_comment { wxColour("#008000") };
-    wxColour m_colour_rust_keyword { wxColour("#0000FF") };
-    wxColour m_colour_rust_number { wxColour("#FF0000") };
-    wxColour m_colour_rust_string { wxColour("#008000") };
-
     wxColour m_colour_xrc_attribute { wxColour("#FF00FF") };
     wxColour m_colour_xrc_dblstring { wxColour("#008000") };
     wxColour m_colour_xrc_tag { wxColour("#0000FF") };
@@ -262,7 +241,6 @@ private:
     int m_python_line_length { 90 };
     int m_ruby_line_length { 80 };
     int m_perl_line_length { 80 };
-    int m_rust_line_length { 100 };
 
     int m_icon_size { 20 };
 

@@ -39,7 +39,6 @@ public:
     bool is_gen_perl() const { return m_gen_perl_code; }
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
-    bool is_gen_rust() const { return m_gen_rust_code; }
     bool is_gen_xrc() const { return m_gen_xrc_code; }
 
 private:
@@ -48,7 +47,6 @@ private:
     wxCheckBox* m_checkPerl { nullptr };
     wxCheckBox* m_checkPython { nullptr };
     wxCheckBox* m_checkRuby { nullptr };
-    wxCheckBox* m_checkRust { nullptr };
     wxCheckBox* m_checkXRC { nullptr };
 
     bool m_gen_base_code { false };
@@ -56,7 +54,6 @@ private:
     bool m_gen_perl_code { false };
     bool m_gen_python_code { false };
     bool m_gen_ruby_code { false };
-    bool m_gen_rust_code { false };
     bool m_gen_xrc_code { false };
 
 protected:

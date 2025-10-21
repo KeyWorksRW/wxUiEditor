@@ -658,7 +658,6 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_python_file:
                     case prop_ruby_combined_file:
                     case prop_ruby_file:
-                    case prop_rust_file:
                     case prop_subclass_header:
                     case prop_xrc_file:
                         return new ttFileProperty(prop);
@@ -934,21 +933,6 @@ void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
         }
         if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
-        {
-            m_prop_grid->Collapse(id);
-        }
-    }
-    else if (name.contains("wxRust"))
-    {
-        if (UserPrefs.is_DarkMode())
-        {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#b35900"));  // Dark orange
-        }
-        else
-        {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffa64d"));  // Light orange
-        }
-        if (Project.get_CodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(id);
         }

@@ -348,13 +348,11 @@ extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_rust_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
 std::set<std::string> g_set_ruby_keywords;
 std::set<std::string> g_set_perl_keywords;
-std::set<std::string> g_set_rust_keywords;
 
 bool isValidVarName(const std::string& str, GenLang language)
 {
@@ -404,10 +402,6 @@ bool isValidVarName(const std::string& str, GenLang language)
     else if (language == GEN_LANG_PERL)
     {
         return lambda(g_set_perl_keywords, g_perl_keywords);
-    }
-    else if (language == GEN_LANG_RUST)
-    {
-        return lambda(g_set_rust_keywords, g_rust_keywords);
     }
 
     return true;
@@ -602,9 +596,6 @@ std::string_view GenLangToString(GenLang language)
         case GEN_LANG_RUBY:
             return "Ruby";
             break;
-        case GEN_LANG_RUST:
-            return "Rust";
-            break;
         case GEN_LANG_XRC:
             return "XRC";
             break;
@@ -628,9 +619,6 @@ GenLang ConvertToGenLang(tt_string_view language)
     else if (language == "Ruby" || language.starts_with("wxRuby") ||
              language.starts_with("Folder wxRuby"))
         return GEN_LANG_RUBY;
-    else if (language == "Rust" || language.starts_with("wxRust") ||
-             language.starts_with("Folder wxRust"))
-        return GEN_LANG_RUST;
     else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
         return GEN_LANG_XRC;
 
@@ -638,7 +626,7 @@ GenLang ConvertToGenLang(tt_string_view language)
     else
     {
         return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                                    GEN_LANG_PERL | GEN_LANG_RUST | GEN_LANG_XRC);
+                                    GEN_LANG_PERL | GEN_LANG_XRC);
     }
 }
 
@@ -654,8 +642,6 @@ std::string GetLanguageExtension(GenLang language)
             return ".py";
         case GEN_LANG_RUBY:
             return ".rb";
-        case GEN_LANG_RUST:
-            return ".rs";
         case GEN_LANG_XRC:
             return ".xrc";
 

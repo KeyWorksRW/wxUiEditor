@@ -270,9 +270,6 @@
         bitmap="SVG;ruby_logo.svg;[24,24]" />
       <node
         class="embedded_image"
-        bitmap="SVG;rust_logo.svg;[24,24]" />
-      <node
-        class="embedded_image"
         bitmap="SVG;saveas.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -3423,7 +3420,7 @@
         class_name="GenerateDlg"
         title="Generate Code"
         base_file="..\tools\generate_dlg"
-        inserted_hdr_code="public:@@bool is_gen_base() const { return m_gen_base_code; }@@bool is_gen_inherited() const { return m_gen_inherited_code; }@@bool is_gen_perl() const { return m_gen_perl_code; }@@bool is_gen_python() const { return m_gen_python_code; }@@bool is_gen_ruby() const { return m_gen_ruby_code; }@@bool is_gen_rust() const { return m_gen_rust_code; }@@bool is_gen_xrc() const { return m_gen_xrc_code; }@@@@private:@@wxCheckBox* m_checkBaseCode { nullptr };@@wxCheckBox* m_checkDerived { nullptr };@@wxCheckBox* m_checkPerl { nullptr };@@wxCheckBox* m_checkPython { nullptr };@@wxCheckBox* m_checkRuby { nullptr };@@wxCheckBox* m_checkRust { nullptr };@@wxCheckBox* m_checkXRC { nullptr };@@@@bool m_gen_base_code { false };@@bool m_gen_inherited_code { false };@@bool m_gen_perl_code { false };@@bool m_gen_python_code { false };@@bool m_gen_ruby_code { false };@@bool m_gen_rust_code { false };@@bool m_gen_xrc_code { false };"
+        inserted_hdr_code="public:@@bool is_gen_base() const { return m_gen_base_code; }@@bool is_gen_inherited() const { return m_gen_inherited_code; }@@bool is_gen_perl() const { return m_gen_perl_code; }@@bool is_gen_python() const { return m_gen_python_code; }@@bool is_gen_ruby() const { return m_gen_ruby_code; }@@bool is_gen_xrc() const { return m_gen_xrc_code; }@@@@private:@@wxCheckBox* m_checkBaseCode { nullptr };@@wxCheckBox* m_checkDerived { nullptr };@@wxCheckBox* m_checkPerl { nullptr };@@wxCheckBox* m_checkPython { nullptr };@@wxCheckBox* m_checkRuby { nullptr };@@wxCheckBox* m_checkXRC { nullptr };@@@@bool m_gen_base_code { false };@@bool m_gen_inherited_code { false };@@bool m_gen_perl_code { false };@@bool m_gen_python_code { false };@@bool m_gen_ruby_code { false };@@bool m_gen_xrc_code { false };"
         system_hdr_includes="wx/checkbox.h;wx/sizer.h;wx/valgen.h"
         derived_class_name="GenerateDlg"
         derived_file="generatedlg"
@@ -4278,90 +4275,6 @@
                         symbol_margin="0"
                         use_tabs="0"
                         var_name="m_ruby_stc_lambda"
-                        wrap_indent_mode="indent"
-                        wrap_mode="word"
-                        wrap_visual_flag="end"
-                        minimum_size="400,-1"
-                        border_size="10"
-                        flags="wxEXPAND"
-                        proportion="1" />
-                    </node>
-                  </node>
-                </node>
-              </node>
-              <node
-                class="BookPage"
-                bitmap="SVG;rust_logo.svg;[24,24]"
-                class_access="protected:"
-                label="Rust"
-                var_name="m_rust_bookpage"
-                background_colour="wxSYS_COLOUR_BTNFACE"
-                window_style="wxTAB_TRAVERSAL">
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="page_sizer5">
-                  <node
-                    class="StaticRadioBtnBoxSizer"
-                    checked="0"
-                    class_access="protected:"
-                    label="Use function"
-                    radiobtn_var_name="m_rust_radio_use_function"
-                    var_name="m_rust_function_box"
-                    flags="wxEXPAND"
-                    wxEVT_RADIOBUTTON="OnUseRustFunction">
-                    <node
-                      class="wxBoxSizer"
-                      var_name="box_sizer13"
-                      flags="wxEXPAND">
-                      <node
-                        class="wxTextCtrl"
-                        var_name="m_rust_text_function"
-                        flags="wxEXPAND"
-                        proportion="1"
-                        wxEVT_TEXT="OnChange" />
-                      <node
-                        class="wxButton"
-                        class_access="none"
-                        label="Default"
-                        var_name="btn13"
-                        wxEVT_BUTTON="OnDefault" />
-                      <node
-                        class="wxButton"
-                        class_access="none"
-                        label="None"
-                        var_name="btn14"
-                        wxEVT_BUTTON="OnNone" />
-                    </node>
-                    <node
-                      class="StaticRadioBtnBoxSizer"
-                      checked="0"
-                      class_access="protected:"
-                      label="Anonymous function"
-                      radiobtn_var_name="m_rust_radio_use_anon_func"
-                      var_name="m_rust_lambda_box"
-                      flags="wxEXPAND"
-                      proportion="1"
-                      wxEVT_RADIOBUTTON="OnUseRustLambda">
-                      <node
-                        class="wxBoxSizer"
-                        var_name="box_sizer5" />
-                      <node
-                        class="wxStaticText"
-                        class_access="none"
-                        label="Function:"
-                        var_name="staticText5" />
-                      <node
-                        class="wxStyledTextCtrl"
-                        additional_carets_blink="1"
-                        indentation_guides="forward"
-                        lexer="RUST"
-                        multiple_selection_typing="1"
-                        multiple_selections="1"
-                        paste_multiple="1"
-                        symbol_margin="0"
-                        use_tabs="0"
-                        var_name="m_rust_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -6492,12 +6405,6 @@
             validator_variable="m_gen_perl_code" />
           <node
             class="wxRadioButton"
-            label="R&amp;ust"
-            var_name="m_radioBtn_Rust"
-            get_function="is_gen_rust"
-            validator_variable="m_gen_rust_code" />
-          <node
-            class="wxRadioButton"
             label="&amp;XRC"
             var_name="m_radioBtn_XRC"
             get_function="is_gen_xrc"
@@ -7386,11 +7293,6 @@
                 label="&amp;Perl"
                 var_name="m_radio_perl"
                 wxEVT_RADIOBUTTON="OnPerl" />
-              <node
-                class="wxRadioButton"
-                label="R&amp;ust"
-                var_name="m_radio_rust"
-                wxEVT_RADIOBUTTON="OnRust" />
               <node
                 class="wxRadioButton"
                 label="&amp;XRC"

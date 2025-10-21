@@ -157,7 +157,6 @@ int App::OnRun()
     parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_python", "generate python files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
-    parser.AddLongOption("gen_rust", "generate Rust files and exit");
     parser.AddLongOption("gen_xrc", "generate XRC files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
@@ -190,7 +189,6 @@ int App::OnRun()
     parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_python", "generate Python code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_ruby", "generate Ruby code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_rust", "generate Rust code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);
 
@@ -519,10 +517,6 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
         {
             generate_type = GEN_LANG_RUBY;
         }
-        else if (parser.Found("gen_rust", &filename))
-        {
-            generate_type = GEN_LANG_RUST;
-        }
         else if (parser.Found("gen_xrc", &filename))
         {
             generate_type = GEN_LANG_XRC;
@@ -530,8 +524,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 
         else if (parser.Found("gen_all", &filename))
         {
-            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                             GEN_LANG_RUST);
+            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
         }
         else if (parser.Found("gen_quick", &filename))
         {
@@ -561,11 +554,6 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
         if (parser.Found("test_ruby", &filename))
         {
             generate_type = (generate_type | GEN_LANG_RUBY);
-            test_only = true;
-        }
-        if (parser.Found("test_rust", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_RUST);
             test_only = true;
         }
         if (parser.Found("test_xrc", &filename))
@@ -704,7 +692,6 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
             GenCode(GEN_LANG_PERL);
             GenCode(GEN_LANG_PYTHON);
             GenCode(GEN_LANG_RUBY);
-            GenCode(GEN_LANG_RUST);
             GenCode(GEN_LANG_XRC);
 
             auto& log_msg = m_cmdline_log.emplace_back();

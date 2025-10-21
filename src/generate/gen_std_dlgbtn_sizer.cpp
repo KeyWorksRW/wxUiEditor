@@ -509,8 +509,6 @@ namespace
                 return EventHandlerDlg::GetRubyValue(value);
             case GEN_LANG_PERL:
                 return EventHandlerDlg::GetPerlValue(value);
-            case GEN_LANG_RUST:
-                return EventHandlerDlg::GetRustValue(value);
             default:
                 FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(language)
                                      << " (" << language << ")");

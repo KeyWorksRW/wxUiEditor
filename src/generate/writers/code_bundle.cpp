@@ -38,10 +38,6 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
                 BundlePerl(parts);
                 break;
 
-            case GEN_LANG_RUST:
-                // RustBundleCode(*this, prop_name);
-                break;
-
             default:
                 break;
         }

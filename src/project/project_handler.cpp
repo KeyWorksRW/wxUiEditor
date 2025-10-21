@@ -122,7 +122,6 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     std::set<std::string_view> perl_filenames;
     std::set<std::string_view> python_filenames;
     std::set<std::string_view> ruby_filenames;
-    std::set<std::string_view> rust_filenames;
     std::set<std::string_view> xrc_filenames;
 
     // Collect all of the class and filenames in use by each form so we can make sure the new
@@ -147,7 +146,6 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
         insert_if_has_value(iter, prop_perl_file, perl_filenames);
         insert_if_has_value(iter, prop_python_file, python_filenames);
         insert_if_has_value(iter, prop_ruby_file, ruby_filenames);
-        insert_if_has_value(iter, prop_rust_file, rust_filenames);
         insert_if_has_value(iter, prop_xrc_file, xrc_filenames);
     }
 
@@ -207,7 +205,6 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     SetNewNodeName(perl_filenames, prop_perl_file);
     SetNewNodeName(python_filenames, prop_python_file);
     SetNewNodeName(ruby_filenames, prop_ruby_file);
-    SetNewNodeName(rust_filenames, prop_rust_file);
     SetNewNodeName(xrc_filenames, prop_xrc_file);
 }
 
@@ -312,7 +309,6 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::p
                 { GEN_LANG_PERL, prop_folder_perl_output_folder },
                 { GEN_LANG_PYTHON, prop_folder_python_output_folder },
                 { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
-                { GEN_LANG_RUST, prop_folder_rust_output_folder },
                 { GEN_LANG_XRC, prop_folder_xrc_directory }
             };
 
@@ -333,7 +329,6 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::p
             { GEN_LANG_PERL, prop_perl_output_folder },
             { GEN_LANG_PYTHON, prop_python_output_folder },
             { GEN_LANG_RUBY, prop_ruby_output_folder },
-            { GEN_LANG_RUST, prop_rust_output_folder },
             { GEN_LANG_XRC, prop_xrc_directory }
         };
 
@@ -362,7 +357,6 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::p
             { GEN_LANG_PYTHON, prop_python_file },
             { GEN_LANG_RUBY, prop_ruby_file },
             { GEN_LANG_PERL, prop_perl_file },
-            { GEN_LANG_RUST, prop_rust_file },
             { GEN_LANG_XRC, prop_xrc_file }
         };
         // clang-format on
@@ -427,7 +421,6 @@ auto ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const ->
             { GEN_LANG_PERL, prop_folder_perl_output_folder },
             { GEN_LANG_PYTHON, prop_folder_python_output_folder },
             { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
-            { GEN_LANG_RUST, prop_folder_rust_output_folder },
             { GEN_LANG_XRC, prop_folder_xrc_directory }
         };
         if (auto iter = folderLangPropMap.find(language); iter != folderLangPropMap.end())
@@ -456,7 +449,6 @@ auto ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const ->
             { GEN_LANG_PERL, prop_perl_output_folder },
             { GEN_LANG_PYTHON, prop_python_output_folder },
             { GEN_LANG_RUBY, prop_ruby_output_folder },
-            { GEN_LANG_RUST, prop_rust_output_folder },
             { GEN_LANG_XRC, prop_xrc_directory }
         };
 
@@ -534,7 +526,6 @@ auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
         { "Perl", GEN_LANG_PERL },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
-        { "Rust", GEN_LANG_RUST },
         { "XRC", GEN_LANG_XRC }
     };
     // clang-format on
@@ -560,7 +551,6 @@ auto ProjectHandler::get_GenerateLanguages() const -> size_t
         { "Perl", GEN_LANG_PERL },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
-        { "Rust", GEN_LANG_RUST },
         { "XRC", GEN_LANG_XRC }
     };
     // clang-format on
@@ -601,7 +591,6 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
                       { prop_perl_file, GEN_LANG_PERL, OUTPUT_PERL },
                       { prop_python_file, GEN_LANG_PYTHON, OUTPUT_PYTHON },
                       { prop_ruby_file, GEN_LANG_RUBY, OUTPUT_RUBY },
-                      { prop_rust_file, GEN_LANG_RUST, OUTPUT_RUST },
                       { prop_xrc_file, GEN_LANG_XRC, OUTPUT_XRC } }
                 };
 
@@ -845,7 +834,6 @@ namespace
         { GEN_LANG_PERL, prop_wxPerl_version },
         { GEN_LANG_PYTHON, prop_wxPython_version },
         { GEN_LANG_RUBY, prop_wxRuby_version },
-        { GEN_LANG_RUST, prop_wxRust_version },
         { GEN_LANG_XRC, prop_wxWidgets_version }
     };
     // clang-format on

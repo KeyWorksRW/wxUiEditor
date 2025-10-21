@@ -208,11 +208,6 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         {
             code.AddComment("# TODO: wxBitmapBundle in wxPerl not currently supported");
         }
-        else if (code.is_rust())
-        {
-            code.AddComment("wxRust does not currently support wxBitmapBundle, currently wxUE does "
-                            "not support non-bundle bitmaps");
-        }
         else
         {
             ASSERT_MSG(false, "Unknown language in MenuItemGenerator::SettingsCode()");

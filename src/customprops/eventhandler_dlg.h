@@ -70,11 +70,6 @@ public:
     // Ruby is not enabled and another language specified a value.
     static tt_string GetRubyValue(tt_string_view value);
 
-    // This will return a string as if Rust was the only value specified even if the original
-    // value had values for multiple languages. Note that this *will* return a value even if
-    // Ruby is not enabled and another language specified a value.
-    static tt_string GetRustValue(tt_string_view value);
-
 protected:
     // This is used to colorize member variables in the C++ lambda
     void CollectMemberVariables(Node* node, std::set<std::string>& variables);
@@ -96,7 +91,6 @@ protected:
     void OnUsePythonLambda(wxCommandEvent& event) override;
     void OnUseRubyFunction(wxCommandEvent& event) override;
     void OnUseRubyLambda(wxCommandEvent& /* event unused */) override;
-    void OnUseRustFunction(wxCommandEvent& event) override;
     void OnDefault(wxCommandEvent& event) override;
     void OnNone(wxCommandEvent& event) override;
 
@@ -108,7 +102,6 @@ private:
     int m_perl_page;
     int m_python_page;
     int m_ruby_page;
-    int m_rust_page;
 
     size_t m_gen_languages;     // set by Project.get_GenerateLanguages()
     GenLang m_code_preference;  // This will be one of the GEN_LANG values
@@ -117,11 +110,9 @@ private:
     bool m_is_perl_enabled { false };
     bool m_is_python_enabled { false };
     bool m_is_ruby_enabled { false };
-    bool m_is_rust_enabled { false };
 
     bool m_is_cpp_lambda { false };
     // bool m_is_perl_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
-    bool m_is_rust_lambda { false };
 };

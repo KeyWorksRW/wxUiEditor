@@ -664,7 +664,6 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                     class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
                     class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
                     class_info->AddBaseClass(get_NodeDeclaration("wxPerl Settings"));
-                    class_info->AddBaseClass(get_NodeDeclaration("wxRust Settings"));
 
                     elem_base = elem_base.next_sibling("inherits");
                     continue;

@@ -183,17 +183,6 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Eol().Str(
             "my $self = $class->SUPER::new( $parent, $id, $title, $pos, $size, $style, $name );");
     }
-    else if (code.is_rust())
-    {
-        code.Str("class ").NodeName().Str(" extends wxDialog");
-        code.Eol().Str("{");
-        code.Indent();
-        code.Eol().Str("public function __construct()");
-        code.Eol().Str("{");
-        code.Indent();
-        code.Eol().Str("parent::__construct($parent, $id, $title, $pos, $size, $style, $name);");
-    }
-
     else
     {
         code.AddComment("Unknown language", true);

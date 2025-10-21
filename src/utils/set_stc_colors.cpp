@@ -22,7 +22,6 @@ extern const char* g_u8_cpp_keywords;
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_rust_keywords;
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.
@@ -433,80 +432,6 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         // stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_variables);
         stc->StyleSetForeground(wxSTC_RB_INSTANCE_VAR, clr_keywords);
         stc->StyleSetForeground(wxSTC_RB_CLASS_VAR, clr_keywords);
-    }
-    else if (language == GEN_LANG_RUST)
-    {
-        if (set_lexer)
-        {
-            stc->SetLexer(wxSTC_LEX_RUST);
-        }
-        if (add_keywords)
-        {
-            // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-            stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
-
-            // Add regular classes that have different generator class names
-
-            tt_string widget_keywords;
-            for (auto iter: lst_widgets_keywords)
-            {
-                if (widget_keywords.size())
-                {
-                    widget_keywords << ' ' << iter;
-                }
-                else
-                {
-                    widget_keywords = iter;
-                }
-            }
-
-            for (auto* iter: NodeCreation.get_NodeDeclarationArray())
-            {
-                if (iter == nullptr)
-                {
-                    // This will happen if there is an enumerated value but no generator for it
-                    continue;
-                }
-
-                if (!iter->get_DeclName().starts_with("wx") ||
-                    iter->get_DeclName() == "wxContextMenuEvent")
-                {
-                    continue;
-                }
-                widget_keywords << ' ' << iter->get_DeclName().substr(2);
-            }
-            widget_keywords << " wxAuiToolBarItem wxToolBarToolBase";
-
-            // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-            stc->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
-        }
-
-        stc->StyleSetBold(wxSTC_RUST_WORD, true);
-
-        if (UserPrefs.is_DarkMode())
-        {
-            for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
-            {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
-            }
-        }
-
-        stc->StyleSetForeground(wxSTC_RUST_COMMENTLINE, UserPrefs.is_HighContrast() ?
-                                                            clr_comments :
-                                                            UserPrefs.get_RustCommentColour());
-        stc->StyleSetForeground(wxSTC_RUST_NUMBER, UserPrefs.is_HighContrast() ?
-                                                       clr_numbers :
-                                                       UserPrefs.get_RustNumberColour());
-        stc->StyleSetForeground(wxSTC_RUST_STRING, UserPrefs.is_HighContrast() ?
-                                                       clr_strings :
-                                                       UserPrefs.get_RustStringColour());
-        stc->StyleSetForeground(wxSTC_RUST_WORD, UserPrefs.is_HighContrast() ?
-                                                     clr_keywords :
-                                                     UserPrefs.get_RustColour());
-        stc->StyleSetForeground(wxSTC_RUST_WORD2, UserPrefs.is_HighContrast() ?
-                                                      clr_functions :
-                                                      UserPrefs.get_RustKeywordColour());
     }
     else if (language == GEN_LANG_XRC)
     {

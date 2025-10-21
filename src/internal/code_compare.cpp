@@ -47,9 +47,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_perl = new wxRadioButton(this, wxID_ANY, "&Perl");
     grid_sizer->Add(m_radio_perl, wxSizerFlags().Border(wxALL));
 
-    m_radio_rust = new wxRadioButton(this, wxID_ANY, "R&ust");
-    grid_sizer->Add(m_radio_rust, wxSizerFlags().Border(wxALL));
-
     m_radio_xrc = new wxRadioButton(this, wxID_ANY, "&XRC");
     grid_sizer->Add(m_radio_xrc, wxSizerFlags().Border(wxALL));
 
@@ -107,7 +104,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_perl->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPerl, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPython, this);
     m_radio_ruby->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnRuby, this);
-    m_radio_rust->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnRust, this);
     m_radio_xrc->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnXRC, this);
 
     return true;
@@ -237,9 +233,6 @@ void CodeCompare::OnRadioButton(GenLang language)
         case GEN_LANG_RUBY:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUBY);
             break;
-        case GEN_LANG_RUST:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUST);
-            break;
         case GEN_LANG_XRC:
             result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_XRC);
             break;
@@ -277,11 +270,6 @@ void CodeCompare::OnRuby(wxCommandEvent& /* event unused */)
 void CodeCompare::OnPerl(wxCommandEvent& /* event */)
 {
     OnRadioButton(GEN_LANG_PERL);
-}
-
-void CodeCompare::OnRust(wxCommandEvent& /* event */)
-{
-    OnRadioButton(GEN_LANG_RUST);
 }
 
 void CodeCompare::OnXRC(wxCommandEvent& /* event */)

@@ -301,7 +301,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // value if it's a different grid_prop
     if (!node_prop->isProp(prop_base_file) && !node_prop->isProp(prop_perl_file) &&
         !node_prop->isProp(prop_python_file) && !node_prop->isProp(prop_ruby_file) &&
-        !node_prop->isProp(prop_xrc_file) && !node_prop->isProp(prop_rust_file))
+        !node_prop->isProp(prop_xrc_file))
     {
         if (!newValue.empty())
         {

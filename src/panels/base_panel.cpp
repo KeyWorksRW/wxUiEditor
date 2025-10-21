@@ -23,7 +23,6 @@
 #include "gen_perl.h"    // PerlCodeGenerator class
 #include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_rust.h"    // RustCodeGenerator -- Generate wxRust code
 #include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
 
 // These are used everywhere we use scintilla to edit C++ code. It is also used to verify valid
@@ -56,11 +55,6 @@ const char* g_perl_keywords =
     "do if else elsif unless while until for foreach last next pod cut redo continue "
     "qw sub return goto and or not xor "
     "unless use no package require my our local state ";
-
-const char* g_rust_keywords =
-    "as break const continue crate do else enum extern false fn for if impl in let loop match mod "
-    "move mut pub "
-    "ref return self self mut static struct trait true type unsafe use where while";
 
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : wxPanel(parent)
 {
@@ -109,13 +103,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_XRC)
-    {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
-    }
-    else if (m_panel_type == GEN_LANG_RUST)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -325,10 +312,6 @@ void BasePanel::GenerateBaseClass()
             code_generator = std::make_unique<PerlCodeGenerator>(m_cur_form);
             break;
 
-        case GEN_LANG_RUST:
-            code_generator = std::make_unique<RustCodeGenerator>(m_cur_form);
-            break;
-
         case GEN_LANG_XRC:
             code_generator = std::make_unique<XrcCodeGenerator>(m_cur_form);
             break;
@@ -369,10 +352,6 @@ void BasePanel::GenerateBaseClass()
 
         case GEN_LANG_RUBY:
             code_generator->GenerateClass(GEN_LANG_RUBY, panel_page);
-            break;
-
-        case GEN_LANG_RUST:
-            code_generator->GenerateClass(GEN_LANG_RUST, panel_page);
             break;
 
         case GEN_LANG_XRC:

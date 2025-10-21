@@ -50,10 +50,6 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_Perl->SetValidator(wxGenericValidator(&m_gen_perl_code));
     grid_sizer->Add(m_radioBtn_Perl, wxSizerFlags().Border(wxALL));
 
-    m_radioBtn_Rust = new wxRadioButton(this, wxID_ANY, "R&ust");
-    m_radioBtn_Rust->SetValidator(wxGenericValidator(&m_gen_rust_code));
-    grid_sizer->Add(m_radioBtn_Rust, wxSizerFlags().Border(wxALL));
-
     m_radioBtn_XRC = new wxRadioButton(this, wxID_ANY, "&XRC");
     m_radioBtn_XRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
     grid_sizer->Add(m_radioBtn_XRC, wxSizerFlags().Border(wxALL));
@@ -115,7 +111,6 @@ void CodePreferenceDlg::OnInit(wxInitDialogEvent& event)
     if (!wxGetApp().isTestingSwitch())
     {
         m_radioBtn_Perl->Hide();
-        m_radioBtn_Rust->Hide();
         m_radioBtn_XRC->Hide();
 
         Layout();

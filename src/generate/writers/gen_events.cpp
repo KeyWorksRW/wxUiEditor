@@ -23,10 +23,7 @@
 
 using namespace code;
 
-extern std::string_view cpp_rust_end_cmt_line;  // "// ************* End of generated code"
-
-/////////////////////////////////////////// Default generator event code
-//////////////////////////////////////////////
+////////////////////////////////// Default generator event code //////////////////////////////////
 
 constexpr auto prop_sheet_events =
     frozen::make_map<std::string_view, std::string_view>({ { "OKButtonClicked", "wxID_OK" },
@@ -60,10 +57,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     else if (code.get_language() == GEN_LANG_RUBY)
     {
         event_code = EventHandlerDlg::GetRubyValue(event->get_value());
-    }
-    else if (code.get_language() == GEN_LANG_RUST)
-    {
-        event_code = EventHandlerDlg::GetRustValue(event->get_value());
     }
 
     else
@@ -218,11 +211,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             {
                 handler.Str(event_name).Str("(").NodeName().Str(".get_id, :") << event_code << ')';
             }
-        }
-        else if (code.is_rust())
-        {
-            // wxRust1 uses contro.connect and a generated extern "C" function
-            // wxRust2 uses form.base.bind(wx::RustEvent::..., move |event: &wx::EventType| { ... })
         }
     }
 

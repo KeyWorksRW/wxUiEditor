@@ -108,7 +108,6 @@ public:
     [[nodiscard]] auto is_perl() const -> bool { return m_language == GEN_LANG_PERL; }
     [[nodiscard]] auto is_python() const -> bool { return m_language == GEN_LANG_PYTHON; }
     [[nodiscard]] auto is_ruby() const -> bool { return m_language == GEN_LANG_RUBY; }
-    [[nodiscard]] auto is_rust() const -> bool { return m_language == GEN_LANG_RUST; }
 
     [[nodiscard]] auto is_local_var() const -> bool;
 
@@ -409,7 +408,7 @@ public:
     // non-sizer parents.
     auto ValidParentName() -> Code&;
 
-    // Adds "this" for C++, "$self" for Perl, and "self" for Python, Ruby, and Rust.
+    // Adds "this" for C++, "$self" for Perl, and "self" for Python and Ruby
     auto FormParent() -> Code&;
 
     // Handles regular or or'd properties.
@@ -550,7 +549,7 @@ public:
     void ResetIndent() { m_indent = 0; }
 
     // Call Indent() and Eol(eol_if_needed).
-    // In C++, Perl, and Rust "{" will be added before calling Indent().
+    // In C++ and Perl, "{" will be added before calling Indent().
     auto OpenBrace(bool all_languages = false) -> Code&;
 
     // In C++, this adds "\\n}" and removes indentation set by OpenBrace().

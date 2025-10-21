@@ -158,24 +158,6 @@ void MainFrame::UpdateLanguagePanels()
         m_rubyPanel = nullptr;
     }
 
-    if (languages & GEN_LANG_RUST && !m_rustPanel)
-    {
-        m_rustPanel = new BasePanel(m_notebook, this, GEN_LANG_RUST);
-        if (Project.get_CodePreference() == GEN_LANG_RUST)
-        {
-            m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_RUST) && m_rustPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_rustPanel));
-        m_rustPanel = nullptr;
-    }
-
     int position;
     switch (Project.get_CodePreference())
     {
@@ -216,16 +198,6 @@ void MainFrame::UpdateLanguagePanels()
             {
                 m_notebook->RemovePage(position);
                 m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_RUST:
-            ASSERT(m_rustPanel);
-            position = m_notebook->GetPageIndex(m_rustPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_rustPanel, "Rust", false, wxWithImages::NO_IMAGE);
             }
             break;
 

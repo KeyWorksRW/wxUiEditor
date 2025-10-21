@@ -321,12 +321,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case MenuSingleGenRust:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_RUST);
-            }
-            break;
-
         case MenuSingleGenXRC:
             {
                 wxCommandEvent dummy;
@@ -527,11 +521,6 @@ void NavPopupMenu::MenuAddCommands()
             if (m_node->HasValue(prop_perl_file))
             {
                 Append(MenuSingleGenPerl, "Generate Perl for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_rust_file))
-            {
-                Append(MenuSingleGenRust, "Generate Rust for this form");
                 ++count;
             }
 

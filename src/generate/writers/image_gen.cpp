@@ -170,7 +170,6 @@ std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
     { GEN_LANG_PERL, prop_perl_line_length },
     { GEN_LANG_PYTHON, prop_python_line_length },
     { GEN_LANG_RUBY, prop_ruby_line_length  },
-    { GEN_LANG_RUST, prop_rust_line_length },
 };
 
 // clang-format on

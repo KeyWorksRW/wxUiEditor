@@ -14,7 +14,6 @@
 #include "gen_perl.h"    // PerlCodeGenerator class
 #include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_rust.h"    // RustCodeGenerator -- Generate wxRust code
 #include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
 
 #include "pugixml.hpp"
@@ -305,10 +304,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         code_generator = std::make_unique<PerlCodeGenerator>(form);
                         break;
 
-                    case GEN_LANG_RUST:
-                        code_generator = std::make_unique<RustCodeGenerator>(form);
-                        break;
-
                     case GEN_LANG_XRC:
                         code_generator = std::make_unique<XrcCodeGenerator>(form);
                         break;
@@ -342,10 +337,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
 
                     case GEN_LANG_RUBY:
                         code_generator->GenerateClass(GEN_LANG_RUBY);
-                        break;
-
-                    case GEN_LANG_RUST:
-                        code_generator->GenerateClass(GEN_LANG_RUST);
                         break;
 
                     case GEN_LANG_XRC:
@@ -398,10 +389,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                             new_code_generator = std::make_unique<RubyCodeGenerator>(form);
                             break;
 
-                        case GEN_LANG_RUST:
-                            new_code_generator = std::make_unique<RustCodeGenerator>(form);
-                            break;
-
                         case GEN_LANG_XRC:
                             new_code_generator = std::make_unique<XrcCodeGenerator>(form);
                             break;
@@ -436,10 +423,6 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                         case GEN_LANG_RUBY:
                             cpp_cw->SetTabToSpaces(2);
                             new_code_generator->GenerateClass(GEN_LANG_RUBY);
-                            break;
-
-                        case GEN_LANG_RUST:
-                            new_code_generator->GenerateClass(GEN_LANG_RUST);
                             break;
 
                         case GEN_LANG_XRC:

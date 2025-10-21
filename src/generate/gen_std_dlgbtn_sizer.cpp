@@ -647,7 +647,8 @@ namespace
                 {
                     const auto id_constant = GetButtonIdConstant(event_name);
                     code.Add(id_constant);
-                    auto event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
+                    auto event_code =
+                        GetEventCodeForLanguage(code.get_language(), event->get_value());
                     code.Comma().Str("$self->can('") << event_code << "')";
                     return true;
                 }
@@ -676,7 +677,8 @@ namespace
                 if (code.is_perl())
                 {
                     code.Replace("}", "");
-                    auto event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
+                    auto event_code =
+                        GetEventCodeForLanguage(code.get_language(), event->get_value());
                     code.Str("}->GetId(), $self->can('") << event_code << "')";
                     return true;
                 }

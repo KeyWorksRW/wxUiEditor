@@ -61,11 +61,11 @@ auto Code::Add(tt_string_view text) -> Code&
 {
     bool old_linebreak = m_auto_break;
     // Ruby changes the prefix to "Wx::", and Python changes it to "wx."
-    // C++, Perl, and Rust use the constant unmodified.
+    // C++ and Perl use the constant unmodified.
     //
     // "wx" is the shortest string that could be changed -- no single letter will ever be changed by
     // this function.
-    if (is_cpp() || is_perl() || is_rust() || text.size() < (sizeof("wx") - 1))
+    if (is_cpp() || is_perl() || text.size() < (sizeof("wx") - 1))
     {
         if (is_perl() && text == "wxEmptyString")
         {
@@ -221,7 +221,6 @@ auto Code::AddComment(std::string_view comment, bool force) -> Code&
     switch (m_language)
     {
         case GEN_LANG_CPLUSPLUS:
-        case GEN_LANG_RUST:
             *this << "// " << comment;
             break;
 
@@ -254,17 +253,13 @@ auto Code::AddAuto() -> Code&
         {
             return *this;  // no modifier for local variables in Python or Ruby
         }
-        else if (is_rust())
-        {
-            *this += "let ";
-        }
     }
     return *this;
 }
 
 auto Code::AddConditionalAnd() -> Code&
 {
-    if (is_cpp() || is_ruby() || is_perl() || is_rust())
+    if (is_cpp() || is_ruby() || is_perl())
     {
         *this << " && ";
     }
@@ -283,7 +278,7 @@ auto Code::AddConditionalAnd() -> Code&
 
 auto Code::AddConditionalOr() -> Code&
 {
-    if (is_cpp() || is_ruby() || is_perl() || is_rust())
+    if (is_cpp() || is_ruby() || is_perl())
     {
         *this << " || ";
     }

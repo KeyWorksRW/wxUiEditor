@@ -42,7 +42,7 @@ R"===(# ************* End of generated code ***********
 # ***********************************************
 )===";
 
-std::string_view cpp_rust_end_cmt_line = "// ************* End of generated code";
+std::string_view cpp_end_cmt_line = "// ************* End of generated code";
 
 // clang-format on
 
@@ -124,10 +124,6 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
             m_buffer += code;
         }
     }
-    else if (language == GEN_LANG_RUST)
-    {
-        m_buffer += end_cpp_block;
-    }
 
     size_t additional_content = (to_size_t) -1;
     bool old_style_file = false;  // true if this doesn't have a trailing comment block
@@ -159,8 +155,8 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
         new_file.ReadString(m_buffer);
 
         std::string_view look_for = {};
-        if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_RUST)
-            look_for = cpp_rust_end_cmt_line;
+        if (language == GEN_LANG_CPLUSPLUS)
+            look_for = cpp_end_cmt_line;
         else if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY ||
                  language == GEN_LANG_PERL)
             look_for = python_perl_ruby_end_cmt_line;

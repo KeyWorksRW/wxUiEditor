@@ -316,10 +316,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
                 break;
 
-            case GEN_LANG_RUST:
-                code.Eol() << "if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32')";
-                break;
-
             default:
                 FAIL_MSG(tt_string() << "Unsupported language: " << m_language);
                 break;
@@ -359,14 +355,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 else
                     code.Eol() << "if ";
                 code << "Wx::PLATFORM == 'WXUNIX'";
-                break;
-
-            case GEN_LANG_RUST:
-                if (code.size())
-                    code << " || ";
-                else
-                    code.Eol() << "if ";
-                code << "PHP_OS == 'Linux'";
                 break;
 
             default:
@@ -409,14 +397,6 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 code << "Wx::PLATFORM == 'WXOSX'";
                 break;
 
-            case GEN_LANG_RUST:
-                if (code.size())
-                    code << " || ";
-                else
-                    code.Eol() << "if ";
-                code << "PHP_OS == 'Darwin'";
-                break;
-
             default:
                 break;
         }
@@ -445,10 +425,6 @@ void BaseCodeGenerator::EndPlatformCode()
         case GEN_LANG_RUBY:
             m_source->Unindent();
             m_source->writeLine("end");
-            break;
-
-        case GEN_LANG_RUST:
-            m_source->Unindent();
             break;
 
         default:

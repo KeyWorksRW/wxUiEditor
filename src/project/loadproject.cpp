@@ -963,8 +963,6 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 project_node->set_value(prop_code_preference, "Perl");
             else if (language & GEN_LANG_PYTHON)
                 project_node->set_value(prop_code_preference, "Python");
-            else if (language & GEN_LANG_RUST)  // wxFormBuilder can generate Rust
-                project_node->set_value(prop_code_preference, "Rust");
             else if (language & GEN_LANG_XRC)
                 project_node->set_value(prop_code_preference, "XRC");
 
@@ -989,10 +987,6 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
                 else if (dlg.is_gen_perl())
                 {
                     project_node->set_value(prop_code_preference, "Perl");
-                }
-                else if (dlg.is_gen_rust())
-                {
-                    project_node->set_value(prop_code_preference, "Rust");
                 }
                 else if (dlg.is_gen_xrc())
                 {
@@ -1112,17 +1106,6 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                         if (generate_languages.size())
                             generate_languages << '|';
                         generate_languages << "Perl";
-                        generated_changed = true;
-                    }
-                }
-                else if (dlg.is_gen_rust())
-                {
-                    project->set_value(prop_code_preference, "Rust");
-                    if (!generate_languages.contains("Rust", tt::CASE::either))
-                    {
-                        if (generate_languages.size())
-                            generate_languages << '|';
-                        generate_languages << "Rust";
                         generated_changed = true;
                     }
                 }

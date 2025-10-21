@@ -175,23 +175,6 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             code.GetCode().Replace("\t\t\t\t", spaces, true);
         }
     }
-    else if (code.is_rust())
-    {
-        code.Str("#[derive(Clone)]").Eol().Str("struct ").NodeName();
-        code.OpenBrace();
-        code.Str("base: wx::WeakRef<wx::Frame>").Eol();
-        code.CloseBrace().Eol();
-        code.Str("impl ").NodeName();
-        code.OpenBrace();
-        code.Str("fn new(");
-        code.Str("parent: &wx::Window, id: i32, title: &str, pos: wx::Point, size: wx::Size, "
-                 "style: i32, name: &str) -> Self");
-        code.OpenBrace();
-        code.Str("let frame = wx::Frame::builder(parent, id, title, pos, size, style, "
-                 "name).build();")
-            .Eol();
-        return true;
-    }
     else
     {
         code.AddComment("Unknown language", true);
@@ -388,12 +371,6 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
     if (center.size() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Centre(").AddConstant(center).EndFunction();
-    }
-
-    if (code.is_rust())
-    {
-        code.Eol(eol_if_needed).NodeName();
-        code.OpenBrace().Str("base: frame.to_weak_ref()").CloseBrace();
     }
 
     return true;

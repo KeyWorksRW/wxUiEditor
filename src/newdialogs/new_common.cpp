@@ -29,10 +29,6 @@ void UpdateFormClass(Node* form_node)
     {
         form_node->set_value(prop_ruby_file, filename);
     }
-    else if (Project.get_CodePreference() == GEN_LANG_RUST)
-    {
-        form_node->set_value(prop_rust_file, filename);
-    }
     else if (Project.get_CodePreference() == GEN_LANG_XRC)
     {
         form_node->set_value(prop_xrc_file, filename);

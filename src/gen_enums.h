@@ -549,16 +549,6 @@ namespace GenEnum
         prop_perl_project_preamble,
         prop_wxPerl_version,
 
-        prop_folder_rust_output_folder,
-        prop_rust_conditional,
-        prop_rust_file,
-        prop_rust_inherit_name,
-        prop_rust_insert,
-        prop_rust_line_length,
-        prop_rust_output_folder,
-        prop_rust_project_preamble,
-        prop_wxRust_version,
-
         // This must always be the last item as it is used to calculate the array size needed to
         // store all items
         prop_name_array_size,
@@ -721,7 +711,6 @@ namespace GenEnum
         gen_wxRuby,
         gen_XRC,
         gen_wxPerl,
-        gen_wxRust,
 
         gen_LanguageSettings,  // Using this will pull in all the language settings
 
@@ -729,7 +718,6 @@ namespace GenEnum
         gen_DerivedCPlusSettings,
         gen_CPlusHeaderSettings,
         gen_PerlSettings,
-        gen_RustSettings,
         gen_PythonSettings,
         gen_RubySettings,
 

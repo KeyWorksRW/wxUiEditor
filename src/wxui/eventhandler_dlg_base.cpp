@@ -40,7 +40,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         bundle_list.push_back(wxue_img::bundle_perl_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_python_logo_only_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_ruby_logo_svg(24, 24));
-        bundle_list.push_back(wxue_img::bundle_rust_logo_svg(24, 24));
         m_notebook->SetImages(bundle_list);
     }
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
@@ -302,77 +301,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer_3->Add(m_ruby_function_box, wxSizerFlags().Expand().Border(wxALL));
     m_ruby_bookpage->SetSizerAndFit(page_sizer_3);
 
-    m_rust_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_rust_bookpage, "Rust", false, 4);
-    m_rust_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer5 = new wxBoxSizer(wxVERTICAL);
-
-    m_rust_radio_use_function = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_rust_function_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_bookpage, wxID_ANY, m_rust_radio_use_function),
-        wxVERTICAL);
-
-    auto* box_sizer13 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_rust_text_function = new wxTextCtrl(m_rust_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer13->Add(m_rust_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn13 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer13->Add(btn13, wxSizerFlags().Border(wxALL));
-
-    auto* btn14 = new wxButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer13->Add(btn14, wxSizerFlags().Border(wxALL));
-
-    m_rust_function_box->Add(box_sizer13, wxSizerFlags().Expand().Border(wxALL));
-
-    m_rust_radio_use_anon_func = new wxRadioButton(m_rust_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_rust_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_rust_function_box->GetStaticBox(), wxID_ANY,
-        m_rust_radio_use_anon_func), wxVERTICAL);
-
-    auto* box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_rust_lambda_box->Add(box_sizer5, wxSizerFlags().Border(wxALL));
-
-    auto* staticText5 = new wxStaticText(m_rust_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
-    m_rust_lambda_box->Add(staticText5, wxSizerFlags().Border(wxALL));
-
-    m_rust_stc_lambda = new wxStyledTextCtrl(m_rust_lambda_box->GetStaticBox());
-    {
-        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
-        m_rust_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_rust_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_rust_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_rust_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_rust_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_rust_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_rust_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_rust_stc_lambda->SetAdditionalCaretsBlink(true);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
-
-        m_rust_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_rust_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_rust_stc_lambda->SetMarginWidth(1, 0);
-        // Remove default margin
-
-        m_rust_stc_lambda->SetMarginWidth(0, 16);
-        m_rust_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_rust_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_rust_stc_lambda->SetMarginSensitive(0, false);
-        m_rust_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_rust_stc_lambda->SetUseTabs(false);
-        m_rust_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_rust_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_rust_lambda_box->Add(m_rust_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_rust_function_box->Add(m_rust_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer5->Add(m_rust_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_rust_bookpage->SetSizerAndFit(page_sizer5);
-
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
@@ -410,11 +338,9 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
     btn->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn11->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
-    btn13->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn15->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn3->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn12->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
-    btn14->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn16->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn2->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn4->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
@@ -430,14 +356,11 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_perl_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
-    m_rust_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustFunction, this);
-    m_rust_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRustLambda, this);
     m_cpp_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_perl_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_lambda->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_ruby_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_rust_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
 
     return true;
 }

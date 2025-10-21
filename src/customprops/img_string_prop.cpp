@@ -69,11 +69,6 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
                 // released, that's uncertain.
                 remove_webp = Project.get_LangVersion(GEN_LANG_PYTHON) < 404000;
             }
-
-            // REVIEW: [Randalphwa - 08-31-2025] wxRuby already supports 3.3.x, and I *think* wxPerl
-            // does as well, but the latter requires testing. If wxRust3 ever exists, it will be
-            // built on 3.3.x or later.
-
             if (remove_webp)
             {
                 pattern.Replace("|WEBP|*.webp", "", false);

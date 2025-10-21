@@ -36,7 +36,6 @@ extern const char* g_u8_cpp_keywords;
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
 extern const char* g_perl_keywords;
-extern const char* g_rust_keywords;
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.

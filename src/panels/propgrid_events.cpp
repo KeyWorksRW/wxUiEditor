@@ -309,17 +309,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("Rust"))
-            {
-                if (prop->as_string() != "any" && prop->as_string() != "Rust")
-                {
-                    m_prop_grid->Collapse(grid_property);
-                }
-                else
-                {
-                    m_prop_grid->Expand(grid_property);
-                }
-            }
             else if (grid_property->GetLabel().Contains("XRC"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "XRC")

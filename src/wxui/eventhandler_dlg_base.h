@@ -55,8 +55,6 @@ protected:
     virtual void OnUsePythonLambda(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseRubyFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseRubyLambda(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseRustFunction(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseRustLambda(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
 
@@ -67,7 +65,6 @@ protected:
     wxPanel* m_perl_bookpage;
     wxPanel* m_python_bookpage;
     wxPanel* m_ruby_bookpage;
-    wxPanel* m_rust_bookpage;
     wxRadioButton* m_cpp_radio_use_function;
     wxStaticBoxSizer* m_cpp_function_box;
     wxRadioButton* m_cpp_radio_use_lambda;
@@ -84,21 +81,15 @@ protected:
     wxStaticBoxSizer* m_ruby_function_box;
     wxRadioButton* m_ruby_radio_use_lambda;
     wxStaticBoxSizer* m_ruby_lambda_box;
-    wxRadioButton* m_rust_radio_use_anon_func;
-    wxStaticBoxSizer* m_rust_lambda_box;
-    wxRadioButton* m_rust_radio_use_function;
-    wxStaticBoxSizer* m_rust_function_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_cpp_stc_lambda;
     wxStyledTextCtrl* m_perl_stc_lambda;
     wxStyledTextCtrl* m_ruby_stc_lambda;
-    wxStyledTextCtrl* m_rust_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
     wxTextCtrl* m_perl_text_function;
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_py_text_lambda;
     wxTextCtrl* m_ruby_text_function;
-    wxTextCtrl* m_rust_text_function;
 };
 
 // ************* End of generated code ***********

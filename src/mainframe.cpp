@@ -92,16 +92,14 @@ enum : std::uint16_t
     id_DebugXrcImport,
     id_FindWidget,
     id_GenerateCpp,
+    id_GeneratePerl,
     id_GeneratePython,
     id_GenerateRuby,
-    id_GeneratePerl,
-    id_GenerateRust,
     id_GenerateXrc,
     id_GenSingleCpp,
+    id_GenSinglePerl,
     id_GenSinglePython,
     id_GenSingleRuby,
-    id_GenSinglePerl,
-    id_GenSingleRust,
     id_GenSingleXrc,
     id_NodeMemory,
     id_ShowLogger,
@@ -492,13 +490,6 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateSingleLanguage(GEN_LANG_RUST);
-            },
-            id_GenSingleRust);
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
                 OnGenerateSingleLanguage(GEN_LANG_XRC);
             },
             id_GenSingleXrc);
@@ -518,14 +509,6 @@ MainFrame::MainFrame() :
                 OnGenerateLanguage(GEN_LANG_PERL);
             },
             id_GeneratePerl);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GEN_LANG_RUST);
-            },
-            id_GenerateRust);
 
         Bind(
             wxEVT_MENU,

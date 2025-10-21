@@ -29,7 +29,6 @@
 #include "gen_perl.h"    // PerlCodeGenerator class
 #include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_rust.h"    // RustCodeGenerator -- Generate wxRust code
 #include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
 
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
@@ -1432,10 +1431,6 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
-        case GEN_LANG_RUST:
-            code_generator = std::make_unique<RustCodeGenerator>(form);
-            break;
-
         case GEN_LANG_XRC:
             code_generator = std::make_unique<XrcCodeGenerator>(form);
             break;
@@ -1476,10 +1471,6 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
 
         case GEN_LANG_RUBY:
             code_generator->GenerateClass(GEN_LANG_RUBY);
-            break;
-
-        case GEN_LANG_RUST:
-            code_generator->GenerateClass(GEN_LANG_RUST);
             break;
 
         case GEN_LANG_XRC:

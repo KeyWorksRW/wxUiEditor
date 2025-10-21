@@ -28,7 +28,7 @@
 using namespace code;
 using namespace GenEnum;
 
-extern std::string_view cpp_rust_end_cmt_line;  // "// ************* End of generated code"
+extern std::string_view cpp_end_cmt_line;  // "// ************* End of generated code"
 
 // clang-format off
 
@@ -300,7 +300,7 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
             size_t line_index;
             for (line_index = 0; line_index < org_file.size(); ++line_index)
             {
-                if (org_file[line_index].is_sameprefix(cpp_rust_end_cmt_line))
+                if (org_file[line_index].is_sameprefix(cpp_end_cmt_line))
                 {
                     break;
                 }

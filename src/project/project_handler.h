@@ -29,7 +29,6 @@ enum : std::uint8_t
     OUTPUT_RUBY = 1 << 3,
     OUTPUT_XRC = 1 << 4,
     OUTPUT_PERL = 1 << 5,
-    OUTPUT_RUST = 1 << 6,
 };
 
 enum : std::uint8_t

@@ -7,7 +7,6 @@
         <inherits class="wxPerl"/>
         <inherits class="wxPython"/>
         <inherits class="wxRuby"/>
-        <inherits class="wxRust"/>
         <inherits class="XRC"/>
 
         <property name="code_preference" type="option"
@@ -16,7 +15,6 @@
 			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="Rust"/>
 			<option name="XRC"/>
 
             C++</property>
@@ -26,7 +24,6 @@
 			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="Rust"/>
 			<option name="XRC"/>
 
             C++ | Python | Ruby
@@ -68,7 +65,6 @@
 			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="Rust"/>
 			<option name="XRC"/>C++</property>
     </gen>
 

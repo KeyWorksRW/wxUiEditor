@@ -98,17 +98,6 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             wildcard = "Ruby Files|*.rb;*.rbw";
             break;
 
-        case prop_rust_file:
-            if (folder && folder->HasValue(prop_folder_rust_output_folder))
-                root_path.AssignDir(folder->as_string(prop_folder_rust_output_folder));
-            else if (Project.get_ProjectNode()->HasValue(prop_rust_output_folder))
-                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_rust_output_folder));
-            else
-                root_path.AssignDir(Project.get_wxFileName()->GetPath());
-            title = "Rust filename";
-            wildcard = "Rust Files|*.rust";
-            break;
-
         case prop_xrc_file:
         case prop_combined_xrc_file:
         case prop_folder_combined_xrc_file:

@@ -144,9 +144,3 @@ void PythonBtnBimapCode(Code& code, bool is_single = false);
 // Deterimes where the ruby code will be written to, and returns an absolute path to that
 // location.
 tt_string MakeRubyPath(Node* node);
-
-/////////////////////////////////////// wxRust Functions ///////////////////////////////////////
-
-// Deterimes where the perl code will be written to, and returns an absolute path to that
-// location.
-tt_string MakeRustPath(Node* node);

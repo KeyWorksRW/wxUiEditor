@@ -145,7 +145,6 @@ enum GenLang : std::uint16_t
     GEN_LANG_PERL = 1 << 2,
     GEN_LANG_PYTHON = 1 << 3,
     GEN_LANG_RUBY = 1 << 4,
-    GEN_LANG_RUST = 1 << 5,
 
     // These should always be the last languages in the list.
     GEN_LANG_XRC = 1 << 6,

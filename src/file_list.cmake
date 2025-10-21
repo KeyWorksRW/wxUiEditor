@@ -107,7 +107,6 @@ set( file_list
     generate/writers/gen_perl.cpp          # Generate wxPerl code
     generate/writers/gen_python.cpp        # Generate wxPython code
     generate/writers/gen_ruby.cpp          # Generate wxRuby3 code
-    generate/writers/gen_rust.cpp          # Generate wxRust code
     generate/writers/gen_script_common.cpp # Common functions for generating Script Languages
     generate/writers/gen_xrc.cpp           # Generate XRC
     generate/writers/verify_codegen.cpp    # Verify that code generation did not change

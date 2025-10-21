@@ -97,7 +97,6 @@ static bool gen_derived_code = false;
 static bool gen_perl_code = false;
 static bool gen_python_code = false;
 static bool gen_ruby_code = false;
-static bool gen_rust_code = false;
 static bool gen_xrc_code = false;
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
@@ -186,13 +185,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 code_generated = true;
             }
 
-            gen_rust_code = dlg.is_gen_rust();
-            if (gen_rust_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_RUST);
-                code_generated = true;
-            }
-
             if (wxGetApp().isTestingMenuEnabled())
             {
                 auto* config = wxConfig::Get();
@@ -203,7 +195,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 config->Write("gen_perl_code", gen_perl_code);
                 config->Write("gen_python_code", gen_python_code);
                 config->Write("gen_ruby_code", gen_ruby_code);
-                config->Write("gen_rust_code", gen_rust_code);
 
                 config->SetPath("/");
             }
@@ -264,9 +255,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         case GEN_LANG_RUBY:
             gen_ruby_code = true;
             break;
-        case GEN_LANG_RUST:
-            gen_rust_code = true;
-            break;
         case GEN_LANG_XRC:
             gen_xrc_code = true;
             break;
@@ -314,15 +302,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
         if (gen_ruby_code)
             m_checkRuby->SetValue(true);
-    }
-    if (languages & GEN_LANG_RUST || gen_rust_code)
-    {
-        m_gen_rust_code = gen_rust_code;
-        m_checkRust = new wxCheckBox(this, wxID_ANY, "RUST");
-        m_checkRust->SetValidator(wxGenericValidator(&m_gen_rust_code));
-        m_grid_sizer->Add(m_checkRust, wxSizerFlags().Border(wxALL));
-        if (gen_rust_code)
-            m_checkRust->SetValue(true);
     }
     if (languages & GEN_LANG_XRC || gen_xrc_code)
     {

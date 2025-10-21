@@ -44,7 +44,6 @@ protected:
     void OnPerl(wxCommandEvent& event);
     void OnPython(wxCommandEvent& event);
     void OnRuby(wxCommandEvent& event);
-    void OnRust(wxCommandEvent& event);
     void OnWinMerge(wxCommandEvent& event);
     void OnXRC(wxCommandEvent& event);
 
@@ -60,7 +59,6 @@ private:
     wxRadioButton* m_radio_perl;
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
-    wxRadioButton* m_radio_rust;
     wxRadioButton* m_radio_xrc;
 
     std::vector<tt_string> m_class_list;

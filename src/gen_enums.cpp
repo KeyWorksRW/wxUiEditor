@@ -527,15 +527,6 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_perl_project_preamble, "perl_project_preamble" },
     { prop_wxPerl_version, "wxPerl_version" },
 
-    { prop_folder_rust_output_folder, "folder_rust_output_folder" },
-    { prop_rust_file, "rust_file" },
-    { prop_rust_inherit_name, "rust_inherit_name" },
-    { prop_rust_insert, "insert_rust_code" },
-    { prop_rust_line_length, "rust_line_length" },
-    { prop_rust_output_folder, "rust_output_folder" },
-    { prop_rust_project_preamble, "rust_project_preamble" },
-    { prop_wxRust_version, "wxRust_version" },
-
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -668,7 +659,6 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_wxRuby, "wxRuby" },
     { gen_XRC, "XRC" },
     { gen_wxPerl, "wxPerl" },
-    { gen_wxRust, "wxRust" },
 
     { gen_LanguageSettings, "Language Settings" },
 
@@ -676,7 +666,6 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
     { gen_CPlusHeaderSettings, "C++ Header Settings" },
     { gen_PerlSettings, "wxPerl Settings" },
-    { gen_RustSettings, "wxRust Settings" },
     { gen_PythonSettings, "wxPython Settings" },
     { gen_RubySettings, "wxRuby Settings" },
 

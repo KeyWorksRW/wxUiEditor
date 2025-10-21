@@ -68,12 +68,6 @@ void Prefs::ReadConfig()
     m_colour_perl_number = config->Read("perl_number_colour", "#FF0000");
     m_colour_perl_string = config->Read("perl_string_colour", "#008000");
 
-    m_colour_rust = config->Read("rust_colour", "#FF00FF");
-    m_colour_rust_comment = config->Read("rust_comment_colour", "#008000");
-    m_colour_rust_keyword = config->Read("rust_keyword_colour", "#0000FF");
-    m_colour_rust_number = config->Read("rust_number_colour", "#FF0000");
-    m_colour_rust_string = config->Read("rust_string_colour", "#008000");
-
     m_colour_xrc_attribute = config->Read("xrc_colour", "#FF00FF");
     m_colour_xrc_dblstring = config->Read("xrc_dblstring_colour", "#008000");
     m_colour_xrc_tag = config->Read("xrc_tag_colour", "#0000FF");
@@ -82,7 +76,6 @@ void Prefs::ReadConfig()
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
     m_perl_line_length = config->Read("perl_line_length", 80);
-    m_rust_line_length = config->Read("rust_line_length", 80);
 
     m_icon_size = config->Read("icon_size", 20);
 

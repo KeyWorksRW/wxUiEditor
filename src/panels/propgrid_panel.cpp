@@ -593,10 +593,6 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
             ChangeOutputFile(prop_ruby_file);
             break;
 
-        case GEN_LANG_RUST:
-            ChangeOutputFile(prop_rust_file);
-            break;
-
         case GEN_LANG_XRC:
             ChangeOutputFile(prop_xrc_file);
             break;

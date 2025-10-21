@@ -83,7 +83,6 @@ public:
     BasePanel* GetPerlPanel() { return m_perlPanel; }
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
-    BasePanel* GetRustPanel() { return m_rustPanel; }
     BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
     void UpdateLanguagePanels();
@@ -272,7 +271,6 @@ public:
     void OnGenSinglePerl(wxCommandEvent& event);
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
-    void OnGenSingleRust(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
 
     void OnInsertWidget(wxCommandEvent&) override;
@@ -374,7 +372,6 @@ private:
     BasePanel* m_perlPanel { nullptr };
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
-    BasePanel* m_rustPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
     ImportPanel* m_imnportPanel { nullptr };

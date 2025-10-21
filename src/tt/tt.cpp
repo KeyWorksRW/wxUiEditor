@@ -6,9 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <filesystem>  // directory_entry
-#include <string>
-
 #include <format>
+#include <string>
 #include <string_view>
 
 #include "tt.h"

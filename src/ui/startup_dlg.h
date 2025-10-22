@@ -7,30 +7,34 @@
 
 #pragma once
 
+#include <wx/filename.h>  // wxFileName class
+
 #include "../wxui/startup_dlg_base.h"
 
 class StartupDlg : public StartupDlgBase
 {
 public:
-    StartupDlg() : StartupDlgBase() {}
-    StartupDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
+    StartupDlg() = default;
+    StartupDlg(wxWindow* parent, wxWindowID win_id = wxID_ANY,
                const wxString& title = "Open, Import, or Create Project",
                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-               long style = wxDEFAULT_DIALOG_STYLE, const wxString& name = wxDialogNameStr) :
-        StartupDlgBase(parent, id, title, pos, size, style, name)
+               long style = wxDEFAULT_DIALOG_STYLE,
+               const wxString& name =
+                   wxDialogNameStr) :  // NOLINT (wxDialogNameStr issue) // cppcheck-suppress
+        StartupDlgBase(parent, win_id, title, pos, size, style, name)
     {
     }
 
-    enum
+    enum class Command : std::uint8_t
     {
-        START_MRU,
-        START_CONVERT,
-        START_OPEN,
-        START_EMPTY,
+        start_mru,
+        start_convert,
+        start_open,
+        start_empty,
     };
 
-    auto GetCommandType() const { return m_cmdType; }
-    tt_string& GetProjectFile() { return m_value; }
+    [[nodiscard]] auto GetCommand() const -> Command { return m_command; }
+    [[nodiscard]] auto GetProjectFile() -> wxFileName& { return m_value; }
 
 protected:
     // Event handlers
@@ -44,6 +48,10 @@ protected:
     void RemoveProjectFilename(wxCommandEvent& event);
 
 private:
-    tt_string m_value;
-    size_t m_cmdType { START_EMPTY };
+    wxFileName m_value;
+    Command m_command { Command::start_empty };
+
+    // Helper method to add projects to the grid, reduces code duplication
+    void AddProjectToGrid(const wxString& display_name, const wxString& url,
+                          const wxFileName& project_file, bool use_standard_colors);
 };

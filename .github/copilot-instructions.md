@@ -29,6 +29,7 @@ This is a C++ project used to generate C++, Perl, Python, and Ruby code for crea
 - When passing a wxString to a function expecting std::string_view, use `ToStdString()`
 - **If `std::format` is used, the file must `#include <format>` near the top**
 - Do not use `tt_string` for any new code
+- Do not use `tt_string_view` for any new code
 
 ### Array conversions
 

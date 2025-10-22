@@ -45,9 +45,8 @@ std::vector<std::pair<std::string_view, std::string_view>> map_bundle_extensions
 
 ImageHandler& ProjectImages = ImageHandler::getInstance();
 
-inline const std::array<const char*, 8> suffixes {
-    "_1_25x", "_1_5x", "_1_75x", "_2x", "@1_25x", "@1_5x", "@1_75x", "@2x",
-};
+inline constexpr auto suffixes = std::to_array<const char*>(
+    { "_1_25x", "_1_5x", "_1_75x", "_2x", "@1_25x", "@1_5x", "@1_75x", "@2x" });
 
 namespace wxue_img
 {

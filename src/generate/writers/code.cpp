@@ -1190,7 +1190,7 @@ namespace
     // clang-format off
 
     // List of valid component parent types
-    constexpr std::array<GenType, 16> s_GenParentTypes = {
+    constexpr auto s_GenParentTypes = std::to_array<GenType>({
         type_aui_toolbar,
         type_auinotebook,
         type_bookpage,
@@ -1207,7 +1207,7 @@ namespace
         type_splitter,
         type_toolbar,
         type_wizardpagesimple
-    };
+    });
 
     // clang-format on
 

@@ -275,13 +275,13 @@ struct BTN_BMP_TYPES
     const char* function_name;
 };
 
-inline const std::array<BTN_BMP_TYPES, 5> btn_bmp_types = { {
-    { prop_bitmap, "SetBitmap" },
-    { prop_disabled_bmp, "SetBitmapDisabled" },
-    { prop_pressed_bmp, "SetBitmapPressed" },
-    { prop_focus_bmp, "SetBitmapFocus" },
-    { prop_current, "SetBitmapCurrent" },
-} };
+inline constexpr auto btn_bmp_types = std::to_array<BTN_BMP_TYPES>({
+    { .prop_name = prop_bitmap, .function_name = "SetBitmap" },
+    { .prop_name = prop_disabled_bmp, .function_name = "SetBitmapDisabled" },
+    { .prop_name = prop_pressed_bmp, .function_name = "SetBitmapPressed" },
+    { .prop_name = prop_focus_bmp, .function_name = "SetBitmapFocus" },
+    { .prop_name = prop_current, .function_name = "SetBitmapCurrent" },
+});
 
 bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
 {

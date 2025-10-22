@@ -586,13 +586,22 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
                     GenLang language;
                     size_t output_flag;
                 };
-                static const std::array<OutputLangInfo, 6> outputLangs = {
-                    { { prop_base_file, GEN_LANG_CPLUSPLUS, OUTPUT_CPLUS },
-                      { prop_perl_file, GEN_LANG_PERL, OUTPUT_PERL },
-                      { prop_python_file, GEN_LANG_PYTHON, OUTPUT_PYTHON },
-                      { prop_ruby_file, GEN_LANG_RUBY, OUTPUT_RUBY },
-                      { prop_xrc_file, GEN_LANG_XRC, OUTPUT_XRC } }
-                };
+                static constexpr auto outputLangs =
+                    std::to_array<OutputLangInfo>({ { .base_file_property = prop_base_file,
+                                                      .language = GEN_LANG_CPLUSPLUS,
+                                                      .output_flag = OUTPUT_CPLUS },
+                                                    { .base_file_property = prop_perl_file,
+                                                      .language = GEN_LANG_PERL,
+                                                      .output_flag = OUTPUT_PERL },
+                                                    { .base_file_property = prop_python_file,
+                                                      .language = GEN_LANG_PYTHON,
+                                                      .output_flag = OUTPUT_PYTHON },
+                                                    { .base_file_property = prop_ruby_file,
+                                                      .language = GEN_LANG_RUBY,
+                                                      .output_flag = OUTPUT_RUBY },
+                                                    { .base_file_property = prop_xrc_file,
+                                                      .language = GEN_LANG_XRC,
+                                                      .output_flag = OUTPUT_XRC } });
 
                 auto shouldOutputLang = [&](const OutputLangInfo& info) -> bool
                 {

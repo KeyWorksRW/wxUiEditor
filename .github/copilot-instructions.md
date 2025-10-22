@@ -30,6 +30,10 @@ This is a C++ project used to generate C++, Perl, Python, and Ruby code for crea
 - **If `std::format` is used, the file must `#include <format>` near the top**
 - Do not use `tt_string` for any new code
 
+### Array conversions
+
+Convert C style char* arrays to std::array using std::to_array.
+
 ### Debug Checks
 - Use `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros from `assertion_dlg.h` for debug checks
 - These are preferred over raw assert() or throw statements

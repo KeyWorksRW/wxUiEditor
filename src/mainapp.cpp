@@ -281,6 +281,8 @@ int App::OnRun()
                     {
                         auto& project_file = start_dlg.GetProjectFile();
                         auto ext = project_file.GetExt().Lower().ToStdString();
+                        ext.insert(ext.begin(), '.');
+
                         if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
                         {
                             is_project_loaded =

@@ -21,7 +21,7 @@ This is a C++ project used to generate C++, Perl, Python, and Ruby code for crea
 ### Protected Code Sections
 - **Do not edit any code between `// Do not edit any code above` and `// End of generated code` comment blocks**
 - These sections are automatically generated and will be overwritten
-- Your modifications outside these blocks will be preserved
+- Your modifications added after the `// End of generated code` comment block will be preserved
 
 ### String Conversions
 - **Always use `wxString::ToStdString()`** for converting `wxString` to `std::string` or `std::string_view`
@@ -39,7 +39,15 @@ Convert C style char* arrays to std::array using std::to_array.
 - Use `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros from `assertion_dlg.h` for debug checks
 - These are preferred over raw assert() or throw statements
 
-## C++ Coding Standards
+## Copilot Agent Build Instructions
+
+- When running a build, always capture the terminal output and parse it for warnings and errors, regardless of the Problems panel state.
+- Do not rely solely on the Problems panel to determine build success or failure.
+- Fix any errors or warnings found in the build output, even if the Problems panel is empty.
+
+# Language-Specific Coding Standards
+
+## C++ Standards
 
 ### Naming Conventions
 - Variables: `snake_case`

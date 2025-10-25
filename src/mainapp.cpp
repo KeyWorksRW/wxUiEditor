@@ -312,7 +312,7 @@ int App::OnRun()
                         wxFileDialog dialog(
                             nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
                             wxString::FromUTF8(
-                                std::format("wxUiEditor Project File (*{})|{}"
+                                std::format("wxUiEditor Project File (*{})|*{}"
                                             "|wxCrafter Project File (*.wxcp)|*.wxcp"
                                             "|DialogBlocks Project File (*.fjd)|*.fjd"
                                             "|wxFormBuilder Project File (*.fbp)|*.fbp"

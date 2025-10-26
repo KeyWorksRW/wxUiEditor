@@ -277,3 +277,23 @@ auto ttwx::StringVector::is_sameas(const ttwx::StringVector& other) const -> boo
     }
     return true;
 }
+
+auto ttwx::StringVector::WriteFile(const wxString& filename) const -> bool
+{
+    wxFile file(filename, wxFile::write);
+    if (!file.IsOpened())
+    {
+        return false;
+    }
+
+    for (const auto& iter: *this)
+    {
+        wxString line = wxString::FromUTF8(iter) + "\n";
+        if (!file.Write(line))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}

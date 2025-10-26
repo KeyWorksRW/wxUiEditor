@@ -360,7 +360,7 @@ void MainFrame::OnClose(wxCloseEvent& event)
     event.Skip();
 }
 
-void MainFrame::OnCopy(wxCommandEvent&)
+void MainFrame::OnCopy(wxCommandEvent& /* event unused */)
 {
     if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
@@ -374,7 +374,7 @@ void MainFrame::OnCopy(wxCommandEvent&)
     }
 }
 
-void MainFrame::OnCut(wxCommandEvent&)
+void MainFrame::OnCut(wxCommandEvent& /* event unused */)
 {
     if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
@@ -388,7 +388,7 @@ void MainFrame::OnCut(wxCommandEvent&)
     }
 }
 
-void MainFrame::OnDelete(wxCommandEvent&)
+void MainFrame::OnDelete(wxCommandEvent& /* event unused */)
 {
     ASSERT(m_selected_node);
     RemoveNode(m_selected_node.get(), false);
@@ -403,31 +403,32 @@ void MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */)
     StartupDlg start_dlg(m_nav_panel);
     if (auto result = start_dlg.ShowModal(); result == wxID_OK)
     {
-        switch (start_dlg.GetCommandType())
+        switch (start_dlg.GetCommand())
         {
-            case StartupDlg::START_MRU:
-                if (!start_dlg.GetProjectFile().extension().is_sameas(PROJECT_FILE_EXTENSION,
-                                                                      tt::CASE::either) &&
-                    !start_dlg.GetProjectFile().extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
-                                                                      tt::CASE::either))
+            case StartupDlg::Command::start_mru:
                 {
-                    Project.ImportProject(start_dlg.GetProjectFile());
-                }
-                else
-                {
-                    Project.LoadProject(start_dlg.GetProjectFile());
+                    auto& project_file = start_dlg.GetProjectFile();
+                    auto ext = project_file.GetExt().Lower().ToStdString();
+                    if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
+                    {
+                        Project.ImportProject(project_file.GetFullPath().ToStdString());
+                    }
+                    else
+                    {
+                        Project.LoadProject(project_file.GetFullPath().ToStdString());
+                    }
                 }
                 break;
 
-            case StartupDlg::START_EMPTY:
+            case StartupDlg::Command::start_empty:
                 Project.NewProject(true);
                 break;
 
-            case StartupDlg::START_CONVERT:
+            case StartupDlg::Command::start_convert:
                 Project.NewProject(false);
                 break;
 
-            case StartupDlg::START_OPEN:
+            case StartupDlg::Command::start_open:
                 {
                     // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the
                     // wxSmith resources -- so it would actually make sense to process it since we

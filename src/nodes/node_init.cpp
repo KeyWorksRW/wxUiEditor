@@ -29,7 +29,7 @@ using namespace wxue_data;
 // These functions are declared in the wxue_data namespace, and retrieve the XML data as a string.
 // The data is compressed, so each function will decompress the data before returning it. See
 // wxue_data.h for the original xml file that was converted into a compressed string by wxUiEditor.
-const static std::function<std::string()> functionArray[] = {
+const auto functionArray = std::to_array<std::function<std::string()>>({
     get_bars,
     get_boxes,
     get_buttons,
@@ -42,7 +42,7 @@ const static std::function<std::string()> functionArray[] = {
     get_sizers,
     get_text_ctrls,
     get_widgets,
-};
+});
 
 // var_names for these generators will default to "none" for class access
 // inline const GenName set_no_class_access[] = {
@@ -94,312 +94,344 @@ struct ParentChild
 };
 
 // A child node can only be created if it is listed below as valid for the current parent.
-static const ParentChild lstParentChild[] = {
+constexpr auto lstParentChild = std::to_array<ParentChild>({
 
     // Books
 
-    { type_bookpage, type_gbsizer, one },
-    { type_bookpage, type_sizer, one },
-    { type_bookpage, type_bookpage, infinite },  // only valid when grandparent is a wxTreebook
-    { type_bookpage, type_widget, infinite },
+    ParentChild { .parent = type_bookpage, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_bookpage, .child = type_sizer, .max_children = one },
+    ParentChild { .parent = type_bookpage,
+                  .child = type_bookpage,
+                  .max_children = infinite },  // only valid when grandparent is a wxTreebook
+    ParentChild { .parent = type_bookpage, .child = type_widget, .max_children = infinite },
 
-    { type_page, type_auinotebook, one },
-    { type_page, type_choicebook, one },
-    { type_page, type_container, one },
-    { type_page, type_dataviewctrl, one },
-    { type_page, type_dataviewlistctrl, one },
-    { type_page, type_dataviewtreectrl, one },
-    { type_page, type_listbook, one },
-    { type_page, type_notebook, one },
-    { type_page, type_panel, one },
-    { type_page, type_propgrid, one },
-    { type_page, type_propgridman, one },
-    { type_page, type_ribbonbar, one },
-    { type_page, type_simplebook, one },
-    { type_page, type_splitter, one },
-    { type_page, type_treelistctrl, one },
-    { type_page, type_widget, one },
+    ParentChild { .parent = type_page, .child = type_auinotebook, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_choicebook, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_container, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_dataviewctrl, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_dataviewlistctrl, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_dataviewtreectrl, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_listbook, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_notebook, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_panel, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_propgrid, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_propgridman, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_ribbonbar, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_simplebook, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_splitter, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_treelistctrl, .max_children = one },
+    ParentChild { .parent = type_page, .child = type_widget, .max_children = one },
 
-    { type_choicebook, type_bookpage, infinite },
-    { type_choicebook, type_page, infinite },
-    { type_choicebook, type_widget, infinite },  // The only book that allows adding a widget
-    { type_listbook, type_bookpage, infinite },
-    { type_listbook, type_page, infinite },
-    { type_notebook, type_bookpage, infinite },
-    { type_notebook, type_page, infinite },
-    { type_simplebook, type_bookpage, infinite },
-    { type_simplebook, type_page, infinite },
+    ParentChild { .parent = type_choicebook, .child = type_bookpage, .max_children = infinite },
+    ParentChild { .parent = type_choicebook, .child = type_page, .max_children = infinite },
+    ParentChild { .parent = type_choicebook,
+                  .child = type_widget,
+                  .max_children = infinite },  // The only book that allows adding a widget
+    ParentChild { .parent = type_listbook, .child = type_bookpage, .max_children = infinite },
+    ParentChild { .parent = type_listbook, .child = type_page, .max_children = infinite },
+    ParentChild { .parent = type_notebook, .child = type_bookpage, .max_children = infinite },
+    ParentChild { .parent = type_notebook, .child = type_page, .max_children = infinite },
+    ParentChild { .parent = type_simplebook, .child = type_bookpage, .max_children = infinite },
+    ParentChild { .parent = type_simplebook, .child = type_page, .max_children = infinite },
 
     // Menus
 
-    { type_menu, type_menuitem, infinite },
-    { type_menu, type_submenu, infinite },
-    { type_menubar, type_menu, infinite },
+    ParentChild { .parent = type_menu, .child = type_menuitem, .max_children = infinite },
+    ParentChild { .parent = type_menu, .child = type_submenu, .max_children = infinite },
+    ParentChild { .parent = type_menubar, .child = type_menu, .max_children = infinite },
 
-    { type_submenu, type_menuitem, infinite },
-    { type_submenu, type_submenu, infinite },
+    ParentChild { .parent = type_submenu, .child = type_menuitem, .max_children = infinite },
+    ParentChild { .parent = type_submenu, .child = type_submenu, .max_children = infinite },
 
-    { type_popup_menu, type_menuitem, infinite },
-    { type_popup_menu, type_submenu, infinite },
+    ParentChild { .parent = type_popup_menu, .child = type_menuitem, .max_children = infinite },
+    ParentChild { .parent = type_popup_menu, .child = type_submenu, .max_children = infinite },
 
-    { type_ctx_menu, type_menuitem, infinite },
-    { type_ctx_menu, type_submenu, infinite },
+    ParentChild { .parent = type_ctx_menu, .child = type_menuitem, .max_children = infinite },
+    ParentChild { .parent = type_ctx_menu, .child = type_submenu, .max_children = infinite },
 
     // Forms
 
-    { type_frame_form, type_gbsizer, one },
-    { type_frame_form, type_sizer, one },
+    ParentChild { .parent = type_frame_form, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_frame_form, .child = type_sizer, .max_children = one },
 
-    { type_frame_form, type_container, infinite },
-    { type_frame_form, type_panel, infinite },
-    { type_frame_form, type_splitter, infinite },
+    ParentChild { .parent = type_frame_form, .child = type_container, .max_children = infinite },
+    ParentChild { .parent = type_frame_form, .child = type_panel, .max_children = infinite },
+    ParentChild { .parent = type_frame_form, .child = type_splitter, .max_children = infinite },
 
-    { type_frame_form, type_statusbar, one },
-    { type_frame_form, type_toolbar, one },
-    { type_frame_form, type_aui_toolbar, one },
-    { type_frame_form, type_menubar, one },
-    { type_frame_form, type_ctx_menu, one },
-    { type_frame_form, type_timer, infinite },
+    ParentChild { .parent = type_frame_form, .child = type_statusbar, .max_children = one },
+    ParentChild { .parent = type_frame_form, .child = type_toolbar, .max_children = one },
+    ParentChild { .parent = type_frame_form, .child = type_aui_toolbar, .max_children = one },
+    ParentChild { .parent = type_frame_form, .child = type_menubar, .max_children = one },
+    ParentChild { .parent = type_frame_form, .child = type_ctx_menu, .max_children = one },
+    ParentChild { .parent = type_frame_form, .child = type_timer, .max_children = infinite },
 
-    { type_frame_form, type_choicebook, infinite },
-    { type_frame_form, type_listbook, infinite },
-    { type_frame_form, type_simplebook, infinite },
-    { type_frame_form, type_notebook, infinite },
-    { type_frame_form, type_widget, infinite },
+    ParentChild { .parent = type_frame_form, .child = type_choicebook, .max_children = infinite },
+    ParentChild { .parent = type_frame_form, .child = type_listbook, .max_children = infinite },
+    ParentChild { .parent = type_frame_form, .child = type_simplebook, .max_children = infinite },
+    ParentChild { .parent = type_frame_form, .child = type_notebook, .max_children = infinite },
+    ParentChild { .parent = type_frame_form, .child = type_widget, .max_children = infinite },
 
-    { type_form, type_ctx_menu, one },
-    { type_form, type_gbsizer, one },
-    { type_form, type_sizer, one },
-    { type_form, type_timer, infinite },
+    ParentChild { .parent = type_form, .child = type_ctx_menu, .max_children = one },
+    ParentChild { .parent = type_form, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_form, .child = type_sizer, .max_children = one },
+    ParentChild { .parent = type_form, .child = type_timer, .max_children = infinite },
 
-    { type_panel_form, type_gbsizer, one },
-    { type_panel_form, type_sizer, one },
+    ParentChild { .parent = type_panel_form, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_panel_form, .child = type_sizer, .max_children = one },
 
-    { type_panel_form, type_ctx_menu, one },
-    { type_panel_form, type_timer, infinite },
+    ParentChild { .parent = type_panel_form, .child = type_ctx_menu, .max_children = one },
+    ParentChild { .parent = type_panel_form, .child = type_timer, .max_children = infinite },
 
-    { type_panel_form, type_aui_toolbar, infinite },
-    { type_panel_form, type_panel_form, infinite },
-    { type_panel_form, type_splitter, infinite },
-    { type_panel_form, type_toolbar, infinite },
+    ParentChild { .parent = type_panel_form, .child = type_aui_toolbar, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_panel_form, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_splitter, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_toolbar, .max_children = infinite },
 
-    { type_panel_form, type_auinotebook, infinite },
-    { type_panel_form, type_choicebook, infinite },
-    { type_panel_form, type_container, infinite },
-    { type_panel_form, type_dataviewctrl, infinite },
-    { type_panel_form, type_dataviewlistctrl, infinite },
-    { type_panel_form, type_dataviewtreectrl, infinite },
-    { type_panel_form, type_listbook, infinite },
-    { type_panel_form, type_notebook, infinite },
-    { type_panel_form, type_propgrid, infinite },
-    { type_panel_form, type_propgridman, infinite },
-    { type_panel_form, type_ribbonbar, infinite },
-    { type_panel_form, type_simplebook, infinite },
-    { type_panel_form, type_splitter, infinite },
-    { type_panel_form, type_treelistctrl, infinite },
+    ParentChild { .parent = type_panel_form, .child = type_auinotebook, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_choicebook, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_container, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_dataviewctrl, .max_children = infinite },
+    ParentChild {
+        .parent = type_panel_form, .child = type_dataviewlistctrl, .max_children = infinite },
+    ParentChild {
+        .parent = type_panel_form, .child = type_dataviewtreectrl, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_listbook, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_notebook, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_propgrid, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_propgridman, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_ribbonbar, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_simplebook, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_splitter, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_treelistctrl, .max_children = infinite },
 
-    { type_panel_form, type_widget, infinite },
+    ParentChild { .parent = type_panel_form, .child = type_widget, .max_children = infinite },
 
-    { type_propsheetform, type_bookpage, infinite },
+    ParentChild { .parent = type_propsheetform, .child = type_bookpage, .max_children = infinite },
 
-    { type_menubar_form, type_menu, infinite },
-    { type_ribbonbar_form, type_ribbonpage, infinite },
-    { type_toolbar_form, type_tool, infinite },
-    { type_toolbar_form, type_tool_separator, infinite },
-    { type_toolbar_form, type_widget, infinite },
-    { type_aui_toolbar_form, type_aui_tool, infinite },
-    { type_aui_toolbar_form, type_tool_separator, infinite },
-    { type_aui_toolbar_form, type_widget, infinite },
+    ParentChild { .parent = type_menubar_form, .child = type_menu, .max_children = infinite },
+    ParentChild {
+        .parent = type_ribbonbar_form, .child = type_ribbonpage, .max_children = infinite },
+    ParentChild { .parent = type_toolbar_form, .child = type_tool, .max_children = infinite },
+    ParentChild {
+        .parent = type_toolbar_form, .child = type_tool_separator, .max_children = infinite },
+    ParentChild { .parent = type_toolbar_form, .child = type_widget, .max_children = infinite },
+    ParentChild {
+        .parent = type_aui_toolbar_form, .child = type_aui_tool, .max_children = infinite },
+    ParentChild {
+        .parent = type_aui_toolbar_form, .child = type_tool_separator, .max_children = infinite },
+    ParentChild { .parent = type_aui_toolbar_form, .child = type_widget, .max_children = infinite },
 
-    { type_data_list, type_data_string, infinite },
-    { type_data_list, type_data_folder, infinite },
-    { type_data_folder, type_data_string, infinite },
-    { type_images, type_embed_image, infinite },
-    { type_wizard, type_wizardpagesimple, infinite },
+    ParentChild { .parent = type_data_list, .child = type_data_string, .max_children = infinite },
+    ParentChild { .parent = type_data_list, .child = type_data_folder, .max_children = infinite },
+    ParentChild { .parent = type_data_folder, .child = type_data_string, .max_children = infinite },
+    ParentChild { .parent = type_images, .child = type_embed_image, .max_children = infinite },
+    ParentChild { .parent = type_wizard, .child = type_wizardpagesimple, .max_children = infinite },
 
-    { type_project, type_data_list, one },
-    { type_project, type_form, infinite },
-    { type_project, type_folder, infinite },
-    { type_project, type_frame_form, infinite },
-    { type_project, type_images, one },
-    { type_project, type_menubar_form, infinite },
-    { type_project, type_panel_form, infinite },
-    { type_project, type_popup_menu, infinite },
-    { type_project, type_ribbonbar_form, infinite },
-    { type_project, type_toolbar_form, infinite },
-    { type_project, type_aui_toolbar_form, infinite },
-    { type_project, type_wizard, infinite },
-    { type_project, type_propsheetform, infinite },
+    ParentChild { .parent = type_project, .child = type_data_list, .max_children = one },
+    ParentChild { .parent = type_project, .child = type_form, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_folder, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_frame_form, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_images, .max_children = one },
+    ParentChild { .parent = type_project, .child = type_menubar_form, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_panel_form, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_popup_menu, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_ribbonbar_form, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_toolbar_form, .max_children = infinite },
+    ParentChild {
+        .parent = type_project, .child = type_aui_toolbar_form, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_wizard, .max_children = infinite },
+    ParentChild { .parent = type_project, .child = type_propsheetform, .max_children = infinite },
 
     // Folders and sub-folders
 
-    { type_folder, type_sub_folder, infinite },
-    { type_folder, type_form, infinite },
-    { type_folder, type_frame_form, infinite },
-    { type_folder, type_menubar_form, infinite },
-    { type_folder, type_panel_form, infinite },
-    { type_folder, type_popup_menu, infinite },
-    { type_folder, type_ribbonbar_form, infinite },
-    { type_folder, type_toolbar_form, infinite },
-    { type_folder, type_aui_toolbar_form, infinite },
-    { type_folder, type_wizard, infinite },
-    { type_folder, type_DocViewApp, one },
-    { type_folder, type_propsheetform, infinite },
+    ParentChild { .parent = type_folder, .child = type_sub_folder, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_frame_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_menubar_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_panel_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_popup_menu, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_ribbonbar_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_toolbar_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_aui_toolbar_form, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_wizard, .max_children = infinite },
+    ParentChild { .parent = type_folder, .child = type_DocViewApp, .max_children = one },
+    ParentChild { .parent = type_folder, .child = type_propsheetform, .max_children = infinite },
 
-    { type_sub_folder, type_form, infinite },
-    { type_sub_folder, type_sub_folder, infinite },
-    { type_sub_folder, type_frame_form, infinite },
-    { type_sub_folder, type_menubar_form, infinite },
-    { type_sub_folder, type_panel_form, infinite },
-    { type_sub_folder, type_popup_menu, infinite },
-    { type_sub_folder, type_ribbonbar_form, infinite },
-    { type_sub_folder, type_toolbar_form, infinite },
-    { type_sub_folder, type_aui_toolbar_form, infinite },
-    { type_sub_folder, type_wizard, infinite },
-    { type_sub_folder, type_propsheetform, infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_form, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_sub_folder, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_frame_form, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_menubar_form, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_panel_form, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_popup_menu, .max_children = infinite },
+    ParentChild {
+        .parent = type_sub_folder, .child = type_ribbonbar_form, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_toolbar_form, .max_children = infinite },
+    ParentChild {
+        .parent = type_sub_folder, .child = type_aui_toolbar_form, .max_children = infinite },
+    ParentChild { .parent = type_sub_folder, .child = type_wizard, .max_children = infinite },
+    ParentChild {
+        .parent = type_sub_folder, .child = type_propsheetform, .max_children = infinite },
 
     // MDI
-    { type_DocViewApp, type_wx_document, infinite },
-    { type_DocViewApp, type_mdi_menubar, one },
-    { type_wx_document, type_doc_menubar, one },
-    { type_wx_document, type_wx_view, infinite },
+    ParentChild { .parent = type_DocViewApp, .child = type_wx_document, .max_children = infinite },
+    ParentChild { .parent = type_DocViewApp, .child = type_mdi_menubar, .max_children = one },
+    ParentChild { .parent = type_wx_document, .child = type_doc_menubar, .max_children = one },
+    ParentChild { .parent = type_wx_document, .child = type_wx_view, .max_children = infinite },
 
     // Containers
 
-    { type_container, type_gbsizer, one },
-    { type_container, type_sizer, one },
+    ParentChild { .parent = type_container, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_container, .child = type_sizer, .max_children = one },
 
-    { type_panel, type_gbsizer, one },
-    { type_panel, type_sizer, one },
+    ParentChild { .parent = type_panel, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_panel, .child = type_sizer, .max_children = one },
 
-    { type_panel, type_ctx_menu, one },
-    { type_panel, type_timer, infinite },
+    ParentChild { .parent = type_panel, .child = type_ctx_menu, .max_children = one },
+    ParentChild { .parent = type_panel, .child = type_timer, .max_children = infinite },
 
-    { type_panel, type_aui_toolbar, infinite },
-    { type_panel, type_panel, infinite },
-    { type_panel, type_splitter, infinite },
-    { type_panel, type_toolbar, infinite },
+    ParentChild { .parent = type_panel, .child = type_aui_toolbar, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_panel, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_splitter, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_toolbar, .max_children = infinite },
 
-    { type_panel, type_auinotebook, infinite },
-    { type_panel, type_choicebook, infinite },
-    { type_panel, type_container, infinite },
-    { type_panel, type_dataviewctrl, infinite },
-    { type_panel, type_dataviewlistctrl, infinite },
-    { type_panel, type_dataviewtreectrl, infinite },
-    { type_panel, type_listbook, infinite },
-    { type_panel, type_notebook, infinite },
-    { type_panel, type_propgrid, infinite },
-    { type_panel, type_propgridman, infinite },
-    { type_panel, type_ribbonbar, infinite },
-    { type_panel, type_simplebook, infinite },
-    { type_panel, type_splitter, infinite },
-    { type_panel, type_treelistctrl, infinite },
+    ParentChild { .parent = type_panel, .child = type_auinotebook, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_choicebook, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_container, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_dataviewctrl, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_dataviewlistctrl, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_dataviewtreectrl, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_listbook, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_notebook, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_propgrid, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_propgridman, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_ribbonbar, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_simplebook, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_splitter, .max_children = infinite },
+    ParentChild { .parent = type_panel, .child = type_treelistctrl, .max_children = infinite },
 
-    { type_panel, type_widget, infinite },
+    ParentChild { .parent = type_panel, .child = type_widget, .max_children = infinite },
 
     // DataView
 
-    { type_dataviewctrl, type_dataviewcolumn, infinite },
-    { type_dataviewlistctrl, type_dataviewlistcolumn, infinite },
+    ParentChild {
+        .parent = type_dataviewctrl, .child = type_dataviewcolumn, .max_children = infinite },
+    ParentChild { .parent = type_dataviewlistctrl,
+                  .child = type_dataviewlistcolumn,
+                  .max_children = infinite },
 
-    { type_propgrid, type_propgriditem, infinite },
-    { type_propgrid, type_propgrid_category, infinite },
-    { type_propgrid_category, type_propgriditem, infinite },
-    { type_propgriditem, type_propgridpage, infinite },
-    { type_propgridman, type_propgridpage, infinite },
-    { type_propgridpage, type_propgrid_category, infinite },
-    { type_propgridpage, type_propgriditem, infinite },
+    ParentChild { .parent = type_propgrid, .child = type_propgriditem, .max_children = infinite },
+    ParentChild {
+        .parent = type_propgrid, .child = type_propgrid_category, .max_children = infinite },
+    ParentChild {
+        .parent = type_propgrid_category, .child = type_propgriditem, .max_children = infinite },
+    ParentChild {
+        .parent = type_propgriditem, .child = type_propgridpage, .max_children = infinite },
+    ParentChild {
+        .parent = type_propgridman, .child = type_propgridpage, .max_children = infinite },
+    ParentChild {
+        .parent = type_propgridpage, .child = type_propgrid_category, .max_children = infinite },
+    ParentChild {
+        .parent = type_propgridpage, .child = type_propgriditem, .max_children = infinite },
 
     // Ribbon bar
 
-    { type_ribbonbar, type_ribbonpage, infinite },
-    { type_ribbonbuttonbar, type_ribbonbutton, infinite },
-    { type_ribbongallery, type_ribbongalleryitem, infinite },
-    { type_ribbonpage, type_ribbonpanel, infinite },
-    { type_ribbonpanel, type_ribbonbuttonbar, one },
-    { type_ribbonpanel, type_ribbongallery, one },
-    { type_ribbonpanel, type_ribbontoolbar, one },
-    { type_ribbonpanel, type_sizer, one },
-    { type_ribbonpanel, type_gbsizer, one },
-    { type_ribbontoolbar, type_ribbontool, infinite },
-    { type_ribbontoolbar, type_ribbontool, infinite },
+    ParentChild { .parent = type_ribbonbar, .child = type_ribbonpage, .max_children = infinite },
+    ParentChild {
+        .parent = type_ribbonbuttonbar, .child = type_ribbonbutton, .max_children = infinite },
+    ParentChild {
+        .parent = type_ribbongallery, .child = type_ribbongalleryitem, .max_children = infinite },
+    ParentChild { .parent = type_ribbonpage, .child = type_ribbonpanel, .max_children = infinite },
+    ParentChild { .parent = type_ribbonpanel, .child = type_ribbonbuttonbar, .max_children = one },
+    ParentChild { .parent = type_ribbonpanel, .child = type_ribbongallery, .max_children = one },
+    ParentChild { .parent = type_ribbonpanel, .child = type_ribbontoolbar, .max_children = one },
+    ParentChild { .parent = type_ribbonpanel, .child = type_sizer, .max_children = one },
+    ParentChild { .parent = type_ribbonpanel, .child = type_gbsizer, .max_children = one },
+    ParentChild {
+        .parent = type_ribbontoolbar, .child = type_ribbontool, .max_children = infinite },
+    ParentChild {
+        .parent = type_ribbontoolbar, .child = type_ribbontool, .max_children = infinite },
 
     // Sizers
 
-    { type_sizer, type_aui_toolbar, infinite },
-    { type_sizer, type_auinotebook, infinite },
-    { type_sizer, type_choicebook, infinite },
-    { type_sizer, type_container, infinite },
-    { type_sizer, type_dataviewctrl, infinite },
-    { type_sizer, type_dataviewlistctrl, infinite },
-    { type_sizer, type_dataviewtreectrl, infinite },
-    { type_sizer, type_gbsizer, infinite },
-    { type_sizer, type_listbook, infinite },
-    { type_sizer, type_notebook, infinite },
-    { type_sizer, type_panel, infinite },
-    { type_sizer, type_propgrid, infinite },
-    { type_sizer, type_propgridman, infinite },
-    { type_sizer, type_ribbonbar, infinite },
-    { type_sizer, type_simplebook, infinite },
-    { type_sizer, type_sizer, infinite },
-    { type_sizer, type_splitter, infinite },
-    { type_sizer, type_staticbox, infinite },
-    { type_sizer, type_toolbar, infinite },
-    { type_sizer, type_treelistctrl, infinite },
-    { type_sizer, type_widget, infinite },
+    ParentChild { .parent = type_sizer, .child = type_aui_toolbar, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_auinotebook, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_choicebook, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_container, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_dataviewctrl, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_dataviewlistctrl, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_dataviewtreectrl, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_gbsizer, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_listbook, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_notebook, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_panel, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_propgrid, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_propgridman, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_ribbonbar, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_simplebook, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_sizer, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_splitter, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_staticbox, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_toolbar, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_treelistctrl, .max_children = infinite },
+    ParentChild { .parent = type_sizer, .child = type_widget, .max_children = infinite },
 
     // Toolbars
 
-    { type_aui_toolbar, type_aui_tool, infinite },
-    { type_aui_toolbar, type_tool_separator, infinite },
-    { type_aui_toolbar, type_widget, infinite },
+    ParentChild { .parent = type_aui_toolbar, .child = type_aui_tool, .max_children = infinite },
+    ParentChild {
+        .parent = type_aui_toolbar, .child = type_tool_separator, .max_children = infinite },
+    ParentChild { .parent = type_aui_toolbar, .child = type_widget, .max_children = infinite },
     // type_tool_dropdown only works in wxToolBar -- wxAuiToolBar requires the caller to create the
     // menu on demand
 
-    { type_toolbar, type_tool, infinite },
-    { type_toolbar, type_tool_dropdown, infinite },
-    { type_toolbar, type_tool_separator, infinite },
-    { type_toolbar, type_widget, infinite },
-    { type_tool_dropdown, type_menuitem, infinite },
+    ParentChild { .parent = type_toolbar, .child = type_tool, .max_children = infinite },
+    ParentChild { .parent = type_toolbar, .child = type_tool_dropdown, .max_children = infinite },
+    ParentChild { .parent = type_toolbar, .child = type_tool_separator, .max_children = infinite },
+    ParentChild { .parent = type_toolbar, .child = type_widget, .max_children = infinite },
+    ParentChild { .parent = type_tool_dropdown, .child = type_menuitem, .max_children = infinite },
 
     // wxStaticBox
 
-    { type_staticbox, type_widget, infinite },
-    { type_staticbox, type_sizer, infinite },
-    { type_staticbox, type_gbsizer, infinite },
+    ParentChild { .parent = type_staticbox, .child = type_widget, .max_children = infinite },
+    ParentChild { .parent = type_staticbox, .child = type_sizer, .max_children = infinite },
+    ParentChild { .parent = type_staticbox, .child = type_gbsizer, .max_children = infinite },
 
     // Misc
 
-    { type_splitter, type_auinotebook, two },
-    { type_splitter, type_choicebook, two },
-    { type_splitter, type_container, two },
-    { type_splitter, type_dataviewctrl, two },
-    { type_splitter, type_dataviewlistctrl, two },
-    { type_splitter, type_dataviewtreectrl, two },
-    { type_splitter, type_listbook, two },
-    { type_splitter, type_notebook, two },
-    { type_splitter, type_panel, two },
-    { type_splitter, type_propgrid, two },
-    { type_splitter, type_propgridman, two },
-    { type_splitter, type_simplebook, two },
-    { type_splitter, type_splitter, two },
-    { type_splitter, type_treelistctrl, two },
-    { type_splitter, type_widget, two },
+    ParentChild { .parent = type_splitter, .child = type_auinotebook, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_choicebook, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_container, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_dataviewctrl, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_dataviewlistctrl, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_dataviewtreectrl, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_listbook, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_notebook, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_panel, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_propgrid, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_propgridman, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_simplebook, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_splitter, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_treelistctrl, .max_children = two },
+    ParentChild { .parent = type_splitter, .child = type_widget, .max_children = two },
 
-    { type_treelistctrl, type_treelistctrlcolumn, infinite },
+    ParentChild {
+        .parent = type_treelistctrl, .child = type_treelistctrlcolumn, .max_children = infinite },
 
-    { type_wx_document, type_mdi_menubar, one },  // default menu bar when no document is loaded
-    { type_wx_document, type_doc_menubar, one },  // menu bar when a document is loaded
-    { type_mdi_menubar, type_menu, infinite },
-    { type_doc_menubar, type_menu, infinite },
+    ParentChild { .parent = type_wx_document,
+                  .child = type_mdi_menubar,
+                  .max_children = one },  // default menu bar when no document is loaded
+    ParentChild { .parent = type_wx_document,
+                  .child = type_doc_menubar,
+                  .max_children = one },  // menu bar when a document is loaded
+    ParentChild { .parent = type_mdi_menubar, .child = type_menu, .max_children = infinite },
+    ParentChild { .parent = type_doc_menubar, .child = type_menu, .max_children = infinite },
 
-    { type_wizardpagesimple, type_gbsizer, one },
-    { type_wizardpagesimple, type_sizer, one },
-
-};
+    ParentChild { .parent = type_wizardpagesimple, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_wizardpagesimple, .child = type_sizer, .max_children = one },
+});
 
 // These are types used to convert wxFormBuilder projects
-static constexpr const char* fb_ImportTypes[] = {
+static constexpr auto fb_ImportTypes = std::to_array<std::string_view>({
 
     "sizeritem",
     "gbsizeritem",
@@ -407,42 +439,44 @@ static constexpr const char* fb_ImportTypes[] = {
 
     "oldbookpage",
 
-};
+});
 
 void NodeCreator::Initialize()
 {
-    for (auto& iter: GenEnum::map_PropNames)
+    for (const auto& iter: GenEnum::map_PropNames)
     {
         GenEnum::rmap_PropNames[iter.second] = iter.first;
     }
 
-    for (auto& iter: map_PropMacros)
+    for (const auto& iter: map_PropMacros)
     {
         map_MacroProps[iter.second] = iter.first;
     }
 
-    for (auto& iter: GenEnum::map_GenNames)
+    for (const auto& iter: GenEnum::map_GenNames)
     {
         rmap_GenNames[iter.second] = iter.first;
     }
 
-    for (auto& iter: map_GenTypes)
+    for (const auto& iter: map_GenTypes)
     {
-        m_a_node_types[static_cast<size_t>(iter.first)].Create(iter.first);
+        m_a_node_types.at(static_cast<size_t>(iter.first)).Create(iter.first);
     }
 
-    for (auto& iter: lstParentChild)
+    for (const auto& iter: lstParentChild)
     {
         get_NodeType(iter.parent)->AddChild(iter.child, iter.max_children);
         if (iter.parent == type_sizer)
+        {
             get_NodeType(type_gbsizer)->AddChild(iter.child, iter.max_children);
+        }
     }
 
     {
         pugi::xml_document interface_doc;
         m_pdoc_interface = &interface_doc;
 
-        auto result = interface_doc.load_string(wxue_data::get_interfaces().c_str());
+        auto result = interface_doc.load_string(wxue_data::get_interfaces());
         if (!result)
         {
             FAIL_MSG("xml/interfaces.xml is corrupted!");
@@ -452,7 +486,7 @@ void NodeCreator::Initialize()
         // Now parse the completed m_pdoc_interface document
         ParseGeneratorFile("");
 
-        for (auto& iter: functionArray)
+        for (const auto& iter: functionArray)
         {
             auto xml_data = iter();
             if (xml_data.size())
@@ -467,7 +501,7 @@ void NodeCreator::Initialize()
 
     InitGenerators();
 
-    for (auto& iter: fb_ImportTypes)
+    for (const auto& iter: fb_ImportTypes)
     {
         m_setOldHostTypes.emplace(iter);
     }
@@ -557,7 +591,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                            "Don't put a non-interface generation in an interace xml file!");
             }
 #endif  // _DEBUG
-            for (auto& iter: map_GenTypes)
+            for (const auto& iter: map_GenTypes)
             {
                 if (type_name == iter.second)
                 {
@@ -582,8 +616,8 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
             m_interfaces[class_name] = generator;
         }
 
-        auto declaration = new NodeDeclaration(class_name, get_NodeType(type));
-        m_a_declarations[declaration->get_GenName()] = declaration;
+        auto* declaration = new NodeDeclaration(class_name, get_NodeType(type));
+        m_a_declarations.at(declaration->get_GenName()) = declaration;
 
         if (auto flags = generator.attribute("flags").as_view(); flags.size())
         {
@@ -645,7 +679,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                 class_name.remove_prefix(sizeof("gen_") - 1);
             }
 
-            auto class_info = get_NodeDeclaration(class_name);
+            auto* class_info = get_NodeDeclaration(class_name);
 
             // This can happen if the project file is corrupted, or it it a newer version of the
             // project file that the current version doesn't support.
@@ -670,7 +704,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
                 }
 
                 // Add a reference to its base class
-                auto base_info = get_NodeDeclaration(base_name);
+                auto* base_info = get_NodeDeclaration(base_name);
 
                 if (class_info && base_info)
                 {
@@ -794,7 +828,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
             }
         }
 
-        auto prop_info =
+        auto* prop_info =
             new PropDeclaration(prop_name, property_type, PropDeclaration::DefaultValue(def_value),
                                 PropDeclaration::HelpText(description));
         node_declaration->GetPropInfoMap()[name] = prop_info;

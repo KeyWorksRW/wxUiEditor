@@ -516,17 +516,18 @@ namespace
         }
     }
 
-    const std::array<std::pair<std::string_view, std::string_view>, 10> button_suffix_map = { {
-        { "OKButton", "_ok" },
-        { "YesButton", "_yes" },
-        { "SaveButton", "_save" },
-        { "NoButton", "_no" },
-        { "CancelButton", "_cancel" },
-        { "CloseButton", "_close" },
-        { "HelpButton", "_help" },
-        { "ContextHelpButton", "_ctx_help" },
-        { "ApplyButton", "_apply" },
-    } };
+    constexpr auto button_suffix_map =
+        std::to_array<std::pair<std::string_view, std::string_view>>({
+            { "OKButton", "_ok" },
+            { "YesButton", "_yes" },
+            { "SaveButton", "_save" },
+            { "NoButton", "_no" },
+            { "CancelButton", "_cancel" },
+            { "CloseButton", "_close" },
+            { "HelpButton", "_help" },
+            { "ContextHelpButton", "_ctx_help" },
+            { "ApplyButton", "_apply" },
+        });
 
     [[nodiscard]] auto GetButtonIdSuffix(std::string_view event_name) -> std::string_view
     {
@@ -540,7 +541,7 @@ namespace
         return {};
     }
 
-    const std::array<std::pair<std::string_view, std::string_view>, 10> button_id_map = { {
+    constexpr auto button_id_map = std::to_array<std::pair<std::string_view, std::string_view>>({
         { "OKButton", "wxID_OK" },
         { "YesButton", "wxID_YES" },
         { "SaveButton", "wxID_SAVE" },
@@ -550,7 +551,7 @@ namespace
         { "CloseButton", "wxID_CLOSE" },
         { "HelpButton", "wxID_HELP" },
         { "ContextHelpButton", "wxID_CONTEXT_HELP" },
-    } };
+    });
 
     [[nodiscard]] auto GetButtonIdConstant(std::string_view event_name) -> std::string_view
     {

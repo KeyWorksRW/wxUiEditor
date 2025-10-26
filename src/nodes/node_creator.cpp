@@ -473,10 +473,12 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node, Node* parent)
     return copyObj;
 }
 
-int NodeCreator::get_ConstantAsInt(const std::string& name, int defValue) const
+// auto NodeCreator::get_ConstantAsInt(const std::string& name, int defValue) const -> int
+auto NodeCreator::get_ConstantAsInt(std::string_view name, int defValue) const -> int
 {
-    if (auto iter = m_map_constants.find(name); iter != m_map_constants.end())
+    if (auto iter = m_map_constants.find(std::string(name)); iter != m_map_constants.end())
+    {
         return iter->second;
-    else
-        return defValue;
+    }
+    return defValue;
 }

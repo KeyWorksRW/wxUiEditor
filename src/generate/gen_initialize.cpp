@@ -132,192 +132,197 @@
 
 using namespace GenEnum;
 
-#define SET_GENERATOR(name, generator)                        \
-    {                                                         \
-        ASSERT(get_declaration(name));                        \
-        get_declaration(name)->SetGenerator(new generator()); \
+namespace
+{
+    template <typename GeneratorType>
+    auto SetGenerator(GenName name) -> void
+    {
+        auto* decl = NodeCreation.get_declaration(name);
+        ASSERT(decl);
+        decl->SetGenerator(new GeneratorType());
     }
+}  // namespace
 
 void NodeCreator::InitGenerators()
 {
-    SET_GENERATOR(gen_BookPage, BookPageGenerator)
-    SET_GENERATOR(gen_PageCtrl, PageCtrlGenerator)
+    SetGenerator<BookPageGenerator>(gen_BookPage);
+    SetGenerator<PageCtrlGenerator>(gen_PageCtrl);
 
-    SET_GENERATOR(gen_wxWizardPageSimple, WizardPageGenerator)
-    SET_GENERATOR(gen_wxBannerWindow, BannerWindowGenerator)
-    SET_GENERATOR(gen_wxBitmapComboBox, BitmapComboBoxGenerator)
-    SET_GENERATOR(gen_wxActivityIndicator, ActivityIndicatorGenerator)
-    SET_GENERATOR(gen_wxAnimationCtrl, AnimationGenerator)
-    SET_GENERATOR(gen_wxButton, ButtonGenerator)
-    SET_GENERATOR(gen_CloseButton, CloseButtonGenerator)
-    SET_GENERATOR(gen_wxCheckBox, CheckBoxGenerator)
-    SET_GENERATOR(gen_Check3State, Check3StateGenerator)
-    SET_GENERATOR(gen_wxCheckListBox, CheckListBoxGenerator)
-    SET_GENERATOR(gen_wxChoice, ChoiceGenerator)
-    SET_GENERATOR(gen_wxChoicebook, ChoicebookGenerator)
-    SET_GENERATOR(gen_wxCollapsiblePane, CollapsiblePaneGenerator)
-    SET_GENERATOR(gen_wxComboBox, ComboBoxGenerator)
-    SET_GENERATOR(gen_wxCommandLinkButton, CommandLinkBtnGenerator)
-    SET_GENERATOR(gen_wxContextHelpButton, CtxHelpButtonGenerator)
-    SET_GENERATOR(gen_wxGauge, GaugeGenerator)
-    SET_GENERATOR(gen_wxHtmlWindow, HtmlWindowGenerator)
-    SET_GENERATOR(gen_wxHyperlinkCtrl, HyperlinkGenerator)
-    SET_GENERATOR(gen_wxWebView, WebViewGenerator)
-    SET_GENERATOR(gen_wxInfoBar, InfoBarGenerator)
-    SET_GENERATOR(gen_wxListBox, ListBoxGenerator)
-    SET_GENERATOR(gen_wxSimpleHtmlListBox, HtmlListBoxGenerator)
-    SET_GENERATOR(gen_wxAuiNotebook, AuiNotebookGenerator)
-    SET_GENERATOR(gen_wxListbook, ListbookGenerator)
-    SET_GENERATOR(gen_wxNotebook, NotebookGenerator)
-    SET_GENERATOR(gen_wxToolbook, ToolbookGenerator)
-    SET_GENERATOR(gen_wxTreebook, TreebookGenerator)
-    SET_GENERATOR(gen_wxPanel, PanelGenerator)
-    SET_GENERATOR(gen_wxRadioBox, RadioBoxGenerator)
-    SET_GENERATOR(gen_wxRearrangeCtrl, RearrangeCtrlGenerator)
-    SET_GENERATOR(gen_wxRadioButton, RadioButtonGenerator)
-    SET_GENERATOR(gen_wxRichTextCtrl, RichTextCtrlGenerator)
-    SET_GENERATOR(gen_wxScrollBar, ScrollBarGenerator)
-    SET_GENERATOR(gen_wxScrolledCanvas, ScrolledCanvasGenerator)
-    SET_GENERATOR(gen_wxScrolledWindow, ScrolledWindowGenerator)
-    SET_GENERATOR(gen_wxSimplebook, SimplebookGenerator)
-    SET_GENERATOR(gen_wxSlider, SliderGenerator)
-    SET_GENERATOR(gen_wxSplitterWindow, SplitterWindowGenerator)
-    SET_GENERATOR(gen_wxStaticBitmap, StaticBitmapGenerator)
-    SET_GENERATOR(gen_wxStaticLine, StaticLineGenerator)
-    SET_GENERATOR(gen_wxStaticText, StaticTextGenerator)
-    SET_GENERATOR(gen_wxStatusBar, StatusBarGenerator)
-    SET_GENERATOR(gen_wxStyledTextCtrl, StyledTextGenerator)
-    SET_GENERATOR(gen_wxTextCtrl, TextCtrlGenerator)
-    SET_GENERATOR(gen_wxTimer, TimerGenerator)
-    SET_GENERATOR(gen_wxToggleButton, ToggleButtonGenerator)
-    SET_GENERATOR(gen_wxBitmapToggleButton, BitmapToggleButtonGenerator)
-    SET_GENERATOR(gen_wxCalendarCtrl, CalendarCtrlGenerator)
-    SET_GENERATOR(gen_wxFileCtrl, FileCtrlGenerator)
-    SET_GENERATOR(gen_wxGenericDirCtrl, GenericDirCtrlGenerator)
-    SET_GENERATOR(gen_wxSearchCtrl, SearchCtrlGenerator)
-    SET_GENERATOR(gen_wxListView, ListViewGenerator)
-    SET_GENERATOR(gen_wxEditableListBox, EditListBoxGenerator)
-    SET_GENERATOR(gen_wxGrid, GridGenerator)
+    SetGenerator<WizardPageGenerator>(gen_wxWizardPageSimple);
+    SetGenerator<BannerWindowGenerator>(gen_wxBannerWindow);
+    SetGenerator<BitmapComboBoxGenerator>(gen_wxBitmapComboBox);
+    SetGenerator<ActivityIndicatorGenerator>(gen_wxActivityIndicator);
+    SetGenerator<AnimationGenerator>(gen_wxAnimationCtrl);
+    SetGenerator<ButtonGenerator>(gen_wxButton);
+    SetGenerator<CloseButtonGenerator>(gen_CloseButton);
+    SetGenerator<CheckBoxGenerator>(gen_wxCheckBox);
+    SetGenerator<Check3StateGenerator>(gen_Check3State);
+    SetGenerator<CheckListBoxGenerator>(gen_wxCheckListBox);
+    SetGenerator<ChoiceGenerator>(gen_wxChoice);
+    SetGenerator<ChoicebookGenerator>(gen_wxChoicebook);
+    SetGenerator<CollapsiblePaneGenerator>(gen_wxCollapsiblePane);
+    SetGenerator<ComboBoxGenerator>(gen_wxComboBox);
+    SetGenerator<CommandLinkBtnGenerator>(gen_wxCommandLinkButton);
+    SetGenerator<CtxHelpButtonGenerator>(gen_wxContextHelpButton);
+    SetGenerator<GaugeGenerator>(gen_wxGauge);
+    SetGenerator<HtmlWindowGenerator>(gen_wxHtmlWindow);
+    SetGenerator<HyperlinkGenerator>(gen_wxHyperlinkCtrl);
+    SetGenerator<WebViewGenerator>(gen_wxWebView);
+    SetGenerator<InfoBarGenerator>(gen_wxInfoBar);
+    SetGenerator<ListBoxGenerator>(gen_wxListBox);
+    SetGenerator<HtmlListBoxGenerator>(gen_wxSimpleHtmlListBox);
+    SetGenerator<AuiNotebookGenerator>(gen_wxAuiNotebook);
+    SetGenerator<ListbookGenerator>(gen_wxListbook);
+    SetGenerator<NotebookGenerator>(gen_wxNotebook);
+    SetGenerator<ToolbookGenerator>(gen_wxToolbook);
+    SetGenerator<TreebookGenerator>(gen_wxTreebook);
+    SetGenerator<PanelGenerator>(gen_wxPanel);
+    SetGenerator<RadioBoxGenerator>(gen_wxRadioBox);
+    SetGenerator<RearrangeCtrlGenerator>(gen_wxRearrangeCtrl);
+    SetGenerator<RadioButtonGenerator>(gen_wxRadioButton);
+    SetGenerator<RichTextCtrlGenerator>(gen_wxRichTextCtrl);
+    SetGenerator<ScrollBarGenerator>(gen_wxScrollBar);
+    SetGenerator<ScrolledCanvasGenerator>(gen_wxScrolledCanvas);
+    SetGenerator<ScrolledWindowGenerator>(gen_wxScrolledWindow);
+    SetGenerator<SimplebookGenerator>(gen_wxSimplebook);
+    SetGenerator<SliderGenerator>(gen_wxSlider);
+    SetGenerator<SplitterWindowGenerator>(gen_wxSplitterWindow);
+    SetGenerator<StaticBitmapGenerator>(gen_wxStaticBitmap);
+    SetGenerator<StaticLineGenerator>(gen_wxStaticLine);
+    SetGenerator<StaticTextGenerator>(gen_wxStaticText);
+    SetGenerator<StatusBarGenerator>(gen_wxStatusBar);
+    SetGenerator<StyledTextGenerator>(gen_wxStyledTextCtrl);
+    SetGenerator<TextCtrlGenerator>(gen_wxTextCtrl);
+    SetGenerator<TimerGenerator>(gen_wxTimer);
+    SetGenerator<ToggleButtonGenerator>(gen_wxToggleButton);
+    SetGenerator<BitmapToggleButtonGenerator>(gen_wxBitmapToggleButton);
+    SetGenerator<CalendarCtrlGenerator>(gen_wxCalendarCtrl);
+    SetGenerator<FileCtrlGenerator>(gen_wxFileCtrl);
+    SetGenerator<GenericDirCtrlGenerator>(gen_wxGenericDirCtrl);
+    SetGenerator<SearchCtrlGenerator>(gen_wxSearchCtrl);
+    SetGenerator<ListViewGenerator>(gen_wxListView);
+    SetGenerator<EditListBoxGenerator>(gen_wxEditableListBox);
+    SetGenerator<GridGenerator>(gen_wxGrid);
 
-    SET_GENERATOR(gen_wxColourPickerCtrl, ColourPickerGenerator)
-    SET_GENERATOR(gen_wxDatePickerCtrl, DatePickerCtrlGenerator)
-    SET_GENERATOR(gen_wxDirPickerCtrl, DirPickerGenerator)
-    SET_GENERATOR(gen_wxFilePickerCtrl, FilePickerGenerator)
-    SET_GENERATOR(gen_wxFontPickerCtrl, FontPickerGenerator)
-    SET_GENERATOR(gen_wxTimePickerCtrl, TimePickerCtrlGenerator)
+    SetGenerator<ColourPickerGenerator>(gen_wxColourPickerCtrl);
+    SetGenerator<DatePickerCtrlGenerator>(gen_wxDatePickerCtrl);
+    SetGenerator<DirPickerGenerator>(gen_wxDirPickerCtrl);
+    SetGenerator<FilePickerGenerator>(gen_wxFilePickerCtrl);
+    SetGenerator<FontPickerGenerator>(gen_wxFontPickerCtrl);
+    SetGenerator<TimePickerCtrlGenerator>(gen_wxTimePickerCtrl);
 
-    SET_GENERATOR(gen_wxMenuBar, MenuBarGenerator)
-    SET_GENERATOR(gen_MenuBar, MenuBarFormGenerator)
-    SET_GENERATOR(gen_PopupMenu, PopupMenuGenerator)
-    SET_GENERATOR(gen_wxMenu, MenuGenerator)
-    SET_GENERATOR(gen_submenu, SubMenuGenerator)
-    SET_GENERATOR(gen_wxMenuItem, MenuItemGenerator)
-    SET_GENERATOR(gen_separator, SeparatorGenerator)
-    SET_GENERATOR(gen_wxContextMenuEvent, CtxMenuGenerator)
+    SetGenerator<MenuBarGenerator>(gen_wxMenuBar);
+    SetGenerator<MenuBarFormGenerator>(gen_MenuBar);
+    SetGenerator<PopupMenuGenerator>(gen_PopupMenu);
+    SetGenerator<MenuGenerator>(gen_wxMenu);
+    SetGenerator<SubMenuGenerator>(gen_submenu);
+    SetGenerator<MenuItemGenerator>(gen_wxMenuItem);
+    SetGenerator<SeparatorGenerator>(gen_separator);
+    SetGenerator<CtxMenuGenerator>(gen_wxContextMenuEvent);
 
-    SET_GENERATOR(gen_MdiFrameMenuBar, MdiFrameMenuBar)
-    SET_GENERATOR(gen_MdiDocMenuBar, MdiDocumentMenuBar)
+    SetGenerator<MdiFrameMenuBar>(gen_MdiFrameMenuBar);
+    SetGenerator<MdiDocumentMenuBar>(gen_MdiDocMenuBar);
 
-    SET_GENERATOR(gen_Data, DataGenerator)
-    SET_GENERATOR(gen_data_string, DataStringGenerator)
-    SET_GENERATOR(gen_data_xml, DataXmlGenerator)
-    SET_GENERATOR(gen_Images, ImagesGenerator)
-    SET_GENERATOR(gen_embedded_image, EmbeddedImageGenerator)
+    SetGenerator<DataGenerator>(gen_Data);
+    SetGenerator<DataStringGenerator>(gen_data_string);
+    SetGenerator<DataXmlGenerator>(gen_data_xml);
+    SetGenerator<ImagesGenerator>(gen_Images);
+    SetGenerator<EmbeddedImageGenerator>(gen_embedded_image);
 
-    SET_GENERATOR(gen_wxDataViewCtrl, DataViewCtrl)
-    SET_GENERATOR(gen_wxDataViewListCtrl, DataViewListCtrl)
-    SET_GENERATOR(gen_wxDataViewTreeCtrl, DataViewTreeCtrl)
-    SET_GENERATOR(gen_dataViewColumn, DataViewColumn)
-    SET_GENERATOR(gen_dataViewListColumn, DataViewListColumn)
+    SetGenerator<DataViewCtrl>(gen_wxDataViewCtrl);
+    SetGenerator<DataViewListCtrl>(gen_wxDataViewListCtrl);
+    SetGenerator<DataViewTreeCtrl>(gen_wxDataViewTreeCtrl);
+    SetGenerator<DataViewColumn>(gen_dataViewColumn);
+    SetGenerator<DataViewListColumn>(gen_dataViewListColumn);
 
-    SET_GENERATOR(gen_wxPropertyGrid, PropertyGridGenerator)
-    SET_GENERATOR(gen_wxPropertyGridManager, PropertyGridManagerGenerator)
-    SET_GENERATOR(gen_propGridCategory, PropertyGridCategoryGenerator)
-    SET_GENERATOR(gen_propGridItem, PropertyGridItemGenerator)
-    SET_GENERATOR(gen_propGridPage, PropertyGridPageGenerator)
+    SetGenerator<PropertyGridGenerator>(gen_wxPropertyGrid);
+    SetGenerator<PropertyGridManagerGenerator>(gen_wxPropertyGridManager);
+    SetGenerator<PropertyGridCategoryGenerator>(gen_propGridCategory);
+    SetGenerator<PropertyGridItemGenerator>(gen_propGridItem);
+    SetGenerator<PropertyGridPageGenerator>(gen_propGridPage);
 
-    SET_GENERATOR(gen_wxSpinButton, SpinButtonGenerator)
-    SET_GENERATOR(gen_wxSpinCtrl, SpinCtrlGenerator)
-    SET_GENERATOR(gen_wxSpinCtrlDouble, SpinCtrlDoubleGenerator)
+    SetGenerator<SpinButtonGenerator>(gen_wxSpinButton);
+    SetGenerator<SpinCtrlGenerator>(gen_wxSpinCtrl);
+    SetGenerator<SpinCtrlDoubleGenerator>(gen_wxSpinCtrlDouble);
 
-    SET_GENERATOR(gen_spacer, SpacerGenerator)
+    SetGenerator<SpacerGenerator>(gen_spacer);
 
-    SET_GENERATOR(gen_AuiToolBar, AuiToolBarFormGenerator)
-    SET_GENERATOR(gen_wxAuiToolBar, AuiToolBarGenerator)
-    SET_GENERATOR(gen_auitool, AuiToolGenerator)
-    SET_GENERATOR(gen_auitool_label, AuiToolLabelGenerator)
-    SET_GENERATOR(gen_auitool_spacer, AuiToolSpacerGenerator)
-    SET_GENERATOR(gen_auitool_stretchable, AuiToolStretchSpacerGenerator)
-    SET_GENERATOR(gen_ToolBar, ToolBarFormGenerator)
-    SET_GENERATOR(gen_wxToolBar, ToolBarGenerator)
-    SET_GENERATOR(gen_tool, ToolGenerator)
-    SET_GENERATOR(gen_tool_dropdown, ToolDropDownGenerator)
-    SET_GENERATOR(gen_toolSeparator, ToolSeparatorGenerator)
-    SET_GENERATOR(gen_toolStretchable, ToolStretchableGenerator)
+    SetGenerator<AuiToolBarFormGenerator>(gen_AuiToolBar);
+    SetGenerator<AuiToolBarGenerator>(gen_wxAuiToolBar);
+    SetGenerator<AuiToolGenerator>(gen_auitool);
+    SetGenerator<AuiToolLabelGenerator>(gen_auitool_label);
+    SetGenerator<AuiToolSpacerGenerator>(gen_auitool_spacer);
+    SetGenerator<AuiToolStretchSpacerGenerator>(gen_auitool_stretchable);
+    SetGenerator<ToolBarFormGenerator>(gen_ToolBar);
+    SetGenerator<ToolBarGenerator>(gen_wxToolBar);
+    SetGenerator<ToolGenerator>(gen_tool);
+    SetGenerator<ToolDropDownGenerator>(gen_tool_dropdown);
+    SetGenerator<ToolSeparatorGenerator>(gen_toolSeparator);
+    SetGenerator<ToolStretchableGenerator>(gen_toolStretchable);
 
-    SET_GENERATOR(gen_RibbonBar, RibbonBarFormGenerator)
-    SET_GENERATOR(gen_wxRibbonBar, RibbonBarGenerator)
-    SET_GENERATOR(gen_wxRibbonPage, RibbonPageGenerator)
-    SET_GENERATOR(gen_wxRibbonPanel, RibbonPanelGenerator)
-    SET_GENERATOR(gen_wxRibbonButtonBar, RibbonButtonBarGenerator)
-    SET_GENERATOR(gen_wxRibbonToolBar, RibbonToolBarGenerator)
-    SET_GENERATOR(gen_ribbonSeparator, ToolSeparatorGenerator)
-    SET_GENERATOR(gen_wxRibbonGallery, RibbonGalleryGenerator)
+    SetGenerator<RibbonBarFormGenerator>(gen_RibbonBar);
+    SetGenerator<RibbonBarGenerator>(gen_wxRibbonBar);
+    SetGenerator<RibbonPageGenerator>(gen_wxRibbonPage);
+    SetGenerator<RibbonPanelGenerator>(gen_wxRibbonPanel);
+    SetGenerator<RibbonButtonBarGenerator>(gen_wxRibbonButtonBar);
+    SetGenerator<RibbonToolBarGenerator>(gen_wxRibbonToolBar);
+    SetGenerator<ToolSeparatorGenerator>(gen_ribbonSeparator);
+    SetGenerator<RibbonGalleryGenerator>(gen_wxRibbonGallery);
 
-    SET_GENERATOR(gen_ribbonButton, RibbonButtonGenerator)
-    SET_GENERATOR(gen_ribbonTool, RibbonToolGenerator)
-    SET_GENERATOR(gen_ribbonGalleryItem, RibbonGalleryItemGenerator)
+    SetGenerator<RibbonButtonGenerator>(gen_ribbonButton);
+    SetGenerator<RibbonToolGenerator>(gen_ribbonTool);
+    SetGenerator<RibbonGalleryItemGenerator>(gen_ribbonGalleryItem);
 
-    SET_GENERATOR(gen_wxTreeCtrl, TreeCtrlGenerator)
-    SET_GENERATOR(gen_wxTreeListCtrl, TreeListCtrlGenerator)
-    SET_GENERATOR(gen_TreeListCtrlColumn, TreeListCtrlColumnGenerator)
+    SetGenerator<TreeCtrlGenerator>(gen_wxTreeCtrl);
+    SetGenerator<TreeListCtrlGenerator>(gen_wxTreeListCtrl);
+    SetGenerator<TreeListCtrlColumnGenerator>(gen_TreeListCtrlColumn);
 
-    SET_GENERATOR(gen_PanelForm, PanelFormGenerator)
-    SET_GENERATOR(gen_wxDialog, DialogFormGenerator)
-    SET_GENERATOR(gen_wxFrame, FrameFormGenerator)
-    SET_GENERATOR(gen_wxPopupWindow, PopupWinGenerator)
-    SET_GENERATOR(gen_wxPopupTransientWindow, PopupTransientWinGenerator)
-    SET_GENERATOR(gen_wxPropertySheetDialog, PropSheetDlgGenerator)
-    SET_GENERATOR(gen_wxWizard, WizardFormGenerator)
+    SetGenerator<PanelFormGenerator>(gen_PanelForm);
+    SetGenerator<DialogFormGenerator>(gen_wxDialog);
+    SetGenerator<FrameFormGenerator>(gen_wxFrame);
+    SetGenerator<PopupWinGenerator>(gen_wxPopupWindow);
+    SetGenerator<PopupTransientWinGenerator>(gen_wxPopupTransientWindow);
+    SetGenerator<PropSheetDlgGenerator>(gen_wxPropertySheetDialog);
+    SetGenerator<WizardFormGenerator>(gen_wxWizard);
 
-    SET_GENERATOR(gen_VerticalBoxSizer, BoxSizerGenerator)
-    SET_GENERATOR(gen_wxBoxSizer, BoxSizerGenerator)
-    SET_GENERATOR(gen_wxFlexGridSizer, FlexGridSizerGenerator)
-    SET_GENERATOR(gen_wxGridBagSizer, GridBagSizerGenerator)
-    SET_GENERATOR(gen_wxGridSizer, GridSizerGenerator)
-    SET_GENERATOR(gen_wxStaticBox, StaticBoxGenerator)
-    SET_GENERATOR(gen_wxStaticBoxSizer, StaticBoxSizerGenerator)
-    SET_GENERATOR(gen_StaticCheckboxBoxSizer, StaticCheckboxBoxSizerGenerator)
-    SET_GENERATOR(gen_StaticRadioBtnBoxSizer, StaticRadioBtnBoxSizerGenerator)
-    SET_GENERATOR(gen_wxStdDialogButtonSizer, StdDialogButtonSizerGenerator)
-    SET_GENERATOR(gen_wxWrapSizer, WrapSizerGenerator)
-    SET_GENERATOR(gen_TextSizer, TextSizerGenerator)
+    SetGenerator<BoxSizerGenerator>(gen_VerticalBoxSizer);
+    SetGenerator<BoxSizerGenerator>(gen_wxBoxSizer);
+    SetGenerator<FlexGridSizerGenerator>(gen_wxFlexGridSizer);
+    SetGenerator<GridBagSizerGenerator>(gen_wxGridBagSizer);
+    SetGenerator<GridSizerGenerator>(gen_wxGridSizer);
+    SetGenerator<StaticBoxGenerator>(gen_wxStaticBox);
+    SetGenerator<StaticBoxSizerGenerator>(gen_wxStaticBoxSizer);
+    SetGenerator<StaticCheckboxBoxSizerGenerator>(gen_StaticCheckboxBoxSizer);
+    SetGenerator<StaticRadioBtnBoxSizerGenerator>(gen_StaticRadioBtnBoxSizer);
+    SetGenerator<StdDialogButtonSizerGenerator>(gen_wxStdDialogButtonSizer);
+    SetGenerator<WrapSizerGenerator>(gen_wxWrapSizer);
+    SetGenerator<TextSizerGenerator>(gen_TextSizer);
 
-    SET_GENERATOR(gen_CustomControl, CustomControl)
+    SetGenerator<CustomControl>(gen_CustomControl);
 
-    SET_GENERATOR(gen_wxDocParentFrame, DocParentFrameGenerator)
-    SET_GENERATOR(gen_wxDocMDIParentFrame, DocMdiParentFrameGenerator)
-    SET_GENERATOR(gen_wxAuiMDIParentFrame, AuiMdiFrameGenerator)
-    SET_GENERATOR(gen_wxDocChildFrame, DocChildFrame)
-    SET_GENERATOR(gen_wxDocMDIChildFrame, DocMDIChildFrame)
-    SET_GENERATOR(gen_wxAuiMDIChildFrame, AuiMDIChildFrame)
+    SetGenerator<DocParentFrameGenerator>(gen_wxDocParentFrame);
+    SetGenerator<DocMdiParentFrameGenerator>(gen_wxDocMDIParentFrame);
+    SetGenerator<AuiMdiFrameGenerator>(gen_wxAuiMDIParentFrame);
+    SetGenerator<DocChildFrame>(gen_wxDocChildFrame);
+    SetGenerator<DocMDIChildFrame>(gen_wxDocMDIChildFrame);
+    SetGenerator<AuiMDIChildFrame>(gen_wxAuiMDIChildFrame);
 
-    SET_GENERATOR(gen_DocViewApp, DocViewAppGenerator)
+    SetGenerator<DocViewAppGenerator>(gen_DocViewApp);
 
-    SET_GENERATOR(gen_DocumentImage, ImageDocGenerator)
-    SET_GENERATOR(gen_ViewImage, ImageViewGenerator)
-    SET_GENERATOR(gen_DocumentRichTextCtrl, RichTextDocGenerator)
-    SET_GENERATOR(gen_ViewRichTextCtrl, RichTextViewGenerator)
-    SET_GENERATOR(gen_DocumentSplitterWindow, SplitterDocGenerator)
-    SET_GENERATOR(gen_ViewSplitterWindow, SplitterViewGenerator)
-    SET_GENERATOR(gen_DocumentStyledTextCtrl, ScintillaDocGenerator)
-    SET_GENERATOR(gen_ViewStyledTextCtrl, ScintillaViewGenerator)
-    SET_GENERATOR(gen_DocumentTextCtrl, TextDocGenerator)
-    SET_GENERATOR(gen_ViewTextCtrl, TextViewGenerator)
+    SetGenerator<ImageDocGenerator>(gen_DocumentImage);
+    SetGenerator<ImageViewGenerator>(gen_ViewImage);
+    SetGenerator<RichTextDocGenerator>(gen_DocumentRichTextCtrl);
+    SetGenerator<RichTextViewGenerator>(gen_ViewRichTextCtrl);
+    SetGenerator<SplitterDocGenerator>(gen_DocumentSplitterWindow);
+    SetGenerator<SplitterViewGenerator>(gen_ViewSplitterWindow);
+    SetGenerator<ScintillaDocGenerator>(gen_DocumentStyledTextCtrl);
+    SetGenerator<ScintillaViewGenerator>(gen_ViewStyledTextCtrl);
+    SetGenerator<TextDocGenerator>(gen_DocumentTextCtrl);
+    SetGenerator<TextViewGenerator>(gen_ViewTextCtrl);
 
-    SET_GENERATOR(gen_Project, ProjectGenerator)
-    SET_GENERATOR(gen_folder, FolderGenerator)
-    SET_GENERATOR(gen_sub_folder, SubFolderGenerator)
+    SetGenerator<ProjectGenerator>(gen_Project);
+    SetGenerator<FolderGenerator>(gen_folder);
+    SetGenerator<SubFolderGenerator>(gen_sub_folder);
 
     AddAllConstants();
 }

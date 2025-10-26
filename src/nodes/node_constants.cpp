@@ -817,7 +817,8 @@ void NodeCreator::AddAllConstants()
     m_map_constants["Tab_Leave"] = wxGrid::Tab_Leave;
 }
 
-std::unordered_map<std::string, const char*> g_friend_constant = {
+// Frozen std::map does not work correctly even when sorting all the key entries.
+const std::unordered_map<std::string_view, std::string_view> g_friend_constant = {
 
     // CAUTION! All entries *must* have a prefix!
 

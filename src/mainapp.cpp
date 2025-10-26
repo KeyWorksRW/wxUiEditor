@@ -275,31 +275,35 @@ int App::OnRun()
         StartupDlg start_dlg(nullptr);
         if (auto result = start_dlg.ShowModal(); result == wxID_OK)
         {
-            switch (start_dlg.GetCommandType())
+            switch (start_dlg.GetCommand())
             {
-                case StartupDlg::START_MRU:
-                    if (!start_dlg.GetProjectFile().extension().is_sameas(PROJECT_FILE_EXTENSION,
-                                                                          tt::CASE::either) &&
-                        !start_dlg.GetProjectFile().extension().is_sameas(
-                            PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
+                case StartupDlg::Command::start_mru:
                     {
-                        is_project_loaded = Project.ImportProject(start_dlg.GetProjectFile());
-                    }
-                    else
-                    {
-                        is_project_loaded = Project.LoadProject(start_dlg.GetProjectFile());
+                        auto& project_file = start_dlg.GetProjectFile();
+                        auto ext = project_file.GetExt().Lower().ToStdString();
+                        ext.insert(ext.begin(), '.');
+
+                        if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
+                        {
+                            is_project_loaded =
+                                Project.ImportProject(project_file.GetFullPath().ToStdString());
+                        }
+                        else
+                        {
+                            is_project_loaded =
+                                Project.LoadProject(project_file.GetFullPath().ToStdString());
+                        }
                     }
                     break;
-
-                case StartupDlg::START_EMPTY:
+                case StartupDlg::Command::start_empty:
                     is_project_loaded = Project.NewProject(true);
                     break;
 
-                case StartupDlg::START_CONVERT:
+                case StartupDlg::Command::start_convert:
                     is_project_loaded = Project.NewProject(false);
                     break;
 
-                case StartupDlg::START_OPEN:
+                case StartupDlg::Command::start_open:
                     {
                         // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the
                         // wxSmith resources -- so it would actually make sense to process it since
@@ -308,7 +312,7 @@ int App::OnRun()
                         wxFileDialog dialog(
                             nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
                             wxString::FromUTF8(
-                                std::format("wxUiEditor Project File (*{})|{}"
+                                std::format("wxUiEditor Project File (*{})|*{}"
                                             "|wxCrafter Project File (*.wxcp)|*.wxcp"
                                             "|DialogBlocks Project File (*.fjd)|*.fjd"
                                             "|wxFormBuilder Project File (*.fbp)|*.fbp"

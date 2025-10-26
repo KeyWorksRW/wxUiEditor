@@ -162,7 +162,7 @@ auto ttwx::append_filename(wxString& path, const wxString& filename) -> wxString
         auto last = path.ToStdString().back();
         if (last != '/' && last != '\\')
         {
-            // wxWidgets prefers to using the native path separator, however Windows handles a
+            // wxWidgets prefers to use the native path separator, however Windows handles a
             // forward slash as a separator. Using a forward slash means the path can be saved in a
             // format that works on all platforms, unlike using the wxWidgets native separator which
             // would fail if the filename were then used on a non-Windows platform.

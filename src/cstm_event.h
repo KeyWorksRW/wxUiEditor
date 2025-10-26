@@ -17,16 +17,14 @@ class UndoAction;
 class CustomEvent : public wxEvent
 {
 public:
-    CustomEvent(wxEventType commandType, Node* node) : wxEvent(0, commandType), m_node(node) {}
-    CustomEvent(wxEventType commandType, NodeProperty* property) :
-        wxEvent(0, commandType), m_property(property)
+    CustomEvent(wxEventType Command, Node* node) : wxEvent(0, Command), m_node(node) {}
+    CustomEvent(wxEventType Command, NodeProperty* property) :
+        wxEvent(0, Command), m_property(property)
     {
     }
-    CustomEvent(wxEventType commandType, NodeEvent* event) : wxEvent(0, commandType), m_event(event)
-    {
-    }
-    CustomEvent(wxEventType commandType, UndoAction* undo_cmd) :
-        wxEvent(0, commandType), m_undo_cmd(undo_cmd)
+    CustomEvent(wxEventType Command, NodeEvent* event) : wxEvent(0, Command), m_event(event) {}
+    CustomEvent(wxEventType Command, UndoAction* undo_cmd) :
+        wxEvent(0, Command), m_undo_cmd(undo_cmd)
     {
     }
 

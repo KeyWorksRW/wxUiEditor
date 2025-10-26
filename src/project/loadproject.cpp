@@ -428,7 +428,8 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                 {
                                     if (tt::is_sameas(friendly_pair.second, iter.value()))
                                     {
-                                        prop->set_value(friendly_pair.first.substr(friendly_pair.first.find('_') + 1));
+                                        prop->set_value(friendly_pair.first.substr(
+                                            friendly_pair.first.find('_') + 1));
                                         found = true;
                                         break;
                                     }
@@ -456,7 +457,8 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                                 new_value << '|';
                                             }
 
-                                            new_value << friendly_pair.first.substr(friendly_pair.first.find('_') + 1);
+                                            new_value << friendly_pair.first.substr(
+                                                friendly_pair.first.find('_') + 1);
                                             found = true;
                                             break;
                                         }

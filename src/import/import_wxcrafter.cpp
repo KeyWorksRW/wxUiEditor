@@ -911,7 +911,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, tt_
                             if (tt::is_sameas(friendly_pair.second, list_effects[index]))
                             {
                                 node->set_value(prop_show_effect,
-                                                std::string_view (friendly_pair.first)
+                                                std::string_view(friendly_pair.first)
                                                     .substr(friendly_pair.first.find('_') + 1));
                                 node->set_value(prop_hide_effect,
                                                 std::string_view(friendly_pair.first)

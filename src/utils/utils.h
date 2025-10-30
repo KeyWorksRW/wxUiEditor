@@ -26,8 +26,23 @@ class Node;
 class wxInputStream;
 class wxOutputStream;
 
-// Newer functions should be placed in the utils namespace
+// Structure to hold adjacent Node* parameters for form and child. This allows C++20 designated
+// initializers to be used.
+struct NodesFormChild
+{
+    Node* form;
+    Node* child;
+};
 
+// Structure to hold adjacent Node* parameters for parent and child.  This allows C++20 designated
+// initializers to be used.
+struct NodesParentChild
+{
+    Node* parent;
+    Node* child;
+};
+
+// Newer functions should be placed in the utils namespace
 namespace utils
 {
     // Look for search string in line, and if found, replace with replace_with string. If all

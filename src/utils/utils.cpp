@@ -7,6 +7,7 @@
 
 #include <array>
 #include <charconv>
+#include <cstddef>
 #include <cstdio>  // For snprintf
 #include <set>
 
@@ -62,7 +63,9 @@ tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue)
         if (iter != flag)
         {
             if (result.size())
+            {
                 result << '|';
+            }
             result << iter;
         }
     }
@@ -96,7 +99,9 @@ tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentVal
         if (!isFlagged)
         {
             if (result.size())
+            {
                 result << '|';
+            }
             result << iter;
         }
     }
@@ -112,15 +117,18 @@ tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue)
     }
 
     tt_view_vector mstr(currentValue, '|');
-    for (auto& iter: mstr)
+    if (std::ranges::any_of(mstr,
+                            [&](const auto& iter)
+                            {
+                                return iter.is_sameas(flag);
+                            }))
     {
-        if (iter.is_sameas(flag))
-        {
-            return result;  // flag has already been added
-        }
+        return result;  // flag has already been added
     }
     if (result.size())
+    {
         result << '|';
+    }
     result << flag;
     return result;
 }
@@ -133,14 +141,11 @@ bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue)
     }
 
     tt_view_vector mstr(currentValue, '|');
-    for (auto& iter: mstr)
-    {
-        if (iter.is_sameas(flag))
-        {
-            return true;  // flag has already been added
-        }
-    }
-    return false;
+    return std::ranges::any_of(mstr,
+                               [&](const auto& iter)
+                               {
+                                   return iter.is_sameas(flag);
+                               });
 }
 
 wxSystemColour ConvertToSystemColour(tt_string_view value)
@@ -148,49 +153,48 @@ wxSystemColour ConvertToSystemColour(tt_string_view value)
     // clang-format off
 
     #define IS_SYSCOLOUR(name) if (value == #name) return name;
-    #define ELSE_IS_SYSCOLOUR(name) else if (value == #name) return name;
 
     IS_SYSCOLOUR(wxSYS_COLOUR_SCROLLBAR)
 
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_BACKGROUND)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_ACTIVECAPTION)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_INACTIVECAPTION)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_MENU)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_WINDOW)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_WINDOWFRAME)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_MENUTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_WINDOWTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_CAPTIONTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_ACTIVEBORDER)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_INACTIVEBORDER)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_APPWORKSPACE)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_HIGHLIGHT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_HIGHLIGHTTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_BTNFACE)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_BTNSHADOW)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_GRAYTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_BTNTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_INACTIVECAPTIONTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_BTNHIGHLIGHT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_3DDKSHADOW)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_3DLIGHT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_INFOTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_INFOBK)
+    IS_SYSCOLOUR(wxSYS_COLOUR_BACKGROUND)
+    IS_SYSCOLOUR(wxSYS_COLOUR_ACTIVECAPTION)
+    IS_SYSCOLOUR(wxSYS_COLOUR_INACTIVECAPTION)
+    IS_SYSCOLOUR(wxSYS_COLOUR_MENU)
+    IS_SYSCOLOUR(wxSYS_COLOUR_WINDOW)
+    IS_SYSCOLOUR(wxSYS_COLOUR_WINDOWFRAME)
+    IS_SYSCOLOUR(wxSYS_COLOUR_MENUTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_WINDOWTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_CAPTIONTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_ACTIVEBORDER)
+    IS_SYSCOLOUR(wxSYS_COLOUR_INACTIVEBORDER)
+    IS_SYSCOLOUR(wxSYS_COLOUR_APPWORKSPACE)
+    IS_SYSCOLOUR(wxSYS_COLOUR_HIGHLIGHT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_HIGHLIGHTTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_BTNFACE)
+    IS_SYSCOLOUR(wxSYS_COLOUR_BTNSHADOW)
+    IS_SYSCOLOUR(wxSYS_COLOUR_GRAYTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_BTNTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_INACTIVECAPTIONTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_BTNHIGHLIGHT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_3DDKSHADOW)
+    IS_SYSCOLOUR(wxSYS_COLOUR_3DLIGHT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_INFOTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_INFOBK)
 
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_LISTBOX)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_HOTLIGHT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_GRADIENTACTIVECAPTION)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_GRADIENTINACTIVECAPTION)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_MENUHILIGHT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_MENUBAR)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_LISTBOXTEXT)
-    ELSE_IS_SYSCOLOUR(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_LISTBOX)
+    IS_SYSCOLOUR(wxSYS_COLOUR_HOTLIGHT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_GRADIENTACTIVECAPTION)
+    IS_SYSCOLOUR(wxSYS_COLOUR_GRADIENTINACTIVECAPTION)
+    IS_SYSCOLOUR(wxSYS_COLOUR_MENUHILIGHT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_MENUBAR)
+    IS_SYSCOLOUR(wxSYS_COLOUR_LISTBOXTEXT)
+    IS_SYSCOLOUR(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT)
 
     return wxSYS_COLOUR_BTNFACE;
     // clang-format on
 }
 
-const char* ConvertFontFamilyToString(wxFontFamily family)
+auto ConvertFontFamilyToString(wxFontFamily family) -> const char*
 {
     const char* result;
 
@@ -222,22 +226,22 @@ const char* ConvertFontFamilyToString(wxFontFamily family)
     return result;
 }
 
-tt_string ConvertEscapeSlashes(tt_string_view str)
+auto ConvertEscapeSlashes(tt_string_view str) -> tt_string
 {
     tt_string result;
 
     for (size_t pos = 0; pos < str.size(); ++pos)
     {
-        auto ch = str[pos];
-        if (ch == '\\')
+        auto current_char = str[pos];
+        if (current_char == '\\')
         {
             // REVIEW: [KeyWorks - 06-07-2020] Like the original wxString version, this will not
             // save a backslash if it is at the end of a line. Is that intentional or just a bug?
             if (pos < str.length() - 1)
             {
-                auto nextChar = str[pos + 1];
+                auto next_char = str[pos + 1];
 
-                switch (nextChar)
+                switch (next_char)
                 {
                     case 'n':
                         result += '\n';
@@ -258,46 +262,65 @@ tt_string ConvertEscapeSlashes(tt_string_view str)
                         result += '\\';
                         ++pos;
                         break;
+
+                    default:
+                        // REVIEW: [Randalphwa - 10-30-2025] This was just added, but not tested...
+
+                        // If not a recognized escape, just add the backslash and the next character
+                        result += '\\';
+                        // Do not increment pos here, so the next character will be processed
+                        // normally
+                        break;
                 }
             }
         }
         else
-            result += ch;
+        {
+            result += current_char;
+        }
     }
 
     return result;
 }
 
-wxPoint DlgPoint(Node* node, GenEnum::PropName prop)
+auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint
 {
     if (!isScalingEnabled(node, prop))
+    {
         return node->as_wxPoint(prop);
+    }
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxPoint(prop));
 }
 
 wxSize DlgSize(Node* node, GenEnum::PropName prop)
 {
     if (!isScalingEnabled(node, prop))
+    {
         return node->as_wxSize(prop);
+    }
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxSize(prop));
 }
 
-int DlgPoint(int width)
+auto DlgPoint(int width) -> int
 {
-    wxPoint pt = { width, -1 };
-    wxGetMainFrame()->getWindow()->FromDIP(pt);
-    return pt.x;
+    wxPoint dlg_point = { width, -1 };
+    wxGetMainFrame()->getWindow()->FromDIP(dlg_point);
+    return dlg_point.x;
 }
 
-wxSize GetSizeInfo(tt_string_view description)
+auto GetSizeInfo(tt_string_view description) -> wxSize
 {
     wxSize size;
 
     tt_view_vector size_description;
     if (description.contains(";"))
+    {
         size_description.SetString(description, ';', tt::TRIM::left);
+    }
     else
+    {
         size_description.SetString(description, ',');
+    }
 
     ASSERT(size_description.size())
     ASSERT(size_description[0].size())
@@ -307,9 +330,13 @@ wxSize GetSizeInfo(tt_string_view description)
         size_t start = size_description[0].front() == '[' ? 1 : 0;
         size.x = size_description[0].atoi(start);
         if (size_description.size() > 1)
+        {
             size.y = size_description[1].atoi();
+        }
         else
+        {
             size.y = 0;
+        }
     }
     else
     {
@@ -322,26 +349,25 @@ wxSize GetSizeInfo(tt_string_view description)
 
 // Any mime type in the following list will NOT be converted to PNG.
 
-// clang-format off
-inline constexpr const char* lst_no_png_conversion[] = {
+#include <array>
 
+// clang-format off
+inline constexpr auto lst_no_png_conversion = std::to_array<const char*>({
     "image/x-ani",
     "image/x-cur",
     "image/gif",
     "image/x-ico",
-    "image/jpeg",
-
-};
+    "image/jpeg"
+});
 // clang-format on
 
 bool isConvertibleMime(const tt_string& suffix)
 {
-    for (auto& iter: lst_no_png_conversion)
-    {
-        if (suffix.is_sameas(iter))
-            return false;
-    }
-    return true;
+    return std::ranges::all_of(lst_no_png_conversion,
+                               [&](const char* iter)
+                               {
+                                   return !suffix.is_sameas(iter);
+                               });
 }
 
 extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
@@ -354,17 +380,21 @@ std::set<std::string> g_set_python_keywords;
 std::set<std::string> g_set_ruby_keywords;
 std::set<std::string> g_set_perl_keywords;
 
-bool isValidVarName(const std::string& str, GenLang language)
+auto isValidVarName(const std::string& str, GenLang language) -> bool
 {
     // variable names must start with an alphabetic character or underscore character
-    if (!((str[0] >= 'a' && str[0] <= 'z') || (str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_'))
+    if ((str[0] < 'a' || str[0] > 'z') && (str[0] < 'A' || str[0] > 'Z') && str[0] != '_')
+    {
         return false;
+    }
 
     for (auto iter: str)
     {
-        if (!((iter >= 'a' && iter <= 'z') || (iter >= 'A' && iter <= 'Z') ||
-              (iter >= '0' && iter <= '9') || iter == '_'))
+        if ((iter < 'a' || iter > 'z') && (iter < 'A' || iter > 'Z') &&
+            (iter < '0' || iter > '9') && iter != '_')
+        {
             return false;
+        }
     }
 
     // Ensure that the variable name is not a keyword in the specified language
@@ -381,7 +411,9 @@ bool isValidVarName(const std::string& str, GenLang language)
         }
 
         if (set_keywords.contains(str))
+        {
             return false;
+        }
 
         return true;
     };
@@ -391,15 +423,15 @@ bool isValidVarName(const std::string& str, GenLang language)
     {
         return lambda(g_set_cpp_keywords, g_u8_cpp_keywords);
     }
-    else if (language == GEN_LANG_PYTHON)
+    if (language == GEN_LANG_PYTHON)
     {
         return lambda(g_set_python_keywords, g_python_keywords);
     }
-    else if (language == GEN_LANG_RUBY)
+    if (language == GEN_LANG_RUBY)
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
     }
-    else if (language == GEN_LANG_PERL)
+    if (language == GEN_LANG_PERL)
     {
         return lambda(g_set_perl_keywords, g_perl_keywords);
     }
@@ -407,7 +439,7 @@ bool isValidVarName(const std::string& str, GenLang language)
     return true;
 }
 
-tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name)
+auto CreateBaseFilename(Node* form_node, const tt_string& class_name) -> tt_string
 {
     tt_string filename;
     if (class_name.size())
@@ -430,7 +462,7 @@ tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name)
     return filename;
 }
 
-tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name)
+auto CreateDerivedFilename(Node* form_node, const tt_string& class_name) -> tt_string
 {
     tt_string filename;
     if (class_name.size())
@@ -456,7 +488,7 @@ tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name)
     return filename;
 }
 
-tt_string ConvertToSnakeCase(tt_string_view str)
+auto ConvertToSnakeCase(tt_string_view str) -> tt_string
 {
     tt_string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
@@ -470,12 +502,14 @@ tt_string ConvertToSnakeCase(tt_string_view str)
 
         if (result[pos] >= 'A' && result[pos] <= 'Z')
         {
-            result[pos] = result[pos] - 'A' + 'a';
+            result[pos] = static_cast<char>(result[pos] - 'A' + 'a');
             if (pos > 0)
             {
                 // Do not add an underscore if the previous letter is uppercase
                 if (str[original_pos - 1] >= 'A' && str[original_pos - 1] <= 'Z')
+                {
                     continue;
+                }
                 result.insert(pos, "_");
                 ++pos;
             }
@@ -484,7 +518,7 @@ tt_string ConvertToSnakeCase(tt_string_view str)
     return result;
 }
 
-tt_string ConvertToUpperSnakeCase(tt_string_view str)
+auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string
 {
     tt_string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
@@ -495,7 +529,9 @@ tt_string ConvertToUpperSnakeCase(tt_string_view str)
             {
                 // Do not add an underscore if the previous letter is uppercase
                 if (str[original_pos - 1] >= 'A' && str[original_pos - 1] <= 'Z')
+                {
                     continue;
+                }
                 result.insert(pos, "_");
                 ++pos;
             }
@@ -503,13 +539,13 @@ tt_string ConvertToUpperSnakeCase(tt_string_view str)
         else if (result[pos] >= 'a' && result[pos] <= 'z')
         {
             // convert to uppercase
-            result[pos] = result[pos] - 'a' + 'A';
+            result[pos] = static_cast<char>(result[pos] - 'a' + 'A');
         }
     }
     return result;
 }
 
-std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_length)
+auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optional<tt_string>
 {
     ASSERT(max_length > sizeof("_name_truncated"))
 
@@ -528,7 +564,7 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
 
     for (size_t pos = 0; pos < filename.size(); pos++)
     {
-        auto iter = static_cast<unsigned char>(filename[pos]);
+        auto iter = static_cast<char>(filename[pos]);
         if (tt::is_alnum(iter) || iter == '_')
         {
             var_name += iter;
@@ -546,11 +582,9 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
                 var_name += '_';
             }
             // Ignore the first byte of a UTF-8 character sequence
-            else if (iter != 0xFF)
+            else if (static_cast<unsigned char>(iter) != 0xFF)
             {
-                char hexString[3];
-                snprintf(hexString, sizeof(hexString), "%02x", iter);
-                var_name += hexString;
+                var_name += std::format("{:02x}", static_cast<unsigned char>(iter));
             }
         }
 
@@ -567,20 +601,24 @@ std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_l
 
 bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language)
 {
-    if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either) == true)
+    if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either))
+    {
         return false;
+    }
 
 #if !PERL_FROM_DIP
-    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does not
-    // have a FromDIP function. So we need to disable DPI scaling for Perl.
-    else if (m_language == GEN_LANG_PERL)
+    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does
+    // not have a FromDIP function. So we need to disable DPI scaling for Perl.
+
+    if (m_language == GEN_LANG_PERL)
+    {
         return false;
+    }
 #endif
-    else
-        return true;
+    return true;
 }
 
-std::string_view GenLangToString(GenLang language)
+auto GenLangToString(GenLang language) -> std::string_view
 {
     switch (language)
     {
@@ -606,31 +644,38 @@ std::string_view GenLangToString(GenLang language)
     }
 }
 
-GenLang ConvertToGenLang(tt_string_view language)
+auto ConvertToGenLang(tt_string_view language) -> GenLang
 {
     if (language.starts_with("C++") || language.starts_with("Folder C++"))
+    {
         return GEN_LANG_CPLUSPLUS;
-    else if (language == "Perl" || language.starts_with("wxPerl") ||
-             language.starts_with("Folder wxPerl"))
+    }
+    if (language == "Perl" || language.starts_with("wxPerl") ||
+        language.starts_with("Folder wxPerl"))
+    {
         return GEN_LANG_PERL;
-    else if (language == "Python" || language.starts_with("wxPython") ||
-             language.starts_with("Folder wxPython"))
+    }
+    if (language == "Python" || language.starts_with("wxPython") ||
+        language.starts_with("Folder wxPython"))
+    {
         return GEN_LANG_PYTHON;
-    else if (language == "Ruby" || language.starts_with("wxRuby") ||
-             language.starts_with("Folder wxRuby"))
+    }
+    if (language == "Ruby" || language.starts_with("wxRuby") ||
+        language.starts_with("Folder wxRuby"))
+    {
         return GEN_LANG_RUBY;
-    else if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
+    }
+    if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
+    {
         return GEN_LANG_XRC;
 
-    // If this wasn't an actual language setting, then return all languages
-    else
-    {
-        return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                                    GEN_LANG_PERL | GEN_LANG_XRC);
+        // If this wasn't an actual language setting, then return all languages
     }
+    return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
+                                GEN_LANG_PERL | GEN_LANG_XRC);
 }
 
-std::string GetLanguageExtension(GenLang language)
+auto GetLanguageExtension(GenLang language) -> std::string
 {
     switch (language)
     {
@@ -650,7 +695,7 @@ std::string GetLanguageExtension(GenLang language)
     }
 }
 
-ClassOverrideType GetClassOverrideType(Node* node)
+auto GetClassOverrideType(Node* node) -> ClassOverrideType
 {
     ASSERT(node != nullptr);
     if (node->HasValue(prop_subclass))
@@ -659,41 +704,38 @@ ClassOverrideType GetClassOverrideType(Node* node)
         {
             return ClassOverrideType::Generic;  // Use the wxGeneric version of the class
         }
-        else
-        {
-            return ClassOverrideType::Subclass;  // User specified a subclass
-        }
+
+        return ClassOverrideType::Subclass;  // User specified a subclass
     }
-    else if (node->as_bool(prop_use_generic))
+    if (node->as_bool(prop_use_generic))
     {
         return ClassOverrideType::Generic;  // Use the wxGeneric version of the class
     }
-    else
-    {
-        return ClassOverrideType::None;  // No override specified
-    }
+
+    return ClassOverrideType::None;  // No override specified
 }
 
-bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
+auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size) -> bool
 {
-    size_t buf_size;
-    if (size == tt::npos || size > (64 * 1024))
-        buf_size = (64 * 1024);
-    else
-        buf_size = size;
+    constexpr size_t BUF_KB_SIZE = 1024;
+    constexpr size_t BUF_SIZE = 64 * BUF_KB_SIZE;
 
-    auto read_buf = std::make_unique<unsigned char[]>(buf_size);
+    size_t buf_size = (size > BUF_SIZE) ? BUF_SIZE : size;
+
+    std::array<unsigned char, BUF_SIZE> read_buf {};
     auto read_size = buf_size;
 
     size_t copied_data = 0;
     for (;;)
     {
         if (size != tt::npos && copied_data + read_size > size)
+        {
             read_size = size - copied_data;
-        inputStream->Read(read_buf.get(), read_size);
+        }
+        inputStream->Read(read_buf.data(), read_size);
 
         auto actually_read = inputStream->LastRead();
-        outputStream->Write(read_buf.get(), actually_read);
+        outputStream->Write(read_buf.data(), actually_read);
         if (outputStream->LastWrite() != actually_read)
         {
             return false;
@@ -702,13 +744,17 @@ bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
         if (size == tt::npos)
         {
             if (inputStream->Eof())
+            {
                 break;
+            }
         }
         else
         {
             copied_data += actually_read;
             if (copied_data >= size)
+            {
                 break;
+            }
         }
     }
 

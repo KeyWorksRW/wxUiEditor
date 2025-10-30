@@ -51,74 +51,76 @@ namespace utils
                          bool all) -> void;
 }  // namespace utils
 
-tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue);
-tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue);
-tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue);
+auto ClearPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string;
+auto ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue) -> tt_string;
+auto SetPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string;
 
 // Convert a double to a string without needing to switch locales
-tt_string DoubleToStr(double val);
+auto DoubleToStr(double val) -> tt_string;
 
-bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue);
+auto isPropFlagSet(tt_string_view flag, tt_string_view currentValue) -> bool;
 
-wxSystemColour ConvertToSystemColour(tt_string_view value);
+auto ConvertToSystemColour(tt_string_view value) -> wxSystemColour;
 
-const char* ConvertFontFamilyToString(wxFontFamily family);
+auto ConvertFontFamilyToString(wxFontFamily family) -> const char*;
 
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
-tt_string ConvertEscapeSlashes(tt_string_view str);
+auto ConvertEscapeSlashes(tt_string_view str) -> tt_string;
 
 // This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
-wxPoint DlgPoint(Node* node, GenEnum::PropName prop);
+auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint;
 
 // This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
-wxSize DlgSize(Node* node, GenEnum::PropName prop);
+auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize;
 
 // Given a width this will convert it using wxGetMainFrame()->getWindow()->FromDIP()
-int DlgPoint(int width);
+auto DlgPoint(int width) -> int;
 
 // Convert a filename to a valid variable name. This will handle filnames with leading
 // numbers, utf8 characters, and other characters that are not valid in a variable name.
 //
 // If max_length is exceeded, the name will be have ""_name_truncated" as a suffix
-std::optional<tt_string> FileNameToVarName(tt_string_view filename, size_t max_length = 256);
+auto FileNameToVarName(tt_string_view filename, size_t max_length = 256)
+    -> std::optional<tt_string>;
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-wxSize GetSizeInfo(tt_string_view size_description);
+auto GetSizeInfo(tt_string_view size_description) -> wxSize;
 
 // Friendly name/wxSTC_WRAP_ constant
-extern std::map<std::string, const char*> g_stc_wrap_mode;
+extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppcheck-suppress
 
-bool isConvertibleMime(const tt_string& suffix);
+auto isConvertibleMime(const tt_string& suffix) -> bool;
 
 // Checks whether a string is a valid C++ variable name.
-bool isValidVarName(const std::string& str, GenLang language = GEN_LANG_CPLUSPLUS);
+auto isValidVarName(const std::string& str, GenLang language = GEN_LANG_CPLUSPLUS) -> bool;
 
 // This takes the class_name of the form, converts it to lowercase, and if the class name
 // ends with Base, the a "_base" suffix is added.
 //
 // This does *not* check to see if the file already exists.
-tt_string CreateBaseFilename(Node* form_node, const tt_string& class_name);
+auto CreateBaseFilename(Node* form_node, const tt_string& class_name) -> tt_string;
 
-tt_string CreateDerivedFilename(Node* form_node, const tt_string& class_name);
+auto CreateDerivedFilename(Node* form_node, const tt_string& class_name) -> tt_string;
 
 // Typically called to convert a string into a Ruby string which prefers snake_case
-tt_string ConvertToSnakeCase(tt_string_view str);
+auto ConvertToSnakeCase(tt_string_view str) -> tt_string;
 
 // Converts string to snake_case, then converts to upper case
-tt_string ConvertToUpperSnakeCase(tt_string_view str);
+auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string;
 
 // Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
 // used.
-bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language = GEN_LANG_NONE);
+auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language = GEN_LANG_NONE)
+    -> bool;
 
 // Convert the GEN_LANG enum to a string
-std::string_view GenLangToString(GenLang language);
+auto GenLangToString(GenLang language) -> std::string_view;
 
-GenLang ConvertToGenLang(tt_string_view language);
+auto ConvertToGenLang(tt_string_view language) -> GenLang;
 
-std::string GetLanguageExtension(GenLang language);
+auto GetLanguageExtension(GenLang language) -> std::string;
 
-enum class ClassOverrideType
+enum class ClassOverrideType : std::uint8_t
 {
     None = 0,
     Subclass,  // User specified a subclass
@@ -135,5 +137,5 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true
 void SetUniqueRibbonToolID(Node* node);
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
-bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
-                    size_t compressed_size);
+auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
+                    size_t compressed_size) -> bool;

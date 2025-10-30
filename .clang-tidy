@@ -5,14 +5,21 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
+  -readability-magic-numbers,
   modernize-*,
   cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
   -readability-implicit-bool-conversion,
   -readability-enum-initial-value,
   -cppcoreguidelines-owning-memory,
   -misc-no-recursion
 
 FormatStyle: file
+
+CheckOptions:
+  readability-magic-numbers.IgnoredIntegerValues: '0;1;2;-1'
+  readability-magic-numbers.IgnoredFloatingPointValues: '0.0;1.0'
+  readability-magic-numbers.IgnoredVariableNames: '^std_.*'
 
 # Generates way too many invalid warnings
 #  -readability-implicit-bool-conversion,

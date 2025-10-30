@@ -41,9 +41,27 @@ Convert C style char* arrays to std::array using std::to_array.
 
 ## Copilot Agent Build Instructions
 
-- When running a build, always capture the terminal output and parse it for warnings and errors, regardless of the Problems panel state.
-- Do not rely solely on the Problems panel to determine build success or failure.
-- Fix any errors or warnings found in the build output, even if the Problems panel is empty.
+**CRITICAL**: When running a build task, you MUST verify the actual build result correctly:
+
+1. **Clear the terminal BEFORE starting the build** to prevent parsing errors from previous build output
+2. **Always use `get_terminal_output` or `get_task_output` AFTER the build completes** to retrieve the full terminal output
+3. **Search the output for these FAILURE indicators**:
+   - Lines containing "error:" or "error C" (compiler errors)
+   - Lines containing "undefined reference" or "unresolved external symbol" (linker errors)
+   - Lines containing "FAILED:" (build system failures)
+   - Exit code != 0 (check the exit code explicitly)
+   - Lines containing "cannot find" or "No such file"
+4. **Search the output for these SUCCESS indicators**:
+   - "Build finished" or "Build succeeded"
+   - Exit code = 0
+   - No error indicators from the list above
+5. **If ANY errors are found**, the build FAILED - report this to the user with specific error details
+6. **Do NOT report success based on**:
+   - The Problems panel alone
+   - Absence of exceptions
+   - Task completion without checking output
+7. **After identifying errors**, analyze each error message and fix the root cause in the source code
+8. **Re-run the build** after making fixes to verify they resolved the issues
 
 # Language-Specific Coding Standards
 

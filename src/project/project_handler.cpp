@@ -278,109 +278,99 @@ auto ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const -> tt
     return path;
 }
 
-auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::pair<tt_string, bool>
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+auto ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& form) const
+    -> tt_string
 {
-    ASSERT(form->is_Form() || form->is_Folder());
-
     tt_string result;
-    Node* folder = form->is_Folder() ? form : form->get_Folder();
-    if (folder)
+
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        if (language == GEN_LANG_CPLUSPLUS)
+        if (folder->HasValue(prop_folder_base_directory))
         {
-            if (folder->HasValue(prop_folder_base_directory))
-            {
-                result = folder->as_string(prop_folder_base_directory);
-            }
-            else if (folder->HasValue(prop_output_file))
-            {
-                result = folder->as_string(prop_output_file);
-            }
-            else if (folder->is_Gen(gen_data_folder))
-            {
-                // Move the form to the gen_Data node since the folder doesn't specify an output
-                // file.
-                form = folder->get_Parent();
-            }
+            result = folder->as_string(prop_folder_base_directory);
         }
-        else
+        else if (folder->HasValue(prop_output_file))
         {
-            static const std::map<GenLang, PropName> langFolderPropMap = {
-                { GEN_LANG_PERL, prop_folder_perl_output_folder },
-                { GEN_LANG_PYTHON, prop_folder_python_output_folder },
-                { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
-                { GEN_LANG_XRC, prop_folder_xrc_directory }
-            };
-
-            if (auto iter = langFolderPropMap.find(language);
-                iter != langFolderPropMap.end() && folder->HasValue(iter->second))
-            {
-                result = folder->as_string(iter->second);
-            }
+            result = folder->as_string(prop_output_file);
         }
-    }
-
-    // Even if the node has a folder parent, there may not be a directory set for it, so check
-    // result and if it's empty use the project directory properties.
-    if (result.empty() || !folder)
-    {
-        static const std::map<GenLang, PropName> langProjectPropMap = {
-            { GEN_LANG_CPLUSPLUS, prop_base_directory },
-            { GEN_LANG_PERL, prop_perl_output_folder },
-            { GEN_LANG_PYTHON, prop_python_output_folder },
-            { GEN_LANG_RUBY, prop_ruby_output_folder },
-            { GEN_LANG_XRC, prop_xrc_directory }
-        };
-
-        if (auto iter = langProjectPropMap.find(language);
-            iter != langProjectPropMap.end() && m_project_node->HasValue(iter->second))
+        else if (folder->is_Gen(gen_data_folder))
         {
-            result = m_project_node->as_string(iter->second);
+            form = folder->get_Parent();
         }
-    }
-
-    if (result.empty())
-    {
-        result = get_ProjectPath();
-    }
-
-    tt_string base_file;
-    if (language == GEN_LANG_CPLUSPLUS && form->is_Gen(gen_Data))
-    {
-        base_file = form->as_string(prop_output_file);
     }
     else
     {
-        // clang-format off
-        static const std::map<GenLang, PropName> langbase_file_propertyMap = {
-            { GEN_LANG_CPLUSPLUS, prop_base_file },
-            { GEN_LANG_PYTHON, prop_python_file },
-            { GEN_LANG_RUBY, prop_ruby_file },
-            { GEN_LANG_PERL, prop_perl_file },
-            { GEN_LANG_XRC, prop_xrc_file }
+        static const std::map<GenLang, PropName> langFolderPropMap = {
+            { GEN_LANG_PERL, prop_folder_perl_output_folder },
+            { GEN_LANG_PYTHON, prop_folder_python_output_folder },
+            { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
+            { GEN_LANG_XRC, prop_folder_xrc_directory }
         };
-        // clang-format on
-        auto iter = langbase_file_propertyMap.find(language);
-        if (iter != langbase_file_propertyMap.end())
+
+        if (auto iter = langFolderPropMap.find(language);
+            iter != langFolderPropMap.end() && folder->HasValue(iter->second))
         {
-            base_file = form->as_string(iter->second);
-        }
-        else
-        {
-            FAIL_MSG(tt_string() << "Unknown language: " << language);
+            result = folder->as_string(iter->second);
         }
     }
 
-    if (base_file.empty())
+    return result;
+}
+
+auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> tt_string
+{
+    static const std::map<GenLang, PropName> langProjectPropMap = {
+        { GEN_LANG_CPLUSPLUS, prop_base_directory },
+        { GEN_LANG_PERL, prop_perl_output_folder },
+        { GEN_LANG_PYTHON, prop_python_output_folder },
+        { GEN_LANG_RUBY, prop_ruby_output_folder },
+        { GEN_LANG_XRC, prop_xrc_directory }
+    };
+
+    if (auto iter = langProjectPropMap.find(language);
+        iter != langProjectPropMap.end() && m_project_node->HasValue(iter->second))
     {
-        return std::make_pair(result, false);
+        return m_project_node->as_string(iter->second);
     }
 
+    return get_ProjectPath();
+}
+
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> tt_string
+{
+    if (language == GEN_LANG_CPLUSPLUS && form->is_Gen(gen_Data))
+    {
+        return form->as_string(prop_output_file);
+    }
+
+    static const std::map<GenLang, PropName> langbase_file_propertyMap = {
+        { GEN_LANG_CPLUSPLUS, prop_base_file },
+        { GEN_LANG_PYTHON, prop_python_file },
+        { GEN_LANG_RUBY, prop_ruby_file },
+        { GEN_LANG_PERL, prop_perl_file },
+        { GEN_LANG_XRC, prop_xrc_file }
+    };
+
+    auto iter = langbase_file_propertyMap.find(language);
+    if (iter != langbase_file_propertyMap.end())
+    {
+        return form->as_string(iter->second);
+    }
+
+    FAIL_MSG(tt_string() << "Unknown language: " << language);
+    return "";
+}
+
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+auto ProjectHandler::MergeBaseFilePath(tt_string& result, const tt_string& base_file) const -> void
+{
     // TODO: [Randalphwa - 01-06-2024] It's possible that the user created the filename using a
     // folder prefix that is the same as the project's base directory. If that's the case, the
     // prefix should be removed here.
 
-    base_file.backslashestoforward();
+    result.backslashestoforward();
     if (base_file.contains("/"))
     {
         result.backslashestoforward();
@@ -403,6 +393,33 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::p
     result.append_filename(base_file);
     result.make_absolute();
     result.backslashestoforward();
+}
+
+auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::pair<tt_string, bool>
+{
+    ASSERT(form->is_Form() || form->is_Folder());
+
+    tt_string result;
+    Node* folder = form->is_Folder() ? form : form->get_Folder();
+
+    if (folder)
+    {
+        result = GetFolderOutputPath(folder, language, form);
+    }
+
+    if (result.empty())
+    {
+        result = GetProjectOutputPath(language);
+    }
+
+    tt_string base_file = GetBaseFilename(form, language);
+
+    if (base_file.empty())
+    {
+        return std::make_pair(result, false);
+    }
+
+    MergeBaseFilePath(result, base_file);
 
     return std::make_pair(result, true);
 }
@@ -504,6 +521,7 @@ auto ProjectHandler::get_FirstFormChild(Node* node) const -> Node*
     return nullptr;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
 {
     tt_string value = Project.as_string(prop_code_preference);
@@ -565,17 +583,58 @@ auto ProjectHandler::get_GenerateLanguages() const -> size_t
     return languages;
 }
 
+auto ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
+                                          const PropName& base_file_property,
+                                          GenLang language) const -> bool
+{
+    if (!nodes.child->HasValue(base_file_property))
+    {
+        return false;
+    }
+
+    // Check if the property has its default value
+    if (nodes.child->as_string(base_file_property) ==
+        nodes.child->get_PropDefaultValue(base_file_property))
+    {
+        // C++ always outputs with default value
+        if (language == GEN_LANG_CPLUSPLUS)
+        {
+            return get_CodePreference(nodes.form) == GEN_LANG_CPLUSPLUS;
+        }
+
+        // Data/Image nodes with default values follow code preference (except XRC)
+        if (language != GEN_LANG_XRC)
+        {
+            if ((nodes.child->is_Gen(gen_Images) || nodes.child->is_Gen(gen_Data)))
+            {
+                return get_CodePreference(nodes.form) == language;
+            }
+        }
+        else
+        {
+            // XRC doesn't output Data/Images with default values
+            if (nodes.child->is_Gen(gen_Images) || nodes.child->is_Gen(gen_Data))
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 auto ProjectHandler::get_OutputType(int flags) const -> size_t
 {
     size_t result = OUTPUT_NONE;
 
-    auto rlambda = [&](Node* form, auto&& rlambda) -> void
+    auto traverse_forms_recursively = [&](Node* form, auto&& traverse_forms_recursively) -> void
     {
         for (const auto& child: form->get_ChildNodePtrs())
         {
             if (child->is_FormParent())
             {
-                rlambda(child.get(), rlambda);
+                traverse_forms_recursively(child.get(), traverse_forms_recursively);
             }
             else if (child->is_Form())
             {
@@ -603,46 +662,10 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
                                                       .language = GEN_LANG_XRC,
                                                       .output_flag = OUTPUT_XRC } });
 
-                auto shouldOutputLang = [&](const OutputLangInfo& info) -> bool
-                {
-                    if (!child->HasValue(info.base_file_property))
-                    {
-                        return false;
-                    }
-                    if (info.language == GEN_LANG_CPLUSPLUS)
-                    {
-                        if (child->as_string(info.base_file_property) ==
-                                child->get_PropDefaultValue(info.base_file_property) &&
-                            get_CodePreference(form) != GEN_LANG_CPLUSPLUS)
-                        {
-                            return false;
-                        }
-                    }
-                    else if (info.language != GEN_LANG_XRC)
-                    {
-                        if ((child->is_Gen(gen_Images) || child->is_Gen(gen_Data)) &&
-                            child->as_string(info.base_file_property) ==
-                                child->get_PropDefaultValue(info.base_file_property) &&
-                            get_CodePreference(form) != info.language)
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if ((child->is_Gen(gen_Images) || child->is_Gen(gen_Data)) &&
-                            child->as_string(info.base_file_property) ==
-                                child->get_PropDefaultValue(info.base_file_property))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                };
-
                 for (const auto& info: outputLangs)
                 {
-                    if (shouldOutputLang(info))
+                    if (ShouldOutputLanguage({ .form = form, .child = child.get() },
+                                             info.base_file_property, info.language))
                     {
                         result |= info.output_flag;
                     }
@@ -664,7 +687,7 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
         }
     };
 
-    rlambda(m_project_node.get(), rlambda);
+    traverse_forms_recursively(m_project_node.get(), traverse_forms_recursively);
 
     return result;
 }
@@ -693,71 +716,120 @@ auto ProjectHandler::get_DerivedFilename(Node* form) const -> tt_string
     return path;
 }
 
-void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
+[[nodiscard]] auto ProjectHandler::AllFormTypesFound() const -> bool
 {
-    auto ParseImageProps = [&](Node* node, auto&& ParseImageProps) -> void
+    return m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image;
+}
+
+void ProjectHandler::ProcessImageProperty(const NodeProperty& prop, Node* child)
+{
+    if ((prop.type() != type_image && prop.type() != type_animation) || !prop.HasValue())
     {
-        for (const auto& child: node->get_ChildNodePtrs())
+        return;
+    }
+
+    tt_string_vector parts(prop.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts.size() < IndexImage + 1)
+    {
+        return;
+    }
+
+    Node* form_to_use = m_ImagesForm ? m_ImagesForm : child->get_Form();
+    if (!form_to_use)
+    {
+        return;
+    }
+
+    if (parts[IndexType] == "Embed")
+    {
+        if (prop.type() == type_animation)
         {
-            for (const auto& iter: child->get_PropsVector())
+            if (!m_form_Animation)
             {
-                if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
-                {
-                    tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
-                    if (parts.size() < IndexImage + 1)
-                    {
-                        continue;
-                    }
-                    if (parts[IndexType] == "Embed")
-                    {
-                        if (iter.type() == type_animation)
-                        {
-                            if (!m_form_Animation)
-                            {
-                                m_form_Animation = m_ImagesForm ? m_ImagesForm : child->get_Form();
-                            }
-                        }
-                        else
-                        {
-                            if (!m_form_Image)
-                            {
-                                m_form_Image = m_ImagesForm ? m_ImagesForm : child->get_Form();
-                            }
-                            if (!m_form_BundleBitmaps &&
-                                ProjectImages.GetPropertyImageBundle(parts))
-                            {
-                                m_form_BundleBitmaps =
-                                    m_ImagesForm ? m_ImagesForm : child->get_Form();
-                            }
-                        }
-                    }
-                    else if ((parts[IndexType] == "SVG"))
-                    {
-                        if (!m_form_BundleSVG)
-                        {
-                            m_form_BundleSVG = m_ImagesForm ? m_ImagesForm : child->get_Form();
-                        }
-                    }
-
-                    if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps &&
-                        m_form_Image)
-                    {
-                        return;
-                    }
-                }
-            }
-            if (child->get_ChildCount())
-            {
-                ParseImageProps(child.get(), ParseImageProps);
-
-                if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
-                {
-                    return;
-                }
+                m_form_Animation = form_to_use;
             }
         }
-    };
+        else
+        {
+            if (!m_form_Image)
+            {
+                m_form_Image = form_to_use;
+            }
+            if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+            {
+                m_form_BundleBitmaps = form_to_use;
+            }
+        }
+    }
+    else if (parts[IndexType] == "SVG")
+    {
+        if (!m_form_BundleSVG)
+        {
+            m_form_BundleSVG = form_to_use;
+        }
+    }
+}
 
+void ProjectHandler::ParseImagePropsRecursive(Node* node)
+{
+    for (const auto& child_ptr: node->get_ChildNodePtrs())
+    {
+        Node* child = child_ptr.get();
+        for (const auto& prop: child->get_PropsVector())
+        {
+            ProcessImageProperty(prop, child);
+            if (AllFormTypesFound())
+            {
+                return;
+            }
+        }
+
+        if (child->get_ChildCount())
+        {
+            ParseImagePropsRecursive(child);
+            if (AllFormTypesFound())
+            {
+                return;
+            }
+        }
+    }
+}
+
+void ProjectHandler::ProcessFormIcon(Node* form)
+{
+    if (!form->HasValue(prop_icon))
+    {
+        return;
+    }
+
+    tt_string_vector parts(form->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    if (parts.size() < IndexImage + 1)
+    {
+        return;
+    }
+
+    if (parts[IndexType] == "Embed")
+    {
+        if (!m_form_Image)
+        {
+            m_form_Image = form;
+        }
+        if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+        {
+            m_form_BundleBitmaps = form;
+        }
+    }
+    else if (parts[IndexType] == "SVG")
+    {
+        if (!m_form_BundleSVG)
+        {
+            m_form_BundleSVG = form;
+        }
+    }
+}
+
+void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
+{
     m_form_BundleSVG = nullptr;
     m_form_BundleBitmaps = nullptr;
     m_form_Image = nullptr;
@@ -772,36 +844,10 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
             continue;
         }
 
-        if (form->HasValue(prop_icon))
-        {
-            // GetPropertyImageBundle requires a tt_string_vector, so we can't use
-            // ttwx::StringVector just yet.
-            tt_string_vector parts(form->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
-            if (parts.size() >= IndexImage + 1)
-            {
-                if (parts[IndexType] == "Embed")
-                {
-                    if (!m_form_Image)
-                    {
-                        m_form_Image = form;
-                    }
-                    if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
-                    {
-                        m_form_BundleBitmaps = form;
-                    }
-                }
-                else if ((parts[IndexType] == "SVG"))
-                {
-                    if (!m_form_BundleSVG)
-                    {
-                        m_form_BundleSVG = form;
-                    }
-                }
-            }
-        }
+        ProcessFormIcon(form);
+        ParseImagePropsRecursive(form);
 
-        ParseImageProps(form, ParseImageProps);
-        if (m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image)
+        if (AllFormTypesFound())
         {
             return;
         }
@@ -928,6 +974,11 @@ namespace
 
 }  // namespace
 
+// Version encoding constants for get_LangVersion()
+// Assumes major, minor, and patch each have 99 possible values
+constexpr int VERSION_MAJOR_MULTIPLIER = 10000;
+constexpr int VERSION_MINOR_MULTIPLIER = 100;
+
 auto ProjectHandler::get_LangVersion(GenLang language) const -> int
 {
     std::string_view version;
@@ -943,5 +994,5 @@ auto ProjectHandler::get_LangVersion(GenLang language) const -> int
 
     auto [major, minor, patch] = parseVersionString(version);
 
-    return (major * 10000) + (minor * 100) + patch;
+    return (major * VERSION_MAJOR_MULTIPLIER) + (minor * VERSION_MINOR_MULTIPLIER) + patch;
 }

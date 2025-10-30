@@ -10,8 +10,9 @@
 #include <cstdint>  // for std::uint8_t
 #include <utility>  // for pair<>
 
-#include "gen_enums.h"  // Enumerations for generators
-#include "node.h"       // Node class
+#include "gen_enums.h"    // Enumerations for generators
+#include "node.h"         // Node class
+#include "utils/utils.h"  // NodesFormChild structure
 
 namespace pugi
 {
@@ -45,11 +46,12 @@ private:
     // ProjectHandler() {}
     ProjectHandler();
     ~ProjectHandler();
+
+public:
     ProjectHandler(ProjectHandler&&) = delete;
     auto operator=(ProjectHandler&&) -> ProjectHandler& = delete;
     ProjectHandler(ProjectHandler const&) = delete;
 
-public:
     void operator=(ProjectHandler const&) = delete;
 
     static auto getInstance() -> ProjectHandler&
@@ -105,7 +107,7 @@ public:
     // was specified.
     auto get_DerivedFilename(Node*) const -> tt_string;
 
-    auto get_ProjectNode() const -> Node* { return m_project_node.get(); }
+    [[nodiscard]] auto get_ProjectNode() const -> Node* { return m_project_node.get(); }
     auto get_ChildNodePtrs() -> auto& { return m_project_node->get_ChildNodePtrs(); }
     auto get_Child(size_t index) -> Node* { return m_project_node->get_Child(index); }
 
@@ -253,6 +255,24 @@ public:
     }
 
 private:
+    // Helper function to determine if a language should generate output for a child node
+    [[nodiscard]] auto ShouldOutputLanguage(const NodesFormChild& nodes,
+                                            const PropName& base_file_property,
+                                            GenLang language) const -> bool;
+
+    // Helper functions for GetOutputPath complexity reduction
+    [[nodiscard]] auto GetFolderOutputPath(Node* folder, GenLang language, Node*& form) const
+        -> tt_string;
+    [[nodiscard]] auto GetProjectOutputPath(GenLang language) const -> tt_string;
+    [[nodiscard]] auto GetBaseFilename(Node* form, GenLang language) const -> tt_string;
+    void MergeBaseFilePath(tt_string& result, const tt_string& base_file) const;
+
+    // Helper functions for FindWxueFunctions complexity reduction
+    [[nodiscard]] auto AllFormTypesFound() const -> bool;
+    void ProcessImageProperty(const NodeProperty& prop, Node* child);
+    void ParseImagePropsRecursive(Node* node);
+    void ProcessFormIcon(Node* form);
+
     NodeSharedPtr m_project_node { nullptr };
 
     Node* m_form_BundleSVG { nullptr };

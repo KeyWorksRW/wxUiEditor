@@ -9,6 +9,7 @@
 #include <charconv>
 #include <cstddef>
 #include <cstdio>  // For snprintf
+#include <format>
 #include <set>
 
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations

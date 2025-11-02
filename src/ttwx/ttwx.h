@@ -189,18 +189,20 @@ namespace ttwx
 
     auto append_folder_name(wxString& path, const wxString& folder_name) -> wxString&;
 
+    ////////////////////////// SaveCwd class and related constants ////////////////
+
     // Saves the current working directory and optionally restores it when the object goes
     // out of scope.
     class SaveCwd
     {
     public:
-        enum class RestoreOption : std::uint8_t
+        enum : bool
         {
-            no_restore = 0,
-            restore = 1
+            no_restore = false,
+            restore = true
         };
 
-        explicit SaveCwd(RestoreOption option = RestoreOption::restore) : m_restore_option(option)
+        explicit SaveCwd(bool option = restore) : m_restore_option(option)
         {
             m_saved_cwd = wxGetCwd();
         }
@@ -214,7 +216,7 @@ namespace ttwx
 
         ~SaveCwd()
         {
-            if (m_restore_option == RestoreOption::restore)
+            if (m_restore_option)
             {
                 // Deliberately ignoring the return value because there's nothing we can do about it
                 // here.
@@ -224,6 +226,10 @@ namespace ttwx
 
     private:
         wxString m_saved_cwd;
-        RestoreOption m_restore_option;
+        bool m_restore_option;
     };
+
+    // Named constants for SaveCwd options
+    constexpr bool restore_cwd = SaveCwd::restore;
+    constexpr bool no_restore_cwd = SaveCwd::no_restore;
 }  // namespace ttwx

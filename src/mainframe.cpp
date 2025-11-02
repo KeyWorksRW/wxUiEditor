@@ -107,6 +107,7 @@ enum : std::uint16_t
     id_UndoInfo,
     id_DebugPythonTest,
     id_DebugRubyTest,
+    id_VerifyTtwx,
 
 };
 
@@ -274,19 +275,20 @@ MainFrame::MainFrame() :
 #if defined(_DEBUG)
     auto* menuInternal = new wxMenu;
 
-    // We want these available in internal Release builds
-
     menuInternal->AppendSeparator();
     menuInternal->Append(id_DebugPreferences, "Test &Settings...",
                          "Settings to use in testing builds");
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     menuInternal->AppendSeparator();
+    menuInternal->Append(id_VerifyTtwx, "&Verify TTWX...", "Verify TTWX files");
+
+    menuInternal->AppendSeparator();
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
     m_menubar->Append(menuInternal, "&Internal");
 
-#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
+#endif  // defined(_DEBUG)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -531,6 +533,7 @@ MainFrame::MainFrame() :
     }
 
 #if defined(_DEBUG)
+    Bind(wxEVT_MENU, &MainFrame::OnVerifyTTWX, this, id_VerifyTtwx);
     Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
     Bind(
         wxEVT_MENU,

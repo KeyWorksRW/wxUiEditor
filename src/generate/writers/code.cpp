@@ -29,6 +29,7 @@
 #include "image_gen.h"        // Functions for generating embedded images
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+#include "ttwx.h"             // ttwx helpers for whitespace detection
 #include "utils.h"            // Miscellaneous utilities
 
 using namespace code;
@@ -535,7 +536,7 @@ auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
     }
 
     // Ensure there are no trailing tabs
-    while (size() && tt::is_whitespace(back()))
+    while (size() && ttwx::is_whitespace(back()))
     {
         pop_back();
     }
@@ -572,7 +573,7 @@ void Code::CloseFontBrace()
 {
     if (is_cpp() || is_perl())
     {
-        while (size() && tt::is_whitespace(back()))
+        while (size() && ttwx::is_whitespace(back()))
         {
             pop_back();
         }

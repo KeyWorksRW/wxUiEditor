@@ -11,6 +11,7 @@
 
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "mainframe.h"           // MainFrame -- Main window frame
+#include "ttwx.h"                // ttwx helpers for numeric conversions
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
@@ -35,7 +36,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_NUMBER);
 
     auto fields = m_prop->as_statusbar_fields();
-    if (tt::is_digit(m_prop->as_string()[0]))
+    if (ttwx::is_digit(m_prop->as_string()[0]))
     {
         fields.clear();
         auto total_fields = m_prop->as_int();
@@ -75,7 +76,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& /* event unused */)
         m_grid->SetCellValue(row, 0, iter.style);
         m_grid->SetCellValue(row, 1, iter.width);
         // m_grid->SetRowLabelValue(row, " ");
-        m_grid->SetRowLabelValue(row, tt::itoa(row));
+        m_grid->SetRowLabelValue(row, ttwx::itoa(row));
         ++row;
     }
 
@@ -140,7 +141,7 @@ void SBarFieldsDialog::OnNewRow(wxCommandEvent& /* event unused */)
         "wxSB_SUNKEN",
     };
     m_grid->SetCellEditor(new_row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices));
-    m_grid->SetRowLabelValue(new_row, tt::itoa(new_row));
+    m_grid->SetRowLabelValue(new_row, ttwx::itoa(new_row));
     m_grid->SelectRow(new_row);
     m_grid->SetCellValue(new_row, 0, choices[0]);
     m_grid->SetCellValue(new_row, 1, "-1");

@@ -9,6 +9,7 @@
 
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
+#include "ttwx.h"          // ttwx helpers for numeric conversions
 
 WinResource::WinResource() {}
 
@@ -180,7 +181,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                 else if (curline.starts_with("#pragma code_page"))
                 {
                     auto code = curline.find('(');
-                    m_codepage = tt::atoi(curline.subview(code + 1));
+                    m_codepage = ttwx::atoi(curline.subview(code + 1));
                 }
             }
         }
@@ -266,7 +267,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                     if (curline.contains(" code_page("))
                     {
                         auto code = curline.find('(');
-                        m_codepage = tt::atoi(curline.subview(code + 1));
+                        m_codepage = ttwx::atoi(curline.subview(code + 1));
                     }
                 }
             }
@@ -315,7 +316,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
     {
         MSG_ERROR(e.what());
         wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line "
-                                  << tt::itoa(m_curline << 1) << "\n\n"
+                                  << ttwx::itoa(m_curline << 1) << "\n\n"
                                   << e.what())
                          .make_wxString(),
                      "RC Parser");

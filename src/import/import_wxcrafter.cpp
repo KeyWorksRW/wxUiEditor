@@ -25,6 +25,7 @@
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "ttwx.h"            // ttwx helpers for character classification
 #include "utils.h"           // Utility functions that work with properties
 
 #include "import_crafter_maps.cpp"  // Map of wxCrafter properties to wxUiEditor properties
@@ -1120,7 +1121,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         if (setting.IsString())
         {
             tt_string result = setting.GetString();
-            if (tt::is_digit(result[0]))
+            if (ttwx::is_digit(result[0]))
             {
                 if (node->HasProp(prop_selection_int))
                     node->set_value(prop_selection_int, result.atoi());
@@ -1411,7 +1412,7 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
                 mstr[0].is_sameas("wxSYS_ANSI_FIXED_FONT"))
                 font_info.Family(wxFONTFAMILY_TELETYPE);
 
-            if (tt::is_digit(mstr[0][0]))
+            if (ttwx::is_digit(mstr[0][0]))
             {
                 font_info.PointSize(mstr[0].atoi());
 

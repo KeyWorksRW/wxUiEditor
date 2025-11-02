@@ -15,6 +15,7 @@
 
 #include "mainapp.h"         // App -- App class
 #include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
+#include "ttwx.h"            // ttwx helpers for character classification
 
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
@@ -431,7 +432,7 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
         {
             for (auto& line: rc_file)
             {
-                if (line.empty() || !tt::is_alpha(line[0]))
+                if (line.empty() || !ttwx::is_alpha(line[0]))
                     continue;
 
                 auto type = line.view_stepover();

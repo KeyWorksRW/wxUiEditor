@@ -13,6 +13,7 @@
 #include "node.h"           // Node class
 #include "node_creator.h"   // Class used to create nodes
 #include "pugixml.hpp"      // xml read/write/create/process
+#include "ttwx.h"           // ttwx helpers for character classification
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
@@ -236,7 +237,7 @@ int StatusBarGenerator::GetRequiredVersion(Node* node)
     {
         return BaseGenerator::GetRequiredVersion(node);
     }
-    if (tt::is_digit(node->as_string(prop_fields)[0]))
+    if (ttwx::is_digit(node->as_string(prop_fields)[0]))
     {
         return BaseGenerator::GetRequiredVersion(node);
     }

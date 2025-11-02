@@ -16,6 +16,7 @@
 #include "mainframe.h"         // Main window frame
 #include "node.h"              // Node class
 #include "node_creator.h"      // NodeCreator class
+#include "ttwx.h"              // ttwx helpers for character and numeric conversions
 #include "ttwx_view_vector.h"  // ttwx_view_vector class
 #include "utils.h"             // Utility functions that work with properties
 
@@ -898,11 +899,11 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_cellspan:
                 if (tt_string_vector mstr(xml_obj.text().as_view(), ','); mstr.size())
                 {
-                    if (mstr[0].size() && tt::atoi(mstr[0]) > 0)
+                    if (mstr[0].size() && ttwx::atoi(mstr[0]) > 0)
                     {
                         node->set_value(prop_rowspan, mstr[0]);
                     }
-                    if (mstr.size() > 1 && mstr[1].size() && tt::atoi(mstr[1]) > 0)
+                    if (mstr.size() > 1 && mstr[1].size() && ttwx::atoi(mstr[1]) > 0)
                     {
                         node->set_value(prop_colspan, mstr[1]);
                     }

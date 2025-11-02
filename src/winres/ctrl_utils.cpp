@@ -8,6 +8,7 @@
 #include "winres_ctrl.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "ttwx.h"           // ttwx helpers for numeric parsing
 #include "utils.h"          // Utility functions that work with properties
 
 void resCtrl::ParseCommonStyles(tt_string_view line)
@@ -35,9 +36,9 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     if (line.at(0) == ',')
         line.moveto_digit();
 
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetLeft(tt::atoi(line));
+    duRect.SetLeft(ttwx::atoi(line));
 
     auto pos = line.find_first_of(',');
     if (!tt::is_found(pos))
@@ -45,9 +46,9 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetTop(tt::atoi(line));
+    duRect.SetTop(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
     if (!tt::is_found(pos))
@@ -55,9 +56,9 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetWidth(tt::atoi(line));
+    duRect.SetWidth(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
     if (!tt::is_found(pos))
@@ -65,9 +66,9 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetHeight(tt::atoi(line));
+    duRect.SetHeight(ttwx::atoi(line));
 
     if (m_node->is_Gen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
     {
@@ -127,7 +128,7 @@ tt_string_view resCtrl::GetID(tt_string_view line)
         {
             id = "wxID_ANY";
         }
-        else if (tt::is_digit(id[0]))
+        else if (ttwx::is_digit(id[0]))
         {
             id.insert(0, "id_");
         }

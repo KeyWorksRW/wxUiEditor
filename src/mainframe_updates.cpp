@@ -76,9 +76,9 @@ void MainFrame::UpdateLanguagePanels()
     // Language panels in order, then restore the XRC and DocView panels after all language panels
     // have been added.
 
-    if (m_imnportPanel)
+    if (m_importPanel)
     {
-        m_notebook->RemovePage(m_notebook->GetPageIndex(m_imnportPanel));
+        m_notebook->RemovePage(m_notebook->GetPageIndex(m_importPanel));
     }
 
     m_notebook->RemovePage(m_notebook->GetPageIndex(m_xrcPanel));
@@ -216,9 +216,9 @@ void MainFrame::UpdateLanguagePanels()
     }
 
     // Now add back the XRC and DocView panels at the end.
-    if (m_imnportPanel)
+    if (m_importPanel)
     {
-        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+        m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
 
     if (Project.get_CodePreference() != GEN_LANG_XRC)

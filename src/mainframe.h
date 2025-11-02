@@ -94,7 +94,7 @@ public:
     auto getTopNotebook() -> wxAuiNotebook* { return m_notebook; }
     auto getDocViewPanel() -> DocViewPanel* { return m_docviewPanel; }
 
-    auto getImportPanel() -> ImportPanel* { return m_imnportPanel; }
+    auto getImportPanel() -> ImportPanel* { return m_importPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler)
     {
@@ -379,7 +379,7 @@ private:
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
-    ImportPanel* m_imnportPanel { nullptr };
+    ImportPanel* m_importPanel { nullptr };
 
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };

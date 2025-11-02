@@ -661,8 +661,8 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     if (wxGetApp().isTestingMenuEnabled())
     {
         // Shows original import file if project is imported, otherwise it shows the project file
-        m_imnportPanel = new ImportPanel(m_notebook);
-        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+        m_importPanel = new ImportPanel(m_notebook);
+        m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
 
     return m_notebook;

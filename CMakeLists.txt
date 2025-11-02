@@ -123,11 +123,14 @@ if( INTERNAL_BLD_TESTING )
     # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
     # and FAIL_MSG() in a Release build.
     add_compile_definitions( INTERNAL_TESTING )
+    include( src/verify/verify.cmake )  # This will set ${verify_files} with a list of source files
+
     set( wxui_internal_files
         src/internal/msg_logging.cpp
         src/internal/msgframe.cpp
         src/internal/import_panel.cpp
         src/internal/convert_img.cpp
+        ${verify_files}
     )
 else()
     set( wxui_internal_files
@@ -243,22 +246,6 @@ FetchContent_MakeAvailable( wxWidgets )
 
 message( NOTICE "wxWidgets has been fetched and configured." )
 message( STATUS "wxWidgets sources: " ${wxWidgets_SOURCE_DIR} )
-
-include( FetchContent )
-
-message( STATUS "Fetching Catch2..." )
-
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.5.4
-)
-
-message( NOTICE "Configuring Catch2  (this may take awhile) ..." )
-
-FetchContent_MakeAvailable( Catch2 )
-
-message( NOTICE "Catch2 has been fetched and configured." )
 
 # ###################### Libraries and Executables #######################
 
@@ -411,16 +398,6 @@ foreach( component ${wxWidgets_REQUIRED_COMPONENTS} )
 endforeach()
 
 target_link_libraries( wxUiEditor PRIVATE ${wxWidgets_LIBRARIES} ${SYSTEM_LIBS} )
-
-# ###################### Testing #######################
-
-# Enable testing
-enable_testing()
-
-# Add ttwx tests subdirectory
-add_subdirectory( src/ttwx/tests )
-
-# include( tests/app_tests.cmake )  # This will set ${wxue_generated_code} with list of generated files
 
 # ###################### Packaging Instructions #######################
 if( UNIX )

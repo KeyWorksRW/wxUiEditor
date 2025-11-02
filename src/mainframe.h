@@ -325,6 +325,7 @@ protected:
 
 #if defined(_DEBUG)  // Starts debug section.
 
+    void OnVerifyTTWX(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);
 
 #endif

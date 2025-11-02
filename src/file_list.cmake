@@ -417,7 +417,7 @@ set( doc_list
     ../docs/import_winres.md
     ../docs/xrc.md
 
-    ../dev_docs/dev_notes.md
+    ../dev_docs/dev_notes.mdwh test_xr
     ../dev_docs/xml_interface.md
     ../dev_docs/generators.md
     ../dev_docs/windows_res.md
@@ -425,22 +425,6 @@ set( doc_list
 
     ../.github/copilot-instructions.md
     ../Claude.md
-)
-
-set( ttwx_files
-    ttwx/tests/QUICK_START.md
-    ttwx/tests/README.md
-    ttwx/tests/test_ttwx.cpp
-    ttwx/tests/CMakeLists.txt
-    ttwx/tests/test_string_vector.cpp
-    ttwx/tests/test_view_vector.cpp
-
-    ttwx/ttwx.cpp
-    ttwx/ttwx.h
-    ttwx/ttwx_view_vector.cpp
-    ttwx/ttwx_view_vector.h
-    ttwx/ttwx_string_vector.cpp
-    ttwx/ttwx_string_vector.h
 )
 
 set( xml_list

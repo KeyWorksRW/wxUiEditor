@@ -562,7 +562,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node*
             return gen_PanelForm;
         }
 
-        if (tt::is_found(parent->get_DeclName().find("book")))
+        if (ttwx::is_found(parent->get_DeclName().find("book")))
         {
             return gen_BookPage;
         }
@@ -735,7 +735,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     tt_string label = ConvertEscapeSlashes(iter.text().as_view());
                     label.Replace("_", "&");
                     auto pos = label.find("\\t");
-                    if (tt::is_found(pos))
+                    if (ttwx::is_found(pos))
                     {
                         label[pos] = 0;
                         node->set_value(prop_shortcut, label.subview(pos + 2));

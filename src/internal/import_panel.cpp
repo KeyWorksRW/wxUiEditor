@@ -243,7 +243,7 @@ void ImportPanel::OnNodeSelected(Node* node)
     if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
-        if (auto pos = search.find('='); tt::is_found(pos))
+        if (auto pos = search.find('='); ttwx::is_found(pos))
         {
             search.erase(pos - 1, search.size() - pos + 1);
         }
@@ -258,13 +258,14 @@ void ImportPanel::OnNodeSelected(Node* node)
     }
     line = (to_int) m_view.FindLineContaining(search);
 
-    if (!tt::is_found(line) && m_import_file.has_extension(".pjd") && node->HasValue(prop_var_name))
+    if (!ttwx::is_found(line) && m_import_file.has_extension(".pjd") &&
+        node->HasValue(prop_var_name))
     {
         search = "\"" + node->as_string(prop_var_name);
         line = (to_int) m_view.FindLineContaining(search);
     }
 
-    if (!tt::is_found(line) && m_import_file.has_extension(".pjd"))
+    if (!ttwx::is_found(line) && m_import_file.has_extension(".pjd"))
     {
         search = node->get_NodeDeclaration()->get_DeclName();
         // DialogBlocks uses wbClassName instead of the expected wxClassName
@@ -273,7 +274,7 @@ void ImportPanel::OnNodeSelected(Node* node)
         line = (to_int) m_view.FindLineContaining(search);
     }
 
-    if (!tt::is_found(line))
+    if (!ttwx::is_found(line))
     {
         return;
     }

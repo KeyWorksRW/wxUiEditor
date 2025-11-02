@@ -237,7 +237,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                                  Project.get_ProjectNode()->as_string(prop_cmake_file);
                 path.make_absolute();
                 tt_string tmp_path(path);
-                if (auto pos_file = path.find_filename(); tt::is_found(pos_file))
+                if (auto pos_file = path.find_filename(); ttwx::is_found(pos_file))
                 {
                     tmp_path.insert(pos_file, "~wxue_");
                 }
@@ -360,7 +360,7 @@ void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node ro
                 if (new_hdr || new_src)
                 {
                     tt_string tmp_path(path);
-                    if (auto pos_file = path.find_filename(); tt::is_found(pos_file))
+                    if (auto pos_file = path.find_filename(); ttwx::is_found(pos_file))
                     {
                         tmp_path.insert(pos_file, "~wxue_");
                     }

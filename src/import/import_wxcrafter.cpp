@@ -679,7 +679,7 @@ void WxCrafter::ProcessEvents(Node* node, const Value& array)
                     if (!node_event)
                     {
                         auto pos = modified_name.find_last_of('_');
-                        if (tt::is_found(pos))
+                        if (ttwx::is_found(pos))
                         {
                             modified_name.erase(pos);
                             node_event = node->get_Event(GetCorrectEventName(modified_name));

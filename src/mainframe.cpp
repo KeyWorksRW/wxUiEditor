@@ -803,7 +803,7 @@ void MainFrame::CopyNode(Node* node)
 
             // Skip over the XML header
             auto begin = strm.str().find("<node");
-            if (tt::is_found(begin))
+            if (ttwx::is_found(begin))
             {
                 u8_data->GetText() = strm.str().c_str() + begin;
                 auto* hash_data = new wxUEDataObject();

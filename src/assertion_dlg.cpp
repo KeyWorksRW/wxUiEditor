@@ -65,7 +65,7 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
             if (wxGetApp().isTestingMenuEnabled())
             {
                 tt_string log_msg = str.ToStdString();
-                if (auto pos = log_msg.find("\n\nPress Yes"); tt::is_found(pos))
+                if (auto pos = log_msg.find("\n\nPress Yes"); ttwx::is_found(pos))
                 {
                     log_msg.erase(pos, std::string::npos);
                 }
@@ -123,7 +123,7 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
             if (wxGetApp().isTestingMenuEnabled())
             {
                 tt_string log_msg = str.ToStdString();
-                if (auto pos = log_msg.find("\n\nPress Yes"); tt::is_found(pos))
+                if (auto pos = log_msg.find("\n\nPress Yes"); ttwx::is_found(pos))
                 {
                     log_msg.erase(pos, std::string::npos);
                 }

@@ -42,7 +42,7 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (value <= row_or_col)
                 {
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); tt::is_found(pos))
+                    if (auto pos = iter.find(':'); ttwx::is_found(pos))
                     {
                         proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                     }
@@ -108,7 +108,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
                         is_within_braces = true;
                     }
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); tt::is_found(pos))
+                    if (auto pos = iter.find(':'); ttwx::is_found(pos))
                     {
                         proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                     }

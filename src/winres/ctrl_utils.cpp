@@ -41,7 +41,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     duRect.SetLeft(ttwx::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
@@ -51,7 +51,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     duRect.SetTop(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
@@ -61,7 +61,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     duRect.SetWidth(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
@@ -136,7 +136,7 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     else
     {
         auto end = line.find_first_of(',');
-        if (!tt::is_found(end))
+        if (!ttwx::is_found(end))
         {
             MSG_WARNING(tt_string() << "Missing comma after ID :" << m_original_line);
             end = line.size();
@@ -192,7 +192,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
     else
     {
         auto pos = line.find(',');
-        if (!tt::is_found(pos))
+        if (!ttwx::is_found(pos))
         {
             throw std::invalid_argument("Expected a quoted label.");
         }
@@ -206,7 +206,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
     if (m_node->is_Gen(gen_wxHyperlinkCtrl))
     {
         auto begin_anchor = label.locate("<a", 0, tt::CASE::either);
-        if (!tt::is_found(begin_anchor))
+        if (!ttwx::is_found(begin_anchor))
         {
             // Without an anchor, there is no URL
             m_node->set_value(prop_label, ConvertEscapeSlashes(label));
@@ -293,7 +293,7 @@ tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
 tt_string_view resCtrl::StepOverComma(tt_string_view line, tt_string& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return tt::emptystring;
 
     if (pos + 1 >= line.size())

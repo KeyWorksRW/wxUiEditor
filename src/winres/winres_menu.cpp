@@ -178,7 +178,7 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                 parent->AdoptChild(item);
                 tt_string_view label = line.view_substr(0);
                 auto end = label.find("\\t");
-                if (tt::is_found(end))
+                if (ttwx::is_found(end))
                 {
                     item->set_value(prop_label,
                                     m_pWinResource->ConvertCodePageString(label.substr(0, end)));
@@ -191,12 +191,12 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                 }
 
                 auto pos = line.find("\",");
-                if (tt::is_found(pos))
+                if (ttwx::is_found(pos))
                 {
                     tt_string_view id = line.subview(pos + 3);
                     id.moveto_nonspace();
                     end = id.find_first_of(',');
-                    if (!tt::is_found(end))
+                    if (!ttwx::is_found(end))
                     {
                         id.trim(tt::TRIM::right);
                         item->set_value(prop_id, id);

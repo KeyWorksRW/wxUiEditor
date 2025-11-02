@@ -205,7 +205,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         code.Unindent();
 
         // Try to line up the parameters with the "parent" parameter
-        if (auto indent_pos = code.GetCode().find("parent"); tt::is_found(indent_pos))
+        if (auto indent_pos = code.GetCode().find("parent"); ttwx::is_found(indent_pos))
         {
             indent_pos -= code.GetCode().find("\n");
             std::string spaces(indent_pos, ' ');

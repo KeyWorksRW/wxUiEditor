@@ -194,7 +194,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
             auto& prop_id = iter.as_string();
             if (prop_id.size() && !prop_id.starts_with("wxID_"))
             {
-                if (tt::is_found(
+                if (ttwx::is_found(
                         prop_id.find('=')))  // If it has an assignment operator, it's a constant
                     set_const_ids.insert(prop_id);
                 else

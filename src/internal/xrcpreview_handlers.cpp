@@ -148,7 +148,7 @@ void XrcPreview::Generate(Node* form_node)
 
     int line = (to_int) m_view.FindLineContaining(search);
 
-    if (!tt::is_found(line))
+    if (!ttwx::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);

@@ -108,7 +108,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         // First copy the diretive name without the leading whitespace
         temp_view.moveto_nonspace();
         auto pos_space = temp_view.find_space();
-        if (!tt::is_found(pos_space))
+        if (!ttwx::is_found(pos_space))
         {
             MSG_ERROR(tt_string() << "Invalid directive: " << line);
             return;

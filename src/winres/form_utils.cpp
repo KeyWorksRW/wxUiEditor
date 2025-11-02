@@ -204,7 +204,7 @@ bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     duRect.SetLeft(ttwx::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
@@ -214,7 +214,7 @@ bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     duRect.SetTop(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
@@ -224,7 +224,7 @@ bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     duRect.SetWidth(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);

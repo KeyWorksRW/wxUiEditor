@@ -144,7 +144,7 @@ void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
         m_isLineWriting = true;
     }
 
-    if (tt::is_found(code.find('\t')))
+    if (ttwx::is_found(code.find('\t')))
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
@@ -179,7 +179,7 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
         writeLine();
         return;
     }
-    if (tt::is_found(code.find('\n')))
+    if (ttwx::is_found(code.find('\n')))
     {
         tt_view_vector lines(code, '\n');
         for (auto& iter: lines)
@@ -200,7 +200,7 @@ void WriteCode::writeLine(tt_string_view code, size_t indentation)
         writeLine();
         return;
     }
-    if (tt::is_found(code.find('\n')))
+    if (ttwx::is_found(code.find('\n')))
     {
         tt_view_vector lines(code, '\n');
         for (auto& iter: lines)
@@ -243,7 +243,7 @@ void WriteCode::write(tt_string_view code, bool auto_indent)
         m_isLineWriting = true;
     }
 
-    if (tt::is_found(code.find('\t')))
+    if (ttwx::is_found(code.find('\t')))
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);

@@ -122,7 +122,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
             file.RemoveLine(idx + 1);
         }
 
-        if (file[idx].size() > 3 && tt::is_found(file[idx].find("NOT", file[idx].size() - 4)))
+        if (file[idx].size() > 3 && ttwx::is_found(file[idx].find("NOT", file[idx].size() - 4)))
         {
             file[idx] << ' ' << file[idx + 1].view_nonspace();
             file[idx].trim();
@@ -168,7 +168,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
         // String tables need to be processed first because we need the id in case it's used as the
         // help string for a menu.
         m_curline = file.FindLineContaining("STRINGTABLE");
-        if (tt::is_found(m_curline))
+        if (ttwx::is_found(m_curline))
         {
             // We have to restart at zero in order to pickup code page changes
             for (m_curline = 0; m_curline < file.size(); ++m_curline)
@@ -414,7 +414,7 @@ void WinResource::ParseStringTable(tt_string_vector& file)
         }
 
         auto pos = line.find_space();
-        if (tt::is_found(pos))
+        if (ttwx::is_found(pos))
         {
             tt_string id(line.substr(0, pos));
             id.trim(tt::TRIM::right);
@@ -422,7 +422,7 @@ void WinResource::ParseStringTable(tt_string_vector& file)
                 id.pop_back();
 
             pos = line.find_nonspace(pos);
-            if (tt::is_found(pos))
+            if (ttwx::is_found(pos))
             {
                 auto text = ConvertCodePageString(line.view_substr(pos));
                 // tt_string text(line.view_substr(pos));

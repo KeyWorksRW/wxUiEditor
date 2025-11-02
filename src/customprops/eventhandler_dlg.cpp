@@ -232,7 +232,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
                     m_check_capture_this->SetValue(value.contains("this"));
                     m_check_include_event->SetValue(value.contains("& event)"));
 
-                    if (auto pos = value.find('{'); tt::is_found(pos))
+                    if (auto pos = value.find('{'); ttwx::is_found(pos))
                     {
                         tt_string lamda = value.substr(pos + 1);
                         if (lamda.back() == '}')

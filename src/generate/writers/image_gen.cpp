@@ -427,7 +427,7 @@ namespace
 
         tt_string art_id(parts[IndexArtID]);
         tt_string art_client;
-        if (auto pos = art_id.find('|'); tt::is_found(pos))
+        if (auto pos = art_id.find('|'); ttwx::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);

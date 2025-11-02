@@ -205,7 +205,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
             if (!files_are_different)
                 return write_current;
 
-            if (!tt::is_found(additional_content))
+            if (!ttwx::is_found(additional_content))
             {
                 for (; line_index < org_file.size(); ++line_index)
                 {
@@ -217,7 +217,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
                 }
             }
 
-            if (!tt::is_found(additional_content))
+            if (!ttwx::is_found(additional_content))
             {
                 // This is bad -- it means the original file no longer has the comment block
                 // ending the generated code. We don't want to overwrite the changes, so instead
@@ -316,7 +316,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
         return write_error;
     }
 
-    if (tt::is_found(additional_content))
+    if (ttwx::is_found(additional_content))
         return write_edited;
     else
         return write_success;

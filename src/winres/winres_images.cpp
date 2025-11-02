@@ -69,7 +69,7 @@ void resCtrl::ParseIconControl(tt_string_view line)
     else
     {
         auto pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing comma after control text :" << m_original_line);
             return;
@@ -143,7 +143,7 @@ void resCtrl::ParseImageControl(tt_string_view line)
     else
     {
         auto pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing comma after control text :" << m_original_line);
             return;
@@ -237,14 +237,14 @@ void resCtrl::ParseImageControl(tt_string_view line)
     if (line.size() && line.at(0) == '"')
     {
         auto pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing style after class :" << m_original_line);
             return;
         }
         // Now step over the style
         pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing dimension after style :" << m_original_line);
             return;

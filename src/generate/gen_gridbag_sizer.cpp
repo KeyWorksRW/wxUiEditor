@@ -127,7 +127,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
             for (auto& iter: values)
             {
                 int proportion = 0;
-                if (auto pos = iter.find(':'); tt::is_found(pos))
+                if (auto pos = iter.find(':'); ttwx::is_found(pos))
                 {
                     proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                 }
@@ -213,7 +213,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
                     is_within_braces = true;
                 }
                 int proportion = 0;
-                if (auto pos = iter.find(':'); tt::is_found(pos))
+                if (auto pos = iter.find(':'); ttwx::is_found(pos))
                 {
                     proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                 }

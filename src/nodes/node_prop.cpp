@@ -717,14 +717,14 @@ bool NodeProperty::HasValue() const
             return (as_point() != wxDefaultPosition);
 
         case type_animation:
-            if (auto semicolonIndex = m_value.find_first_of(";"); tt::is_found(semicolonIndex))
+            if (auto semicolonIndex = m_value.find_first_of(";"); ttwx::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0);
             }
             return m_value.size();
 
         case type_image:
-            if (auto semicolonIndex = m_value.find_first_of(";"); tt::is_found(semicolonIndex))
+            if (auto semicolonIndex = m_value.find_first_of(";"); ttwx::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }

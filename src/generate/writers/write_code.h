@@ -64,7 +64,7 @@ public:
     virtual void Clear() = 0;
 
     // Derived class provides this to write text to whatever output device is being used
-    virtual void doWrite(tt_string_view code) = 0;
+    virtual void doWrite(std::string_view code) = 0;
 
     [[nodiscard]] auto get_Indentation() const { return m_indent; }
 

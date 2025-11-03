@@ -170,7 +170,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         {
             name << "->Bind";
             line = (to_int) m_view.FindLineContaining(name);
-            if (!tt::is_found(line))
+            if (!ttwx::is_found(line))
             {
                 name.Replace("->Bind", " = ");
                 line = (to_int) m_view.FindLineContaining(name);
@@ -186,7 +186,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
                     continue;
 
                 line = (to_int) m_view.FindLineContaining(value);
-                if (tt::is_found(line))
+                if (ttwx::is_found(line))
                     break;
             }
         }
@@ -224,7 +224,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
                         code.clear();
                         code.Function(node->is_Gen(gen_ribbonButton) ? "AddButton" : "AddTool");
                         line = (to_int) m_view.FindLineContaining(code.GetCode());
-                        if (tt::is_found(line))
+                        if (ttwx::is_found(line))
                         {
                             line = (to_int) m_view.FindLineContaining(*result, line);
                         }
@@ -232,19 +232,19 @@ void CodeDisplay::OnNodeSelected(Node* node)
                 }
             }
 
-            if (!tt::is_found(line) && node->HasValue(prop_label))
+            if (!ttwx::is_found(line) && node->HasValue(prop_label))
             {
                 code.clear();
                 code.Function("AddTool");
                 line = (to_int) m_view.FindLineContaining(code.GetCode());
-                if (tt::is_found(line))
+                if (ttwx::is_found(line))
                 {
                     line = (to_int) m_view.FindLineContaining(node->as_string(prop_label), line);
                 }
             }
         }
 
-        if (!tt::is_found(line))
+        if (!ttwx::is_found(line))
         {
             if (page == CPP_PANEL)
             {
@@ -259,7 +259,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         }
     }
 
-    if (!tt::is_found(line))
+    if (!ttwx::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);

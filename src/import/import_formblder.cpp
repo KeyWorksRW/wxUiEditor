@@ -465,11 +465,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             else if (prop_name == "construction")
             {
                 tt_string copy = xml_prop.text().as_view();
-                if (auto pos = copy.find('('); tt::is_found(pos))
+                if (auto pos = copy.find('('); ttwx::is_found(pos))
                 {
                     copy.erase(0, pos);
                 }
-                if (auto pos = copy.find(';'); tt::is_found(pos))
+                if (auto pos = copy.find(';'); ttwx::is_found(pos))
                 {
                     copy.erase_from(';');
                 }
@@ -1001,7 +1001,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     if (org_value.contains("Load From File") || org_value.contains("Load From Embedded File"))
     {
         auto pos_semi = org_value.find(';');
-        if (!tt::is_found(pos_semi))
+        if (!ttwx::is_found(pos_semi))
             return;
         tt_string filename;
         if (org_value.subview(pos_semi) == "; Load From File")

@@ -8,6 +8,7 @@
 #include "winres_ctrl.h"
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "ttwx.h"           // ttwx helpers for numeric parsing
 #include "utils.h"          // Utility functions that work with properties
 
 void resCtrl::ParseCommonStyles(tt_string_view line)
@@ -35,39 +36,39 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     if (line.at(0) == ',')
         line.moveto_digit();
 
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetLeft(tt::atoi(line));
+    duRect.SetLeft(ttwx::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetTop(tt::atoi(line));
+    duRect.SetTop(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetWidth(tt::atoi(line));
+    duRect.SetWidth(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetHeight(tt::atoi(line));
+    duRect.SetHeight(ttwx::atoi(line));
 
     if (m_node->is_Gen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
     {
@@ -127,7 +128,7 @@ tt_string_view resCtrl::GetID(tt_string_view line)
         {
             id = "wxID_ANY";
         }
-        else if (tt::is_digit(id[0]))
+        else if (ttwx::is_digit(id[0]))
         {
             id.insert(0, "id_");
         }
@@ -135,7 +136,7 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     else
     {
         auto end = line.find_first_of(',');
-        if (!tt::is_found(end))
+        if (!ttwx::is_found(end))
         {
             MSG_WARNING(tt_string() << "Missing comma after ID :" << m_original_line);
             end = line.size();
@@ -191,7 +192,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
     else
     {
         auto pos = line.find(',');
-        if (!tt::is_found(pos))
+        if (!ttwx::is_found(pos))
         {
             throw std::invalid_argument("Expected a quoted label.");
         }
@@ -205,7 +206,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
     if (m_node->is_Gen(gen_wxHyperlinkCtrl))
     {
         auto begin_anchor = label.locate("<a", 0, tt::CASE::either);
-        if (!tt::is_found(begin_anchor))
+        if (!ttwx::is_found(begin_anchor))
         {
             // Without an anchor, there is no URL
             m_node->set_value(prop_label, ConvertEscapeSlashes(label));
@@ -292,7 +293,7 @@ tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
 tt_string_view resCtrl::StepOverComma(tt_string_view line, tt_string& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return tt::emptystring;
 
     if (pos + 1 >= line.size())

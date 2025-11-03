@@ -21,6 +21,7 @@
 #include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler singleton class
 #include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
+#include "ttwx.h"             // ttwx helpers for character classification
 #include "utils.h"            // Utility functions that work with properties
 
 using namespace GenEnum;
@@ -72,7 +73,7 @@ tt_string NodeProperty::get_PropId(const tt_string& complete_id)
     tt_string id;
     if (auto pos = complete_id.find('='); pos != tt::npos)
     {
-        while (pos > 0 && tt::is_whitespace(complete_id[pos - 1]))
+        while (pos > 0 && ttwx::is_whitespace(complete_id[pos - 1]))
         {
             --pos;
         }
@@ -290,7 +291,7 @@ wxColour NodeProperty::as_color() const
     {
         return wxColour(m_value);
     }
-    else if (tt::is_alpha(m_value[0]))
+    else if (ttwx::is_alpha(m_value[0]))
     {
         if (auto result = kw_css_colors.find(m_value); result != kw_css_colors.end())
             return wxColour(result->second);
@@ -716,14 +717,14 @@ bool NodeProperty::HasValue() const
             return (as_point() != wxDefaultPosition);
 
         case type_animation:
-            if (auto semicolonIndex = m_value.find_first_of(";"); tt::is_found(semicolonIndex))
+            if (auto semicolonIndex = m_value.find_first_of(";"); ttwx::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0);
             }
             return m_value.size();
 
         case type_image:
-            if (auto semicolonIndex = m_value.find_first_of(";"); tt::is_found(semicolonIndex))
+            if (auto semicolonIndex = m_value.find_first_of(";"); ttwx::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }

@@ -23,6 +23,7 @@
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "project_handler.h"  // ProjectHandler class
+#include "ttwx.h"             // ttwx helpers for character classification
 #include "utils.h"            // Utility functions that work with properties
 
 MockupParent* BaseGenerator::getMockup()
@@ -136,7 +137,7 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
     tt_string new_id;
     if (auto pos = newValue.find('='); pos != tt::npos)
     {
-        while (pos > 0 && tt::is_whitespace(newValue[pos - 1]))
+        while (pos > 0 && ttwx::is_whitespace(newValue[pos - 1]))
         {
             --pos;
         }

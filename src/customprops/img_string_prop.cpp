@@ -13,6 +13,7 @@
 
 #include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
 #include "project_handler.h"  // ProjectHandler class
+#include "ttwx.h"             // ttwx helpers for wxString path normalization
 
 bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /* property unused */)
 {
@@ -83,7 +84,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
             wxFileName file(dlg.GetPath());
             file.MakeRelativeTo(Project.get_ProjectPath().make_wxString());
             auto name = file.GetFullPath();
-            tt::backslashestoforward(name);
+            ttwx::back_slashesto_forward(name);
             SetValue(name);
             return true;
         }

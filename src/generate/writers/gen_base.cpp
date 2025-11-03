@@ -17,6 +17,7 @@
 #include "node_decl.h"        // NodeDeclaration class
 #include "project_handler.h"  // ProjectHandler class
 #include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
+#include "ttwx.h"             // ttwx helpers for character classification
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -193,7 +194,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
             auto& prop_id = iter.as_string();
             if (prop_id.size() && !prop_id.starts_with("wxID_"))
             {
-                if (tt::is_found(
+                if (ttwx::is_found(
                         prop_id.find('=')))  // If it has an assignment operator, it's a constant
                     set_const_ids.insert(prop_id);
                 else
@@ -424,7 +425,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             else if (value.starts_with("Header") || value.starts_with("XPM"))
             {
                 tt_view_vector parts(value);
-                if (tt::is_whitespace(parts[IndexImage].front()))
+                if (ttwx::is_whitespace(parts[IndexImage].front()))
                 {
                     parts[IndexImage].remove_prefix(1);
                 }

@@ -14,6 +14,7 @@
 #include "mockup_parent.h"   // Top-level MockUp Parent window
 #include "node.h"            // Node class
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "ttwx.h"            // ttwx helpers for numeric and whitespace parsing
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -126,9 +127,9 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
             for (auto& iter: values)
             {
                 int proportion = 0;
-                if (auto pos = iter.find(':'); tt::is_found(pos))
+                if (auto pos = iter.find(':'); ttwx::is_found(pos))
                 {
-                    proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
+                    proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                 }
 
                 // REVIEW: [Randalphwa - 03-14-2025] Forcing the column/row count to be at least one
@@ -212,11 +213,11 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
                     is_within_braces = true;
                 }
                 int proportion = 0;
-                if (auto pos = iter.find(':'); tt::is_found(pos))
+                if (auto pos = iter.find(':'); ttwx::is_found(pos))
                 {
-                    proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
+                    proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                 }
-                if (!code.size() || !tt::is_whitespace(code.GetCode().back()))
+                if (!code.size() || !ttwx::is_whitespace(code.GetCode().back()))
                     code.Eol();
 
                 // Note that iter may start with a space, so using itoa() ensures that we

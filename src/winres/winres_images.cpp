@@ -9,6 +9,7 @@
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
+#include "ttwx.h"           // ttwx helpers for numeric parsing
 
 static std::map<int, const char*> map_win_stock_cursors = {
 
@@ -68,7 +69,7 @@ void resCtrl::ParseIconControl(tt_string_view line)
     else
     {
         auto pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing comma after control text :" << m_original_line);
             return;
@@ -76,14 +77,14 @@ void resCtrl::ParseIconControl(tt_string_view line)
         icon_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
 
-        if (tt::is_digit(icon_name[0]))
+        if (ttwx::is_digit(icon_name[0]))
         {
-            if (auto icon = map_win_stock_icons.find(tt::atoi(icon_name));
+            if (auto icon = map_win_stock_icons.find(ttwx::atoi(icon_name));
                 icon != map_win_stock_icons.end())
             {
                 icon_name = icon->second;
             }
-            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(icon_name));
+            else if (auto cursor = map_win_stock_cursors.find(ttwx::atoi(icon_name));
                      cursor != map_win_stock_cursors.end())
             {
                 icon_name = cursor->second;
@@ -142,7 +143,7 @@ void resCtrl::ParseImageControl(tt_string_view line)
     else
     {
         auto pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing comma after control text :" << m_original_line);
             return;
@@ -150,14 +151,14 @@ void resCtrl::ParseImageControl(tt_string_view line)
         image_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
 
-        if (tt::is_digit(image_name[0]))
+        if (ttwx::is_digit(image_name[0]))
         {
-            if (auto icon = map_win_stock_icons.find(tt::atoi(image_name));
+            if (auto icon = map_win_stock_icons.find(ttwx::atoi(image_name));
                 icon != map_win_stock_icons.end())
             {
                 image_name = icon->second;
             }
-            else if (auto cursor = map_win_stock_cursors.find(tt::atoi(image_name));
+            else if (auto cursor = map_win_stock_cursors.find(ttwx::atoi(image_name));
                      cursor != map_win_stock_cursors.end())
             {
                 image_name = cursor->second;
@@ -236,14 +237,14 @@ void resCtrl::ParseImageControl(tt_string_view line)
     if (line.size() && line.at(0) == '"')
     {
         auto pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing style after class :" << m_original_line);
             return;
         }
         // Now step over the style
         pos_comma = line.find(',');
-        if (!tt::is_found(pos_comma))
+        if (!ttwx::is_found(pos_comma))
         {
             MSG_ERROR(tt_string() << "Missing dimension after style :" << m_original_line);
             return;

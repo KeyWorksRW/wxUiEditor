@@ -18,6 +18,7 @@
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
+#include "ttwx.h"             // ttwx helpers for character classification
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Miscellaneous utilities
 
@@ -972,7 +973,7 @@ tt_string Node::get_UniqueName(const tt_string& proposed_name, PropName prop_nam
         // We get here if the name has already been used.
 
         std::string org_name(proposed_name);
-        while (tt::is_digit(org_name.back()))
+        while (ttwx::is_digit(org_name.back()))
         {
             // remove any trailing digits
             org_name.erase(org_name.size() - 1, 1);
@@ -1036,7 +1037,7 @@ bool Node::FixDuplicateName()
                 // We get here if the name has already been used.
 
                 std::string org_name(name);
-                while (tt::is_digit(org_name.back()))
+                while (ttwx::is_digit(org_name.back()))
                 {
                     // remove any trailing digits
                     org_name.erase(org_name.size() - 1, 1);
@@ -1123,7 +1124,7 @@ void Node::FixDuplicateNodeNames(Node* form)
                 // We get here if the name has already been used.
 
                 std::string org_name(name);
-                while (tt::is_digit(org_name.back()))
+                while (ttwx::is_digit(org_name.back()))
                 {
                     // remove any trailing digits
                     org_name.erase(org_name.size() - 1, 1);

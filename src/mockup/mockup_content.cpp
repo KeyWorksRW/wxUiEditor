@@ -149,9 +149,9 @@ void MockupContent::CreateAllGenerators()
 
             // First create the menu and toolbar if they exist
 
-            if (tt::is_found(pos_menu))
+            if (ttwx::is_found(pos_menu))
                 CreateChildren(form->get_Child(pos_menu), this, this, m_parent_sizer);
-            if (tt::is_found(pos_toolbar))
+            if (ttwx::is_found(pos_toolbar))
                 CreateChildren(form->get_Child(pos_toolbar), this, this, m_parent_sizer);
 
             for (size_t i = 0; i < form->get_ChildCount(); i++)
@@ -160,7 +160,7 @@ void MockupContent::CreateAllGenerators()
                     CreateChildren(form->get_Child(i), this, this, m_parent_sizer);
             }
 
-            if (tt::is_found(pos_statusbar))
+            if (ttwx::is_found(pos_statusbar))
                 CreateChildren(form->get_Child(pos_statusbar), this, this, m_parent_sizer);
         }
 

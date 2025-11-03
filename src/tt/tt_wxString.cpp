@@ -162,7 +162,7 @@ tt_wxString& tt_wxString::replace_extension(std::string_view newExtension)
     }
 
     auto pos_file = find_filename();
-    if (!tt::is_found(pos_file))
+    if (!ttwx::is_found(pos_file))
         pos_file = 0;
 
     if (auto pos = find_last_of('.'); is_found(pos) && pos > pos_file)
@@ -208,7 +208,7 @@ tt_wxString& tt_wxString::replace_extension_wx(const wxString& newExtension)
     }
 
     auto pos_file = find_filename();
-    if (!tt::is_found(pos_file))
+    if (!ttwx::is_found(pos_file))
         pos_file = 0;
 
     if (auto pos = find_last_of('.'); is_found(pos) && pos > pos_file)

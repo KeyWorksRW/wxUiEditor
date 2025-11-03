@@ -11,6 +11,7 @@
 
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "mainframe.h"           // MainFrame -- Main window frame
+#include "ttwx.h"                // ttwx helpers for numeric and character processing
 
 GrowColumnsProperty::GrowColumnsProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
@@ -35,13 +36,13 @@ void GrowColumnsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     tt_string_vector fields(m_prop->as_string(), ",", tt::TRIM::both);
     for (auto& iter: fields)
     {
-        if (tt::is_digit(iter[0]))
+        if (ttwx::is_digit(iter[0]))
         {
             GrowColumnsEntry entry;
-            entry.column = tt::atoi(iter);
+            entry.column = ttwx::atoi(iter);
             if (auto pos = iter.find(':'); pos != std::string::npos)
             {
-                entry.proportion = tt::atoi(iter.substr(pos + 1));
+                entry.proportion = ttwx::atoi(iter.substr(pos + 1));
             }
             else
             {
@@ -96,8 +97,8 @@ void GrowColumnsDialog::OnOK(wxCommandEvent& event)
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
     {
         GrowColumnsEntry grow_entry;
-        grow_entry.column = tt::atoi(m_grid->GetCellValue(row, 0).ToStdString());
-        grow_entry.proportion = tt::atoi(m_grid->GetCellValue(row, 1).ToStdString());
+        grow_entry.column = ttwx::atoi(m_grid->GetCellValue(row, 0).ToStdString());
+        grow_entry.proportion = ttwx::atoi(m_grid->GetCellValue(row, 1).ToStdString());
         m_grow_columns.push_back(grow_entry);
     }
 

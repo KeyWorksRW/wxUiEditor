@@ -14,6 +14,7 @@
 #include "mockup_parent.h"   // Top-level MockUp Parent window
 #include "node.h"            // Node class
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "ttwx.h"            // ttwx helpers for numeric and whitespace parsing
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -41,9 +42,9 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (value <= row_or_col)
                 {
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); tt::is_found(pos))
+                    if (auto pos = iter.find(':'); ttwx::is_found(pos))
                     {
-                        proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
+                        proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                     }
                     if (prop_name == prop_growablerows)
                         sizer->AddGrowableRow(value, proportion);
@@ -107,11 +108,11 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
                         is_within_braces = true;
                     }
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); tt::is_found(pos))
+                    if (auto pos = iter.find(':'); ttwx::is_found(pos))
                     {
-                        proportion = tt::atoi(tt::find_nonspace(iter.data() + pos + 1));
+                        proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
                     }
-                    if (!tt::is_whitespace(code.GetCode().back()))
+                    if (!ttwx::is_whitespace(code.GetCode().back()))
                         code.Eol();
 
                     // Note that iter may start with a space, so using itoa() ensures that we

@@ -8,6 +8,7 @@
 #include "winres_form.h"
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "ttwx.h"          // ttwx helpers for numeric parsing
 
 bool resForm::is_same_top(const resCtrl* left, const resCtrl* right, bool loose_check) const
 {
@@ -198,39 +199,39 @@ bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     if (line.at(0) == ',')
         line.moveto_digit();
 
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetLeft(tt::atoi(line));
+    duRect.SetLeft(ttwx::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetTop(tt::atoi(line));
+    duRect.SetTop(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetWidth(tt::atoi(line));
+    duRect.SetWidth(ttwx::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !tt::is_digit(line.at(0)))
+    if (line.empty() || !ttwx::is_digit(line.at(0)))
         return false;
-    duRect.SetHeight(tt::atoi(line));
+    duRect.SetHeight(ttwx::atoi(line));
 
     /*
 

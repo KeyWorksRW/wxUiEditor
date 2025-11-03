@@ -9,6 +9,7 @@
 
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
+#include "ttwx.h"          // ttwx helpers for numeric conversions
 
 WinResource::WinResource() {}
 
@@ -121,7 +122,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
             file.RemoveLine(idx + 1);
         }
 
-        if (file[idx].size() > 3 && tt::is_found(file[idx].find("NOT", file[idx].size() - 4)))
+        if (file[idx].size() > 3 && ttwx::is_found(file[idx].find("NOT", file[idx].size() - 4)))
         {
             file[idx] << ' ' << file[idx + 1].view_nonspace();
             file[idx].trim();
@@ -167,7 +168,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
         // String tables need to be processed first because we need the id in case it's used as the
         // help string for a menu.
         m_curline = file.FindLineContaining("STRINGTABLE");
-        if (tt::is_found(m_curline))
+        if (ttwx::is_found(m_curline))
         {
             // We have to restart at zero in order to pickup code page changes
             for (m_curline = 0; m_curline < file.size(); ++m_curline)
@@ -180,7 +181,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                 else if (curline.starts_with("#pragma code_page"))
                 {
                     auto code = curline.find('(');
-                    m_codepage = tt::atoi(curline.subview(code + 1));
+                    m_codepage = ttwx::atoi(curline.subview(code + 1));
                 }
             }
         }
@@ -266,7 +267,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                     if (curline.contains(" code_page("))
                     {
                         auto code = curline.find('(');
-                        m_codepage = tt::atoi(curline.subview(code + 1));
+                        m_codepage = ttwx::atoi(curline.subview(code + 1));
                     }
                 }
             }
@@ -315,7 +316,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
     {
         MSG_ERROR(e.what());
         wxMessageBox((tt_string() << "Problem parsing " << m_RcFilename << " at around line "
-                                  << tt::itoa(m_curline << 1) << "\n\n"
+                                  << ttwx::itoa(m_curline << 1) << "\n\n"
                                   << e.what())
                          .make_wxString(),
                      "RC Parser");
@@ -413,7 +414,7 @@ void WinResource::ParseStringTable(tt_string_vector& file)
         }
 
         auto pos = line.find_space();
-        if (tt::is_found(pos))
+        if (ttwx::is_found(pos))
         {
             tt_string id(line.substr(0, pos));
             id.trim(tt::TRIM::right);
@@ -421,7 +422,7 @@ void WinResource::ParseStringTable(tt_string_vector& file)
                 id.pop_back();
 
             pos = line.find_nonspace(pos);
-            if (tt::is_found(pos))
+            if (ttwx::is_found(pos))
             {
                 auto text = ConvertCodePageString(line.view_substr(pos));
                 // tt_string text(line.view_substr(pos));

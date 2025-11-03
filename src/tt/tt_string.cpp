@@ -316,7 +316,7 @@ size_t tt_string::Replace(std::string_view oldtext, std::string_view newtext, bo
         return false;
 
     size_t replacements = 0;
-    if (auto pos = locate(oldtext, 0, checkcase); tt::is_found(pos))
+    if (auto pos = locate(oldtext, 0, checkcase); ttwx::is_found(pos))
     {
         do
         {
@@ -337,7 +337,7 @@ size_t tt_string::Replace(std::string_view oldtext, std::string_view newtext, bo
             if (pos >= size() || !replace_all)
                 break;
             pos = locate(oldtext, pos, checkcase);
-        } while (tt::is_found(pos));
+        } while (ttwx::is_found(pos));
     }
 
     return replacements;
@@ -460,10 +460,10 @@ tt_string& tt_string::replace_extension(std::string_view newExtension)
     }
 
     auto pos_file = find_filename();
-    if (!tt::is_found(pos_file))
+    if (!ttwx::is_found(pos_file))
         pos_file = 0;
 
-    if (auto pos = find_last_of('.'); tt::is_found(pos) && pos > pos_file)
+    if (auto pos = find_last_of('.'); ttwx::is_found(pos) && pos > pos_file)
     {
         // If the string only contains . or .. then it is a folder
         if (pos == 0 || (pos == 1 && at(0) != '.'))
@@ -499,7 +499,7 @@ tt_string_view tt_string::extension() const noexcept
         return "";
 
     auto pos = find_last_of('.');
-    if (!tt::is_found(pos))
+    if (!ttwx::is_found(pos))
         return "";
 
     // . by itself is a folder

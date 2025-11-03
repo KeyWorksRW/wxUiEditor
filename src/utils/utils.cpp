@@ -19,6 +19,7 @@
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
+#include "ttwx.h"            // ttwx namespace helpers for wxString-aware utilities
 #include "utils.h"           // Utility functions that work with properties
 
 // Look for search string in line, and if found, replace with replace_with string. If all
@@ -558,7 +559,7 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
 
     tt_string var_name;
 
-    if (tt::is_digit(filename[0]))
+    if (ttwx::is_digit(filename[0]))
     {
         var_name += "img_";
     }
@@ -566,7 +567,7 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
     for (size_t pos = 0; pos < filename.size(); pos++)
     {
         auto iter = static_cast<char>(filename[pos]);
-        if (tt::is_alnum(iter) || iter == '_')
+        if (ttwx::is_alnum(iter) || iter == '_')
         {
             var_name += iter;
         }

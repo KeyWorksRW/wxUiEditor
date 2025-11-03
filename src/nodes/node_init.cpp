@@ -822,7 +822,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())
         {
             def_value = lastChild.text().get();
-            if (tt::is_found(def_value.find('\n')))
+            if (ttwx::is_found(def_value.find('\n')))
             {
                 def_value.trim(tt::TRIM::both);
             }

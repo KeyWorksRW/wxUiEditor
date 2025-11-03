@@ -137,7 +137,7 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     m_choice_client->Append("wxART_MESSAGE_BOX");
     m_choice_client->Append("wxART_OTHER");
 
-    if (auto pos = img_props.image.find('|'); tt::is_found(pos))
+    if (auto pos = img_props.image.find('|'); ttwx::is_found(pos))
     {
         m_client = img_props.image.subview(pos + 1).make_wxString();
         m_org_id = img_props.image.subview(0, pos);

@@ -98,6 +98,8 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
 // Code below this comment block will be preserved
+
+#include "ttwx.h"  // ttwx helpers for character classification
 // if the code for this class is re-generated.
 //
 // clang-format on
@@ -155,7 +157,7 @@ void ImportWinRes::ReadRcFile()
 
     for (auto& iter: rc_file)
     {
-        if (iter.empty() || !tt::is_alpha(iter[0]))
+        if (iter.empty() || !ttwx::is_alpha(iter[0]))
             continue;
 
         auto type = iter.view_stepover();
@@ -169,7 +171,7 @@ void ImportWinRes::ReadRcFile()
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);
-            if (tt::is_alnum(name[0]) || name[0] == '"')
+            if (ttwx::is_alnum(name[0]) || name[0] == '"')
             {
                 auto sel = m_checkListResUI->Append(name);
                 m_checkListResUI->Check(sel);

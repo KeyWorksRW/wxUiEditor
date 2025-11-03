@@ -1,7 +1,6 @@
 set( file_list_dir ${CMAKE_CURRENT_LIST_DIR} )
 
 # wxui/wxui_code.cmake
-# ../in.cmake
 set( file_list
 
     wxUiEditor.rc # Only processed when compiling for Windows, ignored otherwise

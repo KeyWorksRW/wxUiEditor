@@ -393,7 +393,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     for (size_t pos = 0; pos < newValue.size();)
                     {
                         result = newValue.find("\" \"", pos);
-                        if (tt::is_found(result))
+                        if (ttwx::is_found(result))
                         {
                             if (newValue.at(result - 1) != ' ')
                             {
@@ -408,7 +408,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     }
 
                     result = newValue.find_last_of('"');
-                    if (tt::is_found(result))
+                    if (ttwx::is_found(result))
                     {
                         if (newValue.at(result - 1) != ' ')
                         {

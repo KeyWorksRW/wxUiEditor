@@ -16,6 +16,7 @@
 
 #include "mainframe.h"  // for wxGetMainFrame()
 #include "pugixml.hpp"  // For XML parsing of SVG files
+#include "ttwx.h"       // ttwx namespace helpers for wxStrings
 #include "utils.h"      // For FileNameToVarName()
 
 EmbeddedImage::EmbeddedImage(tt_string_view path, Node* form)
@@ -34,7 +35,7 @@ EmbeddedImage::EmbeddedImage(tt_string_view path, Node* form)
 
     for (size_t idx = 0; idx < base_image().array_name.size(); ++idx)
     {
-        if (tt::is_alnum(base_image().array_name[idx]) || base_image().array_name[idx] == '_')
+        if (ttwx::is_alnum(base_image().array_name[idx]) || base_image().array_name[idx] == '_')
         {
             continue;
         }

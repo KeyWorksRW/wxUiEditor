@@ -111,7 +111,7 @@ enum : std::uint16_t
 
 };
 
-std::string_view txtEmptyProject = "Empty Project";
+const std::string_view txtEmptyProject = "Empty Project";
 constexpr int MAX_HISTORY_FILES = 9;
 
 MainFrame::MainFrame() :
@@ -661,8 +661,8 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     if (wxGetApp().isTestingMenuEnabled())
     {
         // Shows original import file if project is imported, otherwise it shows the project file
-        m_imnportPanel = new ImportPanel(m_notebook);
-        m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+        m_importPanel = new ImportPanel(m_notebook);
+        m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
 
     return m_notebook;
@@ -803,7 +803,7 @@ void MainFrame::CopyNode(Node* node)
 
             // Skip over the XML header
             auto begin = strm.str().find("<node");
-            if (tt::is_found(begin))
+            if (ttwx::is_found(begin))
             {
                 u8_data->GetText() = strm.str().c_str() + begin;
                 auto* hash_data = new wxUEDataObject();

@@ -338,7 +338,7 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
 
     // Note that path may now contain the prop_art_directory prefix
 
-    if (auto pos = path.find_last_of('.'); tt::is_found(pos))
+    if (auto pos = path.find_last_of('.'); ttwx::is_found(pos))
     {
         if (path.contains("_16x16."))
         {
@@ -896,7 +896,7 @@ ImageBundle* ImageHandler::ProcessBundleProperty(const tt_string_vector& parts, 
 
     img_bundle.lst_filenames.emplace_back(parts[IndexImage]);
 
-    if (auto pos = parts[IndexImage].find_last_of('.'); tt::is_found(pos))
+    if (auto pos = parts[IndexImage].find_last_of('.'); ttwx::is_found(pos))
     {
         if (parts[IndexImage].contains("_16x16."))
         {

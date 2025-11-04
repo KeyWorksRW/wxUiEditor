@@ -192,110 +192,22 @@ auto Code::Add(tt_string_view text) -> Code&
             }
         }
 
-        // Handle Ruby-specific constant mappings
-        static constexpr auto ruby_constant_map =
-            frozen::make_map<std::string_view, std::string_view>(
-                { { "wxEmptyString", "''" },
-                  { "wxDefaultCoord", "Wx::DEFAULT_COORD" },
-                  { "wxDefaultSize", "Wx::DEFAULT_SIZE" },
-                  { "wxDefaultPosition", "Wx::DEFAULT_POSITION" },
-                  { "wxNullBitmap", "Wx::NULL_BITMAP" },
-                  { "wxNullAnimation", "Wx::NULL_ANIMATION" } });
-
-        if (const auto* iter = ruby_constant_map.find(text); iter != ruby_constant_map.end())
+        // Check for Ruby-specific constant mappings
+        if (AddRubyConstant(text))
         {
-            *this += iter->second;
             return *this;
         }
     }
 
+    // Handle combined values separated by pipes
     if (text.find('|') != tt::npos)
     {
-        bool initial_combined_value_set = false;
-        tt_view_vector multistr(text, "|", tt::TRIM::both);
-        for (auto& iter: multistr)
-        {
-            if (iter.empty())
-            {
-                continue;
-            }
-            if (initial_combined_value_set)
-            {
-                *this += '|';
-            }
-            if (iter.is_sameprefix("wx") && !is_cpp())
-            {
-#if 0
-                    if (is_perl() && (HasPerlMapConstant(text) || set_perl_constants.contains(text)))
-                    {
-                        CheckLineLength(text.size());
-                        *this += text;
-                        initial_combined_value_set = true;
-                        continue;
-                    }
-#endif
-                if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-                    language_prefix.size())
-                {
-                    // Some languages will have a module added after their standard prefix.
-                    CheckLineLength(language_prefix.size() + iter.size() - 2);
-                    *this << language_prefix << iter.substr(2);
-                }
-                else
-                {
-                    // If there was no sub-language module added (e.g., wx.aui. for
-                    // Python), then use the default language prefix.
-                    CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
-                    *this << m_language_wxPrefix << iter.substr(2);
-                }
-            }
-            else
-            {
-                CheckLineLength(iter.size());
-                *this += iter;
-            }
-            initial_combined_value_set = true;
-        }
+        AddCombinedValues(text);
     }
+    // Handle single wx-prefixed constants
     else if (text.is_sameprefix("wx") && !is_cpp())
     {
-        if (is_perl())
-        {
-            if (HasPerlMapConstant(text) || set_perl_constants.contains(text))
-            {
-                CheckLineLength(text.size());
-                *this += text;
-                return *this;
-            }
-            if (text == "wxEmptyString")
-            {
-                *this << "\"\"";
-                return *this;
-            }
-
-            if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-                language_prefix.size())
-            {
-                CheckLineLength(language_prefix.size() + text.size() - 2);
-                *this << language_prefix << text.substr(2);
-            }
-            else
-            {
-                CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
-                *this << m_language_wxPrefix << text.substr(2);
-            }
-        }
-        else if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-                 language_prefix.size())
-        {
-            CheckLineLength(language_prefix.size() + text.size() - 2);
-            *this << language_prefix << text.substr(2);
-        }
-        else
-        {
-            CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
-            *this << m_language_wxPrefix << text.substr(2);
-        }
+        AddWxPrefixedConstant(text);
     }
     else
     {
@@ -306,6 +218,111 @@ auto Code::Add(tt_string_view text) -> Code&
     // In case linebreak was shut off
     m_auto_break = old_linebreak;
 
+    return *this;
+}
+
+// Helper method: Check if text matches a Ruby constant mapping
+[[nodiscard]] auto Code::AddRubyConstant(tt_string_view text) -> bool
+{
+    // Handle Ruby-specific constant mappings
+    static constexpr auto ruby_constant_map = frozen::make_map<std::string_view, std::string_view>(
+        { { "wxEmptyString", "''" },
+          { "wxDefaultCoord", "Wx::DEFAULT_COORD" },
+          { "wxDefaultSize", "Wx::DEFAULT_SIZE" },
+          { "wxDefaultPosition", "Wx::DEFAULT_POSITION" },
+          { "wxNullBitmap", "Wx::NULL_BITMAP" },
+          { "wxNullAnimation", "Wx::NULL_ANIMATION" } });
+
+    if (const auto* iter = ruby_constant_map.find(text); iter != ruby_constant_map.end())
+    {
+        *this += iter->second;
+        return true;
+    }
+    return false;
+}
+
+// Helper method: Handle combined values separated by pipes (|)
+auto Code::AddCombinedValues(tt_string_view text) -> Code&
+{
+    bool initial_combined_value_set = false;
+    tt_view_vector multistr(text, "|", tt::TRIM::both);
+    for (auto& iter: multistr)
+    {
+        if (iter.empty())
+        {
+            continue;
+        }
+        if (initial_combined_value_set)
+        {
+            *this += '|';
+        }
+        if (iter.is_sameprefix("wx") && !is_cpp())
+        {
+            if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
+                language_prefix.size())
+            {
+                // Some languages will have a module added after their standard prefix.
+                CheckLineLength(language_prefix.size() + iter.size() - 2);
+                *this << language_prefix << iter.substr(2);
+            }
+            else
+            {
+                // If there was no sub-language module added (e.g., wx.aui. for
+                // Python), then use the default language prefix.
+                CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+                *this << m_language_wxPrefix << iter.substr(2);
+            }
+        }
+        else
+        {
+            CheckLineLength(iter.size());
+            *this += iter;
+        }
+        initial_combined_value_set = true;
+    }
+    return *this;
+}
+
+// Helper method: Handle wx-prefixed constants with language transformations
+auto Code::AddWxPrefixedConstant(tt_string_view text) -> Code&
+{
+    if (is_perl())
+    {
+        if (HasPerlMapConstant(text) || set_perl_constants.contains(text))
+        {
+            CheckLineLength(text.size());
+            *this += text;
+            return *this;
+        }
+        if (text == "wxEmptyString")
+        {
+            *this << "\"\"";
+            return *this;
+        }
+
+        if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+            language_prefix.size())
+        {
+            CheckLineLength(language_prefix.size() + text.size() - 2);
+            *this << language_prefix << text.substr(2);
+        }
+        else
+        {
+            CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+            *this << m_language_wxPrefix << text.substr(2);
+        }
+    }
+    else if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+             language_prefix.size())
+    {
+        CheckLineLength(language_prefix.size() + text.size() - 2);
+        *this << language_prefix << text.substr(2);
+    }
+    else
+    {
+        CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+        *this << m_language_wxPrefix << text.substr(2);
+    }
     return *this;
 }
 
@@ -485,7 +502,9 @@ void Code::AddPublicRubyMembers()
         for (auto iter = public_members.begin(); iter != public_members.end(); ++iter)
         {
             if (iter != public_members.begin())
+            {
                 *this << ", ";
+            }
             *this << *iter;
             CheckLineLength();
         }

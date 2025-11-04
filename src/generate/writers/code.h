@@ -670,6 +670,11 @@ private:
     void AddScaledSizePerl(wxSize size);
     void AddUnscaledSizePerl(wxSize size);
 
+    // Helper methods for Add()
+    [[nodiscard]] auto AddRubyConstant(tt_string_view text) -> bool;
+    auto AddCombinedValues(tt_string_view text) -> Code&;
+    auto AddWxPrefixedConstant(tt_string_view text) -> Code&;
+
     Node* m_node;
     GenLang m_language;
 

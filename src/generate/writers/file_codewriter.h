@@ -11,6 +11,8 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
+#include "ttwx_view_vector.h"  // ViewVector -- ttwx::ViewVector class
+
 #include "write_code.h"
 
 // Use for writing code to disk
@@ -57,15 +59,47 @@ public:
 
     // Returns one of code::write_ enums. Errors are negative values, 0 is current, positive
     // values indicate success or update needed (if testing).
-    [[nodiscard]] auto WriteFile(GenLang language, int flags = code::flag_none, Node* node = nullptr) -> int;
+    [[nodiscard]] auto WriteFile(GenLang language, int flags = code::flag_none,
+                                 Node* node = nullptr) -> int;
 
 protected:
     void doWrite(std::string_view code) override { m_buffer += std::string(code); };
 
 private:
+    // Helper methods
+    [[nodiscard]] static auto GetCommentLineToFind(GenLang language) -> std::string_view;
+    [[nodiscard]] static auto GetBlockLength(GenLang language) -> size_t;
+    [[nodiscard]] static auto GetCommentCharacter(GenLang language) -> std::string_view;
+    [[nodiscard]] auto IsOldStyleFile() -> bool;
+    [[nodiscard]] auto FindAdditionalContentIndex() -> size_t;
+    void AppendEndOfFileBlock();
+    void AppendMissingCommentBlockWarning();
+    void AppendUserContent();
+
+    // Language-specific end-of-file block handlers
+    void AppendCppEndBlock();
+    void AppendPerlEndBlock();
+    void AppendPythonEndBlock();
+    void AppendRubyEndBlock();
+    [[nodiscard]] auto ReadOriginalFile(bool is_comparing) -> int;
+    [[nodiscard]] auto EnsureDirectoryExists(int flags) -> int;
+    [[nodiscard]] auto WriteToFile() -> int;
+    void ProcessExistingFile();
+
+    // Member variables
     std::string m_buffer;
     wxFileName m_filename;
     Node* m_node { nullptr };
+
+    // Shared state between helper methods
+    GenLang m_language { GEN_LANG_NONE };
+    int m_flags { 0 };
+    bool m_file_exists { false };
+    bool m_recheck_additional_content { true };
+    size_t m_block_length { 0 };
+    size_t m_additional_content { static_cast<size_t>(-1) };
+    ttwx::ViewVector m_org_file;
+    ttwx::ViewVector m_new_file;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

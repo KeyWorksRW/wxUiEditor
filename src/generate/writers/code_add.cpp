@@ -57,6 +57,104 @@ constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
 
 // clang-format on
 
+void Code::AddClassNameForLanguage(const std::string& class_name)
+{
+    if (is_cpp())
+    {
+        *this += class_name;
+        return;
+    }
+
+    // Handle non-C++ languages
+    if (class_name.starts_with("wx"))
+    {
+        if (auto language_prefix = GetLanguagePrefix(class_name, m_language);
+            language_prefix.size())
+        {
+            *this << language_prefix << class_name.substr(2);
+        }
+        else
+        {
+            *this << m_language_wxPrefix << class_name.substr(2);
+        }
+    }
+    else
+    {
+        *this += class_name;
+    }
+
+    // Add language-specific instantiation syntax
+    if (is_perl())
+    {
+        *this += "->new";
+    }
+    else if (is_ruby())
+    {
+        *this += ".new";
+    }
+}
+
+void Code::AddSubclassParams()
+{
+    if (m_node->HasValue(prop_subclass_params))
+    {
+        *this += m_node->as_string(prop_subclass_params);
+        RightTrim();
+        if (back() != ',')
+        {
+            Comma();
+        }
+        else
+        {
+            *this += ' ';
+        }
+    }
+}
+
+void Code::AddFunctionNoOperatorWithWx(tt_string_view text)
+{
+    if (is_ruby())
+    {
+        *this << "Wx::" << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
+    }
+    else
+    {
+        *this << "wx." << text.substr(sizeof("wx") - 1);
+    }
+}
+
+void Code::AddFunctionWithOperatorRuby(tt_string_view text)
+{
+    // Check for a preceeding empty "()" and remove it if found
+    if (ends_with("())"))
+    {
+        resize(size() - 2);
+    }
+
+    *this << '.';
+    if (text.is_sameprefix("wx"))
+    {
+        *this << "Wx::" << text.substr(sizeof("wx") - 1);
+    }
+    else
+    {
+        *this += ConvertToSnakeCase(text);
+    }
+}
+
+void Code::AddFunctionWithOperatorPython(tt_string_view text)
+{
+    *this << '.';
+    if (text.is_sameprefix("wx"))
+    {
+        *this << "wx." << text.substr(sizeof("wx") - 1);
+    }
+    else
+    {
+        *this += text;
+    }
+}
+
 auto Code::Add(tt_string_view text) -> Code&
 {
     bool old_linebreak = m_auto_break;

@@ -111,9 +111,9 @@ void CodeDisplay::Clear()
     m_scintilla->ClearAll();
 }
 
-void CodeDisplay::doWrite(tt_string_view code)
+void CodeDisplay::doWrite(std::string_view code)
 {
-    m_view.GetBuffer() << code;
+    m_view.GetBuffer() += code;
 }
 
 void CodeDisplay::CodeGenerationComplete()

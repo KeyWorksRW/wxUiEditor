@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <ranges>
 #include <wx/file.h>      // wxFile - encapsulates low-level "file descriptor"
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
@@ -14,14 +15,14 @@
 #include "code.h"            // Code -- Helper class for generating code
 #include "common_strings.h"  // Common strings used in code generation
 #include "gen_enums.h"
-#include "mainapp.h"         // App -- Main application class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "mainapp.h"             // App -- Main application class
+#include "ttwx_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
 using namespace code;
 
 // clang-format off
 
-inline constexpr const auto end_cpp_block =
+inline constexpr std::string_view end_cpp_block =
 R"===(
 // ************* End of generated code ***********
 // DO NOT EDIT THIS COMMENT BLOCK!
@@ -42,271 +43,357 @@ R"===(# ************* End of generated code ***********
 # ***********************************************
 )===";
 
-std::string_view cpp_end_cmt_line = "// ************* End of generated code";
-
 // clang-format on
 
-int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
+const std::string_view cpp_end_cmt_line = "// ************* End of generated code";
+
+auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
 {
-    ASSERT_MSG(m_filename.size(), "Filename must be set before calling WriteFile()");
+    ASSERT_MSG(!m_filename.GetFullPath().IsEmpty(),
+               "Filename must be set before calling WriteFile()");
+
+    // Initialize member variables
     m_node = node;
-    bool file_exists = m_filename.file_exists();
-    if (!file_exists && (flags & flag_test_only))
+    m_language = language;
+    m_flags = flags;
+    m_file_exists = m_filename.FileExists();
+    m_block_length = GetBlockLength(language);
+    m_additional_content = (to_size_t) -1;
+
+    if (!m_file_exists && (flags & flag_test_only))
+    {
         return write_needed;
-
-    // It's critical that this be accurate as it allows us to step over the generated comment
-    // block.
-    size_t block_length = (language == GEN_LANG_CPLUSPLUS) ? 8 : 6;
-
-    if (language == GEN_LANG_CPLUSPLUS)
-    {
-        if (flags & flag_add_closing_brace)
-        {
-            tt_string_vector lines;
-            lines.ReadString(end_cpp_block);
-            for (auto& iter: lines)
-            {
-                if (iter.is_sameprefix("// clang-format on"))
-                {
-                    // Skip this line, and reduce the block length acccordingly
-                    --block_length;
-                }
-                else
-                {
-                    m_buffer << iter << "\n";
-                }
-            }
-            if (!file_exists)
-            {
-                m_buffer += "  // clang-format on\n};\n";
-            }
-        }
-        else
-        {
-            m_buffer += end_cpp_block;
-        }
-    }
-    else if (language == GEN_LANG_PERL)
-    {
-        m_buffer += end_python_perl_ruby_block;
-
-        // If the file has never been written before, then add "1;" line that is required to close
-        // the package. This is written outside of the comment block, so presumably any
-        // user edits will be made above this line or they will remove it and replace it with their
-        // own "1;" line.
-        if (!file_exists)
-        {
-            // TODO: [Randalphwa - 01-09-2025] Ideally, this should be followed with a comment
-            // indicating that it is the end of the form's package. However, that requires knowing
-            // the node we are writing.
-            m_buffer += "\n1;";
-            if (m_node)
-            {
-                m_buffer += "  # " + m_node->get_NodeName();
-            }
-        }
-    }
-    else if (language == GEN_LANG_PYTHON)
-    {
-        m_buffer += end_python_perl_ruby_block;
-    }
-    else if (language == GEN_LANG_RUBY)
-    {
-        m_buffer += end_python_perl_ruby_block;
-
-        // If the file has never been written before, then we end the class outside of the closing
-        // comment block. This allows the user to add event handlers or other functionality within
-        // the class.
-        if (!file_exists && !node->is_Gen(GenEnum::gen_Images) && !node->is_Gen(GenEnum::gen_Data))
-        {
-            Code code(node, GEN_LANG_RUBY);
-            code.Eol().Str("end  # end of ").Str(node->get_NodeName()).Str(" class");
-            m_buffer += code;
-        }
     }
 
-    size_t additional_content = (to_size_t) -1;
-    bool old_style_file = false;  // true if this doesn't have a trailing comment block
+    bool is_comparing = (!m_filename.GetName().IsEmpty() && m_filename.GetName()[0] == '~');
 
-    bool is_comparing = (m_filename.filename()[0] == '~');
-
-    if (file_exists || is_comparing)
+    if (m_file_exists || is_comparing)
     {
-        // If the file exists, then we need to read it and compare the generated portion to
-        // our generated portion, ignoring initial whitespace and end-of-line character(s).
-        // If all of the generated code matches, then we don't need to write the file.
-
-        tt_view_vector org_file;
-        if (is_comparing)
+        int read_error = ReadOriginalFile(is_comparing);
+        if (read_error != 0)
         {
-            tt_string org_filename(m_filename);
-            org_filename.Replace("~wxue_", "");
-            if (!org_file.ReadFile(org_filename))
-            {
-                return write_cant_read;
-            }
-        }
-        else if (!org_file.ReadFile(m_filename))
-        {
-            return write_cant_read;
+            return read_error;
         }
 
-        tt_view_vector new_file;
-        new_file.ReadString(m_buffer);
+        // Create a temporary new_file to check for additional content
+        m_new_file.ReadString(std::string_view(m_buffer));
+        m_additional_content = FindAdditionalContentIndex();
+    }
 
-        std::string_view look_for = {};
-        if (language == GEN_LANG_CPLUSPLUS)
-            look_for = cpp_end_cmt_line;
-        else if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY ||
-                 language == GEN_LANG_PERL)
-            look_for = python_perl_ruby_end_cmt_line;
+    // Append end of file block with additional content information
+    AppendEndOfFileBlock();
 
-        if (org_file.size() > 3 && org_file[1].contains("Code generated by wxUiEditor") &&
-            org_file[3].contains(
-                "DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!"))
+    if (m_file_exists || is_comparing)
+    {
+        m_new_file.clear();
+        m_new_file.ReadString(std::string_view(m_buffer));
+        ProcessExistingFile();
+
+        if (m_additional_content == write_current)
         {
-            if (flags & flag_test_only)
-                return write_needed;
-            old_style_file = true;
+            return write_current;
         }
 
-        if (!old_style_file)
+        if (m_additional_content == write_needed && (flags & flag_test_only))
         {
-            size_t line_index;
-            bool files_are_different = false;
-            for (line_index = 0; line_index < new_file.size(); ++line_index)
-            {
-                if (line_index >= org_file.size())
-                {
-                    files_are_different = true;
-                    break;
-                }
-#if defined(_DEBUG)
-                // In DEBUG builds, we also want to check leading indentation
-                auto org_start = org_file[line_index];
-                auto new_start = new_file[line_index];
-#else
-                auto org_start = org_file[line_index].view_nonspace();
-                auto new_start = new_file[line_index].view_nonspace();
-#endif  // _DEBUG
-                if (org_start != new_start)
-                {
-                    files_are_different = true;
-                    break;
-                }
-
-                if (org_file[line_index].is_sameprefix(look_for))
-                {
-                    additional_content = line_index + block_length;
-                    break;
-                }
-            }
-
-            if (!files_are_different)
-                return write_current;
-
-            if (!ttwx::is_found(additional_content))
-            {
-                for (; line_index < org_file.size(); ++line_index)
-                {
-                    if (org_file[line_index].is_sameprefix(look_for))
-                    {
-                        additional_content = line_index + block_length;
-                        break;
-                    }
-                }
-            }
-
-            if (!ttwx::is_found(additional_content))
-            {
-                // This is bad -- it means the original file no longer has the comment block
-                // ending the generated code. We don't want to overwrite the changes, so instead
-                // we add a comment to the end of the new file indicating that the original
-                // comment block is missing, and copying the new file after that comment block.
-
-                tt_string comment_begin;
-                if (language == GEN_LANG_CPLUSPLUS)
-                    comment_begin = "\n// ";
-                else if (language == GEN_LANG_PYTHON || language == GEN_LANG_PERL)
-                    comment_begin = "\n# ";
-
-                m_buffer += ((language == GEN_LANG_CPLUSPLUS) ? "\n//" : "\n#");
-                m_buffer << comment_begin
-                         << "The original file was missing the comment block ending the generated "
-                            "code!\n";
-                m_buffer += ((language == GEN_LANG_CPLUSPLUS) ? "//" : "#");
-                m_buffer
-                    << comment_begin
-                    << "The entire original file has been copied below this comment block.\n\n";
-                for (size_t idx = 0; idx < org_file.size(); ++idx)
-                {
-                    m_buffer += org_file[idx];
-                    m_buffer += "\n";
-                }
-            }
-            else
-            {
-                // Allocate additional space for the user content, plus a newline for each line
-                size_t expansion_needed = 0;
-                for (auto& iter: org_file)
-                {
-                    expansion_needed += (iter.size() + 1);
-                }
-                m_buffer.reserve(m_buffer.size() + expansion_needed);
-
-                // Add the user content after our generated code comment block
-                for (size_t idx = additional_content; idx < org_file.size(); ++idx)
-                {
-                    m_buffer += org_file[idx];
-                    m_buffer += "\n";
-                }
-            }
+            return write_needed;
         }
     }
 
     if (flags & flag_test_only)
-        return write_needed;
-
-    // At this point, m_buffer contains the new generated content plus any additional content
-    // the user already added. Note that indentation of the user added code is preserved, but
-    // line endings are forced to '\n'.
-
-    // Make certain the folder we are supposed to write to exists
-    tt_string copy(m_filename);
-    copy.remove_filename();
-    if (copy.size() && !copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
     {
-        if (wxGetApp().is_Generating())
-        {
-            return write_no_folder;
-        }
+        return write_needed;
+    }
 
-        // Use wxMessageDialog() rather than wxMessageBox() because it will correctly handle a
-        // long filename, whereas wxMessageBox() would truncate a long filename.
+    // Ensure directory exists before writing
+    int dir_result = EnsureDirectoryExists(flags);
+    if (dir_result != 0)
+    {
+        return dir_result;
+    }
 
-        std::string msg("The directory:\n    \"" + copy +
-                        "\"\ndoesn't exist. Would you like it to be created?");
-        wxMessageDialog dlg(nullptr, wxString::FromUTF8(msg), "Generate Files",
-                            wxICON_WARNING | wxYES_NO);
-        if (dlg.ShowModal() == wxID_YES)
+    // Write the file
+    int write_result = WriteToFile();
+    if (write_result != write_success)
+    {
+        return write_result;
+    }
+
+    if (ttwx::is_found(m_additional_content))
+    {
+        return write_edited;
+    }
+    return write_success;
+}
+
+[[nodiscard]] auto FileCodeWriter::GetCommentLineToFind(GenLang language) -> std::string_view
+{
+    if (language == GEN_LANG_CPLUSPLUS)
+    {
+        return cpp_end_cmt_line;
+    }
+    if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY || language == GEN_LANG_PERL)
+    {
+        return python_perl_ruby_end_cmt_line;
+    }
+    return {};
+}
+
+[[nodiscard]] auto FileCodeWriter::GetBlockLength(GenLang language) -> size_t
+{
+    return (language == GEN_LANG_CPLUSPLUS) ? 8 : 6;
+}
+
+[[nodiscard]] auto FileCodeWriter::GetCommentCharacter(GenLang language) -> std::string_view
+{
+    return (language == GEN_LANG_CPLUSPLUS) ? "//" : "#";
+}
+
+[[nodiscard]] auto FileCodeWriter::IsOldStyleFile() -> bool
+{
+    constexpr auto npos = std::string::npos;
+    return m_org_file.size() > 3 && m_org_file[1].find("Code generated by wxUiEditor") != npos &&
+           m_org_file[3].find(
+               "DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!") != npos;
+}
+
+[[nodiscard]] auto FileCodeWriter::FindAdditionalContentIndex() -> size_t
+{
+    std::string_view look_for = GetCommentLineToFind(m_language);
+
+    // Search for the comment line in m_new_file first, ensuring both files match
+    auto search_result = std::ranges::find_if(
+        std::views::iota(size_t(0), m_new_file.size()),
+        [this, look_for](size_t line_index) -> bool
         {
-            if (!tt_string::MkDir(copy))
+            if (line_index >= m_org_file.size())
             {
-                msg = "The directory:\n    \"" + copy + "\"\ncould not be created.";
-                wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(msg), "Generate Files",
-                                          wxICON_ERROR | wxOK);
-                dlg_error.ShowModal();
-                return write_cant_create;
+                return true;  // Trigger exit condition
+            }
+#if defined(_DEBUG)
+            auto org_start = m_org_file[line_index];
+            auto new_start = m_new_file[line_index];
+#else
+            auto org_start = ttwx::find_nonspace(m_org_file[line_index]);
+            auto new_start = ttwx::find_nonspace(m_new_file[line_index]);
+#endif
+            return org_start != new_start || m_new_file[line_index].starts_with(look_for);
+        });
+
+    if (search_result != std::ranges::end(std::views::iota(size_t(0), m_new_file.size())))
+    {
+        size_t line_index = *search_result;
+        if (line_index < m_org_file.size() && m_new_file[line_index].starts_with(look_for))
+        {
+            return line_index + m_block_length;
+        }
+        return (to_size_t) -1;
+    }
+
+    // Continue searching in the original file if not found yet
+    auto org_search = std::ranges::find_if(std::views::iota(m_new_file.size(), m_org_file.size()),
+                                           [this, look_for](size_t line_index) -> bool
+                                           {
+                                               return m_org_file[line_index].starts_with(look_for);
+                                           });
+
+    if (org_search != std::ranges::end(std::views::iota(m_new_file.size(), m_org_file.size())))
+    {
+        size_t line_index = *org_search;
+        return line_index + m_block_length;
+    }
+
+    return (to_size_t) -1;
+}
+
+void FileCodeWriter::AppendCppEndBlock()
+{
+    if (m_flags & code::flag_add_closing_brace)
+    {
+        ttwx::StringVector lines;
+        lines.ReadString(end_cpp_block);
+        for (auto& iter: lines)
+        {
+            if (iter.starts_with("// clang-format on"))
+            {
+                --m_block_length;
+            }
+            else
+            {
+                m_buffer += iter;
+                m_buffer += "\n";
             }
         }
-        else
+        if (!m_file_exists)
         {
-            wxGetApp().AddMissingDir(copy);
+            m_buffer += "  // clang-format on\n};\n";
+        }
+    }
+    else
+    {
+        m_buffer += end_cpp_block;
+    }
+}
+
+void FileCodeWriter::AppendPerlEndBlock()
+{
+    m_buffer += end_python_perl_ruby_block;
+    if (!m_file_exists && m_node)
+    {
+        m_buffer += "\n1;  # " + m_node->get_NodeName();
+    }
+}
+
+void FileCodeWriter::AppendPythonEndBlock()
+{
+    m_buffer += end_python_perl_ruby_block;
+}
+
+void FileCodeWriter::AppendRubyEndBlock()
+{
+    m_buffer += end_python_perl_ruby_block;
+    if (m_node && !m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data))
+    {
+        // If the file doesn't exist, or it is missing any user content, append psuedo user content
+        // that adds the "end" statement for the class.
+        if (!m_file_exists || !ttwx::is_found(m_additional_content))
+        {
+            Code code(m_node, GEN_LANG_RUBY);
+            code.Eol().Str("end  # end of ").Str(m_node->get_NodeName()).Str(" class").Eol();
+            m_buffer += code;
+        }
+    }
+}
+
+void FileCodeWriter::AppendEndOfFileBlock()
+{
+    switch (m_language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+            AppendCppEndBlock();
+            break;
+        case GEN_LANG_PERL:
+            AppendPerlEndBlock();
+            break;
+        case GEN_LANG_PYTHON:
+            AppendPythonEndBlock();
+            break;
+        case GEN_LANG_RUBY:
+            AppendRubyEndBlock();
+            break;
+        default:
+            break;
+    }
+}
+
+void FileCodeWriter::AppendMissingCommentBlockWarning()
+{
+    const auto comment_char = GetCommentCharacter(m_language);
+    const auto comment_line = std::string(comment_char) + " ";
+
+    m_buffer += "\n" + std::string(comment_char) + "\n" + comment_line;
+    m_buffer += "The original file was missing the comment block ending the generated code!\n" +
+                std::string(comment_char) + "\n" + comment_line;
+    m_buffer += "The entire original file has been copied below this comment block.\n\n";
+
+    for (const auto& line: m_org_file)
+    {
+        m_buffer += line;
+        m_buffer += "\n";
+    }
+}
+
+void FileCodeWriter::AppendUserContent()
+{
+    if (m_language == GEN_LANG_RUBY && m_node && m_org_file.size() == m_new_file.size() + 2 &&
+        (!m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data)))
+    {
+        // Ruby requires an 'end' statement for the class. We can't put it before the final comment
+        // block, because then the user can add content to the class. So we we create our own user
+        // content consisting of the the required end. The user can then extend the class by
+        // inserting code after the final comment block but before the end statment.
+        Code code(m_node, GEN_LANG_RUBY);
+        code.Str("end  # end of ").Str(m_node->get_NodeName()).Str(" class");
+        if (m_org_file[m_additional_content].empty() &&
+            m_org_file[m_additional_content + 1] == code)
+        {
+            // The only thing added was our own end statement, so nothing else to append
+            m_additional_content = write_current;
+            return;
         }
     }
 
+    for (size_t idx = m_additional_content; idx < m_org_file.size(); ++idx)
+    {
+        m_new_file.emplace_back(m_org_file[idx]);
+    }
+}
+
+[[nodiscard]] auto FileCodeWriter::ReadOriginalFile(bool is_comparing) -> int
+{
+    m_org_file.clear();
+    if (is_comparing)
+    {
+        wxFileName org_filename(m_filename);
+        wxString name = org_filename.GetName();
+        name.Replace("~wxue_", "");
+        org_filename.SetName(name);
+        if (!m_org_file.ReadFile(org_filename))
+        {
+            return write_cant_read;
+        }
+    }
+    else if (!m_org_file.ReadFile(m_filename))
+    {
+        return write_cant_read;
+    }
+    return 0;
+}
+
+[[nodiscard]] auto FileCodeWriter::EnsureDirectoryExists(int flags) -> int
+{
+    wxFileName dir(m_filename);
+    dir.ClearExt();
+    dir.RemoveLastDir();
+
+    if ((!dir.GetFullPath().empty() && dir.DirExists()) ||
+        wxGetApp().AskedAboutMissingDir(dir.GetFullPath().ToStdString()))
+    {
+        return 0;
+    }
+
+    if (wxGetApp().is_Generating() || (flags & code::flag_no_ui))
+    {
+        return write_no_folder;
+    }
+
+    std::string msg("The directory:\n    \"" + std::string(dir.GetFullPath().ToStdString()) +
+                    "\"\ndoesn't exist. Would you like it to be created?");
+    wxMessageDialog dlg(nullptr, wxString::FromUTF8(msg), "Generate Files",
+                        wxICON_WARNING | wxYES_NO);
+    if (dlg.ShowModal() == wxID_YES)
+    {
+        if (!wxFileName::Mkdir(dir.GetFullPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
+        {
+            msg = "The directory:\n    \"" + std::string(dir.GetFullPath().ToStdString()) +
+                  "\"\ncould not be created.";
+            wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(msg), "Generate Files",
+                                      wxICON_ERROR | wxOK);
+            dlg_error.ShowModal();
+            return write_cant_create;
+        }
+    }
+    else
+    {
+        wxGetApp().AddMissingDir(dir.GetFullPath().ToStdString());
+    }
+    return 0;
+}
+
+[[nodiscard]] auto FileCodeWriter::WriteToFile() -> int
+{
     wxFile fileOut;
-    if (!fileOut.Create(m_filename.make_wxString(), true))
+    if (!fileOut.Create(m_filename.GetFullPath(), true))
     {
         return write_cant_create;
     }
@@ -315,9 +402,83 @@ int FileCodeWriter::WriteFile(GenLang language, int flags, Node* node)
     {
         return write_error;
     }
+    return write_success;
+}
 
-    if (ttwx::is_found(additional_content))
-        return write_edited;
+void FileCodeWriter::ProcessExistingFile()
+{
+    if (IsOldStyleFile())
+    {
+        if (m_flags & flag_test_only)
+        {
+            m_additional_content = write_needed;
+        }
+        return;
+    }
+
+    std::string_view look_for = GetCommentLineToFind(m_language);
+
+    // Check if look_for exists in m_org_file
+    auto found = std::ranges::find_if(m_org_file,
+                                      [look_for](std::string_view line)
+                                      {
+                                          return line.starts_with(look_for);
+                                      });
+
+    if (found != m_org_file.end())
+    {
+        if (ttwx::is_found(m_additional_content))
+        {
+            // Ruby has to have an 'end' statement for the class. If there's nothing after the final
+            // comment block, then we need to add it.
+            if (m_language == GEN_LANG_RUBY && m_node && !m_node->is_Gen(GenEnum::gen_Images) &&
+                !m_node->is_Gen(GenEnum::gen_Data))
+            {
+                // If the file is Ruby code, and there is no actual additional content
+                // then add the "end" statement for the class.
+                if (m_new_file.size() == m_additional_content)
+                {
+                    Code code(m_node, GEN_LANG_RUBY);
+                    code.Eol()
+                        .Str("end  # end of ")
+                        .Str(m_node->get_NodeName())
+                        .Str(" class")
+                        .Eol();
+                    m_buffer += code;
+                    m_additional_content = write_needed;
+                    return;
+                }
+            }
+
+            // Normally we get here and just add whatever the user added after the final comment
+            // block.
+            AppendUserContent();
+        }
+    }
     else
-        return write_success;
+    {
+        // This means the final comment block is missing. We want to preserve all user content, but
+        // we don't know what is user and what is ours, so we just copy it all. Presumably this will
+        // be a rare occurrence unless AI decides to remove it...
+        AppendMissingCommentBlockWarning();
+    }
+
+    // Check if files are identical (no changes needed)
+    if (m_new_file.size() == m_org_file.size())
+    {
+        bool all_match = true;
+        for (size_t i = 0; i < m_new_file.size(); ++i)
+        {
+            if (ttwx::find_nonspace(m_org_file[i]) != ttwx::find_nonspace(m_new_file[i]))
+            {
+                all_match = false;
+                break;
+            }
+        }
+        if (all_match)
+        {
+            m_additional_content = write_current;
+            return;
+        }
+    }
 }

@@ -72,8 +72,6 @@ namespace
     void GenCppForm(GenData& gen_data, Node* form);
 }
 
-extern std::string_view cpp_end_cmt_line;  // "// ************* End of generated code"
-
 const std::map<wxBitmapType, std::string_view> g_map_handlers = {
     { wxBITMAP_TYPE_ICO, "wxICOHandler" },   { wxBITMAP_TYPE_CUR, "wxCURHandler" },
     { wxBITMAP_TYPE_XPM, "wxXPMHandler" },

@@ -100,6 +100,7 @@ private:
     size_t m_additional_content { static_cast<size_t>(-1) };
     ttwx::ViewVector m_org_file;
     ttwx::ViewVector m_new_file;
+    std::string_view m_comment_line_to_find;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

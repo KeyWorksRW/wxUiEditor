@@ -59,6 +59,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
     m_file_exists = m_filename.FileExists();
     m_block_length = GetBlockLength(language);
     m_additional_content = (to_size_t) -1;
+    m_comment_line_to_find = GetCommentLineToFind(language);
 
     if (!m_file_exists && (flags & flag_test_only))
     {
@@ -75,7 +76,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
             return read_error;
         }
 
-        // Create a temporary new_file to check for additional content
+        // Create m_new_file once to check for additional content
         m_new_file.ReadString(std::string_view(m_buffer));
         m_additional_content = FindAdditionalContentIndex();
     }
@@ -85,7 +86,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
 
     if (m_file_exists || is_comparing)
     {
-        m_new_file.clear();
+        // Update m_new_file with the appended end-of-file block
         m_new_file.ReadString(std::string_view(m_buffer));
         ProcessExistingFile();
 
@@ -159,31 +160,32 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
 
 [[nodiscard]] auto FileCodeWriter::FindAdditionalContentIndex() -> size_t
 {
-    std::string_view look_for = GetCommentLineToFind(m_language);
-
     // Search for the comment line in m_new_file first, ensuring both files match
-    auto search_result = std::ranges::find_if(
-        std::views::iota(size_t(0), m_new_file.size()),
-        [this, look_for](size_t line_index) -> bool
-        {
-            if (line_index >= m_org_file.size())
-            {
-                return true;  // Trigger exit condition
-            }
+    auto search_result =
+        std::ranges::find_if(std::views::iota(size_t(0), m_new_file.size()),
+                             [this](size_t line_index) -> bool
+                             {
+                                 if (line_index >= m_org_file.size())
+                                 {
+                                     return true;  // Trigger exit condition
+                                 }
 #if defined(_DEBUG)
-            auto org_start = m_org_file[line_index];
-            auto new_start = m_new_file[line_index];
+                                 auto org_start = m_org_file[line_index];
+                                 auto new_start = m_new_file[line_index];
 #else
+            // Optimize: compute find_nonspace once per line
             auto org_start = ttwx::find_nonspace(m_org_file[line_index]);
             auto new_start = ttwx::find_nonspace(m_new_file[line_index]);
 #endif
-            return org_start != new_start || m_new_file[line_index].starts_with(look_for);
-        });
+                                 return org_start != new_start ||
+                                        m_new_file[line_index].starts_with(m_comment_line_to_find);
+                             });
 
     if (search_result != std::ranges::end(std::views::iota(size_t(0), m_new_file.size())))
     {
         size_t line_index = *search_result;
-        if (line_index < m_org_file.size() && m_new_file[line_index].starts_with(look_for))
+        if (line_index < m_org_file.size() &&
+            m_new_file[line_index].starts_with(m_comment_line_to_find))
         {
             return line_index + m_block_length;
         }
@@ -191,11 +193,12 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
     }
 
     // Continue searching in the original file if not found yet
-    auto org_search = std::ranges::find_if(std::views::iota(m_new_file.size(), m_org_file.size()),
-                                           [this, look_for](size_t line_index) -> bool
-                                           {
-                                               return m_org_file[line_index].starts_with(look_for);
-                                           });
+    auto org_search =
+        std::ranges::find_if(std::views::iota(m_new_file.size(), m_org_file.size()),
+                             [this](size_t line_index) -> bool
+                             {
+                                 return m_org_file[line_index].starts_with(m_comment_line_to_find);
+                             });
 
     if (org_search != std::ranges::end(std::views::iota(m_new_file.size(), m_org_file.size())))
     {
@@ -289,12 +292,16 @@ void FileCodeWriter::AppendEndOfFileBlock()
 void FileCodeWriter::AppendMissingCommentBlockWarning()
 {
     const auto comment_char = GetCommentCharacter(m_language);
-    const auto comment_line = std::string(comment_char) + " ";
 
-    m_buffer += "\n" + std::string(comment_char) + "\n" + comment_line;
-    m_buffer += "The original file was missing the comment block ending the generated code!\n" +
-                std::string(comment_char) + "\n" + comment_line;
-    m_buffer += "The entire original file has been copied below this comment block.\n\n";
+    m_buffer += "\n";
+    m_buffer += comment_char;
+    m_buffer += "\n";
+    m_buffer += comment_char;
+    m_buffer += " The original file was missing the comment block ending the generated code!\n";
+    m_buffer += comment_char;
+    m_buffer += "\n";
+    m_buffer += comment_char;
+    m_buffer += " The entire original file has been copied below this comment block.\n\n";
 
     for (const auto& line: m_org_file)
     {

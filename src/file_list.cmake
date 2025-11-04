@@ -72,12 +72,14 @@ set( file_list
     custom_ctrls/kw_color_picker.cpp # kwColourPickerCtrl -- Modified version of wxColourPickerCtrl
 
     # Code generation modules
-    generate/writers/common_strings.cpp    # Common strings used by code generators
     generate/writers/code.cpp              # Code -- Helper class for generating code
     generate/writers/code_add.cpp          # Code::Add...() functions
     generate/writers/code_bundle.cpp       # Code::Bundle() functions
     generate/writers/code_gen.cpp          # Code::Gen...() functions
     generate/writers/code_pos_style.cpp    # Code::Pose...()/Style() functions
+    generate/writers/code_size_pos.cpp     # Code::Pose...()/Style() functions
+    generate/writers/code_string.cpp       # Code::Pose...()/Style() functions
+    generate/writers/common_strings.cpp    # Common strings used by code generators
 
     generate/writers/file_codewriter.cpp   # FileCodeWriter -- Class to write code to disk
     generate/writers/gen_base.cpp          # BaseCodeGenerator -- Generate Src and Hdr files for Base and Derived Class

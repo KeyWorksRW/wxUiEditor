@@ -55,3 +55,5 @@ private:
     void AddProjectToGrid(const wxString& display_name, const wxString& url,
                           const wxFileName& project_file, bool use_standard_colors);
 };
+
+auto DsisplayStartupDlg(wxWindow* parent) -> bool;

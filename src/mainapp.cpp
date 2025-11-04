@@ -272,77 +272,7 @@ int App::OnRun()
 
     if (!is_project_loaded)
     {
-        StartupDlg start_dlg(nullptr);
-        if (auto result = start_dlg.ShowModal(); result == wxID_OK)
-        {
-            switch (start_dlg.GetCommand())
-            {
-                case StartupDlg::Command::start_mru:
-                    {
-                        auto& project_file = start_dlg.GetProjectFile();
-                        auto ext = project_file.GetExt().Lower().ToStdString();
-                        ext.insert(ext.begin(), '.');
-
-                        if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
-                        {
-                            is_project_loaded =
-                                Project.ImportProject(project_file.GetFullPath().ToStdString());
-                        }
-                        else
-                        {
-                            is_project_loaded =
-                                Project.LoadProject(project_file.GetFullPath().ToStdString());
-                        }
-                    }
-                    break;
-                case StartupDlg::Command::start_empty:
-                    is_project_loaded = Project.NewProject(true);
-                    break;
-
-                case StartupDlg::Command::start_convert:
-                    is_project_loaded = Project.NewProject(false);
-                    break;
-
-                case StartupDlg::Command::start_open:
-                    {
-                        // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the
-                        // wxSmith resources -- so it would actually make sense to process it since
-                        // we can combine all of those resources into our single project file.
-
-                        wxFileDialog dialog(
-                            nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
-                            wxString::FromUTF8(
-                                std::format("wxUiEditor Project File (*{})|*{}"
-                                            "|wxCrafter Project File (*.wxcp)|*.wxcp"
-                                            "|DialogBlocks Project File (*.fjd)|*.fjd"
-                                            "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                            "|wxGlade File (*.wxg)|*.wxg"
-                                            "|wxSmith File (*.wxs)|*.wxs"
-                                            "|XRC File (*.xrc)|*.xrc"
-                                            "|Windows Resource File (*.rc)|*.rc||",
-                                            PROJECT_FILE_EXTENSION, PROJECT_FILE_EXTENSION)
-                                    .c_str()),
-                            wxFD_OPEN);
-
-                        if (dialog.ShowModal() == wxID_OK)
-                        {
-                            tt_string filename = dialog.GetPath().utf8_string();
-                            if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
-                                                                tt::CASE::either) &&
-                                !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
-                                                                tt::CASE::either))
-                            {
-                                is_project_loaded = Project.ImportProject(filename);
-                            }
-                            else
-                            {
-                                is_project_loaded = Project.LoadProject(dialog.GetPath());
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
+        is_project_loaded = DsisplayStartupDlg(nullptr);
     }
 
     if (is_project_loaded)
@@ -357,11 +287,8 @@ int App::OnRun()
 
         return wxApp::OnRun();
     }
-    else
-    {
-        m_frame->Close();
-        return 1;
-    }
+    m_frame->Close();
+    return 1;
 }
 
 int App::OnExit()

@@ -24,7 +24,7 @@
 #include "version.h"          // Version numbers and other constants
 
 #include "preferences_dlg.h"  // PreferencesDlg -- Dialog for setting user preferences
-#include "startup_dlg.h"      // Dialog to display if wxUE is launched with no arguments
+#include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
 #include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
@@ -403,74 +403,7 @@ void MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */)
         return;
     }
 
-    StartupDlg start_dlg(m_nav_panel);
-    if (auto result = start_dlg.ShowModal(); result == wxID_OK)
-    {
-        switch (start_dlg.GetCommand())
-        {
-            case StartupDlg::Command::start_mru:
-                {
-                    auto& project_file = start_dlg.GetProjectFile();
-                    auto ext = project_file.GetExt().Lower().ToStdString();
-                    if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
-                    {
-                        Project.ImportProject(project_file.GetFullPath().ToStdString());
-                    }
-                    else
-                    {
-                        Project.LoadProject(project_file.GetFullPath().ToStdString());
-                    }
-                }
-                break;
-
-            case StartupDlg::Command::start_empty:
-                Project.NewProject(true);
-                break;
-
-            case StartupDlg::Command::start_convert:
-                Project.NewProject(false);
-                break;
-
-            case StartupDlg::Command::start_open:
-                {
-                    // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the
-                    // wxSmith resources -- so it would actually make sense to process it since we
-                    // can combine all of those resources into our single project file.
-
-                    wxFileDialog dialog(
-                        nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
-                        wxString::FromUTF8(std::format("wxUiEditor Project File (*{})|{}"
-                                                       "|wxCrafter Project File (*.wxcp)|*.wxcp"
-                                                       "|DialogBlocks Project File (*.fjd)|*.fjd"
-                                                       "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                                       "|wxGlade File (*.wxg)|*.wxg"
-                                                       "|wxSmith File (*.wxs)|*.wxs"
-                                                       "|XRC File (*.xrc)|*.xrc"
-                                                       "|Windows Resource File (*.rc)|*.rc||",
-                                                       PROJECT_FILE_EXTENSION,
-                                                       PROJECT_FILE_EXTENSION)
-                                               .c_str()),
-                        wxFD_OPEN);
-
-                    if (dialog.ShowModal() == wxID_OK)
-                    {
-                        tt_string filename = dialog.GetPath().utf8_string();
-                        if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
-                                                            tt::CASE::either) &&
-                            !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
-                                                            tt::CASE::either))
-                        {
-                            Project.ImportProject(filename);
-                        }
-                        else
-                        {
-                            Project.LoadProject(dialog.GetPath());
-                        }
-                    }
-                }
-                break;
-        }
-    }
+    (void) DsisplayStartupDlg(m_nav_panel);
 }
 
 void MainFrame::OnDuplicate(wxCommandEvent& /* event unused */)

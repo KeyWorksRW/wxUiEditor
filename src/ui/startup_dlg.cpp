@@ -6,13 +6,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/display.h>   // wxDisplay
+#include <wx/filedlg.h>   // wxFileDialog base header
 #include <wx/filename.h>  // wxFileName class
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
 
-#include "mainframe.h"  // Main frame
-#include "version.h"    // Version numbers generated in ../CMakeLists.txt
+#include "mainframe.h"        // Main frame
+#include "project_handler.h"  // ProjectHandler class
+#include "version.h"          // Version numbers generated in ../CMakeLists.txt
 
 // wxGenericHyperlinkCtrl has a DoContextMenu() method that displays "Copy URL" which isn't useful
 // for StartDlg. What we need instead is an option to remove the project from the list.
@@ -233,4 +235,72 @@ void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
 
     Fit();
     Refresh();
+}
+
+auto DsisplayStartupDlg(wxWindow* parent) -> bool
+{
+    StartupDlg start_dlg(parent);
+    if (auto result = start_dlg.ShowModal(); result == wxID_OK)
+    {
+        switch (start_dlg.GetCommand())
+        {
+            case StartupDlg::Command::start_mru:
+                {
+                    auto& project_file = start_dlg.GetProjectFile();
+                    auto ext = project_file.GetExt().Lower().ToStdString();
+                    ext.insert(ext.begin(), '.');
+
+                    if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
+                    {
+                        return Project.ImportProject(project_file.GetFullPath().ToStdString());
+                    }
+                    return Project.LoadProject(project_file.GetFullPath().ToStdString());
+                }
+                break;
+
+            case StartupDlg::Command::start_empty:
+                return Project.NewProject(true);
+                break;
+
+            case StartupDlg::Command::start_convert:
+                return Project.NewProject(false);
+                break;
+
+            case StartupDlg::Command::start_open:
+                {
+                    // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the
+                    // wxSmith resources -- so it would actually make sense to process it since
+                    // we can combine all of those resources into our single project file.
+
+                    wxFileDialog dialog(
+                        nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
+                        wxString::FromUTF8(std::format("wxUiEditor Project File (*{})|*{}"
+                                                       "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                                                       "|DialogBlocks Project File (*.fjd)|*.fjd"
+                                                       "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                                       "|wxGlade File (*.wxg)|*.wxg"
+                                                       "|wxSmith File (*.wxs)|*.wxs"
+                                                       "|XRC File (*.xrc)|*.xrc"
+                                                       "|Windows Resource File (*.rc)|*.rc||",
+                                                       PROJECT_FILE_EXTENSION,
+                                                       PROJECT_FILE_EXTENSION)
+                                               .c_str()),
+                        wxFD_OPEN);
+
+                    if (dialog.ShowModal() == wxID_OK)
+                    {
+                        tt_string filename = dialog.GetPath().utf8_string();
+                        if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
+                                                            tt::CASE::either) &&
+                            !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
+                                                            tt::CASE::either))
+                        {
+                            return Project.ImportProject(filename);
+                        }
+                        return Project.LoadProject(dialog.GetPath());
+                    }
+                }
+        }
+    }
+    return false;
 }

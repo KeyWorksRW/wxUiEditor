@@ -30,6 +30,7 @@
 #include "verify_codegen.h"        // VerifyCodeGen -- Verify that code generation did not change
 #include "version.h"               // Version numbers and other constants
 
+#include "frozen/map.h"  // frozen::map
 #include "frozen/set.h"  // frozen::set
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
@@ -57,7 +58,7 @@
 // If wxIMPLEMENT_APP_CONSOLE is used, a console will be created if the app isn't being run from a
 // console, however std::cout and std::cerr will work.
 
-wxIMPLEMENT_APP(App);
+wxIMPLEMENT_APP(App);  // NOLINT (cppcheck-suppress)
 // wxIMPLEMENT_APP_CONSOLE(App);
 
 #if defined(_WIN32) && defined(_DEBUG)
@@ -240,9 +241,14 @@ int App::OnRun()
     }
 
     // A positive return value means code generation was for command-line only
-    if (auto result = Generate(parser, is_project_loaded); result >= 0)
+    auto result = Generate(parser, is_project_loaded);
+    if (result == cmd_gen_project_not_loaded)
     {
-        return result;
+        return 1;
+    }
+    if (result == cmd_gen_success)
+    {
+        return 0;
     }
 
     if (!m_frame)  // nothing passed on the command line, so frame not created yet
@@ -250,10 +256,24 @@ int App::OnRun()
         m_frame = new MainFrame();
     }
 
-    if (!is_project_loaded)
+    if (result == cmd_project_file_only)
     {
-        if (auto result = parser.FoundSwitch("load_last");
-            result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
+        wxString filename = parser.GetParam(0);
+        if (!Project.LoadProject(filename, true))
+        {
+            wxMessageBox(wxString("Unable to load project file: ") << filename,
+                         "Project Load Error", wxOK | wxICON_ERROR);
+            is_project_loaded = false;
+        }
+        else
+        {
+            is_project_loaded = true;
+        }
+    }
+    else if (result == cmd_no_params || result == cmd_gen_project_not_found)
+    {
+        if (auto switch_result = parser.FoundSwitch("load_last");
+            switch_result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
         {
             auto& file_history = m_frame->getFileHistory();
             tt_string file = file_history.GetHistoryFile(0).utf8_string();
@@ -287,26 +307,29 @@ int App::OnRun()
 
         return wxApp::OnRun();
     }
-    m_frame->Close();
+    if (!m_frame)
+    {
+        m_frame->Close();
+    }
     return 1;
 }
 
-int App::OnExit()
+auto App::OnExit() -> int
 {
     return wxApp::OnExit();
 }
 
-bool App::isFireCreationMsgs() const
+auto App::isFireCreationMsgs() -> bool
 {
     return (UserPrefs.GetDebugFlags() & Prefs::PREFS_CREATION_MSG);
 }
 
-bool App::isPjtMemberPrefix() const
+auto App::isPjtMemberPrefix() -> bool
 {
     return (UserPrefs.GetProjectFlags() & Prefs::PREFS_PJT_MEMBER_PREFIX);
 }
 
-bool App::AutoMsgWindow() const
+auto App::AutoMsgWindow() -> bool
 {
     return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
 }
@@ -319,7 +342,7 @@ bool App::AutoMsgWindow() const
 class StackLogger : public wxStackWalker
 {
 public:
-    auto& GetCalls() { return m_calls; }
+    auto GetCalls() -> auto& { return m_calls; }
 
 protected:
     void OnStackFrame(const wxStackFrame& frame) override
@@ -336,7 +359,9 @@ protected:
 
                 for (size_t i = 0; i < paramCount; ++i)
                 {
-                    wxString type, name, value;
+                    wxString type;
+                    wxString name;
+                    wxString value;
                     if (frame.GetParam(i, &type, &name, &value))
                     {
                         params << type << " " << name << " = " << value << ", ";
@@ -347,7 +372,9 @@ protected:
             }
 
             if (params.size() > 100)
+            {
                 params = "(...)";
+            }
 
             m_calls.emplace_back()
                 << (to_int) frame.GetLevel() << ' ' << frame.GetName().utf8_string()
@@ -360,6 +387,7 @@ protected:
         }
     }
 
+private:
     std::vector<tt_string> m_calls;
 };
 
@@ -377,7 +405,9 @@ void App::OnFatalException()
     {
         // We're only interested in our own source code, so ignore the rest.
         if (!iter.contains("wxUiEditor"))
+        {
             continue;
+        }
 
         wxLogDebug(iter.c_str());
     }
@@ -402,7 +432,8 @@ void App::ShowMsgWindow()
 
     #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
-void App::DbgCurrentTest(wxCommandEvent&)
+// Don't make this static or Bind() will not work
+void App::DbgCurrentTest(wxCommandEvent& /* event unused */)  // NOLINT (cppcheck-suppress)
 {
     wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
 
@@ -415,228 +446,228 @@ void App::DbgCurrentTest(wxCommandEvent&)
 
 #endif
 
-int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
+// Helper: Parse command-line options to determine generation type
+auto App::ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
+    -> std::pair<size_t, bool>
 {
-    if (parser.GetParamCount() || parser.GetArguments().size())
+    // Map option names to their corresponding generation type values
+    constexpr frozen::map<std::string_view, size_t, 8> gen_options = {
+        { "gen_cpp", GEN_LANG_CPLUSPLUS },
+        { "gen_perl", GEN_LANG_PERL },
+        { "gen_python", GEN_LANG_PYTHON },
+        { "gen_ruby", GEN_LANG_RUBY },
+        { "gen_xrc", GEN_LANG_XRC },
+        { "gen_all", (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+        { "gen_quick", (GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+        { "gen_coverage", (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+    };
+
+    size_t generate_type = GEN_LANG_NONE;
+    bool test_only = false;
+
+    // Check gen_* options (mutually exclusive)
+    for (const auto& [option_name, option_type]: gen_options)
     {
-        if (parser.FoundSwitch("verbose") == wxCMD_SWITCH_ON)
+        if (parser.Found(wxString(option_name), &filename))
         {
-            m_is_verbose_codegen = true;
-        }
+            generate_type = option_type;
 
-        wxString filename;
-        if (parser.GetParamCount())
-        {
-            filename = parser.GetParam(0);
-        }
-
-        tt_string log_file;
-        size_t generate_type = GEN_LANG_NONE;
-        bool test_only = false;
-        if (parser.Found("gen_cpp", &filename))
-        {
-            generate_type = GEN_LANG_CPLUSPLUS;
-        }
-        else if (parser.Found("gen_perl", &filename))
-        {
-            generate_type = GEN_LANG_PERL;
-        }
-        else if (parser.Found("gen_python", &filename))
-        {
-            generate_type = GEN_LANG_PYTHON;
-        }
-        else if (parser.Found("gen_ruby", &filename))
-        {
-            generate_type = GEN_LANG_RUBY;
-        }
-        else if (parser.Found("gen_xrc", &filename))
-        {
-            generate_type = GEN_LANG_XRC;
-        }
-
-        else if (parser.Found("gen_all", &filename))
-        {
-            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
-        }
-        else if (parser.Found("gen_quick", &filename))
-        {
-            generate_type = (GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
-        }
-        else if (parser.Found("gen_coverage", &filename))
-        {
-            generate_type = (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY);
-            m_is_coverage_testing = true;
-        }
-
-        if (parser.Found("test_cpp", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_CPLUSPLUS);
-            test_only = true;
-        }
-        if (parser.Found("test_perl", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_PERL);
-            test_only = true;
-        }
-        if (parser.Found("test_python", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_PYTHON);
-            test_only = true;
-        }
-        if (parser.Found("test_ruby", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_RUBY);
-            test_only = true;
-        }
-        if (parser.Found("test_xrc", &filename))
-        {
-            generate_type = (generate_type | GEN_LANG_XRC);
-            test_only = true;
-        }
-
-        if (generate_type != GEN_LANG_NONE && filename.empty())
-        {
-            wxDir dir;
-            dir.Open("./");
-            if (!dir.GetFirst(&filename, "*" + std::string(PROJECT_FILE_EXTENSION), wxDIR_FILES))
+            if (option_name == "gen_coverage")
             {
-                wxMessageBox("No project file found in current directory. Filenane is required if "
-                             "switch is used.",
-                             "Command-line Switch Error", wxOK | wxICON_ERROR);
-                return 1;
+                wxGetApp().m_is_coverage_testing = true;
             }
+            break;  // Only first match counts for gen_* options
         }
+    }
 
-        if (generate_type == GEN_LANG_NONE)
+    // Check test_* options (can be combined)
+    constexpr frozen::map<std::string_view, GenLang, 5> test_options = {
+        { "test_cpp", GEN_LANG_CPLUSPLUS }, { "test_perl", GEN_LANG_PERL },
+        { "test_python", GEN_LANG_PYTHON }, { "test_ruby", GEN_LANG_RUBY },
+        { "test_xrc", GEN_LANG_XRC },
+    };
+
+    for (const auto& [option_name, option_type]: test_options)
+    {
+        if (parser.Found(wxString(option_name), &filename))
         {
-            // If we're not generating code, then we need to create the main frame so that
-            // LoadProject() and ImportProject() can fire events.
-            m_frame = new MainFrame();
+            generate_type = (generate_type | option_type);
+            test_only = true;
         }
+    }
 
-        tt_string tt_filename = filename;
+    return std::make_pair(generate_type, test_only);
+}
 
-        tt_filename.make_absolute();
-        log_file = filename;
-        log_file.replace_extension(".log");
-        GenResults results;
-        if (tt_filename.file_exists())
+// Helper: Find project file if filename is empty
+[[nodiscard]] auto App::FindProjectFile(wxString& filename) -> bool
+{
+    wxDir dir;
+    dir.Open("./");
+    if (!dir.GetFirst(&filename, "*" + std::string(PROJECT_FILE_EXTENSION), wxDIR_FILES))
+    {
+        wxMessageBox("No project file found in current directory. Filenane is required if "
+                     "switch is used.",
+                     "Command-line Switch Error", wxOK | wxICON_ERROR);
+        return false;
+    }
+    return true;
+}
+
+// Helper: Load or import the project file
+auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
+                          bool& is_project_loaded) -> bool
+{
+    if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) &&
+        !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
+    {
+        is_project_loaded = Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
+    }
+    else
+    {
+        is_project_loaded = Project.LoadProject(tt_filename, generate_type == GEN_LANG_NONE);
+    }
+    return is_project_loaded;
+}
+
+// Helper: Log results for each language generation
+void App::LogGenerationResults(GenResults& results, std::vector<tt_string>& class_list,
+                               bool test_only, std::string_view language_type)
+{
+    if (results.updated_files.size() || class_list.size())
+    {
+        if (test_only)
         {
-            if (generate_type != GEN_LANG_NONE)
+            for (auto& iter: class_list)
             {
-                m_is_generating = true;
-                if (wxGetApp().isTestingMenuEnabled())
-                    results.StartClock();
-            }
-            if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) &&
-                !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
-            {
-                is_project_loaded =
-                    Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
-            }
-            else
-            {
-                is_project_loaded =
-                    Project.LoadProject(tt_filename, generate_type == GEN_LANG_NONE);
+                auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+                log_msg << "Needs updating: " << iter;
             }
         }
         else
         {
-            if (generate_type != GEN_LANG_NONE)
+            for (auto& iter: results.updated_files)
             {
-                m_cmdline_log.clear();
-                m_cmdline_log.emplace_back(tt_string("Unable to find project file: ")
-                                           << filename.utf8_string());
-                m_cmdline_log.WriteFile(log_file);
-                return 1;
+                auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+                log_msg << "Updated: " << iter;
             }
-        }
-
-        if (generate_type != GEN_LANG_NONE)
-        {
-            if (!is_project_loaded)
-            {
-                m_cmdline_log.clear();
-                m_cmdline_log.emplace_back(tt_string("Unable to load project file: ")
-                                           << filename.utf8_string());
-                m_cmdline_log.WriteFile(log_file);
-                return 1;
-            }
-
-            m_cmdline_log.clear();
-            std::vector<tt_string> class_list;
-            auto start_time = std::chrono::steady_clock::now();
-
-            auto log_results = [&](std::string_view language_type = {})
-            {
-                if (results.updated_files.size() || class_list.size())
-                {
-                    if (test_only)
-                    {
-                        for (auto& iter: class_list)
-                        {
-                            auto& log_msg = m_cmdline_log.emplace_back();
-                            log_msg << "Needs updating: " << iter;
-                        }
-                    }
-                    else
-                    {
-                        for (auto& iter: results.updated_files)
-                        {
-                            auto& log_msg = m_cmdline_log.emplace_back();
-                            log_msg << "Updated: " << iter;
-                        }
-                    }
-                }
-                else
-                {
-                    auto& log_msg = m_cmdline_log.emplace_back();
-                    log_msg << "All " << results.file_count << " generated " << language_type
-                            << " files are current";
-                }
-
-                for (auto& iter: results.msgs)
-                {
-                    if (iter.contains("Elapsed time"))
-                        continue;
-                    auto& log_msg = m_cmdline_log.emplace_back();
-                    log_msg << iter;
-                }
-            };
-
-            // Passing a class_list reference will cause the code generator to process all the
-            // top-level forms, but only populate class_list with the names of the forms that
-            // would be changed if the file was written. If test_only is set, then we use this
-            // mechanism and write any special messages that code generation caused (warnings,
-            // errors, timing, etc.) to a log file.
-
-            auto GenCode = [&](GenLang language)
-            {
-                if (generate_type & language)
-                {
-                    results.clear();
-                    GenerateLanguageFiles(results, test_only ? &class_list : nullptr, language);
-                    log_results(GenLangToString(language));
-                }
-            };
-
-            GenCode(GEN_LANG_CPLUSPLUS);
-            GenCode(GEN_LANG_PERL);
-            GenCode(GEN_LANG_PYTHON);
-            GenCode(GEN_LANG_RUBY);
-            GenCode(GEN_LANG_XRC);
-
-            auto& log_msg = m_cmdline_log.emplace_back();
-            auto end_time = std::chrono::steady_clock::now();
-            size_t total_elapsed_time =
-                std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time)
-                    .count();
-
-            log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
-            m_cmdline_log.WriteFile(log_file);
-
-            return 0;
         }
     }
-    return -1;
+    else
+    {
+        auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+        log_msg << "All " << results.file_count << " generated " << language_type
+                << " files are current";
+    }
+
+    for (auto& iter: results.msgs)
+    {
+        if (iter.contains("Elapsed time"))
+        {
+            continue;
+        }
+        auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+        log_msg << iter;
+    }
+}
+
+// Helper: Generate code for all requested languages
+void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                               std::vector<tt_string>& class_list)
+{
+    auto GenCode = [&](GenLang language)
+    {
+        if (generate_type & language)
+        {
+            results.clear();
+            GenerateLanguageFiles(results, test_only ? &class_list : nullptr, language);
+            LogGenerationResults(results, class_list, test_only, GenLangToString(language));
+        }
+    };
+
+    GenCode(GEN_LANG_CPLUSPLUS);
+    GenCode(GEN_LANG_PERL);
+    GenCode(GEN_LANG_PYTHON);
+    GenCode(GEN_LANG_RUBY);
+    GenCode(GEN_LANG_XRC);
+}
+
+auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
+{
+    if (!parser.GetParamCount() && !parser.GetArguments().size())
+    {
+        return cmd_no_params;
+    }
+
+    if (parser.FoundSwitch("verbose") == wxCMD_SWITCH_ON)
+    {
+        m_is_verbose_codegen = true;
+    }
+
+    wxString filename;
+    if (parser.GetParamCount())
+    {
+        filename = parser.GetParam(0);
+    }
+
+    auto [generate_type, test_only] = ParseGenerationType(parser, filename);
+
+    if (generate_type == GEN_LANG_NONE)
+    {
+        if (filename.empty())
+        {
+            return cmd_no_params;
+        }
+
+        return cmd_project_file_only;
+    }
+
+    // If we get here then we were asked to generate at least one language type
+
+    tt_string tt_filename = filename;
+    tt_filename.make_absolute();
+    tt_string log_file = filename;
+    log_file.replace_extension(".log");
+
+    if (!tt_filename.file_exists())
+    {
+        m_cmdline_log.clear();
+        m_cmdline_log.emplace_back(tt_string("Unable to find project file: ")
+                                   << filename.utf8_string());
+        m_cmdline_log.WriteFile(log_file);
+        return 1;
+    }
+
+    m_is_generating = true;
+    GenResults results;
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        results.StartClock();
+    }
+
+    LoadProjectFile(tt_filename, generate_type, is_project_loaded);
+    if (!is_project_loaded)
+    {
+        m_cmdline_log.clear();
+        m_cmdline_log.emplace_back(tt_string("Unable to load project file: ")
+                                   << filename.utf8_string());
+        m_cmdline_log.WriteFile(log_file);
+        return cmd_gen_project_not_loaded;
+    }
+
+    m_cmdline_log.clear();
+    std::vector<tt_string> class_list;
+    auto start_time = std::chrono::steady_clock::now();
+
+    GenerateAllLanguages(generate_type, test_only, results, class_list);
+
+    auto& log_msg = m_cmdline_log.emplace_back();
+    auto end_time = std::chrono::steady_clock::now();
+    size_t total_elapsed_time =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+
+    log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
+    m_cmdline_log.WriteFile(log_file);
+
+    return cmd_gen_success;
 }

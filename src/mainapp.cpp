@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <chrono>
-#include <format>
 
 #include <wx/arrstr.h>   // wxArrayString class
 #include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command

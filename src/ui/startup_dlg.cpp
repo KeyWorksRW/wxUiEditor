@@ -10,6 +10,8 @@
 #include <wx/filename.h>  // wxFileName class
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
+#include <format>
+
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
 
 #include "mainframe.h"        // Main frame

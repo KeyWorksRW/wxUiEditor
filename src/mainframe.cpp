@@ -532,9 +532,12 @@ MainFrame::MainFrame() :
         Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, this, id_DebugXrcDuplicate);
     }
 
-#if defined(_DEBUG)
+#if defined(INTERNAL_BLD_TESTING)
     Bind(wxEVT_MENU, &MainFrame::OnVerifyTTWX, this, id_VerifyTtwx);
     Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
+#endif
+
+#if defined(_DEBUG)
     Bind(
         wxEVT_MENU,
         [this](wxCommandEvent&)

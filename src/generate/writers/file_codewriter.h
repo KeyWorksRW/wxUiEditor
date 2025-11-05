@@ -7,12 +7,18 @@
 
 #pragma once
 
+#include <cstddef>
+
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
+
+#include "ttwx_view_vector.h"  // ViewVector -- ttwx::ViewVector class
+
 #include "write_code.h"
 
 // Use for writing code to disk
 namespace code
 {
-    enum
+    enum : std::uint8_t
     {
         flag_none = 0,
         flag_test_only = 1 << 0,          // Don't write the file, just return the result
@@ -20,7 +26,7 @@ namespace code
         flag_add_closing_brace = 1 << 2,  // Set when no_closing_brace property is set
     };
 
-    enum
+    enum : std::int8_t
     {
         write_error = -1,        // File could not be written
         write_cant_create = -2,  // File could not be created
@@ -36,43 +42,64 @@ namespace code
 
 class Node;  // forward declaration
 
+extern const std::string_view cpp_end_cmt_line;  // "// ************* End of generated code"
+
 class FileCodeWriter : public WriteCode
 {
 public:
-    FileCodeWriter(const wxString& file, size_t reserved_amount = 8 * 1024) :
-        m_filename(file.utf8_string())
+    FileCodeWriter(const wxString& file, size_t reserved_amount = static_cast<size_t>(8 * 1024)) :
+        m_filename(file)
     {
-        m_buffer.clear();
-        m_buffer.reserve(reserved_amount);
-    }
-    FileCodeWriter(const tt_string& file, size_t reserved_amount = 8 * 1024)
-    {
-        // REVIEW: [Randalphwa - 06-18-2023] Both of these *should* work! However, we end up
-        // with m_filename being empty.
-
-        // m_filename.FromUTF8(file);
-        // m_filename.FromUTF8(file.data(), file.size());
-
-        m_filename = file;
         m_buffer.clear();
         m_buffer.reserve(reserved_amount);
     }
 
     void Clear() override { m_buffer.clear(); };
-    tt_string& GetString() { return m_buffer; };
+    [[nodiscard]] auto GetString() -> std::string& { return m_buffer; };
 
     // Returns one of code::write_ enums. Errors are negative values, 0 is current, positive
     // values indicate success or update needed (if testing).
-    int WriteFile(GenLang language, int flags = code::flag_none, Node* node = nullptr);
+    [[nodiscard]] auto WriteFile(GenLang language, int flags = code::flag_none,
+                                 Node* node = nullptr) -> int;
 
 protected:
-    void doWrite(tt_string_view code) override { m_buffer += code; };
-
-    tt_string m_buffer;
+    void doWrite(std::string_view code) override { m_buffer += std::string(code); };
 
 private:
-    tt_string m_filename;
+    // Helper methods
+    [[nodiscard]] static auto GetCommentLineToFind(GenLang language) -> std::string_view;
+    [[nodiscard]] static auto GetBlockLength(GenLang language) -> size_t;
+    [[nodiscard]] static auto GetCommentCharacter(GenLang language) -> std::string_view;
+    [[nodiscard]] auto IsOldStyleFile() -> bool;
+    [[nodiscard]] auto FindAdditionalContentIndex() -> size_t;
+    void AppendEndOfFileBlock();
+    void AppendMissingCommentBlockWarning();
+    void AppendUserContent();
+
+    // Language-specific end-of-file block handlers
+    void AppendCppEndBlock();
+    void AppendPerlEndBlock();
+    void AppendPythonEndBlock();
+    void AppendRubyEndBlock();
+    [[nodiscard]] auto ReadOriginalFile(bool is_comparing) -> int;
+    [[nodiscard]] auto EnsureDirectoryExists(int flags) -> int;
+    [[nodiscard]] auto WriteToFile() -> int;
+    void ProcessExistingFile();
+
+    // Member variables
+    std::string m_buffer;
+    wxFileName m_filename;
     Node* m_node { nullptr };
+
+    // Shared state between helper methods
+    GenLang m_language { GEN_LANG_NONE };
+    int m_flags { 0 };
+    bool m_file_exists { false };
+    bool m_recheck_additional_content { true };
+    size_t m_block_length { 0 };
+    size_t m_additional_content { static_cast<size_t>(-1) };
+    ttwx::ViewVector m_org_file;
+    ttwx::ViewVector m_new_file;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

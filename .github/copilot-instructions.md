@@ -39,6 +39,17 @@ Convert C style char* arrays to std::array using std::to_array.
 - Use `ASSERT`, `ASSERT_MSG`, and `FAIL_MSG` macros from `assertion_dlg.h` for debug checks
 - These are preferred over raw assert() or throw statements
 
+## Copilot Agent Code Review Instructions
+
+**Line Number Accuracy**: When providing code reviews, analyzing code, or referencing specific lines:
+1. **Use `grep_search` tool with the file path** to find the exact line numbers of code elements before providing analysis
+2. **Always verify line numbers match the editor** by searching for the actual code patterns/strings
+3. **Report line numbers exactly as they appear** in the search results - these are the authoritative line numbers
+4. **When multiple instances exist**, clearly distinguish between them by including surrounding context
+5. **Never estimate or count lines** - always search to verify before citing line numbers in reviews or analysis
+
+This ensures code reviews and analysis accurately reference the actual editor line numbers.
+
 ## Copilot Agent Build Instructions
 
 **CRITICAL**: When running a build task, you MUST verify the actual build result correctly:
@@ -115,6 +126,12 @@ Convert C style char* arrays to std::array using std::to_array.
   - `frozen::unordered_map` (immutable `std::unordered_map`)
 - Always include the appropriate frozen header file
 - Prefer `constexpr` or `constinit` for frozen containers for compile-time initialization
+
+### Reducing Function Complexity
+- When asked to reduce the complexity of a class method, create helper functions as **private class methods** rather than using an anonymous namespace
+- If the new private class methods can be made `static`, then do so
+- If state information needs to be shared between two or more helper methods, add the state as a **private class member variable**
+- This approach keeps related functionality encapsulated within the class and makes the interface clearer
 
 ## Perl Coding Standards
 

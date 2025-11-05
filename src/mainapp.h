@@ -12,6 +12,7 @@
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
 class Project;
+struct GenResults;
 
 namespace pugi
 {
@@ -34,36 +35,37 @@ public:
 
     MainFrame* getMainFrame() { return m_frame; }
 
-    bool isFireCreationMsgs() const;
+    auto static isFireCreationMsgs() -> bool;
 
-    bool isPjtMemberPrefix() const;
+    auto static isPjtMemberPrefix() -> bool;
 
     // Returns true if command line option --gen_coverage is specified. The assumption is
     // that after code generation, syntax checks will be performed on all languages, and some
     // warning messages need not be generated (such as language not supporting a widget
     // type).
-    bool isCoverageTesting() const noexcept { return m_is_coverage_testing; }
+    auto isCoverageTesting() const noexcept -> bool { return m_is_coverage_testing; }
 
-    void ShowMsgWindow();
-    bool AutoMsgWindow() const;
+    void static ShowMsgWindow();
+    auto static AutoMsgWindow() -> bool;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    // Don't make this static or Bind() will not work
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
     void setMainFrameClosing() { m_isMainFrameClosing = true; }
-    bool isMainFrameClosing() { return m_isMainFrameClosing; }
+    auto isMainFrameClosing() const -> bool { return m_isMainFrameClosing; }
 
-    auto get_ProjectVersion() { return m_ProjectVersion; }
+    auto get_ProjectVersion() const { return m_ProjectVersion; }
 
-    bool AskedAboutMissingDir(const wxString path)
+    auto AskedAboutMissingDir(const wxString& path) -> bool
     {
-        return (m_missing_dirs.find(path) != m_missing_dirs.end());
+        return (m_missing_dirs.contains(path));
     }
-    void AddMissingDir(const wxString path) { m_missing_dirs.insert(path); }
+    void AddMissingDir(const wxString& path) { m_missing_dirs.insert(path); }
 
-    bool isDarkMode() const noexcept { return m_isDarkMode; }
-    bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
+    auto isDarkMode() const noexcept -> bool { return m_isDarkMode; }
+    auto isDarkHighContrast() const noexcept -> bool { return m_isDarkHighContrast; }
 
     // Determines whether the testing menu is enabled
     auto isTestingMenuEnabled() const noexcept -> bool { return m_TestingMenuEnabled; }
@@ -83,7 +85,7 @@ public:
 
     // Add warning or error messages to this if is_Generating() is true (which means code is
     // being generated from the command line).
-    tt_string_vector& get_CmdLineLog() { return m_cmdline_log; }
+    auto get_CmdLineLog() -> tt_string_vector& { return m_cmdline_log; }
 
 protected:
     bool OnInit() override;
@@ -92,13 +94,37 @@ protected:
     void OnFatalException() override;
 #endif
 
-    int OnRun() override;
-    int OnExit() override;
-
-    // Returns a positive value if command-line only code generation was requested and handled.
-    int Generate(wxCmdLineParser& parser, bool& is_project_loaded);
+    auto OnRun() -> int override;
+    auto OnExit() -> int override;
 
 private:
+    enum : int
+    {
+        cmd_no_params = -2,
+        cmd_gen_project_not_found = -1,
+        cmd_project_file_only = 0,
+        cmd_gen_project_not_loaded = 1,
+        cmd_gen_success = 2,
+
+    };
+
+    // Returns a positive value if command-line only code generation was requested and handled.
+    auto Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int;
+
+    // Helper methods for Generate()
+    static auto ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
+        -> std::pair<size_t, bool>;
+
+    [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
+
+    static auto LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
+                                bool& is_project_loaded) -> bool;
+
+    static void LogGenerationResults(GenResults& results, std::vector<tt_string>& class_list,
+                                     bool test_only, std::string_view language_type);
+
+    static void GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                                     std::vector<tt_string>& class_list);
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
     // want to create it. If they choose No then we store the path here and never ask again
     // for the current session.
@@ -137,7 +163,7 @@ private:
 #endif
 };
 
-DECLARE_APP(App)
+DECLARE_APP(App)  // NOLINT (cppcheck-suppress)
 
 // Temporarily disables the testing menu for the scope of this object.
 // Restores the previous state in the destructor.

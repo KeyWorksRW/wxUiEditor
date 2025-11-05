@@ -645,6 +645,36 @@ protected:
     auto WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&;
 
 private:
+    // Helper methods for initialization (static as they don't need instance data)
+    [[nodiscard]] static auto GetLineBreakLength(GenLang language) -> size_t;
+    [[nodiscard]] static auto GetLanguagePrefixForInit(GenLang language) -> std::string_view;
+    [[nodiscard]] static auto GetIndentSize(GenLang language) -> int;
+    [[nodiscard]] static auto GetLineOffset(GenLang language) -> size_t;
+
+    // Helper methods for Function()
+    void AddFunctionNoOperatorWithWx(tt_string_view text);
+    void AddFunctionWithOperatorRuby(tt_string_view text);
+    void AddFunctionWithOperatorPython(tt_string_view text);
+
+    // Helper methods for ValidParentName()
+    void AddFormParentName();
+
+    // Helper methods for QuotedString()
+    void ProcessEscapedChar(char chr, bool& has_escape);
+    [[nodiscard]] static auto HasUtf8Char(tt_string_view text) -> bool;
+    void AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_char);
+
+    // Helper methods for WxSize()
+    void AddScaledSizeRuby(wxSize size);
+    void AddUnscaledSizeRuby(wxSize size);
+    void AddScaledSizePerl(wxSize size);
+    void AddUnscaledSizePerl(wxSize size);
+
+    // Helper methods for Add()
+    [[nodiscard]] auto AddRubyConstant(tt_string_view text) -> bool;
+    auto AddCombinedValues(tt_string_view text) -> Code&;
+    auto AddWxPrefixedConstant(tt_string_view text) -> Code&;
+
     Node* m_node;
     GenLang m_language;
 

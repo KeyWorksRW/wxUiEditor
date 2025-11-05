@@ -9,6 +9,8 @@
 
 #include "mainframe.h"  // CMainFrame
 
+#if defined(_DEBUG)  // Starts debug section.
+
 void MainFrame::OnVerifyTTWX(wxCommandEvent& /* event unused */)  // NOLINT (cppcheck-suppress)
 {
     if (VerifyTTwx())
@@ -26,3 +28,5 @@ void MainFrame::OnVerifyTTWX(wxCommandEvent& /* event unused */)  // NOLINT (cpp
         MSG_INFO("VerifyViewVector: All tests passed successfully!");
     }
 }
+
+#endif  // Ends debug section.

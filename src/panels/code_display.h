@@ -49,7 +49,7 @@ protected:
 
     // The following function is required to inherit from WriteCode
 
-    void doWrite(tt_string_view code) override;
+    void doWrite(std::string_view code) override;
 
 private:
     tt_view_vector m_view;

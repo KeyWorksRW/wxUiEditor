@@ -144,7 +144,6 @@ bool App::OnInit()
 int App::OnRun()
 {
     NodeCreation.Initialize();
-    bool is_project_loaded = false;
 
     wxCmdLineParser parser(argc, argv);
     OnInitCmdLine(parser);
@@ -234,6 +233,8 @@ int App::OnRun()
         }
     }
 
+    bool is_project_loaded = false;
+
     if (is_verify_mode)
     {
         return VerifyCodeGen(parser, is_project_loaded);
@@ -250,10 +251,8 @@ int App::OnRun()
         return 0;
     }
 
-    if (!m_frame)  // nothing passed on the command line, so frame not created yet
-    {
-        m_frame = new MainFrame();
-    }
+    m_frame = new MainFrame();
+    ASSERT(m_frame);
 
     if (result == cmd_project_file_only)
     {
@@ -306,9 +305,11 @@ int App::OnRun()
 
         return wxApp::OnRun();
     }
+
     if (!m_frame)
     {
         m_frame->Close();
+        m_frame = nullptr;
     }
     return 1;
 }

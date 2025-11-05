@@ -32,7 +32,7 @@ using EventVector = std::vector<NodeEvent*>;
 namespace result
 {
     // These enums are returned to indicate the result of generating a file
-    enum
+    enum : std::int8_t
     {
         fail = -1,
         exists = 0,
@@ -43,11 +43,17 @@ namespace result
 }  // namespace result
 
 // flag == 1 for test only, flag == 2 if temp filename in updated_files
-int WriteCMakeFile(Node* parent_node, GenResults& results, int flag = 0);  // See gen_cmake.cpp
+auto WriteCMakeFile(Node* parent_node, GenResults& results, int flag = 0)
+    -> int;  // See gen_cmake.cpp
 
 class BaseCodeGenerator
 {
 public:
+    BaseCodeGenerator(const BaseCodeGenerator&) = delete;
+    auto operator=(const BaseCodeGenerator&) -> BaseCodeGenerator& = delete;
+    BaseCodeGenerator(BaseCodeGenerator&&) = delete;
+    auto operator=(BaseCodeGenerator&&) -> BaseCodeGenerator& = delete;
+
     BaseCodeGenerator(GenLang language, Node* form_node);
     virtual ~BaseCodeGenerator() = default;
 
@@ -58,8 +64,8 @@ public:
     virtual void GenerateClass(GenLang language, PANEL_PAGE panel_type = NOT_PANEL) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
-    virtual int GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
-                                     PANEL_PAGE panel_type = NOT_PANEL)
+    virtual auto GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
+                                      PANEL_PAGE panel_type = NOT_PANEL) -> int
     {
         m_panel_type = panel_type;
         return result::fail;
@@ -68,7 +74,7 @@ public:
     auto GetHeaderWriter() { return m_header; }
     auto GetSrcWriter() { return m_source; }
 
-    PANEL_PAGE GetPanelType() { return m_panel_type; }
+    auto GetPanelType() -> PANEL_PAGE { return m_panel_type; }
 
     static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
                            std::set<std::string>& set_const_ids);
@@ -85,7 +91,7 @@ protected:
 
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
     void AddPersistCode(Node* node);
-    enum Permission
+    enum class Permission : std::uint8_t
     {
         Protected,
         Public
@@ -94,7 +100,7 @@ protected:
     // This method is in gen_images.cpp, and handles both source and header code generation
     void GenerateImagesForm();
 
-    tt_string GetDeclaration(Node* node);
+    static auto GetDeclaration(Node* node) -> tt_string;
 
     void CollectEventHandlers(Node* node, EventVector& events);
 
@@ -116,18 +122,17 @@ protected:
     void GenSettings(Node* node, bool within_brace = false);
 
     // Write everything in the set and then clear it
-    void WriteSetLines(WriteCode* pDest, std::set<std::string>& code_lines);
+    void static WriteSetLines(WriteCode* write_code, std::set<std::string>& set_lines);
 
     // Called after base class is fully constructed
     void GenContextMenuHandler(Node* node_ctx_menu);
 
-protected:
     // Call this to set m_ImagesForm
     void SetImagesForm();
 
     void BeginPlatformCode(Code& code, const tt_string& platforms);
     void EndPlatformCode();
-    bool GenAfterChildren(Node* node, bool need_closing_brace);
+    auto GenAfterChildren(Node* node, bool need_closing_brace) -> bool;
 
     // Call if GenAfterChildren() returns false and node's parent is a sizer
     void GenParentSizer(Node* node, bool need_closing_brace);
@@ -138,6 +143,9 @@ protected:
     // In C++ unindents, then adds a line with "}". Other languages just unindent.
     void EndBrace();
 
+    // NOLINTBEGIN
+    // We expect derived classes to be able to access these variables, so they must remain
+    // protected, not private.
 protected:
     WriteCode* m_header;
     WriteCode* m_source;
@@ -181,7 +189,62 @@ protected:
     bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
     bool m_NeedSVGFunction { false };        // Set when SVG image type is used
     bool m_NeedImageFunction { false };
-
+    // NOLINTEND
 private:
+    // Helper methods for CollectEventHandlers - reduce function complexity
+    // Adds event to conditional events map, checking for duplicates
+    void AddConditionalEvent(std::string_view platform, NodeEvent* event);
+
+    // Adds event to context menu events or regular events based on parent type
+    void AddEventToProperContainer(Node* node, NodeEvent* event, EventVector& events);
+
+    // Processes a single event, determining where it should be stored
+    void ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events);
+
+    // Helper methods for CollectImageHeaders - reduce function complexity
+    // Processes embedded or SVG images from a bundle
+    void ProcessEmbeddedImages(const std::vector<tt_string>& filenames);
+
+    // Processes header or XPM images from a bundle
+    void ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
+                             std::set<std::string>& embedset);
+
+    // Processes animation embed data
+    void ProcessAnimationEmbed(std::string_view value);
+
+    // Processes animation header or XPM data
+    void ProcessAnimationHeaders(std::string_view value, Node* node,
+                                 std::set<std::string>& embedset);
+
+    // Helper to check if embedded image already exists in collection
+    [[nodiscard]] auto IsEmbeddedImageInCollection(const EmbeddedImage* embed) -> bool;
+
+    // Helper methods for ParseImageProperties - reduce function complexity
+    // Processes icon property for form nodes
+    void ProcessFormIcon(Node* node);
+
+    // Processes embed type images/animations from child node
+    void ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation);
+
+    // Processes SVG type images/animations from child node
+    void ProcessChildSVGType(const tt_string_vector& parts, bool is_animation);
+
+    // Processes header or XPM type images/animations from child node
+    void ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation);
+
+    // Helper methods for GetDeclaration - reduce function complexity
+    // Processes wx class declarations (wxStdDialogButtonSizer, wxStaticBitmap, etc)
+    static void ProcessWxClassDeclaration(const tt_string& class_name, Node* node, tt_string& code);
+
+    // Processes special custom class declarations
+    static void ProcessCustomClassDeclaration(Node* node, tt_string& code);
+
+    // Processes tool class declarations based on parent type
+    static void ProcessToolDeclaration(Node* node, tt_string& code);
+
+    // Processes StaticCheckboxBoxSizer or StaticRadioBtnBoxSizer declarations
+    static void ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
+                                                 tt_string& code);
+
     std::mutex m_embedded_images_mutex;  // Protects m_embedded_images from concurrent access
 };

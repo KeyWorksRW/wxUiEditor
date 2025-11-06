@@ -8,6 +8,8 @@
 #include <wx/datetime.h>  // wxDateTime
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
+#include <frozen/map.h>
+
 #include "gen_base.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base Generator class
@@ -24,98 +26,31 @@
 using namespace GenEnum;
 
 BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node) :
-    m_form_node(form_node), m_language(language)
+    m_header(nullptr), m_source(nullptr), m_form_node(form_node), m_language(language)
 {
 }
 
-tt_string BaseCodeGenerator::GetDeclaration(Node* node)
+auto BaseCodeGenerator::GetDeclaration(Node* node) -> tt_string
 {
     tt_string code;
-
     tt_string class_name(node->get_DeclName());
 
     if (class_name.starts_with("wx"))
     {
-        if (node->HasValue(prop_subclass))
-        {
-            code << node->as_string(prop_subclass) << "* " << node->get_NodeName() << ';';
-        }
-        else
-        {
-            if (node->get_Generator()->IsGeneric(node))
-            {
-                class_name = node->get_DeclName();
-                class_name.Replace("wx", "wxGeneric");
-            }
-            code << class_name << "* " << node->get_NodeName() << ';';
-        }
-
-        if (class_name == "wxStdDialogButtonSizer")
-        {
-            if (!node->get_Form()->is_Gen(gen_wxDialog) || node->as_bool(prop_Save) ||
-                node->as_bool(prop_ContextHelp))
-            {
-                if (node->as_bool(prop_OK))
-                    code << "\n\twxButton* " << node->get_NodeName() << "OK;";
-                if (node->as_bool(prop_Yes))
-                    code << "\n\twxButton* " << node->get_NodeName() << "Yes;";
-                if (node->as_bool(prop_Save))
-                    code << "\n\twxButton* " << node->get_NodeName() << "Save;";
-                if (node->as_bool(prop_Apply))
-                    code << "\n\twxButton* " << node->get_NodeName() << "Apply;";
-                if (node->as_bool(prop_No))
-                    code << "\n\twxButton* " << node->get_NodeName() << "No;";
-                if (node->as_bool(prop_Cancel))
-                    code << "\n\twxButton* " << node->get_NodeName() << "Cancel;";
-                if (node->as_bool(prop_Close))
-                    code << "\n\twxButton* " << node->get_NodeName() << "Close;";
-                if (node->as_bool(prop_Help))
-                    code << "\n\twxButton* " << node->get_NodeName() << "Help;";
-                if (node->as_bool(prop_ContextHelp))
-                    code << "\n\twxButton* " << node->get_NodeName() << "ContextHelp;";
-            }
-        }
-        else if (class_name == "wxStaticBitmap")
-        {
-            // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to
-            // support it.
-            if (node->as_string(prop_scale_mode) != "None")
-                code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
-        }
+        ProcessWxClassDeclaration(class_name, node, code);
     }
     else if (node->HasValue(prop_subclass))
     {
-        code << node->as_string(prop_subclass) << "* " << node->get_NodeName() << ';';
+        code << node->as_view(prop_subclass) << "* " << node->get_NodeName() << ';';
     }
     else if (class_name == "CloseButton")
     {
         code << "wxBitmapButton* " << node->get_NodeName() << ';';
     }
-    else if (class_name == "StaticCheckboxBoxSizer")
+    else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
     {
-        if (node->HasValue(prop_checkbox_var_name))
-            code << "wxCheckBox* " << node->as_string(prop_checkbox_var_name) << ';';
-
-        if (!node->is_Local())
-        {
-            if (code.size())
-                code << "\n";
-            code << "wxStaticBoxSizer* " << node->get_NodeName() << ';';
-        }
+        ProcessStaticBoxSizerDeclaration(class_name, node, code);
     }
-    else if (class_name == "StaticRadioBtnBoxSizer")
-    {
-        if (node->HasValue(prop_radiobtn_var_name))
-            code << "wxRadioButton* " << node->as_string(prop_radiobtn_var_name) << ';';
-
-        if (!node->is_Local())
-        {
-            if (code.size())
-                code << "\n";
-            code << "wxStaticBoxSizer* " << node->get_NodeName() << ';';
-        }
-    }
-
     else if (class_name == "propGridItem" || class_name == "propGridCategory")
     {
         code << "wxPGProperty* " << node->get_NodeName() << ';';
@@ -138,38 +73,12 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name == "tool")
     {
-        class_name = node->get_Parent()->get_DeclName();
-        if (class_name == "wxAuiToolBar")
-        {
-            code << "wxAuiToolBarItem* " << node->get_NodeName() << ';';
-        }
-        else if (class_name == "wxToolBar")
-        {
-            code << "wxToolBarToolBase* " << node->get_NodeName() << ';';
-        }
-        else if (class_name == "ToolBar")
-        {
-            code << "wxToolBarToolBase* " << node->get_NodeName() << ';';
-        }
-        else
-        {
-            FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.")
-        }
+        ProcessToolDeclaration(node, code);
     }
     else if (class_name.is_sameas("CustomControl"))
     {
-        if (auto* node_namespace = node->get_Folder();
-            node_namespace && node_namespace->HasValue(prop_folder_namespace))
-        {
-            code << node_namespace->as_string(prop_folder_namespace) << "::";
-        }
-        else if (node->HasValue(prop_namespace))
-        {
-            code << node->as_string(prop_namespace) << "::";
-        }
-        code << node->as_string(prop_class_name) << "* " << node->get_NodeName() << ';';
+        ProcessCustomClassDeclaration(node, code);
     }
-
     else if (class_name.is_sameas("dataViewColumn") || class_name.is_sameas("dataViewListColumn"))
     {
         code << "wxDataViewColumn* " << node->get_NodeName() << ';';
@@ -177,10 +86,125 @@ tt_string BaseCodeGenerator::GetDeclaration(Node* node)
 
     if (node->HasValue(prop_var_comment))
     {
-        code << "  // " << node->as_string(prop_var_comment);
+        code << "  // " << node->as_view(prop_var_comment);
     }
 
     return code;
+}
+
+namespace
+{
+    constexpr auto button_map = frozen::map<GenEnum::PropName, std::string_view, 9> {
+        { prop_OK, "OK" },       { prop_Yes, "Yes" },   { prop_Save, "Save" },
+        { prop_Apply, "Apply" }, { prop_No, "No" },     { prop_Cancel, "Cancel" },
+        { prop_Close, "Close" }, { prop_Help, "Help" }, { prop_ContextHelp, "ContextHelp" },
+    };
+
+    void AddStdDialogButtonDeclaration(Node* node, tt_string& code)
+    {
+        for (const auto& [prop, button_name]: button_map)
+        {
+            if (node->as_bool(prop))
+            {
+                code << "\n\twxButton* " << node->get_NodeName() << button_name << ";";
+            }
+        }
+    }
+}  // namespace
+
+void BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, Node* node,
+                                                  tt_string& code)
+{
+    if (node->HasValue(prop_subclass))
+    {
+        code << node->as_view(prop_subclass) << "* " << node->get_NodeName() << ';';
+    }
+    else
+    {
+        tt_string adjusted_class_name(class_name);
+        if (node->get_Generator()->IsGeneric(node))
+        {
+            adjusted_class_name.Replace("wx", "wxGeneric");
+        }
+        code << adjusted_class_name << "* " << node->get_NodeName() << ';';
+    }
+
+    if (class_name == "wxStdDialogButtonSizer")
+    {
+        if (!node->get_Form()->is_Gen(gen_wxDialog) || node->as_bool(prop_Save) ||
+            node->as_bool(prop_ContextHelp))
+        {
+            AddStdDialogButtonDeclaration(node, code);
+        }
+    }
+    else if (class_name == "wxStaticBitmap")
+    {
+        // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to
+        // support it.
+        if (node->as_view(prop_scale_mode) != "None")
+        {
+            code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
+        }
+    }
+}
+
+void BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
+                                                         tt_string& code)
+{
+    if (class_name == "StaticCheckboxBoxSizer")
+    {
+        if (node->HasValue(prop_checkbox_var_name))
+        {
+            code << "wxCheckBox* " << node->as_view(prop_checkbox_var_name) << ';';
+        }
+    }
+    else if (class_name == "StaticRadioBtnBoxSizer")
+    {
+        if (node->HasValue(prop_radiobtn_var_name))
+        {
+            code << "wxRadioButton* " << node->as_view(prop_radiobtn_var_name) << ';';
+        }
+    }
+
+    if (!node->is_Local())
+    {
+        if (code.size())
+        {
+            code << "\n";
+        }
+        code << "wxStaticBoxSizer* " << node->get_NodeName() << ';';
+    }
+}
+
+void BaseCodeGenerator::ProcessToolDeclaration(Node* node, tt_string& code)
+{
+    tt_string parent_class_name(node->get_Parent()->get_DeclName());
+    if (parent_class_name == "wxAuiToolBar")
+    {
+        code << "wxAuiToolBarItem* " << node->get_NodeName() << ';';
+    }
+    else if (parent_class_name == "wxToolBar" || parent_class_name == "ToolBar")
+    {
+        code << "wxToolBarToolBase* " << node->get_NodeName() << ';';
+    }
+    else
+    {
+        FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.")
+    }
+}
+
+void BaseCodeGenerator::ProcessCustomClassDeclaration(Node* node, tt_string& code)
+{
+    if (auto* node_namespace = node->get_Folder();
+        node_namespace && node_namespace->HasValue(prop_folder_namespace))
+    {
+        code << node_namespace->as_view(prop_folder_namespace) << "::";
+    }
+    else if (node->HasValue(prop_namespace))
+    {
+        code << node->as_view(prop_namespace) << "::";
+    }
+    code << node->as_view(prop_class_name) << "* " << node->get_NodeName() << ';';
 }
 
 // This is a static function
@@ -191,14 +215,18 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
     {
         if (iter.type() == type_id)
         {
-            auto& prop_id = iter.as_string();
+            const auto& prop_id = iter.as_string();
             if (prop_id.size() && !prop_id.starts_with("wxID_"))
             {
-                if (ttwx::is_found(
-                        prop_id.find('=')))  // If it has an assignment operator, it's a constant
+                if (prop_id.find('=') !=
+                    std::string_view::npos)  // If it has an assignment operator, it's a constant
+                {
                     set_const_ids.insert(prop_id);
+                }
                 else
+                {
                     set_enum_ids.insert(prop_id);
+                }
             }
         }
     }
@@ -209,19 +237,58 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
     }
 }
 
+void BaseCodeGenerator::AddConditionalEvent(std::string_view platform, NodeEvent* event)
+{
+    if (!m_map_conditional_events.contains(platform))
+    {
+        m_map_conditional_events[platform] = std::vector<NodeEvent*>();
+    }
+
+    auto& event_vector = m_map_conditional_events[platform];
+    if (!std::ranges::any_of(event_vector,
+                             [event](const NodeEvent* vector_event)
+                             {
+                                 return vector_event == event;
+                             }))
+    {
+        event_vector.push_back(event);
+    }
+}
+
+void BaseCodeGenerator::AddEventToProperContainer(Node* node, NodeEvent* event, EventVector& events)
+{
+    if (node->get_Parent()->is_Gen(gen_wxContextMenuEvent))
+    {
+        m_ctx_menu_events.push_back(event);
+        return;
+    }
+
+    events.push_back(event);
+}
+
+void BaseCodeGenerator::ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events)
+{
+    // Check if node has platform-specific constraint
+    if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    {
+        AddConditionalEvent(node->as_string(prop_platforms), event);
+        return;
+    }
+
+    // Check if node is within a platform container
+    if (auto* node_container = node->get_PlatformContainer(); node_container)
+    {
+        AddConditionalEvent(node_container->as_string(prop_platforms), event);
+        return;
+    }
+
+    // No platform constraints, add to appropriate container
+    AddEventToProperContainer(node, event, events);
+}
+
 void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
 {
     ASSERT(node);
-
-    auto CheckIfEventExists = [](const EventVector& vectors, const NodeEvent* event) -> bool
-    {
-        for (const auto vector_event: vectors)
-        {
-            if (vector_event == event)
-                return true;
-        }
-        return false;
-    };
 
     for (auto& iter: node->get_MapEvents())
     {
@@ -231,48 +298,7 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
             // Because the NodeEvent* gets stored in a set if there is a conditional, it won't get
             // duplicated even if it is added by both the Node and any container containing the same
             // conditional
-
-            if (node->HasProp(prop_platforms) &&
-                node->as_string(prop_platforms) != "Windows|Unix|Mac")
-            {
-                if (!m_map_conditional_events.contains(node->as_string(prop_platforms)))
-                {
-                    m_map_conditional_events[node->as_string(prop_platforms)] =
-                        std::vector<NodeEvent*>();
-                }
-                if (!CheckIfEventExists(m_map_conditional_events[node->as_string(prop_platforms)],
-                                        &iter.second))
-                {
-                    m_map_conditional_events[node->as_string(prop_platforms)].push_back(
-                        &iter.second);
-                }
-            }
-
-            // If node_container is non-null, it means the current node is within a container that
-            // has a conditional.
-            else if (auto node_container = node->get_PlatformContainer(); node_container)
-            {
-                if (!m_map_conditional_events.contains(node_container->as_string(prop_platforms)))
-                {
-                    m_map_conditional_events[node_container->as_string(prop_platforms)] =
-                        std::vector<NodeEvent*>();
-                }
-                if (!CheckIfEventExists(
-                        m_map_conditional_events[node_container->as_string(prop_platforms)],
-                        &iter.second))
-                {
-                    m_map_conditional_events[node_container->as_string(prop_platforms)].push_back(
-                        &iter.second);
-                }
-            }
-
-            else
-            {
-                if (node->get_Parent()->is_Gen(gen_wxContextMenuEvent))
-                    m_ctx_menu_events.push_back(&iter.second);
-                else
-                    events.push_back(&iter.second);
-            }
+            ProcessEventHandler(node, &iter.second, events);
         }
     }
 
@@ -290,163 +316,165 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>
     }
 }
 
+auto BaseCodeGenerator::IsEmbeddedImageInCollection(const EmbeddedImage* embed) -> bool
+{
+    std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
+    return std::ranges::any_of(m_embedded_images,
+                               [embed](const EmbeddedImage* pimage)
+                               {
+                                   return pimage == embed;
+                               });
+}
+
+void BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& filenames)
+{
+    for (const auto& idx_image: filenames)
+    {
+        if (auto* embed = ProjectImages.GetEmbeddedImage(idx_image); embed)
+        {
+            if (!IsEmbeddedImageInCollection(embed))
+            {
+                if (embed->base_image().filename.file_exists())
+                {
+                    auto file_time = embed->base_image().filename.last_write_time();
+                    if (file_time != embed->base_image().file_time)
+                    {
+                        embed->UpdateImage(embed->base_image());
+                        embed->base_image().file_time = file_time;
+                    }
+                    std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
+                    m_embedded_images.emplace_back(embed);
+                }
+                else
+                {
+                    MSG_INFO(tt_string()
+                             << "Unable to get file time for " << embed->base_image().filename);
+                }
+            }
+        }
+    }
+}
+
+void BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
+                                            std::set<std::string>& embedset)
+{
+    for (const auto& idx_image: filenames)
+    {
+        tt_string path(idx_image);
+        auto art_dir = Project.ArtDirectory();
+        if (art_dir.size())
+        {
+            auto output_dir = Project.get_BaseDirectory(node, m_language);
+            output_dir.append_filename(path);
+            if (!output_dir.file_exists())
+            {
+                art_dir.append_filename(path.filename());
+                if (art_dir.file_exists())
+                {
+                    path = art_dir;
+                    path.make_relative(Project.get_BaseDirectory(node, m_language));
+                }
+            }
+        }
+        path.backslashestoforward();
+        embedset.insert(tt_string() << "#include \"" << path << "\"");
+    }
+}
+
+void BaseCodeGenerator::ProcessAnimationEmbed(std::string_view value)
+{
+    tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].size())
+    {
+        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        if (!embed)
+        {
+            if (!ProjectImages.AddEmbeddedImage(parts[IndexImage], m_form_node))
+            {
+                return;
+            }
+            embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            if (!embed)
+            {
+                return;
+            }
+        }
+        else if (IsEmbeddedImageInCollection(embed))
+        {
+            return;  // we already have this image
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
+            m_embedded_images.emplace_back(embed);
+        }
+    }
+}
+
+void BaseCodeGenerator::ProcessAnimationHeaders(std::string_view value, Node* node,
+                                                std::set<std::string>& embedset)
+{
+    tt_view_vector parts(value);
+    if (ttwx::is_whitespace(parts[IndexImage].front()))
+    {
+        parts[IndexImage].remove_prefix(1);
+    }
+    tt_string path = parts[IndexImage];
+    auto art_dir = Project.ArtDirectory();
+    if (art_dir.size())
+    {
+        auto output_dir = Project.get_BaseDirectory(node, m_language);
+        output_dir.append_filename(path);
+        if (!output_dir.file_exists())
+        {
+            art_dir.append_filename(path);
+            if (art_dir.file_exists())
+            {
+                path = art_dir;
+                path.make_relative(Project.get_BaseDirectory(node, m_language));
+            }
+        }
+    }
+    path.backslashestoforward();
+    embedset.insert(tt_string() << "#include \"" << path << "\"");
+}
+
 // This function is called by the thread thrd_collect_img_headers
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
     for (auto& iter: node->get_PropsVector())
     {
         if (!iter.HasValue())
+        {
             continue;
+        }
 
-        auto& value = iter.as_string();
         if (iter.type() == type_image)
         {
-            if (auto bundle = ProjectImages.GetPropertyImageBundle(iter.as_string()); bundle)
+            if (const auto* bundle = ProjectImages.GetPropertyImageBundle(iter.as_string()); bundle)
             {
+                const auto& value = iter.as_string();
                 if (value.starts_with("Embed") || value.starts_with("SVG"))
                 {
-                    for (auto& idx_image: bundle->lst_filenames)
-                    {
-                        if (auto* embed = ProjectImages.GetEmbeddedImage(idx_image); embed)
-                        {
-                            bool is_found = false;
-                            {
-                                std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
-                                for (auto* pimage: m_embedded_images)
-                                {
-                                    if (pimage == embed)
-                                    {
-                                        is_found = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!is_found)
-                            {
-                                if (embed->base_image().filename.file_exists())
-                                {
-                                    auto file_time = embed->base_image().filename.last_write_time();
-                                    if (file_time != embed->base_image().file_time)
-                                    {
-                                        embed->UpdateImage(embed->base_image());
-                                        embed->base_image().file_time = file_time;
-                                    }
-                                    std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
-                                    m_embedded_images.emplace_back(embed);
-                                }
-                                else
-                                {
-                                    MSG_INFO(tt_string() << "Unable to get file time for "
-                                                         << embed->base_image().filename);
-                                }
-                            }
-                        }
-                    }
+                    ProcessEmbeddedImages(bundle->lst_filenames);
                 }
                 else if (value.starts_with("Header") || value.starts_with("XPM"))
                 {
-                    for (auto& idx_image: bundle->lst_filenames)
-                    {
-                        tt_string path(idx_image);
-                        auto art_dir = Project.ArtDirectory();
-                        if (art_dir.size())
-                        {
-                            auto output_dir = Project.get_BaseDirectory(node, m_language);
-                            output_dir.append_filename(path);
-                            if (!output_dir.file_exists())
-                            {
-                                art_dir.append_filename(path.filename());
-                                if (art_dir.file_exists())
-                                {
-                                    path = art_dir;
-                                    path.make_relative(Project.get_BaseDirectory(node, m_language));
-                                }
-                            }
-                        }
-                        path.backslashestoforward();
-                        embedset.insert(tt_string() << "#include \"" << path << "\"");
-                    }
+                    ProcessHeaderImages(node, bundle->lst_filenames, embedset);
                 }
-            }
-            else
-            {
-                // Since this is a thread, you can't send the standard MSG_WARNING if the window is
-                // opened, or it will lock the debugger.
             }
         }
-
         else if (iter.type() == type_animation)
         {
+            const auto& value = iter.as_string();
             if (value.starts_with("Embed"))
             {
-                tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
-
-                if (parts[IndexImage].size())
-                {
-                    auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-                    if (!embed)
-                    {
-                        if (!ProjectImages.AddEmbeddedImage(parts[IndexImage], m_form_node))
-                        {
-                            continue;
-                        }
-                        embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
-                        if (!embed)
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        bool is_found = false;
-                        {
-                            std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
-                            for (auto& pimage: m_embedded_images)
-                            {
-                                if (pimage == embed)
-                                {
-                                    is_found = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (is_found)
-                        {
-                            continue;  // we already have this image
-                        }
-                    }
-
-                    {
-                        std::lock_guard<std::mutex> lock(m_embedded_images_mutex);
-                        m_embedded_images.emplace_back(embed);
-                    }
-                }
+                ProcessAnimationEmbed(value);
             }
             else if (value.starts_with("Header") || value.starts_with("XPM"))
             {
-                tt_view_vector parts(value);
-                if (ttwx::is_whitespace(parts[IndexImage].front()))
-                {
-                    parts[IndexImage].remove_prefix(1);
-                }
-                tt_string path = parts[IndexImage];
-                auto art_dir = Project.ArtDirectory();
-                if (art_dir.size())
-                {
-                    auto output_dir = Project.get_BaseDirectory(node, m_language);
-                    output_dir.append_filename(path);
-                    if (!output_dir.file_exists())
-                    {
-                        art_dir.append_filename(path);
-                        if (art_dir.file_exists())
-                        {
-                            path = art_dir;
-                            path.make_relative(Project.get_BaseDirectory(node, m_language));
-                        }
-                    }
-                }
-                path.backslashestoforward();
-                embedset.insert(tt_string() << "#include \"" << path << "\"");
+                ProcessAnimationHeaders(value, node, embedset);
             }
         }
     }
@@ -454,6 +482,100 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     for (auto& child: node->get_ChildNodePtrs())
     {
         CollectImageHeaders(child.get(), embedset);
+    }
+}
+
+void BaseCodeGenerator::ProcessFormIcon(Node* node)
+{
+    if (node->is_Form() && node->HasValue(prop_icon))
+    {
+        tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        if (parts.size() >= IndexImage + 1)
+        {
+            if (parts[IndexType] == "Header" || parts[IndexType] == "XPM")
+            {
+                if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+                {
+                    m_NeedHeaderFunction = true;
+                }
+            }
+            else if (parts[IndexType] == "Art")
+            {
+                m_NeedArtProviderHeader = true;
+            }
+        }
+    }
+}
+
+void BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation)
+{
+    if (is_animation)
+    {
+        m_NeedAnimationFunction = true;
+        return;
+    }
+
+    if (!m_ImagesForm)
+    {
+        m_NeedImageFunction = true;
+        return;
+    }
+
+    // If we haven't already encountered an image that requires a function, then check to see
+    // if this image is in the Images List file and has a bundle function to access it. If it
+    // does, then we still don't need to generate an image function in the class file.
+    if (!m_NeedImageFunction)
+    {
+        if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+            bundle && bundle->lst_filenames.size())
+        {
+            if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+            {
+                if (ProjectImages.GetBundleFuncName(embed).empty())
+                {
+                    m_NeedImageFunction = true;
+                }
+            }
+        }
+    }
+}
+
+void BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
+                                            [[maybe_unused]] bool is_animation)
+{
+    if (!m_ImagesForm)
+    {
+        m_NeedSVGFunction = true;
+        return;
+    }
+
+    if (m_NeedSVGFunction)
+    {
+        return;
+    }
+
+    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+        bundle && bundle->lst_filenames.size())
+    {
+        if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+        {
+            if (ProjectImages.GetBundleFuncName(embed).empty())
+            {
+                m_NeedSVGFunction = true;
+            }
+        }
+    }
+}
+
+void BaseCodeGenerator::ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation)
+{
+    if (is_animation)
+    {
+        m_NeedAnimationFunction = true;
+    }
+    else if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+    {
+        m_NeedHeaderFunction = true;
     }
 }
 
@@ -466,33 +588,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
     ASSERT(node);
     if (node->is_Form() && node->HasValue(prop_icon))
     {
-        tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
-        if (parts.size() >= IndexImage + 1)
-        {
-            // If ProjectImages returns a function name, then the function will be in the
-            // Images List header file, so we don't need to generate any functions for it in
-            // the source file.
-            if (auto function_name = ProjectImages.GetBundleFuncName(node->as_string(prop_icon));
-                function_name.empty())
-            {
-                if (parts[IndexType] == "Header")
-                {
-                    m_NeedHeaderFunction = true;
-                }
-                else if (parts[IndexType] == "Embed")
-                {
-                    m_NeedImageFunction = true;
-                }
-                else if ((parts[IndexType] == "Art"))
-                {
-                    m_NeedArtProviderHeader = true;
-                }
-                else if ((parts[IndexType] == "SVG"))
-                {
-                    m_NeedSVGFunction = true;
-                }
-            }
-        }
+        ProcessFormIcon(node);
     }
 
     for (const auto& child: node->get_ChildNodePtrs())
@@ -503,83 +599,21 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
             {
                 tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
+                {
                     continue;
+                }
 
                 if (parts[IndexType] == "Embed")
                 {
-                    if (iter.type() == type_animation)
-                    {
-                        m_NeedAnimationFunction = true;
-                    }
-                    else
-                    {
-                        if (!m_ImagesForm)
-                        {
-                            m_NeedImageFunction = true;
-                        }
-
-                        // If we haven't already encountered an image that requires a function,
-                        // then check to see if this image is in the Images List file and has a
-                        // bundle function to access it. If it does, then we still don't need
-                        // to generate an image function in the class file.
-                        else if (!m_NeedImageFunction)
-                        {
-                            if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
-                                bundle && bundle->lst_filenames.size())
-                            {
-                                if (auto embed =
-                                        ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                                    embed)
-                                {
-#if defined(_DEBUG)
-                                    auto name = ProjectImages.GetBundleFuncName(embed);
-                                    if (name.empty())
-#else
-                                    if (ProjectImages.GetBundleFuncName(embed).empty())
-#endif  // _DEBUG
-                                    {
-                                        m_NeedImageFunction = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    ProcessChildEmbedType(parts, iter.type() == type_animation);
                 }
                 else if ((parts[IndexType] == "SVG"))
                 {
-                    if (!m_ImagesForm)
-                    {
-                        m_NeedSVGFunction = true;
-                    }
-                    else if (!m_NeedSVGFunction)
-                    {
-                        if (auto bundle = ProjectImages.GetPropertyImageBundle(parts);
-                            bundle && bundle->lst_filenames.size())
-                        {
-                            if (auto embed =
-                                    ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
-                                embed)
-                            {
-#if defined(_DEBUG)
-                                auto name = ProjectImages.GetBundleFuncName(embed);
-                                if (name.empty())
-#else
-                                if (ProjectImages.GetBundleFuncName(embed).empty())
-#endif  // _DEBUG
-                                {
-                                    m_NeedSVGFunction = true;
-                                }
-                            }
-                        }
-                    }
+                    ProcessChildSVGType(parts, iter.type() == type_animation);
                 }
                 else if (parts[IndexType] == "Header")
                 {
-                    if (iter.type() == type_animation)
-                        m_NeedAnimationFunction = true;
-                    else if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm",
-                                            tt::CASE::either))
-                        m_NeedHeaderFunction = true;
+                    ProcessChildHeaderType(parts, iter.type() == type_animation);
                 }
             }
         }
@@ -605,19 +639,19 @@ void BaseCodeGenerator::AddPersistCode(Node* node)
     }
 }
 
-void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& code_lines)
+void BaseCodeGenerator::WriteSetLines(WriteCode* write_code, std::set<std::string>& set_lines)
 {
-    for (auto iter: code_lines)
+    for (auto iter: set_lines)
     {
-        // out->writeLine((tt_string&) (iter));
-        out->writeLine(iter);
+        // write_code->writeLine((tt_string&) (iter));
+        write_code->writeLine(iter);
     }
-    code_lines.clear();
+    set_lines.clear();
 }
 
 void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
 {
-    if (auto generator = node_ctx_menu->get_Generator(); generator)
+    if (auto* generator = node_ctx_menu->get_Generator(); generator)
     {
         Code code(node_ctx_menu, m_language);
         if (generator->AfterChildrenCode(code))
@@ -674,7 +708,7 @@ void BaseCodeGenerator::SetImagesForm()
             break;
         }
 
-        else if (form->is_Gen(gen_Images))
+        if (form->is_Gen(gen_Images))
         {
             m_ImagesForm = form.get();
             break;

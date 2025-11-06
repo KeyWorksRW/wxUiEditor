@@ -27,7 +27,7 @@ This is a C++ project used to generate C++, Perl, Python, and Ruby code for crea
 - **Always use `wxString::ToStdString()`** for converting `wxString` to `std::string` or `std::string_view`
 - Only use `wxString::utf8_string()` in rare cases where you specifically need UTF-8 encoded behavior that `ToStdString()` doesn't provide
 - When passing a wxString to a function expecting std::string_view, use `ToStdString()`
-- **If `std::format` is used, the file must `#include <format>` near the top**
+- **If `std::format` is used, the file must include `<format>` near the top**
 - Do not use `tt_string` for any new code
 - Do not use `tt_string_view` for any new code
 
@@ -90,8 +90,8 @@ This ensures code reviews and analysis accurately reference the actual editor li
 - Line length: 100 characters maximum
 - Use blank lines to separate logical code sections
 
-### Function Declarations
-- Always use trailing return type syntax: `auto FunctionName() -> ReturnType`
+### Function Declarations and Definitions
+- Always use trailing return type syntax for both declarations and definitions: `auto FunctionName() -> ReturnType`
 - Functions returning `bool` or `int` must have `[[nodiscard]]` attribute
 
 ### Enum Guidelines

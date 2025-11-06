@@ -1032,18 +1032,6 @@ void CppCodeGenerator::GenerateCppClassConstructor()
             m_source->writeLine();
             m_source->writeLine("// Event handlers");
             GenSrcEventBinding(m_form_node, m_events);
-
-            // Only generate potential events if no derived class is being
-            // created. If a derived class is being created, then we don't know
-            // the name of that class's file, and therefore have no idea if the
-            // event has been implemented or not.
-            if (m_events.size() && !m_form_node->as_bool(prop_derived_class))
-            {
-                m_source->writeLine();
-                m_source->ResetIndent();
-                GenUnhandledEvents(m_events);
-                m_source->Indent();
-            }
         }
 
         code.clear();

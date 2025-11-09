@@ -59,7 +59,7 @@ private:
 // if the code for this class is re-generated.
 //
 // ***********************************************
-    // ***********************************************
+    // clang-format on
 
 public:
     const tt_string& GetRcFilename() { return m_rcFilename; }

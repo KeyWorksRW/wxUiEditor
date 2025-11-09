@@ -98,10 +98,10 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
 // Code below this comment block will be preserved
-
-#include "ttwx.h"  // ttwx helpers for character classification
 // if the code for this class is re-generated.
 //
+// clang-format on
+// ***********************************************
 // clang-format on
 // ***********************************************
 

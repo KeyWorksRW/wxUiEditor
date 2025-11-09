@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
-// Purpose:   Classs to write code to disk
+// Purpose:   Class to write code to disk
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -71,20 +71,42 @@ private:
     [[nodiscard]] static auto GetBlockLength(GenLang language) -> size_t;
     [[nodiscard]] static auto GetCommentCharacter(GenLang language) -> std::string_view;
     [[nodiscard]] auto IsOldStyleFile() -> bool;
-    [[nodiscard]] auto FindAdditionalContentIndex() -> size_t;
+
+    // Returns the index of the line after the final comment block, or -1 if not found
+    [[nodiscard]] auto FindAdditionalContentIndex() -> std::ptrdiff_t;
+
+    // All Append...() functions append to m_buffer
+
     void AppendEndOfFileBlock();
     void AppendMissingCommentBlockWarning();
-    void AppendUserContent();
+
+    // If fake user content was added to m_buffer, the offset to it is in begin_new_user_content.
+    // This function will set m_additional_content if the file has not been read before.
+    // Returns true if any user content was appended.
+    auto AppendOriginalUserContent(size_t begin_new_user_content) -> bool;
 
     // Language-specific end-of-file block handlers
     void AppendCppEndBlock();
     void AppendPerlEndBlock();
     void AppendPythonEndBlock();
     void AppendRubyEndBlock();
+
+    // Ruby classes require an 'end' statement for the class.
+    // C++ header files with no closing brace require a closing brace.
+    // In both situations, fake user content is added after the final comment block.
+    // Returns the size of the appended content, zero if nothing was appended.
+    auto AppendFakeUserContent() -> size_t;
+
+    // This reads the original file into m_org_buffer
     [[nodiscard]] auto ReadOriginalFile(bool is_comparing) -> int;
+
     [[nodiscard]] auto EnsureDirectoryExists(int flags) -> int;
     [[nodiscard]] auto WriteToFile() -> int;
-    void ProcessExistingFile();
+
+    // Helper methods for WriteFile complexity reduction
+    [[nodiscard]] auto HandleEqualSizeBuffers() -> int;
+    [[nodiscard]] auto HandleLargerOriginalFile() -> int;
+    [[nodiscard]] auto ProcessDifferentSizeFiles() -> int;
 
     // Member variables
     std::string m_buffer;
@@ -95,11 +117,11 @@ private:
     GenLang m_language { GEN_LANG_NONE };
     int m_flags { 0 };
     bool m_file_exists { false };
-    bool m_recheck_additional_content { true };
     size_t m_block_length { 0 };
-    size_t m_additional_content { static_cast<size_t>(-1) };
+    std::ptrdiff_t m_additional_content { -1 };
+    std::string m_org_buffer;
     ttwx::ViewVector m_org_file;
-    ttwx::ViewVector m_new_file;
+    std::string_view m_comment_line_to_find;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

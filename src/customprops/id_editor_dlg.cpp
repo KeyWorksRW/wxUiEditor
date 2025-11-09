@@ -191,8 +191,6 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // DO NOT EDIT THIS COMMENT BLOCK!
 //
 // Code below this comment block will be preserved
-
-#include "ttwx.h"  // ttwx helpers for string parsing
 // if the code for this class is re-generated.
 //
 // clang-format on

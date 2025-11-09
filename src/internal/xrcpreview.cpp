@@ -172,49 +172,6 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Bind(wxEVT_INIT_DIALOG, &XrcPreview::OnInit, this);
     m_searchCtrl->Bind(wxEVT_SEARCHCTRL_SEARCH_BTN, &XrcPreview::OnSearch, this);
 
-// Unimplemented Event handler functions
-// Copy any of the following and paste them below the comment block, or to your inherited class.
-
-/*
-void XrcPreview::OnClear(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnCompare(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnDuplicate(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnExport(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnGenerate(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnInit(wxInitDialogEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnPreview(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnSearch(wxCommandEvent& event)
-{
-    event.Skip();
-}
-void XrcPreview::OnVerify(wxCommandEvent& event)
-{
-    event.Skip();
-}
-
-*/
-
     return true;
 }
 

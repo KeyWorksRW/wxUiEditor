@@ -487,6 +487,20 @@ void NodeCreator::Initialize()
         // Now parse the completed m_pdoc_interface document
         ParseGeneratorFile("");
 
+        /*
+         [Randalphwa - 11-09-2025] I looked into turning this into threaded code, but it's not
+         really practical:
+
+        - XML decompression (in wxue_data functions) is already CPU-intensive and would saturate
+         cores
+        - Lock contention on m_a_declarations would serialize the critical sections anyway
+         - Memory allocation for NodeDeclaration objects has its own internal synchronization
+         overhead
+        - Only 12 iterations (based on functionArray size) - insufficient parallelism to
+         overcome threading overhead
+
+        */
+
         for (const auto& iter: functionArray)
         {
             auto xml_data = iter();

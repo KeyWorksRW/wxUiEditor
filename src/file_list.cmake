@@ -3,67 +3,67 @@ set( file_list_dir ${CMAKE_CURRENT_LIST_DIR} )
 # wxui/wxui_code.cmake
 set( file_list
 
-    wxUiEditor.rc # Only processed when compiling for Windows, ignored otherwise
+    wxUiEditor.rc           # Only processed when compiling for Windows, ignored otherwise
 
-    mainapp.cpp # Main application class
-    mainframe.cpp # Main window frame
-    mainframe_events.cpp # Main window frame event handlers
-    mainframe_updates.cpp # Main window frame event handlers
-    assertion_dlg.cpp # Assertion Dialog
+    mainapp.cpp             # Main application class
+    mainframe.cpp           # Main window frame
+    mainframe_events.cpp    # Main window frame event handlers
+    mainframe_updates.cpp   # Main window frame event handlers
+    assertion_dlg.cpp       # Assertion Dialog
 
-    bitmaps.cpp # Map of bitmaps accessed by name
-    clipboard.cpp # Handles reading and writing OS clipboard data
-    cstm_event.cpp # Custom Event handling
-    frame_status_bar.cpp # MainFrame status bar functions
-    gen_enums.cpp # Enumerations for generators
-    id_lists.cpp # wxID_ strings
-    paths.cpp # Handles *_directory properties
-    preferences.cpp # Prefs/UserPrefs -- Set/Get wxUiEditor preferences
-    previews.cpp # Top level Preview functions
-    undo_cmds.cpp # Undoable command classes derived from UndoStackCmd
-    undo_stack.cpp # Maintain an undo and redo stack
-    wakatime.cpp # Updates WakaTime metrics
+    bitmaps.cpp             # Map of bitmaps accessed by name
+    clipboard.cpp           # Handles reading and writing OS clipboard data
+    cstm_event.cpp          # Custom Event handling
+    frame_status_bar.cpp    # MainFrame status bar functions
+    gen_enums.cpp           # Enumerations for generators
+    id_lists.cpp            # wxID_ strings
+    paths.cpp               # Handles *_directory properties
+    preferences.cpp         # Prefs/UserPrefs -- Set/Get wxUiEditor preferences
+    previews.cpp            # Top level Preview functions
+    undo_cmds.cpp           # Undoable command classes derived from UndoStackCmd
+    undo_stack.cpp          # Maintain an undo and redo stack
+    wakatime.cpp            # Updates WakaTime metrics
 
-    ui/startup_dlg.cpp # Dialog to display if wxUiEditor is launched with no arguments
+    ui/startup_dlg.cpp      # Dialog to display if wxUiEditor is launched with no arguments
 
-    ttwx/ttwx.cpp # ttwx namespace functions and declarations
-    ttwx/ttwx_view_vector.cpp # ttwx::ViewVector class
+    ttwx/ttwx.cpp               # ttwx namespace functions and declarations
+    ttwx/ttwx_view_vector.cpp   # ttwx::ViewVector class
     ttwx/ttwx_string_vector.cpp # ttwx::StringVector class
 
-    tt/tt.cpp # tt namespace functions
-    tt/tt_string.cpp # std::string with additional methods
-    tt/tt_string_view.cpp # std::string_view with additional methods
-    tt/tt_string_vector.cpp # Read/Write line-oriented strings/files
-    tt/tt_view_vector.cpp # Read/Write line-oriented strings/files
+    tt/tt.cpp                   # tt namespace functions
+    tt/tt_string.cpp            # std::string with additional methods
+    tt/tt_string_view.cpp       # std::string_view with additional methods
+    tt/tt_string_vector.cpp     # Read/Write line-oriented strings/files
+    tt/tt_view_vector.cpp       # Read/Write line-oriented strings/files
 
     # Custom property handling for Property Grid panel
-    customprops/code_single_prop.cpp # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
-    customprops/code_string_prop.cpp # EditCodeProperty --Derived wxStringProperty class for code
-    customprops/custom_colour_prop.cpp # EditColourProperty -- Property editor for colour
-    customprops/custom_param_prop.cpp # EditParamProperty -- Derived wxStringProperty class for custom control parameters
-    customprops/directory_prop.cpp # DirectoryProperty -- Derived wxStringProperty class for choosing a directory
-    customprops/edit_custom_mockup.cpp # Custom Property editor for pop_custom_mockup
-    customprops/evt_string_prop.cpp # EventStringProperty -- Derived wxStringProperty class for event function
-    customprops/font_string_prop.cpp # FontStringProperty -- Derived wxStringProperty class for font property
-    customprops/html_string_prop.cpp # EditHtmlProperty - Derived wxStringProperty class for HTML
-    customprops/id_prop.cpp # ID_Property -- Uses IDEditorDlg to edit a custom ID
-    customprops/img_string_prop.cpp # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
-    customprops/include_files_prop.cpp # IncludeFilesProperty -- Derived wxStringProperty class for Include Files
-    customprops/rearrange_prop.cpp # RearrangeProperty -- wxRearangeList contents editor
-    customprops/sb_fields_prop.cpp # SBarFieldsProperty -- Property editor for status bar fields
-    customprops/sizer_grow_columns.cpp # GrowColumnsProperty -- Property editor for Growable Sizer Columns
-    customprops/sizer_grow_rows.cpp # GrowRowsProperty -- Property editor for Growable Sizer Rows
-    customprops/txt_string_prop.cpp # EditStringProperty -- Derived wxStringProperty class for single-line text
+    customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
+    customprops/code_string_prop.cpp      # EditCodeProperty --Derived wxStringProperty class for code
+    customprops/custom_colour_prop.cpp    # EditColourProperty -- Property editor for colour
+    customprops/custom_param_prop.cpp     # EditParamProperty -- Derived wxStringProperty class for custom control parameters
+    customprops/directory_prop.cpp        # DirectoryProperty -- Derived wxStringProperty class for choosing a directory
+    customprops/edit_custom_mockup.cpp    # Custom Property editor for pop_custom_mockup
+    customprops/evt_string_prop.cpp       # EventStringProperty -- Derived wxStringProperty class for event function
+    customprops/font_string_prop.cpp      # FontStringProperty -- Derived wxStringProperty class for font property
+    customprops/html_string_prop.cpp      # EditHtmlProperty - Derived wxStringProperty class for HTML
+    customprops/id_prop.cpp               # ID_Property -- Uses IDEditorDlg to edit a custom ID
+    customprops/img_string_prop.cpp       # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
+    customprops/include_files_prop.cpp    # IncludeFilesProperty -- Derived wxStringProperty class for Include Files
+    customprops/rearrange_prop.cpp        # RearrangeProperty -- wxRearangeList contents editor
+    customprops/sb_fields_prop.cpp        # SBarFieldsProperty -- Property editor for status bar fields
+    customprops/sizer_grow_columns.cpp    # GrowColumnsProperty -- Property editor for Growable Sizer Columns
+    customprops/sizer_grow_rows.cpp       # GrowRowsProperty -- Property editor for Growable Sizer Rows
+    customprops/txt_string_prop.cpp       # EditStringProperty -- Derived wxStringProperty class for single-line text
 
-    customprops/eventhandler_dlg.cpp # EventHandlerDlg -- Dialog for editing event handlers
-    customprops/font_prop_dlg.cpp # FontPropDlg -- Dialog for editing Font Property
-    customprops/img_props.cpp # ImageProperties -- Handles property grid image properties
+    customprops/eventhandler_dlg.cpp      # EventHandlerDlg -- Dialog for editing event handlers
+    customprops/font_prop_dlg.cpp         # FontPropDlg -- Dialog for editing Font Property
+    customprops/img_props.cpp             # ImageProperties -- Handles property grid image properties
 
-    customprops/tt_file_property.cpp # ttFileProperty -- Version of wxFileProperty specific to wxUiEditor
+    customprops/tt_file_property.cpp      # ttFileProperty -- Version of wxFileProperty specific to wxUiEditor
 
-    customprops/pg_image.cpp # PropertyGrid_Image -- Custom property grid class for images
-    customprops/pg_animation.cpp # PropertyGrid_Animation -- Custom property grid class for animations
-    customprops/pg_point.cpp # CustomPointProperty -- Custom wxPGProperty for wxPoint
+    customprops/pg_image.cpp         # PropertyGrid_Image -- Custom property grid class for images
+    customprops/pg_animation.cpp     # PropertyGrid_Animation -- Custom property grid class for animations
+    customprops/pg_point.cpp         # CustomPointProperty -- Custom wxPGProperty for wxPoint
 
     # (generated) customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
     # (generated) customprops/include_files_dlg.cpp
@@ -116,9 +116,9 @@ set( file_list
     # and generating both C++, Python, Ruby and XRC code. If the generated object
     # can be used in a Dialog or Frame, then the generator must also be able to
     # create a preview of the object for the Preview display.
-    generate/gen_images_list.cpp # Images List Embedded images generator
-    generate/gen_data_list.cpp # Data List generator
-    generate/gen_project.cpp # Project generator
+    generate/gen_images_list.cpp    # Images List Embedded images generator
+    generate/gen_data_list.cpp      # Data List generator
+    generate/gen_project.cpp        # Project generator
 
     # Misc widgets
     generate/dataview_widgets.cpp      # wxDataView generation classes
@@ -169,7 +169,7 @@ set( file_list
     generate/gen_web_view.cpp          # wxWebView generator
 
     # Non-python widgets
-    generate/gen_dir_ctrl.cpp # wxGenericDirCtrl generator
+    generate/gen_dir_ctrl.cpp          # wxGenericDirCtrl generator
 
     # Books
     generate/gen_aui_notebook.cpp     # wxAuiNotebook generator

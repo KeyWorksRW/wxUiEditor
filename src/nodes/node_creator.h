@@ -62,7 +62,7 @@ public:
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    auto CreateNode(tt_string_view name, Node* parent, bool verify_language_support = false)
+    auto CreateNode(std::string_view name, Node* parent, bool verify_language_support = false)
         -> std::pair<NodeSharedPtr, int>;
 
     auto CreateNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
@@ -73,7 +73,7 @@ public:
     auto CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true) -> NodeSharedPtr;
 
     // Creates an orphaned node.
-    auto NewNode(NodeDeclaration* node_info) -> NodeSharedPtr;
+    static auto NewNode(NodeDeclaration* node_decl) -> NodeSharedPtr;
 
     // Creates an orphaned node.
     auto NewNode(GenEnum::GenName get_GenName) -> NodeSharedPtr
@@ -88,7 +88,7 @@ public:
         return m_a_declarations.at(static_cast<size_t>(get_GenName));
     }
 
-    auto get_NodeDeclaration(tt_string_view class_name) -> NodeDeclaration*;
+    auto get_NodeDeclaration(std::string_view class_name) -> NodeDeclaration*;
 
     [[nodiscard]] auto get_NodeDeclarationArray() const -> const NodeDeclarationArray&
     {
@@ -100,7 +100,7 @@ public:
     [[nodiscard]] auto get_ConstantAsInt(std::string_view name, int defValue = 0) const -> int;
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
-    auto MakeCopy(Node* node, Node* parent = nullptr) -> NodeSharedPtr;
+    [[nodiscard]] auto MakeCopy(Node* node, Node* parent = nullptr) -> NodeSharedPtr;
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     auto MakeCopy(const NodeSharedPtr& node) -> NodeSharedPtr { return MakeCopy(node.get()); };
@@ -119,7 +119,7 @@ public:
     // mean that parent already has the maximum number of children allowed).
     auto is_ValidCreateParent(GenName name, Node* parent, bool use_recursion = true) const -> Node*;
 
-    auto CountChildrenWithSameType(Node* parent, GenType type) const -> size_t;
+    static auto CountChildrenWithSameType(Node* parent, GenType type) -> size_t;
 
 protected:
     // This must
@@ -135,6 +135,24 @@ protected:
     void AddAllConstants();
 
 private:
+    // Helper methods for MakeCopy
+    auto CreateToolCopy(Node* node, Node* parent) -> NodeSharedPtr;
+    static void CopyProperties(Node* source, NodeSharedPtr& target);
+    auto ConvertFormToControl(Node* node, Node* parent) -> NodeSharedPtr;
+    void CopyChildren(Node* source, NodeSharedPtr& target);
+
+    // Helper methods for CreateNode
+    [[nodiscard]] auto ResolveNodeDeclaration(GenName name) const -> NodeDeclaration*;
+    [[nodiscard]] static auto ValidateParentConstraints(GenName name, NodeDeclaration* node_decl,
+                                                        Node* parent) -> int;
+    static auto AllocateChildNode(GenName name, NodeDeclaration* node_decl, Node* parent)
+        -> NodeSharedPtr;
+    [[nodiscard]] static auto VerifyLanguageSupport(NodeSharedPtr& node) -> int;
+
+    // Helper methods for is_ValidCreateParent
+    [[nodiscard]] static auto CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent)
+        -> bool;
+
     // Helper methods for ParseGeneratorFile
     auto ParseGenerator(pugi::xml_node& generator, bool is_interface) -> NodeDeclaration*;
     void ProcessGeneratorInheritance(pugi::xml_node& elem_obj);
@@ -153,7 +171,7 @@ private:
 
     std::unordered_set<std::string, str_view_hash, std::equal_to<>> m_setOldHostTypes;
 
-    std::unordered_map<std::string, int> m_map_constants;
+    std::unordered_map<std::string, int, str_view_hash, std::equal_to<>> m_map_constants;
 
     // Contains the nodes that m_interfaces maps to -- valid only during Initialize()
     pugi::xml_document* m_pdoc_interface { nullptr };

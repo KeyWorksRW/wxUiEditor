@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Class used to create nodes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -65,8 +65,9 @@ public:
     auto CreateNode(tt_string_view name, Node* parent, bool verify_language_support = false)
         -> std::pair<NodeSharedPtr, int>;
 
-    NodeSharedPtr CreateNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
-                                    bool check_for_duplicates = false, bool allow_ui = true);
+    auto CreateNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
+                           bool check_for_duplicates = false, bool allow_ui = true)
+        -> NodeSharedPtr;
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
     auto CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui = true) -> NodeSharedPtr;
@@ -87,7 +88,7 @@ public:
         return m_a_declarations.at(static_cast<size_t>(get_GenName));
     }
 
-    NodeDeclaration* get_NodeDeclaration(tt_string_view class_name);
+    auto get_NodeDeclaration(tt_string_view class_name) -> NodeDeclaration*;
 
     [[nodiscard]] auto get_NodeDeclarationArray() const -> const NodeDeclarationArray&
     {
@@ -99,7 +100,7 @@ public:
     [[nodiscard]] auto get_ConstantAsInt(std::string_view name, int defValue = 0) const -> int;
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
-    NodeSharedPtr MakeCopy(Node* node, Node* parent = nullptr);
+    auto MakeCopy(Node* node, Node* parent = nullptr) -> NodeSharedPtr;
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     auto MakeCopy(const NodeSharedPtr& node) -> NodeSharedPtr { return MakeCopy(node.get()); };
@@ -123,7 +124,7 @@ public:
 protected:
     // This must
     void ParseGeneratorFile(const char* xml_data);
-    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info,
+    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* node_declaration,
                          NodeCategory& category);
 
     auto get_NodeType(GenEnum::GenType type_name) -> NodeType*
@@ -134,6 +135,19 @@ protected:
     void AddAllConstants();
 
 private:
+    // Helper methods for ParseGeneratorFile
+    auto ParseGenerator(pugi::xml_node& generator, bool is_interface) -> NodeDeclaration*;
+    void ProcessGeneratorInheritance(pugi::xml_node& elem_obj);
+    static void SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration* declaration);
+    static auto DetermineGenType(pugi::xml_node& generator, bool is_interface) -> GenType;
+
+    // Helper methods for ParseProperties
+    static void ParseSingleProperty(pugi::xml_node& elem_prop, NodeDeclaration* node_declaration,
+                                    NodeCategory& category);
+    static void AddPropertyOptions(pugi::xml_node& elem_prop, PropDeclaration* prop_info);
+    static void AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
+                                            NodeCategory& category);
+
     std::array<NodeDeclaration*, gen_name_array_size> m_a_declarations {};
     std::array<NodeType, gen_type_array_size> m_a_node_types;
 

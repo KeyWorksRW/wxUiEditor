@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Message logging class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,25 +12,31 @@
 #include "msgframe.h"     // MsgFrame -- Stores messages
 #include "preferences.h"  // Set/Get wxUiEditor preferences
 
-MsgLogging* g_pMsgLogging { nullptr };
-std::vector<tt_string> g_log_msgs;
+MsgLogging* g_pMsgLogging { nullptr };  // NOLINT (cppcheck-suppress)
+std::vector<tt_string> g_log_msgs;      // NOLINT (cppcheck-suppress)
 
 void MSG_INFO(const std::string& msg)
 {
     if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+    {
         g_pMsgLogging->AddInfoMsg(msg);
+    }
 }
 
 void MSG_WARNING(const std::string& msg)
 {
     if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+    {
         g_pMsgLogging->AddWarningMsg(msg);
+    }
 }
 
 void MSG_ERROR(const std::string& msg)
 {
     if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+    {
         g_pMsgLogging->AddErrorMsg(msg);
+    }
 }
 
 void MsgLogging::ShowLogger()
@@ -47,13 +53,17 @@ void MsgLogging::ShowLogger()
 void MsgLogging::CloseLogger()
 {
     if (!m_bDestroyed)
+    {
         m_msgFrame->Close(true);
+    }
 }
 
-void MsgLogging::AddInfoMsg(tt_string_view msg)
+void MsgLogging::AddInfoMsg(std::string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
+    {
         return;  // no point in adding messages if we are shutting down
+    }
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
@@ -72,7 +82,9 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
         }
 
         else if (!m_bDestroyed)
+        {
             m_msgFrame->AddInfoMsg(str);
+        }
     }
 
     if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
@@ -80,9 +92,11 @@ void MsgLogging::AddInfoMsg(tt_string_view msg)
         return;
     }
 
-    auto frame = wxGetMainFrame();
+    auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
+    {
         frame->setRightStatusField(msg);
+    }
 }
 
 void MsgLogging::Clear()
@@ -93,10 +107,12 @@ void MsgLogging::Clear()
     }
 }
 
-void MsgLogging::AddEventMsg(tt_string_view msg)
+void MsgLogging::AddEventMsg(std::string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
+    {
         return;  // no point in adding messages if we are shutting down
+    }
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_EVENT)
     {
@@ -115,7 +131,9 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
         }
 
         else if (!m_bDestroyed)
+        {
             m_msgFrame->AddEventMsg(str);
+        }
     }
 
     if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
@@ -123,15 +141,19 @@ void MsgLogging::AddEventMsg(tt_string_view msg)
         return;
     }
 
-    auto frame = wxGetMainFrame();
+    auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
+    {
         frame->setRightStatusField(tt_string("Event: ") << msg);
+    }
 }
 
-void MsgLogging::AddWarningMsg(tt_string_view msg)
+void MsgLogging::AddWarningMsg(std::string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
+    {
         return;  // no point in adding messages if we are shutting down
+    }
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
@@ -162,15 +184,19 @@ void MsgLogging::AddWarningMsg(tt_string_view msg)
         return;
     }
 
-    auto frame = wxGetMainFrame();
+    auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
+    {
         frame->setRightStatusField(tt_string("Warning: ") << msg);
+    }
 }
 
-void MsgLogging::AddErrorMsg(tt_string_view msg)
+void MsgLogging::AddErrorMsg(std::string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
+    {
         return;  // no point in adding messages if we are shutting down
+    }
 
     auto& str = g_log_msgs.emplace_back("Error: ");
     str << msg << '\n';
@@ -194,11 +220,15 @@ void MsgLogging::AddErrorMsg(tt_string_view msg)
     }
 
     else if (!m_bDestroyed)
+    {
         m_msgFrame->AddErrorMsg(str.view_stepover());
+    }
 
-    auto frame = wxGetMainFrame();
+    auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
+    {
         frame->setRightStatusField(str);
+    }
 }
 
 void MsgLogging::OnNodeSelected()
@@ -212,7 +242,9 @@ void MsgLogging::OnNodeSelected()
 void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info)
 {
     if (wxGetApp().isMainFrameClosing())
+    {
         return;
+    }
 
     switch (level)
     {
@@ -228,11 +260,15 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 }
 
                 else if (!m_bDestroyed)
+                {
                     m_msgFrame->Add_wxErrorMsg(str.view_stepover());
+                }
 
-                auto frame = wxGetMainFrame();
+                auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
+                {
                     frame->setRightStatusField(str);
+                }
             }
 
             // Following is for wxLogGui
@@ -256,11 +292,15 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 }
 
                 else if (!m_bDestroyed)
+                {
                     m_msgFrame->Add_wxWarningMsg(str.view_stepover());
+                }
 
-                auto frame = wxGetMainFrame();
+                auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
+                {
                     frame->setRightStatusField(str);
+                }
             }
 
             // Following is for wxLogGui
@@ -285,11 +325,15 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 }
 
                 else if (!m_bDestroyed)
+                {
                     m_msgFrame->Add_wxInfoMsg(str.view_stepover());
+                }
 
-                auto frame = wxGetMainFrame();
+                auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
+                {
                     frame->setRightStatusField(str);
+                }
             }
 
             // Following is for wxLogGui
@@ -300,9 +344,11 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
         case wxLOG_Status:
             {
-                auto frame = wxGetMainFrame();
+                auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
+                {
                     frame->setRightStatusField(tt_string() << msg.utf8_string());
+                }
             }
             break;
 

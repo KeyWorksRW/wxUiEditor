@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <format>
 #include <functional>
 
 #include <frozen/set.h>
@@ -532,7 +533,7 @@ auto NodeCreator::DetermineGenType(pugi::xml_node& generator, bool is_interface)
     }
 
 #if defined(_DEBUG)
-    ASSERT_MSG(false, tt_string("Unrecognized class type -- ") << type_name);
+    ASSERT_MSG(false, std::format("Unrecognized class type -- {}", type_name));
 #endif  // _DEBUG
     return gen_type_unknown;
 }
@@ -551,8 +552,8 @@ void NodeCreator::SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration
             auto image = GetInternalImage(image_name);
             if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
             {
-                MSG_INFO(tt_string() << image_name << " width: " << image.GetWidth()
-                                     << "height: " << image.GetHeight());
+                MSG_INFO(std::format("{} width: {}height: {}", image_name, image.GetWidth(),
+                                     image.GetHeight()));
                 declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
             }
             else
@@ -586,15 +587,16 @@ auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -
     {
         if (!rmap_GenNames.contains(class_name))
         {
-            MSG_WARNING(tt_string(is_interface ? "Unrecognized interface name -- " :
-                                                 "Unrecognized class name -- ")
-                        << class_name);
+            MSG_WARNING(std::format("{}{}",
+                                    is_interface ? "Unrecognized interface name -- " :
+                                                   "Unrecognized class name -- ",
+                                    class_name));
         }
     }
 
     // This code makes it possible to add `enable="internal"` to an XML class/interface to
     // prevent it from being used when not testing.
-    if (auto enable = generator.attribute("enable"); enable.as_sview() == "internal")
+    if (auto enable = generator.attribute("enable"); enable.as_view() == "internal")
     {
         if (!wxGetApp().isTestingMenuEnabled())
         {
@@ -630,7 +632,7 @@ auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -
 
 void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
 {
-    auto class_name = elem_obj.attribute("class").as_sview();
+    auto class_name = elem_obj.attribute("class").as_view();
     if (class_name.starts_with("gen_"))
     {
         class_name.remove_prefix(sizeof("gen_") - 1);
@@ -674,8 +676,8 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
             auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
             if (lookup_name == rmap_PropNames.end())
             {
-                MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
-                          << inheritedProperty.attribute("name").as_view());
+                MSG_ERROR(std::format("Unrecognized inherited property name -- {}",
+                                      inheritedProperty.attribute("name").as_view()));
                 inheritedProperty = inheritedProperty.next_sibling("property");
                 continue;
             }
@@ -690,8 +692,8 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
             auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
             if (lookup_name == rmap_PropNames.end())
             {
-                MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
-                          << inheritedProperty.attribute("name").as_view());
+                MSG_ERROR(std::format("Unrecognized inherited property name -- {}",
+                                      inheritedProperty.attribute("name").as_view()));
                 inheritedProperty = inheritedProperty.next_sibling("hide");
                 continue;
             }
@@ -779,7 +781,7 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
 
     // class_access property
     category.addProperty(prop_class_access);
-    tt_string access("protected:");
+    std::string access("protected:");
 
     // Most widgets will default to protected: as their class access. Those in the
     // set_no_class_access array should have "none" as the default class access.
@@ -830,7 +832,7 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
     auto lookup_name = rmap_PropNames.find(name);
     if (lookup_name == rmap_PropNames.end())
     {
-        MSG_ERROR(tt_string("Unrecognized property name -- ") << name);
+        MSG_ERROR(std::format("Unrecognized property name -- {}", name));
         return;
     }
     GenEnum::PropName prop_name = lookup_name->second;
@@ -839,7 +841,7 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
 
     auto description = elem_prop.attribute("help").as_view();
 
-    auto prop_type = elem_prop.attribute("type").as_sview();
+    auto prop_type = elem_prop.attribute("type").as_view();
     if (prop_type.starts_with("type_"))
     {
         prop_type.remove_prefix(sizeof("type_") - 1);
@@ -854,23 +856,24 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
 
     if (property_type == type_unknown)
     {
-        MSG_ERROR(tt_string("Unrecognized property type -- ") << prop_type);
+        MSG_ERROR(std::format("Unrecognized property type -- {}", prop_type));
         return;
     }
 
-    tt_string def_value;
+    wxString def_value;
     if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())
     {
         def_value = lastChild.text().get();
-        if (ttwx::is_found(def_value.find('\n')))
+        if (def_value.find('\n') != wxString::npos)
         {
-            def_value.trim(tt::TRIM::both);
+            def_value.Trim(false);
+            def_value.Trim();
         }
     }
 
-    auto* prop_info =
-        new PropDeclaration(prop_name, property_type, PropDeclaration::DefaultValue(def_value),
-                            PropDeclaration::HelpText(description));
+    auto* prop_info = new PropDeclaration(prop_name, property_type,
+                                          PropDeclaration::DefaultValue(def_value.ToStdString()),
+                                          PropDeclaration::HelpText(description));
     node_declaration->GetPropInfoMap()[name] = prop_info;
 
     if (elem_prop.attribute("hide").as_bool())
@@ -948,8 +951,8 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
         auto evt_name = nodeEvent.attribute("name").as_str();
         category.addEvent(evt_name);
 
-        auto evt_class = nodeEvent.attribute("class").as_str("wxEvent");
-        auto description = nodeEvent.attribute("help").as_str();
+        auto evt_class = nodeEvent.attribute("class").as_view("wxEvent");
+        auto description = nodeEvent.attribute("help").as_view();
 
         m_events[evt_name] = new NodeEventInfo(evt_name, evt_class, description);
 

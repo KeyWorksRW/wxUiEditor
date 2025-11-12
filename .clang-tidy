@@ -12,7 +12,8 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-enum-initial-value,
   -cppcoreguidelines-owning-memory,
-  -misc-no-recursion
+  -misc-no-recursion,
+  -modernize-use-nodiscard
 
 FormatStyle: file
 

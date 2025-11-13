@@ -941,7 +941,7 @@ void GenValidatorSettings(Code& code)
     }
 
     tt_string_vector styles(style, '|', tt::TRIM::both);
-    if (validator_type.is_sameas("wxTextValidator"))
+    if (validator_type == "wxTextValidator")
     {
         if (style.contains("wxFILTER_"))
         {
@@ -979,7 +979,7 @@ void GenValidatorSettings(Code& code)
     }
     else
     {
-        if (validator_type.is_sameas("wxFloatingPointValidator"))
+        if (validator_type == "wxFloatingPointValidator")
         {
             if (node->as_int(prop_precision) > 0)
             {
@@ -1021,8 +1021,7 @@ void GenValidatorSettings(Code& code)
         }
         code.EndFunction();
     }
-    if (validator_type.is_sameas("wxIntegerValidator") ||
-        validator_type.is_sameas("wxFloatingPointValidator"))
+    if (validator_type == "wxIntegerValidator" || validator_type == "wxFloatingPointValidator")
     {
         if (node->HasValue(prop_minValue))
         {
@@ -1033,7 +1032,7 @@ void GenValidatorSettings(Code& code)
                     .NodeName()
                     .Str("->GetValidator(), ")
                     .Str(validator_type);
-                if (validator_type.is_sameas("wxIntegerValidator"))
+                if (validator_type == "wxIntegerValidator")
                     code.Str("<").Str(data_type).Str(">");
                 code.Str(")->SetMin(").Add(prop_minValue).Str(");");
             }
@@ -1051,7 +1050,7 @@ void GenValidatorSettings(Code& code)
                     .NodeName()
                     .Str("->GetValidator(), ")
                     .Str(validator_type);
-                if (validator_type.is_sameas("wxIntegerValidator"))
+                if (validator_type == "wxIntegerValidator")
                     code.Str("<").Str(data_type).Str(">");
                 code.Str(")->SetMax(").Add(prop_maxValue).Str(");");
             }

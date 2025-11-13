@@ -205,14 +205,14 @@ public:
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
-    auto get_NodeName(GenLang lang) const -> tt_string_view;
+    auto get_NodeName(GenLang lang) const -> std::string_view;
 
     // Returns the value of the parent property "var_name" or "class_name"
     auto get_ParentName() const -> const tt_string&;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
-    auto get_ParentName(GenLang lang, bool ignore_sizers = false) const -> tt_string_view;
+    auto get_ParentName(GenLang lang, bool ignore_sizers = false) const -> std::string_view;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.
     auto get_Form() noexcept -> Node*;
@@ -231,11 +231,11 @@ public:
 
     // Retrieves prop_validator_data_type if it has one, or correct data type for use with
     // wxGenericValidator if it doesn't.
-    auto get_ValidatorDataType() const -> tt_string;
+    auto get_ValidatorDataType() const -> std::string;
 
     // This will return wxGenericValidator, wxTextValidator, wxIntValidator or
     // wxFloatValidator
-    auto get_ValidatorType() const -> tt_string_view;
+    auto get_ValidatorType() const -> std::string_view;
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
@@ -460,7 +460,6 @@ public:
 
     auto getSizerFlags() const -> wxSizerFlags;
 
-public:
     auto get_PropsVector() -> std::vector<NodeProperty>& { return m_properties; }
 
     auto AddNodeProperty(PropDeclaration* declaration) -> NodeProperty*;
@@ -500,8 +499,8 @@ public:
     static void ModifyProperty(NodeProperty* prop, int value);
 
     // Both var_name and validator_variable properties are checked
-    auto get_UniqueName(const tt_string& proposed_name, PropName prop_name = prop_var_name)
-        -> tt_string;
+    auto get_UniqueName(const std::string& proposed_name, PropName prop_name = prop_var_name)
+        -> std::string;
 
     // Fix duplicate names in the current node and all of it's children
     void FixDuplicateNodeNames(Node* form = nullptr);
@@ -544,14 +543,11 @@ public:
     void set_MockupObject(wxObject* object) { m_mockup_object = object; }
     auto get_MockupObject() const -> const wxObject* { return m_mockup_object; }
 
-    // This will create a std::unique_ptr<std::vector<tt_string>> if one doesn't already exist.
-    auto get_InternalData() -> std::vector<tt_string>*;
-
 protected:
     void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
 
 private:
-    static auto GetBorderDirection(const tt_string& border_settings) -> int;
+    static auto GetBorderDirection(std::string_view border_settings) -> int;
     static auto ApplyAlignment(wxSizerFlags& flags, const tt_string& alignment) -> void;
     static auto ApplyAdditionalFlags(wxSizerFlags& flags, const tt_string& prop) -> void;
 
@@ -569,7 +565,7 @@ private:
     static auto InitializeNameSet(std::unordered_set<std::string>& name_set) -> void;
     static auto GenerateUniqueNameFromBase(const std::string& base_name,
                                            const std::unordered_set<std::string>& name_set)
-        -> tt_string;
+        -> std::string;
     auto FixDuplicateVariableNames(const std::unordered_set<std::string>& name_set) -> void;
     auto FixChildrenNodeNames(Node* form) -> void;
     auto FixPropGridLabelIfNeeded() -> void;

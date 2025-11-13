@@ -953,9 +953,9 @@ auto Code::NodeName(Node* node) -> Code&
             return *this;
         }
         *this += "$self->{";
-        if (node_name.is_sameprefix("$"))
+        if (node_name.starts_with("$"))
         {
-            *this += node_name.subview(1);
+            *this += node_name.substr(1);
         }
         else
         {

@@ -490,9 +490,9 @@ auto CreateDerivedFilename(Node* form_node, const tt_string& class_name) -> tt_s
     return filename;
 }
 
-auto ConvertToSnakeCase(tt_string_view str) -> tt_string
+auto ConvertToSnakeCase(tt_string_view str) -> std::string
 {
-    tt_string result(str);
+    std::string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
     {
         if (str[original_pos] == '(')

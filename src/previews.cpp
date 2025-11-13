@@ -215,7 +215,9 @@ void PreviewXrc(Node* form_node)
 
     // Restore the original style if it was temporarily changed.
     if (form_node->as_string(prop_style) != style)
+    {
         form_node->set_value(prop_style, style);
+    }
 
     PreviewXrc(doc_str, form_node->get_GenName(), form_node);
 }

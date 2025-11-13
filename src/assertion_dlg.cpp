@@ -15,7 +15,7 @@
 
 namespace
 {
-    std::mutex mutex_assert;
+    std::mutex mutex_assert;  // NOLINT (cppcheck-suppress)
 }
 
 // Note that this returns bool allowing the ASSERT macro to call wxTrap in the caller's code rather

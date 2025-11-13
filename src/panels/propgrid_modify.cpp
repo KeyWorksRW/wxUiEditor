@@ -343,7 +343,7 @@ namespace
         if (access && name.starts_with("m_"))
         {
             name.erase(0, 2);
-            auto final_name = node->get_UniqueName(name);
+            auto final_name = node->get_UniqueName(name.ToStdString());
             if (!final_name.empty())
             {
                 name = final_name;
@@ -353,7 +353,7 @@ namespace
         else if (!access && !name.starts_with("m_"))
         {
             name.insert(0, "m_");
-            auto final_name = node->get_UniqueName(name);
+            auto final_name = node->get_UniqueName(name.ToStdString());
             if (!final_name.empty())
             {
                 name = final_name;
@@ -368,7 +368,7 @@ namespace
         if (!access && !name.starts_with("_"))
         {
             name.insert(0, "_");
-            auto final_name = node->get_UniqueName(name);
+            auto final_name = node->get_UniqueName(name.ToStdString());
             if (!final_name.empty())
             {
                 name = final_name;
@@ -378,7 +378,7 @@ namespace
         else if (access && name.starts_with("_"))
         {
             name.erase(0, 1);
-            auto final_name = node->get_UniqueName(name);
+            auto final_name = node->get_UniqueName(name.ToStdString());
             if (!final_name.empty())
             {
                 name = final_name;
@@ -392,7 +392,7 @@ namespace
         if (access && name.starts_with("@"))
         {
             name.erase(0, 1);
-            auto final_name = node->get_UniqueName(name);
+            auto final_name = node->get_UniqueName(name.ToStdString());
             if (!final_name.empty())
             {
                 name = final_name;
@@ -402,7 +402,7 @@ namespace
         else if (!access && !name.starts_with("@"))
         {
             name.insert(0, "@");
-            auto final_name = node->get_UniqueName(name);
+            auto final_name = node->get_UniqueName(name.ToStdString());
             if (!final_name.empty())
             {
                 name = final_name;

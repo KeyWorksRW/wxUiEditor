@@ -518,9 +518,9 @@ auto Node::get_NodeName() const -> const tt_string&
     return tt_empty_cstr;
 }
 
-auto Node::get_NodeName(GenLang lang) const -> tt_string_view
+auto Node::get_NodeName(GenLang lang) const -> std::string_view
 {
-    tt_string_view name = get_NodeName();
+    std::string_view name = get_NodeName();
     if (name.empty())
     {
         return "unknown node";
@@ -571,7 +571,7 @@ auto Node::get_ParentName() const -> const tt_string&
     return tt_empty_cstr;
 }
 
-auto Node::get_ParentName(GenLang lang, bool ignore_sizers) const -> tt_string_view
+auto Node::get_ParentName(GenLang lang, bool ignore_sizers) const -> std::string_view
 {
     if (ignore_sizers)
     {
@@ -604,27 +604,27 @@ auto Node::get_FormName() -> const tt_string&
     return tt_empty_cstr;
 }
 
-auto Node::GetBorderDirection(const tt_string& border_settings) -> int
+auto Node::GetBorderDirection(std::string_view border_settings) -> int
 {
-    if (border_settings.contains("wxALL"))
+    if (border_settings.find("wxALL") != std::string_view::npos)
     {
         return wxALL;
     }
 
     int direction = 0;
-    if (border_settings.contains("wxLEFT"))
+    if (border_settings.find("wxLEFT") != std::string_view::npos)
     {
         direction |= wxLEFT;
     }
-    if (border_settings.contains("wxRIGHT"))
+    if (border_settings.find("wxRIGHT") != std::string_view::npos)
     {
         direction |= wxRIGHT;
     }
-    if (border_settings.contains("wxTOP"))
+    if (border_settings.find("wxTOP") != std::string_view::npos)
     {
         direction |= wxTOP;
     }
-    if (border_settings.contains("wxBOTTOM"))
+    if (border_settings.find("wxBOTTOM") != std::string_view::npos)
     {
         direction |= wxBOTTOM;
     }
@@ -710,7 +710,7 @@ auto Node::getSizerFlags() const -> wxSizerFlags
     flags.Proportion(as_int(prop_proportion));
 
     auto border_size = as_int(prop_border_size);
-    int direction = GetBorderDirection(as_string(prop_borders));
+    int direction = GetBorderDirection(as_view(prop_borders));
     flags.Border(direction, border_size);
 
     ApplyAlignment(flags, as_string(prop_alignment));
@@ -768,7 +768,7 @@ auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
     }
     else
     {
-        tt_string member_name = new_node->as_string(prop_var_name);
+        std::string member_name = new_node->as_string(prop_var_name);
         if (Project.get_CodePreference(this) == GEN_LANG_RUBY ||
             Project.get_CodePreference(this) == GEN_LANG_PYTHON)
         {
@@ -1023,9 +1023,9 @@ auto Node::ModifyProperty(NodeProperty* prop, tt_string_view value) -> void
     }
 }
 
-auto Node::get_UniqueName(const tt_string& proposed_name, PropName prop_name) -> tt_string
+auto Node::get_UniqueName(const std::string& proposed_name, PropName prop_name) -> std::string
 {
-    tt_string new_name(proposed_name);
+    std::string new_name(proposed_name);
     if (is_Form())
     {
         return {};
@@ -1081,13 +1081,11 @@ auto Node::get_UniqueName(const tt_string& proposed_name, PropName prop_name) ->
 
         for (int i = 2; iter != name_set.end(); iter = name_set.find(new_name), ++i)
         {
-            new_name.clear();
             if (org_name.back() == '_')
             {
                 org_name.pop_back();
             }
-            // new_name << org_name << '_' << i;
-            new_name << org_name << i;
+            new_name = org_name + std::to_string(i);
         }
     }
 
@@ -1149,12 +1147,11 @@ auto Node::FixDuplicateName() -> bool
                     org_name.erase(org_name.size() - 1, 1);
                 }
 
-                tt_string new_name;
+                std::string new_name;
                 for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
                 {
                     new_name.clear();
-                    // new_name << org_name << '_' << i;
-                    new_name << org_name << i;
+                    new_name = org_name + std::to_string(i);
                 }
 
                 auto* fix_name = get_PropPtr(iter);
@@ -1169,7 +1166,7 @@ auto Node::FixDuplicateName() -> bool
         name_set.clear();
         form->CollectUniqueNames(name_set, this, prop_label);
 
-        tt_string org_name(as_string(prop_label));
+        std::string org_name(as_string(prop_label));
         auto result = get_UniqueName(org_name, prop_label);
         if (result != as_string(prop_label))
         {
@@ -1229,7 +1226,8 @@ auto Node::InitializeNameSet(std::unordered_set<std::string>& name_set) -> void
 }
 
 auto Node::GenerateUniqueNameFromBase(const std::string& base_name,
-                                      const std::unordered_set<std::string>& name_set) -> tt_string
+                                      const std::unordered_set<std::string>& name_set)
+    -> std::string
 {
     std::string org_name(base_name);
     while (ttwx::is_digit(org_name.back()))
@@ -1242,11 +1240,11 @@ auto Node::GenerateUniqueNameFromBase(const std::string& base_name,
         org_name.erase(org_name.size() - 1, 1);
     }
 
-    tt_string new_name;
+    std::string new_name;
     for (int i = 2; name_set.contains(new_name); ++i)
     {
         new_name.clear();
-        new_name << org_name << i;
+        new_name = org_name + std::to_string(i);
     }
 
     return new_name;
@@ -1295,7 +1293,7 @@ auto Node::FixPropGridLabelIfNeeded() -> void
             }
         }
 
-        tt_string org_name(as_string(prop_label));
+        std::string org_name(as_string(prop_label));
         auto result = get_UniqueName(org_name, prop_label);
         if (result != as_string(prop_label))
         {
@@ -1490,12 +1488,12 @@ static constexpr frozen::set<GenEnum::GenName, 1> s_date_picker_validators = {
 
 // clang-format on
 
-auto Node::get_ValidatorDataType() const -> tt_string
+auto Node::get_ValidatorDataType() const -> std::string
 {
-    tt_string data_type;
+    std::string data_type;
     if (HasProp(prop_validator_data_type))
     {
-        data_type = as_string(prop_validator_data_type);
+        data_type = as_view(prop_validator_data_type);
     }
     else
     {
@@ -1524,14 +1522,14 @@ auto Node::get_ValidatorDataType() const -> tt_string
     return data_type;
 }
 
-auto Node::get_ValidatorType() const -> tt_string_view
+auto Node::get_ValidatorType() const -> std::string_view
 {
     if (!is_Gen(gen_wxTextCtrl))
     {
         return "wxGenericValidator";
     }
 
-    const auto& data_type = as_string(prop_validator_data_type);
+    auto data_type = as_view(prop_validator_data_type);
     if (data_type == "wxString")
     {
         return "wxTextValidator";
@@ -1556,7 +1554,7 @@ auto Node::get_PlatformContainer() -> Node*  // NOLINT (cppcheck-suppress)
         while (parent && !parent->is_Gen(gen_Project))
         {
             if (parent->HasProp(prop_platforms) &&
-                parent->as_string(prop_platforms) != "Windows|Unix|Mac")
+                parent->as_view(prop_platforms) != "Windows|Unix|Mac")
             {
                 return parent;
             }
@@ -1564,13 +1562,4 @@ auto Node::get_PlatformContainer() -> Node*  // NOLINT (cppcheck-suppress)
         }
     }
     return nullptr;
-}
-
-auto Node::get_InternalData() -> std::vector<tt_string>*
-{
-    if (!m_internal_data)
-    {
-        m_internal_data = std::make_unique<std::vector<tt_string>>();
-    }
-    return m_internal_data.get();
 }

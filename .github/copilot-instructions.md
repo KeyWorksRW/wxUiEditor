@@ -17,6 +17,7 @@ All generators in `src/generate/` inherit from `src/generate/base_generator.h`
 
 ### String Conversions
 - **Use `wxString::ToStdString()`** for `wxString` → `std::string`/`std::string_view`
+- Note that wxString::ToStdString() returns const std::string&
 - Use `wxString::utf8_string()` only for specific UTF-8 encoding needs
 - Files using `std::format` must `#include <format>`
 - Avoid `tt_string` and `tt_string_view` in new code

@@ -37,13 +37,39 @@ When reviewing/analyzing code or referencing specific lines:
 4. Never estimate - always search to verify line numbers
 
 ### Build Verification - Critical Process
-When running builds:
-1. Clear terminal before build (prevents parsing old output)
-2. Use `get_terminal_output` or `get_task_output` after completion
-3. Check for **FAILURE** indicators: `error:`, `error C`, `undefined reference`, `unresolved external symbol`, `FAILED:`, exit code ≠ 0, `cannot find`
-4. Check for **SUCCESS** indicators: `Build finished`, `Build succeeded`, exit code = 0, no error indicators
-5. If errors found: analyze messages, fix root cause, rebuild to verify
-6. **Do NOT** rely on Problems panel or task completion alone
+When running builds, you MUST verify actual success/failure by examining the command output:
+1. **ALWAYS** use `run_in_terminal` tool for builds instead of relying on task completion messages
+2. **ALWAYS** check the actual terminal output for failure indicators
+3. Check for **FAILURE** indicators in output:
+   - `error:`, `error C[0-9]`, `undefined reference`, `unresolved external symbol`
+   - `FAILED:`, `ninja: build stopped:`, `cannot find`, `fatal error`
+   - `Command exited with code 1` or other non-zero exit codes
+   - `compilation terminated` or similar build termination messages
+4. Check for **SUCCESS** indicators:
+   - `ninja: no work to do.` (already built)
+   - Final linking message like `Linking CXX executable` followed by no errors
+   - No error indicators present in output
+5. **CRITICAL**: If you see "The task succeeded with no problems" but need to verify actual build status, use `run_in_terminal` to execute the build command directly
+6. **NEVER** assume success based on task completion alone - always examine actual build output
+7. If errors found: analyze error messages, identify root cause, fix issues, then rebuild to verify
+
+### PowerShell Environment Commands
+When working in PowerShell environment (Windows):
+1. **File Output**: Use PowerShell cmdlets instead of Unix commands:
+   - Use `Select-Object -Last 100` instead of `tail -100`
+   - Use `Select-Object -First 50` instead of `head -50`
+   - Use `Get-Content file.txt | Select-Object -Last 20` for file tail operations
+   - Use `Get-Content file.txt -TotalCount 20` for file head operations
+2. **Exit Code Checking**: Use `$LASTEXITCODE` to check previous command exit status
+3. **Directory Navigation**: Use `cd` or `Set-Location`, both work in PowerShell
+4. **File Operations**: Prefer PowerShell cmdlets:
+   - `Get-ChildItem` instead of `ls` or `dir`
+   - `Copy-Item` instead of `cp`
+   - `Remove-Item` instead of `rm`
+5. **Text Processing**:
+   - Use `Select-String` instead of `grep`
+   - Use `Measure-Object` instead of `wc`
+   - Use `Sort-Object` instead of `sort`
 
 # Language-Specific Coding Standards
 

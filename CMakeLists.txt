@@ -81,10 +81,10 @@ if( MSVC )
     string( REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
     set( CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE )
 
-    # Using /Z7 instead of /Zi to avoid blocking while parallel compilers write to the pdb
+    # Using /Z7 instead of /Zi avoids blocking while parallel compilers write to the pdb
     # file. This can considerably speed up build times at the cost of larger object files.
-    string( REPLACE "/Zi" "/Z7" z_seven "${CMAKE_CXX_FLAGS_DEBUG}" )
-    set( CMAKE_CXX_FLAGS_DEBUG ${z_seven} CACHE STRING "C++ Debug flags" FORCE )
+    # However, it is NOT compatible with ccache. As of 11.13.2025 this CMake file
+    # uses ccache if available, so we cannot use /Z7.
 
     # Use static runtime for Release builds to run with Wine without needing to install the dlls
     if( NOT BUILD_SHARED_LIBS )
@@ -122,7 +122,7 @@ if( INTERNAL_BLD_TESTING )
     # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
     # and FAIL_MSG() in a Release build.
     add_compile_definitions( INTERNAL_TESTING )
-    include( src/verify/verify.cmake )  # This will set ${verify_files} with a list of source files
+    include( src/verify/verify.cmake ) # This will set ${verify_files} with a list of source files
 
     set( wxui_internal_files
         src/internal/msg_logging.cpp
@@ -247,6 +247,22 @@ message( NOTICE "wxWidgets has been fetched and configured." )
 message( STATUS "wxWidgets sources: " ${wxWidgets_SOURCE_DIR} )
 
 # ###################### Libraries and Executables #######################
+find_program( CCACHE_PROGRAM ccache )
+
+if( CCACHE_PROGRAM )
+    message( STATUS "Using ccache: ${CCACHE_PROGRAM}" )
+    set( CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" )
+    set( CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" )
+
+    # Ensure ccache uses hard links for maximum efficiency
+    set( ENV{CCACHE_HARDLINK} "true" )
+
+    if( MSVC )
+        # Configure ccache for better MSVC compatibility
+        set( ENV{CCACHE_SLOPPINESS} "pch_defines,time_macros" )
+        set( ENV{CCACHE_PCH_EXTSUM} "true" )
+    endif()
+endif()
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
 # Specifying the full path and extension means ninja sees this as a normal dependency that

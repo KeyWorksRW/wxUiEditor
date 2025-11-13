@@ -247,9 +247,11 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
                 }
                 code << " { " << (bState ? "true" : "false") << " };";
             }
-            else if (val_data_type.contains("int") || val_data_type.contains("short") ||
-                     val_data_type.contains("long") || val_data_type.contains("double") ||
-                     val_data_type.contains("float"))
+            else if (val_data_type.find("int") != std::string::npos ||
+                     val_data_type.find("short") != std::string::npos ||
+                     val_data_type.find("long") != std::string::npos ||
+                     val_data_type.find("double") != std::string::npos ||
+                     val_data_type.find("float") != std::string::npos)
             {
                 auto* prop = node->get_PropPtr(prop_value);
                 if (!prop)

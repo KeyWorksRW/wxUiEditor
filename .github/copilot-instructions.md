@@ -85,7 +85,6 @@ When working in PowerShell environment (Windows):
 
 ### Function Declarations
 - Use trailing return type syntax: `auto FunctionName() -> ReturnType`
-- Add `[[nodiscard]]` to functions returning `bool` or `int`
 
 ### Enums
 - Use `enum class` with explicit underlying type: `enum class Color : std::uint8_t { red, green, blue };`

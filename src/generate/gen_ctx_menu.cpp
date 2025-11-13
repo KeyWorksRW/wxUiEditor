@@ -115,9 +115,8 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
         if (auto generator = iter->getNode()->get_NodeDeclaration()->get_Generator(); generator)
         {
             Code event_code(iter->getNode(), code.get_language());
-            if (generator->GenEvent(event_code, iter,
-                                    code.node()->get_ParentName(code.get_language()).as_str());
-                event_code.size())
+            std::string parent_name(code.node()->get_ParentName(code.get_language()));
+            if (generator->GenEvent(event_code, iter, parent_name); event_code.size())
             {
                 code.Eol(eol_if_needed).Str("ctx_menu.") += event_code.GetCode();
             }

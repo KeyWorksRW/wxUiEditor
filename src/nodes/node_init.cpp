@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <format>
 #include <functional>
 
 #include <frozen/set.h>
@@ -486,6 +487,20 @@ void NodeCreator::Initialize()
         // Now parse the completed m_pdoc_interface document
         ParseGeneratorFile("");
 
+        /*
+         [Randalphwa - 11-09-2025] I looked into turning this into threaded code, but it's not
+         really practical:
+
+        - XML decompression (in wxue_data functions) is already CPU-intensive and would saturate
+         cores
+        - Lock contention on m_a_declarations would serialize the critical sections anyway
+         - Memory allocation for NodeDeclaration objects has its own internal synchronization
+         overhead
+        - Only 12 iterations (based on functionArray size) - insufficient parallelism to
+         overcome threading overhead
+
+        */
+
         for (const auto& iter: functionArray)
         {
             auto xml_data = iter();
@@ -507,12 +522,207 @@ void NodeCreator::Initialize()
     }
 }
 
+auto NodeCreator::DetermineGenType(pugi::xml_node& generator, bool is_interface) -> GenType
+{
+    if (is_interface)
+    {
+        return type_interface;
+    }
+
+    auto type_name = generator.attribute("type").as_view();
+#if defined(_DEBUG)
+    if (is_interface && type_name != "interface")
+    {
+        ASSERT_MSG(type_name == "interface",
+                   "Don't put a non-interface class in an interace xml file!");
+    }
+#endif  // _DEBUG
+
+    for (const auto& iter: map_GenTypes)
+    {
+        if (type_name == iter.second)
+        {
+            return iter.first;
+        }
+    }
+
+#if defined(_DEBUG)
+    ASSERT_MSG(false, std::format("Unrecognized class type -- {}", type_name));
+#endif  // _DEBUG
+    return gen_type_unknown;
+}
+
+void NodeCreator::SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration* declaration)
+{
+    auto image_name = generator.attribute("image").as_view();
+    if (image_name.size())
+    {
+        if (auto bndl_function = GetSvgFunction(image_name); bndl_function)
+        {
+            declaration->SetBundleFunction(bndl_function);
+        }
+        else
+        {
+            auto image = GetInternalImage(image_name);
+            if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
+            {
+                MSG_INFO(std::format("{} width: {}height: {}", image_name, image.GetWidth(),
+                                     image.GetHeight()));
+                declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
+            }
+            else
+            {
+                declaration->SetImage(image);
+            }
+        }
+    }
+    else
+    {
+        if (auto bndl_function = GetSvgFunction("unknown"); bndl_function)
+        {
+            declaration->SetBundleFunction(bndl_function);
+        }
+        else
+        {
+            declaration->SetImage(GetInternalImage("unknown").Scale(GenImageSize, GenImageSize));
+        }
+    }
+}
+
+auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -> NodeDeclaration*
+{
+    auto class_name = generator.attribute("class").as_str();
+    if (class_name.starts_with("gen_"))
+    {
+        class_name.erase(0, sizeof("gen_") - 1);
+    }
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        if (!rmap_GenNames.contains(class_name))
+        {
+            MSG_WARNING(std::format("{}{}",
+                                    is_interface ? "Unrecognized interface name -- " :
+                                                   "Unrecognized class name -- ",
+                                    class_name));
+        }
+    }
+
+    // This code makes it possible to add `enable="internal"` to an XML class/interface to
+    // prevent it from being used when not testing.
+    if (auto enable = generator.attribute("enable"); enable.as_view() == "internal")
+    {
+        if (!wxGetApp().isTestingMenuEnabled())
+        {
+            return nullptr;  // Skip this class if we're not testing
+        }
+    }
+
+    GenType type = DetermineGenType(generator, is_interface);
+    if (type == gen_type_unknown)
+    {
+        return nullptr;
+    }
+
+    if (is_interface)
+    {
+        m_interfaces[class_name] = generator;
+    }
+
+    auto* declaration = new NodeDeclaration(class_name, get_NodeType(type));
+    m_a_declarations.at(declaration->get_GenName()) = declaration;
+
+    if (auto flags = generator.attribute("flags").as_view(); flags.size())
+    {
+        declaration->SetGeneratorFlags(flags);
+    }
+
+    SetupGeneratorImage(generator, declaration);
+    ParseProperties(generator, declaration, declaration->GetCategory());
+    declaration->ParseEvents(generator, declaration->GetCategory());
+
+    return declaration;
+}
+
+void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
+{
+    auto class_name = elem_obj.attribute("class").as_view();
+    if (class_name.starts_with("gen_"))
+    {
+        class_name.remove_prefix(sizeof("gen_") - 1);
+    }
+
+    auto* class_info = get_NodeDeclaration(class_name);
+    if (!class_info)
+    {
+        return;  // Corrupted or unsupported project file
+    }
+
+    auto elem_base = elem_obj.child("inherits");
+    while (elem_base)
+    {
+        auto base_name = elem_base.attribute("class").as_view();
+        if (base_name == "Language Settings")
+        {
+            class_info->AddBaseClass(get_NodeDeclaration("C++ Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("C++ Header Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("C++ Derived Class Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("wxPerl Settings"));
+
+            elem_base = elem_base.next_sibling("inherits");
+            continue;
+        }
+
+        auto* base_info = get_NodeDeclaration(base_name);
+        if (!class_info || !base_info)
+        {
+            elem_base = elem_base.next_sibling("inherits");
+            continue;
+        }
+
+        class_info->AddBaseClass(base_info);
+
+        auto inheritedProperty = elem_base.child("property");
+        while (inheritedProperty)
+        {
+            auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
+            if (lookup_name == rmap_PropNames.end())
+            {
+                MSG_ERROR(std::format("Unrecognized inherited property name -- {}",
+                                      inheritedProperty.attribute("name").as_view()));
+                inheritedProperty = inheritedProperty.next_sibling("property");
+                continue;
+            }
+            class_info->SetOverRideDefValue(lookup_name->second,
+                                            inheritedProperty.text().as_view());
+            inheritedProperty = inheritedProperty.next_sibling("property");
+        }
+
+        inheritedProperty = elem_base.child("hide");
+        while (inheritedProperty)
+        {
+            auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
+            if (lookup_name == rmap_PropNames.end())
+            {
+                MSG_ERROR(std::format("Unrecognized inherited property name -- {}",
+                                      inheritedProperty.attribute("name").as_view()));
+                inheritedProperty = inheritedProperty.next_sibling("hide");
+                continue;
+            }
+            class_info->HideProperty(lookup_name->second);
+            inheritedProperty = inheritedProperty.next_sibling("hide");
+        }
+
+        elem_base = elem_base.next_sibling("inherits");
+    }
+}
+
 // The xml_data parameter is the char* pointer to the XML data. It will be empty when
 // processing an interface document.
 void NodeCreator::ParseGeneratorFile(const char* xml_data)
 {
-    // All but one of the possible files will use the doc file, so we create it even if it gets
-    // ignored because this is an interface file
     pugi::xml_document doc;
     pugi::xml_node root;
     bool is_interface = (xml_data == nullptr || !*xml_data);
@@ -541,213 +751,163 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
     auto generator = root.child("gen");
     while (generator)
     {
-        auto class_name = generator.attribute("class").as_str();
-        if (class_name.starts_with("gen_"))
-        {
-            class_name.erase(0, sizeof("gen_") - 1);
-        }
-        if (wxGetApp().isTestingMenuEnabled())
-        {
-            if (is_interface)
-            {
-                if (!rmap_GenNames.contains(class_name))
-                {
-                    MSG_WARNING(tt_string("Unrecognized interface name -- ") << class_name);
-                }
-            }
-            else
-            {
-                if (!rmap_GenNames.contains(class_name))
-                {
-                    MSG_WARNING(tt_string("Unrecognized class name -- ") << class_name);
-                }
-            }
-        }
-
-        // This code makes it possible to add `enable="internal"` to an XML class/interface to
-        // prevent it from being used when not testing.
-        if (auto enable = generator.attribute("enable"); enable.as_sview() == "internal")
-        {
-            if (!wxGetApp().isTestingMenuEnabled())
-            {
-                // Skip this class if we're not testing
-                generator = generator.next_sibling("gen");
-                continue;
-            }
-        }
-
-        GenType type { gen_type_unknown };
-        if (is_interface)
-        {
-            type = type_interface;
-        }
-        else
-        {
-            auto type_name = generator.attribute("type").as_view();
-#if defined(_DEBUG)
-            if (is_interface && type_name != "interface")
-            {
-                ASSERT_MSG(type_name == "interface",
-                           "Don't put a non-interface generation in an interace xml file!");
-            }
-#endif  // _DEBUG
-            for (const auto& iter: map_GenTypes)
-            {
-                if (type_name == iter.second)
-                {
-                    type = iter.first;
-                    break;
-                }
-            }
-
-#if defined(_DEBUG)
-            ASSERT_MSG(type != gen_type_unknown, tt_string("Unrecognized class type -- ")
-                                                     << type_name);
-            if (type == gen_type_unknown)
-            {
-                generator = generator.next_sibling("gen");
-                continue;
-            }
-#endif  // _DEBUG
-        }
-
-        if (is_interface)
-        {
-            m_interfaces[class_name] = generator;
-        }
-
-        auto* declaration = new NodeDeclaration(class_name, get_NodeType(type));
-        m_a_declarations.at(declaration->get_GenName()) = declaration;
-
-        if (auto flags = generator.attribute("flags").as_view(); flags.size())
-        {
-            declaration->SetGeneratorFlags(flags);
-        }
-
-        auto image_name = generator.attribute("image").as_view();
-        if (image_name.size())
-        {
-            if (auto bndl_function = GetSvgFunction(image_name); bndl_function)
-            {
-                declaration->SetBundleFunction(bndl_function);
-            }
-            else
-            {
-                auto image = GetInternalImage(image_name);
-                if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
-                {
-                    MSG_INFO(tt_string() << image_name << " width: " << image.GetWidth()
-                                         << "height: " << image.GetHeight());
-                    declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
-                }
-                else
-                {
-                    declaration->SetImage(image);
-                }
-            }
-        }
-        else
-        {
-            if (auto bndl_function = GetSvgFunction("unknown"); bndl_function)
-            {
-                declaration->SetBundleFunction(bndl_function);
-            }
-            else
-            {
-                declaration->SetImage(
-                    GetInternalImage("unknown").Scale(GenImageSize, GenImageSize));
-            }
-        }
-
-        // ParseProperties(generator, declaration.get(), declaration->GetCategory());
-        ParseProperties(generator, declaration, declaration->GetCategory());
-
-        declaration->ParseEvents(generator, declaration->GetCategory());
-
+        ParseGenerator(generator, is_interface);
         generator = generator.next_sibling("gen");
     }
 
-    // Interface processing doesn't have a xml_data
+    // Interface processing doesn't have xml_data
     if (xml_data && *xml_data)
     {
         auto elem_obj = root.child("gen");
         while (elem_obj)
         {
-            auto class_name = elem_obj.attribute("class").as_sview();
-            if (class_name.starts_with("gen_"))
-            {
-                class_name.remove_prefix(sizeof("gen_") - 1);
-            }
-
-            auto* class_info = get_NodeDeclaration(class_name);
-
-            // This can happen if the project file is corrupted, or it it a newer version of the
-            // project file that the current version doesn't support.
-            if (!class_info)
-                break;
-
-            auto elem_base = elem_obj.child("inherits");
-            while (elem_base)
-            {
-                auto base_name = elem_base.attribute("class").as_view();
-                if (base_name == "Language Settings")
-                {
-                    class_info->AddBaseClass(get_NodeDeclaration("C++ Settings"));
-                    class_info->AddBaseClass(get_NodeDeclaration("C++ Header Settings"));
-                    class_info->AddBaseClass(get_NodeDeclaration("C++ Derived Class Settings"));
-                    class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
-                    class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
-                    class_info->AddBaseClass(get_NodeDeclaration("wxPerl Settings"));
-
-                    elem_base = elem_base.next_sibling("inherits");
-                    continue;
-                }
-
-                // Add a reference to its base class
-                auto* base_info = get_NodeDeclaration(base_name);
-
-                if (class_info && base_info)
-                {
-                    class_info->AddBaseClass(base_info);
-
-                    auto inheritedProperty = elem_base.child("property");
-                    while (inheritedProperty)
-                    {
-                        auto lookup_name =
-                            rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
-                        if (lookup_name == rmap_PropNames.end())
-                        {
-                            MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
-                                      << inheritedProperty.attribute("name").as_view());
-                            inheritedProperty = inheritedProperty.next_sibling("property");
-                            continue;
-                        }
-                        class_info->SetOverRideDefValue(lookup_name->second,
-                                                        inheritedProperty.text().as_view());
-                        inheritedProperty = inheritedProperty.next_sibling("property");
-                    }
-
-                    inheritedProperty = elem_base.child("hide");
-                    while (inheritedProperty)
-                    {
-                        auto lookup_name =
-                            rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
-                        if (lookup_name == rmap_PropNames.end())
-                        {
-                            MSG_ERROR(tt_string("Unrecognized inherited property name -- ")
-                                      << inheritedProperty.attribute("name").as_view());
-                            inheritedProperty = inheritedProperty.next_sibling("hide");
-                            continue;
-                        }
-                        class_info->HideProperty(lookup_name->second);
-                        inheritedProperty = inheritedProperty.next_sibling("hide");
-                    }
-                }
-                elem_base = elem_base.next_sibling("inherits");
-            }
-
+            ProcessGeneratorInheritance(elem_obj);
             elem_obj = elem_obj.next_sibling("gen");
         }
+    }
+}
+
+void NodeCreator::AddPropertyOptions(pugi::xml_node& elem_prop, PropDeclaration* prop_info)
+{
+    auto& opts = prop_info->getOptions();
+    auto elem_opt = elem_prop.child("option");
+    while (elem_opt)
+    {
+        auto& opt = opts.emplace_back();
+        opt.name = elem_opt.attribute("name").as_view();
+        opt.help = elem_opt.attribute("help").as_view();
+
+        elem_opt = elem_opt.next_sibling("option");
+    }
+}
+
+void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
+                                              NodeCategory& category)
+{
+    // var_comment property
+    category.addProperty(prop_var_comment);
+    auto* prop_info = new PropDeclaration(
+        prop_var_comment, type_string_edit_single, PropDeclaration::DefaultValue(tt_empty_cstr),
+        PropDeclaration::HelpText(
+            "Comment to add to the variable name in the generated header file "
+            "if the class access is set to protected or public"));
+    node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_var_comment))] = prop_info;
+
+    // class_access property
+    category.addProperty(prop_class_access);
+    std::string access("protected:");
+
+    // Most widgets will default to protected: as their class access. Those in the
+    // set_no_class_access array should have "none" as the default class access.
+    if (set_no_class_access.contains(node_declaration->get_GenName()))
+    {
+        access = "none";
+    }
+
+    prop_info = new PropDeclaration(
+        prop_class_access, type_option, PropDeclaration::DefaultValue(access),
+        PropDeclaration::HelpText(
+            "Determines the type of access your inherited class has to this item."));
+    node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_class_access))] =
+        prop_info;
+
+    auto& opts = prop_info->getOptions();
+
+    if (!node_declaration->is_Gen(gen_wxTimer))
+    {
+        opts.emplace_back();
+        opts[opts.size() - 1].name = "none";
+        opts[opts.size() - 1].help = "The item can only be accessed within the class.";
+    }
+
+    opts.emplace_back();
+    opts[opts.size() - 1].name = "protected:";
+    opts[opts.size() - 1].help =
+        "In C++, only derived classes can access this item.\nIn wxPython, item will have a "
+        "self. prefix.\nIn wxPerl, item will have a $self-> prefix.";
+
+    opts.emplace_back();
+    opts[opts.size() - 1].name = "public:";
+    opts[opts.size() - 1].help =
+        "In C++, item is added as a public: class member.\nIn Python, item will have a "
+        "self. prefix.\nIn wxPerl, item will have a $self-> prefix.";
+}
+
+/* static */ void NodeCreator::ParseSingleProperty(pugi::xml_node& elem_prop,
+                                                   NodeDeclaration* node_declaration,
+                                                   NodeCategory& category)
+{
+    auto name = elem_prop.attribute("name").as_str();
+    if (name.starts_with("prop_"))
+    {
+        name.erase(0, sizeof("prop_") - 1);
+    }
+
+    auto lookup_name = rmap_PropNames.find(name);
+    if (lookup_name == rmap_PropNames.end())
+    {
+        MSG_ERROR(std::format("Unrecognized property name -- {}", name));
+        return;
+    }
+    GenEnum::PropName prop_name = lookup_name->second;
+
+    category.addProperty(prop_name);
+
+    auto description = elem_prop.attribute("help").as_view();
+
+    auto prop_type = elem_prop.attribute("type").as_view();
+    if (prop_type.starts_with("type_"))
+    {
+        prop_type.remove_prefix(sizeof("type_") - 1);
+    }
+
+    GenEnum::PropType property_type { type_unknown };
+
+    if (auto result = umap_PropTypes.find(prop_type); result != umap_PropTypes.end())
+    {
+        property_type = result->second;
+    }
+
+    if (property_type == type_unknown)
+    {
+        MSG_ERROR(std::format("Unrecognized property type -- {}", prop_type));
+        return;
+    }
+
+    wxString def_value;
+    if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())
+    {
+        def_value = lastChild.text().get();
+        if (def_value.find('\n') != wxString::npos)
+        {
+            def_value.Trim(false);
+            def_value.Trim();
+        }
+    }
+
+    auto* prop_info = new PropDeclaration(prop_name, property_type,
+                                          PropDeclaration::DefaultValue(def_value.ToStdString()),
+                                          PropDeclaration::HelpText(description));
+    node_declaration->GetPropInfoMap()[name] = prop_info;
+
+    if (elem_prop.attribute("hide").as_bool())
+    {
+        node_declaration->HideProperty(prop_name);
+    }
+
+    if (property_type == type_bitlist || property_type == type_option ||
+        property_type == type_editoption)
+    {
+        AddPropertyOptions(elem_prop, prop_info);
+    }
+
+    // Any time there is a var_name property, it needs to be followed by a var_comment and
+    // class_access property. Rather than add this to all the XML generator specifications, we
+    // simply insert it here if it doesn't exist.
+    if (tt::is_sameas(name, map_PropNames.at(prop_var_name)) &&
+        !node_declaration->is_Gen(gen_data_string) && !node_declaration->is_Gen(gen_data_xml))
+    {
+        AddVarNameRelatedProperties(node_declaration, category);
     }
 }
 
@@ -778,137 +938,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
     auto elem_prop = elem_obj.child("property");
     while (elem_prop)
     {
-        auto name = elem_prop.attribute("name").as_str();
-        if (name.starts_with("prop_"))
-        {
-            name.erase(0, sizeof("prop_") - 1);
-        }
-
-        GenEnum::PropName prop_name;
-        auto lookup_name = rmap_PropNames.find(name);
-        if (lookup_name == rmap_PropNames.end())
-        {
-            MSG_ERROR(tt_string("Unrecognized property name -- ") << name);
-            elem_prop = elem_prop.next_sibling("property");
-            continue;
-        }
-        prop_name = lookup_name->second;
-
-        category.addProperty(prop_name);
-
-        auto description = elem_prop.attribute("help").as_view();
-
-        auto prop_type = elem_prop.attribute("type").as_sview();
-        if (prop_type.starts_with("type_"))
-        {
-            prop_type.remove_prefix(sizeof("type_") - 1);
-        }
-
-        GenEnum::PropType property_type { type_unknown };
-
-        if (auto result = umap_PropTypes.find(prop_type); result != umap_PropTypes.end())
-        {
-            property_type = result->second;
-        }
-
-        if (property_type == type_unknown)
-        {
-            MSG_ERROR(tt_string("Unrecognized property type -- ") << prop_type);
-            elem_prop = elem_prop.next_sibling("property");
-            continue;
-        }
-
-        tt_string def_value;
-        if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())
-        {
-            def_value = lastChild.text().get();
-            if (ttwx::is_found(def_value.find('\n')))
-            {
-                def_value.trim(tt::TRIM::both);
-            }
-        }
-
-        auto* prop_info =
-            new PropDeclaration(prop_name, property_type, PropDeclaration::DefaultValue(def_value),
-                                PropDeclaration::HelpText(description));
-        node_declaration->GetPropInfoMap()[name] = prop_info;
-        if (elem_prop.attribute("hide").as_bool())
-        {
-            node_declaration->HideProperty(prop_name);
-        }
-
-        if (property_type == type_bitlist || property_type == type_option ||
-            property_type == type_editoption)
-        {
-            auto& opts = prop_info->getOptions();
-            auto elem_opt = elem_prop.child("option");
-            while (elem_opt)
-            {
-                auto& opt = opts.emplace_back();
-                opt.name = elem_opt.attribute("name").as_view();
-                opt.help = elem_opt.attribute("help").as_view();
-
-                elem_opt = elem_opt.next_sibling("option");
-            }
-        }
-
-        // Any time there is a var_name property, it needs to be followed by a var_comment and
-        // class_access property. Rather than add this to all the XML generator specifications, we
-        // simply insert it here if it doesn't exist.
-
-        if (tt::is_sameas(name, map_PropNames.at(prop_var_name)) &&
-            !node_declaration->is_Gen(gen_data_string) && !node_declaration->is_Gen(gen_data_xml))
-        {
-            category.addProperty(prop_var_comment);
-            prop_info = new PropDeclaration(
-                prop_var_comment, type_string_edit_single,
-                PropDeclaration::DefaultValue(tt_empty_cstr),
-                PropDeclaration::HelpText(
-                    "Comment to add to the variable name in the generated header file "
-                    "if the class access is set to protected or public"));
-            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_var_comment))] =
-                prop_info;
-
-            category.addProperty(prop_class_access);
-            tt_string access("protected:");
-
-            // Most widgets will default to protected: as their class access. Those in the
-            // set_no_class_access array should have "none" as the default class access.
-
-            if (set_no_class_access.contains(node_declaration->get_GenName()))
-            {
-                access = "none";
-            }
-
-            prop_info = new PropDeclaration(
-                prop_class_access, type_option, PropDeclaration::DefaultValue(access),
-                PropDeclaration::HelpText(
-                    "Determines the type of access your inherited class has to this item."));
-            node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_class_access))] =
-                prop_info;
-
-            auto& opts = prop_info->getOptions();
-
-            if (!node_declaration->is_Gen(gen_wxTimer))
-            {
-                opts.emplace_back();
-                opts[opts.size() - 1].name = "none";
-                opts[opts.size() - 1].help = "The item can only be accessed within the class.";
-            }
-
-            opts.emplace_back();
-            opts[opts.size() - 1].name = "protected:";
-            opts[opts.size() - 1].help =
-                "In C++, only derived classes can access this item.\nIn wxPython, item will have a "
-                "self. prefix.\nIn wxPerl, item will have a $self-> prefix.";
-
-            opts.emplace_back();
-            opts[opts.size() - 1].name = "public:";
-            opts[opts.size() - 1].help =
-                "In C++, item is added as a public: class member.\nIn Python, item will have a "
-                "self. prefix.\nIn wxPerl, item will have a $self-> prefix.";
-        }
-
+        ParseSingleProperty(elem_prop, node_declaration, category);
         elem_prop = elem_prop.next_sibling("property");
     }
 }
@@ -935,8 +965,8 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
         auto evt_name = nodeEvent.attribute("name").as_str();
         category.addEvent(evt_name);
 
-        auto evt_class = nodeEvent.attribute("class").as_str("wxEvent");
-        auto description = nodeEvent.attribute("help").as_str();
+        auto evt_class = nodeEvent.attribute("class").as_view("wxEvent");
+        auto description = nodeEvent.attribute("help").as_view();
 
         m_events[evt_name] = new NodeEventInfo(evt_name, evt_class, description);
 

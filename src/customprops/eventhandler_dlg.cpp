@@ -199,7 +199,8 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
         if (m_is_python_enabled)
         {
             // Pylint recommends snake_case for Python functions, so we convert the default
-            m_py_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+            m_py_text_function->SetValue(
+                wxString::FromUTF8(ConvertToSnakeCase(m_value.ToStdString())));
             m_py_radio_use_function->SetValue(true);
             m_py_lambda_box->GetStaticBox()->Enable(false);
         }
@@ -207,7 +208,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
         {
             // RuboCop recommends snake_case for Ruby functions, so we convert the default
             m_ruby_text_function->SetValue(
-                ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+                wxString::FromUTF8(ConvertToSnakeCase(m_value.ToStdString())));
             m_ruby_radio_use_function->SetValue(true);
             m_ruby_lambda_box->GetStaticBox()->Enable(false);
         }
@@ -561,11 +562,12 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
     }
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
     {
-        m_py_text_function->SetValue(ConvertToSnakeCase(value.ToStdString()).make_wxString());
+        m_py_text_function->SetValue(wxString::FromUTF8(ConvertToSnakeCase(value.ToStdString())));
     }
     else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
     {
-        m_ruby_text_function->SetValue(ConvertToSnakeCase(m_value.ToStdString()).make_wxString());
+        m_ruby_text_function->SetValue(
+            wxString::FromUTF8(ConvertToSnakeCase(m_value.ToStdString())));
     }
 }
 

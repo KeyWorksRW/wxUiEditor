@@ -22,10 +22,10 @@ public:
     void ShowLogger();
     void CloseLogger();
 
-    void AddInfoMsg(tt_string_view msg);
-    void AddEventMsg(tt_string_view msg);
-    void AddWarningMsg(tt_string_view msg);
-    void AddErrorMsg(tt_string_view msg);
+    void AddInfoMsg(std::string_view msg);
+    void AddEventMsg(std::string_view msg);
+    void AddWarningMsg(std::string_view msg);
+    void AddErrorMsg(std::string_view msg);
 
     void OnNodeSelected();
 
@@ -40,5 +40,5 @@ private:
     bool m_isFirstShown { false };  // If false, and PREFS_MSG_WINDOW is set, then show the window
 };
 
-extern MsgLogging* g_pMsgLogging;
-extern std::vector<tt_string> g_log_msgs;
+extern MsgLogging* g_pMsgLogging;          // NOLINT (cppcheck-suppress)
+extern std::vector<tt_string> g_log_msgs;  // NOLINT (cppcheck-suppress)

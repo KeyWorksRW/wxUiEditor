@@ -64,6 +64,15 @@ jobs:
         cmake --version
         ccache --version
 
+    - name: Setup ccache
+      run: |
+        ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
+        ccache --set-config=compression=true
+        ccache --set-config=sloppiness=pch_defines,time_macros
+        ccache --set-config=hard_link=true
+        ccache --zero-stats
+        ccache --show-config
+
     - name: Cache ccache
       uses: actions/cache@v4
       with:
@@ -80,12 +89,6 @@ jobs:
         key: ${{ runner.os }}-cmake-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: |
           ${{ runner.os }}-cmake-fetchcontent-
-
-    - name: Setup ccache
-      run: |
-        ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
-        ccache --set-config=compression=true
-        ccache --zero-stats
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}

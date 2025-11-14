@@ -28,6 +28,7 @@ jobs:
         ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
         ccache --set-config=compression=true
         ccache --set-config=sloppiness=pch_defines,time_macros
+        ccache --set-config=hard_link=true
         ccache --zero-stats
         ccache --show-config
 

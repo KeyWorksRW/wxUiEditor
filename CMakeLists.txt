@@ -76,15 +76,40 @@ set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
 set( CMAKE_CXX_EXTENSIONS OFF )
 
+# ###################### ccache support #######################
+find_program( CCACHE_PROGRAM ccache )
+
+if( CCACHE_PROGRAM )
+    message( STATUS "Using ccache: ${CCACHE_PROGRAM}" )
+    set( CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" )
+    set( CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" )
+
+    message( NOTICE "ccache detected. Configure ccache globally for your development environment:" )
+    message( NOTICE "  Recommended for all platforms:" )
+    message( NOTICE "    ccache --set-config=compression=true" )
+    message( NOTICE "    ccache --set-config=max_size=<appropriate for your projects>" )
+
+    if( MSVC )
+        message( NOTICE "  Required for MSVC:" )
+        message( NOTICE "    ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime" )
+        message( NOTICE "    ccache --set-config=pch_external_checksum=true" )
+        message( NOTICE "    ccache --set-config=depend_mode=true" )
+        message( NOTICE "    ccache --set-config=\"ignore_options=/Zi /Z7 /ZI /FS /Fd*\"" )
+    endif()
+
+    message( NOTICE "  Run 'ccache --show-config' to verify current settings" )
+    message( NOTICE "  Run 'ccache -s' to monitor cache usage" )
+endif()
+
 if( MSVC )
     # /O1 often results in faster code than /O2 due to CPU caching
     string( REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
     set( CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE )
 
-    # Using /Z7 instead of /Zi avoids blocking while parallel compilers write to the pdb
-    # file. This can considerably speed up build times at the cost of larger object files.
-    # However, it is NOT compatible with ccache. As of 11.13.2025 this CMake file
-    # uses ccache if available, so we cannot use /Z7.
+    # Using /Z7 instead of /Zi avoids blocking while parallel compilers write to the pdb file. This
+    # can considerably speed up build times at the cost of larger object files. However, it is NOT
+    # compatible with ccache. Rather than trying to determine if the user has ccache, we just let
+    # CMake handle any /Z switch.
 
     # Use static runtime for Release builds to run with Wine without needing to install the dlls
     if( NOT BUILD_SHARED_LIBS )
@@ -247,23 +272,6 @@ message( NOTICE "wxWidgets has been fetched and configured." )
 message( STATUS "wxWidgets sources: " ${wxWidgets_SOURCE_DIR} )
 
 # ###################### Libraries and Executables #######################
-find_program( CCACHE_PROGRAM ccache )
-
-if( CCACHE_PROGRAM )
-    message( STATUS "Using ccache: ${CCACHE_PROGRAM}" )
-    set( CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" )
-    set( CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" )
-
-    # Ensure ccache uses hard links for maximum efficiency
-    set( ENV{CCACHE_HARDLINK} "true" )
-
-    if( MSVC )
-        # Configure ccache for better MSVC compatibility
-        set( ENV{CCACHE_SLOPPINESS} "pch_defines,time_macros" )
-        set( ENV{CCACHE_PCH_EXTSUM} "true" )
-    endif()
-endif()
-
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
 # Specifying the full path and extension means ninja sees this as a normal dependency that
 # didn't change any time one of the files it specifies changes.

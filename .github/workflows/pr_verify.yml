@@ -1,0 +1,40 @@
+name: PR Verification
+
+# on:
+  # workflow_dispatch:
+
+on:
+  pull_request:
+    paths-ignore:
+      - src/art_src
+      - src/tests
+      - src/xml
+      - src/import/rapidjson
+      - tests
+      - docs
+      - import_tests
+      - .github
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  clangFormat:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: DoozyX/clang-format-lint-action@v0.20
+      with:
+        source: './src'
+        exclude: file
+        extensions: 'h,cpp'
+        clangFormatVersion: 20
+        style: file
+
+  buildUnix:
+    uses: ./.github/workflows/build-unix-reusable.yml
+    with:
+      create-setup: false
+      build-type: Release

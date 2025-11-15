@@ -109,10 +109,14 @@ if( MSVC )
     string( REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
     set( CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE )
 
-    # Using /Z7 instead of /Zi avoids blocking while parallel compilers write to the pdb file. This
-    # can considerably speed up build times at the cost of larger object files. However, it is NOT
-    # compatible with ccache. Rather than trying to determine if the user has ccache, we just let
-    # CMake handle any /Z switch.
+    # Use /Z7 instead of /Zi to embed debug info in object files. Benefits:
+    # 1. Avoids blocking when parallel compilers write to PDB files (faster multi-core builds)
+    # 2. Required for ccache to cache compilation results
+    # Trade-off: Larger object files, but build speed improvement is significant
+    string( REPLACE "/Zi" "/Z7" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}" )
+    string( REPLACE "/Zi" "/Z7" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" )
+    set( CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG} CACHE STRING "C++ Debug flags" FORCE )
+    set( CMAKE_C_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG} CACHE STRING "C Debug flags" FORCE )
 
     # Use static runtime for Release builds to run with Wine without needing to install the dlls
     if( NOT BUILD_SHARED_LIBS )

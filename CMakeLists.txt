@@ -88,10 +88,11 @@ if( CCACHE_PROGRAM )
     message( NOTICE "  Recommended for all platforms:" )
     message( NOTICE "    ccache --set-config=compression=true" )
     message( NOTICE "    ccache --set-config=max_size=<appropriate for your projects>" )
+    message( NOTICE "    ccache --set-config=sloppiness=pch_defines,time_macros" )
 
     if( MSVC )
         message( NOTICE "  Required for MSVC:" )
-        message( NOTICE "    ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime" )
+
         message( NOTICE "    ccache --set-config=pch_external_checksum=true" )
         message( NOTICE "    ccache --set-config=depend_mode=true" )
         message( NOTICE "    ccache --set-config=\"ignore_options=/Zi /Z7 /ZI /FS /Fd*\"" )

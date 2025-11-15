@@ -59,12 +59,14 @@ option( INTERNAL_FEATURE2 "Build with Feature #2 enabled" ) # Currently tied to 
 option( INTERNAL_FEATURE3 "Build with Feature #3 enabled" ) # unused
 
 # ###################### Version #######################
+# Generate C++ header file with version constants for use in source code
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/src/version.h.in
     ${CMAKE_CURRENT_LIST_DIR}/src/version.h
     @ONLY
 )
 
+# Generate Windows resource file with version info for executable properties
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/src/version.rc.in
     ${CMAKE_CURRENT_LIST_DIR}/src/version.rc
@@ -88,7 +90,7 @@ if( CCACHE_PROGRAM )
     message( NOTICE "  Recommended for all platforms:" )
     message( NOTICE "    ccache --set-config=compression=true" )
     message( NOTICE "    ccache --set-config=max_size=<appropriate for your projects>" )
-    message( NOTICE "    ccache --set-config=sloppiness=pch_defines,time_macros" )
+    message( NOTICE "    ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime" )
 
     if( MSVC )
         message( NOTICE "  Required for MSVC:" )

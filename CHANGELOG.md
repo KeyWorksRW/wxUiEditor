@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - When a stock id is selected for a control with a _label_ property, and the label text has not been changed since the control was created, the label will be cleared to enable the automatic creation of the label text by the wxWidgets stock id.
 - C++ trivial constructors now use `= default;' instead of `{}`
 - C++ documentation is now always displayed in your default browser since it requires you to verify that you are human and not a bot.
+- wxHtmlWindow will set a temporary minimum size of 160x60 pixels if neither size nor minimum_size properties are set. This prevents the control from collapsing to zero size in sizers.
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.
@@ -51,6 +52,7 @@ All notable changes to this project will be documented in this file.
 - Code generation for SVG images no longer scale the image twice
 - Fix C++ code generation for the form version of bars (toolbars, ribbonbars, menubars)
 - Don't nest wxue_img namespace within a project, folder, or class namespace -- this was generating invalid code.
+- wxHtmlWindow correctly loads a URL when specified in the prop_html_url property
 
 ## [Released (1.2.1)]
 

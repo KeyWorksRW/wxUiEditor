@@ -40,19 +40,19 @@ jobs:
         ccache --zero-stats
         ccache --show-config
 
-    - name: Cache ccache
-      uses: actions/cache@v4
+    - name: Restore ccache
+      id: cache-ccache-restore
+      uses: actions/cache/restore@v4
       with:
         path: ${{runner.workspace}}/.ccache
-        key: ${{ runner.os }}-ccache-${{ github.ref_name }}-${{ github.run_number }}
+        key: ${{ runner.os }}-ccache-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ github.ref_name }}-
           ${{ runner.os }}-ccache-
         enableCrossOsArchive: false
-        save-always: true
 
-    - name: Cache CMake FetchContent
-      uses: actions/cache@v4
+    - name: Restore CMake FetchContent
+      id: cache-fetchcontent-restore
+      uses: actions/cache/restore@v4
       with:
         path: |
           ${{github.workspace}}/build/_deps
@@ -60,7 +60,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-fetchcontent-
         enableCrossOsArchive: false
-        save-always: true
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}}
@@ -70,6 +69,21 @@ jobs:
 
     - name: Show ccache statistics
       run: ccache --show-stats
+
+    - name: Save ccache
+      if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{runner.workspace}}/.ccache
+        key: ${{ runner.os }}-ccache-${{ github.sha }}
+
+    - name: Save CMake FetchContent
+      if: always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          ${{github.workspace}}/build/_deps
+        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
 
     - name: Build Setup
       if: ${{ inputs.create-setup }}

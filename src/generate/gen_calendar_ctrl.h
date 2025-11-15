@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxCalendarCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,19 +12,21 @@
 class CalendarCtrlGenerator : public BaseGenerator
 {
 public:
-    wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    auto CreateMockup(Node* node, wxObject* parent) -> wxObject* override;
 
-    bool ConstructionCode(Code& code) override;
-    bool SettingsCode(Code&) override;
+    auto ConstructionCode(Code& code) -> bool override;
+    auto SettingsCode(Code& /*unused*/) -> bool override;
 
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
-                     GenLang /* language */) override;
-    bool GetPythonImports(Node*, std::set<std::string>& set_imports) override;
+    auto GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     GenLang /* language */) -> bool override;
+    auto GetPythonImports(Node* /*unused*/, std::set<std::string>& set_imports) -> bool override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+    auto GenXrcObject(Node* /*unused*/, pugi::xml_node& /* object */, size_t /* xrc_flags */)
+        -> int override;
+    void RequiredHandlers(Node* /*unused*/, std::set<std::string>& /* handlers */) override;
 
-    tt_string GetPythonURL(Node*) override { return "wx.adv.CalendarCtrl.html"; }
+    auto GetPythonURL(Node* /*node*/) -> tt_string override { return "wx.adv.CalendarCtrl.html"; }
 
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
+    auto GetImports(Node* /*unused*/, std::set<std::string>& set_imports, GenLang language)
+        -> bool override;
 };

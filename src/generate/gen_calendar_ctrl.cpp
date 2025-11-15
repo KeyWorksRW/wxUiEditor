@@ -18,10 +18,10 @@
 
 #include "gen_calendar_ctrl.h"
 
-wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
+auto CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject*
 {
-    wxCalendarCtrlBase* widget;
-    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+    wxCalendarCtrlBase* widget = nullptr;
+    if (node->as_view(prop_subclass).starts_with("wxGeneric"))
     {
         widget = new wxGenericCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
                                            wxDefaultDateTime, DlgPoint(node, prop_pos),
@@ -39,7 +39,7 @@ wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool CalendarCtrlGenerator::ConstructionCode(Code& code)
+auto CalendarCtrlGenerator::ConstructionCode(Code& code) -> bool
 {
     bool use_generic_version =
         code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
@@ -62,11 +62,11 @@ bool CalendarCtrlGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool CalendarCtrlGenerator::SettingsCode(Code& code)
+auto CalendarCtrlGenerator::SettingsCode(Code& code) -> bool
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -76,10 +76,11 @@ bool CalendarCtrlGenerator::SettingsCode(Code& code)
     return true;
 }
 
-bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                        std::set<std::string>& set_hdr, GenLang /* language */)
+auto CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        std::set<std::string>& set_hdr,
+                                        GenLang /* language unused */) -> bool
 {
-    if (node->as_string(prop_subclass).starts_with("wxGeneric"))
+    if (node->as_view(prop_subclass).starts_with("wxGeneric"))
     {
         InsertGeneratorInclude(node, "#include <wx/calctrl.h>\n#include <wx/generic/calctrlg.h>",
                                set_src, set_hdr);
@@ -92,7 +93,8 @@ bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-bool CalendarCtrlGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
+auto CalendarCtrlGenerator::GetPythonImports(Node* /*unused*/, std::set<std::string>& set_imports)
+    -> bool
 {
     set_imports.insert("import wx.adv");
     return true;
@@ -101,7 +103,8 @@ bool CalendarCtrlGenerator::GetPythonImports(Node*, std::set<std::string>& set_i
 // ../../wxSnapShot/src/xrc/xh_cald.cpp
 // ../../../wxWidgets/src/xrc/xh_cald.cpp
 
-int CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+auto CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+    -> int
 {
     auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
                                                    BaseGenerator::xrc_updated;
@@ -125,8 +128,8 @@ void CalendarCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
     handlers.emplace("wxCalendarCtrlXmlHandler");
 }
 
-bool CalendarCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                       GenLang language)
+auto CalendarCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                       GenLang language) -> bool
 {
     if (language == GEN_LANG_PERL)
     {

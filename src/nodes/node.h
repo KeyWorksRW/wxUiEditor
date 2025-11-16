@@ -48,7 +48,7 @@ class Node : public std::enable_shared_from_this<Node>
 {
 public:
     // node creation error codes
-    enum : std::int8_t
+    enum class Validity : std::int8_t
     {
         valid_node = 0,
         unsupported_language = -1,
@@ -58,7 +58,7 @@ public:
         invalid_page_grandparent = -5,
         invalid_child_count = -6,
         gridbag_insert_error = -7,
-        invalid_child = -8,  // Requiested child is not allowed for the parent
+        invalid_child = -8,  // Requested child is not allowed for the parent
 
         unknown_error = -99,
     };
@@ -480,7 +480,7 @@ public:
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
     auto CreateChildNode(GenName name, bool verify_language_support = false, int pos = -1)
-        -> std::pair<NodeSharedPtr, int>;
+        -> std::pair<NodeSharedPtr, Node::Validity>;
 
     // Gets the current selected node and uses that to call CreateChildNode().
     auto CreateNode(GenName name) -> Node*;
@@ -561,13 +561,14 @@ private:
 
     // Helper methods for CreateChildNode to reduce complexity
     auto TryCreateInSizerChild(GenName name, bool verify_language_support, Node*& parent,
-                               NodeSharedPtr& new_node) -> std::pair<NodeSharedPtr, int>;
+                               NodeSharedPtr& new_node) -> std::pair<NodeSharedPtr, Node::Validity>;
     static auto HandleGridBagInsertion(Node* parent, Node* new_node)
-        -> std::pair<NodeSharedPtr, int>;
+        -> std::pair<NodeSharedPtr, Node::Validity>;
     auto AdjustMemberNameForLanguage(Node* new_node) -> void;
     auto HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
-        -> std::pair<NodeSharedPtr, int>;
-    auto TryCreateInParent(GenName name, [[maybe_unused]] int pos) -> std::pair<NodeSharedPtr, int>;
+        -> std::pair<NodeSharedPtr, Node::Validity>;
+    auto TryCreateInParent(GenName name, [[maybe_unused]] int pos)
+        -> std::pair<NodeSharedPtr, Node::Validity>;
 
     // Helper methods for FixDuplicateNodeNames to reduce complexity
     static auto InitializeNameSet(std::unordered_set<std::string>& name_set) -> void;

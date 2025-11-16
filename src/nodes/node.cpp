@@ -25,6 +25,7 @@
 #include "utils.h"            // Miscellaneous utilities
 
 using namespace GenEnum;
+using enum Node::Validity;
 
 // clang-format off
 inline constexpr auto lst_form_types = std::to_array<GenType>({
@@ -720,7 +721,8 @@ auto Node::getSizerFlags() const -> wxSizerFlags
 }
 
 auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Node*& parent,
-                                 NodeSharedPtr& new_node) -> std::pair<NodeSharedPtr, int>
+                                 NodeSharedPtr& new_node)
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     if ((is_Form() || is_Container()) && get_ChildCount())
     {
@@ -728,7 +730,7 @@ auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Nod
             get_Child(0)->get_GenType() == type_gbsizer)
         {
             auto result = NodeCreation.CreateNode(name, get_Child(0), verify_language_support);
-            if (!result.first || result.second < 0)
+            if (!result.first || result.second != valid_node)
             {
                 return { nullptr, result.second };
             }
@@ -741,17 +743,18 @@ auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Nod
             }
         }
     }
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
-auto Node::HandleGridBagInsertion(Node* parent, Node* new_node) -> std::pair<NodeSharedPtr, int>
+auto Node::HandleGridBagInsertion(Node* parent, Node* new_node)
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     GridBag grid_bag(parent);
     if (grid_bag.InsertNode(parent, new_node))
     {
-        return { new_node->get_SharedPtr(), Node::valid_node };
+        return { new_node->get_SharedPtr(), valid_node };
     }
-    return { nullptr, Node::gridbag_insert_error };
+    return { nullptr, gridbag_insert_error };
 }
 
 auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
@@ -768,7 +771,7 @@ auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
     }
     else
     {
-        std::string member_name = new_node->as_string(prop_var_name);
+        std::string member_name(new_node->as_view(prop_var_name));
         if (Project.get_CodePreference(this) == GEN_LANG_RUBY ||
             Project.get_CodePreference(this) == GEN_LANG_PYTHON)
         {
@@ -784,7 +787,7 @@ auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
             if (Project.get_CodePreference(this) == GEN_LANG_PYTHON)
             {
                 // Python public names don't have a prefix
-                member_name.erase(0, 2);
+                member_name.erase(2);
             }
             else if (Project.get_CodePreference(this) == GEN_LANG_RUBY)
             {
@@ -820,10 +823,10 @@ auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
 }
 
 auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
-    -> std::pair<NodeSharedPtr, int>
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     auto result = NodeCreation.CreateNode(gen_ribbonTool, this);
-    if (!result.first || result.second < 0)
+    if (!result.first || result.second != valid_node)
     {
         return { nullptr, result.second };
     }
@@ -831,18 +834,18 @@ auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
     tt_string undo_str = "insert ribbon tool";
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
 auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
-    -> std::pair<NodeSharedPtr, int>
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     auto* parent = get_Parent();
     if (!parent)
     {
         wxMessageBox(tt_string() << "You cannot add " << map_GenNames.at(name) << " as a child of "
                                  << get_DeclName());
-        return { nullptr, Node::invalid_child };
+        return { nullptr, invalid_child };
     }
 
     auto* decl = NodeCreation.get_declaration(name);
@@ -861,7 +864,7 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
                          << "You can only add " << (to_size_t) max_children << ' '
                          << map_GenNames.at(name) << " as a child of " << get_DeclName());
         }
-        return { nullptr, Node::invalid_child_count };
+        return { nullptr, invalid_child_count };
     }
 
     auto new_node = NodeCreation.CreateNode(name, parent).first;
@@ -879,16 +882,16 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, insert_pos));
     }
 
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
 auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
-    -> std::pair<NodeSharedPtr, int>
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     auto& frame = wxGetFrame();
 
     auto result = NodeCreation.CreateNode(name, this, verify_language_support);
-    if (!result.first || result.second < 0)
+    if (!result.first || result.second != valid_node)
     {
         return { nullptr, result.second };
     }
@@ -900,7 +903,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
     {
         new_node = NodeCreation.CreateNode(name, this).first;
         result = TryCreateInSizerChild(name, verify_language_support, parent, new_node);
-        if (result.second != Node::valid_node)
+        if (result.second != valid_node)
         {
             return result;
         }
@@ -940,7 +943,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
     else
     {
         result = TryCreateInParent(name, pos);
-        if (result.second != Node::valid_node)
+        if (result.second != valid_node)
         {
             return result;
         }
@@ -955,7 +958,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
         frame.SelectNode(new_node.get(), evt_flags::fire_event | evt_flags::force_selection);
     }
 
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
 auto Node::CreateNode(GenName name) -> Node*

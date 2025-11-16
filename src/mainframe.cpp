@@ -945,11 +945,11 @@ void MainFrame::PasteNode(Node* parent)
                         gen_tool :
                         gen_auitool;
                 auto tool_node = NodeCreation.CreateNode(tool_generator, parent);
-                ASSERT(tool_node.second == Node::valid_node);
+                ASSERT(tool_node.second == Node::Validity::valid_node);
                 // REVIEW: [Randalphwa - 04-28-2025] Not being able to create a tool node with a
                 // valid toolbar parent is extremely unlikely. Simply returning prevents a crash,
                 // but tells the user nothing...
-                if (tool_node.second != Node::valid_node)
+                if (tool_node.second != Node::Validity::valid_node)
                 {
                     return;
                 }
@@ -978,8 +978,8 @@ void MainFrame::PasteNode(Node* parent)
                     parent = grandparent;
                 }
                 auto menu_node = NodeCreation.CreateNode(gen_wxMenuItem, parent);
-                ASSERT(menu_node.second == Node::valid_node);
-                if (menu_node.second != Node::valid_node)
+                ASSERT(menu_node.second == Node::Validity::valid_node);
+                if (menu_node.second != Node::Validity::valid_node)
                 {
                     return;
                 }

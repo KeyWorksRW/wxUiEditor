@@ -3,10 +3,18 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 
 ## Project-Specific Guidelines
 
+### Performance-Critical Code
+**`src/nodes/` and `src/generate/` directories: Prioritize performance over readability**
+- These paths execute frequently during code generation
+- Prefer in-place operations (`erase()`, `append()`) over allocations (`substr()`, string concatenation)
+- Use `std::string_view` parameters, avoid unnecessary string copies
+- Cache frequently accessed values (e.g., `get_CodePreference()` results)
+- Prefer `as_view()` over `as_string()` for all Node/NodeProperty access
+
 ### Node Classes
 - `Node` class: `nodes/node.h` | Pass `Node*` to functions (not `NodeSharedPtr`)
 - `NodeProperty` class: `nodes/node_prop.h`
-- **Prefer `as_view()` over `as_string()`** for efficiency in both `Node` and `NodeProperty`
+- **Always use `as_view()` over `as_string()`** for efficiency
 - Use `as_string()` only when Node/NodeProperty is unavailable
 
 ### Generator Classes
@@ -16,17 +24,16 @@ All generators in `src/generate/` inherit from `src/generate/base_generator.h`
 **Never edit between `// Do not edit any code above` and `// End of generated code` markers** - auto-generated sections will be overwritten. Add modifications after `// End of generated code`.
 
 ### String Conversions
-- **Use `wxString::ToStdString()`** for `wxString` → `std::string`/`std::string_view`
-- Note that wxString::ToStdString() returns const std::string&
-- Use `wxString::utf8_string()` only for specific UTF-8 encoding needs
-- Files using `std::format` must `#include <format>`
-- Avoid `tt_string` and `tt_string_view` in new code
+- **`wxString::ToStdString()`** → `std::string`/`std::string_view` (returns `const std::string&`)
+- `wxString::utf8_string()` only for UTF-8 encoding needs
+- `std::format` requires `#include <format>`
+- Avoid `tt_string`/`tt_string_view` in new code
 
 ### Array Conversions
-Convert C-style `char*` arrays to `std::array` using `std::to_array`
+Use `std::to_array` to convert C-style `char*` arrays to `std::array`
 
 ### Debug Assertions
-Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h` (preferred over raw `assert()` or `throw`)
+Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h` (not raw `assert()`/`throw`)
 
 ## Agent Instructions
 
@@ -38,47 +45,37 @@ When reviewing/analyzing code or referencing specific lines:
 4. Never estimate - always search to verify line numbers
 
 ### Build Verification - Critical Process
-When running builds, you MUST verify actual success/failure by examining the command output:
-1. **ALWAYS** use `run_in_terminal` tool for builds instead of relying on task completion messages
-2. **ALWAYS** check the actual terminal output for failure indicators
-3. Check for **FAILURE** indicators in output:
+When running builds, verify actual success/failure by examining command output:
+1. **Use `run_in_terminal`** for builds (not task completion messages)
+2. **Check actual terminal output** for failure indicators
+3. **FAILURE** indicators:
    - `error:`, `error C[0-9]`, `undefined reference`, `unresolved external symbol`
    - `FAILED:`, `ninja: build stopped:`, `cannot find`, `fatal error`
-   - `Command exited with code 1` or other non-zero exit codes
-   - `compilation terminated` or similar build termination messages
-4. Check for **SUCCESS** indicators:
-   - `ninja: no work to do.` (already built)
-   - Final linking message like `Linking CXX executable` followed by no errors
-   - No error indicators present in output
-5. **CRITICAL**: If you see "The task succeeded with no problems" but need to verify actual build status, use `run_in_terminal` to execute the build command directly
-6. **NEVER** assume success based on task completion alone - always examine actual build output
-7. If errors found: analyze error messages, identify root cause, fix issues, then rebuild to verify
+   - Non-zero exit codes, `compilation terminated`
+4. **SUCCESS** indicators:
+   - `ninja: no work to do.` or final linking message with no errors
+5. **Never assume success from task completion alone** - always examine build output
+6. If errors found: analyze, fix, rebuild to verify
 
 ### Build Directory Navigation
 When running build commands:
-1. **Check current terminal directory** before changing directories
-2. The build directory is `C:\rwCode\wxUiEditor\build`
-3. **If already in build directory**, run `ninja -f build-Debug.ninja` directly
-4. **If not in build directory**, use `Set-Location build; ninja -f build-Debug.ninja`
-5. **NEVER** run `cd build` when already in the build directory (causes errors)
+1. Check current terminal directory before changing
+2. Build directory: `C:\rwCode\wxUiEditor\build`
+3. If already in build: `ninja -f build-Debug.ninja`
+4. If not in build: `Set-Location build; ninja -f build-Debug.ninja`
+5. Never `cd build` when already in build directory
 
 ### PowerShell Environment Commands
-When working in PowerShell environment (Windows):
-1. **File Output**: Use PowerShell cmdlets instead of Unix commands:
-   - Use `Select-Object -Last 100` instead of `tail -100`
-   - Use `Select-Object -First 50` instead of `head -50`
-   - Use `Get-Content file.txt | Select-Object -Last 20` for file tail operations
-   - Use `Get-Content file.txt -TotalCount 20` for file head operations
-2. **Exit Code Checking**: Use `$LASTEXITCODE` to check previous command exit status
-3. **Directory Navigation**: Use `cd` or `Set-Location`, both work in PowerShell
-4. **File Operations**: Prefer PowerShell cmdlets:
-   - `Get-ChildItem` instead of `ls` or `dir`
-   - `Copy-Item` instead of `cp`
-   - `Remove-Item` instead of `rm`
-5. **Text Processing**:
-   - Use `Select-String` instead of `grep`
-   - Use `Measure-Object` instead of `wc`
-   - Use `Sort-Object` instead of `sort`
+When working in PowerShell (Windows):
+1. **File Output**: PowerShell cmdlets (not Unix commands):
+   - `Select-Object -Last 100` not `tail -100`
+   - `Select-Object -First 50` not `head -50`
+   - `Get-Content file.txt | Select-Object -Last 20` for tail
+   - `Get-Content file.txt -TotalCount 20` for head
+2. **Exit Code**: `$LASTEXITCODE` checks previous command status
+3. **Navigation**: `cd` or `Set-Location`
+4. **File Operations**: `Get-ChildItem`, `Copy-Item`, `Remove-Item`
+5. **Text Processing**: `Select-String`, `Measure-Object`, `Sort-Object`
 
 # Language-Specific Coding Standards
 

@@ -34,14 +34,6 @@ struct NodesFormChild
     Node* child;
 };
 
-// Structure to hold adjacent Node* parameters for parent and child.  This allows C++20 designated
-// initializers to be used.
-struct NodesParentChild
-{
-    Node* parent;
-    Node* child;
-};
-
 // Newer functions should be placed in the utils namespace
 namespace utils
 {

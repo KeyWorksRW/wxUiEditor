@@ -36,6 +36,14 @@ using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, 
 
 using namespace GenEnum;
 
+// Structure to hold adjacent Node* parameters for parent and child.  This allows C++20 designated
+// initializers to be used.
+struct NodesParentChild
+{
+    Node* parent;
+    Node* child;
+};
+
 class Node : public std::enable_shared_from_this<Node>
 {
 public:

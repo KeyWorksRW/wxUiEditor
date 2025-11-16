@@ -302,7 +302,7 @@ bool Node::CreateToolNode(GenName name, int pos)
     }
 
     auto result = CreateChildNode(name, true, pos);
-    if (result.second == Node::unsupported_language)
+    if (result.second == Node::Validity::unsupported_language)
     {
         return true;
     }

@@ -55,7 +55,7 @@ public:
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
     auto CreateNode(GenName name, Node* parent, bool verify_language_support = false)
-        -> std::pair<NodeSharedPtr, int>;
+        -> std::pair<NodeSharedPtr, Node::Validity>;
 
     // Only creates the node if the parent allows it as a child. Returns the node and a
     // Node:: error code (see enum in node.h).
@@ -63,7 +63,7 @@ public:
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
     auto CreateNode(std::string_view name, Node* parent, bool verify_language_support = false)
-        -> std::pair<NodeSharedPtr, int>;
+        -> std::pair<NodeSharedPtr, Node::Validity>;
 
     auto CreateNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
                            bool check_for_duplicates = false, bool allow_ui = true)
@@ -138,16 +138,16 @@ private:
     // Helper methods for MakeCopy
     auto CreateToolCopy(Node* node, Node* parent) -> NodeSharedPtr;
     static void CopyProperties(Node* source, NodeSharedPtr& target);
-    auto ConvertFormToControl(Node* node, Node* parent) -> NodeSharedPtr;
+    auto ConvertFormToControl(NodesParentChild nodes) -> NodeSharedPtr;
     void CopyChildren(Node* source, NodeSharedPtr& target);
 
     // Helper methods for CreateNode
     [[nodiscard]] auto ResolveNodeDeclaration(GenName name) const -> NodeDeclaration*;
     [[nodiscard]] static auto ValidateParentConstraints(GenName name, NodeDeclaration* node_decl,
-                                                        Node* parent) -> int;
+                                                        Node* parent) -> Node::Validity;
     static auto AllocateChildNode(GenName name, NodeDeclaration* node_decl, Node* parent)
         -> NodeSharedPtr;
-    [[nodiscard]] static auto VerifyLanguageSupport(NodeSharedPtr& node) -> int;
+    [[nodiscard]] static auto VerifyLanguageSupport(NodeSharedPtr& node) -> Node::Validity;
 
     // Helper methods for is_ValidCreateParent
     [[nodiscard]] static auto CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent)

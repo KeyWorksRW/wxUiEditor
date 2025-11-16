@@ -25,6 +25,7 @@
 #include "utils.h"            // Miscellaneous utilities
 
 using namespace GenEnum;
+using enum Node::Validity;
 
 // clang-format off
 inline constexpr auto lst_form_types = std::to_array<GenType>({
@@ -720,7 +721,8 @@ auto Node::getSizerFlags() const -> wxSizerFlags
 }
 
 auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Node*& parent,
-                                 NodeSharedPtr& new_node) -> std::pair<NodeSharedPtr, int>
+                                 NodeSharedPtr& new_node)
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     if ((is_Form() || is_Container()) && get_ChildCount())
     {
@@ -728,7 +730,7 @@ auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Nod
             get_Child(0)->get_GenType() == type_gbsizer)
         {
             auto result = NodeCreation.CreateNode(name, get_Child(0), verify_language_support);
-            if (!result.first || result.second < 0)
+            if (!result.first || result.second != valid_node)
             {
                 return { nullptr, result.second };
             }
@@ -741,89 +743,79 @@ auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Nod
             }
         }
     }
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
-auto Node::HandleGridBagInsertion(Node* parent, Node* new_node) -> std::pair<NodeSharedPtr, int>
+auto Node::HandleGridBagInsertion(Node* parent, Node* new_node)
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     GridBag grid_bag(parent);
     if (grid_bag.InsertNode(parent, new_node))
     {
-        return { new_node->get_SharedPtr(), Node::valid_node };
+        return { new_node->get_SharedPtr(), valid_node };
     }
-    return { nullptr, Node::gridbag_insert_error };
+    return { nullptr, gridbag_insert_error };
 }
 
 auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
 {
-    bool is_name_changed = false;
-    if (Project.get_CodePreference(this) == GEN_LANG_CPLUSPLUS)
+    if (!new_node->HasProp(prop_var_name))
     {
-        if (new_node->HasProp(prop_var_name) && UserPrefs.is_CppSnakeCase())
-        {
-            auto member_name = ConvertToSnakeCase(new_node->as_string(prop_var_name));
-            new_node->set_value(prop_var_name, member_name);
-            new_node->FixDuplicateName();
-        }
+        return;
+    }
+
+    auto original_name = new_node->as_view(prop_var_name);
+    std::string member_name;
+
+    // Assign default name if empty
+    if (original_name.empty())
+    {
+        member_name = new_node->get_PropDefaultValue(prop_var_name);
     }
     else
     {
-        std::string member_name = new_node->as_string(prop_var_name);
-        if (Project.get_CodePreference(this) == GEN_LANG_RUBY ||
-            Project.get_CodePreference(this) == GEN_LANG_PYTHON)
-        {
-            member_name = ConvertToSnakeCase(member_name);
-            if (member_name != new_node->as_string(prop_var_name))
-            {
-                is_name_changed = true;
-            }
-        }
+        member_name = std::string(original_name);
+    }
 
-        if (member_name.starts_with("m_"))
-        {
-            if (Project.get_CodePreference(this) == GEN_LANG_PYTHON)
-            {
-                // Python public names don't have a prefix
-                member_name.erase(0, 2);
-            }
-            else if (Project.get_CodePreference(this) == GEN_LANG_RUBY)
-            {
-                // We don't add the '@' because that will be added automatically during
-                // code generation.
-                member_name.erase(0, 2);
-            }
+    const auto language = Project.get_CodePreference(this);
 
-            if (member_name.ends_with("_2"))
-            {
-                // This is unlikely, but the previous check for duplication assumed a m_
-                // prefix, so without the prefix, it's possible that the name isn't a
-                // duplicate. We only check for _2 since a mix of names with/without a m_
-                // prefix is unlikely.
-                member_name.erase(member_name.size() - 2);
-            }
+    // Apply C++ naming conventions
+    if (language == GEN_LANG_CPLUSPLUS && UserPrefs.is_CppSnakeCase())
+    {
+        member_name = ConvertToSnakeCase(member_name);
+    }
 
-            is_name_changed = true;
-        }
-        else if (Project.get_CodePreference(this) == GEN_LANG_PYTHON)
-        {
-            // Python private names have '_' as a prefix
-            member_name.insert(0, "_");
-            is_name_changed = true;
-        }
+    // Remove m_ prefix (common in imported projects)
+    if (member_name.starts_with("m_"))
+    {
+        member_name.erase(0, 2);
 
-        if (is_name_changed)
+        // Remove duplicate suffix that was added assuming m_ prefix
+        if (member_name.ends_with("_2"))
         {
-            new_node->set_value(prop_var_name, member_name);
-            new_node->FixDuplicateName();
+            member_name.erase(member_name.size() - 2);
         }
+    }
+
+    // Apply Python private name convention
+    if (language == GEN_LANG_PYTHON && new_node->is_Local())
+    {
+        member_name = "_" + member_name;
+    }
+
+    // Update node if name changed and check for duplicates
+    if (member_name != original_name)
+    {
+        new_node->set_value(prop_var_name, member_name);
+        new_node->FixDuplicateName();
     }
 }
 
 auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
-    -> std::pair<NodeSharedPtr, int>
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     auto result = NodeCreation.CreateNode(gen_ribbonTool, this);
-    if (!result.first || result.second < 0)
+    if (!result.first || result.second != valid_node)
     {
         return { nullptr, result.second };
     }
@@ -831,18 +823,18 @@ auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
     tt_string undo_str = "insert ribbon tool";
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
 auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
-    -> std::pair<NodeSharedPtr, int>
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     auto* parent = get_Parent();
     if (!parent)
     {
         wxMessageBox(tt_string() << "You cannot add " << map_GenNames.at(name) << " as a child of "
                                  << get_DeclName());
-        return { nullptr, Node::invalid_child };
+        return { nullptr, invalid_child };
     }
 
     auto* decl = NodeCreation.get_declaration(name);
@@ -861,7 +853,7 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
                          << "You can only add " << (to_size_t) max_children << ' '
                          << map_GenNames.at(name) << " as a child of " << get_DeclName());
         }
-        return { nullptr, Node::invalid_child_count };
+        return { nullptr, invalid_child_count };
     }
 
     auto new_node = NodeCreation.CreateNode(name, parent).first;
@@ -879,16 +871,16 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, insert_pos));
     }
 
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
 auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
-    -> std::pair<NodeSharedPtr, int>
+    -> std::pair<NodeSharedPtr, Node::Validity>
 {
     auto& frame = wxGetFrame();
 
     auto result = NodeCreation.CreateNode(name, this, verify_language_support);
-    if (!result.first || result.second < 0)
+    if (!result.first || result.second != valid_node)
     {
         return { nullptr, result.second };
     }
@@ -900,7 +892,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
     {
         new_node = NodeCreation.CreateNode(name, this).first;
         result = TryCreateInSizerChild(name, verify_language_support, parent, new_node);
-        if (result.second != Node::valid_node)
+        if (result.second != valid_node)
         {
             return result;
         }
@@ -940,7 +932,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
     else
     {
         result = TryCreateInParent(name, pos);
-        if (result.second != Node::valid_node)
+        if (result.second != valid_node)
         {
             return result;
         }
@@ -955,7 +947,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
         frame.SelectNode(new_node.get(), evt_flags::fire_event | evt_flags::force_selection);
     }
 
-    return { new_node, Node::valid_node };
+    return { new_node, valid_node };
 }
 
 auto Node::CreateNode(GenName name) -> Node*

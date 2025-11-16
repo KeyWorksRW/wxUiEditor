@@ -128,6 +128,9 @@ if( MSVC )
         add_compile_options( /fsanitize=address )
         add_link_options( /fsanitize=address )
     endif()
+
+    # Increase stack size for large projects with many object files
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608")  # 8MB stack
 else()
     # Use the package PkgConfig to detect GTK+ headers/library files
     find_package( PkgConfig REQUIRED )

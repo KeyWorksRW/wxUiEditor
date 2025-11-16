@@ -34,14 +34,6 @@ struct NodesFormChild
     Node* child;
 };
 
-// Structure to hold adjacent Node* parameters for parent and child.  This allows C++20 designated
-// initializers to be used.
-struct NodesParentChild
-{
-    Node* parent;
-    Node* child;
-};
-
 // Newer functions should be placed in the utils namespace
 namespace utils
 {
@@ -103,7 +95,7 @@ auto CreateBaseFilename(Node* form_node, const tt_string& class_name) -> tt_stri
 auto CreateDerivedFilename(Node* form_node, const tt_string& class_name) -> tt_string;
 
 // Typically called to convert a string into a Ruby string which prefers snake_case
-auto ConvertToSnakeCase(tt_string_view str) -> std::string;
+auto ConvertToSnakeCase(std::string_view str) -> std::string;
 
 // Converts string to snake_case, then converts to upper case
 auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string;

@@ -759,66 +759,55 @@ auto Node::HandleGridBagInsertion(Node* parent, Node* new_node)
 
 auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
 {
-    bool is_name_changed = false;
-    if (Project.get_CodePreference(this) == GEN_LANG_CPLUSPLUS)
+    if (!new_node->HasProp(prop_var_name))
     {
-        if (new_node->HasProp(prop_var_name) && UserPrefs.is_CppSnakeCase())
-        {
-            auto member_name = ConvertToSnakeCase(new_node->as_string(prop_var_name));
-            new_node->set_value(prop_var_name, member_name);
-            new_node->FixDuplicateName();
-        }
+        return;
+    }
+
+    auto original_name = new_node->as_view(prop_var_name);
+    std::string member_name;
+
+    // Assign default name if empty
+    if (original_name.empty())
+    {
+        member_name = new_node->get_PropDefaultValue(prop_var_name);
     }
     else
     {
-        std::string member_name(new_node->as_view(prop_var_name));
-        if (Project.get_CodePreference(this) == GEN_LANG_RUBY ||
-            Project.get_CodePreference(this) == GEN_LANG_PYTHON)
-        {
-            member_name = ConvertToSnakeCase(member_name);
-            if (member_name != new_node->as_string(prop_var_name))
-            {
-                is_name_changed = true;
-            }
-        }
+        member_name = std::string(original_name);
+    }
 
-        if (member_name.starts_with("m_"))
-        {
-            if (Project.get_CodePreference(this) == GEN_LANG_PYTHON)
-            {
-                // Python public names don't have a prefix
-                member_name.erase(2);
-            }
-            else if (Project.get_CodePreference(this) == GEN_LANG_RUBY)
-            {
-                // We don't add the '@' because that will be added automatically during
-                // code generation.
-                member_name.erase(0, 2);
-            }
+    const auto language = Project.get_CodePreference(this);
 
-            if (member_name.ends_with("_2"))
-            {
-                // This is unlikely, but the previous check for duplication assumed a m_
-                // prefix, so without the prefix, it's possible that the name isn't a
-                // duplicate. We only check for _2 since a mix of names with/without a m_
-                // prefix is unlikely.
-                member_name.erase(member_name.size() - 2);
-            }
+    // Apply C++ naming conventions
+    if (language == GEN_LANG_CPLUSPLUS && UserPrefs.is_CppSnakeCase())
+    {
+        member_name = ConvertToSnakeCase(member_name);
+    }
 
-            is_name_changed = true;
-        }
-        else if (Project.get_CodePreference(this) == GEN_LANG_PYTHON)
-        {
-            // Python private names have '_' as a prefix
-            member_name.insert(0, "_");
-            is_name_changed = true;
-        }
+    // Remove m_ prefix (common in imported projects)
+    if (member_name.starts_with("m_"))
+    {
+        member_name.erase(0, 2);
 
-        if (is_name_changed)
+        // Remove duplicate suffix that was added assuming m_ prefix
+        if (member_name.ends_with("_2"))
         {
-            new_node->set_value(prop_var_name, member_name);
-            new_node->FixDuplicateName();
+            member_name.erase(member_name.size() - 2);
         }
+    }
+
+    // Apply Python private name convention
+    if (language == GEN_LANG_PYTHON && new_node->is_Local())
+    {
+        member_name = "_" + member_name;
+    }
+
+    // Update node if name changed and check for duplicates
+    if (member_name != original_name)
+    {
+        new_node->set_value(prop_var_name, member_name);
+        new_node->FixDuplicateName();
     }
 }
 

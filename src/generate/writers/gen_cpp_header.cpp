@@ -561,8 +561,7 @@ void CppCodeGenerator::WriteProtectedAndPrivateSections(Code& code, BaseGenerato
 
     if (m_form_node->HasValue(prop_class_members))
     {
-        tt_string_vector class_list(m_form_node->as_view(prop_class_members), '"',
-                                    tt::TRIM::both);
+        tt_string_vector class_list(m_form_node->as_view(prop_class_members), '"', tt::TRIM::both);
         m_header->writeLine();
         for (auto& iter: class_list)
         {
@@ -653,8 +652,7 @@ void CppCodeGenerator::WritePublicClassMethods()
 {
     if (m_form_node->HasValue(prop_class_methods))
     {
-        tt_string_vector class_list(m_form_node->as_view(prop_class_methods), '"',
-                                    tt::TRIM::both);
+        tt_string_vector class_list(m_form_node->as_view(prop_class_methods), '"', tt::TRIM::both);
         if (class_list.size())
         {
             m_header->writeLine();

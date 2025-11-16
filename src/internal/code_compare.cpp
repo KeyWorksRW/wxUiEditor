@@ -246,7 +246,7 @@ void CodeCompare::OnRadioButton(GenLang language)
     {
         for (auto& iter: m_class_list)
         {
-            m_list_changes->AppendString(iter.make_wxString());
+            m_list_changes->AppendString(wxString::FromUTF8(iter));
         }
         m_btn->Enable();
     }

@@ -531,7 +531,7 @@ auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
 }
 
 // Helper: Log results for each language generation
-void App::LogGenerationResults(GenResults& results, std::vector<tt_string>& class_list,
+void App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
                                bool test_only, std::string_view language_type)
 {
     if (results.updated_files.size() || class_list.size())
@@ -573,7 +573,7 @@ void App::LogGenerationResults(GenResults& results, std::vector<tt_string>& clas
 
 // Helper: Generate code for all requested languages
 void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                               std::vector<tt_string>& class_list)
+                               std::vector<std::string>& class_list)
 {
     auto GenCode = [&](GenLang language)
     {
@@ -656,7 +656,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     }
 
     m_cmdline_log.clear();
-    std::vector<tt_string> class_list;
+    std::vector<std::string> class_list;
     auto start_time = std::chrono::steady_clock::now();
 
     GenerateAllLanguages(generate_type, test_only, results, class_list);

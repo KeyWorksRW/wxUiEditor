@@ -1395,7 +1395,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     return true;
 }
 
-bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList,
+bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::string>* pClassList,
                           GenLang language)
 {
     auto [path, has_base_file] = Project.GetOutputPath(form, language);
@@ -1523,7 +1523,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<tt_string
     return true;
 }
 
-bool GenerateLanguageFiles(GenResults& results, std::vector<tt_string>* pClassList,
+bool GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
                            GenLang language)
 {
     if (Project.get_ChildCount() == 0)

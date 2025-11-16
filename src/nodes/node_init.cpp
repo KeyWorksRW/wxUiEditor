@@ -444,6 +444,12 @@ static constexpr auto fb_ImportTypes = std::to_array<std::string_view>({
 
 void NodeCreator::Initialize()
 {
+    // REVIEW: [Randalphwa - 11-15-2025]
+    // Make certain these are cleared to avoid possible memory corruption.
+    rmap_PropNames.clear();
+    map_MacroProps.clear();
+    rmap_GenNames.clear();
+
     for (const auto& iter: GenEnum::map_PropNames)
     {
         GenEnum::rmap_PropNames[iter.second] = iter.first;

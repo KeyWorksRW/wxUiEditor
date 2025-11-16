@@ -46,7 +46,7 @@ public:
 
     // Note that if prop_combine_all_forms is set, this will generate a single XRC file. Otherwise,
     // it will generate a separate XRC file for each form.
-    void GenerateAllXrcForms(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+    void GenerateAllXrcForms(GenResults& results, std::vector<std::string>* pClassList = nullptr);
 
     pugi::xml_document& getDocument() { return m_doc; }
 

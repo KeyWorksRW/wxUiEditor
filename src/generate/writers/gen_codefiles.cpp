@@ -165,7 +165,7 @@ void GenInhertedClass(GenResults& results)
     }
 }
 
-void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root,
+void GenerateTmpFiles(const std::vector<std::string>& ClassList, pugi::xml_node root,
                       GenLang language)
 {
     tt_cwd cwd(true);

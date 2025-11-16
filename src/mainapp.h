@@ -120,11 +120,11 @@ private:
     static auto LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
                                 bool& is_project_loaded) -> bool;
 
-    static void LogGenerationResults(GenResults& results, std::vector<tt_string>& class_list,
+    static void LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
                                      bool test_only, std::string_view language_type);
 
     static void GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                                     std::vector<tt_string>& class_list);
+                                     std::vector<std::string>& class_list);
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
     // want to create it. If they choose No then we store the path here and never ask again
     // for the current session.

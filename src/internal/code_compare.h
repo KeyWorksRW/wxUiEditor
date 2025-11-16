@@ -61,7 +61,7 @@ private:
     wxRadioButton* m_radio_ruby;
     wxRadioButton* m_radio_xrc;
 
-    std::vector<tt_string> m_class_list;
+    std::vector<std::string> m_class_list;
 };
 
 // ************* End of generated code ***********

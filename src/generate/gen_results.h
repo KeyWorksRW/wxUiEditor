@@ -48,7 +48,7 @@ struct GenResults
 // updating.
 //
 // ../generate/gen_codefiles.cpp
-bool GenerateCppFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+bool GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr);
 
 // ../generate/gen_codefiles.cpp
 void GenInhertedClass(GenResults& results);
@@ -62,7 +62,7 @@ void GenInhertedClass(GenResults& results);
 // updating.
 //
 // ../generate/gen_xrc.cpp
-bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+bool GenerateXrcFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr);
 
-void GenerateTmpFiles(const std::vector<tt_string>& ClassList, pugi::xml_node root,
+void GenerateTmpFiles(const std::vector<std::string>& ClassList, pugi::xml_node root,
                       GenLang language = GEN_LANG_CPLUSPLUS);

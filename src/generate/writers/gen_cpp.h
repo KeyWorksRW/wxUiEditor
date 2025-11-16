@@ -69,7 +69,7 @@ protected:
                                  std::set<std::string>& set_hdr);
 
     // Generates all the code lines for validator_variables initialized in the header file
-    void GenCppValVarsBase(const NodeDeclaration* info, Node* node,
+    void GenCppValVarsBase(const NodeDeclaration* declaration, Node* node,
                            std::set<std::string>& code_lines);
 
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
@@ -85,4 +85,142 @@ protected:
     void WriteImagePreConstruction(Code& code);  // declared in image_gen.cpp
 
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);
+
+private:
+    // ============================================================================
+    // IMPLEMENTATION DETAILS BELOW - Not part of the public interface
+    // ============================================================================
+    // The following private helper methods are implementation details of the
+    // CppCodeGenerator class. They are declared here only to satisfy the compiler
+    // requirements for class member function definitions. External code should
+    // not depend on or use these methods.
+    // ============================================================================
+
+    // Helper methods for WritePropHdrCode
+    static auto IsAccessSpecifier(const tt_string& code) -> bool;
+    static auto ShouldIndentAfter(const tt_string& code) -> bool;
+
+    // Helper methods for GatherGeneratorIncludes
+    static void ProcessFontProperty(const NodeProperty& prop, bool isAddToSrc,
+                                    std::set<std::string>& set_src, std::set<std::string>& set_hdr);
+    static void ProcessColourProperty(bool isAddToSrc, std::set<std::string>& set_src,
+                                      std::set<std::string>& set_hdr);
+    void ProcessImageProperty(const NodeProperty& prop, bool isAddToSrc,
+                              std::set<std::string>& set_src, std::set<std::string>& set_hdr);
+
+    // Helper methods for GenUnhandledEvents
+    [[nodiscard]] auto CollectUserEventHandlers(std::unordered_set<std::string>& code_lines)
+        -> bool;
+    [[nodiscard]] auto
+        CheckIfAllEventsImplemented(const EventVector& events,
+                                    const std::unordered_set<std::string>& code_lines) -> bool;
+    static void GenerateEventFunctionBody(Code& code, NodeEvent* event);
+
+    // Helper methods for GenerateCppClassConstructor
+    void GenerateConstructionPreamble(Code& code, BaseGenerator* generator);
+    void GenerateChildrenAndEvents(Code& code, BaseGenerator* generator);
+    void GenerateConstructorClosing(Code& code, BaseGenerator* generator);
+
+    // Helper methods for GenerateClassIncludes
+    void CollectBaseIncludes(std::set<std::string>& src_includes,
+                             std::set<std::string>& hdr_includes, std::thread* thrd_get_events);
+    static void ProcessOrderDependentIncludes(std::set<std::string>& src_includes,
+                                              std::vector<std::string>& ordered_includes);
+    void WriteSourceIncludes(const std::set<std::string>& src_includes,
+                             const std::vector<std::string>& ordered_includes,
+                             const tt_string& file);
+
+    // Helper methods for GenerateClass - reduce function complexity
+    void InitializeGenerationState();
+    void StartThreadedCollections(std::set<std::string>& img_include_set);
+    void ProcessEmbeddedImagesAndIncludes(const std::set<std::string>& img_include_set);
+    void DetermineNamespace(tt_string& namespace_prop);
+    void FinalizeNamespace(const tt_string_vector& names, size_t indent, Code& code);
+
+    // Helper methods for GenHdrEvents
+    [[nodiscard]] static auto ShouldSkipEvent(const tt_string& event_code) -> bool;
+    [[nodiscard]] static auto HasContextMenuHandler(NodeEvent* event) -> bool;
+    void ProcessSingleEvent(NodeEvent* event, std::set<tt_string>& code_lines);
+    void BuildEventHandlerDeclaration(tt_string& code, const tt_string& event_code,
+                                      const tt_string& event_class) const;
+    void WriteEventHandlerHeader() const;
+    void ProcessConditionalEvents(Code& code);
+
+    // Helper methods for GenInitHeaderFile
+    static void ProcessOrderDependentHeaderIncludes(std::set<std::string>& hdr_includes,
+                                                    std::vector<std::string>& ordered_includes);
+    void WriteWxWidgetsHeaders(const std::set<std::string>& hdr_includes);
+    static auto ExtractNamespaces(std::set<std::string>& hdr_includes) -> std::vector<std::string>;
+    void WriteNonWxHeaders(const std::set<std::string>& hdr_includes);
+    void WritePreambleAndCustomIncludes();
+    void WriteNamespaceDeclarations(const std::vector<std::string>& namespaces);
+
+    // Helper methods for GenerateCppClassHeader
+    void WriteClassDeclaration(Code& code, BaseGenerator* generator);
+    void WritePublicSection(Code& code, BaseGenerator* generator);
+    void WriteProtectedAndPrivateSections(Code& code, BaseGenerator* generator);
+
+    // Helper methods for WritePublicSection
+    void WritePublicMemberVariables(Code& code);
+    void WriteConstValues(Code& code);
+    void WriteGeneratorHeaderCode(Code& code, BaseGenerator* generator);
+    void WritePublicClassMethods();
+
+    // Helper methods for WriteConstValues
+    static void WriteFormIdConst(Code& code, Node* node);
+    static void WriteFormStyleConst(Code& code, Node* node);
+    static void WriteFormPosConst(Code& code, Node* node);
+    static void WriteFormSizeConst(Code& code, Node* node);
+    static void WriteFormTitleConst(Code& code, Node* node);
+
+    // Helper methods for WriteProtectedAndPrivateSections
+    void WriteProtectedClassMethods();
+    void WriteValidatorVariables(Code& code, std::set<std::string>& code_lines);
+    void WriteProtectedMemberVariables(Code& code, BaseGenerator* generator,
+                                       std::set<std::string>& code_lines);
+
+    // Helper methods for CollectMemberVariables
+    static void AdjustGenericClassName(Node* node, tt_string& code);
+    void InsertMemberVariable(Node* node, const tt_string& code, Permission perm);
+    void InsertPlatformSpecificVariable(const tt_string& platform, const tt_string& code,
+                                        Permission perm);
+    static void InsertRegularMemberVariable(const tt_string& code,
+                                            std::set<std::string>& code_lines);
+    void ProcessProtectedMemberVariables(Node* node, std::set<std::string>& code_lines);
+    void ProcessCheckboxRadioVariables(Node* node, std::set<std::string>& code_lines);
+    void ProcessClassAccessProperty(Node* node, Permission perm, std::set<std::string>& code_lines);
+
+    // Helper methods for GenCppValVarsBase
+    static void AppendBoolInitializer(tt_string& code, Node* node);
+    static void AppendNumericInitializer(tt_string& code, Node* node);
+    static void AppendStringInitializer(tt_string& code, Node* node);
+    void InsertValidatorVariable(Node* node, const tt_string& code,
+                                 std::set<std::string>& code_lines);
+
+    // Helper methods for GenerateDerivedClass
+    static void GetFileExtensions(Node* project, tt_string& source_ext, tt_string& header_ext);
+    [[nodiscard]] auto DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_type,
+                                                const tt_string& source_ext) -> tt_string;
+    void DetermineBaseFilePath(Node* form, tt_string& baseFile);
+    static void ProcessNamespace(Node* form, tt_string& namespace_using_name);
+    void GenerateDerivedClassName(tt_string& derived_name);
+    void GenerateDerivedHeader(const tt_string& derived_name, const tt_string& baseFile,
+                               const tt_string& namespace_using_name, const tt_string& header_ext,
+                               PANEL_PAGE panel_type);
+    void GenerateDerivedSource(Node* project, const tt_string& derived_name,
+                               const tt_string& baseFile, const tt_string& derived_file,
+                               const tt_string& namespace_using_name, const tt_string& header_ext,
+                               const tt_string& source_ext, PANEL_PAGE panel_type);
+    void GenerateDerivedEventHandlers(const EventVector& events, const tt_string& derived_name,
+                                      PANEL_PAGE panel_type);
+    static auto IsCloseTypeButton(NodeEvent* event) -> bool;
+    static auto ShouldSkipContextMenuEvent(NodeEvent* event) -> bool;
+    void WriteEventHandlerDeclaration(const tt_string& event_code, const tt_string& event_class);
+    void WriteEventHandlerImplementation(NodeEvent* event, const tt_string& derived_name,
+                                         const tt_string& event_code, bool close_type_button);
+
+    // Thread member variables for GenerateClass
+    std::thread m_thrd_get_events;
+    std::thread m_thrd_collect_img_headers;
+    std::thread m_thrd_need_img_func;
 };

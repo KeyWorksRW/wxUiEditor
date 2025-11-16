@@ -528,7 +528,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_wxPerl_version, "wxPerl_version" },
 
 };
-std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
+std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames {};
 
 const std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
 
@@ -850,7 +850,7 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_wxAuiMDIChildFrame, "wxAuiMDIChildFrame" },
 
 };
-std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
+std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames {};
 
 const std::map<GenEnum::PropName, std::string_view> map_PropMacros = {
 
@@ -872,7 +872,7 @@ const std::map<GenEnum::PropName, std::string_view> map_PropMacros = {
 };
 
 // This is the opposite of map_PropMacros, and is initialized in NodeCreator::Initialize()
-std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;
+std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps {};
 
 // In order to sort the left column, everything needs to be on one line. Since these can be
 // very long lines, we can't let clang-format wrap them.

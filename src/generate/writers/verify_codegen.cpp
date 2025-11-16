@@ -106,7 +106,7 @@ namespace
     }
 
     [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, size_t generate_type,
-                                                std::vector<tt_string>& class_list,
+                                                std::vector<std::string>& class_list,
                                                 GenResults& results) -> verify_codegen::VerifyResult
     {
         if (!(generate_type & language))
@@ -170,7 +170,7 @@ namespace
         return result;
     }
 
-    std::vector<tt_string> class_list;
+    std::vector<std::string> class_list;
     GenResults results;
 
     // Passing a class_list reference will cause the code generator to process all the

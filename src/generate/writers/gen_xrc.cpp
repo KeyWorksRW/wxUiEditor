@@ -297,7 +297,7 @@ void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     }
 }
 
-bool GenerateXrcFiles(GenResults& results, std::vector<tt_string>* pClassList)
+bool GenerateXrcFiles(GenResults& results, std::vector<std::string>* pClassList)
 {
     XrcGenerator xrc_gen;
     xrc_gen.AddProjectFlags();
@@ -473,7 +473,7 @@ std::string XrcGenerator::getXmlString()
     return xml_stream.str();
 }
 
-void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<tt_string>* pClassList)
+void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::string>* pClassList)
 {
     bool combine_forms = Project.as_bool(prop_combine_all_forms);
     if (combine_forms)

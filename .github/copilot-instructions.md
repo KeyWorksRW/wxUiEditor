@@ -54,6 +54,14 @@ When running builds, you MUST verify actual success/failure by examining the com
 6. **NEVER** assume success based on task completion alone - always examine actual build output
 7. If errors found: analyze error messages, identify root cause, fix issues, then rebuild to verify
 
+### Build Directory Navigation
+When running build commands:
+1. **Check current terminal directory** before changing directories
+2. The build directory is `C:\rwCode\wxUiEditor\build`
+3. **If already in build directory**, run `ninja -f build-Debug.ninja` directly
+4. **If not in build directory**, use `Set-Location build; ninja -f build-Debug.ninja`
+5. **NEVER** run `cd build` when already in the build directory (causes errors)
+
 ### PowerShell Environment Commands
 When working in PowerShell environment (Windows):
 1. **File Output**: Use PowerShell cmdlets instead of Unix commands:

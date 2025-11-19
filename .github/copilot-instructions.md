@@ -45,6 +45,7 @@ When reviewing/analyzing code or referencing specific lines:
 4. Never estimate - always search to verify line numbers
 
 ### Build Verification - Critical Process
+- **Always use `cmake --build build --config Debug`** from the project root - never change to build directory
 When running builds, verify actual success/failure by examining command output:
 1. **Use `run_in_terminal`** for builds (not task completion messages)
 2. **Check actual terminal output** for failure indicators
@@ -56,14 +57,6 @@ When running builds, verify actual success/failure by examining command output:
    - `ninja: no work to do.` or final linking message with no errors
 5. **Never assume success from task completion alone** - always examine build output
 6. If errors found: analyze, fix, rebuild to verify
-
-### Build Directory Navigation
-When running build commands:
-1. Check current terminal directory before changing
-2. Build directory: `C:\rwCode\wxUiEditor\build`
-3. If already in build: `ninja -f build-Debug.ninja`
-4. If not in build: `Set-Location build; ninja -f build-Debug.ninja`
-5. Never `cd build` when already in build directory
 
 ### PowerShell Environment Commands
 When working in PowerShell (Windows):
@@ -154,7 +147,7 @@ When working in PowerShell (Windows):
 - ✅ Always check if Standard Library provides needed functionality before using external libraries
 - ✅ Include appropriate frozen headers when using immutable containers
 - ✅ Validate that enum classes use explicit underlying types
-- ✅ Ensure all bool/int-returning functions have `[[nodiscard]]` attribute
+- ✅ Ensure all bool-returning functions have `[[nodiscard]]` attribute
 - ✅ Verify conditionals use braces even for single statements
 - ✅ **Respect protected code sections** – Do not edit between "Do not edit" and "End of generated code" markers
 - ✅ For Node and NodeProperty classes, prefer `as_view()` methods

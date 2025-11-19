@@ -7243,15 +7243,13 @@
       </node>
       <node
         class="wxDialog"
-        class_name="CodeCompare"
+        class_name="CodeCompareBase"
         title="Compare Code Generation"
-        base_file="..\internal\code_compare"
+        base_file="..\internal\code_compare_base"
         class_members="&quot;&quot; &quot;std::vector&lt;tt_string> m_class_list;&quot;"
-        class_methods="&quot;~CodeCompare();&quot;"
         derived_class_name="CodeCompare"
         private_members="1"
-        protected_class_methods="&quot;void OnRadioButton(GenLang language);&quot;"
-        use_derived_class="0"
+        pure_virtual_functions="1"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"

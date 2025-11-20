@@ -53,7 +53,7 @@
 
 #include "wxui/ui_images.h"  // This is generated from the Images List
 
-#include "internal/code_compare.h"  // CodeCompare
+#include "internal/compare/code_compare.h"  // CodeCompare
 #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #include "internal/msg_logging.h"   // MsgLogging -- Message logging class
 #include "internal/node_info.h"     // NodeInfo

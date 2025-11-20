@@ -19,11 +19,11 @@
 #include <wx/listbox.h>
 #include <wx/radiobut.h>
 
-class CodeCompare : public wxDialog
+class CodeCompareBase : public wxDialog
 {
 public:
-    CodeCompare() {}
-    CodeCompare(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare Code Generation",
+    CodeCompareBase() {}
+    CodeCompareBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare Code Generation",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -33,23 +33,17 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    ~CodeCompare();
-
 protected:
 
-    // Event handlers
+    // Virtual event handlers -- override them in your derived class
 
-    void OnCPlusPlus(wxCommandEvent& event);
-    void OnInit(wxInitDialogEvent& event);
-    void OnPerl(wxCommandEvent& event);
-    void OnPython(wxCommandEvent& event);
-    void OnRuby(wxCommandEvent& event);
-    void OnWinMerge(wxCommandEvent& event);
-    void OnXRC(wxCommandEvent& event);
-
-    void OnRadioButton(GenLang language);
-
-private:
+    virtual void OnCPlusPlus(wxCommandEvent& event) = 0;
+    virtual void OnDiff(wxCommandEvent& event) = 0;
+    virtual void OnInit(wxInitDialogEvent& event) = 0;
+    virtual void OnPerl(wxCommandEvent& event) = 0;
+    virtual void OnPython(wxCommandEvent& event) = 0;
+    virtual void OnRuby(wxCommandEvent& event) = 0;
+    virtual void OnXRC(wxCommandEvent& event) = 0;
 
     // Class member variables
 
@@ -60,8 +54,6 @@ private:
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
     wxRadioButton* m_radio_xrc;
-
-    std::vector<std::string> m_class_list;
 };
 
 // ************* End of generated code ***********

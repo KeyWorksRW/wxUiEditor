@@ -1523,8 +1523,8 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
     return true;
 }
 
-bool GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
-                           GenLang language)
+auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
+                           GenLang language) -> bool
 {
     if (Project.get_ChildCount() == 0)
     {
@@ -1536,7 +1536,9 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClass
     ASSERT_MSG(language != GEN_LANG_NONE, "No language specified for code generation!");
 
     if (wxGetApp().isTestingMenuEnabled())
+    {
         results.StartClock();
+    }
 
     tt_cwd cwd(true);
     Project.ChangeDir();
@@ -1567,14 +1569,16 @@ bool GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClass
         }
     }
     if (wxGetApp().isTestingMenuEnabled())
+    {
         results.EndClock();
+    }
 
     return generate_result;
 }
 
 void OnGenerateSingleLanguage(GenLang language)
 {
-    auto form = wxGetMainFrame()->getSelectedNode();
+    auto* form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->is_Form())
     {
         form = form->get_Form();
@@ -1592,9 +1596,13 @@ void OnGenerateSingleLanguage(GenLang language)
     if (results.updated_files.size())
     {
         if (results.updated_files.size() == 1)
+        {
             msg << "1 file was updated";
+        }
         else
+        {
             msg << results.updated_files.size() << " files were updated";
+        }
         msg << '\n';
     }
     else

@@ -3,6 +3,13 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 
 ## Project-Specific Guidelines
 
+### CRITICAL: Legacy Code Restrictions
+**NEVER use any functions, classes, or types from `src/tt/` directory in new code**
+- ❌ `tt_string`, `tt_string_view`, `tt_cwd`, `tt_view_vector` - all deprecated
+- ✅ Use C++ Standard Library equivalents: `std::string`, `std::string_view`, `std::filesystem::path`
+- ✅ Use project-approved alternatives: `ttwx::ViewVector` (not `tt_view_vector`)
+- Exception: Existing code may use these types - do not refactor unless explicitly requested
+
 ### Performance-Critical Code
 **`src/nodes/` and `src/generate/` directories: Prioritize performance over readability**
 - These paths execute frequently during code generation
@@ -27,7 +34,7 @@ All generators in `src/generate/` inherit from `src/generate/base_generator.h`
 - **`wxString::ToStdString()`** → `std::string`/`std::string_view` (returns `const std::string&`)
 - `wxString::utf8_string()` only for UTF-8 encoding needs
 - `std::format` requires `#include <format>`
-- Avoid `tt_string`/`tt_string_view` in new code
+- **Never use `tt_string` or `tt_string_view`** - see Legacy Code Restrictions above
 
 ### Array Conversions
 Use `std::to_array` to convert C-style `char*` arrays to `std::array`
@@ -101,9 +108,10 @@ When working in PowerShell (Windows):
 
 ### Library Priority (in order)
 1. **C++ Standard Library (`std::`)** – Always check first
-2. **wxWidgets library** – When standard library insufficient
+2. **wxWidgets library** – Use when standard library doesn't provide the needed functionality (e.g., `wxString`, `wxFileName`, `wxDir`)
 3. **`ttwx::` namespace** (`src/ttwx/ttwx.h`) – Project utilities
 4. **Frozen containers** (`frozen/include/frozen`) – Immutable collections
+5. **NEVER use `src/tt/` types** – See Legacy Code Restrictions above
 
 ### Immutable Containers
 - Use frozen types: `frozen::set`, `frozen::unordered_set`, `frozen::map`, `frozen::unordered_map`

@@ -62,7 +62,7 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_list_changes->SetMinSize(FromDIP(wxSize(250, 200)));
     box_sizer->Add(m_list_changes, wxSizerFlags().Expand().Border(wxALL));
 
-    m_btn = new wxButton(this, wxID_ANY, "&WinMerge...");
+    m_btn = new wxButton(this, wxID_ANY, "&Diff...");
         m_btn->SetBitmap(wxBitmapBundle::FromBitmap(wxImage(WinMerge_xpm)));
     m_btn->Enable(false);
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));
@@ -98,7 +98,7 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
-    m_btn->Bind(wxEVT_BUTTON, &CodeCompareBase::OnWinMerge, this);
+    m_btn->Bind(wxEVT_BUTTON, &CodeCompareBase::OnDiff, this);
     Bind(wxEVT_INIT_DIALOG, &CodeCompareBase::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnCPlusPlus, this);
     m_radio_perl->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnPerl, this);

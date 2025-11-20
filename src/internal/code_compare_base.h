@@ -38,11 +38,11 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnCPlusPlus(wxCommandEvent& event) = 0;
+    virtual void OnDiff(wxCommandEvent& event) = 0;
     virtual void OnInit(wxInitDialogEvent& event) = 0;
     virtual void OnPerl(wxCommandEvent& event) = 0;
     virtual void OnPython(wxCommandEvent& event) = 0;
     virtual void OnRuby(wxCommandEvent& event) = 0;
-    virtual void OnWinMerge(wxCommandEvent& event) = 0;
     virtual void OnXRC(wxCommandEvent& event) = 0;
 
     // Class member variables
@@ -54,8 +54,6 @@ protected:
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
     wxRadioButton* m_radio_xrc;
-
-    std::vector<tt_string> m_class_list;
 };
 
 // ************* End of generated code ***********

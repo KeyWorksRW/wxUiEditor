@@ -342,7 +342,9 @@ set( file_list
     internal/import_panel.cpp          # Panel to display original imported file
     internal/import_panel.cpp          # Panel to display original imported file
     tests/test_xrc_import.cpp          # XRC Import tests
-    internal/code_compare.cpp          # Code Generation Comparison
+    internal/compare/code_compare.cpp  # Code Generation Comparison
+    internal/compare/diff.cpp          # Simple diff algorithm for comparing text files
+    internal/compare/diff_viewer.cpp   # Dialog for displaying file differences
 
     internal/xrcpreview.cpp            # Generated XrcPreview Dialog code
     internal/xrcpreview_handlers.cpp   # Handlers for XrcPreview Dialog class

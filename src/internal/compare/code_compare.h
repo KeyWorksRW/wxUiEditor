@@ -17,7 +17,8 @@
 #include <wx/listbox.h>
 #include <wx/radiobut.h>
 
-#include "code_compare_base.h"  // CodeCompareBase -- Class for comparing generated code
+#include "../code_compare_base.h"  // CodeCompareBase -- Class for comparing generated code
+#include "diff_viewer.h"
 
 class CodeCompare : public CodeCompareBase
 {
@@ -25,6 +26,11 @@ public:
     CodeCompare() = default;  // If you use this constructor, you must call Create(parent)
     CodeCompare(wxWindow* parent) { Create(parent); }  // NOLINT (cppcheck-suppress)
     ~CodeCompare();
+
+    CodeCompare(const CodeCompare&) = delete;
+    CodeCompare(CodeCompare&&) = delete;
+    auto operator=(const CodeCompare&) -> CodeCompare& = delete;
+    auto operator=(CodeCompare&&) -> CodeCompare& = delete;
 
 protected:
     // Event handlers
@@ -34,21 +40,14 @@ protected:
     void OnPerl(wxCommandEvent& event) override;
     void OnPython(wxCommandEvent& event) override;
     void OnRuby(wxCommandEvent& event) override;
-    void OnWinMerge(wxCommandEvent& event) override;
+    void OnDiff(wxCommandEvent& event) override;
     void OnXRC(wxCommandEvent& event) override;
 
     void OnRadioButton(GenLang language);
 
 private:
-    // Class member variables
-
-    wxButton* m_btn;
-    wxListBox* m_list_changes;
-    wxRadioButton* m_radio_cplusplus;
-    wxRadioButton* m_radio_perl;
-    wxRadioButton* m_radio_python;
-    wxRadioButton* m_radio_ruby;
-    wxRadioButton* m_radio_xrc;
+    auto CollectFileDiffs() -> std::vector<FileDiff>;
 
     std::vector<std::string> m_class_list;
+    GenLang m_current_language = GEN_LANG_CPLUSPLUS;
 };

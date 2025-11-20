@@ -65,6 +65,8 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     }
 
     m_htmlWin = new wxHtmlWindow(m_splitter);
+    // Neither size nor minimum_size properties set; setting a temporary minimum size
+    m_htmlWin->SetMinSize(wxSize(160, 60));
     m_splitter->SplitVertically(m_scintilla, m_htmlWin);
 
     auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

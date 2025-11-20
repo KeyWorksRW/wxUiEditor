@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <memory>  // For std::make_unique
-
 #include <wx/image.h>
 #include <wx/mstream.h>   // For wxMemoryInputStream
 #include <wx/wfstream.h>  // For wxFileInputStream
@@ -49,7 +47,7 @@ void EmbeddedImage::SetEmbedSize(const wxImage& image)
 }
 
 // size parameter is only used for SVG files
-wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
+auto EmbeddedImage::get_bundle(wxSize override_size) -> wxBitmapBundle
 {
     if (base_image().type == wxBITMAP_TYPE_SVG || base_image().type == wxBITMAP_TYPE_XPM)
     {
@@ -59,25 +57,23 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
             UpdateImage(base_image());
         }
         uint64_t org_size = (base_image().array_size >> 32);
-        auto str = std::make_unique<char[]>(org_size);
-        wxMemoryInputStream stream_in(base_image().array_data.get(),
+        std::vector<char> str(org_size);
+        wxMemoryInputStream stream_in(base_image().array_data.data(),
                                       base_image().array_size & 0xFFFFFFFF);
         wxZlibInputStream zlib_strm(stream_in);
-        zlib_strm.Read(str.get(), org_size);
+        zlib_strm.Read(str.data(), org_size);
         if (base_image().type == wxBITMAP_TYPE_SVG)
         {
-            return wxBitmapBundle::FromSVG(str.get(),
+            return wxBitmapBundle::FromSVG(str.data(),
                                            override_size == wxDefaultSize ? m_size : override_size);
         }
-        else  // base_image().type == wxBITMAP_TYPE_XPM
-        {
-            ASSERT(base_image().type == wxBITMAP_TYPE_XPM);
+        // base_image().type == wxBITMAP_TYPE_XPM
+        ASSERT(base_image().type == wxBITMAP_TYPE_XPM);
 
-            wxImage image;
-            wxMemoryInputStream stream(str.get(), org_size);
-            image.LoadFile(stream, wxBITMAP_TYPE_XPM);
-            return wxBitmapBundle::FromBitmap(image);
-        }
+        wxImage image;
+        wxMemoryInputStream stream(str.data(), org_size);
+        image.LoadFile(stream, wxBITMAP_TYPE_XPM);
+        return wxBitmapBundle::FromBitmap(image);
     }
 
     wxVector<wxBitmap> bitmaps;
@@ -88,13 +84,13 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         {
             UpdateImage(iter);
         }
-        wxMemoryInputStream stream(iter.array_data.get(), iter.array_size);
+        wxMemoryInputStream stream(iter.array_data.data(), iter.array_size);
         wxImage image;
         image.LoadFile(stream);
         ASSERT(image.IsOk())
         if (image.IsOk())
         {
-            bitmaps.push_back(image);
+            bitmaps.emplace_back(image);
         }
     }
     return wxBitmapBundle::FromBitmaps(bitmaps);
@@ -146,8 +142,8 @@ void EmbeddedImage::UpdateImage(ImageInfo& image_info)
 
         auto read_stream = memory_stream.GetOutputStreamBuffer();
         base_image().array_size = (compressed_size | (org_size << 32));
-        base_image().array_data = std::make_unique<unsigned char[]>(compressed_size);
-        memcpy(base_image().array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        base_image().array_data.resize(compressed_size);
+        memcpy(base_image().array_data.data(), read_stream->GetBufferStart(), compressed_size);
         return;
     }
 
@@ -186,26 +182,23 @@ void EmbeddedImage::UpdateImage(ImageInfo& image_info)
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
                         image_info.array_size = read_stream->GetBufferSize();
-                        image_info.array_data =
-                            std::make_unique<unsigned char[]>(image_info.array_size);
-                        memcpy(image_info.array_data.get(), read_stream->GetBufferStart(),
+                        image_info.array_data.resize(image_info.array_size);
+                        memcpy(image_info.array_data.data(), read_stream->GetBufferStart(),
                                image_info.array_size);
                     }
                     else
                     {
                         image_info.array_size = stream.GetSize();
-                        image_info.array_data =
-                            std::make_unique<unsigned char[]>(image_info.array_size);
-                        stream.Read(image_info.array_data.get(), image_info.array_size);
+                        image_info.array_data.resize(image_info.array_size);
+                        stream.Read(image_info.array_data.data(), image_info.array_size);
                     }
                 }
                 else
                 {
                     stream.SeekI(0);
                     image_info.array_size = stream.GetSize();
-                    image_info.array_data =
-                        std::make_unique<unsigned char[]>(image_info.array_size);
-                    stream.Read(image_info.array_data.get(), image_info.array_size);
+                    image_info.array_data.resize(image_info.array_size);
+                    stream.Read(image_info.array_data.data(), image_info.array_size);
                 }
 
                 return;

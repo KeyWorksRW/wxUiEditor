@@ -19,7 +19,7 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
     tt_string_vector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, tt::TRIM::both);
     if (parts[IndexType].contains("SVG"))
     {
-        GenerateBundleParameter(*this, parts);
+        GenerateBundleParameter(parts);
     }
 
     else

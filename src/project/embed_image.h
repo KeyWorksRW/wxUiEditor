@@ -30,7 +30,7 @@ struct ImageInfo
 
     // SVG and XPM files are stored as zlib-compressed data. All other image types are stored
     // in their original format.
-    std::unique_ptr<unsigned char[]> array_data;
+    std::vector<unsigned char> array_data;
 
     // The lower 32-bits contains the compressed size of array_data. The upper 32-bits contains the
     // original size of the image file before compression.

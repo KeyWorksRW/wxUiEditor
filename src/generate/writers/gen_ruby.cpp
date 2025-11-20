@@ -681,7 +681,7 @@ void RubyCodeGenerator::GenerateImagesForm()
         m_source->writeLine(code);
         code.clear();
         auto encoded =
-            base64_encode(iter_array->base_image().array_data.get(),
+            base64_encode(iter_array->base_image().array_data.data(),
                           iter_array->base_image().array_size & MAX_UINT32, GEN_LANG_RUBY);
         if (encoded.size())
         {

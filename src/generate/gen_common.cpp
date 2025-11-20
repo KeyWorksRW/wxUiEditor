@@ -1242,7 +1242,7 @@ void GenToolCode(Code& code)
         }
         else
         {
-            GenerateBundleParameter(code, parts);
+            code.GenerateBundleParameter(parts);
         }
     }
 

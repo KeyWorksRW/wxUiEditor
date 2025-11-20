@@ -440,7 +440,7 @@ void PythonCodeGenerator::GenerateImagesForm()
         m_source->writeLine(code);
         code.clear();
         auto encoded =
-            base64_encode(iter_array->base_image().array_data.get(),
+            base64_encode(iter_array->base_image().array_data.data(),
                           iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
         if (encoded.size())
         {

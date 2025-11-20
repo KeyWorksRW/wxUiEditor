@@ -244,7 +244,7 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
 2. **Build the project**: `cmake --build build --config Debug`
 3. **Verify code generation unchanged**:
    ```powershell
-   $RepoRoot = (Get-Item $PWD).Parent.FullName; cd ..\wxUiEditor_tests\; & "$RepoRoot\build\bin\Debug\wxUiEditor.exe" --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+   cd ..\wxUiEditor_tests\; ../../wxUiEditor/build/bin/Debug/wxUiEditor.exe --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
    ```
 4. **On verification failure** (exit code ≠ 0):
    - Read `c:\rwCode\wxUiEditor_tests\quick\quick.log` to see differences
@@ -260,5 +260,5 @@ This ensures refactoring doesn't inadvertently change code generation output.
 ### Code Generation Verification
 When asked to "verify code generation" or "verify codegen":
 ```powershell
-$RepoRoot = (Get-Item $PWD).Parent.FullName; cd ..\wxUiEditor_tests\; & "$RepoRoot\build\bin\Debug\wxUiEditor.exe" --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+cd ..\wxUiEditor_tests\; ../../wxUiEditor/build/bin/Debug/wxUiEditor.exe --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 ```

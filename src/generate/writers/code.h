@@ -19,6 +19,9 @@
 #include "node.h"              // Node class
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
+class EmbeddedImage;
+struct ImageBundle;
+
 namespace code
 {
     enum : std::uint8_t

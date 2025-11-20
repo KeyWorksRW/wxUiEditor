@@ -9,6 +9,7 @@
 #include "propgrid_panel.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "image_handler.h"    // ImageHandler class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
@@ -164,7 +165,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         else
         {
             // This ensures that all images from a bitmap bundle get added
-            ProjectImages.UpdateBundle(parts, node_prop->getNode());
+            ProjectImages.UpdateBundle(&parts, node_prop->getNode());
         }
     }
 

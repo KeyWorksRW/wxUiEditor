@@ -44,11 +44,10 @@
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
-
 #include "embed_image.h"  // EmbeddedImage class
 
 class Node;
+class tt_string_vector;
 class wxAnimation;
 
 using NodeSharedPtr = std::shared_ptr<Node>;
@@ -94,13 +93,9 @@ public:
     // to load. The image is cached for as long as the project is open.
     //
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
-    wxImage GetPropertyBitmap(const tt_string_vector& parts, bool check_image = true);
+    auto GetPropertyBitmap(const tt_string_vector* parts, bool check_image = true) -> wxImage;
 
-    auto GetPropertyBitmap(const tt_string& description, bool check_image = true) -> wxImage
-    {
-        tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-        return GetPropertyBitmap(parts, check_image);
-    }
+    auto GetPropertyBitmap(const tt_string& description, bool check_image = true) -> wxImage;
 
     wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description);
 
@@ -108,35 +103,27 @@ public:
     // code for the bundle.
     //
     // Returns nullptr if there is no ImageBundle
-    auto GetPropertyImageBundle(const tt_string_vector& parts, Node* node = nullptr)
+    auto GetPropertyImageBundle(const tt_string_vector* parts, Node* node = nullptr)
         -> const ImageBundle*;
     auto GetPropertyImageBundle(tt_string_view description, Node* node = nullptr)
-        -> const ImageBundle*
-    {
-        tt_string_vector parts(description, ';', tt::TRIM::both);
-        return GetPropertyImageBundle(parts, node);
-    }
+        -> const ImageBundle*;
 
     // If there is an Image form containing this bundle, return it's function name
     auto GetBundleFuncName(const tt_string& description) -> tt_string;
 
     // If there is an Images List containing this bundle, return it's function name
-    auto GetBundleFuncName(const tt_string_vector& parts) -> tt_string;
+    auto GetBundleFuncName(const tt_string_vector* parts) -> tt_string;
 
     // If there is an Images List containing this image, return it's function name
     auto GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size = wxDefaultSize)
         -> tt_string;
 
-    auto ProcessBundleProperty(const tt_string_vector& parts, Node* node) -> ImageBundle*;
+    auto ProcessBundleProperty(const tt_string_vector* parts, Node* node) -> ImageBundle*;
 
-    auto ProcessBundleProperty(const tt_string& description, Node* node) -> ImageBundle*
-    {
-        tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-        return ProcessBundleProperty(parts, node);
-    }
+    auto ProcessBundleProperty(const tt_string& description, Node* node) -> ImageBundle*;
 
     // This adds the bundle if new, or updates the embed->form if the node has changed
-    void UpdateBundle(const tt_string_vector& parts, Node* node);
+    void UpdateBundle(const tt_string_vector* parts, Node* node);
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -168,15 +155,11 @@ protected:
         -> EmbeddedImage*;
     // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
     // depending on the type of the image file.
-    auto AddNewEmbeddedBundle(const tt_string_vector& parts, std::string_view org_path, Node* form)
+    auto AddNewEmbeddedBundle(const tt_string_vector* parts, std::string_view org_path, Node* form)
         -> bool;
 
     auto AddNewEmbeddedBundle(const tt_string& description, std::string_view org_path, Node* form)
-        -> bool
-    {
-        tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-        return AddNewEmbeddedBundle(parts, org_path, form);
-    }
+        -> bool;
 
     // Reads the image, remove unused metadat, compresses it and stores it in m_map_embedded
     auto AddSvgBundleImage(tt_string& path, Node* form) -> bool;
@@ -186,7 +169,7 @@ protected:
 
 private:
     static auto ConvertToLookup(const tt_string& description) -> tt_string;
-    static auto ConvertToLookup(const tt_string_vector& parts) -> tt_string;
+    static auto ConvertToLookup(const tt_string_vector* parts) -> tt_string;
 
     NodeSharedPtr m_project_node { nullptr };
 

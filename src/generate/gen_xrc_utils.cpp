@@ -367,7 +367,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             }
             else
             {
-                if (auto bundle = ProjectImages.GetPropertyImageBundle(parts); bundle)
+                if (auto bundle = ProjectImages.GetPropertyImageBundle(&parts); bundle)
                 {
                     tt_string names;
                     for (auto& file: bundle->lst_filenames)

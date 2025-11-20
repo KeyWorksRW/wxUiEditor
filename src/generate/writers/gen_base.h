@@ -13,6 +13,7 @@
 #include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
 #include "gen_enums.h"             // Enumerations for generators
 #include "gen_results.h"           // Code generation file writing functions
+#include "tt_string_vector.h"      // tt_string_vector -- Read/Write line-oriented strings/files
 
 class Code;
 class Node;

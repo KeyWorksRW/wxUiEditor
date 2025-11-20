@@ -18,9 +18,10 @@
 
 #include "project_handler.h"
 
-#include "data_handler.h"   // DataHandler class
-#include "image_handler.h"  // ProjectImage class
-#include "node.h"           // Node class
+#include "data_handler.h"      // DataHandler class
+#include "image_handler.h"     // ProjectImage class
+#include "node.h"              // Node class
+#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 #include "utils.h"
 
 #include "ttwx.h"              // ttwx namespace functions and declarations
@@ -755,7 +756,7 @@ void ProjectHandler::ProcessImageProperty(const NodeProperty& prop, Node* child)
             {
                 m_form_Image = form_to_use;
             }
-            if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+            if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(&parts))
             {
                 m_form_BundleBitmaps = form_to_use;
             }
@@ -814,7 +815,7 @@ void ProjectHandler::ProcessFormIcon(Node* form)
         {
             m_form_Image = form;
         }
-        if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(parts))
+        if (!m_form_BundleBitmaps && ProjectImages.GetPropertyImageBundle(&parts))
         {
             m_form_BundleBitmaps = form;
         }

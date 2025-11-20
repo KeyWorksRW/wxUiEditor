@@ -310,7 +310,7 @@ void Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap)
 
     if (is_cpp())
     {
-        if (auto function_name = ProjectImages.GetBundleFuncName(parts); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(&parts); function_name.size())
         {
             // The function name includes the size, but we need to replace the size with a DIP
             // version.
@@ -471,7 +471,7 @@ void Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap)
 {
     if (is_cpp())
     {
-        if (auto function_name = ProjectImages.GetBundleFuncName(parts); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(&parts); function_name.size())
         {
             Str(function_name);
             if (get_bitmap)
@@ -485,8 +485,8 @@ void Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap)
         }
     }
 
-    const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
-    if (!bundle || !bundle->lst_filenames.size())
+    const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
+    if (bundle && bundle->lst_filenames.size())
     {
         MSG_WARNING(tt_string("Missing bundle for ") << parts[IndexImage]);
         Add("wxNullBitmap");

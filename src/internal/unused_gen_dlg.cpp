@@ -18,6 +18,7 @@
 #include "gen_enums.h"
 #include "node.h"
 #include "project_handler.h"
+#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)

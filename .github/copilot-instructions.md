@@ -168,3 +168,24 @@ When working in PowerShell (Windows):
 - **Function prefixes for wxWidgets**:
   - Perl and Ruby: Begin with `Wx:` (e.g., `Wx::CreateButton`)
   - Python: Begin with `wx.` (e.g., `wx.CreateButton`)
+
+## Refactoring Code Generation Functions
+
+When asked to "Refactor codegen function [name]" or when refactoring any code in `src/generate/` or `src/nodes/`:
+
+1. **Make the requested changes** to the function/class
+2. **Build the project**: `cmake --build build --config Debug`
+3. **Verify code generation unchanged**:
+   ```powershell
+   cd ..\wxUiEditor_tests\quick; ../../wxUiEditor2/build/bin/Debug/wxUiEditor.exe --verify_cpp quick.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+   ```
+4. **On verification failure** (exit code ≠ 0):
+   - Read `c:\rwCode\wxUiEditor_tests\quick\quick.log` to see differences
+   - Analyze what changed in generated code
+   - Fix the refactoring to preserve original behavior
+   - Rebuild and re-verify
+5. **Task is complete only when**:
+   - Build succeeds with no errors
+   - Verification exits with code 0 (no differences in generated code)
+
+This ensures refactoring doesn't inadvertently change code generation output.

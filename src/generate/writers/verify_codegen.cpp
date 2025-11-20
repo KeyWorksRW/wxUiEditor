@@ -25,11 +25,10 @@
 
 #include "verify_codegen.h"
 
-#include "gen_common.h"       // Common component functions
-#include "gen_results.h"      // Code generation file writing functions
-#include "mainapp.h"          // App -- Main application class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "../../internal/compare/code_compare.h"  // CodeCompare class
+#include "mainapp.h"                              // App -- Main application class
+#include "project_handler.h"                      // ProjectHandler class
+#include "utils.h"                                // Utility functions that work with properties
 
 namespace
 {
@@ -105,27 +104,77 @@ namespace
         return verify_codegen::VERIFY_SUCCESS;
     }
 
-    [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, size_t generate_type,
-                                                std::vector<std::string>& class_list,
-                                                GenResults& results) -> verify_codegen::VerifyResult
+    [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, size_t generate_type)
+        -> verify_codegen::VerifyResult
     {
         if (!(generate_type & language))
         {
             return verify_codegen::VERIFY_SUCCESS;
         }
 
-        results.clear();
-        GenerateLanguageFiles(results, &class_list, language);
-        ASSERT_MSG(results.updated_files.empty(),
-                   std::format("Code generation altered files: {}", GenLangToString(language)));
+        // Use CodeCompare to collect diffs between generated code and disk files
+        auto diffs = CodeCompare::CollectFileDiffsForLanguage(language);
 
-        if (results.updated_files.empty())
+        if (diffs.empty())
         {
             return verify_codegen::VERIFY_SUCCESS;
         }
 
-        wxMessageBox(std::format("Code generation altered files: {}", GenLangToString(language)),
-                     "Verify");
+        // Write differences to log
+        auto& log = wxGetApp().get_CmdLineLog();
+        log.clear();
+        log.emplace_back(
+            std::format("Code generation differences found for {}:", GenLangToString(language)));
+        log.emplace_back("");
+
+        for (const auto& diff: diffs)
+        {
+            log.emplace_back(std::format("File: {}", diff.filename));
+            log.emplace_back(std::string(80, '-'));
+
+            // Write diff details from left side (original/disk)
+            for (const auto& line_diff: diff.diff_result.left_lines)
+            {
+                switch (line_diff.type)
+                {
+                    case DiffType::deleted:
+                        log.emplace_back(std::format("- {}", line_diff.text));
+                        break;
+                    case DiffType::unchanged:
+                        log.emplace_back(std::format("  {}", line_diff.text));
+                        break;
+                    case DiffType::modified:
+                        log.emplace_back(std::format("! {}", line_diff.text));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // Write diff details from right side (new/generated)
+            for (const auto& line_diff: diff.diff_result.right_lines)
+            {
+                if (line_diff.type == DiffType::added)
+                {
+                    log.emplace_back(std::format("+ {}", line_diff.text));
+                }
+            }
+
+            log.emplace_back("");
+        }
+
+        // Write log file based on project filename
+        std::filesystem::path log_file(Project.get_ProjectFile().ToStdString());
+        log_file.replace_extension(".log");
+        log.WriteFile(log_file.string());
+
+#if defined(MESSAGE_BOX)
+        std::string msg =
+            std::format("Code generation altered {} file(s) for {}. See {} for details.",
+                        diffs.size(), GenLangToString(language), log_file.filename().string());
+        wxMessageBox(msg, "Verify");
+#endif
+
         return verify_codegen::VERIFY_FAILURE;
     }
 }  // namespace
@@ -170,15 +219,6 @@ namespace
         return result;
     }
 
-    std::vector<std::string> class_list;
-    GenResults results;
-
-    // Passing a class_list reference will cause the code generator to process all the
-    // top-level forms, but only populate class_list with the names of the forms that
-    // would be changed if the file was written. If test_only is set, then we use this
-    // mechanism and write any special messages that code generation caused (warnings,
-    // errors, timing, etc.) to a log file.
-
     constexpr auto languages = std::to_array<GenLang>({
         GEN_LANG_CPLUSPLUS,
         GEN_LANG_PERL,
@@ -191,7 +231,7 @@ namespace
 
     for (auto lang: languages)
     {
-        result = VerifyLanguageGeneration(lang, generate_type, class_list, results);
+        result = VerifyLanguageGeneration(lang, generate_type);
         if (result != verify_codegen::VERIFY_SUCCESS)
         {
             return result;

@@ -490,3 +490,18 @@ void CodeCompare::OnDiff(wxCommandEvent& /* event unused */)
     wxMessageBox("No differences found between generated code and files on disk.",
                  "Code Comparison", wxOK | wxICON_INFORMATION);
 }
+
+// Static method for non-UI code comparison (used by verify_codegen)
+auto CodeCompare::CollectFileDiffsForLanguage(GenLang language) -> std::vector<FileDiff>
+{
+    // Create a temporary instance to use the existing comparison logic
+    CodeCompare comparer;
+    comparer.m_current_language = language;
+
+    // Generate language files to populate class_list with forms that would change
+    GenResults results;
+    GenerateLanguageFiles(results, &comparer.m_class_list, language);
+
+    // Now collect the actual diffs
+    return comparer.CollectFileDiffs();
+}

@@ -32,6 +32,10 @@ public:
     auto operator=(const CodeCompare&) -> CodeCompare& = delete;
     auto operator=(CodeCompare&&) -> CodeCompare& = delete;
 
+    // Static method for non-UI code comparison (used by verify_codegen)
+    [[nodiscard]] static auto CollectFileDiffsForLanguage(GenLang language)
+        -> std::vector<FileDiff>;
+
 protected:
     // Event handlers
 

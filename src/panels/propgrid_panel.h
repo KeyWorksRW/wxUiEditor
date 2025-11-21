@@ -5,6 +5,17 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: PropGridPanel is the central property editing panel in wxUiEditor's main window.
+// It manages two wxPropertyGridManager instances: one for node properties and one for event
+// handlers. The class dynamically creates property editors based on Node and NodeProperty
+// definitions from the node system, organizing them into categories by functionality. It handles
+// property validation, change notifications via CustomEvent (EVT_NodePropChange), and maintains
+// property state including expansion states and enabled/disabled conditions. The implementation is
+// split across multiple files: propgrid_panel.cpp (construction/creation), propgrid_events.cpp
+// (event handlers), propgrid_modify.cpp (property modification), and propgrid_create.cpp (property
+// creation). Custom property editors in src/customprops/ are instantiated by CreatePGProperty() for
+// specialized editing of fonts, images, code, colors, and other complex property types.
+
 #pragma once
 
 #include <map>
@@ -97,6 +108,13 @@ protected:
     static auto GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int;
 
     void AllowIdChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+
+    // Directory and file path validation and modification
+    void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+    void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+    void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+    void ChangeDerivedDirectory(tt_string& path);
+    void ChangeBaseDirectory(tt_string& path);
 
     // Event handlers
 

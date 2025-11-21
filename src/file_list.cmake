@@ -22,7 +22,6 @@ set( file_list
     frame_status_bar.cpp    # MainFrame status bar functions
     gen_enums.cpp           # Enumerations for generators
     id_lists.cpp            # wxID_ strings
-    paths.cpp               # Handles *_directory properties
     preferences.cpp         # Prefs/UserPrefs -- Set/Get wxUiEditor preferences
     previews.cpp            # Top level Preview functions
     undo_cmds.cpp           # Undoable command classes derived from UndoStackCmd

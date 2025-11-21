@@ -32,7 +32,6 @@
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
-#include "paths.h"            // Handles *_directory properties
 #include "preferences.h"      // Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "prop_decl.h"        // PropChildDeclaration and PropDeclaration classes

@@ -122,6 +122,73 @@ When working in PowerShell (Windows):
 - Make helpers `static` if no instance member access needed
 - Share state via **private member variables** when needed across helpers
 
+### Adding AI Context Documentation to Header Files
+
+When asked to document a header file or when adding AI Context comments:
+
+**Process:**
+1. **Analyze the header file** to understand:
+   - Design patterns used (Command, Factory, Observer, etc.)
+   - Class hierarchy and relationships
+   - Key methods and their purposes
+   - How the code fits into the larger wxUiEditor system
+
+2. **Add AI Context comment block** immediately after the license header:
+   ```cpp
+   // AI Context: [One-sentence summary of what this file implements]
+   // [Multi-line detailed explanation covering design patterns, class relationships,
+   // operational flow, important constraints, and behavioral characteristics]
+   ```
+
+3. **Generate/update contributor documentation** in `docs/contributors/architecture.md`:
+   - Add a new section with the file path as reference
+   - Convert the AI Context comment to readable paragraphs
+   - Use proper markdown formatting with heading, file reference, and horizontal rule separator
+
+**AI Context Format Guidelines:**
+- **One-sentence summary:** Complete "This file implements..."
+  - Example: "a command pattern-based undo/redo system for wxUiEditor"
+- **Details (3-8 lines):** Cover architecture, not implementation
+  - Design patterns used
+  - Core class responsibilities
+  - Method interaction flow
+  - Important constraints or behavioral details
+  - Memory management approach (if relevant)
+- **Omit:** Implementation details visible in code, API docs, change history, TODOs
+
+**Example AI Context:**
+```cpp
+// AI Context: This file implements a command pattern-based undo/redo system for wxUiEditor.
+// UndoAction is an abstract base class requiring derived classes to implement Change()
+// (apply/redo), Revert() (undo), and GetMemorySize(). GroupUndoActions allows multiple actions to
+// be treated as a single undoable operation. UndoStack manages two vectors (undo/redo stacks) where
+// Push() executes Change() and adds to undo stack, Undo() calls Revert() and moves to redo stack,
+// and Redo() calls Change() and moves back to undo stack. The stack can be locked to execute
+// actions without affecting undo/redo history. Actions may optionally store Node pointers and
+// control UI selection events.
+```
+
+**Contributor Documentation Format:**
+Add to `docs/contributors/architecture.md`:
+```markdown
+## [Descriptive Title from Summary]
+
+**File:** `src/path/to/file.h`
+
+[Convert AI Context to readable paragraphs. Break long sentences into multiple paragraphs
+for readability. Focus on helping contributors understand the architectural design.]
+
+---
+```
+
+**Benefits:**
+- AI agents get concise context for code generation
+- Contributors get high-level understanding without reading implementation
+- Documentation lives with code and is version controlled
+- Single source of truth automatically extracted to docs
+
+See `docs/contributors/ai-context-template.md` for complete guidelines and examples.
+
 ## Perl Coding Standards
 
 ### Naming Conventions
@@ -177,7 +244,7 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
 2. **Build the project**: `cmake --build build --config Debug`
 3. **Verify code generation unchanged**:
    ```powershell
-   cd ..\wxUiEditor_tests\quick; ../../wxUiEditor2/build/bin/Debug/wxUiEditor.exe --verify_cpp quick.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+   $RepoRoot = (Get-Item $PWD).Parent.FullName; cd ..\wxUiEditor_tests\; & "$RepoRoot\build\bin\Debug\wxUiEditor.exe" --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
    ```
 4. **On verification failure** (exit code ≠ 0):
    - Read `c:\rwCode\wxUiEditor_tests\quick\quick.log` to see differences
@@ -189,3 +256,9 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
    - Verification exits with code 0 (no differences in generated code)
 
 This ensures refactoring doesn't inadvertently change code generation output.
+
+### Code Generation Verification
+When asked to "verify code generation" or "verify codegen":
+```powershell
+$RepoRoot = (Get-Item $PWD).Parent.FullName; cd ..\wxUiEditor_tests\; & "$RepoRoot\build\bin\Debug\wxUiEditor.exe" --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+```

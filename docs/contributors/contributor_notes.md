@@ -1,4 +1,4 @@
-# Developer notes
+# Contributor notes
 
 Contributions are welcome! If you are interested in contributing, please read the following sections.
 

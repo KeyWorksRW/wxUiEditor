@@ -4,13 +4,13 @@ This WYSIWYG tool is used to create and maintain [wxWidgets](https://docs.wxwidg
 
 In addition to creating new projects, the following project types can be imported:
 
-- **wxCrafter** (Click [here](docs/import_crafter.md) for more information)
-- **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more information)
+- **wxCrafter** (Click [here](docs/users/import_crafter.md) for more information)
+- **wxFormBuilder** (Click [here](docs/users/import_formbuilder.md) for more information)
 - **wxGlade**
 - **wxSmith**
-- **DialogBlocks** (Click [here](docs/import_dialogblocks.md) for more information)
+- **DialogBlocks** (Click [here](docs/users/import_dialogblocks.md) for more information)
 - **XRC** (including exports from **DialogBlocks**)
-- **Windows Resource Dialogs** (Click [here](docs/import_winres.md) for more information)
+- **Windows Resource Dialogs** (Click [here](docs/users/import_winres.md) for more information)
 ## Installing
 
 For Windows, you can either run the wxUiEditor-_ver_-win64.exe installer from [releases](https://github.com/KeyWorksRW/wxUiEditor/releases) or run `winget install wxUiEditor` from a command line. For Linux, wxUiEditor-_ver_-Linux.deb and wxUiEditor-_ver_-Linux.rpm are available in the [releases](https://github.com/KeyWorksRW/wxUiEditor/releases) section.
@@ -31,7 +31,7 @@ You will need a C++20 compliant compiler to build **wxUiEditor**. To build using
 
 For Unix builds, you currently need a minimum of gcc 13.1 or clang 15 to be able to compile the sources. Note that unlike gcc, clang requires libc++17 to be installed (ships with Ubuntu 24.04). After building, you can can change to the build/ directory and run `cpack -G DEB -C Release` or `cpack -G RPM -C Release` to create a Ubuntu or Fedora package.
 
-See [Developer notes](docs/DEV_NOTES.md) if you want information about contributing to the project.
+See [Contributor notes](docs/contributors/contributor_notes.md) if you want information about contributing to the project.
 
 ## Licenses
 

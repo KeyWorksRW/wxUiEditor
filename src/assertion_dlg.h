@@ -41,11 +41,11 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
             wxTrap();                                                            \
         }
 
-// Leave this as a MACRO so that it doesn't require a semicolon at the end of the line when it is
-// used.
+    // NOLINTBEGIN(cppcoreguidelines-macro-usage)
     #define FAIL_MSG(msg)                                                \
         if (AssertionDlg(__FILE__, __func__, __LINE__, "failed", (msg))) \
         {                                                                \
             wxTrap();                                                    \
         }
+// NOLINTEND(cppcoreguidelines-macro-usage)
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)

@@ -5,6 +5,13 @@
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file provides project-specific assertion macros (ASSERT, ASSERT_MSG, FAIL_MSG)
+// that improve debugging over wxASSERT by calling wxTrap() in the caller's context rather than in
+// the assertion handler. These macros display a custom dialog allowing developers to: continue
+// execution, trigger a debugger breakpoint via wxTrap(), or exit the program. The assertions are
+// compiled out in release builds unless INTERNAL_TESTING is defined. Use these macros instead of
+// raw assert() or throw for runtime validation throughout the wxUiEditor codebase.
+
 #pragma once  // NOLINT(#pragma once in main file)
 
 // Note that while it is considered more "modern" there's nothing in the current code base for

@@ -86,3 +86,11 @@ private:
 //
 // clang-format on
 // ***********************************************
+
+// AI Context: IDEditorDlg provides a specialized dialog for editing wxWidgets control IDs within
+// the wxUiEditor property grid system. This dialog allows users to choose between standard
+// wxWidgets IDs (wxID_OK, wxID_CANCEL, etc.) or create custom IDs with configurable prefixes and
+// suffixes from the project's id_prefixes/id_suffixes properties. It integrates with the Node
+// system to validate and format ID strings, supporting both simple IDs and IDs with assigned values
+// (e.g., "MY_ID = wxID_HIGHEST + 1"). The dialog is invoked by ID_Property in
+// customprops/id_prop.cpp when editing the prop_id property of nodes.

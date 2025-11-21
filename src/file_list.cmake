@@ -1,3 +1,8 @@
+# AI Context: Use this file to locate the source file containing a specific class implementation.
+# Each entry includes a comment indicating the primary class(es) defined in that file.
+# If a class is not found in this list, check src/wxui/wxui_code.cmake for additional files
+# organized by component (wxui, internal, tools, etc.).
+
 set( file_list_dir ${CMAKE_CURRENT_LIST_DIR} )
 
 # wxui/wxui_code.cmake

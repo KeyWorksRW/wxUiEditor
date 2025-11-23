@@ -82,7 +82,7 @@ bool RibbonButtonGenerator::ConstructionCode(Code& code)
     code.Comma();
 
     tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
-    GenerateBundleParameter(code, parts, true);
+    code.GenerateBundleParameter(parts, true);
 
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 

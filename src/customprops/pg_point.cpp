@@ -10,6 +10,7 @@
 
 #include "pg_point.h"
 
+#include "image_handler.h"   // ImageHandler class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node -- Node class
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files

@@ -19,6 +19,9 @@
 #include "node.h"              // Node class
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
+class EmbeddedImage;
+struct ImageBundle;
+
 namespace code
 {
     enum : std::uint8_t
@@ -593,6 +596,17 @@ public:
     auto ExpandEventLambda(tt_string lambda) -> Code&;
 
     [[nodiscard]] auto get_Indentation() const { return m_indent; }
+
+    // Generates the code to load a wxBitmapBundle.
+    // If get_bitmap is true, a bitmap will be returned. The bitmap will be scaled to the current
+    // DPI using Rescale for a single bitmap, and wxBitmapBundle::GetBitmap() otherwise.
+    void GenerateBundleParameter(const tt_string_vector& parts, bool get_bitmap = false);
+
+    // Generate specific bundle types
+    void GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap);
+    void GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap);
+    void GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap);
+    void GenerateXpmBitmap(const tt_string_vector& parts, bool get_bitmap);
 
 protected:
     void InsertLineBreak(size_t cur_pos);

@@ -78,7 +78,7 @@ bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
     code.ParentName().Function("Append(");
 
     tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
-    GenerateBundleParameter(code, parts, true);
+    code.GenerateBundleParameter(parts, true);
 
     code.Comma().Add("wxID_ANY").EndFunction();
 

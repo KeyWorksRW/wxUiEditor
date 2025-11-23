@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "gen_enums.h"    // Enumerations for generators
-#include "node.h"         // Node class
-#include "winres_ctrl.h"  // resCtrl -- Process Windows Resource control data
+#include "gen_enums.h"         // Enumerations for generators
+#include "node.h"              // Node class
+#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+#include "winres_ctrl.h"       // resCtrl -- Process Windows Resource control data
 
 class WinResource;
 

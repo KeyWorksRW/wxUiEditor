@@ -526,7 +526,7 @@ void BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, boo
     // does, then we still don't need to generate an image function in the class file.
     if (!m_NeedImageFunction)
     {
-        if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+        if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
             bundle && bundle->lst_filenames.size())
         {
             if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
@@ -554,7 +554,7 @@ void BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
         return;
     }
 
-    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
         bundle && bundle->lst_filenames.size())
     {
         if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)

@@ -11,6 +11,7 @@
 
 #include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
+#include "image_handler.h"    // ImageHandler class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Miscellaneous utilities
 
@@ -19,7 +20,7 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
     tt_string_vector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, tt::TRIM::both);
     if (parts[IndexType].contains("SVG"))
     {
-        GenerateBundleParameter(*this, parts);
+        GenerateBundleParameter(parts);
     }
 
     else
@@ -87,7 +88,7 @@ void Code::BundlePerl(const tt_string_vector& parts)
     // TODO: [Randalphwa - 06-30-2025] wxPerl3 currently does not support SVG images, so we need to
     // do something here...
 
-    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
         bundle && bundle->lst_filenames.size())
     {
         wxFileName filepath(bundle->lst_filenames[0]);
@@ -173,7 +174,7 @@ void Code::BundlePython(const tt_string_vector& parts)
 
     auto path = MakePythonPath(node());
 
-    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
         bundle && bundle->lst_filenames.size())
     {
         wxFileName filepath(bundle->lst_filenames[0]);
@@ -382,7 +383,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
         return;
     }
 
-    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(parts);
+    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
         bundle && bundle->lst_filenames.size())
     {
         if (parts[IndexType].contains("SVG"))

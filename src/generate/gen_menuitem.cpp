@@ -14,6 +14,7 @@
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "image_handler.h"  // ImageHandler class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "node_creator.h"   // NodeCreator -- NodeCreator class

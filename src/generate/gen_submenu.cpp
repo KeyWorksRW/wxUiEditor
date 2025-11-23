@@ -9,6 +9,7 @@
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "image_handler.h"  // ImageHandler class
 #include "node.h"           // Node class
 
 #include "gen_submenu.h"

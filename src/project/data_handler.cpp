@@ -109,7 +109,7 @@ bool DataHandler::LoadAndCompress(Node* node)
     m_embedded_data[node->as_string(prop_var_name)] = {};
     auto& embed = m_embedded_data[node->as_string(prop_var_name)];
     embed.array_size = 0;
-    embed.array_data = nullptr;
+    embed.array_data.clear();
     embed.type = tt::npos;
 
     auto filename = node->as_string(prop_data_file);
@@ -186,8 +186,8 @@ bool DataHandler::LoadAndCompress(Node* node)
         embed.type = 1;
         embed.xml_condensed = true;
         embed.array_size = (compressed_size | (org_size << 32));
-        embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
-        memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+        embed.array_data.resize(compressed_size);
+        memcpy(embed.array_data.data(), read_stream->GetBufferStart(), compressed_size);
         embed.file_time = embed.filename.last_write_time();
         return true;
     }
@@ -223,8 +223,8 @@ bool DataHandler::LoadAndCompress(Node* node)
             embed.type = node->is_Gen(gen_data_xml) ? 1 : 0;
             embed.xml_condensed = false;
             embed.array_size = (compressed_size | (org_size << 32));
-            embed.array_data = std::make_unique<unsigned char[]>(compressed_size);
-            memcpy(embed.array_data.get(), read_stream->GetBufferStart(), compressed_size);
+            embed.array_data.resize(compressed_size);
+            memcpy(embed.array_data.data(), read_stream->GetBufferStart(), compressed_size);
             embed.file_time = embed.filename.last_write_time();
             return true;
         }
@@ -238,8 +238,8 @@ bool DataHandler::LoadAndCompress(Node* node)
         }
         embed.type = 0;
         embed.array_size = static_cast<size_t>(stream.GetLength());
-        embed.array_data = std::make_unique<unsigned char[]>(embed.array_size);
-        stream.Read(embed.array_data.get(), embed.array_size);
+        embed.array_data.resize(embed.array_size);
+        stream.Read(embed.array_data.data(), embed.array_size);
         embed.file_time = embed.filename.last_write_time();
         return true;
     }

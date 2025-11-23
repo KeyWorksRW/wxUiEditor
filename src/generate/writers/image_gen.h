@@ -10,11 +10,8 @@
 class Code;
 class EmbeddedImage;
 
-std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size,
-                                       GenLang language = GEN_LANG_PYTHON);
+auto base64_encode(unsigned char const* data, size_t data_size, GenLang language = GEN_LANG_PYTHON)
+    -> std::vector<std::string>;
 
-// Generates the code to load a wxBitmapBundle.
-//
-// If get_bitmap is true, a bitmap will be returned. The bitmap will be scaled to the current
-// DPI using Rescale for a single bitmap, and wxBitmapBundle::GetBitmap() otherwise.
-void GenerateBundleParameter(Code& code, const tt_string_vector& parts, bool get_bitmap = false);
+// Note: GenerateBundleParameter is now a Code class method.
+// See code.h for the declaration.

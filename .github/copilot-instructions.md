@@ -27,9 +27,6 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 ### Generator Classes
 All generators in `src/generate/` inherit from `src/generate/base_generator.h`
 
-### Protected Code Sections
-**Never edit between `// Do not edit any code above` and `// End of generated code` markers** - auto-generated sections will be overwritten. Add modifications after `// End of generated code`.
-
 ### String Conversions
 - **`wxString::ToStdString()`** → `std::string`/`std::string_view` (returns `const std::string&`)
 - `wxString::utf8_string()` only for UTF-8 encoding needs

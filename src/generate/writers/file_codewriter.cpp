@@ -12,6 +12,7 @@
 #include "file_codewriter.h"
 
 #include "code.h"            // Code -- Helper class for generating code
+#include "comment_blocks.h"  // Shared generated comment blocks
 #include "common_strings.h"  // Common strings used in code generation
 #include "gen_enums.h"
 #include "mainapp.h"             // App -- Main application class
@@ -19,31 +20,6 @@
 #include "ttwx_view_vector.h"    // ViewVector -- ttwx::ViewVector class
 
 using namespace code;
-
-// clang-format off
-
-inline constexpr std::string_view end_cpp_block =
-R"===(
-// ************* End of generated code ***********
-// DO NOT EDIT THIS COMMENT BLOCK!
-//
-// Code below this comment block will be preserved
-// if the code for this class is re-generated.
-//
-// clang-format on
-// ***********************************************
-)===";
-
-inline constexpr auto end_python_perl_ruby_block =
-R"===(# ************* End of generated code ***********
-# DO NOT EDIT THIS COMMENT BLOCK!
-#
-# Code below this comment block will be preserved
-# if the code for this class is re-generated.
-# ***********************************************
-)===";
-
-// clang-format on
 
 // For all languages except Ruby and in some cases C++ header files, all we need to check is whether
 // m_buffer matches exactly to the first part of the original file. If it doesn't match, then we
@@ -224,7 +200,23 @@ auto FileCodeWriter::AppendFakeUserContent() -> size_t
 
 [[nodiscard]] auto FileCodeWriter::GetBlockLength(GenLang language) -> size_t
 {
-    return (language == GEN_LANG_CPLUSPLUS) ? 8 : 6;
+    if (language == GEN_LANG_CPLUSPLUS)
+    {
+        return GetCppEndBlockLength();
+    }
+    if (language == GEN_LANG_RUBY)
+    {
+        return GetRubyEndBlockLength();
+    }
+    if (language == GEN_LANG_PYTHON)
+    {
+        return GetPythonEndBlockLength();
+    }
+    if (language == GEN_LANG_PERL)
+    {
+        return GetPerlEndBlockLength();
+    }
+    return 0;
 }
 
 [[nodiscard]] auto FileCodeWriter::GetCommentCharacter(GenLang language) -> std::string_view
@@ -263,7 +255,7 @@ void FileCodeWriter::AppendCppEndBlock()
     if (m_flags & code::flag_add_closing_brace)
     {
         ttwx::StringVector lines;
-        lines.ReadString(end_cpp_block);
+        lines.ReadString(std::string_view(end_cpp_block));
         for (auto& iter: lines)
         {
             if (iter.starts_with("// clang-format on"))
@@ -285,7 +277,7 @@ void FileCodeWriter::AppendCppEndBlock()
 
 void FileCodeWriter::AppendPerlEndBlock()
 {
-    m_buffer += end_python_perl_ruby_block;
+    m_buffer += end_perl_block;
     if (!m_file_exists && m_node)
     {
         m_buffer += "\n1;  # " + m_node->get_NodeName();
@@ -294,12 +286,12 @@ void FileCodeWriter::AppendPerlEndBlock()
 
 void FileCodeWriter::AppendPythonEndBlock()
 {
-    m_buffer += end_python_perl_ruby_block;
+    m_buffer += end_python_block;
 }
 
 void FileCodeWriter::AppendRubyEndBlock()
 {
-    m_buffer += end_python_perl_ruby_block;
+    m_buffer += end_ruby_block;
     if (m_node && !m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data))
     {
         // If the file doesn't exist, or it is missing any user content, append psuedo user

@@ -5,11 +5,13 @@ This directory contains comprehensive documentation for the `.wxui` file format 
 ## Purpose
 
 This documentation enables:
-- **AI-Assisted Development** - AI tools can generate correct `.wxui` files
+- **AI-Assisted Development** - AI tools can generate correct `.wxui` files from requirements or existing wxWidgets code
 - **Developer Onboarding** - New contributors can understand the format
 - **Better Tooling** - Validators, converters, and utilities can be created
-- **Migration Support** - Users can migrate from other UI designers
+- **Code Conversion** - Convert existing wxWidgets code (C++, Python, Ruby, Perl, Lua) to `.wxui` format
 - **Quality Assurance** - Clear specification reduces bugs and inconsistencies
+
+**Future Possibilities:** See [future/future_plans.md](../future/future_plans.md) for brainstorming on advanced AI-assisted capabilities like Windows API migration.
 
 ## Documentation Structure
 

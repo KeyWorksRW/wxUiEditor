@@ -410,30 +410,6 @@ set( debug_files
     wxui/dlg_gen_results.cpp
 )
 
-set( doc_list
-
-    generate/SUPPORTED.md  # Columns for all languages and whether they support a class
-    ../CHANGELOG.md
-    ../README.md
-    ../docs/build_notes.md
-    ../docs/images.md
-    ../docs/release_prep.md
-    ../docs/import_crafter.md
-    ../docs/import_dialogblocks.md
-    ../docs/import_formbuilder.md
-    ../docs/import_winres.md
-    ../docs/xrc.md
-
-    ../dev_docs/dev_notes.mdwh test_xr
-    ../dev_docs/xml_interface.md
-    ../dev_docs/generators.md
-    ../dev_docs/windows_res.md
-    ../dev_docs/node_classes.md
-
-    ../.github/copilot-instructions.md
-    ../Claude.md
-)
-
 set( xml_list
 
     # interface declarations
@@ -463,3 +439,67 @@ set( workflow_list
     ../.github/workflows/daily_build.yml
     ../.github/workflows/test_clang_format.yml
 )
+
+# ============================================================================
+# Documentation Files Reference
+# ============================================================================
+# All paths are relative to src/ (location of this file_list.cmake)
+#
+# Project Root Documentation:
+#   ../CHANGELOG.md                           - Version history and release notes
+#   ../README.md                              - Project overview and quick start
+#   ../LICENSE                                - Software license
+#   ../pull_request_template.md              - GitHub PR template
+#   ../.github/copilot-instructions.md       - AI coding guidelines and project standards
+#
+# Code Generator Support:
+#   generate/SUPPORTED.md                     - Language support matrix for all widget classes
+#
+# User Documentation (../docs/):
+#   ../docs/README.md                         - Documentation index
+#   ../docs/users/README.md                   - User guide index
+#   ../docs/users/images.md                   - Image and bitmap handling guide
+#   ../docs/users/import_crafter.md           - wxCrafter import instructions
+#   ../docs/users/import_dialogblocks.md      - DialogBlocks import instructions
+#   ../docs/users/import_formbuilder.md       - wxFormBuilder import instructions
+#   ../docs/users/import_winres.md            - Windows resource (.rc) import guide
+#   ../docs/users/wxui_file_format.md         - .wxui XML format specification
+#   ../docs/users/XRC.md                      - XRC export and usage guide
+#
+# Contributor Documentation (../docs/contributors/):
+#   ../docs/contributors/README.md            - Contributor guide index
+#   ../docs/contributors/ai-context-template.md - Template for AI context documentation
+#   ../docs/contributors/architecture.md      - High-level architecture documentation
+#   ../docs/contributors/build_notes.md       - Build system and compilation guide
+#   ../docs/contributors/contributor_notes.md - Development workflow and contribution guidelines
+#   ../docs/contributors/generators.md        - Code generator architecture and implementation
+#   ../docs/contributors/internal_testing.md  - Internal testing tools and debug features
+#   ../docs/contributors/node_classes.md      - Node class system documentation
+#   ../docs/contributors/release_prep.md      - Release preparation checklist
+#   ../docs/contributors/test_coverage.md     - Test coverage and testing strategy
+#   ../docs/contributors/windows_res.md       - Windows resource importer implementation
+#   ../docs/contributors/xml_definitions.md   - XML generator definition system guide
+#   ../docs/contributors/xml_interface.md     - XML interface and property system
+#
+# AI Context Documentation (../docs/ai-context/):
+#   ../docs/ai-context/README.md                          - AI context documentation index
+#   ../docs/ai-context/wxui-format/README.md              - .wxui format AI guide index
+#   ../docs/ai-context/wxui-format/00-overview.md         - High-level overview and design philosophy
+#   ../docs/ai-context/wxui-format/01-xml-structure.md    - XML schema and structure specification
+#   ../docs/ai-context/wxui-format/02-widgets.md          - Complete widget catalog with properties
+#   ../docs/ai-context/wxui-format/03-sizers.md           - Layout sizer reference
+#   ../docs/ai-context/wxui-format/04-events.md           - Event binding and handler mapping
+#   ../docs/ai-context/wxui-format/05-code-generation.md  - XML to code generation mapping
+#   ../docs/ai-context/wxui-format/06-examples.md         - Complete working examples
+#   ../docs/ai-context/wxui-format/07-advanced.md         - Advanced features (menus, toolbars, images)
+#   ../docs/ai-context/wxui-format/08-troubleshooting.md  - Common issues and solutions
+#
+# GitHub Workflows (../.github/workflows/):
+#   ../.github/workflows/build-ubuntu-setup.yml   - Ubuntu build automation
+#   ../.github/workflows/build-win-setup.yml      - Windows build automation
+#   ../.github/workflows/check_build.yml          - Pull request build checks
+#   ../.github/workflows/cleanup-workflows.yml    - Workflow cleanup automation
+#   ../.github/workflows/codeql-analysis.yml      - CodeQL security analysis
+#   ../.github/workflows/daily_build.yml          - Daily build validation
+#   ../.github/workflows/test_clang_format.yml    - Code formatting validation
+# ============================================================================

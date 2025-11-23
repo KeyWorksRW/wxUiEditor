@@ -8,17 +8,17 @@ Every `.wxui` file begins with an XML declaration and a root `<wxUiEditorData>` 
 
 ```xml
 <?xml version="1.0"?>
-<wxUiEditorData data_version="19">
+<wxUiEditorData data_version="20">
   <!-- Project and UI content -->
 </wxUiEditorData>
 ```
 
 ### Required Attributes
 
-- **data_version**: Integer version number of the file format (current: 19)
+- **data_version**: Integer version number of the file format (current: 20)
   - Used for backward compatibility when opening older projects
   - wxUiEditor automatically migrates older versions on load
-  - File will be updated to current version on next save
+  - File will be updated to current version on next save only if migration was required
 
 ### Schema Notes
 
@@ -32,12 +32,12 @@ Every `.wxui` file begins with an XML declaration and a root `<wxUiEditorData>` 
 The first child node must be a `<node>` with `class="Project"`:
 
 ```xml
-<wxUiEditorData data_version="19">
+<wxUiEditorData data_version="20">
   <node
     class="Project"
     art_directory="../art"
     code_preference="C++"
-    generate_languages="C++|Python|Ruby"
+    generate_languages="C++"
     internationalize="0"
     optional_comments="1"
     cpp_line_length="110"
@@ -50,18 +50,89 @@ The first child node must be a `<node>` with `class="Project"`:
 
 ### Project Node Properties
 
+**CRITICAL for AI tools:** `.wxui` files only store properties that differ from their default values. Do NOT include properties with default values when generating `.wxui` files - this keeps files compact and is considered a bug if done incorrectly.
+
+The Project node supports properties organized by category:
+
+#### Language-Independent Properties
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `code_preference` | option | `C++` | Preferred language (C++, Perl, Python, Ruby, XRC) |
-| `generate_languages` | bitlist | `C++` | Languages to generate (pipe-separated) |
+| `generate_languages` | bitlist | `C++ | Python | Ruby` | Languages to generate (pipe-separated). For new projects, should only contain the `code_preference` language. |
 | `art_directory` | path | `./` | Directory containing image resources |
 | `dialog_units` | bool | `1` | Use dialog units for dimensions by default |
 | `internationalize` | bool | `0` | Wrap strings in _() macro for i18n |
-| `cpp_line_length` | uint | `110` | Target line length for C++ code |
-| `generate_cmake` | bool | `0` | Auto-generate CMake file |
-| `cmake_file` | file | `wxui_code.cmake` | Name of generated CMake file |
+| `help_provider` | option | `none` | Help provider class (none, wxSimpleHelpProvider, wxHelpControllerHelpProvider) |
+| `id_prefixes` | stringlist_semi | (empty) | Optional prefixes for custom IDs (semicolon-separated) |
+| `id_suffixes` | stringlist_semi | (empty) | Optional suffixes for custom IDs (semicolon-separated) |
+| `optional_comments` | bool | `0` | Add explanatory comments to generated code |
+
+#### C++ Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
 | `wxWidgets_version` | option | `3.2.0` | Minimum wxWidgets version (3.2.0, 3.3.0) |
 | `minimum_compiler` | option | `11` | Minimum C++ standard (11, 17) |
+| `base_directory` | path | (empty) | Generated base class output directory |
+| `derived_directory` | path | (empty) | Generated derived class output directory |
+| `source_ext` | option | `.cpp` | C++ source file extension (.cpp, .cc, .cxx) |
+| `header_ext` | option | `.h` | C++ header file extension (.h, .hh, .hpp, .hxx) |
+| `cpp_line_length` | uint | `110` | Target line length for C++ code |
+| `trailing_return_type` | bool | `0` | Generate functions with trailing return type |
+| `local_pch_file` | file | (empty) | Precompiled header file to include |
+| `src_preamble` | code_edit | (empty) | Code at top of source files after PCH |
+| `project_src_includes` | include_files | (empty) | Local headers to include in all source files |
+| `name_space` | string | (empty) | Namespace to enclose class declarations |
+| `generate_cmake` | bool | `0` | Auto-generate .cmake file when generating C++ |
+| `cmake_file` | file | `wxui_code.cmake` | Filename of cmake file to create |
+| `cmake_varname` | string | `wxue_generated_code` | Variable name in .cmake file |
+
+#### Perl Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `wxPerl_version` | option | `3.005` | Minimum wxPerl version |
+| `perl_output_folder` | path | (empty) | Output folder for all Perl code |
+| `perl_line_length` | uint | `80` | Target line length for Perl code |
+| `perl_project_preamble` | code_edit | (empty) | Code at top of every Perl file after comment block |
+
+#### Python Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `wxPython_version` | option | `4.2.0` | Minimum wxPython version |
+| `python_output_folder` | path | (empty) | Output folder for all Python code |
+| `python_line_length` | uint | `90` | Target line length for Python code |
+| `python_project_preamble` | code_edit | (empty) | Code at top of every Python file after comment block |
+
+#### Ruby Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `wxRuby_version` | option | `1.6.1` | Minimum wxRuby version (1.5.0, 1.5.5, 1.6.1) |
+| `ruby_output_folder` | path | (empty) | Output folder for all Ruby code |
+| `ruby_line_length` | uint | `80` | Target line length for Ruby code |
+| `disable_rubo_cop` | bool | `0` | Disable all RuboCop warnings in generated code |
+| `ruby_project_preamble` | code_edit | (empty) | Code at top of every Ruby file after comment block |
+
+#### XRC Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `xrc_directory` | path | (empty) | Directory to generate XRC files in |
+| `xrc_add_var_comments` | bool | `1` | Add var_comments to XRC file |
+| `xrc_no_whitespace` | bool | `0` | No leading whitespace (smaller but less readable) |
+| `xrc_indent_attributes` | bool | `1` | Indent attributes (ignored if xrc_no_whitespace is 1) |
+| `xrc_indent_with_spaces` | bool | `0` | Indent with 2 spaces instead of single tab |
+| `combine_all_forms` | bool | `1` | Create single XRC file containing all forms |
+| `combined_xrc_file` | file | (empty) | Filename for combined XRC output |
+| `xrc_art_directory` | path | `./` | Directory containing images for XRC |
+
+**Version-specific properties:**
+- Properties added in later versions will be documented here as they are introduced
+
+**Remember:** Only include properties in generated `.wxui` files if their values differ from the defaults shown above.
 
 ## Widget Hierarchy
 
@@ -184,7 +255,7 @@ This is transparent to AI tools generating `.wxui` files - always use the unpref
 
 ## Variable Naming
 
-The `var_name` property specifies the C++ member variable name for widgets:
+The `var_name` property specifies the member variable name for widgets. Since C++ is the most common generated language, variable names follow C++ conventions and are automatically converted for other languages during code generation.
 
 ```xml
 <node class="wxButton" var_name="m_okButton" label="OK" />
@@ -192,7 +263,9 @@ The `var_name` property specifies the C++ member variable name for widgets:
 
 ### Naming Conventions
 
-1. **Prefix with m_**: Member variables conventionally start with `m_`
+1. **Prefix with m_**: Member variables conventionally start with `m_` for C++ class members (protected/private)
+   - The `m_` prefix is omitted for local variables
+   - When generating code for other languages, wxUiEditor automatically converts the name (e.g., `m_okButton` becomes `ok_button` in Python/Ruby)
 2. **Use camelCase**: After the prefix, use camelCase (e.g., `m_myButton`)
 3. **Descriptive names**: Choose names that describe the widget's purpose
 4. **Unique within class**: Each var_name must be unique within the form
@@ -223,7 +296,7 @@ public:
 ### Special Cases
 
 - **Forms**: Use `class_name` instead of `var_name` for the class name
-- **Sizers**: `var_name` is optional for sizers (they're often unnamed)
+- **Sizers**: Must have `var_name` for code generation (e.g., `sizer`), otherwise no variable will be created for the sizer
 - **Spacers**: Spacers don't have `var_name` (they're not accessible in code)
 
 ## Event Handler Binding

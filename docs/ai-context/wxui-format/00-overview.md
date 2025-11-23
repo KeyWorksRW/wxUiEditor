@@ -22,17 +22,29 @@ From a single `.wxui` file, wxUiEditor can generate:
 - **Perl**: wxPerl modules
 - **XRC**: wxWidgets XML Resource files
 
+Each project has a `code_preference` property that specifies the primary language for code generation. When creating a new project, only the preferred language should be enabled in the `generate_languages` property. Additional languages can be enabled later if needed for multi-language generation.
+
 ### 3. Optimized Property Storage
 - Only non-default property values are stored
 - Reduces file size and version control noise
 - Missing properties automatically use defaults from wxUiEditor's definitions
 - Changes are minimal and focused
 
-### 4. Base/Derived Class Pattern
-wxUiEditor generates a **base class** (regenerated) and optionally a **derived class** (user-edited):
-- **Base class**: Auto-generated, contains UI construction and protected members
-- **Derived class**: User-created, implements event handlers and custom logic
-- Protected code markers prevent accidental base class edits
+### 4. C++ Base/Derived Class Pattern
+
+wxUiEditor generates a **base class** (auto-regenerated) and optionally a **derived class** (user-edited):
+- **Base class**: Auto-generated, contains UI construction code
+  - Contains protected/private member variables for widgets
+  - Protected virtual event handler methods
+  - Protected code markers prevent accidental edits
+  - Regenerated whenever .wxui file changes
+- **Derived class**: Optional (enabled by default), user-created for custom logic
+  - Inherits from base class
+  - Implements event handler overrides
+  - Never overwritten by wxUiEditor
+- **Non-derived class mode**: When derived class is disabled
+  - Base class members may be changed to private instead of protected
+  - User can either edit the base class directly (after "End of generated code" marker), or create a separate source file including the generated base class header file.
 
 ## Basic Structure
 
@@ -110,21 +122,44 @@ The `data_version` attribute enables:
 - Automatic migration to current format
 - Future format evolution without breaking existing projects
 
+**Determining the correct `data_version`:**
+When creating a new `.wxui` project file, AI tools should:
+
+1. Check if wxUiEditor is available (in system PATH or via Windows file association)
+2. If available, execute: `wxUiEditor --data-version`
+   - If the command returns an integer > 15, use that value
+   - If the command fails or returns invalid data, fall back to step 3
+3. Default to `data_version="20"` (compatible with wxUiEditor 1.2.1+)
+
+Example (PowerShell):
+```powershell
+$dataVersion = 20  # default fallback
+try {
+    $result = & wxUiEditor.exe --data-version 2>$null
+    if ($result -match '^\d+$' -and [int]$result -gt 15) {
+        $dataVersion = [int]$result
+    }
+} catch {
+    # wxUiEditor not found or command failed, use default
+}
+```
+
+**Note:** The `--data-version` command-line option is available in wxUiEditor 1.3.0 and later. Earlier versions will not recognize this command. On Windows, the installer registers wxUiEditor with a `.wxui` file association, making it accessible even if not in the system PATH.
+
 ## Typical Workflow
 
 1. **Create/Open Project**: Use wxUiEditor to create a new `.wxui` file or open an existing one
 2. **Design UI Visually**: Add widgets, configure properties, design layout
 3. **Bind Events**: Specify event handlers for user interactions
 4. **Generate Code**: wxUiEditor creates base classes in target language(s)
-5. **Implement Logic**: Write derived classes implementing event handlers
-6. **Iterate**: Modify UI in wxUiEditor, regenerate base classes (derived classes unchanged)
+5. **Implement Logic**: Add custom code (C++ uses derived classes; other languages add code after the generated section)
+6. **Iterate**: Modify UI in wxUiEditor, regenerate base classes (custom code unchanged)
 
 ## When to Edit `.wxui` Files Manually
 
 **Recommended scenarios:**
 - Batch renaming (search/replace with care)
 - Fixing merge conflicts from version control
-- Debugging generation issues
 - Scripted project modifications
 
 **Not recommended:**
@@ -157,7 +192,7 @@ Here's a minimal "Hello World" dialog:
 
 ```xml
 <?xml version="1.0"?>
-<wxUiEditorData data_version="19">
+<wxUiEditorData data_version="20">
   <node class="Project" code_preference="C++">
     <node class="wxDialog" class_name="HelloDialog" title="Hello">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
@@ -187,3 +222,23 @@ Read the documentation in order for comprehensive understanding:
 
 - **For Contributors**: See [../../contributors/xml_definitions.md](../../contributors/xml_definitions.md) for details on wxUiEditor's internal XML definition system
 - **For Users**: See [../../users/wxui_file_format.md](../../users/wxui_file_format.md) for user-friendly format overview
+
+## Reference Implementation
+
+For a comprehensive example of `.wxui` format and generated code across multiple languages, see the **wxUiEditor_tests** repository:
+
+**Repository:** https://github.com/Randalphwa/wxUiEditor_tests
+
+This repository contains:
+- **wxUiTesting.wxui**: An extensive project demonstrating nearly every form type and control
+- **Generated code examples** in:
+  - `cpp/` - C++ implementation
+  - `python/` - wxPython implementation
+  - `ruby/` - wxRuby implementation
+  - `perl/` - wxPerl implementation (available in v1.3+)
+
+This is particularly useful for AI tools to:
+- Understand how complex `.wxui` projects are structured
+- See examples of generated code for all supported languages
+- Learn patterns for specific widgets and layout combinations
+- Validate generated code against working reference implementations

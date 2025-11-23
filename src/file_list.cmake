@@ -83,6 +83,7 @@ set( file_list
     generate/writers/code_pos_style.cpp    # Code::Pose...()/Style() functions
     generate/writers/code_size_pos.cpp     # Code::Pose...()/Style() functions
     generate/writers/code_string.cpp       # Code::Pose...()/Style() functions
+    generate/writers/comment_blocks.cpp    # Shared generated comment blocks
     generate/writers/common_strings.cpp    # Common strings used by code generators
 
     generate/writers/file_codewriter.cpp   # FileCodeWriter -- Class to write code to disk

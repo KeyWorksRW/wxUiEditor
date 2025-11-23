@@ -1,3 +1,14 @@
+// AI Context: This DTD defines the XML schema for wxUiEditor's generator definition files.
+// The schema describes how wxWidgets controls, forms, and properties are defined in XML files
+// (buttons.xml, forms.xml, sizers.xml, etc.) which wxUiEditor parses to build its internal
+// control catalog. Each <gen> element defines a wxWidgets class or interface with properties,
+// events, and inheritance relationships. Properties specify control attributes with types
+// (string, bool, int, image, etc.) and optional default values. The <inherits> element pulls
+// common properties from interface classes defined in interfaces.xml to avoid duplication.
+// <option> elements define enumerated choices for option-type properties. <event> elements
+// declare wxWidgets event types that controls can handle. These XML files are not built directly
+// into wxUiEditor - they are parsed, compressed, and embedded as base64 data in wxue_data.cpp.
+
 <!ELEMENT GeneratorDefinitions ANY>
 
 <!ELEMENT gen ANY>

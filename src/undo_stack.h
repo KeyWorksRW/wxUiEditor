@@ -5,6 +5,15 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements a command pattern-based undo/redo system for wxUiEditor.
+// UndoAction is an abstract base class requiring derived classes to implement Change()
+// (apply/redo), Revert() (undo), and GetMemorySize(). GroupUndoActions allows multiple actions to
+// be treated as a single undoable operation. UndoStack manages two vectors (undo/redo stacks) where
+// Push() executes Change() and adds to undo stack, Undo() calls Revert() and moves to redo stack,
+// and Redo() calls Change() and moves back to undo stack. The stack can be locked to execute
+// actions without affecting undo/redo history. Actions may optionally store Node pointers and
+// control UI selection events.
+
 #pragma once
 
 class Node;

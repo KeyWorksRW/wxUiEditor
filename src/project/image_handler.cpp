@@ -80,7 +80,7 @@ auto ImageHandler::UpdateEmbedNodes() -> bool
     return is_changed;
 }
 
-EmbeddedImage* ImageHandler::FindEmbedded(std::string_view filename)
+auto ImageHandler::FindEmbedded(std::string_view filename) -> EmbeddedImage*
 {
     if (auto result = m_map_embedded.find(filename); result != m_map_embedded.end())
     {
@@ -89,7 +89,7 @@ EmbeddedImage* ImageHandler::FindEmbedded(std::string_view filename)
     return nullptr;
 }
 
-bool ImageHandler::CheckNode(Node* node)
+auto ImageHandler::CheckNode(Node* node) -> bool
 {
     if (node->is_FormParent())
     {
@@ -101,10 +101,10 @@ bool ImageHandler::CheckNode(Node* node)
     Node* node_form = node->get_Form();
 
     auto node_position = m_project_node->get_ChildPosition(node_form);
-    tt_string art_directory;
+    std::string art_directory;
     if (Project.get_ProjectNode()->HasValue(prop_art_directory))
     {
-        art_directory = Project.get_ProjectNode()->as_string(prop_art_directory);
+        art_directory = Project.get_ProjectNode()->as_view(prop_art_directory);
     }
 
     for (auto& iter: node->get_PropsVector())

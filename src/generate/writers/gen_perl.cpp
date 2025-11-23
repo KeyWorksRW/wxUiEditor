@@ -128,7 +128,7 @@ auto PerlCodeGenerator::WriteSourceHeader() -> void
     }
 #endif  // _DEBUG
     {
-        m_source->writeLine(txt_PoundCmtBlock);
+        m_source->writeLine(txt_PerlCmtBlock);
 
         if (Project.HasValue(prop_perl_project_preamble))
         {

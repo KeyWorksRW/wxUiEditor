@@ -200,8 +200,23 @@ auto FileCodeWriter::AppendFakeUserContent() -> size_t
 
 [[nodiscard]] auto FileCodeWriter::GetBlockLength(GenLang language) -> size_t
 {
-    return (language == GEN_LANG_CPLUSPLUS) ? GetCppEndBlockLength() :
-                                              GetPythonPerlRubyEndBlockLength();
+    if (language == GEN_LANG_CPLUSPLUS)
+    {
+        return GetCppEndBlockLength();
+    }
+    if (language == GEN_LANG_RUBY)
+    {
+        return GetRubyEndBlockLength();
+    }
+    if (language == GEN_LANG_PYTHON)
+    {
+        return GetPythonEndBlockLength();
+    }
+    if (language == GEN_LANG_PERL)
+    {
+        return GetPerlEndBlockLength();
+    }
+    return 0;
 }
 
 [[nodiscard]] auto FileCodeWriter::GetCommentCharacter(GenLang language) -> std::string_view
@@ -262,7 +277,7 @@ void FileCodeWriter::AppendCppEndBlock()
 
 void FileCodeWriter::AppendPerlEndBlock()
 {
-    m_buffer += end_python_perl_ruby_block;
+    m_buffer += end_perl_block;
     if (!m_file_exists && m_node)
     {
         m_buffer += "\n1;  # " + m_node->get_NodeName();
@@ -271,12 +286,12 @@ void FileCodeWriter::AppendPerlEndBlock()
 
 void FileCodeWriter::AppendPythonEndBlock()
 {
-    m_buffer += end_python_perl_ruby_block;
+    m_buffer += end_python_block;
 }
 
 void FileCodeWriter::AppendRubyEndBlock()
 {
-    m_buffer += end_python_perl_ruby_block;
+    m_buffer += end_ruby_block;
     if (m_node && !m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data))
     {
         // If the file doesn't exist, or it is missing any user content, append psuedo user

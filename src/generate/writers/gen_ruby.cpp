@@ -118,20 +118,7 @@ auto RubyCodeGenerator::WriteSourceHeader() -> void
     }
 #endif  // _DEBUG
     {
-        m_source->writeLine(txt_PoundCmtBlock);
-
-        if (Project.as_bool(prop_disable_rubo_cop))
-        {
-#if defined(_DEBUG)
-            for (const auto& iter: disable_list)
-            {
-                m_source->writeLine("# rubocop:disable " + iter);
-            }
-#else
-            m_source->writeLine("# rubocop:disable all");
-#endif
-            m_source->writeLine();
-        }
+        m_source->writeLine(txt_RubyCmtBlock);
 
         if (Project.HasValue(prop_ruby_project_preamble))
         {

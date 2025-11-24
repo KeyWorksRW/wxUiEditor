@@ -11,7 +11,6 @@
 #include <wx/gbsizer.h>
 
 #include "id_editor_dlg.h"
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -205,6 +204,8 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/stockitem.h>  // stock items helpers
+
+#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 #include "id_lists.h"
 

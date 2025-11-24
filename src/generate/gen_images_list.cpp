@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <format>
+
 #include <wx/panel.h>              // Base header for wxPanel
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/sizer.h>              // provide wxSizer class for layout
@@ -236,6 +238,8 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         m_source->writeLine();
 
+        int svg_processed = 0;
+        int bundle_processed = 0;
         for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
             if (auto bundle = ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
@@ -273,6 +277,16 @@ void BaseCodeGenerator::GenerateImagesForm()
                     m_source->Unindent();
                     m_source->writeLine("}");
                     m_source->writeLine();
+
+                    ++svg_processed;
+                    if (auto* frame = wxGetMainFrame(); frame)
+                    {
+                        if (svg_processed == 1 || svg_processed % 10 == 0)
+                        {
+                            frame->setStatusText(
+                                std::format("Processed {} SVG bundles", svg_processed));
+                        }
+                    }
                 }
                 else
                 {
@@ -310,7 +324,25 @@ void BaseCodeGenerator::GenerateImagesForm()
                     }
                     m_source->Unindent();  // end function block
                     m_source->writeLine("}");
+
+                    ++bundle_processed;
+                    if (auto* frame = wxGetMainFrame(); frame)
+                    {
+                        if (bundle_processed == 1 || bundle_processed % 50 == 0)
+                        {
+                            frame->setStatusText(
+                                std::format("Processed {} image bundles", bundle_processed));
+                        }
+                    }
                 }
+            }
+        }
+        if (svg_processed > 0 || bundle_processed > 0)
+        {
+            if (auto* frame = wxGetMainFrame(); frame)
+            {
+                frame->setStatusText(std::format("Completed {} SVG bundles, {} other bundles",
+                                                 svg_processed, bundle_processed));
             }
         }
 

@@ -13,7 +13,6 @@
 #include <wx/valtext.h>
 
 #include "edit_custom_mockup_base.h"
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -128,6 +127,8 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
 {

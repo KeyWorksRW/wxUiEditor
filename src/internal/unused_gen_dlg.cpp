@@ -18,7 +18,6 @@
 #include "gen_enums.h"
 #include "node.h"
 #include "project_handler.h"
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -91,6 +90,10 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <wx/filedlg.h>
+
+#include "tt_string_vector.h"  // Legacy code: tt_string_vector
 
 void FindGenerators(Node* node,
                     std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
@@ -181,7 +184,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
     for (auto& iter: rmap_GenNames)
     {
         bool ignored_gen = false;
-        for (auto& ignore: gen_ignore_list)
+        for (const auto& ignore: gen_ignore_list)
         {
             if (ignore == iter.second)
             {
@@ -200,10 +203,9 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
             {
                 continue;
             }
-            else
-            {
-                skipping = false;
-            }
+
+                            skipping = false;
+
         }
 
         if (!used.contains(iter.first))
@@ -215,13 +217,12 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
     event.Skip();
 }
 
-#include <wx/filedlg.h>
-
 void UnusedGenerators::OnSave(wxCommandEvent& /* event unused */)
 {
     auto filename = wxSaveFileSelector("Save unused", "txt", wxEmptyString, this);
-    if (filename.empty())
+    if (filename.empty()) {
         return;
+}
 
     tt_string_vector file;
     for (unsigned int idx = 0; idx < m_listbox->GetCount(); ++idx)

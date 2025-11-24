@@ -8,6 +8,8 @@
 #include <wx/datetime.h>  // wxDateTime
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
+#include <format>
+
 #include <frozen/map.h>
 
 #include "gen_base.h"
@@ -15,6 +17,7 @@
 #include "base_generator.h"   // BaseGenerator -- Base Generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "image_handler.h"    // ImageHandler class
+#include "mainframe.h"        // MainFrame class
 #include "node.h"             // Node class
 #include "node_decl.h"        // NodeDeclaration class
 #include "project_handler.h"  // ProjectHandler class
@@ -328,6 +331,7 @@ auto BaseCodeGenerator::IsEmbeddedImageInCollection(const EmbeddedImage* embed) 
 
 void BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& filenames)
 {
+    size_t processed_count = 0;
     for (const auto& idx_image: filenames)
     {
         if (auto* embed = ProjectImages.GetEmbeddedImage(idx_image); embed)
@@ -339,6 +343,16 @@ void BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& file
                     auto file_time = embed->base_image().filename.last_write_time();
                     if (file_time != embed->base_image().file_time)
                     {
+                        // Update status before the expensive UpdateImage() call
+                        ++processed_count;
+                        if (auto* frame = wxGetMainFrame(); frame)
+                        {
+                            if (processed_count == 1 || processed_count % 10 == 0)
+                            {
+                                frame->setStatusText(
+                                    std::format("Processing embedded image {}", processed_count));
+                            }
+                        }
                         embed->UpdateImage(embed->base_image());
                         embed->base_image().file_time = file_time;
                     }
@@ -351,6 +365,13 @@ void BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& file
                              << "Unable to get file time for " << embed->base_image().filename);
                 }
             }
+        }
+    }
+    if (processed_count > 0)
+    {
+        if (auto* frame = wxGetMainFrame(); frame)
+        {
+            frame->setStatusText(std::format("Processed {} embedded images", processed_count));
         }
     }
 }

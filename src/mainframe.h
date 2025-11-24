@@ -9,6 +9,7 @@
 
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/filehistory.h>  // wxFileHistory class
+#include <wx/timer.h>        // wxTimer class
 
 #include "gen_enums.h"   // Enumerations for generators
 #include "mainapp.h"     // App class
@@ -360,6 +361,14 @@ protected:
     void UpdateWakaTime(bool FileSavedEvent = false);
 
 private:
+    // Helper methods for OnGenerateCode
+    static auto GenerateFromOutputType(GenResults& results) -> bool;
+    auto GenerateFromDialog(GenResults& results) -> bool;
+    static void SaveGenerationPreferences();
+    void ShowGenerationResults(const GenResults& results);
+    void UpdateGenerationStatus();
+    void OnGenerationTimer(wxTimerEvent& event);
+
     wxSplitterWindow* m_SecondarySplitter { nullptr };
 
     wxAuiNotebook* m_notebook;
@@ -380,6 +389,8 @@ private:
     BasePanel* m_xrcPanel { nullptr };
 
     ImportPanel* m_importPanel { nullptr };
+
+    wxTimer m_generation_timer;
 
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };
@@ -444,7 +455,7 @@ inline auto wxGetFrame() -> MainFrame&
     return *wxGetApp().getMainFrame();
 }
 
-// Returns a pointer to the mainframe window
+// Returns a pointer to the mainframe window or nullptr if it hasn't been created yet
 inline auto wxGetMainFrame() -> MainFrame*
 {
     return wxGetApp().getMainFrame();

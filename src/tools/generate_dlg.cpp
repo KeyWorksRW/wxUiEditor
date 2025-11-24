@@ -92,149 +92,202 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include "../wxui/dlg_gen_results.h"
 
-static bool gen_base_code = false;
-static bool gen_derived_code = false;
-static bool gen_perl_code = false;
-static bool gen_python_code = false;
-static bool gen_ruby_code = false;
-static bool gen_xrc_code = false;
+namespace
+{
+
+    bool gen_base_code = false;
+    bool gen_derived_code = false;
+    bool gen_perl_code = false;
+    bool gen_python_code = false;
+    bool gen_ruby_code = false;
+    bool gen_xrc_code = false;
+
+}  // anonymous namespace
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
 // in generate/gen_codefiles.cpp
-void MainFrame::OnGenerateCode(wxCommandEvent&)
+void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
 {
     ProjectImages.UpdateEmbedNodes();
-    bool code_generated = false;
     GenResults results;
+    bool code_generated = false;
+    wxBeginBusyCursor();
 
-    // This looks for
+    m_generation_timer.Start(250);
+
+    code_generated = GenerateFromOutputType(results);
+
+    if (!code_generated)
+    {
+        code_generated = GenerateFromDialog(results);
+    }
+
+    m_generation_timer.Stop();
+    wxEndBusyCursor();
+
+    if (code_generated)
+    {
+        ShowGenerationResults(results);
+    }
+
+    UpdateWakaTime();
+}
+
+auto MainFrame::GenerateFromOutputType(GenResults& results) -> bool
+{
     auto output_type = Project.get_OutputType();
 
     if (output_type == OUTPUT_XRC)
     {
         GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
+        return true;
+    }
+    if (output_type == OUTPUT_CPLUS)
+    {
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
+        return true;
+    }
+    if (output_type == OUTPUT_DERIVED)
+    {
+        GenInhertedClass(results);
+        return true;
+    }
+    if (output_type == OUTPUT_PYTHON)
+    {
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
+        return true;
+    }
+    if (output_type == OUTPUT_RUBY)
+    {
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
+        return true;
+    }
+
+    return false;
+}
+
+auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
+{
+    GenerateDlg dlg(this);
+    if (dlg.ShowModal() != wxID_OK)
+    {
+        return false;
+    }
+
+    bool code_generated = false;
+
+    // Always generate XRC files first in case the XRC files need to be added to a gen_Data
+    // section of the other languages.
+    gen_xrc_code = dlg.is_gen_xrc();
+    if (gen_xrc_code)
+    {
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
         code_generated = true;
     }
-    else if (output_type == OUTPUT_CPLUS)
+
+    gen_base_code = dlg.is_gen_base();
+    if (gen_base_code)
     {
         GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
         code_generated = true;
     }
-    else if (output_type == OUTPUT_DERIVED)
+
+    gen_derived_code = dlg.is_gen_inherited();
+    if (gen_derived_code)
     {
         GenInhertedClass(results);
         code_generated = true;
     }
-    else if (output_type == OUTPUT_PYTHON)
+
+    gen_perl_code = dlg.is_gen_perl();
+    if (gen_perl_code)
+    {
+        GenerateLanguageFiles(results, nullptr, GEN_LANG_PERL);
+        code_generated = true;
+    }
+
+    gen_python_code = dlg.is_gen_python();
+    if (gen_python_code)
     {
         GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
         code_generated = true;
     }
-    else if (output_type == OUTPUT_RUBY)
+
+    gen_ruby_code = dlg.is_gen_ruby();
+    if (gen_ruby_code)
     {
         GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
         code_generated = true;
     }
 
-    if (!code_generated)
+    if (wxGetApp().isTestingMenuEnabled())
     {
-        GenerateDlg dlg(this);
-        if (dlg.ShowModal() == wxID_OK)
-        {
-            // Always generate XRC files first in case the XRC files need to be added to a gen_Data
-            // section of the other languages.
-            gen_xrc_code = dlg.is_gen_xrc();
-            if (gen_xrc_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
-                code_generated = true;
-            }
-
-            gen_base_code = dlg.is_gen_base();
-            if (gen_base_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
-                code_generated = true;
-            }
-
-            gen_derived_code = dlg.is_gen_inherited();
-            if (gen_derived_code)
-            {
-                GenInhertedClass(results);
-                code_generated = true;
-            }
-
-            gen_perl_code = dlg.is_gen_perl();
-            if (gen_perl_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_PERL);
-                code_generated = true;
-            }
-
-            gen_python_code = dlg.is_gen_python();
-            if (gen_python_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
-                code_generated = true;
-            }
-
-            gen_ruby_code = dlg.is_gen_ruby();
-            if (gen_ruby_code)
-            {
-                GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
-                code_generated = true;
-            }
-
-            if (wxGetApp().isTestingMenuEnabled())
-            {
-                auto* config = wxConfig::Get();
-                config->SetPath("/preferences");
-                config->Write("gen_xrc_code", gen_xrc_code);
-                config->Write("gen_base_code", gen_base_code);
-                config->Write("gen_derived_code", gen_derived_code);
-                config->Write("gen_perl_code", gen_perl_code);
-                config->Write("gen_python_code", gen_python_code);
-                config->Write("gen_ruby_code", gen_ruby_code);
-
-                config->SetPath("/");
-            }
-        }
+        SaveGenerationPreferences();
     }
 
-    if (code_generated)
+    return code_generated;
+}
+
+void MainFrame::SaveGenerationPreferences()
+{
+    auto* config = wxConfig::Get();
+    config->SetPath("/preferences");
+    config->Write("gen_xrc_code", gen_xrc_code);
+    config->Write("gen_base_code", gen_base_code);
+    config->Write("gen_derived_code", gen_derived_code);
+    config->Write("gen_perl_code", gen_perl_code);
+    config->Write("gen_python_code", gen_python_code);
+    config->Write("gen_ruby_code", gen_ruby_code);
+    config->SetPath("/");
+}
+
+void MainFrame::UpdateGenerationStatus()
+{
+    Update();
+    wxSafeYield();
+}
+
+void MainFrame::OnGenerationTimer(wxTimerEvent& /* event unused */)
+{
+    UpdateGenerationStatus();
+}
+
+void MainFrame::ShowGenerationResults(const GenResults& results)
+{
+    if (results.updated_files.size() || results.msgs.size())
     {
-        if ((results.updated_files.size() || results.msgs.size()))
+        GeneratedResultsDlg results_dlg;
+        results_dlg.Create(this);
+        for (const auto& iter: results.updated_files)
         {
-            GeneratedResultsDlg results_dlg;
-            results_dlg.Create(this);
-            for (auto& iter: results.updated_files)
-            {
-                iter.make_relative(Project.get_ProjectPath());
-                results_dlg.m_lb_files->Append(iter);
-            }
-
-            if (results.updated_files.size() == 1)
-                results.msgs.emplace_back("1 file was updated");
-            else
-                results.msgs.emplace_back()
-                    << results.updated_files.size() << " files were updated";
-
-            for (auto& iter: results.msgs)
-            {
-                results_dlg.m_lb_info->Append(iter);
-            }
-
-            results_dlg.ShowModal();
+            auto relative_path = iter;
+            relative_path.make_relative(Project.get_ProjectPath());
+            results_dlg.m_lb_files->Append(relative_path);
         }
-        else if (results.file_count)
+
+        auto msgs = results.msgs;  // Make a mutable copy
+        if (results.updated_files.size() == 1)
         {
-            tt_string msg;
-            msg << '\n' << "All " << results.file_count << " generated files are current";
-            wxMessageBox(msg, "Code Generation", wxOK, this);
+            msgs.emplace_back("1 file was updated");
         }
+        else
+        {
+            msgs.emplace_back() << results.updated_files.size() << " files were updated";
+        }
+
+        for (const auto& iter: msgs)
+        {
+            results_dlg.m_lb_info->Append(iter);
+        }
+
+        results_dlg.ShowModal();
     }
-
-    UpdateWakaTime();
+    else if (results.file_count)
+    {
+        tt_string msg;
+        msg << '\n' << "All " << results.file_count << " generated files are current";
+        wxMessageBox(msg, "Code Generation", wxOK, this);
+    }
 }
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)

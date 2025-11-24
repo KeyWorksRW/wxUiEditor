@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm>
+#include <format>
 #include <set>
 #include <thread>
 
@@ -413,14 +414,31 @@ auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList)
     gen_data.set_source_ext(source_ext);
     gen_data.set_header_ext(header_ext);
 
+    auto remaining_forms = forms.size();
     for (const auto& form: forms)
     {
         GenCppForm(gen_data, form);
-    }
 
-    if (pClassList)
+        if (pClassList)
+        {
+            return pClassList->size() > 0;
+        }
+
+        if (remaining_forms > 10)
+        {
+            --remaining_forms;
+            if (remaining_forms % 10 == 0)
+            {
+                if (auto* frame = wxGetMainFrame(); frame)
+                {
+                    frame->setStatusField(std::format("Remaining forms: {:L}", remaining_forms), 1);
+                }
+            }
+        }
+    }
+    if (auto* frame = wxGetMainFrame(); frame)
     {
-        return pClassList->size() > 0;
+        frame->setStatusText("Code generation completed");
     }
     return results.updated_files.size() > 0;
 }
@@ -633,9 +651,9 @@ void CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         return;
     }
 
-    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that we
-    // provide. The indent will be updated to tell us how much the generated code should be indented
-    // to account for the namespace(s).
+    // There can be nested namespaces, so GenHdrNameSpace() will parse those into a vector that
+    // we provide. The indent will be updated to tell us how much the generated code should be
+    // indented to account for the namespace(s).
     size_t indent = 0;
     tt_string_vector names;
     if (namespace_prop.size())

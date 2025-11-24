@@ -39,6 +39,9 @@ Use `std::to_array` to convert C-style `char*` arrays to `std::array`
 ### Debug Assertions
 Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h` (not raw `assert()`/`throw`)
 
+### Busy Cursor
+Prefer `wxBeginBusyCursor()` / `wxEndBusyCursor()` over `wxBusyCursor` for better cross-platform reliability
+
 ## Agent Instructions
 
 ### Code Review - Line Number Accuracy

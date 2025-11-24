@@ -332,6 +332,7 @@ MainFrame::MainFrame() :
     Bind(wxEVT_FIND, &MainFrame::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &MainFrame::OnFind, this);
     Bind(wxEVT_FIND_CLOSE, &MainFrame::OnFindClose, this);
+    Bind(wxEVT_TIMER, &MainFrame::OnGenerationTimer, this, m_generation_timer.GetId());
 
     Bind(EVT_NodeSelected, &MainFrame::OnNodeSelected, this);
 

@@ -7,8 +7,6 @@
 
 #include "data_handler.h"
 
-#include <wx/utils.h>  // For wxBusyCursor
-
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
@@ -158,9 +156,11 @@ bool DataHandler::LoadAndCompress(Node* node)
                 doc.load_file_string(embed.filename, pugi::parse_trim_pcdata | pugi::parse_default);
             !result)
         {
-            wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
-                            wxOK | wxICON_ERROR)
-                .ShowModal();
+            if (auto* frame = wxGetMainFrame(); frame != nullptr)
+            {
+                wxMessageDialog(frame, result.detailed_msg, "Parsing Error", wxOK | wxICON_ERROR)
+                    .ShowModal();
+            }
             return false;
         }
         std::ostringstream xml_stream;
@@ -250,9 +250,9 @@ bool DataHandler::LoadAndCompress(Node* node)
 void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
 {
     // Make certain all files have been loaded
-    wxBusyCursor wait;
     Initialize();
 
+    size_t processed_count = 0;
     for (const auto& node: code.node()->get_ChildNodePtrs())
     {
         if (m_embedded_data.contains(node->as_string(prop_var_name)))
@@ -268,7 +268,21 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             auto file_time = embed.filename.last_write_time();
             if (file_time == embed.file_time)
                 continue;
+            ++processed_count;
+            if (auto* frame = wxGetMainFrame(); frame)
+            {
+                frame->setStatusText(std::format("Processing data entry {}: {}", processed_count,
+                                                 node->as_string(prop_var_name).c_str()));
+            }
             LoadAndCompress(node.get());
+        }
+    }
+    if (processed_count > 0)
+    {
+        if (auto* frame = wxGetMainFrame(); frame)
+        {
+            frame->setStatusText(
+                std::format("Completed processing {} data entries", processed_count));
         }
     }
 
@@ -277,6 +291,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
     // -12 to account for 8 indent + max 3 chars for number + comma
     size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
 
+    processed_count = 0;
     for (auto& iter_array: m_embedded_data)
     {
         auto& var_name = iter_array.first;
@@ -284,6 +299,12 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
         if (embed.type == tt::npos)
         {
             continue;
+        }
+        ++processed_count;
+        if (auto* frame = wxGetMainFrame(); frame)
+        {
+            frame->setStatusText(
+                std::format("Writing data array {}: {}", processed_count, var_name.c_str()));
         }
 
         // The original size is in the high 32 bits, so mask that to just get the compressed size
@@ -329,6 +350,13 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
         code += "};\n";
         source->writeLine(code);
         code.clear();
+    }
+    if (processed_count > 0)
+    {
+        if (auto* frame = wxGetMainFrame(); frame)
+        {
+            frame->setStatusText(std::format("Completed writing {} data arrays", processed_count));
+        }
     }
     source->writeLine();
 

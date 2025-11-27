@@ -42,6 +42,15 @@ Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h` (not raw `assert()
 ### Busy Cursor
 Prefer `wxBeginBusyCursor()` / `wxEndBusyCursor()` over `wxBusyCursor` for better cross-platform reliability
 
+## Copilot Agent Shell and Terminal Instructions
+
+**Check for Local Shell Configuration**: Always check if `.vscode/shell.md` exists at the start of any request. If it does, read that file and follow all instructions it contains, including:
+- Shell command syntax and preferences
+- Custom agent command patterns (e.g., "run com", "run example")
+- Any other developer-specific workflows
+
+**Default Shell Guidance**: If `.vscode/shell.md` does not exist, prefer cross-platform commands that work in multiple shells (git, cmake, ninja, etc.) and avoid shell-specific text processing when possible.
+
 ## Agent Instructions
 
 ### Code Review - Line Number Accuracy

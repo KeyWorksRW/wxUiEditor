@@ -53,13 +53,6 @@ Prefer `wxBeginBusyCursor()` / `wxEndBusyCursor()` over `wxBusyCursor` for bette
 
 ## Agent Instructions
 
-### Code Review - Line Number Accuracy
-When reviewing/analyzing code or referencing specific lines:
-1. Use `grep_search` tool with file path to find exact line numbers
-2. Report line numbers exactly as they appear in search results
-3. For multiple instances, include surrounding context for clarity
-4. Never estimate - always search to verify line numbers
-
 ### Build Verification - Critical Process
 - **Always use `cmake --build build --config Debug`** from the project root - never change to build directory
 When running builds, verify actual success/failure by examining command output:

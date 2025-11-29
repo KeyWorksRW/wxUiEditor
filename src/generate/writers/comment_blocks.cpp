@@ -138,3 +138,61 @@ R"===(
     std::string_view block_view(end_ruby_block);
     return std::count(block_view.begin(), block_view.end(), '\n');
 }
+
+[[nodiscard]] auto GetCppEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_cpp_block up to and including "code"
+    // "// ************* End of generated code"
+    std::string_view full_block(end_cpp_block);
+    // Skip the leading newline
+    auto start = full_block.find("//");
+    if (start == std::string_view::npos)
+    {
+        return {};
+    }
+    auto end = full_block.find('\n', start);
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(start, end - start);
+}
+
+[[nodiscard]] auto GetPythonEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_python_block up to and including "code"
+    // "# ************* End of generated code"
+    std::string_view full_block(end_python_block);
+    auto end = full_block.find('\n');
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(0, end);
+}
+
+[[nodiscard]] auto GetPerlEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_perl_block up to and including "code"
+    // "# ************* End of generated code"
+    std::string_view full_block(end_perl_block);
+    auto end = full_block.find('\n');
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(0, end);
+}
+
+[[nodiscard]] auto GetRubyEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_ruby_block up to and including "code"
+    // "# ************* End of generated code"
+    std::string_view full_block(end_ruby_block);
+    auto end = full_block.find('\n');
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(0, end);
+}

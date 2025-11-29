@@ -42,8 +42,6 @@ namespace code
 
 class Node;  // forward declaration
 
-extern const std::string_view cpp_end_cmt_line;  // "// ************* End of generated code"
-
 class FileCodeWriter : public WriteCode
 {
 public:
@@ -69,7 +67,6 @@ private:
     // Helper methods
     [[nodiscard]] static auto GetCommentLineToFind(GenLang language) -> std::string_view;
     [[nodiscard]] static auto GetBlockLength(GenLang language) -> size_t;
-    [[nodiscard]] static auto GetCommentCharacter(GenLang language) -> std::string_view;
     [[nodiscard]] auto IsOldStyleFile() -> bool;
 
     // Returns the index of the line after the final comment block, or -1 if not found
@@ -102,11 +99,6 @@ private:
 
     [[nodiscard]] auto EnsureDirectoryExists(int flags) -> int;
     [[nodiscard]] auto WriteToFile() -> int;
-
-    // Helper methods for WriteFile complexity reduction
-    [[nodiscard]] auto HandleEqualSizeBuffers() -> int;
-    [[nodiscard]] auto HandleLargerOriginalFile() -> int;
-    [[nodiscard]] auto ProcessDifferentSizeFiles() -> int;
 
     // Member variables
     std::string m_buffer;

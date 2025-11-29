@@ -180,6 +180,10 @@ int App::OnRun()
     parser.AddLongOption("gen_coverage", "generate all language types for test coverage",
                          wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
 
+    // TODO: [Randalphwa - 11-29-2025] Add an "-auto_load" hidden switch that will find all the
+    // *.wxui files in the current directory. If there's only one, set that as the project file. If
+    // there's more than one, load a dialog to let the user select which project file to load.
+
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 

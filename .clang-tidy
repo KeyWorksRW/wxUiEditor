@@ -21,6 +21,7 @@ CheckOptions:
   readability-magic-numbers.IgnoredIntegerValues: '0;1;2;-1'
   readability-magic-numbers.IgnoredFloatingPointValues: '0.0;1.0'
   readability-magic-numbers.IgnoredVariableNames: '^std_.*'
+  readability-function-cognitive-complexity.Threshold: '60'
 
 # Generates way too many invalid warnings
 #  -readability-implicit-bool-conversion,

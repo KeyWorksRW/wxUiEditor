@@ -1,164 +1,156 @@
+<!--
+This file is optimized for Claude Sonnet 4.5 and equivalent high-capability models (e.g., GPT-4o, Gemini 1.5 Pro).
+Structure prioritizes efficient parsing with hierarchical organization and clear semantic markers.
+-->
+
 # AI Coding Guidelines for wxUiEditor
 C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applications.
 
-## Project-Specific Guidelines
+## Critical Project Rules
 
-### CRITICAL: Legacy Code Restrictions
-**NEVER use any functions, classes, or types from `src/tt/` directory in new code**
-- ❌ `tt_string`, `tt_string_view`, `tt_cwd`, `tt_view_vector` - all deprecated
-- ✅ Use C++ Standard Library equivalents: `std::string`, `std::string_view`, `std::filesystem::path`
-- ✅ Use project-approved alternatives: `ttwx::ViewVector` (not `tt_view_vector`)
-- Exception: Existing code may use these types - do not refactor unless explicitly requested
+### 🚫 Legacy Code Restrictions (ABSOLUTE)
+**NEVER use `src/tt/` types in new code:** `tt_string`, `tt_string_view`, `tt_cwd`, `tt_view_vector`
 
-### Performance-Critical Code
-**`src/nodes/` and `src/generate/` directories: Prioritize performance over readability**
-- These paths execute frequently during code generation
-- Prefer in-place operations (`erase()`, `append()`) over allocations (`substr()`, string concatenation)
-- Use `std::string_view` parameters, avoid unnecessary string copies
-- Cache frequently accessed values (e.g., `get_CodePreference()` results)
-- Prefer `as_view()` over `as_string()` for all Node/NodeProperty access
+**Use instead:**
+- Standard Library: `std::string`, `std::string_view`, `std::filesystem::path`
+- Project types: `ttwx::ViewVector` (not `tt_view_vector`)
+- Exception: Don't refactor existing usage unless explicitly requested
 
-### Node Classes
-- `Node` class: `nodes/node.h` | Pass `Node*` to functions (not `NodeSharedPtr`)
+### ⚡ Performance-Critical Paths
+**Directories:** `src/nodes/`, `src/generate/` (executed frequently during code generation)
+
+**Optimization priorities:**
+1. In-place operations: `erase()`, `append()` > `substr()`, string concatenation
+2. View parameters: `std::string_view` > `std::string`
+3. Cache frequently-accessed values: `get_CodePreference()` results
+4. Node access: `as_view()` > `as_string()` (always prefer views)
+
+### 🏗️ Core Architecture
+
+**Node system:**
+- `Node` class: `nodes/node.h` → Pass as `Node*` (not `NodeSharedPtr`)
 - `NodeProperty` class: `nodes/node_prop.h`
-- **Always use `as_view()` over `as_string()`** for efficiency
-- Use `as_string()` only when Node/NodeProperty is unavailable
+- Access pattern: `node.as_view()` for performance, `as_string()` only when Node unavailable
 
-### Generator Classes
-All generators in `src/generate/` inherit from `src/generate/base_generator.h`
+**Generator system:**
+- All generators inherit from `src/generate/base_generator.h`
 
-### String Conversions
-- **`wxString::ToStdString()`** → `std::string`/`std::string_view` (returns `const std::string&`)
-- `wxString::utf8_string()` only for UTF-8 encoding needs
-- `std::format` requires `#include <format>`
-- **Never use `tt_string` or `tt_string_view`** - see Legacy Code Restrictions above
+**String conversions:**
+- `wxString::ToStdString()` → `std::string`/`std::string_view` (returns `const std::string&`)
+- `wxString::utf8_string()` → Use only for explicit UTF-8 encoding
+- `std::format` → Requires `#include <format>`
 
-### Array Conversions
-Use `std::to_array` to convert C-style `char*` arrays to `std::array`
+**Array conversions:**
+- `std::to_array` for C-style `char*` arrays → `std::array`
 
-### Debug Assertions
-Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h` (not raw `assert()`/`throw`)
+**Debugging:**
+- Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h`
+- Never use raw `assert()` or `throw`
 
-### Busy Cursor
-Prefer `wxBeginBusyCursor()` / `wxEndBusyCursor()` over `wxBusyCursor` for better cross-platform reliability
+**UI patterns:**
+- Busy cursor: `wxBeginBusyCursor()` / `wxEndBusyCursor()` > `wxBusyCursor` (cross-platform reliability)
 
-## Copilot Agent Shell and Terminal Instructions
+## Shell Environment
 
-**Check for Local Shell Configuration**: Always check if `.vscode/shell.md` exists at the start of any request. If it does, read that file and follow all instructions it contains, including:
-- Shell command syntax and preferences
-- Custom agent command patterns (e.g., "run com", "run example")
-- Any other developer-specific workflows
+### Configuration Priority
+1. **Check `.vscode/shell.md` first** - if exists, follow all instructions within
+2. **Default**: Use cross-platform commands (git, cmake, ninja) when shell.md absent
 
-**Default Shell Guidance**: If `.vscode/shell.md` does not exist, prefer cross-platform commands that work in multiple shells (git, cmake, ninja, etc.) and avoid shell-specific text processing when possible.
+### Build Verification Protocol (CRITICAL)
 
-## Agent Instructions
+**Build command:** `cmake --build build --config Debug` (from project root only)
 
-### Build Verification - Critical Process
-- **Always use `cmake --build build --config Debug`** from the project root - never change to build directory
-When running builds, verify actual success/failure by examining command output:
-1. **Use `run_in_terminal`** for builds (not task completion messages)
-2. **Check actual terminal output** for failure indicators
-3. **FAILURE** indicators:
-   - `error:`, `error C[0-9]`, `undefined reference`, `unresolved external symbol`
-   - `FAILED:`, `ninja: build stopped:`, `cannot find`, `fatal error`
-   - Non-zero exit codes, `compilation terminated`
-4. **SUCCESS** indicators:
-   - `ninja: no work to do.` or final linking message with no errors
-5. **Never assume success from task completion alone** - always examine build output
-6. If errors found: analyze, fix, rebuild to verify
+**Verification workflow:**
+1. Use `run_in_terminal` for builds (ignore task completion status)
+2. Parse terminal output for actual result
+3. **Failure patterns:** `error:`, `error C[0-9]`, `undefined reference`, `unresolved external symbol`, `FAILED:`, `ninja: build stopped:`, `cannot find`, `fatal error`, non-zero exit, `compilation terminated`
+4. **Success patterns:** `ninja: no work to do.` or final linking with no errors
+5. On failure: analyze → fix → rebuild → verify
 
-### PowerShell Environment Commands
-When working in PowerShell (Windows):
-1. **File Output**: PowerShell cmdlets (not Unix commands):
-   - `Select-Object -Last 100` not `tail -100`
-   - `Select-Object -First 50` not `head -50`
-   - `Get-Content file.txt | Select-Object -Last 20` for tail
-   - `Get-Content file.txt -TotalCount 20` for head
-2. **Exit Code**: `$LASTEXITCODE` checks previous command status
-3. **Navigation**: `cd` or `Set-Location`
-4. **File Operations**: `Get-ChildItem`, `Copy-Item`, `Remove-Item`
-5. **Text Processing**: `Select-String`, `Measure-Object`, `Sort-Object`
+### PowerShell Command Reference (Windows)
+
+| Operation | PowerShell Syntax |
+|-----------|-------------------|
+| Tail file | `Get-Content file.txt \| Select-Object -Last 20` |
+| Head file | `Get-Content file.txt -TotalCount 20` |
+| Exit code | `$LASTEXITCODE` |
+| Navigate | `cd` or `Set-Location` |
+| List | `Get-ChildItem` |
+| Copy | `Copy-Item` |
+| Remove | `Remove-Item` |
+| Search | `Select-String` |
+| Count | `Measure-Object` |
+| Sort | `Sort-Object` |
 
 # Language-Specific Coding Standards
 
 ## C++ Standards
 
 ### Naming Conventions
-- Variables: `snake_case` | Classes/Methods/Functions: `PascalCase` | Constants: `UPPER_SNAKE_CASE`
-- Enum types: `PascalCase` (singular: `Color` not `Colors`) | Enum values: `snake_case`
+- Variable Standards
 
-### Code Style
-- Indentation: 4 spaces | Line length: 100 chars max | Blank lines separate logical sections
+## C++ (Primary Language)
 
-### Function Declarations
-- Use trailing return type syntax: `auto FunctionName() -> ReturnType`
+### Naming & Style
+```
+Variables:          snake_case
+Classes/Methods:    PascalCase
+Constants:          UPPER_SNAKE_CASE
+Enum types:         PascalCase (singular: Color not Colors)
+Enum values:        snake_case
 
-### Enums
-- Use `enum class` with explicit underlying type: `enum class Color : std::uint8_t { red, green, blue };`
+Indentation:        4 spaces
+Line length:        100 chars max
+Function syntax:    auto FunctionName() -> ReturnType
+```
 
-### Conditionals
-- Always use braces (even for single-line statements in `if`, `while`, `for`)
-- No `else` after exit statements (`return`, `throw`, `break`)
+### Type System
+```cpp
+// Enums - always enum class with explicit type
+enum class Color : std::uint8_t { red, green, blue };
 
-### Modern C++ Features
-- Prefer `auto` for variable declarations when type is obvious
-- Use `constexpr` for compile-time constants and functions
-- Use range-based `for` loops over traditional loops when iterating containers
-- Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) instead of raw pointers
-- Use structured bindings for clarity: `auto [x, y] = get_point();`
-- Prefer C++20 ranges library algorithms over manual loops when applicable
+// Conditionals - always braced, no else after exits
+if (condition) {
+    return early;
+}
+process_next();  // No else needed
 
-### Library Priority (in order)
-1. **C++ Standard Library (`std::`)** – Always check first
-2. **wxWidgets library** – Use when standard library doesn't provide the needed functionality (e.g., `wxString`, `wxFileName`, `wxDir`)
-3. **`ttwx::` namespace** (`src/ttwx/ttwx.h`) – Project utilities
-4. **Frozen containers** (`frozen/include/frozen`) – Immutable collections
-5. **NEVER use `src/tt/` types** – See Legacy Code Restrictions above
+// Modern features - prefer when applicable
+auto value = compute();                    // When type obvious
+constexpr int MAX = 100;                   // Compile-time constants
+for (const auto& item : container) {}      // Range-based loops
+auto [x, y] = get_point();                 // Structured bindings
+std::unique_ptr<T> ptr;                    // Smart pointers
+```
 
-### Immutable Containers
-- Use frozen types: `frozen::set`, `frozen::unordered_set`, `frozen::map`, `frozen::unordered_map`
-- Include appropriate frozen header | Prefer `constexpr`/`constinit` for compile-time init
+### Library Precedence (strict order)
+1. **C++ Standard Library** (`std::`) - always check first
+2. **wxWidgets** - when standard library insufficient (`wxString`, `wxFileName`, `wxDir`)
+3. **`ttwx::` namespace** - project utilities (`src/ttwx/ttwx.h`)
+4. **Frozen containers** - immutable collections (`frozen/include/frozen`)
+5. **❌ NEVER `src/tt/` types** - see Legacy Code Restrictions
 
-### Reducing Function Complexity
-- Create helper functions as **private class methods** (not anonymous namespace)
-- Make helpers `static` if no instance member access needed
-- Share state via **private member variables** when needed across helpers
+### Frozen Containers (Immutable)
+```cpp
+#inclI Context Documentation (Header Files)
 
-### Adding AI Context Documentation to Header Files
-
-When asked to document a header file or when adding AI Context comments:
+**When to add:** Documenting header files or adding architectural context
 
 **Process:**
-1. **Analyze the header file** to understand:
-   - Design patterns used (Command, Factory, Observer, etc.)
-   - Class hierarchy and relationships
-   - Key methods and their purposes
-   - How the code fits into the larger wxUiEditor system
+1. Analyze: Design patterns, class hierarchy, key methods, system integration
+2. Add comment block after license header
+3. Update `docs/contributors/architecture.md`
 
-2. **Add AI Context comment block** immediately after the license header:
-   ```cpp
-   // AI Context: [One-sentence summary of what this file implements]
-   // [Multi-line detailed explanation covering design patterns, class relationships,
-   // operational flow, important constraints, and behavioral characteristics]
-   ```
+**AI Context format:**
+```cpp
+// AI Context: [One-sentence "This file implements..." summary]
+// [3-8 lines covering: patterns, class roles, method flow, constraints, memory management]
+```
 
-3. **Generate/update contributor documentation** in `docs/contributors/architecture.md`:
-   - Add a new section with the file path as reference
-   - Convert the AI Context comment to readable paragraphs
-   - Use proper markdown formatting with heading, file reference, and horizontal rule separator
+**Include:** Architecture, patterns, responsibilities, constraints, behavior
+**Exclude:** Implementation details, API docs, history, TODOs
 
-**AI Context Format Guidelines:**
-- **One-sentence summary:** Complete "This file implements..."
-  - Example: "a command pattern-based undo/redo system for wxUiEditor"
-- **Details (3-8 lines):** Cover architecture, not implementation
-  - Design patterns used
-  - Core class responsibilities
-  - Method interaction flow
-  - Important constraints or behavioral details
-  - Memory management approach (if relevant)
-- **Omit:** Implementation details visible in code, API docs, change history, TODOs
-
-**Example AI Context:**
+**Example:**
 ```cpp
 // AI Context: This file implements a command pattern-based undo/redo system for wxUiEditor.
 // UndoAction is an abstract base class requiring derived classes to implement Change()
@@ -170,22 +162,18 @@ When asked to document a header file or when adding AI Context comments:
 // control UI selection events.
 ```
 
-**Contributor Documentation Format:**
-Add to `docs/contributors/architecture.md`:
+**Contributor docs format** (`docs/contributors/architecture.md`):
 ```markdown
-## [Descriptive Title from Summary]
+## [Descriptive Title]
 
 **File:** `src/path/to/file.h`
 
-[Convert AI Context to readable paragraphs. Break long sentences into multiple paragraphs
-for readability. Focus on helping contributors understand the architectural design.]
+[Convert AI Context to paragraphs. Focus on architectural understanding.]
 
 ---
 ```
 
-**Benefits:**
-- AI agents get concise context for code generation
-- Contributors get high-level understanding without reading implementation
+Reference: `docs/contributors/ai-context-template.md`
 - Documentation lives with code and is version controlled
 - Single source of truth automatically extracted to docs
 
@@ -211,32 +199,19 @@ See `docs/contributors/ai-context-template.md` for complete guidelines and examp
 
 ## Ruby Coding Standards
 
-### Naming Conventions
-- Variables/Functions: `snake_case` | Classes: `PascalCase` | `Wx::` methods: `PascalCase` | Constants: `UPPER_SNAKE_CASE`
-- Begin wxWidgets functions with `Wx:` | Use leading `_` for unused parameters (e.g., `_event`)
+###Generated Languages (Perl, Python, Ruby)
 
-### Code Style
-- Indentation: 2 spaces | Line length: 80 chars max | Blank lines separate logical sections
+### Quick Reference Matrix
 
-## Critical Reminders for All Code
-
-### When Working on C++ Code
-- ✅ Always check if Standard Library provides needed functionality before using external libraries
-- ✅ Include appropriate frozen headers when using immutable containers
-- ✅ Validate that enum classes use explicit underlying types
-- ✅ Ensure all bool-returning functions have `[[nodiscard]]` attribute
-- ✅ Verify conditionals use braces even for single statements
-- ✅ **Respect protected code sections** – Do not edit between "Do not edit" and "End of generated code" markers
-- ✅ For Node and NodeProperty classes, prefer `as_view()` methods
-- ✅ All generator classes must derive from `src/generate/base_generator.h`
-
-### When Working With Multiple Programming Languages
-- **Indentation varies by language**: C++/Perl/Python use 4 spaces, Ruby uses 2 spaces
-- **Line length limits vary**: Ruby (80), Python (90), C++/Perl (100)
-- **wxWidgets method naming**: All use `PascalCase`
-- **Function prefixes for wxWidgets**:
-  - Perl and Ruby: Begin with `Wx:` (e.g., `Wx::CreateButton`)
-  - Python: Begin with `wx.` (e.g., `wx.CreateButton`)
+| Aspect | Perl | Python | Ruby |
+|--------|------|--------|------|
+| Variables/Functions | `snake_case` | `snake_case` | `snake_case` |
+| Classes/Packages | `PascalCase` | `PascalCase` | `PascalCase` |
+| Constants | `UPPER_SNAKE_CASE` | `UPPER_SNAKE_CASE` | `UPPER_SNAKE_CASE` |
+| wxWidgets prefix | `Wx:` | `wx.` | `Wx:` |
+| Indentation | 4 spaces | 4 spaces | 2 spaces |
+| Line length | 100 chars | 90 chars | 80 chars |
+| Special | — | — | `_event` for unused params |
 
 ## Refactoring Code Generation Functions
 
@@ -246,21 +221,34 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
 2. **Build the project**: `cmake --build build --config Debug`
 3. **Verify code generation unchanged**:
    ```powershell
-   cd ..\wxUiEditor_tests\; ../../wxUiEditor/build/bin/Debug/wxUiEditor.exe --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-   ```
-4. **On verification failure** (exit code ≠ 0):
-   - Read `c:\rwCode\wxUiEditor_tests\quick\quick.log` to see differences
-   - Analyze what changed in generated code
-   - Fix the refactoring to preserve original behavior
+   Pre-Submission Checklist
+
+### C++ Code
+- [ ] Standard Library checked before external libraries
+- [ ] Frozen headers included for immutable containers
+- [ ] Enum classes have explicit underlying types
+- [ ] Bool-returning functions marked `[[nodiscard]]`
+- [ ] All conditionals braced (even single statements)
+- [ ] Protected code sections preserved ("Do not edit" markers)
+- [ ] Node/NodeProperty use `as_view()` methods
+- [ ] Generators derive from `src/generate/base_generator.h`
+
+### Multi-Language Generation
+- [ ] Correct indentation: C++/Perl/Python (4 spaces), Ruby (2 spaces)
+- [ ] Line length compliance: Ruby (80), Python (90), C++/Perl (100)
+- [ ] wxWidgets prefix: Perl/Ruby (`Wx:`), Python (`wx.Codegen Refactoring Protocol
+
+**Applies to:** Any changes in `src/generate/` or `src/nodes/`
+
+**Workflow:**
+1. Make requested changes
+2. Build: `cmake --build build --config Debug`
+3. Verify: `cd ..\wxUiEditor_tests\; ../../wxUiEditor/build/bin/Debug/wxUiEditor.exe --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }`
+4. On failure (exit code ≠ 0):
+   - Read diff: `c:\rwCode\wxUiEditor_tests\quick\quick.log`
+   - Analyze changes in generated code
+   - Fix refactoring to preserve behavior
    - Rebuild and re-verify
-5. **Task is complete only when**:
-   - Build succeeds with no errors
-   - Verification exits with code 0 (no differences in generated code)
+5. **Success criteria:** Build clean + verification exit code 0
 
-This ensures refactoring doesn't inadvertently change code generation output.
-
-### Code Generation Verification
-When asked to "verify code generation" or "verify codegen":
-```powershell
-cd ..\wxUiEditor_tests\; ../../wxUiEditor/build/bin/Debug/wxUiEditor.exe --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-```
+**Standalone verification command:**

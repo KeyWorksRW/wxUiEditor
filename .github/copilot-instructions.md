@@ -16,6 +16,8 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 - Project types: `ttwx::ViewVector` (not `tt_view_vector`)
 - Exception: Don't refactor existing usage unless explicitly requested
 
+**Note for modernization agent:** When modernizing code, avoid using deprecated `src/tt/` types in any transformations
+
 ### ⚡ Performance-Critical Paths
 **Directories:** `src/nodes/`, `src/generate/` (executed frequently during code generation)
 
@@ -24,6 +26,8 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 2. View parameters: `std::string_view` > `std::string`
 3. Cache frequently-accessed values: `get_CodePreference()` results
 4. Node access: `as_view()` > `as_string()` (always prefer views)
+
+**Complexity refactoring:** When reducing function complexity in `src/nodes/` or `src/generate/`, avoid extracting single-use helpers with complexity <20 (higher threshold due to performance impact)
 
 ### 🏗️ Core Architecture
 

@@ -1,6 +1,6 @@
 ---
 description: 'Provide task details or a file path, and I will create a GitHub issue for the cloud Copilot coding agent with all required sections and coding standards.'
-tools: ['vscode', 'read', 'github/*']
+tools: ['vscode', 'read']
 ---
 
 # GitHub Issue Creation Agent

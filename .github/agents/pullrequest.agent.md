@@ -1,6 +1,6 @@
 ---
 description: 'Analyze all branch changes and generate a comprehensive PR description for review in the chat panel. Reviews commits, diffs, and context to generate professional documentation.'
-tools: ['vscode', 'execute', 'read', 'search']
+tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent']
 ---
 
 # Pull Request Description Agent
@@ -78,7 +78,9 @@ Review all changes on current branch and generate a professional PR description 
 
 ## Output Format
 
-Generate a complete, copy-ready PR description in markdown:
+**CRITICAL:** The PR description MUST be wrapped in a markdown code block (triple backticks) so the user can click the copy button instead of manually selecting text.
+
+Generate a complete, copy-ready PR description wrapped in a markdown code block:
 
 ```markdown
 ## PR Description

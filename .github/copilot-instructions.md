@@ -73,7 +73,7 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 ## Shell Environment
 
 ### Configuration Priority
-1. **Check `.vscode/shell.md` first** - if exists, follow all instructions within
+1. **Check `.private/shell.md` first** - if exists, follow all instructions within
 2. **Default**: Use cross-platform commands (git, cmake, ninja) when shell.md absent
 
 ### Build Commands
@@ -99,7 +99,7 @@ Use these commands for building the project:
    - Re-run build to verify the fix
 
 ### Local Environment Extensions
-When working in a local VS Code environment, additional shell configuration may be available in `.vscode/shell.md` - check and follow those instructions if present for platform-specific command syntax and custom agent workflows.
+When working in a local VS Code environment, additional shell configuration may be available in `.private/shell.md` - check and follow those instructions if present for platform-specific command syntax and custom agent workflows.
 
 ### PowerShell Command Reference (Windows)
 

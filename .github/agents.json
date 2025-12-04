@@ -1,6 +1,12 @@
 {
   "agents": [
     {
+      "name": "architect",
+      "description": "Analyze complex problems and create detailed architectural plans before implementation.",
+      "instructions": ".github/agents/architect.agent.md",
+      "scope": "workspace"
+    },
+    {
       "name": "modern",
       "description": "Modernize C++ code to C++20 standards and fix lint warnings.",
       "instructions": ".github/agents/modern.agent.md",

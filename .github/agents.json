@@ -1,0 +1,47 @@
+{
+  "agents": [
+    {
+      "name": "modern",
+      "description": "Modernize C++ code to C++20 standards and fix lint warnings.",
+      "instructions": ".github/agents/modern.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "complex",
+      "description": "Reduce function complexity by extracting helper functions.",
+      "instructions": ".github/agents/complex.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "code_review",
+      "description": "Conduct thorough code reviews, identifying bugs, safety issues, and maintainability concerns.",
+      "instructions": ".github/agents/code_review.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "commit",
+      "description": "Generate concise, imperative-mood commit messages.",
+      "instructions": ".github/agents/commit.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "pullrequest",
+      "description": "Analyze branch changes and generate comprehensive PR descriptions.",
+      "instructions": ".github/agents/pullrequest.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "issue",
+      "description": "Create GitHub issues for the cloud Copilot coding agent.",
+      "instructions": ".github/agents/issue.agent.md",
+      "scope": "workspace"
+    },
+        {
+      "name": "ttx",
+      "description": "Replace tt_string, tt_string_view, tt_string_vector, and tt_view_vector with modern equivalents.",
+      "instructions": ".github/agents/ttx.agent.md",
+      "scope": "workspace"
+    }
+
+  ]
+}

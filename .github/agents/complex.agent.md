@@ -32,17 +32,22 @@ LineHelper Function Creation
 | **State sharing** | Member variables (class) or parameters (non-class) | — | — |
 ### Creating Helper Functions
 
-**Class methods:** Create as private class methods. Mark `static` if no instance members accessed. Place near main function.
-
-**Non-class functions:** Create in anonymous namespace at file top. Mark `static`.
-
-**State sharing:** Use member variables for class methods, parameters for non-class functions.
+- **Within a class and needing access to class members:** Create **private class methods**
+  - If state information needs to be shared between two or more helper methods, add the state as a **private class member variable**
+  - This approach keeps related functionality encapsulated within the class and makes the interface clearer
+- **No access to class members needed:** Place the function in an **anonymous namespace**
+  - This provides internal linkage and avoids polluting the global namespace
+  - Preferred over `static` functions at file scope in C++
 
 **Example - Class method helpers:**
 ```cpp
 class FileCodeWriter {
 private:
-    // Helper accesses m_buffer, m_org_buffer - NOT static
+    // Shared state between helpers
+    std::string m_buffer;
+    std::string m_org_buffer;
+
+    // Helper accesses instance members - private class method
     auto HandleEqualSizeBuffers() -> int {
         if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin())) {
             return write_current;
@@ -50,7 +55,7 @@ private:
         return ProcessDifferentSizeFiles();
     }
 
-    // Helper doesn't access instance members - mark static
+    // Helper doesn't access instance members - can be static
     static auto CalculateChecksum(const std::string& data) -> int {
         int sum = 0;
         for (char ch : data) { sum += ch; }

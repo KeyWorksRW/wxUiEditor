@@ -42,12 +42,35 @@
       "instructions": ".github/agents/issue.agent.md",
       "scope": "workspace"
     },
-        {
+    {
       "name": "ttx",
       "description": "Replace tt_string, tt_string_view, tt_string_vector, and tt_view_vector with modern equivalents.",
       "instructions": ".github/agents/ttx.agent.md",
       "scope": "workspace"
+    },
+    {
+      "name": "gen_cpp",
+      "description": "Generate C++11 code for wxWidgets 3.2 using the Code class for in-memory code generation.",
+      "instructions": ".github/agents/gen_cpp.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "gen_perl",
+      "description": "Generate Perl code for wxPerl 3.3 using the Code class for in-memory code generation.",
+      "instructions": ".github/agents/gen_perl.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "gen_python",
+      "description": "Generate Python code for wxPython 4.2 using the Code class for in-memory code generation.",
+      "instructions": ".github/agents/gen_python.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "gen_ruby",
+      "description": "Generate Ruby code for wxRuby 1.6.1 using the Code class for in-memory code generation.",
+      "instructions": ".github/agents/gen_ruby.agent.md",
+      "scope": "workspace"
     }
-
   ]
 }

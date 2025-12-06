@@ -70,6 +70,69 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 **UI patterns:**
 - Busy cursor: `wxBeginBusyCursor()` / `wxEndBusyCursor()` > `wxBusyCursor` (cross-platform reliability)
 
+## Custom Language Generation Agents
+
+### Overview
+This project includes four custom agents for code generation in different target languages. These agents provide specialized context and instructions for writing code generation logic using the `Code` class.
+
+**When to use language-specific agents:**
+- You are working in `src/generate/` files (code generator classes)
+- You are writing or modifying code generation logic (using `Code` class methods)
+- You need to generate code for a specific target language
+
+**When NOT to use language-specific agents:**
+- Writing regular C++ application code anywhere in the project
+- Working in `src/nodes/`, `src/ui/`, `src/panels/`, etc. (project code, not generation code)
+- The **default Copilot behavior** applies (standard C++20 development)
+
+### Available Language Agents
+
+#### gen_cpp
+- **Target:** C++11 code for wxWidgets 3.2
+- **Used for:** Generating C++ code using `Code` class with `GEN_LANG_CPLUSPLUS`
+- **Key:** Handles wxWidgets C++ patterns, object creation, method calls
+- **File:** `.github/agents/gen_cpp.agent.md`
+
+#### gen_perl
+- **Target:** Perl code for wxPerl 3.3
+- **Used for:** Generating Perl code using `Code` class with `GEN_LANG_PERL`
+- **Key:** Handles `Wx::` prefix conversion, method syntax, event binding patterns
+- **File:** `.github/agents/gen_perl.agent.md`
+
+#### gen_python
+- **Target:** Python code for wxPython 4.2
+- **Used for:** Generating Python code using `Code` class with `GEN_LANG_PYTHON`
+- **Key:** Handles `wx.` prefix conversion, `self.` prefixing, event binding patterns
+- **File:** `.github/agents/gen_python.agent.md`
+
+#### gen_ruby
+- **Target:** Ruby code for wxRuby 1.6.1
+- **Used for:** Generating Ruby code using `Code` class with `GEN_LANG_RUBY`
+- **Key:** Handles `Wx::` prefix, snake_case conversion, 2-space indentation, event binding patterns
+- **File:** `.github/agents/gen_ruby.agent.md`
+
+### How to Use
+
+**Example workflow:**
+1. Open a file in `src/generate/` that needs code generation changes
+2. Select the relevant code block that needs work
+3. Open the appropriate language agent (e.g., `gen_python` if working on Python generation)
+4. Ask the agent to generate or modify the code generation logic
+5. The agent will use Code class methods and language-specific patterns
+6. Paste the result back into your file
+
+**Or as a single agent session:**
+1. Start with one of the gen_* agents already active
+2. Ask it to work on code generation within `src/generate/` files
+3. The agent will automatically use proper Code class patterns for the language
+
+### Important Notes
+
+- **Default behavior (no agent):** Working in `src/generate/` without a language agent active means you are writing regular C++20 code (the project language itself)
+- **With language agent active:** You are writing C++20 code that generates target language code using the Code class
+- **Code class is crucial:** Always use `Code` class methods (`Add()`, `Eol()`, `Comma()`, etc.) rather than direct string operations
+- **Build verification:** After changes, build with `cmake --build build --config Debug` to verify correctness
+
 ## Shell Environment
 
 ### Configuration Priority
@@ -162,11 +225,13 @@ When working in a local VS Code environment, additional shell configuration may 
 4. **Frozen containers** – Immutable collections (`frozen/include/frozen`)
 5. **❌ NEVER `src/tt/` types** – See Legacy Code Restrictions
 
-### Reducing Function Complexity
-- When asked to reduce the complexity of a class method, create helper functions as **private class methods** rather than using an anonymous namespace
-- If the new private class methods can be made `static`, then do so
-- If state information needs to be shared between two or more helper methods, add the state as a **private class member variable**
-- This approach keeps related functionality encapsulated within the class and makes the interface clearer
+### Creating Helper Functions
+- **Within a class and needing access to class members:** Create **private class methods**
+  - If state information needs to be shared between two or more helper methods, add the state as a **private class member variable**
+  - This approach keeps related functionality encapsulated within the class and makes the interface clearer
+- **No access to class members needed:** Place the function in an **anonymous namespace**
+  - This provides internal linkage and avoids polluting the global namespace
+  - Preferred over `static` functions at file scope in C++
 
 ### Frozen Containers (Immutable)
 ```cpp

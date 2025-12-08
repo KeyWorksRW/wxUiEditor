@@ -71,6 +71,24 @@
       "description": "Generate Ruby code for wxRuby 1.6.1 using the Code class for in-memory code generation.",
       "instructions": ".github/agents/gen_ruby.agent.md",
       "scope": "workspace"
+    },
+    {
+      "name": "wxperl",
+      "description": "Expert wxPerl GUI development using modern Perl practices to create wxWidgets UI applications.",
+      "instructions": ".github/agents/wxperl.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "wxpython",
+      "description": "Expert wxPython GUI development using modern Python practices to create wxWidgets UI applications.",
+      "instructions": ".github/agents/wxpython.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "wxruby",
+      "description": "Expert wxRuby GUI development using modern Ruby practices to create wxWidgets UI applications.",
+      "instructions": ".github/agents/wxruby.agent.md",
+      "scope": "workspace"
     }
   ]
 }

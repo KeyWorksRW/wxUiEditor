@@ -441,6 +441,23 @@ set( workflow_list
     ../.github/workflows/test_clang_format.yml
 )
 
+set ( agents
+    ../.github/agents/architect.agent.md
+    ../.github/agents/code_review.agent.md
+    ../.github/agents/commit.agent.md
+    ../.github/agents/complex.agent.md
+    ../.github/agents/issue.agent.md
+    ../.github/agents/modern.agent.md
+    ../.github/agents/pullrequest.agent.md
+    ../.github/agents/ttx.agent.md
+
+    ../.github/agents/gen_cpp.agent.md
+    ../.github/agents/perl.agent.md
+    ../.github/agents/python.agent.md
+    ../.github/agents/ruby.agent.md
+
+)
+
 # ============================================================================
 # Documentation Files Reference
 # ============================================================================

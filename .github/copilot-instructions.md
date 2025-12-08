@@ -231,6 +231,7 @@ Use these methods for building (in priority order):
   - This approach keeps related functionality encapsulated within the class and makes the interface clearer
 - **No access to class members needed:** Place the function in an **anonymous namespace**
   - This provides internal linkage and avoids polluting the global namespace
+  - **Do NOT use `static` keyword** - anonymous namespace already provides internal linkage
   - Preferred over `static` functions at file scope in C++
 
 ### Frozen Containers (Immutable)

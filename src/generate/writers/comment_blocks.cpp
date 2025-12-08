@@ -21,8 +21,20 @@ R"===(##########################################################################
 ###############################################################################
 
 # pylint: disable=all
-# flake8: noqa
+# flake8: noqa: start
 
+)===" ;
+
+const char* const end_python_block =
+R"===(# ************* End of generated code ***********
+# DO NOT EDIT THIS COMMENT BLOCK!
+#
+# Code below this comment block will be preserved
+# if the code for this class is re-generated.
+# pylint: enable=all
+# flake8: noqa: end
+# ***********************************************
+# </auto-generated>
 )===" ;
 
 const char* const txt_PerlCmtBlock =
@@ -38,25 +50,14 @@ R"===(##########################################################################
 
 )===" ;
 
-const char* const end_python_block =
-R"===(# ************* End of generated code ***********
-# DO NOT EDIT THIS COMMENT BLOCK!
-#
-# Code below this comment block will be preserved
-# if the code for this class is re-generated.
-# ***********************************************
-# pylint: enable=all
-# </auto-generated>
-)===" ;
-
 const char* const end_perl_block =
 R"===(# ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
 #
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
-# ***********************************************
 ## use critic
+# ***********************************************
 # </auto-generated>
 )===" ;
 
@@ -79,8 +80,8 @@ R"===(# ************* End of generated code ***********
 #
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
-# ***********************************************
 # rubocop:enable all
+# ***********************************************
 # </auto-generated>
 )===" ;
 
@@ -95,9 +96,17 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format off
 // NOLINTBEGIN
-// cppcheck-suppress *
+// cppcheck-suppress-begin *
 
 )===" ;
+
+// We used to have a // Clang-format off to match the clang-format in the top header block
+// (txt_SlashCmtBlock), however that will indent that comment line containing it so that the last
+// line(s) we write will change if clang-format is ever run on the file. That in turn makes the
+// files look different. So we can either try to parse whitespace, or simply leave it to the dev
+// whether or not they want to turn it back on. Most devs will be deriving from the class, in which
+// case it won't matter because they aren't adding anything to the file. Those that do, will need to
+// add their own clang-format off if they want it.
 
 const char* const end_cpp_block =
 R"===(
@@ -108,7 +117,7 @@ R"===(
 // if the code for this class is re-generated.
 //
 // NOLINTEND
-// clang-format on
+// cppcheck-suppress-end *
 // ***********************************************
 // </auto-generated>
 )===" ;

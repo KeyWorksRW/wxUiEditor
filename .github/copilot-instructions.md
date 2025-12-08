@@ -131,7 +131,7 @@ This project includes four custom agents for code generation in different target
 - **Default behavior (no agent):** Working in `src/generate/` without a language agent active means you are writing regular C++20 code (the project language itself)
 - **With language agent active:** You are writing C++20 code that generates target language code using the Code class
 - **Code class is crucial:** Always use `Code` class methods (`Add()`, `Eol()`, `Comma()`, etc.) rather than direct string operations
-- **Build verification:** After changes, build with `cmake --build build --config Debug` to verify correctness
+- **Build verification:** After changes, use `cmake --build build --config Debug` to verify correctness
 
 ## Shell Environment
 
@@ -140,15 +140,18 @@ This project includes four custom agents for code generation in different target
 2. **Default**: Use cross-platform commands (git, cmake, ninja) when shell.md absent
 
 ### Build Commands
-Use these commands for building the project:
-- **Debug build:** `cmake --build build --config Debug`
-- **Release build:** `cmake --build build --config Release`
-- **Via ninja directly:** `ninja -C build -f build-Debug.ninja` (if cmake is not available)
+Use these methods for building (in priority order):
+1. **Try task first:** `run_task` with "build debug" - fastest when available
+2. **Fallback to cmake:** `cmake --build build --config Debug` - universal, works on all systems
+
+**Pattern:** Try the task; if you get "Task not found", use cmake instead. Both methods work correctly.
+
+**Note:** `cmake --build` respects whatever build system is configured (Ninja, Make, MSBuild, etc.).
 
 ### Build Verification Protocol (CRITICAL)
 
 **Verification workflow:**
-1. Use `run_in_terminal` for builds (ignore task completion status)
+1. Build using `run_task` or `run_in_terminal`
 2. **Check exit code** - Must be 0 for success
 3. **Look for error indicators** in output:
    - `error:` or `error C` (compiler errors)
@@ -162,9 +165,6 @@ Use these commands for building the project:
    - Re-run build to verify the fix
 
 ### Local Environment Extensions
-When working in a local VS Code environment, additional shell configuration may be available in `.private/shell.md` - check and follow those instructions if present for platform-specific command syntax and custom agent workflows.
-
-### PowerShell Command Reference (Windows)
 
 | Operation | PowerShell Syntax |
 |-----------|-------------------|

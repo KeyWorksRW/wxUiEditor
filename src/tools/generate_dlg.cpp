@@ -265,6 +265,9 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
             results_dlg.m_lb_files->Append(relative_path);
         }
 
+        // TODO: [Randalphwa - 11-29-2025] If we derive from GeneratedResultsDlg then we could make
+        // a hidden section that contains "Updated files: and a dropdown combo box that contains the
+        // names of all the files that have been updated.
         auto msgs = results.msgs;  // Make a mutable copy
         if (results.updated_files.size() == 1)
         {

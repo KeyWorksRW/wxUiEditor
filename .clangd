@@ -1,15 +1,30 @@
 Index:
   Background: Build
-  Exclude:
-    - ".private"
-    - ".vscode"
-    - "art_src"
-    - "docs"
-    - "dev_docs"
-    - "build"
-    - "codegen_test"
-    - "debian"
-    - "import_tests"
-    - "src_archive"
-    - "Testing"
-    - "generate/archived"
+  StandardLibrary: false
+
+---
+If:
+  PathExclude: |
+    (\.private
+    |\.vscode
+    |art_src
+    |docs
+    |dev_docs
+    |build
+    |codegen_test
+    |debian
+    |import_tests
+    |src_archive
+    |Testing
+    |generate/archived)/.*
+Index:
+  Background: Skip
+
+---
+Completion:
+  AllScopes: true
+
+InlayHints:
+  Enabled: true
+  ParameterNames: true
+  DeducedTypes: true

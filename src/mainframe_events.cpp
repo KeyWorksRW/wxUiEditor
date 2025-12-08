@@ -540,26 +540,10 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
         return;
     }
 
-    // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui
-    // extension
-    wxFileDialog dialog(
-        this, "Open or Import Project", wxEmptyString, wxEmptyString,
-        wxString::FromUTF8(std::format("wxUiEditor Project File (*{})|{};{}"
-                                       "|Windows Resource File (*.rc)|*.rc"
-                                       "|wxCrafter Project File (*.wxcp)|*.wxcp"
-                                       "|DialogBlocks Project File (*.fjd)|*.fjd"
-                                       "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                       "|wxGlade File (*.wxg)|*.wxg"
-                                       "|wxSmith File (*.wxs)|*.wxs"
-                                       "|XRC File (*.xrc)|*.xrc||",
-                                       PROJECT_FILE_EXTENSION, PROJECT_FILE_EXTENSION,
-                                       PROJECT_LEGACY_FILE_EXTENSION)
-                               .c_str()),
-        wxFD_OPEN);
-
-    if (dialog.ShowModal() == wxID_OK)
+    auto path = ShowOpenProjectDialog(this);
+    if (!path.IsEmpty())
     {
-        tt_string filename = dialog.GetPath().utf8_string();
+        tt_string filename = path.utf8_string();
         // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui
         // extension
         if (filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) ||
@@ -571,7 +555,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
         {
             Project.ImportProject(filename);
         }
-    };
+    }
 }
 
 void MainFrame::OnOpenRecentProject(wxCommandEvent& event)

@@ -144,3 +144,7 @@ void SetUniqueRibbonToolID(Node* node);
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
 auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
                     size_t compressed_size) -> bool;
+
+// Show the Open/Import Project file dialog and return the selected filename.
+// Returns an empty string if the user cancels.
+auto ShowOpenProjectDialog(wxWindow* parent) -> wxString;

@@ -16,6 +16,7 @@
 
 #include "mainframe.h"        // Main frame
 #include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 #include "version.h"          // Version numbers generated in ../CMakeLists.txt
 
 // wxGenericHyperlinkCtrl has a DoContextMenu() method that displays "Copy URL" which isn't useful
@@ -274,24 +275,10 @@ auto DsisplayStartupDlg(wxWindow* parent) -> bool
                     // wxSmith resources -- so it would actually make sense to process it since
                     // we can combine all of those resources into our single project file.
 
-                    wxFileDialog dialog(
-                        nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
-                        wxString::FromUTF8(std::format("wxUiEditor Project File (*{})|*{}"
-                                                       "|wxCrafter Project File (*.wxcp)|*.wxcp"
-                                                       "|DialogBlocks Project File (*.fjd)|*.fjd"
-                                                       "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                                       "|wxGlade File (*.wxg)|*.wxg"
-                                                       "|wxSmith File (*.wxs)|*.wxs"
-                                                       "|XRC File (*.xrc)|*.xrc"
-                                                       "|Windows Resource File (*.rc)|*.rc||",
-                                                       PROJECT_FILE_EXTENSION,
-                                                       PROJECT_FILE_EXTENSION)
-                                               .c_str()),
-                        wxFD_OPEN);
-
-                    if (dialog.ShowModal() == wxID_OK)
+                    auto path = ShowOpenProjectDialog(nullptr);
+                    if (!path.IsEmpty())
                     {
-                        tt_string filename = dialog.GetPath().utf8_string();
+                        tt_string filename = path.utf8_string();
                         if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
                                                             tt::CASE::either) &&
                             !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
@@ -299,7 +286,7 @@ auto DsisplayStartupDlg(wxWindow* parent) -> bool
                         {
                             return Project.ImportProject(filename);
                         }
-                        return Project.LoadProject(dialog.GetPath());
+                        return Project.LoadProject(path);
                     }
                 }
         }

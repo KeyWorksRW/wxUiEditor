@@ -13,6 +13,7 @@
 #include <wx/cshelp.h>   // Context-sensitive help support classes
 #include <wx/dir.h>      // wxDir is a class for enumerating the files in a directory
 #include <wx/filedlg.h>  // wxFileDialog base header
+#include <wx/msgout.h>   // wxMessageOutput and related classes
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
@@ -201,7 +202,17 @@ int App::OnRun()
     parser.AddLongSwitch("load_last", "Load last opened project",
                          wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
 
+    parser.AddLongSwitch("data-version", "return current data_version", wxCMD_LINE_HIDDEN);
+
     parser.Parse();
+
+    // Return current data_version for AI tools and exit immediately
+    if (parser.Found("data-version"))
+    {
+        wxMessageOutput::Get()->Printf("%d", curSupportedVer);
+        return 0;
+    }
+
 #if defined(INTERNAL_TESTING)
     m_TestingMenuEnabled = true;
 #endif

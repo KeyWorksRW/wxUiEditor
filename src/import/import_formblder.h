@@ -5,6 +5,17 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements FormBuilder, an importer for wxFormBuilder .fbp XML project
+// files. The class extends ImportXML and converts FormBuilder's object/property XML structure to
+// wxUiEditor Nodes using CreateFbpNode (recursive node creation), ProcessPropValue (unknown
+// property handler), BitmapProperty (image path resolution), and ConvertNameSpaceProp (namespace
+// conversion). Import() loads the .fbp file, extracts project-level settings (m_embedPath,
+// m_eventGeneration, m_baseFile, m_class_decoration), and delegates to CreateFbpNode for tree
+// building. FormBuilder uses different property naming conventions than wxUiEditor, requiring
+// extensive mapping via ImportNameMap lookups and custom handling for version-specific differences
+// (m_VerMinor). The importer handles FormBuilder's unique bitmap embedding, event generation
+// settings, and class decoration patterns to produce compatible wxUiEditor project structures.
+
 #pragma once
 
 #include <string>

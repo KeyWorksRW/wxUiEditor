@@ -5,6 +5,19 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements resForm, managing Windows Resource dialog/menu import and layout
+// conversion. The class stores m_ctrls (vector<resCtrl> for all controls), m_form_node
+// (NodeSharedPtr for wxDialog/wxPanel/ wxMenuBar), dual rectangles (m_du_rect, m_pixel_rect), sizer
+// nodes (m_dlg_sizer, m_stdButtonSizer), and m_form_type (form_dialog/form_panel/form_menu).
+// ParseDialog/ParseMenu extract .rc syntax into resCtrl objects, CreateDialogLayout orchestrates
+// layout analysis using grid detection (GridSizerNeeded, GroupGridSizerNeeded, CheckForFlexGrid),
+// static box grouping (CollectGroupControls, AddStaticBoxChildren), two-column pair detection
+// (AddTwoColumnPairs, AddTwoColumnStaticText), and button standardization (CheckForStdButtons).
+// Helper methods (is_same_top, is_within_vertical, is_same_left/right, isInRange with FudgeAmount)
+// compare control positions for alignment detection. SortCtrls orders controls for processing,
+// AdoptChild adds to Node tree with duplicate prevention. The class converts absolute Windows
+// dialog coordinates to wxWidgets sizer-based layouts.
+
 #pragma once
 
 #include "gen_enums.h"         // Enumerations for generators

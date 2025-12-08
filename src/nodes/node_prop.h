@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements NodeProperty, storing user-configured property values for Node
+// instances. Each property holds m_declaration (PropDeclaration* for metadata), m_node (parent
+// Node*), m_value (tt_string storage), and m_constant (cached friendly-name-to-wx-constant
+// conversion). The class provides type-safe setters (set_value overloads for
+// int/wxColour/wxPoint/etc.) and getters (as_int/as_bool/as_color/as_font/etc.) with lazy parsing.
+// Complex properties use custom structs (NODEPROP_STATUSBAR_FIELD, NODEPROP_CHECKLIST_ITEM, etc.)
+// with serialization methods (convert_statusbar_fields, as_checklist_items) handling pipe-separated
+// storage format. The as_constant method converts friendly names ("Default") to wxWidgets constants
+// ("wxID_ANY"), caching in m_constant. HasValue checks non-default/non-empty states. Property
+// access delegates to m_declaration for type info (get_name, get_type, isProp) enabling generic
+// property grid and code generation logic.
+
 #pragma once
 
 #include "font_prop.h"  // FontProperty class

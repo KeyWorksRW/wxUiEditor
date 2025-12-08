@@ -5,6 +5,19 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements concrete UndoAction-derived classes for all undoable operations
+// in wxUiEditor. Each class encapsulates a specific operation: InsertNodeAction/RemoveNodeAction
+// (node tree modifications), ModifyPropertyAction/ModifyProperties (property changes),
+// ModifyEventAction (event handler changes), ChangePositionAction/ChangeParentAction (node
+// repositioning), ChangeSizerType/ChangeNodeType (component type changes),
+// AppendGridBagAction/GridBagAction (wxGridBagSizer operations), and SortProjectAction (project
+// sorting). Classes store both change and revert states (m_change_value/m_revert_value,
+// m_change_parent/m_revert_parent, m_new_gen_sizer/m_old_node) enabling bidirectional execution.
+// Change() applies the operation (called on push and redo), Revert() undoes it (called on undo).
+// State tracking includes m_old_selected (restore selection), m_fire_created_event (event control),
+// m_pos (insertion position). GetMemorySize() reports memory usage for history limits.
+// GroupUndoActions (via ModifyProperties) batches operations into atomic undo units.
+
 #pragma once
 
 #include "gen_enums.h"   // Enumerations for generators

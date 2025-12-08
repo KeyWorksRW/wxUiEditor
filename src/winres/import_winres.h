@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements WinResource, an importer for Windows .rc resource files. The
+// class extends ImportXML and parses text-based .rc format (not XML despite base class) using
+// tt_string_vector line processing. Import/ImportRc load .rc files, InsertDialogs filters dialog
+// selection, ParseDialog/ParseMenu/ParseStringTable extract resources, and FormToNode converts
+// resForm structures to Nodes. Resource lookup methods (FindBitmap, FindIcon, FindStringID) access
+// m_map_bitmaps, m_map_icons, m_map_stringtable populated during parsing. The class handles Windows
+// code page conversion via ConvertCodePageString (m_codepage tracking) and #include directive
+// tracking (m_include_lines). m_forms stores parsed resForm objects before Node conversion. The
+// importer translates Windows Resource format (dialog units, Windows controls, resource IDs,
+// STRINGTABLE) to wxWidgets equivalents, supporting legacy Windows application migration to
+// wxWidgets with wxUiEditor.
+
 #include <optional>
 
 #pragma once

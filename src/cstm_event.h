@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements CustomEvent, a polymorphic wxEvent subclass for broadcasting
+// wxUiEditor-specific notifications. The class uses union-like member storage (m_node, m_property,
+// m_event, m_undo_cmd) with constructors selecting the active member based on event type. Event
+// declarations (EVT_ProjectUpdated, EVT_NodeCreated, EVT_NodePropChange, EVT_MultiPropChange, etc.)
+// define custom event types for project changes, node operations, property modifications, and
+// undo/redo actions. Getter methods (getNode, GetNodeProperty, GetEventNode, GetUndoCmd) retrieve
+// the payload corresponding to the event type. This enables decoupled communication between UI
+// panels (Navigation, Property Grid, Mockup) and core logic (undo stack, node tree) following the
+// observer pattern. Events propagate through wxWidgets' event system allowing multiple listeners to
+// react to operations like node creation (EVT_NodeCreated), selection changes (EVT_NodeSelected),
+// or parent modifications (EVT_ParentChanged).
+
 #pragma once
 
 #include <wx/event.h>

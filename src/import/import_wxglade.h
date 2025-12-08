@@ -5,6 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements WxGlade, an importer for wxGlade XML project files. The class
+// extends ImportXML and converts wxGlade's XRC-like XML format to wxUiEditor Nodes using
+// CreateGladeNode (recursive node creation with wxGlade-specific property handling), CreateMenus
+// (wxMenuBar hierarchy processing), and CreateToolbar (wxToolBar tool extraction). Override methods
+// HandleUnknownProperty and HandleNormalProperty provide wxGlade-specific property conversion for
+// cases where wxGlade's property names/values differ from standard XRC or wxUiEditor conventions.
+// Import() orchestrates file loading and tree building. The importer handles wxGlade's unique
+// property naming, widget hierarchies, and XRC deviations to produce compatible wxUiEditor project
+// structures, supporting Python-oriented wxGlade projects with multi-language output.
+
 #pragma once
 
 #include "import_xml.h"  // ImportXML -- Base class for XML importing

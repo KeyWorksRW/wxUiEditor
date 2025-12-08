@@ -5,6 +5,19 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements ImportXML, the abstract base class for all project importers
+// (FormBuilder, wxCrafter, wxGlade, wxSmith, DialogBlocks, XRC). The class provides common XML
+// parsing infrastructure using pugixml (m_docOut for output document, LoadDocFile for parsing),
+// Node tree building (CreateXrcNode for XRC- compliant importers, m_project for root node), and
+// property/event processing (ProcessProperties, ProcessFont, ProcessBitmap, ProcessHandler,
+// ProcessAttributes, ProcessContent, ProcessNotebookTabs). Derived classes override Import() for
+// file loading and optionally HandleUnknownProperty/HandleNormalProperty for format-specific
+// conversions. MapPropName/MapClassName translate external names to GenEnum values. Helper methods
+// (ConvertToGenName, ProcessStyle, HandleSizerItemProperty) handle common conversion patterns. The
+// class tracks m_errors, m_language (GEN_LANG_*), and m_notebook_tabs (for tab label mapping),
+// providing extensible framework for importing diverse XML-based UI designer formats into
+// wxUiEditor's Node tree structure.
+
 #pragma once
 
 #include <optional>

@@ -5,6 +5,20 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements ProjectHandler, the singleton (Meyer's pattern) managing the
+// active wxUiEditor project. The class owns m_project_node (root Node containing all
+// forms/folders), m_project_path (wxFileName for .wxui file location), and version tracking
+// (m_ProjectVersion, m_OriginalProjectVersion for compatibility warnings). Key responsibilities:
+// project loading (LoadProject parsing XML, ImportProject for external formats), file path
+// resolution (get_OutputPath handling folder overrides, language-specific extensions, base/derived
+// file separation), language preference management (get_CodePreference with folder overrides,
+// get_GenerateLanguages for multi-language projects), and form collection (CollectForms,
+// get_FirstFormChild). Helper nodes (m_form_BundleSVG, m_ImagesForm, m_DataForm) cache special
+// forms found by FindWxueFunctions. Methods like get_BaseDirectory/get_DerivedDirectory resolve
+// output paths considering folder-specific overrides. FixupDuplicatedNode ensures unique
+// class/filenames. Property access delegates to m_project_node (as_string, as_bool, HasValue) for
+// project-level configuration.
+
 #pragma once  // NOLINT(#pragma once in main file)
 
 #include <cstdint>  // for std::uint8_t

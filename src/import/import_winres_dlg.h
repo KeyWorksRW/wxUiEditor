@@ -5,6 +5,16 @@
 // Any changes before that block will be lost if it is re-generated!
 ///////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements ImportWinRes, a dialog for selecting Windows Resource (.rc)
+// dialogs to import. The class extends wxDialog with UI components (m_fileResource for .rc file
+// selection, m_checkListResUI for dialog list, m_btnSelectAll/m_btnClearAll for batch operations)
+// and event handlers (OnResourceFile parses .rc on selection, OnSelectAll/OnClearAll toggle
+// checkboxes, OnInit populates list, OnOk validates selection). ReadRcFile() parses the .rc file to
+// extract dialog names into m_dialogs vector, storing selected dialogs for import. GetRcFilename()
+// and GetDlgNames() provide access to m_rcFilename and m_dialogs for the WinResource importer. The
+// dialog enables selective import from .rc files containing multiple dialog resources, supporting
+// Windows Resource to wxUiEditor conversion workflows.
+
 // clang-format off
 
 #pragma once

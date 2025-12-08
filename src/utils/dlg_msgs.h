@@ -5,6 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file declares utility functions for displaying error dialogs during project
+// import and code generation operations. Import functions (dlgCannotParse, dlgInvalidProject,
+// dlgImportError) handle XML parsing failures, unsupported project formats, and general exceptions
+// with contextual error messages including filename and project type. Code generation function
+// (dlgGenInternalError) reports exceptions during code generation with file context. All functions
+// wrap wxMessageDialog creation to provide consistent error presentation with appropriate icons,
+// buttons, and caption text. They accept pugi::xml_parse_result, std::exception, std::string_view
+// parameters enabling detailed error reporting from importers (FormBuilder, Glade, XRC, etc.) and
+// generators (C++, Python, Ruby, Perl) to guide users in troubleshooting failed operations.
+
 #pragma once
 
 #include <pugixml.hpp>

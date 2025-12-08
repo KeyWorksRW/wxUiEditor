@@ -5,6 +5,19 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file provides utility functions supporting property manipulation, code
+// generation, and UI operations throughout wxUiEditor. Key categories: property flag management
+// (SetPropFlag, ClearPropFlag, isPropFlagSet for bitlist properties), name conversions
+// (FileNameToVarName sanitizing filenames to valid C++/ Python/Ruby identifiers, ConvertToSnakeCase
+// for Ruby naming, ConvertToUpperSnakeCase for constants), validation (isValidVarName checking
+// language-specific identifier rules), DPI scaling (DlgPoint, DlgSize, isScalingEnabled handling
+// FromDIP conversions), language mapping (GenLangToString, ConvertToGenLang, GetLanguageExtension
+// for GEN_LANG_* enums), color/font conversions (ConvertToSystemColour, ConvertFontFamilyToString),
+// filename generation (CreateBaseFilename, CreateDerivedFilename for base/derived class pairs), and
+// specialized helpers (SetStcColors for syntax highlighting, SetUniqueRibbonToolID for ID
+// generation, CopyStreamData for zlib compression). Functions follow pattern of standalone
+// utilities or namespace-grouped (utils::) for newer additions.
+
 #pragma once
 
 #include <optional>

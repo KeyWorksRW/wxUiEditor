@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements WxCrafter, an importer for wxCrafter JSON project files using
+// RapidJSON for parsing. The class extends ImportXML (despite processing JSON) and converts
+// wxCrafter's JSON object structure to wxUiEditor Nodes via ProcessForm (top-level), ProcessChild
+// (recursive), ProcessProperties (property arrays), ProcessStyles/ProcessSizerFlags (style arrays),
+// ProcessEvents (event arrays), ProcessFont/ProcessScintillaProperty (complex properties), and
+// ProcessBitmapPropety (image handling). UnknownProperty/KnownProperty/ValueProperty handle
+// property mapping with wxCrafter-specific conversions. State tracking includes m_output_name (form
+// output file), m_is_output_name_used (prevents duplicate use), and m_generate_ids (project-wide ID
+// generation setting). Only supports GEN_LANG_CPLUSPLUS. The importer navigates wxCrafter's nested
+// JSON arrays/objects to extract component hierarchies, properties, and events into wxUiEditor's
+// XML-based Node tree structure.
+
 #pragma once
 
 #include "gen_enums.h"   // Enumerations for generators

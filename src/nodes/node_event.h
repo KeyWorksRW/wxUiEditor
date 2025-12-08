@@ -5,6 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements a two-class pattern separating immutable event metadata
+// (NodeEventInfo) from user-specific event instances (NodeEvent). NodeEventInfo stores constant
+// data shared across all uses of an event type: m_name (event name like "OnButtonClick"),
+// m_event_class (wxWidgets class like "wxCommandEvent"), and m_help (description text). These are
+// created once during initialization and owned by NodeDeclaration. NodeEvent represents a
+// user-configured event binding with m_info (pointer to shared NodeEventInfo), m_node (owning
+// Node*), and m_value (user's handler function name). This separation optimizes memory by sharing
+// metadata while allowing each node to have unique handler names. NodeEvent provides convenience
+// accessors (get_name, getNode) and size calculation (get_EventSize) for memory tracking.
+
 #pragma once
 
 class Node;

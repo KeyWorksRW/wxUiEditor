@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements NodeCreator, a singleton factory (Meyer's singleton pattern)
+// responsible for creating Node instances and managing component metadata. Initialize() parses XML
+// generator definitions to populate m_a_declarations (NodeDeclaration* array indexed by GenName)
+// and m_a_node_types (parent-child relationship rules). CreateNode validates parent-child
+// compatibility via is_ValidCreateParent, checks language support, and returns pair<NodeSharedPtr,
+// Validity> with error codes. CreateNodeFromXml deserializes .wxui projects by recursively building
+// node trees from pugi::xml_node. The class stores wxWidgets constant mappings in m_map_constants
+// (get_ConstantAsInt), tracks obsolete types in m_setOldHostTypes, and provides declaration lookup
+// via get_declaration/get_NodeDeclaration. MakeCopy performs deep node cloning including child
+// hierarchies. Helper methods handle property parsing, inheritance resolution, and generator
+// initialization.
+
 #pragma once
 
 #include <array>

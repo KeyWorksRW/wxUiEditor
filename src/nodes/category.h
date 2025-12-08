@@ -5,6 +5,15 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements NodeCategory, a hierarchical container for organizing node
+// properties and events in the wxUiEditor property grid UI. Each category has a name (stored as
+// wxString for wxPropertyGrid compatibility), vectors of property names (PropName enums), event
+// names (std::string), and nested subcategories (std::vector<NodeCategory>). Categories are built
+// during node initialization and queried during property grid population to group related
+// properties (e.g., "Window Styles", "Common", "Events") with collapsible headers. Access methods
+// (get_PropName, get_EventName, getCategoryCount) support iteration for UI display, while builder
+// methods (addProperty, addEvent, addCategory) construct the hierarchy.
+
 #pragma once
 
 #include <vector>

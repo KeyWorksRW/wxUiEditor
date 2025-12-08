@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements DialogBlocks, an importer for Anthemion DialogBlocks XML project
+// files. The class extends ImportXML base class and converts DialogBlocks-specific XML structures
+// (proxy attributes, quoted strings, DialogBlocks-style validators) to wxUiEditor Node trees. Key
+// methods: CreateFormNode/ CreateFolderNode parse top-level structures,
+// CreateChildNode/CreateCustomNode recursively build component hierarchies, FindGenerator maps
+// proxy-Base class/proxy-type to GenName enums, ProcessStyles/ProcessEvents/ ProcessMisc extract
+// node properties from XML attributes. Helper methods (SetNodeValidator, SetNodeID, SetNodeVarname,
+// SetNodeDimensions, SetNodeState) populate Node properties, and ExtractQuotedString handles
+// DialogBlocks' inconsistent quoting. State flags (m_use_enums for ID format,
+// m_class_uses_dlg_units for coordinate system) affect conversion. Only supports GEN_LANG_CPLUSPLUS
+// output.
+
 #pragma once
 
 #include "gen_enums.h"   // Enumerations for generators

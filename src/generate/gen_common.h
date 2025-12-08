@@ -5,6 +5,19 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements utility functions shared across all code generators for handling
+// common wxWidgets patterns. Key responsibilities: string escaping and internationalization
+// (GenerateQuotedString, ConvertToCodeString), bitmap/bundle code generation (GenerateBitmapCode,
+// GenerateBundleCode, GenBtnBimapCode), style bitflag conversion (GetStyleInt, GetBitlistInt), and
+// language-specific file generation orchestration (GenerateLanguageFiles, GenerateLanguageForm).
+// Helper functions generate code for colors (ColourCode), fonts, icons (GenerateIconCode), parent
+// name resolution (get_ParentName), validators (GenValidatorSettings), and Get/Set accessor methods
+// (GenGetSetCode). Language-specific sections provide path resolution (MakePythonPath,
+// MakePerlPath, MakeRubyPath), bitmap list generation (PythonBitmapList, PerlBitmapList), and event
+// gathering (GatherPerlNodeEvents). These functions are called by both BaseCodeGenerator derived
+// classes and individual BaseGenerator widget generators to ensure consistent code generation
+// across languages.
+
 #pragma once
 
 #include <optional>

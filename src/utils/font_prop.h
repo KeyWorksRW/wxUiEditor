@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements FontProperty, a mutable font description class mimicking
+// wxFontInfo's fluent API while allowing point size changes and serialization. The class stores
+// m_pointSize (double for fractional points), m_family (wxFontFamily), m_faceName (wxString),
+// m_weight (wxFontWeight), m_flags (bitfield for italic/ underline/strikethrough/antialiased),
+// m_symbolic_size (wxFontSymbolicSize for relative sizing), m_encoding (wxFontEncoding), and
+// m_isDefGuiFont (tracks if using system default). Methods provide fluent setters (PointSize,
+// Family, Bold, Italic returning *this) and getters (GetFont, GetPointSize, GetStyle). Convert()
+// parses serialized font strings (old_style format or new comma-separated), as_string/as_wxString
+// serialize to storage format. Helper structs (FontSymbolPairs, FontFamilyPairs, FontWeightPairs,
+// FontStylePairs) map friendly names ("bold", "italic") to wxWidgets constants for property grid
+// dropdowns, supporting bidirectional conversion for UI and code.
+
 #pragma once
 
 #include <cmath>  // for std::round

@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements resCtrl, representing a single Windows Resource control during
+// .rc import. The class stores m_node (NodeSharedPtr for wxUiEditor component), dual coordinate
+// systems (m_du_rect in dialog units, m_pixel_rect in pixels), m_original_line (unparsed .rc text),
+// m_non_processed_style (deferred styles like UDS_AUTOBUDDY), and m_added flag (layout tracking).
+// ParseDirective() is the main entry point calling GetID/GetLabel/ParseDimensions/ParseStyles to
+// extract control properties from .rc syntax. Style parsing methods (ParseStyles,
+// ParseListViewStyles, ParseButtonStyles, ParseCommonStyles, AddSpecialStyles) map Windows control
+// styles (WS_BORDER, BS_PUSHBUTTON, LVS_REPORT) to wxWidgets equivalents. Helper methods
+// (StepOverQuote, StepOverComma, ParseImageControl, ParseIconControl) parse .rc format. Accessor
+// methods (GetLeft, du_top, etc.) provide coordinate queries. The class bridges Windows Resource
+// control definitions to wxUiEditor Node properties.
+
 #pragma once
 
 #include "node.h"  // Node class

@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements EmbeddedImage, managing embedded bitmap resources for code
+// generation. Each instance stores a vector of ImageInfo structs (m_images) representing
+// multi-resolution image bundles where base_image() (m_images[0]) is the primary image and
+// additional entries support HiDPI (@2x, _1_5x suffixes). ImageInfo contains filename (without
+// path), array_name (valid C++ identifier derived from filename), array_data (zlib-compressed for
+// SVG/XPM, original format for PNG/etc), array_size (lower 32 bits = compressed size, upper 32 bits
+// = original size), file_time (modification tracking), and type (wxBitmapType enum). The class
+// associates with m_form (Node* to owning form), tracks m_size (wxSize of base image), and provides
+// get_bundle() which loads/updates images if file_time changed. UpdateImage() reloads modified
+// files. Constructor converts filename to valid variable name handling UTF-8 and special characters
+// for cross-language compatibility.
+
 #pragma once
 
 // SVG and XPM files only contain a single image. All other image types can contain multiple images,

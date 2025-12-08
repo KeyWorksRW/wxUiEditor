@@ -5,6 +5,17 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements GridBag, a helper class for managing wxGridBagSizer node
+// operations including insertion, movement, and layout calculations. The class wraps a
+// wxGridBagSizer node (m_gridbag) and tracks grid dimensions (m_max_column, m_max_row) computed
+// during Initialize(). InsertNode handles complex insertion logic by finding empty cells and
+// adjusting row/column spans via IncrementColumns/IncrementRows when conflicts occur. Static
+// methods MoveNode, MoveLeft, MoveRight, MoveUp, MoveDown modify child node positions by updating
+// their prop_row/prop_column properties while respecting grid boundaries and span constraints.
+// GridBagSort reorders children in memory to match visual grid layout (top-to-bottom,
+// left-to-right). This class encapsulates GridBag- specific complexity separate from general Node
+// tree operations, supporting both UI manipulation and undo/redo.
+
 #pragma once
 
 class Node;

@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements BaseCodeGenerator, an abstract base class for generating
+// complete source and header files in C++, Python, Perl, and Ruby. Derived classes
+// (CppCodeGenerator, PythonCodeGenerator, etc.) must implement GenerateClass() which orchestrates
+// code generation through WriteCode objects (m_header and m_source). The class manages event
+// collection (m_events, m_ctx_menu_events, m_map_conditional_events), embedded image tracking
+// (m_embedded_images), platform- conditional code sections (m_map_public_members, m_map_protected),
+// and ID sets (m_set_enum_ids, m_set_const_ids). Generation flow: CollectEventHandlers →
+// GenConstruction → GenSettings → GenAfterChildren, with helper methods (BeginBrace, EndBrace,
+// GenSrcEventBinding) adapting output to m_language. The class coordinates with Code class for
+// language-specific syntax and tracks generation state (m_NeedArtProviderHeader, m_NeedSVGFunction)
+// to optimize includes and helper function generation.
+
 #pragma once
 
 #include <mutex>

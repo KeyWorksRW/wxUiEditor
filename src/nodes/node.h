@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements Node, the core class representing a single UI component in
+// wxUiEditor's project tree. Node uses shared_ptr semantics (NodeSharedPtr,
+// enable_shared_from_this) for safe parent-child relationships stored in m_parent and m_children
+// vectors. Each node references immutable metadata via m_declaration (NodeDeclaration*), stores
+// user-configured properties in m_properties (vector<NodeProperty>) indexed by m_prop_indices map,
+// and tracks events in m_map_events (unordered_map). Property access uses as_string/as_int/as_bool
+// methods that delegate to NodeProperty, while HasValue/HasProp check existence. Node type queries
+// (is_Form, is_Sizer, is_Gen) delegate to NodeDeclaration, and tree navigation uses
+// get_Parent/get_Child/get_Form/get_Folder. Child management (AdoptChild, AddChild, RemoveChild)
+// validates parent-child compatibility via NodeType rules and maintains tree consistency for
+// undo/redo operations.
+
 #pragma once
 
 #include <memory>

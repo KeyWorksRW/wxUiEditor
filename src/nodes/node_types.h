@@ -5,6 +5,17 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements NodeType, defining parent-child relationship rules for component
+// types in the node tree. Each NodeType has m_gen_type (the parent's GenType) and m_map_children
+// (map<GenType, ptrdiff_t>) storing allowed child types with maximum child counts. Child count
+// constants (child_count::none=0, infinite=-1, one=1, two=2) specify constraints like "wxBoxSizer
+// accepts infinite type_widget children" or "wxDialog accepts one type_menubar child".
+// get_AllowableChildren queries the map, returning 0 for disallowed types. NodeCreator populates
+// these rules during initialization from XML generator definitions, and Node validation
+// (is_ChildAllowed, AdoptChild) checks against these constraints before adding children. This
+// centralized rule system enforces valid wxWidgets component hierarchies (e.g., preventing multiple
+// menubars in a frame) across UI operations and import.
+
 #pragma once
 
 #include <map>

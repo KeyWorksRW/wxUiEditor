@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements NodeDeclaration, the immutable metadata class defining a
+// component type (wxButton, wxBoxSizer, etc.) shared across all Node instances of that type. Each
+// declaration stores property definitions in m_properties (map<string, PropDeclaration*>), event
+// definitions in m_events (map<string, NodeEventInfo*>), inheritance hierarchy in m_base
+// (vector<NodeDeclaration*>), and parent-child rules in m_type (NodeType*). The class owns
+// m_generator (BaseGenerator*) created during initialization for code generation, m_category
+// (NodeCategory) for property grid organization, and optional m_bundle_function for SVG icon
+// retrieval. Methods like get_PropDeclaration/get_EventInfo provide property/event lookup,
+// isSubclassOf checks inheritance, GetBaseClasses traverses hierarchy, and get_AllowableChildren
+// queries NodeType rules. Images (m_image, GetBitmapBundle) support UI display in navigation panels
+// and toolbars.
+
 #pragma once
 
 #include <string>

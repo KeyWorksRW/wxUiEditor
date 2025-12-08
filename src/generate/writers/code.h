@@ -12,6 +12,16 @@
 
 */
 
+// AI Context: This file implements the Code class, a language-agnostic string builder for
+// generating wxWidgets UI code in C++, Python, Perl, and Ruby. Code inherits from tt_string and
+// provides fluent API methods (Add, Function, Class, etc.) that automatically handle
+// language-specific syntax differences (wx vs wx. vs Wx::, self. vs @, true vs True vs 1). The
+// class manages automatic line breaking at m_break_length characters, indentation tracking via
+// m_indent, and node-aware code generation through m_node pointer. Key patterns: method chaining
+// returns Code&, language detection via is_cpp/is_python/etc, property access delegates to m_node
+// (HasValue, IsTrue, as_string), and helper methods transform wxWidgets constants/classes/functions
+// according to target language conventions (ClassMethod, NodeName, QuotedString).
+
 #pragma once
 
 #include "gen_enums.h"  // Enumerations for generators

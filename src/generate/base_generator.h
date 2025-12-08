@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements BaseGenerator, the interface class for all individual
+// widget/sizer generators in wxUiEditor. Each wxWidgets component (wxButton, wxBoxSizer, etc.) has
+// a derived class implementing virtual methods: ConstructionCode (object creation), SettingsCode
+// (property configuration), AfterChildrenCode (post-child operations), and HeaderCode (C++ class
+// member declarations). The class also handles XRC generation (GenXrcObject), mockup preview
+// creation (CreateMockup, AfterCreation), include file management (GetIncludes, GetPythonImports),
+// and property validation (VerifyProperty, AllowPropertyChange). Generators interact with Code
+// class for language-specific output, query Node properties for configuration, and report
+// version/language compatibility via GetRequiredVersion and isLanguageVersionSupported. Helper
+// functions (DeclAddProp, DeclAddEvent) define property metadata for the UI designer, while
+// specialized methods handle mockup updates and context menu customization.
+
 #pragma once
 
 #include <optional>

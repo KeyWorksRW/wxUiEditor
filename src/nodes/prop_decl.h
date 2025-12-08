@@ -5,6 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements PropDeclaration, the immutable metadata class defining a
+// property type shared across all instances of that property. Each declaration stores m_name_enum
+// (PropName enum), m_prop_type (PropType like type_string/type_int/type_bool), m_def_value (default
+// value string), m_help (description for property grid tooltips), and m_options (vector of valid
+// choices for type_option/type_bitlist properties). The class uses constructor wrapper structs
+// (DefaultValue, HelpText) to prevent parameter order mistakes. Methods get_DeclName maps enum to
+// string via map_PropNames, getDefaultValue/getDescription provide UI text, and getOptions returns
+// choice lists for dropdowns. Type queries (is_Type, isProp) support generic property handling.
+// NodeDeclaration owns these in m_properties map, and NodeProperty references them via
+// m_declaration pointer for metadata access during value validation, UI display, and code
+// generation.
+
 #pragma once
 
 #include <string_view>

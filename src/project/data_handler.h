@@ -5,6 +5,17 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// AI Context: This file implements DataHandler, a singleton manager (Meyer's pattern) for embedded
+// data files in wxUiEditor projects. The class stores compressed data in m_embedded_data
+// (map<string, EmbeddedData>) where each entry contains compressed array_data, original filename,
+// file modification time, and type flags (string, xml, or binary). Initialize() scans Data List
+// nodes, LoadAndCompress() handles file reading and zlib compression with optional XML condensing
+// (removing whitespace/headers), and WriteDataConstruction() generates code declaring extern
+// unsigned char arrays. The class tracks file_time to detect modifications and supports xml_flags
+// for format control (xml_condense_format, xml_trim_whitespace). NeedsUtilityHeader() determines if
+// zlib decompression helpers are needed. This enables embedding configuration files, XML resources,
+// and text data into generated code.
+
 #pragma once
 
 #include <wx/datetime.h>  // declarations of time/date related classes (wxDateTime,

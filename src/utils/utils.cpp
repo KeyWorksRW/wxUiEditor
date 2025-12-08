@@ -12,6 +12,7 @@
 #include <format>
 #include <set>
 
+#include <wx/filedlg.h>  // wxFileDialog base header
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
@@ -761,4 +762,26 @@ auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
     }
 
     return true;
+}
+
+auto ShowOpenProjectDialog(wxWindow* parent) -> wxString
+{
+    wxFileDialog dialog(parent, "Open or Import Project", wxEmptyString, wxEmptyString,
+                        wxString(std::format("wxUiEditor Project File (*{})|*{}"
+                                             "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                                             "|DialogBlocks Project File (*.fjd)|*.fjd"
+                                             "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                             "|wxGlade File (*.wxg)|*.wxg"
+                                             "|wxSmith File (*.wxs)|*.wxs"
+                                             "|XRC File (*.xrc)|*.xrc"
+                                             "|Windows Resource File (*.rc)|*.rc||",
+                                             PROJECT_FILE_EXTENSION, PROJECT_FILE_EXTENSION)
+                                     .c_str()),
+                        wxFD_OPEN);
+
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        return dialog.GetPath();
+    }
+    return wxEmptyString;
 }

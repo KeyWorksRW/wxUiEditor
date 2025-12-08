@@ -343,10 +343,10 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
 2. **Build the project**: `cmake --build build --config Debug`
 3. **Verify code generation unchanged**:
    ```powershell
-   cd ..\ wxUiEditor_tests\; ../../wxUiEditor/build/bin/Debug/wxUiEditor.exe --verify_cpp wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+   build/bin/Debug/wxUiEditor.exe --verify_cpp .local/wxUiEditor_tests/wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
    ```
 4. On failure (exit code ≠ 0):
-   - Read diff: `c:\rwCode\wxUiEditor_tests\quick\quick.log`
+   - Read diff: `.local/wxUiEditor_tests`
    - Analyze changes in generated code
    - Fix refactoring to preserve behavior
    - Rebuild and re-verify
@@ -362,14 +362,3 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
 - ✅ **Respect protected code sections** – Do not edit between "Do not edit" and "End of generated code" markers
 - ✅ Node/NodeProperty use `as_view()` methods
 - ✅ Generators derive from `src/generate/base_generator.h`
-
-## Pre-Submission Checklist
-
-### C++ Code
-- [ ] Frozen headers included for immutable containers (if applicable)
-- [ ] Protected code sections preserved ("Do not edit" markers)
-
-### Multi-Language Generation
-- [ ] Correct indentation: C++/Perl/Python (4 spaces), Ruby (2 spaces)
-- [ ] Line length compliance: Ruby (80), Python (90), C++/Perl (100)
-- [ ] wxWidgets prefix: Perl/Ruby (`Wx:`), Python (`wx.`)

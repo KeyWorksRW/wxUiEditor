@@ -12,6 +12,7 @@
 #include "gen_script_common.h"  // Common functions for generating Script Languages
 
 #include "code.h"             // Code -- Helper class for generating code
+#include "comment_blocks.h"   // Comment block generators
 #include "common_strings.h"   // Common strings used in code generation
 #include "node.h"             // Node class
 #include "node_event.h"       // NodeEvent -- NodeEvent class
@@ -81,11 +82,28 @@ namespace ScriptCommon
             return false;
         }
 
+        // Get the appropriate end comment line based on language
+        std::string_view end_comment_line;
+        switch (language)
+        {
+            case GEN_LANG_PERL:
+                end_comment_line = GetPerlEndCommentLine();
+                break;
+            case GEN_LANG_PYTHON:
+                end_comment_line = GetPythonEndCommentLine();
+                break;
+            case GEN_LANG_RUBY:
+                end_comment_line = GetRubyEndCommentLine();
+                break;
+            default:
+                return false;
+        }
+
         bool found_user_handlers = false;
         size_t line_index = 0;
         for (; line_index < org_file.size(); ++line_index)
         {
-            if (org_file[line_index].is_sameprefix(python_perl_ruby_end_cmt_line))
+            if (org_file[line_index].is_sameprefix(end_comment_line))
             {
                 break;
             }

@@ -24,16 +24,6 @@ extern const std::string_view ruby_begin_cmt_block;
 extern const std::string_view ruby_end_cmt_block;
 
 /**
- * @brief String view containing the end-of-generated-code comment for Python, Perl, and Ruby.
- *
- * This string is typically used to mark the end of generated code in source files
- * for Python, Perl, and Ruby, using the appropriate comment syntax.
- *
- * Example value: "# ************* End of generated code"
- */
-extern const std::string_view
-    python_perl_ruby_end_cmt_line;  // "# ************* End of generated code"
-/**
  * @var perl_begin_cmt_block
  * @brief Perl begin comment block marker ("=pod").
  *

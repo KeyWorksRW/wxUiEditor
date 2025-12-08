@@ -21,8 +21,20 @@ R"===(##########################################################################
 ###############################################################################
 
 # pylint: disable=all
-# flake8: noqa
+# flake8: noqa: start
 
+)===" ;
+
+const char* const end_python_block =
+R"===(# ************* End of generated code ***********
+# DO NOT EDIT THIS COMMENT BLOCK!
+#
+# Code below this comment block will be preserved
+# if the code for this class is re-generated.
+# pylint: enable=all
+# flake8: noqa: end
+# ***********************************************
+# </auto-generated>
 )===" ;
 
 const char* const txt_PerlCmtBlock =
@@ -38,25 +50,14 @@ R"===(##########################################################################
 
 )===" ;
 
-const char* const end_python_block =
-R"===(# ************* End of generated code ***********
-# DO NOT EDIT THIS COMMENT BLOCK!
-#
-# Code below this comment block will be preserved
-# if the code for this class is re-generated.
-# ***********************************************
-# pylint: enable=all
-# </auto-generated>
-)===" ;
-
 const char* const end_perl_block =
 R"===(# ************* End of generated code ***********
 # DO NOT EDIT THIS COMMENT BLOCK!
 #
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
-# ***********************************************
 ## use critic
+# ***********************************************
 # </auto-generated>
 )===" ;
 
@@ -79,8 +80,8 @@ R"===(# ************* End of generated code ***********
 #
 # Code below this comment block will be preserved
 # if the code for this class is re-generated.
-# ***********************************************
 # rubocop:enable all
+# ***********************************************
 # </auto-generated>
 )===" ;
 
@@ -95,9 +96,17 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format off
 // NOLINTBEGIN
-// cppcheck-suppress *
+// cppcheck-suppress-begin *
 
 )===" ;
+
+// We used to have a // Clang-format off to match the clang-format in the top header block
+// (txt_SlashCmtBlock), however that will indent that comment line containing it so that the last
+// line(s) we write will change if clang-format is ever run on the file. That in turn makes the
+// files look different. So we can either try to parse whitespace, or simply leave it to the dev
+// whether or not they want to turn it back on. Most devs will be deriving from the class, in which
+// case it won't matter because they aren't adding anything to the file. Those that do, will need to
+// add their own clang-format off if they want it.
 
 const char* const end_cpp_block =
 R"===(
@@ -108,7 +117,7 @@ R"===(
 // if the code for this class is re-generated.
 //
 // NOLINTEND
-// clang-format on
+// cppcheck-suppress-end *
 // ***********************************************
 // </auto-generated>
 )===" ;
@@ -137,4 +146,62 @@ R"===(
 {
     std::string_view block_view(end_ruby_block);
     return std::count(block_view.begin(), block_view.end(), '\n');
+}
+
+[[nodiscard]] auto GetCppEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_cpp_block up to and including "code"
+    // "// ************* End of generated code"
+    std::string_view full_block(end_cpp_block);
+    // Skip the leading newline
+    auto start = full_block.find("//");
+    if (start == std::string_view::npos)
+    {
+        return {};
+    }
+    auto end = full_block.find('\n', start);
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(start, end - start);
+}
+
+[[nodiscard]] auto GetPythonEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_python_block up to and including "code"
+    // "# ************* End of generated code"
+    std::string_view full_block(end_python_block);
+    auto end = full_block.find('\n');
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(0, end);
+}
+
+[[nodiscard]] auto GetPerlEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_perl_block up to and including "code"
+    // "# ************* End of generated code"
+    std::string_view full_block(end_perl_block);
+    auto end = full_block.find('\n');
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(0, end);
+}
+
+[[nodiscard]] auto GetRubyEndCommentLine() -> std::string_view
+{
+    // Return the first line of end_ruby_block up to and including "code"
+    // "# ************* End of generated code"
+    std::string_view full_block(end_ruby_block);
+    auto end = full_block.find('\n');
+    if (end == std::string_view::npos)
+    {
+        return {};
+    }
+    return full_block.substr(0, end);
 }

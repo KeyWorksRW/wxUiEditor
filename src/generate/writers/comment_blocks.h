@@ -42,3 +42,15 @@ extern const char* const end_ruby_block;
 
 // Get the number of lines in the Ruby end block
 [[nodiscard]] auto GetRubyEndBlockLength() -> size_t;
+
+// Get the "End of generated code" line from the C++ end block
+[[nodiscard]] auto GetCppEndCommentLine() -> std::string_view;
+
+// Get the "End of generated code" line from the Python end block
+[[nodiscard]] auto GetPythonEndCommentLine() -> std::string_view;
+
+// Get the "End of generated code" line from the Perl end block
+[[nodiscard]] auto GetPerlEndCommentLine() -> std::string_view;
+
+// Get the "End of generated code" line from the Ruby end block
+[[nodiscard]] auto GetRubyEndCommentLine() -> std::string_view;

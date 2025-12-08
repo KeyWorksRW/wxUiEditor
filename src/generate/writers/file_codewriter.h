@@ -42,8 +42,6 @@ namespace code
 
 class Node;  // forward declaration
 
-extern const std::string_view cpp_end_cmt_line;  // "// ************* End of generated code"
-
 class FileCodeWriter : public WriteCode
 {
 public:
@@ -67,9 +65,12 @@ protected:
 
 private:
     // Helper methods
+
+    // Returns the " ************* End of generated code" prefixed with language-specific comment
+    // character
     [[nodiscard]] static auto GetCommentLineToFind(GenLang language) -> std::string_view;
+
     [[nodiscard]] static auto GetBlockLength(GenLang language) -> size_t;
-    [[nodiscard]] static auto GetCommentCharacter(GenLang language) -> std::string_view;
     [[nodiscard]] auto IsOldStyleFile() -> bool;
 
     // Returns the index of the line after the final comment block, or -1 if not found
@@ -77,13 +78,17 @@ private:
 
     // All Append...() functions append to m_buffer
 
+    // Add the "End of generated code" comment block and fake user content (Ruby 'end',
+    // C++ '};', Perl '1;') appropriate for the language. Sets m_fake_content_pos to mark
+    // where fake content starts so it can be removed later if needed.
     void AppendEndOfFileBlock();
     void AppendMissingCommentBlockWarning();
 
-    // If fake user content was added to m_buffer, the offset to it is in begin_new_user_content.
-    // This function will set m_additional_content if the file has not been read before.
-    // Returns true if any user content was appended.
-    auto AppendOriginalUserContent(size_t begin_new_user_content) -> bool;
+    // Preserves user content from the original file. If the original file has content after
+    // its comment block, this function removes any fake content we added (at m_fake_content_pos)
+    // and appends the original content instead. Also skips duplicate asterisk lines from
+    // earlier buggy versions. Returns true if any content was appended.
+    [[nodiscard]] auto AppendOriginalUserContent(size_t begin_new_user_content) -> bool;
 
     // Language-specific end-of-file block handlers
     void AppendCppEndBlock();
@@ -91,22 +96,11 @@ private:
     void AppendPythonEndBlock();
     void AppendRubyEndBlock();
 
-    // Ruby classes require an 'end' statement for the class.
-    // C++ header files with no closing brace require a closing brace.
-    // In both situations, fake user content is added after the final comment block.
-    // Returns the size of the appended content, zero if nothing was appended.
-    auto AppendFakeUserContent() -> size_t;
-
     // This reads the original file into m_org_buffer
     [[nodiscard]] auto ReadOriginalFile(bool is_comparing) -> int;
 
     [[nodiscard]] auto EnsureDirectoryExists(int flags) -> int;
     [[nodiscard]] auto WriteToFile() -> int;
-
-    // Helper methods for WriteFile complexity reduction
-    [[nodiscard]] auto HandleEqualSizeBuffers() -> int;
-    [[nodiscard]] auto HandleLargerOriginalFile() -> int;
-    [[nodiscard]] auto ProcessDifferentSizeFiles() -> int;
 
     // Member variables
     std::string m_buffer;
@@ -118,7 +112,17 @@ private:
     int m_flags { 0 };
     bool m_file_exists { false };
     size_t m_block_length { 0 };
+
+    // Line index in m_org_file where user content begins (after final comment block).
+    // -1 means not yet determined or no user content exists.
+    // Used to preserve user-added code when regenerating files.
     std::ptrdiff_t m_additional_content { -1 };
+
+    // Position in m_buffer where fake content (Ruby 'end', C++ '};', Perl '1;') starts.
+    // 0 means no fake content was added. Used to remove fake content when preserving
+    // original file content instead.
+    size_t m_fake_content_pos { 0 };
+
     std::string m_org_buffer;
     ttwx::ViewVector m_org_file;
     std::string_view m_comment_line_to_find;

@@ -1,6 +1,7 @@
 # Directories to ignore
 bld/
 .private/
+.local/
 __pycache__/
 tests/quick_test/
 Affinity/

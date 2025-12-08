@@ -1217,9 +1217,10 @@ auto CppCodeGenerator::CollectUserEventHandlers(std::unordered_set<std::string>&
         if (has_base_file && org_file.ReadFile(path))
         {
             size_t line_index = 0;
+            auto end_comment_line = GetCppEndCommentLine();
             for (; line_index < org_file.size(); ++line_index)
             {
-                if (org_file[line_index].is_sameprefix(cpp_end_cmt_line))
+                if (org_file[line_index].is_sameprefix(end_comment_line))
                 {
                     break;
                 }

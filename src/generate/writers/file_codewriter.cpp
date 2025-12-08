@@ -21,14 +21,19 @@
 
 using namespace code;
 
-// For all languages except Ruby and in some cases C++ header files, all we need to check is whether
-// m_buffer matches exactly to the first part of the original file. If it doesn't match, then we
-// grab everything after the final comment block as user content to append to the end of the newly
-// generated code and write it out.
+// WriteFile() handles writing generated code to disk while preserving any user-added content.
+//
+// The approach is:
+// 1. Generate code and append end-of-file comment block with "fake" user content
+//    (Ruby 'end', C++ '};', Perl '1;') - this ensures new files are complete.
+// 2. If file exists, compare buffers to detect changes.
+// 3. If original file has content after its comment block, remove the fake content
+//    we added and replace it with the original file's content (preserving user edits).
+// 4. Also handles cleanup of duplicate asterisk lines from earlier buggy versions.
 
-const std::string_view cpp_end_cmt_line = "// ************* End of generated code";
-
-auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
+auto FileCodeWriter::WriteFile(GenLang language, int flags,
+                               Node* node)  // NOLINT (cppcheck-suppress)
+    -> int                                  // NOLINT (cppcheck-suppress)
 {
     ASSERT_MSG(!m_filename.GetFullPath().IsEmpty(),
                "Filename must be set before calling WriteFile()");
@@ -38,12 +43,12 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
         return dir_result;
     }
 
-    // Initialize member variables
     m_node = node;
     m_language = language;
     m_flags = flags;
 
-    // Note that AppendEndOfFileBlock() may change m_block_length, so be sure to set it first.
+    // Note that AppendEndOfFileBlock() may change m_block_length, so be sure to set it first so it
+    // can be updated if needed.
     m_block_length = GetBlockLength(language);
 
     AppendEndOfFileBlock();
@@ -51,149 +56,137 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags, Node* node) -> int
     m_file_exists = m_filename.FileExists();
     if (!m_file_exists)
     {
-        AppendFakeUserContent();
+        // File doesn't exist. The end-of-file block and fake user content (Ruby 'end',
+        // C++ '};', Perl '1;') were already added by AppendEndOfFileBlock().
+        // For new files, we keep this fake content to make them syntactically complete.
         return (flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
     m_additional_content = -1;
     m_comment_line_to_find = GetCommentLineToFind(language);
+
+    // TODO: [Randalphwa - 11-28-2025] Do we ever create temporary files with names starting with
+    // '~' anymore? If not, this needs to go away.
     bool is_comparing = (!m_filename.GetName().IsEmpty() && m_filename.GetName()[0] == '~');
     if (int result = ReadOriginalFile(is_comparing); result != 0)
     {
-        // REVIEW: [Randalphwa - 11-06-2025] Need to be sure caller handles this properly
+        // TODO: [Randalphwa - 11-06-2025] Need to be sure caller handles this properly
         return result;
     }
 
-    // At this point, m_buffer contains the newly generated code, but not any possible fake user
-    // content. m_org_buffer contains the contents of the original file.
+    // At this point, m_buffer contains newly generated code WITH fake user content already
+    // appended (Ruby 'end', C++ '};', Perl '1;'). m_org_buffer contains the original file.
+    // m_fake_content_pos marks where we can erase the fake content if we need to preserve
+    // original content instead.
+    //
+    // The comparison logic below has three main branches:
+    //
+    // 1. SAME SIZE: Buffers are exactly the same size
+    //    - If content matches exactly → file is current, no write needed
+    //    - If content differs → try appending original user content and compare
+    //
+    // 2. ORIGINAL LARGER: Original file has more content than new buffer
+    //    - If new buffer matches the prefix of original → file is current
+    //    - Otherwise → find comment block, preserve user content, and write
+    //
+    // 3. SIZES DIFFER: Files differ significantly in size or content
+    //    - Search for final comment block in original file
+    //    - Remove fake content, extract and preserve any user content after the block
+    //    - Write new file with preserved user content
 
+    // ========== BRANCH 1: Handle case where buffers are the same size ==========
     if (m_buffer.size() == m_org_buffer.size())
     {
-        return HandleEqualSizeBuffers();
-    }
-
-    if (m_org_buffer.size() > m_buffer.size())
-    {
-        return HandleLargerOriginalFile();
-    }
-
-    return ProcessDifferentSizeFiles();
-}
-
-[[nodiscard]] auto FileCodeWriter::HandleEqualSizeBuffers() -> int
-{
-    if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
-    {
-        // They are equal through the end of the final comment block, but it may be missing the
-        // fake user content that we might need to add.
-        if (AppendFakeUserContent() == 0)
+        if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
         {
+            // Content matches exactly - file is current, no write needed.
             return write_current;
         }
-        // If additional content was added after the final comment block, then we need to write
-        // out the file again.
+
+        // Same size but different content - likely because original has user content that
+        // our new buffer doesn't include yet. Try to append the original user content.
+        auto begin_user_content = m_buffer.size();
+        bool files_are_different = AppendOriginalUserContent(begin_user_content);
+
+        if (!files_are_different)
+        {
+            // After appending, files match exactly - no write needed
+            return write_current;
+        }
+
+        // Files still differ after appending user content - write is needed
         return (m_flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
-    // Buffers aren't the same, however that might be because of missing fake user content in
-    // our new buffer.
-    auto begin_user_content = m_buffer.size();
-    bool files_are_different = AppendOriginalUserContent(begin_user_content);
-
-    if (!files_are_different)
+    // ========== BRANCH 2: Handle case where original file is larger ==========
+    if (m_org_buffer.size() > m_buffer.size())
     {
-        return write_current;
+        // Original file has more content than our newly generated buffer.
+        // This is expected when the original file has user-added content.
+        // Check if our new buffer matches the beginning portion of the original.
+        if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+        {
+            // New generated code matches the prefix of the original file exactly.
+            // The extra content in the original is user code that should be preserved.
+            // No write needed - file is current.
+            return write_current;
+        }
+        // New buffer doesn't match prefix - fall through to Branch 3 to handle differences
     }
 
-    return (m_flags & flag_test_only) ? write_needed : WriteToFile();
-}
+    // ========== BRANCH 3: Files differ in size or content significantly ==========
+    // Files are different in size or content. We need to find where the end of the final comment
+    // block is in the original file, and preserve anything after that as user content.
 
-[[nodiscard]] auto FileCodeWriter::HandleLargerOriginalFile() -> int
-{
-    // The only thing we change is m_buffer, so as long as the m_buffer portion of m_org_buffer is
-    // the same, then we don't need to write anything.
-    if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
-    {
-        return write_current;
-    }
-
-    // Files are different, need to process them
-    return ProcessDifferentSizeFiles();
-}
-
-[[nodiscard]] auto FileCodeWriter::ProcessDifferentSizeFiles() -> int
-{
-    // We now know that the files are different in size or content. We need to find where the end of
-    // the final comment block is in the original file, and preserve anything after that as user
-    // content.
-
-    // We could try searching for the final comment block in the original string buffer, however we
-    // don't know if the line endings are still the same, so the *safe* was to do it is to create a
-    // vector of std::string_views that we can use to search for the comment line.
+    // We could try searching for the final comment block in the original string buffer, however
+    // we don't know if the line endings are still the same, so the *safe* way to do it is to
+    // create a vector of std::string_views that we can use to search for the comment line.
 
     m_org_file.ReadString(std::string_view(m_org_buffer));
     auto line = FindAdditionalContentIndex();
     if (line == -1)
     {
-        // The original file is missing the final comment block. We have no choice but to copy
-        // everything from the original file as user content.
-        AppendFakeUserContent();
+        // The original file is missing the final comment block marker.
+        // This is unexpected - copy everything from the original file as user content
+        // and add a warning comment. The fake user content (Ruby 'end' or C++ '};')
+        // was already added by AppendEndOfFileBlock(), so we don't need to add it again.
         AppendMissingCommentBlockWarning();
         return WriteToFile();
     }
 
     if (m_org_file.size() > static_cast<size_t>(line))
     {
-        // There's real user content in the original file so add it before writing.
+        // Real user content exists after the final comment block in the original file.
+        // Set m_additional_content to mark where user content begins, then append it.
         m_additional_content = line;
-        AppendOriginalUserContent(0);
+        (void) AppendOriginalUserContent(0);
         return WriteToFile();
     }
 
-    // If we get here, then the original file had no additional content, but the files still differ,
-    // so add any fake user content we might need, then write the file.
-
-    AppendFakeUserContent();
-    return WriteToFile();
-}
-
-auto FileCodeWriter::AppendFakeUserContent() -> size_t
-{
-    auto cur_buffer_size = m_buffer.size();
-
-    // Ruby has to have an 'end' statement for the class. If there's nothing after the
-    // final comment block, then we need to add it.
-    if (m_node && !m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data))
-    {
-        // If the file is Ruby code, and there is no actual additional content
-        // then add the "end" statement for the class.
-        if (m_language == GEN_LANG_RUBY)
-        {
-            Code code(m_node, GEN_LANG_RUBY);
-            code.Eol().Str("end  # end of ").Str(m_node->get_NodeName()).Str(" class").Eol();
-            m_buffer += code;
-        }
-        if (m_language == GEN_LANG_CPLUSPLUS && (m_flags & code::flag_add_closing_brace))
-        {
-            // If the file is C++ code, and there is no actual additional content
-            // then add the closing brace for the class.
-            Code code(m_node, GEN_LANG_CPLUSPLUS);
-            code.Eol().Tab().Str("// Clang-format on").Eol().Str("};").Eol();
-            m_buffer += code;
-        }
-    }
-    return m_buffer.size() - cur_buffer_size;
+    // Original file had no user content after the comment block, but files still differ.
+    // This means the generated code itself has changed.
+    // The end-of-file block (including fake user content) was already added by
+    // AppendEndOfFileBlock(), so just write the file.
+    return (m_flags & flag_test_only) ? write_needed : WriteToFile();
 }
 
 [[nodiscard]] auto FileCodeWriter::GetCommentLineToFind(GenLang language) -> std::string_view
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
-        return cpp_end_cmt_line;
+        return GetCppEndCommentLine();
     }
-    if (language == GEN_LANG_PYTHON || language == GEN_LANG_RUBY || language == GEN_LANG_PERL)
+    if (language == GEN_LANG_PYTHON)
     {
-        return python_perl_ruby_end_cmt_line;
+        return GetPythonEndCommentLine();
+    }
+    if (language == GEN_LANG_RUBY)
+    {
+        return GetRubyEndCommentLine();
+    }
+    if (language == GEN_LANG_PERL)
+    {
+        return GetPerlEndCommentLine();
     }
     return {};
 }
@@ -219,11 +212,6 @@ auto FileCodeWriter::AppendFakeUserContent() -> size_t
     return 0;
 }
 
-[[nodiscard]] auto FileCodeWriter::GetCommentCharacter(GenLang language) -> std::string_view
-{
-    return (language == GEN_LANG_CPLUSPLUS) ? "//" : "#";
-}
-
 [[nodiscard]] auto FileCodeWriter::IsOldStyleFile() -> bool
 {
     constexpr auto npos = std::string::npos;
@@ -232,22 +220,83 @@ auto FileCodeWriter::AppendFakeUserContent() -> size_t
                "DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!") != npos;
 }
 
+// Searches m_org_file for the final comment block and returns the line index where
+// user content begins (the line after the comment block ends).
+// Returns -1 if the comment block marker cannot be found.
+//
+// Handles both 1.2-style files (no </auto-generated> marker) and 1.3-style files
+// (with </auto-generated> marker). Returns the first line after the comment block
+// without skipping any content - the caller (AppendOriginalUserContent) is responsible
+// for handling duplicate lines and preserving the original file's structure.
 [[nodiscard]] auto FileCodeWriter::FindAdditionalContentIndex() -> std::ptrdiff_t
 {
-    // Search for the comment line in m_org_file
+    // Step 1: Find the "End of generated code" comment line
+    std::ptrdiff_t end_comment_line_index = -1;
     for (size_t line_index = 0; line_index < m_org_file.size(); ++line_index)
     {
-        auto line = m_org_file[line_index];
-
-        // Only the length of m_comment_line_to_find matters -- the amount of comment characters
-        // after that is irrelevant.
-        if (line.starts_with(m_comment_line_to_find))
+        if (m_org_file[line_index].starts_with(m_comment_line_to_find))
         {
-            return static_cast<std::ptrdiff_t>(line_index + m_block_length);
+            end_comment_line_index = static_cast<std::ptrdiff_t>(line_index);
+            break;
         }
     }
 
-    return -1;
+    if (end_comment_line_index == -1)
+    {
+        return -1;  // Comment block marker not found
+    }
+
+    // Step 2: Search forward from end_comment_line to find "</auto-generated>" marker (1.3 files)
+    std::ptrdiff_t auto_generated_end_index = -1;
+    for (size_t line_index = static_cast<size_t>(end_comment_line_index) + 1;
+         line_index < m_org_file.size(); ++line_index)
+    {
+        if (m_org_file[line_index].find("</auto-generated>") != std::string_view::npos)
+        {
+            auto_generated_end_index = static_cast<std::ptrdiff_t>(line_index);
+            break;
+        }
+    }
+
+    if (auto_generated_end_index == -1)
+    {
+        // Old 1.2 style file - no "</auto-generated>" marker found
+        // The user content starts immediately after the
+        // "***********************************************" line. We found that line at
+        // end_comment_line_index, so user content is on the next line. Note: We cannot use
+        // m_block_length here because that's the NEW 1.3 block length, which has extra lines
+        // compared to the old 1.2 block.
+
+        // Search forward from the "End of generated code" line to find the line of asterisks
+        for (size_t line_index = static_cast<size_t>(end_comment_line_index) + 1;
+             line_index < m_org_file.size(); ++line_index)
+        {
+            auto line = m_org_file[line_index];
+            if (line.find("***********************************************") !=
+                std::string_view::npos)
+            {
+                // User content starts on the line after the asterisks
+                auto user_content_start = static_cast<std::ptrdiff_t>(line_index + 1);
+
+                // Return user_content_start - don't skip any content.
+                // The original file's structure should be preserved exactly.
+                return user_content_start;
+            }
+        }
+
+        // If we didn't find the asterisk line (shouldn't happen), fall back to old logic
+        return end_comment_line_index + static_cast<std::ptrdiff_t>(m_block_length);
+    }
+
+    // Step 3: New 1.3 style file - user content starts after "</auto-generated>"
+    std::ptrdiff_t user_content_start = auto_generated_end_index + 1;
+
+    // Step 4: Return the line after </auto-generated> as the start of user content.
+    // We do NOT skip fake content (Ruby 'end', C++ '};', Perl '1;') here because:
+    // - If there's real user content, it may appear BEFORE the closing statement
+    // - The original file's structure should be preserved exactly
+    // - AppendEndOfFileBlock() will only add fake content for NEW files
+    return user_content_start;
 }
 
 void FileCodeWriter::AppendCppEndBlock()
@@ -258,27 +307,37 @@ void FileCodeWriter::AppendCppEndBlock()
         lines.ReadString(std::string_view(end_cpp_block));
         for (auto& iter: lines)
         {
-            if (iter.starts_with("// clang-format on"))
-            {
-                --m_block_length;
-            }
-            else
-            {
-                m_buffer += iter;
-                m_buffer += "\n";
-            }
+            m_buffer += iter;
+            m_buffer += "\n";
+        }
+        // Record position where fake content would start
+        m_fake_content_pos = m_buffer.size();
+
+        // Always add the closing brace here - it will be removed later if the original
+        // file has content after the comment block that should be preserved instead.
+        if (m_node)
+        {
+            Code code(m_node, GEN_LANG_CPLUSPLUS);
+            code.Eol().Eol(eol_always).Str("};").Eol();
+            m_buffer += code;
         }
     }
     else
     {
         m_buffer += end_cpp_block;
+        m_fake_content_pos = 0;  // No fake content for this case
     }
 }
 
 void FileCodeWriter::AppendPerlEndBlock()
 {
     m_buffer += end_perl_block;
-    if (!m_file_exists && m_node)
+    // Record position where fake content would start
+    m_fake_content_pos = m_buffer.size();
+
+    // Always add the module return value here - it will be removed later if the original
+    // file has content after the comment block that should be preserved instead.
+    if (m_node)
     {
         m_buffer += "\n1;  # " + m_node->get_NodeName();
     }
@@ -287,21 +346,26 @@ void FileCodeWriter::AppendPerlEndBlock()
 void FileCodeWriter::AppendPythonEndBlock()
 {
     m_buffer += end_python_block;
+    m_fake_content_pos = 0;  // Python has no fake content
 }
 
 void FileCodeWriter::AppendRubyEndBlock()
 {
     m_buffer += end_ruby_block;
+    // Record position where fake content would start
+    m_fake_content_pos = m_buffer.size();
+
     if (m_node && !m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data))
     {
-        // If the file doesn't exist, or it is missing any user content, append psuedo user
-        // content that adds the "end" statement for the class.
-        if (!m_file_exists || !ttwx::is_found(m_additional_content))
-        {
-            Code code(m_node, GEN_LANG_RUBY);
-            code.Eol().Str("end  # end of ").Str(m_node->get_NodeName()).Str(" class").Eol();
-            m_buffer += code;
-        }
+        // Always add the 'end' statement here - it will be removed later if the original
+        // file has content after the comment block that should be preserved instead.
+        Code code(m_node, GEN_LANG_RUBY);
+        code.Eol().Str("end  # end of ").Str(m_node->get_NodeName()).Str(" class").Eol();
+        m_buffer += code;
+    }
+    else
+    {
+        m_fake_content_pos = 0;  // No fake content for Images/Data
     }
 }
 
@@ -328,7 +392,7 @@ void FileCodeWriter::AppendEndOfFileBlock()
 
 void FileCodeWriter::AppendMissingCommentBlockWarning()
 {
-    const auto comment_char = GetCommentCharacter(m_language);
+    const auto* const comment_char = (m_language == GEN_LANG_CPLUSPLUS) ? "//" : "#";
 
     m_buffer += "\n";
     m_buffer += comment_char;
@@ -355,30 +419,54 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
         m_additional_content = FindAdditionalContentIndex();
     }
 
-    if (begin_new_user_content > 0)
+    // Check if there's any content to preserve from the original file
+    if (!ttwx::is_found(m_additional_content) ||
+        static_cast<size_t>(m_additional_content) >= m_org_file.size())
     {
-        ttwx::ViewVector new_content_view;
-        new_content_view.ReadString(std::string_view(m_buffer).substr(begin_new_user_content));
-        if (new_content_view.size() ==
-            (m_org_file.size() - static_cast<size_t>(m_additional_content) + 1))
-        {
-            return false;  // Original user content matches newly added fake user content
-        }
+        // No user content in original file - keep the fake content we already added
+        return false;
+    }
 
-        // Remove any fake user content that was added
+    // There is content in the original file after the comment block.
+    // Remove any fake content we added and replace with original content.
+    if (m_fake_content_pos > 0)
+    {
+        m_buffer.erase(m_fake_content_pos);
+    }
+    else if (begin_new_user_content > 0)
+    {
+        // Fallback for cases where m_fake_content_pos wasn't set
         m_buffer.erase(begin_new_user_content);
-        begin_new_user_content = 0;  // In case this gets checked later (it doesn't currently)
+    }
+
+    // Skip any duplicate closing comment lines (asterisk lines) that may have been
+    // introduced by earlier buggy versions. These lines start with comment chars followed
+    // by asterisks, e.g., "// ***" or "# ***"
+    auto start_idx = static_cast<size_t>(m_additional_content);
+    while (start_idx < m_org_file.size())
+    {
+        auto line = m_org_file[start_idx];
+        // Check for asterisk-only comment lines: "// ***..." or "# ***..."
+        if ((line.starts_with("// ***") || line.starts_with("# ***")) &&
+            line.find_first_not_of("/*# ") == std::string_view::npos)
+        {
+            ++start_idx;  // Skip this duplicate line
+        }
+        else
+        {
+            break;  // Not a duplicate, stop skipping
+        }
     }
 
     // Calculate total length to reserve in m_buffer before appending user content
     size_t total_length = 0;
-    for (auto idx = static_cast<size_t>(m_additional_content); idx < m_org_file.size(); ++idx)
+    for (auto idx = start_idx; idx < m_org_file.size(); ++idx)
     {
         total_length += m_org_file[idx].length() + 1;  // +1 for '\n'
     }
     m_buffer.reserve(m_buffer.size() + total_length);
 
-    for (auto idx = static_cast<size_t>(m_additional_content); idx < m_org_file.size(); ++idx)
+    for (auto idx = start_idx; idx < m_org_file.size(); ++idx)
     {
         m_buffer += m_org_file[idx];
         m_buffer += "\n";

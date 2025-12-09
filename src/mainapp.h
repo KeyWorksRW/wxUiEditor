@@ -127,8 +127,7 @@ private:
     auto Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int;
 
     // Helper methods for Generate()
-    static auto ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
-        -> std::pair<size_t, bool>;
+    static auto ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>;
 
     [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
 

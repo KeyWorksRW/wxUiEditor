@@ -188,6 +188,9 @@ int App::OnRun()
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
 
+    // TODO: [Randalphwa - 11-29-2025] These could potentially be used similar to verify, with the
+    // possibility of using wxMessageOutputDebug() to write the file differences to Debug Console.
+
     parser.AddLongSwitch("verbose", "verbose log file", wxCMD_LINE_HIDDEN);
 
     parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);

@@ -75,6 +75,10 @@ public:
     bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
     void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
 
+    // TODO: [Randalphwa - 12-09-2025] Verify() sets this, but no code generation functions check
+    // it. This might be a good candidate for using wxMessageOutputDebug(), or just expanded
+    // messages for the log file if we are creating oen.
+
     // Returns true if --verbose is specified on the command line.
     auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }
     void set_VerboseCodeGen(bool value) noexcept { m_is_verbose_codegen = value; }

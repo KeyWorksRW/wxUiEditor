@@ -89,6 +89,12 @@
       "description": "Expert wxRuby GUI development using modern Ruby practices to create wxWidgets UI applications.",
       "instructions": ".github/agents/wxruby.agent.md",
       "scope": "workspace"
+    },
+    {
+      "name": "powershell",
+      "description": "Expert PowerShell scripting for testing, building, and automation tasks.",
+      "instructions": ".github/agents/powershell.agent.md",
+      "scope": "workspace"
     }
   ]
 }

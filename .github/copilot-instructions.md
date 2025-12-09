@@ -184,7 +184,7 @@ Use these methods for building (in priority order):
 ## C++ (Primary Language)
 
 ### Naming Conventions
-- Variables: `snake_case`
+- Variables: `snake_case` (minimum 3 characters, except loop counters `i`, `j`, `k`)
 - Classes/Methods/Functions: `PascalCase`
 - Constants: `UPPER_SNAKE_CASE`
 - Enum types: `PascalCase` (singular, e.g., `Color` not `Colors`)

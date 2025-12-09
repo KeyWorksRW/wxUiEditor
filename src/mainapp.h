@@ -11,6 +11,12 @@
 
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
+#if defined(_DEBUG)
+    #include <memory>  // std::unique_ptr
+
+class wxMessageOutputStderr;
+#endif
+
 class Project;
 struct GenResults;
 
@@ -51,6 +57,11 @@ public:
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Don't make this static or Bind() will not work
     void DbgCurrentTest(wxCommandEvent& event);
+#endif
+
+#if defined(_DEBUG)
+    // Writes to stderr even when running as a GUI application
+    void DebugOutput(const wxString& str);
 #endif
 
     void setMainFrameClosing() { m_isMainFrameClosing = true; }
@@ -164,6 +175,10 @@ private:
     bool m_isDarkHighContrast { true };
 #else
     bool m_isDarkHighContrast { false };
+#endif
+
+#if defined(_DEBUG)
+    std::unique_ptr<wxMessageOutputStderr> m_stderr_output;
 #endif
 };
 

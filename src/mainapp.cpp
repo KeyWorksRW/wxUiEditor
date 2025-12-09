@@ -139,11 +139,26 @@ bool App::OnInit()
 #endif
     }
 
+#if defined(_DEBUG)
+    m_stderr_output = std::make_unique<wxMessageOutputStderr>();
+#endif
+
     return true;
 }
 
 int App::OnRun()
 {
+#if defined(_DEBUG)
+    // Attach to parent console for command-line output
+    // This must be done early, before any output attempts
+    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        FILE* file_ptr;  // NOLINT (cppcheck-suppress)
+        freopen_s(&file_ptr, "CONOUT$", "w", stdout);
+        freopen_s(&file_ptr, "CONOUT$", "w", stderr);
+    }
+#endif
+
     NodeCreation.Initialize();
 
     wxCmdLineParser parser(argc, argv);
@@ -336,6 +351,17 @@ auto App::OnExit() -> int
 {
     return wxApp::OnExit();
 }
+
+#if defined(_DEBUG)
+void App::DebugOutput(const wxString& str)
+{
+    if (m_stderr_output)
+    {
+        m_stderr_output->Output(str);
+        fflush(stderr);
+    }
+}
+#endif
 
 auto App::isFireCreationMsgs() -> bool
 {

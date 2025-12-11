@@ -488,7 +488,7 @@ void Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap)
     }
 
     const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-    if (bundle && bundle->lst_filenames.size())
+    if (!bundle || bundle->lst_filenames.empty())
     {
 #if defined(_DEBUG)
         auto msg =

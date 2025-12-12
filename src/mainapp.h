@@ -11,6 +11,12 @@
 
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 
+#if defined(_DEBUG)
+    #include <memory>  // std::unique_ptr
+
+class wxMessageOutputStderr;
+#endif
+
 class Project;
 struct GenResults;
 
@@ -53,6 +59,11 @@ public:
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
+#if defined(_DEBUG)
+    // Writes to stderr even when running as a GUI application
+    void DebugOutput(const wxString& str);
+#endif
+
     void setMainFrameClosing() { m_isMainFrameClosing = true; }
     auto isMainFrameClosing() const -> bool { return m_isMainFrameClosing; }
 
@@ -74,6 +85,10 @@ public:
     // Determines whether the testing switch is enabled
     bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
     void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
+
+    // TODO: [Randalphwa - 12-09-2025] Verify() sets this, but no code generation functions check
+    // it. This might be a good candidate for using wxMessageOutputDebug(), or just expanded
+    // messages for the log file if we are creating oen.
 
     // Returns true if --verbose is specified on the command line.
     auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }
@@ -112,8 +127,7 @@ private:
     auto Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int;
 
     // Helper methods for Generate()
-    static auto ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
-        -> std::pair<size_t, bool>;
+    static auto ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>;
 
     [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
 
@@ -160,6 +174,10 @@ private:
     bool m_isDarkHighContrast { true };
 #else
     bool m_isDarkHighContrast { false };
+#endif
+
+#if defined(_DEBUG)
+    std::unique_ptr<wxMessageOutputStderr> m_stderr_output;
 #endif
 };
 

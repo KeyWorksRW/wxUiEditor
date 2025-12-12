@@ -103,8 +103,63 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
             return write_current;
         }
 
-        // Same size but different content - likely because original has user content that
-        // our new buffer doesn't include yet. Try to append the original user content.
+        // Same size but different content. For Ruby, user may have modified/removed
+        // the comment after 'end', which doesn't require an update. Fall through to
+        // Branch 2 logic which handles this case.
+    }
+
+    // ========== BRANCH 2: Handle Ruby files with special 'end' statement handling ==========
+    // For Ruby files: We only care that buffer up to </auto-generated> matches, and that
+    // there's an 'end' statement in the original. User may have modified or removed the
+    // comment, added blank lines, or added their own content - none require an update.
+    // This handles all size comparisons (same size, larger, or smaller original) in one place.
+    if (m_language == GEN_LANG_RUBY && m_fake_content_pos > 0 &&
+        m_org_buffer.size() >= m_fake_content_pos)
+    {
+        // Compare up to the end of </auto-generated> line (before fake content)
+        if (std::equal(m_buffer.begin(), m_buffer.begin() + m_fake_content_pos,
+                       m_org_buffer.begin()))
+        {
+            // Generated code matches. Now verify there's an 'end' statement somewhere
+            // after the </auto-generated> marker in the original file.
+            auto remaining = std::string_view(m_org_buffer).substr(m_fake_content_pos);
+
+            // Find first non-whitespace character
+            auto first_non_ws = remaining.find_first_not_of(" \t\r\n");
+            if (first_non_ws != std::string_view::npos)
+            {
+                // There's content after </auto-generated> - check if it starts with 'end'
+                auto content_start = remaining.substr(first_non_ws);
+                if (content_start.starts_with("end"))
+                {
+                    // Original file has 'end' statement - file is current, no write needed.
+                    return write_current;
+                }
+            }
+            // No 'end' found - fall through to write the file with proper ending
+        }
+        // Content before </auto-generated> differs - fall through to Branch 3
+    }
+
+    // ========== BRANCH 2b: Handle non-Ruby files where original is larger ==========
+    if (m_language != GEN_LANG_RUBY && m_org_buffer.size() > m_buffer.size())
+    {
+        // Non-Ruby languages: Original file has more content than our buffer.
+        // Check if our new buffer matches the beginning portion of the original.
+        if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+        {
+            // New generated code matches the prefix of the original file exactly.
+            // The extra content in the original is user code that should be preserved.
+            // No write needed - file is current.
+            return write_current;
+        }
+        // New buffer doesn't match prefix - fall through to Branch 3 to handle differences
+    }
+
+    // ========== BRANCH 2c: Handle non-Ruby files where buffers are same size ==========
+    if (m_language != GEN_LANG_RUBY && m_org_buffer.size() == m_buffer.size())
+    {
+        // Non-Ruby, same size but different content - try to append original user content.
         auto begin_user_content = m_buffer.size();
         bool files_are_different = AppendOriginalUserContent(begin_user_content);
 
@@ -116,22 +171,6 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
 
         // Files still differ after appending user content - write is needed
         return (m_flags & flag_test_only) ? write_needed : WriteToFile();
-    }
-
-    // ========== BRANCH 2: Handle case where original file is larger ==========
-    if (m_org_buffer.size() > m_buffer.size())
-    {
-        // Original file has more content than our newly generated buffer.
-        // This is expected when the original file has user-added content.
-        // Check if our new buffer matches the beginning portion of the original.
-        if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
-        {
-            // New generated code matches the prefix of the original file exactly.
-            // The extra content in the original is user code that should be preserved.
-            // No write needed - file is current.
-            return write_current;
-        }
-        // New buffer doesn't match prefix - fall through to Branch 3 to handle differences
     }
 
     // ========== BRANCH 3: Files differ in size or content significantly ==========
@@ -427,7 +466,40 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
         return false;
     }
 
-    // There is content in the original file after the comment block.
+    // Skip any duplicate closing comment lines (asterisk lines) that may have been
+    // introduced by earlier buggy versions. These lines start with comment chars followed
+    // by asterisks, e.g., "// ***" or "# ***"
+    // Also skip blank/whitespace-only lines.
+    auto start_idx = static_cast<size_t>(m_additional_content);
+    while (start_idx < m_org_file.size())
+    {
+        auto line = m_org_file[start_idx];
+
+        // Skip blank/whitespace-only lines
+        if (line.find_first_not_of(" \t\r\n") == std::string_view::npos)
+        {
+            ++start_idx;
+            continue;
+        }
+
+        // Check for asterisk-only comment lines: "// ***..." or "# ***..."
+        if ((line.starts_with("// ***") || line.starts_with("# ***")) &&
+            line.find_first_not_of("/*# ") == std::string_view::npos)
+        {
+            ++start_idx;  // Skip this duplicate line
+            continue;
+        }
+
+        break;  // Found meaningful content, stop skipping
+    }
+
+    // If there's no meaningful content left to append, keep the fake content
+    if (start_idx >= m_org_file.size())
+    {
+        return false;
+    }
+
+    // There is meaningful content in the original file after the comment block.
     // Remove any fake content we added and replace with original content.
     if (m_fake_content_pos > 0)
     {
@@ -437,25 +509,6 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     {
         // Fallback for cases where m_fake_content_pos wasn't set
         m_buffer.erase(begin_new_user_content);
-    }
-
-    // Skip any duplicate closing comment lines (asterisk lines) that may have been
-    // introduced by earlier buggy versions. These lines start with comment chars followed
-    // by asterisks, e.g., "// ***" or "# ***"
-    auto start_idx = static_cast<size_t>(m_additional_content);
-    while (start_idx < m_org_file.size())
-    {
-        auto line = m_org_file[start_idx];
-        // Check for asterisk-only comment lines: "// ***..." or "# ***..."
-        if ((line.starts_with("// ***") || line.starts_with("# ***")) &&
-            line.find_first_not_of("/*# ") == std::string_view::npos)
-        {
-            ++start_idx;  // Skip this duplicate line
-        }
-        else
-        {
-            break;  // Not a duplicate, stop skipping
-        }
     }
 
     // Calculate total length to reserve in m_buffer before appending user content

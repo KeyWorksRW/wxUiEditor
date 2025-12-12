@@ -8,6 +8,7 @@
 #include <wx/artprov.h>
 
 #include <array>
+#include <format>
 #include <vector>
 
 #include "image_gen.h"
@@ -17,6 +18,7 @@
 #include "gen_common.h"       // Common component functions
 #include "gen_enums.h"        // Enumerations for generators
 #include "image_handler.h"    // ImageHandler class
+#include "mainapp.h"          // Main application class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
@@ -486,9 +488,16 @@ void Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap)
     }
 
     const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-    if (bundle && bundle->lst_filenames.size())
+    if (!bundle || bundle->lst_filenames.empty())
     {
-        MSG_WARNING(tt_string("Missing bundle for ") << parts[IndexImage]);
+#if defined(_DEBUG)
+        auto msg =
+            std::format("Missing bundle for {} in {}:{} ({})", std::string_view(parts[IndexImage]),
+                        m_node->get_Form()->as_view(prop_class_name),
+                        m_node->as_view(prop_var_name), GenLangToString(m_language));
+        wxGetApp().DebugOutput(msg);
+        MSG_WARNING(msg);
+#endif  // _DEBUG
         Add("wxNullBitmap");
         return;
     }

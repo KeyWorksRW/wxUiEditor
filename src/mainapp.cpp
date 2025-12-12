@@ -73,6 +73,76 @@ wxIMPLEMENT_APP(App);  // NOLINT (cppcheck-suppress)
 
 tt_string tt_empty_cstr;
 
+namespace
+{
+    // Static storage for command-line filename (populated by ParseGenerationType or
+    // GetCommandLineFilename)
+    wxString s_filename;  // NOLINT (cppcheck-suppress)
+
+    // Helper to process and normalize a filename (add extension, handle wildcards)
+    void ProcessFilename(wxString& filename)
+    {
+        if (filename.empty())
+        {
+            return;
+        }
+
+        // Handle missing extension before wildcard expansion
+        // Check if filename contains wildcards - if so, only add extension if no dot present
+        bool has_wildcards = filename.Contains('*') || filename.Contains('?');
+
+        if (has_wildcards)
+        {
+            // For wildcards, only add extension if there's no dot at all
+            if (!filename.Contains('.'))
+            {
+                filename += ".wxui";
+            }
+        }
+        else
+        {
+            // For non-wildcards, use wxFileName to properly check for extension
+            wxFileName wxfn(filename);
+            if (!wxfn.HasExt())
+            {
+                wxfn.SetExt("wxui");
+                filename = wxfn.GetFullPath();
+            }
+        }
+
+        // Handle wildcards after extension is added
+        if (has_wildcards)
+        {
+            wxDir dir;
+            dir.Open("./");
+            if (!dir.GetFirst(&filename, filename, wxDIR_FILES))
+            {
+                // No match found
+                filename.clear();
+            }
+        }
+    }
+
+    // Helper to retrieve and process filename from command line
+    auto GetCommandLineFilename(wxCmdLineParser& parser) -> wxString&
+    {
+        if (!s_filename.empty())
+        {
+            return s_filename;
+        }
+
+        // Try to get filename from parameter
+        if (parser.GetParamCount() > 0)
+        {
+            s_filename = parser.GetParam(0);
+            ProcessFilename(s_filename);
+        }
+        // Otherwise s_filename may have been set by ParseGenerationType
+
+        return s_filename;
+    }
+}  // anonymous namespace
+
 #if defined(_WIN32)
     #include <wx/msw/darkmode.h>
 
@@ -139,11 +209,26 @@ bool App::OnInit()
 #endif
     }
 
+#if defined(_DEBUG)
+    m_stderr_output = std::make_unique<wxMessageOutputStderr>();
+#endif
+
     return true;
 }
 
 int App::OnRun()
 {
+#if defined(_DEBUG)
+    // Attach to parent console for command-line output
+    // This must be done early, before any output attempts
+    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        FILE* file_ptr;  // NOLINT (cppcheck-suppress)
+        freopen_s(&file_ptr, "CONOUT$", "w", stdout);
+        freopen_s(&file_ptr, "CONOUT$", "w", stderr);
+    }
+#endif
+
     NodeCreation.Initialize();
 
     wxCmdLineParser parser(argc, argv);
@@ -187,6 +272,9 @@ int App::OnRun()
 
     // The "test" options will not write any files, it simply runs the code generation skipping
     // the part where files get written, and generates the log file.
+
+    // TODO: [Randalphwa - 11-29-2025] These could potentially be used similar to verify, with the
+    // possibility of using wxMessageOutputDebug() to write the file differences to Debug Console.
 
     parser.AddLongSwitch("verbose", "verbose log file", wxCMD_LINE_HIDDEN);
 
@@ -234,6 +322,20 @@ int App::OnRun()
         wxSetAssertHandler(ttAssertionHandler);
     }
 
+    /*
+        Command-line options are categorized into three types for non-interactive operation:
+
+        gen_* options - Generate code files for the specified language(s) and write them to disk,
+                        then exit. Used for build automation and CI/CD pipelines.
+
+        verify_* options - Generate code internally and compare against existing files to verify
+                           that code generation produces identical output. Returns non-zero exit
+                           code if differences are detected. Does not modify any files.
+
+        test_* options - Execute code generation logic without writing any files. Primarily used
+                         for testing code generation paths and generating log files for debugging.
+    */
+
     bool is_verify_mode = false;
     constexpr frozen::set<std::string_view, 5> verify_options = { "verify_cpp", "verify_perl",
                                                                   "verify_python", "verify_ruby",
@@ -266,12 +368,22 @@ int App::OnRun()
         return 0;
     }
 
+    /*
+        Normal GUI mode: Create the main window and handle project loading.
+
+        If a project file was specified on the command line, load it directly. Otherwise, if
+        --load_last was specified or enabled in preferences, attempt to load the most recent
+        project from history. If no project is loaded by this point, display the startup dialog
+        to let the user choose or create a project. The main window is shown only after a project
+        is successfully loaded.
+    */
+
     m_frame = new MainFrame();
     ASSERT(m_frame);
 
     if (result == cmd_project_file_only)
     {
-        wxString filename = parser.GetParam(0);
+        const auto& filename = GetCommandLineFilename(parser);
         if (!Project.LoadProject(filename, true))
         {
             wxMessageBox(wxString("Unable to load project file: ") << filename,
@@ -333,6 +445,17 @@ auto App::OnExit() -> int
 {
     return wxApp::OnExit();
 }
+
+#if defined(_DEBUG)
+void App::DebugOutput(const wxString& str)
+{
+    if (m_stderr_output)
+    {
+        m_stderr_output->Output(str);
+        fflush(stderr);
+    }
+}
+#endif
 
 auto App::isFireCreationMsgs() -> bool
 {
@@ -462,8 +585,7 @@ void App::DbgCurrentTest(wxCommandEvent& /* event unused */)  // NOLINT (cppchec
 #endif
 
 // Helper: Parse command-line options to determine generation type
-auto App::ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
-    -> std::pair<size_t, bool>
+auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>
 {
     // Map option names to their corresponding generation type values
     constexpr frozen::map<std::string_view, size_t, 8> gen_options = {
@@ -483,9 +605,17 @@ auto App::ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
     // Check gen_* options (mutually exclusive)
     for (const auto& [option_name, option_type]: gen_options)
     {
-        if (parser.Found(wxString(option_name), &filename))
+        wxString option_filename;
+        if (parser.Found(wxString(option_name), &option_filename))
         {
             generate_type = option_type;
+
+            // Store the filename from the option value
+            if (!option_filename.empty())
+            {
+                s_filename = option_filename;
+                ProcessFilename(s_filename);
+            }
 
             if (option_name == "gen_coverage")
             {
@@ -504,10 +634,18 @@ auto App::ParseGenerationType(wxCmdLineParser& parser, wxString& filename)
 
     for (const auto& [option_name, option_type]: test_options)
     {
-        if (parser.Found(wxString(option_name), &filename))
+        wxString option_filename;
+        if (parser.Found(wxString(option_name), &option_filename))
         {
             generate_type = (generate_type | option_type);
             test_only = true;
+
+            // Store the filename from the option value (first one wins)
+            if (!option_filename.empty() && s_filename.empty())
+            {
+                s_filename = option_filename;
+                ProcessFilename(s_filename);
+            }
         }
     }
 
@@ -619,13 +757,9 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
         m_is_verbose_codegen = true;
     }
 
-    wxString filename;
-    if (parser.GetParamCount())
-    {
-        filename = parser.GetParam(0);
-    }
+    auto [generate_type, test_only] = ParseGenerationType(parser);
 
-    auto [generate_type, test_only] = ParseGenerationType(parser, filename);
+    const auto& filename = GetCommandLineFilename(parser);
 
     if (generate_type == GEN_LANG_NONE)
     {

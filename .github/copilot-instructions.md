@@ -184,7 +184,7 @@ Use these methods for building (in priority order):
 ## C++ (Primary Language)
 
 ### Naming Conventions
-- Variables: `snake_case`
+- Variables: `snake_case` (minimum 3 characters, except loop counters `i`, `j`, `k`)
 - Classes/Methods/Functions: `PascalCase`
 - Constants: `UPPER_SNAKE_CASE`
 - Enum types: `PascalCase` (singular, e.g., `Color` not `Colors`)
@@ -343,10 +343,10 @@ When asked to "Refactor codegen function [name]" or when refactoring any code in
 2. **Build the project**: `cmake --build build --config Debug`
 3. **Verify code generation unchanged**:
    ```powershell
-   build/bin/Debug/wxUiEditor.exe --verify_cpp .local/wxUiEditor_tests/wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+   build/bin/Debug/wxUiEditor.exe --verify_cpp .local/tests/wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
    ```
 4. On failure (exit code ≠ 0):
-   - Read diff: `.local/wxUiEditor_tests`
+   - Read diff: `.local/tests`
    - Analyze changes in generated code
    - Fix refactoring to preserve behavior
    - Rebuild and re-verify

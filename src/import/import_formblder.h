@@ -33,7 +33,7 @@ public:
     FormBuilder() {};
     ~FormBuilder() {};
 
-    bool Import(const tt_string& filename, bool write_doc = true) override;
+    bool Import(const std::string& filename, bool write_doc = true) override;
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
@@ -41,16 +41,16 @@ protected:
 
     // Called when a property is unknown and has a value set.
     void ProcessPropValue(pugi::xml_node& xml_prop, std::string_view prop_name,
-                          tt_string_view class_name, Node* newobject, Node* parent);
+                          std::string_view class_name, Node* newobject, Node* parent);
 
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
     void createProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 
 private:
-    tt_string m_embedPath;
-    tt_string m_eventGeneration;
-    tt_string m_baseFile;
-    tt_string m_class_decoration;
+    std::string m_embedPath;
+    std::string m_eventGeneration;
+    std::string m_baseFile;
+    std::string m_class_decoration;
 
     int m_VerMinor { 0 };
 };

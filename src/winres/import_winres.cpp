@@ -13,7 +13,7 @@
 
 WinResource::WinResource() {}
 
-bool WinResource::Import(const tt_string& filename, bool write_doc)
+bool WinResource::Import(const std::string& filename, bool write_doc)
 {
     std::vector<tt_string> forms;
     if (ImportRc(filename, forms))

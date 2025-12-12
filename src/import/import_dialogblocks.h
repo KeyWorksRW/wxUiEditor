@@ -36,7 +36,7 @@ public:
     DialogBlocks(DialogBlocks&&) = delete;
     auto operator=(DialogBlocks&&) -> DialogBlocks& = delete;
 
-    bool Import(const tt_string& filename, bool write_doc = true) override;
+    bool Import(const std::string& filename, bool write_doc = true) override;
 
     [[nodiscard]] auto GetLanguage() const -> int override { return GEN_LANG_CPLUSPLUS; }
 

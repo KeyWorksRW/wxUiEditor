@@ -870,7 +870,7 @@ namespace
     return result;
 }
 
-bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, bool allow_ui)
+bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, bool allow_ui)
 {
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
@@ -1003,7 +1003,9 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         FinalImportCheck(project_node.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
-        file.replace_extension(std::string(PROJECT_FILE_EXTENSION));
+        wxString wx_file(file);
+        ttwx::replace_extension(wx_file, std::string(PROJECT_FILE_EXTENSION));
+        file = wx_file.ToStdString();
         Project.set_ProjectFile(file);
         ProjectImages.CollectBundles();
 
@@ -1011,7 +1013,7 @@ bool ProjectHandler::Import(ImportXML& import, tt_string& file, bool append, boo
         // If the file has been created once before, then for the first form, copy the old classname
         // and base filename to the re-converted first form.
 
-        if (m_project_node->get_ChildCount() && file.file_exists())
+        if (m_project_node->get_ChildCount() && wxFileName::FileExists(file))
         {
             doc.reset();
             auto result = doc.load_file_string(file);
@@ -1282,7 +1284,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
     {
         WxCrafter crafter;
 
-        if (crafter.Import(file))
+        if (crafter.Import(file.ToStdString()))
         {
             auto& doc = crafter.GetDocument();
             auto root = doc.first_child();
@@ -1336,7 +1338,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
     {
         FormBuilder fb;
 
-        if (fb.Import(file))
+        if (fb.Import(file.ToStdString()))
         {
             auto& doc = fb.GetDocument();
             auto root = doc.first_child();
@@ -1390,7 +1392,7 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
     {
         DialogBlocks db;
 
-        if (db.Import(file))
+        if (db.Import(file.ToStdString()))
         {
             auto& doc = db.GetDocument();
             auto root = doc.first_child();
@@ -1444,7 +1446,7 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
     {
         WxGlade glade;
 
-        if (glade.Import(file))
+        if (glade.Import(file.ToStdString()))
         {
             auto& doc = glade.GetDocument();
             auto root = doc.first_child();
@@ -1498,7 +1500,7 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
     {
         WxSmith smith;
 
-        if (smith.Import(file))
+        if (smith.Import(file.ToStdString()))
         {
             auto& doc = smith.GetDocument();
             auto root = doc.first_child();
@@ -1553,7 +1555,7 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
         // wxSmith files are a superset of XRC files, so we use the wxSmith class to process both
         WxSmith smith;
 
-        if (smith.Import(file))
+        if (smith.Import(file.ToStdString()))
         {
             auto& doc = smith.GetDocument();
             auto root = doc.first_child();

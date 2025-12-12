@@ -23,6 +23,7 @@
  * prop_ex_style, prop_window_style, prop_window_ex_style, prop_alignment, prop_borders, etc.
  */
 
+#include <filesystem>
 #include <set>
 
 #include <frozen/map.h>
@@ -39,9 +40,9 @@
 #include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
 #include "ttwx_view_vector.h"    // ViewVector -- ttwx::ViewVector class
 
-DialogBlocks::DialogBlocks() {}
+DialogBlocks::DialogBlocks() = default;
 
-bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
+auto DialogBlocks::Import(const std::string& filename, bool write_doc) -> bool
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -161,12 +162,13 @@ bool DialogBlocks::Import(const tt_string& filename, bool write_doc)
 
     if (m_errors.size())
     {
-        tt_string errMsg("Not everything in the DialogBlocks project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename() << "------");
+        std::string errMsg("Not everything in the DialogBlocks project could be converted:\n\n");
+        MSG_ERROR(std::string("------  ") +
+                  std::filesystem::path(m_importProjectFile).filename().string() + "------");
         for (const auto& iter: m_errors)
         {
             MSG_ERROR(iter);
-            errMsg << iter << '\n';
+            errMsg += iter + '\n';
         }
         wxMessageDialog dlg(nullptr, errMsg, "Import DialogBlocks Project", wxICON_WARNING | wxOK);
         dlg.ShowModal();
@@ -243,7 +245,7 @@ auto DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                                                        << type_name << "\n"
                                                        << msg);
 #endif  // _DEBUG
-            m_errors.emplace(tt_string("Unrecognized form class: ") << type_name.ToStdString());
+            m_errors.emplace(std::string("Unrecognized form class: ") + type_name.ToStdString());
             return false;
         }
         if (get_GenName == gen_wxDialog)
@@ -285,8 +287,8 @@ auto DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                             auto msg = GatherErrorDetails(form_xml, get_GenName);
                             FAIL_MSG(wxString() << "Unable to create " << type_name << "\n" << msg)
 #endif  // _DEBUG
-                            m_errors.emplace(tt_string("Unable to create ")
-                                             << type_name.ToStdString());
+                            m_errors.emplace(std::string("Unable to create ") +
+                                             type_name.ToStdString());
                         }
                         return false;
 
@@ -316,7 +318,7 @@ auto DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                     auto msg = GatherErrorDetails(form_xml, get_GenName);
                     FAIL_MSG(wxString() << "Unable to create " << type_name << "\n" << msg)
 #endif  // _DEBUG
-                    m_errors.emplace(tt_string("Unable to create ") << type_name.ToStdString());
+                    m_errors.emplace(std::string("Unable to create ") + type_name.ToStdString());
                     return false;
                 }
             }
@@ -326,7 +328,7 @@ auto DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
                 auto msg = GatherErrorDetails(form_xml, get_GenName);
                 FAIL_MSG(wxString() << "Unable to create " << type_name << "\n" << msg)
 #endif  // _DEBUG
-                m_errors.emplace(tt_string("Unable to create ") << type_name.ToStdString());
+                m_errors.emplace(std::string("Unable to create ") + type_name.ToStdString());
                 return false;
             }
         }
@@ -437,7 +439,7 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
                            << msg)
 #endif  // _DEBUG
             m_errors.emplace(
-                tt_string("Unable to determine class due to missing \"proxy-type\" property."));
+                std::string("Unable to determine class due to missing \"proxy-type\" property."));
         }
         else
         {
@@ -545,7 +547,8 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
                              << wxString(map_GenNames.at(parent->get_GenName())) << "\n"
                              << msg);
 #endif  // _DEBUG
-        m_errors.emplace(tt_string("Unable to create ") << map_GenNames.at(get_GenName));
+        m_errors.emplace(std::string("Unable to create ") +
+                         std::string(map_GenNames.at(get_GenName)));
         return;
     }
 
@@ -580,8 +583,8 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
             {
                 FAIL_MSG(wxString() << "Unrecognized orientation: " << direction << "\n"
                                     << GatherErrorDetails(child_xml, get_GenName));
-                m_errors.emplace(tt_string("Unrecognized orientation: ")
-                                 << direction.ToStdString());
+                m_errors.emplace(std::string("Unrecognized orientation: ") +
+                                 direction.ToStdString());
             }
         }
     }
@@ -619,7 +622,8 @@ void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
                              << wxString(map_GenNames.at(parent->get_GenName())) << "\n"
                              << msg);
 #endif  // _DEBUG
-        m_errors.emplace(tt_string("Unable to create ") << map_GenNames.at(gen_CustomControl));
+        m_errors.emplace(std::string("Unable to create ") +
+                         std::string(map_GenNames.at(gen_CustomControl)));
         return;
     }
 
@@ -862,7 +866,7 @@ void DialogBlocks::ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& 
     for (int event_count = 0;; ++event_count)
     {
         if (auto value = node_xml.find_child_by_attribute(
-                "string", "name", tt_string("event-handler-") << event_count);
+                "string", "name", std::string("event-handler-") + std::to_string(event_count));
             value)
         {
             auto event_text = ExtractQuotedString(value);
@@ -1308,14 +1312,14 @@ constexpr auto map_old_borders = frozen::make_map<std::string_view, std::string_
 
 void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node)
 {
-    tt_string window_styles;
-    tt_string window_exstyles;
-    tt_string dialog_styles;
-    tt_string dialog_exstyles;
-    tt_string prop_styles;
-    tt_string alignment_styles;
-    tt_string layout_flags;
-    tt_string border_flags;
+    std::string window_styles;
+    std::string window_exstyles;
+    std::string dialog_styles;
+    std::string dialog_exstyles;
+    std::string prop_styles;
+    std::string alignment_styles;
+    std::string layout_flags;
+    std::string border_flags;
 
     for (auto& form: node_xml.children("bool"))
     {
@@ -1343,65 +1347,65 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         {
             if (window_styles.size())
             {
-                window_styles << '|';
+                window_styles += '|';
             }
-            window_styles << name;
+            window_styles += name;
         }
         else if (set_exwindow_styles.contains(name))
         {
             if (window_exstyles.size())
             {
-                window_exstyles << '|';
+                window_exstyles += '|';
             }
-            window_exstyles << name;
+            window_exstyles += name;
         }
         else if (set_dialog_styles.contains(name))
         {
             if (dialog_styles.size())
             {
-                dialog_styles << '|';
+                dialog_styles += '|';
             }
-            dialog_styles << name;
+            dialog_styles += name;
         }
         else if (set_dialog_exstyles.contains(name))
         {
             if (dialog_exstyles.size())
             {
-                dialog_exstyles << '|';
+                dialog_exstyles += '|';
             }
-            dialog_exstyles << name;
+            dialog_exstyles += name;
         }
         else if (set_styles.contains(name))
         {
             if (prop_styles.size())
             {
-                prop_styles << '|';
+                prop_styles += '|';
             }
-            prop_styles << name;
+            prop_styles += name;
         }
         else if (set_alignment_styles.contains(name))
         {
             if (alignment_styles.size())
             {
-                alignment_styles << '|';
+                alignment_styles += '|';
             }
-            alignment_styles << name;
+            alignment_styles += name;
         }
         else if (set_layout_flags.contains(name))
         {
             if (layout_flags.size())
             {
-                layout_flags << '|';
+                layout_flags += '|';
             }
-            layout_flags << name;
+            layout_flags += name;
         }
         else if (set_borders_flags.contains(name))
         {
             if (border_flags.size())
             {
-                border_flags << '|';
+                border_flags += '|';
             }
-            border_flags << name;
+            border_flags += name;
         }
         else if (set_modes.contains(name))
         {
@@ -1449,10 +1453,10 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
     if (new_node->HasProp(prop_alignment))
     {
-        tt_string style_str;
+        std::string style_str;
         if (alignment_styles.size())
         {
-            style_str << alignment_styles;
+            style_str += alignment_styles;
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignH"); value)
         {
@@ -1461,17 +1465,17 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
             {
                 if (style_str.size())
                 {
-                    style_str << '|';
+                    style_str += '|';
                 }
-                style_str << "wxALIGN_RIGHT";
+                style_str += "wxALIGN_RIGHT";
             }
             else if (alignment.CmpNoCase("Centre") == 0)
             {
                 if (style_str.size())
                 {
-                    style_str << '|';
+                    style_str += '|';
                 }
-                style_str << "wxALIGN_CENTER_HORIZONTAL";
+                style_str += "wxALIGN_CENTER_HORIZONTAL";
             }
         }
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignV"); value)
@@ -1485,17 +1489,17 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 {
                     if (style_str.size())
                     {
-                        style_str << '|';
+                        style_str += '|';
                     }
-                    style_str << "wxALIGN_BOTTOM";
+                    style_str += "wxALIGN_BOTTOM";
                 }
                 else if (alignment.CmpNoCase("Centre") == 0)
                 {
                     if (style_str.size())
                     {
-                        style_str << '|';
+                        style_str += '|';
                     }
-                    style_str << "wxALIGN_CENTER_VERTICAL";
+                    style_str += "wxALIGN_CENTER_VERTICAL";
                 }
             }
         }
@@ -1508,7 +1512,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         style_str.clear();
         if (layout_flags.size())
         {
-            style_str << layout_flags;
+            style_str += layout_flags;
         }
 
         if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-AlignH"); value)
@@ -1521,9 +1525,9 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 {
                     if (style_str.size())
                     {
-                        style_str << '|';
+                        style_str += '|';
                     }
-                    style_str << "wxEXPAND";
+                    style_str += "wxEXPAND";
                 }
             }
         }
@@ -1538,9 +1542,9 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 {
                     if (style_str.size())
                     {
-                        style_str << '|';
+                        style_str += '|';
                     }
-                    style_str << "wxEXPAND";
+                    style_str += "wxEXPAND";
                 }
             }
         }
@@ -1552,8 +1556,10 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
 
         if (border_flags.size())
         {
-            if (border_flags.contains("wxLEFT") && border_flags.contains("wxRIGHT") &&
-                border_flags.contains("wxTOP") && border_flags.contains("wxBOTTOM"))
+            if (border_flags.find("wxLEFT") != std::string::npos &&
+                border_flags.find("wxRIGHT") != std::string::npos &&
+                border_flags.find("wxTOP") != std::string::npos &&
+                border_flags.find("wxBOTTOM") != std::string::npos)
             {
                 new_node->set_value(prop_borders, "wxALL");
             }
@@ -1776,14 +1782,14 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                 fields[pos] += ('|' + wxString(iter).ToStdString());
                 ++pos;
             }
-            tt_string new_fields;
+            std::string new_fields;
             for (auto& iter: fields)
             {
                 if (new_fields.size())
                 {
-                    new_fields << ';';
+                    new_fields += ';';
                 }
-                new_fields << iter;
+                new_fields += iter;
             }
             node->set_value(prop_fields, new_fields);
         }

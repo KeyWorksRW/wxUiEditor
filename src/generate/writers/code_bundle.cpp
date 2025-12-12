@@ -89,7 +89,7 @@ void Code::BundlePerl(const tt_string_vector& parts)
     // do something here...
 
     if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-        bundle && bundle->lst_filenames.size())
+        bundle && !bundle->lst_filenames.empty())
     {
         wxFileName filepath(bundle->lst_filenames[0]);
         filepath.MakeAbsolute();
@@ -175,7 +175,7 @@ void Code::BundlePython(const tt_string_vector& parts)
     auto path = MakePythonPath(node());
 
     if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-        bundle && bundle->lst_filenames.size())
+        bundle && !bundle->lst_filenames.empty())
     {
         wxFileName filepath(bundle->lst_filenames[0]);
         filepath.MakeAbsolute();
@@ -384,7 +384,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
     }
 
     if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-        bundle && bundle->lst_filenames.size())
+        bundle && !bundle->lst_filenames.empty())
     {
         if (parts[IndexType].contains("SVG"))
         {

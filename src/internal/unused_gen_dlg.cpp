@@ -204,8 +204,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
                 continue;
             }
 
-                            skipping = false;
-
+            skipping = false;
         }
 
         if (!used.contains(iter.first))
@@ -220,9 +219,10 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 void UnusedGenerators::OnSave(wxCommandEvent& /* event unused */)
 {
     auto filename = wxSaveFileSelector("Save unused", "txt", wxEmptyString, this);
-    if (filename.empty()) {
+    if (filename.empty())
+    {
         return;
-}
+    }
 
     tt_string_vector file;
     for (unsigned int idx = 0; idx < m_listbox->GetCount(); ++idx)

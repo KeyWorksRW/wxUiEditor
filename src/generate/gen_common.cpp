@@ -57,7 +57,7 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
     }
 }
 
-tt_string GenerateQuotedString(const tt_string& str)
+auto GenerateQuotedString(const tt_string& str) -> tt_string
 {
     tt_string code;
 
@@ -80,16 +80,24 @@ tt_string GenerateQuotedString(const tt_string& str)
             // While this may not be necessary for non-Windows systems, it does ensure the code
             // compiles on all platforms.
             if (Project.as_bool(prop_internationalize))
+            {
                 code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
+            }
             else
+            {
                 code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
+            }
         }
         else
         {
             if (Project.as_bool(prop_internationalize))
+            {
                 code << "_(\"" << str_with_escapes << "\")";
+            }
             else
+            {
                 code << "\"" << str_with_escapes << "\"";
+            }
         }
     }
     else
@@ -100,42 +108,42 @@ tt_string GenerateQuotedString(const tt_string& str)
     return code;
 }
 
-tt_string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
+auto GenerateQuotedString(Node* node, GenEnum::PropName prop_name) -> tt_string
 {
     if (node->HasValue(prop_name))
     {
         return GenerateQuotedString(node->as_string(prop_name));
     }
-    else
-    {
-        return tt_string("wxEmptyString");
-    }
+
+    return tt_string("wxEmptyString");
 }
 
 // clang-format off
 
-// List of valid component parent types
-static constexpr GenType s_GenParentTypes[] = {
 
-    type_auinotebook,
-    type_bookpage,
-    type_choicebook,
-    type_container,
-    type_listbook,
-    type_notebook,
-    type_panel,
-    type_ribbonpanel,
-    type_simplebook,
-    type_splitter,
-    type_wizardpagesimple,
-
-};
+namespace
+{
+    // List of valid component parent types
+    constexpr std::array<GenType, 11> s_GenParentTypes = {
+        type_auinotebook,
+        type_bookpage,
+        type_choicebook,
+        type_container,
+        type_listbook,
+        type_notebook,
+        type_panel,
+        type_ribbonpanel,
+        type_simplebook,
+        type_splitter,
+        type_wizardpagesimple,
+    };
+} // anonymous namespace
 
 // clang-format on
 
-tt_string get_ParentName(Node* node, GenLang language)
+auto get_ParentName(Node* node, GenLang language) -> tt_string
 {
-    auto parent = node->get_Parent();
+    auto* parent = node->get_Parent();
     while (parent)
     {
         if (parent->is_Sizer())
@@ -150,7 +158,7 @@ tt_string get_ParentName(Node* node, GenLang language)
             return tt_string("this");
         }
 
-        for (auto iter: s_GenParentTypes)
+        for (const auto iter: s_GenParentTypes)
         {
             if (parent->is_Type(iter))
             {
@@ -166,7 +174,7 @@ tt_string get_ParentName(Node* node, GenLang language)
     }
 
     ASSERT_MSG(parent, tt_string() << node->get_NodeName() << " has no parent!");
-    return tt_string("internal error");
+    return { "internal error" };
 }
 
 static void GenStyle(Node* node, tt_string& code, const char* prefix)
@@ -177,7 +185,9 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
         !node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
         if (all_styles.size())
+        {
             all_styles << '|';
+        }
         all_styles << node->as_string(prop_tab_position);
     }
 
@@ -185,14 +195,18 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
         !node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
         if (all_styles.size())
+        {
             all_styles << '|';
+        }
         all_styles << node->as_string(prop_orientation);
     }
 
     if (node->is_Gen(gen_wxRichTextCtrl))
     {
         if (all_styles.size())
+        {
             all_styles << '|';
+        }
         all_styles << "wxRE_MULTILINE";
     }
 
@@ -215,14 +229,18 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
     if (node->HasValue(prop_window_style))
     {
         if (all_styles.size())
+        {
             all_styles << '|';
+        }
         all_styles << node->as_string(prop_window_style);
     }
 
     if (node->is_Gen(gen_wxListView))
     {
         if (all_styles.size())
+        {
             all_styles << '|';
+        }
         all_styles << node->as_string(prop_mode);
     }
 
@@ -236,7 +254,7 @@ static void GenStyle(Node* node, tt_string& code, const char* prefix)
     }
 }
 
-int GetStyleInt(Node* node, const char* prefix)
+auto GetStyleInt(Node* node, const char* prefix) -> int
 {
     tt_string styles;
 
@@ -247,7 +265,7 @@ int GetStyleInt(Node* node, const char* prefix)
     // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
     tt_string_vector mstr(styles, '|');
-    for (auto& iter: mstr)
+    for (const auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
         result |= NodeCreation.get_ConstantAsInt(iter);
@@ -255,13 +273,13 @@ int GetStyleInt(Node* node, const char* prefix)
     return result;
 }
 
-int GetBitlistInt(Node* node, GenEnum::PropName prop_name)
+auto GetBitlistInt(Node* node, GenEnum::PropName prop_name) -> int
 {
     int result = 0;
     // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
     tt_string_vector mstr(node->as_string(prop_name), '|');
-    for (auto& iter: mstr)
+    for (const auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
         result |= NodeCreation.get_ConstantAsInt(iter);
@@ -283,25 +301,29 @@ inline constexpr auto btn_bmp_types = std::to_array<BTN_BMP_TYPES>({
     { .prop_name = prop_current, .function_name = "SetBitmapCurrent" },
 });
 
-bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
+auto GenBtnBimapCode(Node* node, tt_string& code, bool is_single) -> bool
 {
     bool has_additional_bitmaps =
         (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
          node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
     if (code.size())
+    {
         code << '\n';
+    }
 
     if (has_additional_bitmaps)
     {
         if (code.size() && !(code.back() == '\n'))
+        {
             code << '\n';
+        }
         code << "{\n";
     }
 
     tt_string bundle_code;
     bool is_vector_generated = false;
 
-    for (auto& iter: btn_bmp_types)
+    for (const auto& iter: btn_bmp_types)
     {
         if (node->HasValue(iter.prop_name))
         {
@@ -323,7 +345,8 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
                 // GenerateBundleCode assumes an indent within an indent
                 bundle_code.Replace("\t\t\t", "\t", true);
                 // if has_additional_bitmaps is true, we already have an opening brace
-                code << bundle_code.c_str() + (has_additional_bitmaps ? 1 : 0);
+                code << (has_additional_bitmaps && bundle_code.size() > 0 ? bundle_code.substr(1) :
+                                                                            bundle_code);
                 code << "\t" << node->get_NodeName() << "->" << iter.function_name;
                 code << "(wxBitmapBundle::FromBitmaps(bitmaps));";
 
@@ -335,7 +358,9 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
             else
             {
                 if (code.size() && !(code.back() == '\n'))
+                {
                     code << '\n';
+                }
                 code << "\t" << node->get_NodeName() << "->" << iter.function_name << "("
                      << bundle_code << ");";
             }
@@ -355,7 +380,7 @@ bool GenBtnBimapCode(Node* node, tt_string& code, bool is_single)
     return is_vector_generated;
 }
 
-tt_string GenerateBitmapCode(const tt_string& description)
+auto GenerateBitmapCode(const tt_string& description) -> tt_string
 {
     tt_string code;
 
@@ -372,7 +397,7 @@ tt_string GenerateBitmapCode(const tt_string& description)
         code << "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
         return code;
     }
-    else if (parts[IndexImage].empty())
+    if (parts[IndexImage].empty())
     {
         code << "wxNullBitmap";
         return code;
@@ -390,7 +415,9 @@ tt_string GenerateBitmapCode(const tt_string& description)
 
         code << "wxArtProvider::GetBitmap(" << art_id;
         if (art_client.size())
+        {
             code << ", " << art_client;
+        }
         code << ')';
 
         return code;
@@ -416,7 +443,7 @@ tt_string GenerateBitmapCode(const tt_string& description)
 
         if (parts[IndexType].starts_with("Embed"))
         {
-            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->base_image().array_name;
@@ -459,7 +486,9 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         // Note that current documentation states that the client is required, but the header file
         // says otherwise
         if (art_client.size())
+        {
             code << art_client;
+        }
 
         if (parts.size() > IndexSize && parts[IndexSize].size())
         {
@@ -484,7 +513,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             return false;
         }
 
-        if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
+        if (const auto* bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
@@ -506,7 +535,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             else
             {
                 code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
-                for (auto& iter: bundle->lst_filenames)
+                for (const auto& iter: bundle->lst_filenames)
                 {
                     tt_string name(iter.filename());
                     name.remove_extension();
@@ -539,7 +568,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             return false;
         }
 
-        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             MSG_WARNING(tt_string() << description << " not embedded!");
@@ -574,13 +603,13 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             return false;
         }
 
-        if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
+        if (const auto* bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
                 tt_string name(bundle->lst_filenames[0].filename());
 
-                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     if (auto function_name = ProjectImages.GetBundleFuncName(embed);
                         function_name.size())
@@ -597,15 +626,17 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             }
             else if (bundle->lst_filenames.size() == 2)
             {
-                tt_string first_name, second_name;
-                tt_string first_function, second_function;
+                tt_string first_name;
+                tt_string second_name;
+                tt_string first_function;
+                tt_string second_function;
 
-                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     first_function = ProjectImages.GetBundleFuncName(embed);
                     first_name = "wxue_img::" + embed->base_image().array_name;
                 }
-                if (auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
+                if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
                 {
                     second_function = ProjectImages.GetBundleFuncName(embed);
                     second_name = "wxue_img::" + embed->base_image().array_name;
@@ -636,12 +667,13 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             }
             else if (bundle->lst_filenames.size() > 2)
             {
-                tt_string name, function;
+                tt_string name;
+                tt_string function;
 
                 code << "{\n\twxVector<wxBitmap> bitmaps;\n";
-                for (auto& iter: bundle->lst_filenames)
+                for (const auto& iter: bundle->lst_filenames)
                 {
-                    if (auto embed = ProjectImages.GetEmbeddedImage(iter); embed)
+                    if (auto* embed = ProjectImages.GetEmbeddedImage(iter); embed)
                     {
                         function = ProjectImages.GetBundleFuncName(embed);
                         name = "wxue_img::" + embed->base_image().array_name;
@@ -722,7 +754,7 @@ void GenFormSettings(Code& code)
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 // Used when generating code.
-tt_string ConvertToCodeString(const tt_string& text)
+auto ConvertToCodeString(const tt_string& text) -> tt_string
 {
     tt_string result;
 
@@ -763,52 +795,66 @@ tt_string ConvertToCodeString(const tt_string& text)
     return result;
 }
 
-std::optional<tt_string> GenGetSetCode(Node* node)
+auto GenGetSetCode(Node* node) -> std::optional<tt_string>
 {
-    auto& get_name = node->as_string(prop_get_function);
-    auto& set_name = node->as_string(prop_set_function);
+    const auto& get_name = node->as_string(prop_get_function);
+    const auto& set_name = node->as_string(prop_set_function);
     if (get_name.empty() && set_name.empty())
+    {
         return {};
+    }
 
-    if (auto& var_name = node->as_string(prop_validator_variable); var_name.size())
+    if (const auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {
         auto val_data_type = node->get_ValidatorDataType();
         if (val_data_type.empty())
+        {
             return {};
+        }
         tt_string code;
         if (val_data_type == "wxString" || val_data_type == "wxFileName" ||
             val_data_type == "wxArrayInt")
         {
             if (get_name.size())
+            {
                 code << "\tconst " << val_data_type << "& " << get_name << "() const { return "
                      << var_name << "; }";
+            }
             if (set_name.size())
             {
                 if (code.size())
+                {
                     code << "\n";
+                }
                 code << "\tvoid " << set_name << "(const " << val_data_type << "& value) { "
                      << var_name << " = value; }";
             }
             if (code.empty())
-                return {};
-            return code;
-        }
-        else
-        {
-            if (get_name.size())
-                code << '\t' << val_data_type << ' ' << get_name << "() const { return " << var_name
-                     << "; }";
-            if (set_name.size())
             {
-                if (code.size())
-                    code << "\n";
-                code << "\tvoid " << set_name << "(" << val_data_type << " value) { " << var_name
-                     << " = value; }";
-            }
-            if (code.empty())
                 return {};
+            }
             return code;
         }
+
+        if (get_name.size())
+        {
+            code << '\t' << val_data_type << ' ' << get_name << "() const { return " << var_name
+                 << "; }";
+        }
+        if (set_name.size())
+        {
+            if (code.size())
+            {
+                code << "\n";
+            }
+            code << "\tvoid " << set_name << "(" << val_data_type << " value) { " << var_name
+                 << " = value; }";
+        }
+        if (code.empty())
+        {
+            return {};
+        }
+        return code;
     }
 
     return {};
@@ -823,7 +869,9 @@ void GenValidatorSettings(Code& code)
     auto var_name = node->as_string(prop_validator_variable);
     // Unless there is a variable name, we ignore the entire validator section
     if (var_name.empty())
+    {
         return;
+    }
 
     // Python supports user-created validator classes, but not any of the wxWidgets validators.
     // From Python docs: "neither TextValidator nor GenericValidator are implemented in wxPython"
@@ -838,11 +886,17 @@ void GenValidatorSettings(Code& code)
     if (code.is_ruby())
     {
         if (node->is_Gen(gen_StaticCheckboxBoxSizer))
+        {
             var_name = "@" + node->as_string(prop_checkbox_var_name);
+        }
         else if (node->is_Gen(gen_StaticRadioBtnBoxSizer))
+        {
             var_name = "@" + node->as_string(prop_radiobtn_var_name);
+        }
         else
+        {
             var_name.insert(0, "@");
+        }
         code.Str("# to retrieve: ").Str(var_name).Str(" = ");
         code.NodeName().Str(".get_validator.get_value()").Eol();
         code.Str(var_name).Str(" = nil").Eol();
@@ -852,15 +906,23 @@ void GenValidatorSettings(Code& code)
     if (code.is_cpp())
     {
         if (node->is_Gen(gen_StaticCheckboxBoxSizer))
+        {
             code.Add(prop_checkbox_var_name);
+        }
         else if (node->is_Gen(gen_StaticRadioBtnBoxSizer))
+        {
             code.Add(prop_radiobtn_var_name);
+        }
         else
+        {
             code.NodeName();
+        }
     }
 
     if (node->is_Gen(gen_wxRearrangeCtrl))
+    {
         code.Function("GetList()");
+    }
 
     code.Function("SetValidator(");
 
@@ -878,7 +940,7 @@ void GenValidatorSettings(Code& code)
         return;
     }
 
-    auto& data_type = node->as_string(prop_validator_data_type);
+    const auto& data_type = node->as_string(prop_validator_data_type);
     ASSERT(data_type.size())
     if (data_type.empty())
     {  // theoretically impossible
@@ -889,7 +951,9 @@ void GenValidatorSettings(Code& code)
     auto style = node->as_string(prop_validator_style);
     style.Replace("wxFILTER_NONE", "", true);
     if (style.starts_with('|'))
+    {
         style.erase(0, 1);
+    }
 
     auto validator_type = node->get_ValidatorType();
 
@@ -922,22 +986,30 @@ void GenValidatorSettings(Code& code)
             {
                 code.Str("Wx::UnsignedValidator.new");
                 if (style.size())
+                {
                     code << '(';
+                }
             }
             else
             {
                 code.Add(validator_type).Str(".new");
                 if (style.size())
+                {
                     code << '(';
+                }
             }
         }
     }
     else
     {
         if (code.is_ruby() && validator_type == "wxFloatingPointValidator")
+        {
             code.Str("Wx::FloatValidator").AddIfRuby(".new") << '(';
+        }
         else
+        {
             code.Add(validator_type).AddIfRuby(".new") << '(';
+        }
     }
 
     tt_string_vector styles(style, '|', tt::TRIM::both);
@@ -946,12 +1018,14 @@ void GenValidatorSettings(Code& code)
         if (style.contains("wxFILTER_"))
         {
             tt_string filters;
-            for (auto& iter: styles)
+            for (const auto& iter: styles)
             {
                 if (iter.starts_with("wxFILTER_"))
                 {
                     if (filters.size())
+                    {
                         filters << '|';
+                    }
                     filters << iter;
                 }
             }
@@ -996,12 +1070,14 @@ void GenValidatorSettings(Code& code)
         if (style.contains("wxNUM_"))
         {
             tt_string num_styles;
-            for (auto& iter: styles)
+            for (const auto& iter: styles)
             {
                 if (iter.starts_with("wxNUM_"))
                 {
                     if (num_styles.size())
+                    {
                         num_styles << '|';
+                    }
                     num_styles << iter;
                 }
             }
@@ -1033,7 +1109,9 @@ void GenValidatorSettings(Code& code)
                     .Str("->GetValidator(), ")
                     .Str(validator_type);
                 if (validator_type == "wxIntegerValidator")
+                {
                     code.Str("<").Str(data_type).Str(">");
+                }
                 code.Str(")->SetMin(").Add(prop_minValue).Str(");");
             }
             else if (code.is_ruby())
@@ -1051,7 +1129,9 @@ void GenValidatorSettings(Code& code)
                     .Str("->GetValidator(), ")
                     .Str(validator_type);
                 if (validator_type == "wxIntegerValidator")
+                {
                     code.Str("<").Str(data_type).Str(">");
+                }
                 code.Str(")->SetMax(").Add(prop_maxValue).Str(");");
             }
             else if (code.is_ruby())
@@ -1065,7 +1145,7 @@ void GenValidatorSettings(Code& code)
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything
 // needed to set the window's icon.
 
-tt_string GenerateIconCode(const tt_string& description)
+auto GenerateIconCode(const tt_string& description) -> tt_string
 {
     tt_string code;
 
@@ -1103,12 +1183,14 @@ tt_string GenerateIconCode(const tt_string& description)
         // Note that current documentation states that the client is required, but the header file
         // says otherwise
         if (art_client.size())
+        {
             code << art_client;
+        }
         code << ").GetIconFor(this));\n";
     }
     else if (description.starts_with("SVG"))
     {
-        auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             FAIL_MSG(tt_string() << description << " not embedded!")
@@ -1135,7 +1217,7 @@ tt_string GenerateIconCode(const tt_string& description)
     }
     else
     {
-        if (auto bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
+        if (const auto* bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
@@ -1146,7 +1228,7 @@ tt_string GenerateIconCode(const tt_string& description)
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                    auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->base_image().array_name;
@@ -1159,14 +1241,14 @@ tt_string GenerateIconCode(const tt_string& description)
             else
             {
                 code << "{\n\twxIconBundle icon_bundle;\n\twxIcon icon;\n";
-                for (auto& iter: bundle->lst_filenames)
+                for (const auto& iter: bundle->lst_filenames)
                 {
                     tt_string name(iter.filename());
                     name.remove_extension();
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
                     if (parts[IndexType].starts_with("Embed"))
                     {
-                        auto embed = ProjectImages.GetEmbeddedImage(iter);
+                        auto* embed = ProjectImages.GetEmbeddedImage(iter);
                         if (embed)
                         {
                             name = "wxue_img::" + embed->base_image().array_name;
@@ -1218,11 +1300,15 @@ void GenToolCode(Code& code)
     }
 
     if (node->is_Parent(gen_wxToolBar) || node->is_Parent(gen_wxAuiToolBar))
+    {
         code.ParentName().Function("AddTool(").as_string(prop_id).Comma();
+    }
     else
     {
         if (code.is_python())
+        {
             code += "self.";
+        }
         code.Add("AddTool(").as_string(prop_id).Comma();
     }
 
@@ -1287,7 +1373,7 @@ void GenToolCode(Code& code)
     code.EndFunction();
 }
 
-bool BitmapList(Code& code, const GenEnum::PropName prop)
+auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
 {
     auto* node = code.node();  // for convenience
     // Note that Ruby always uses a function, and therefore has no need for a list
@@ -1296,7 +1382,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
         return false;
     }
 
-    auto& description = node->as_string(prop);
+    const auto& description = node->as_string(prop);
     tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") ||
@@ -1305,7 +1391,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
         return false;
     }
 
-    auto bundle = ProjectImages.GetPropertyImageBundle(description);
+    const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -1322,7 +1408,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
 
         code += "bitmaps = [ ";
         bool needs_comma = false;
-        for (auto& iter: bundle->lst_filenames)
+        for (const auto& iter: bundle->lst_filenames)
         {
             if (needs_comma)
             {
@@ -1336,7 +1422,9 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
 
             code.Str("wxBitmap(").QuotedString(name);
             if (is_xpm)
+            {
                 code.Comma().Str("wx.BITMAP_TYPE_XPM");
+            }
             code += ")";
             needs_comma = true;
         }
@@ -1358,7 +1446,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     }
     code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
 
-    for (auto& iter: bundle->lst_filenames)
+    for (const auto& iter: bundle->lst_filenames)
     {
         tt_string name(iter.filename());
         name.remove_extension();
@@ -1371,7 +1459,7 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
             name.Replace(".", "_", true);  // fix wxFormBuilder header files
             if (parts[IndexType].starts_with("Embed"))
             {
-                auto embed = ProjectImages.GetEmbeddedImage(iter);
+                auto* embed = ProjectImages.GetEmbeddedImage(iter);
                 if (embed)
                 {
                     name = "wxue_img::" + embed->base_image().array_name;
@@ -1483,12 +1571,14 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
 
     int flags = flag_no_ui;
     if (pClassList)
+    {
         flags |= flag_test_only;
+    }
     auto retval = cpp_cw->WriteFile(language, flags, form);
 
     if (auto warning_msgs = code_generator->getWarnings(); warning_msgs.size())
     {
-        for (auto& iter: warning_msgs)
+        for (const auto& iter: warning_msgs)
         {
             results.msgs.emplace_back() << iter << '\n';
         }
@@ -1503,11 +1593,17 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
         else
         {
             if (form->is_Gen(gen_Images))
+            {
                 pClassList->emplace_back(GenEnum::map_GenNames.at(gen_Images));
+            }
             if (form->is_Gen(gen_Data))
+            {
                 pClassList->emplace_back(GenEnum::map_GenNames.at(gen_Data));
+            }
             else
+            {
                 pClassList->emplace_back(form->as_string(prop_class_name));
+            }
             return true;
         }
     }
@@ -1558,7 +1654,7 @@ auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClass
         std::vector<Node*> forms;
         Project.CollectForms(forms);
 
-        for (const auto& form: forms)
+        for (auto* form: forms)
         {
             GenerateLanguageForm(form, results, pClassList, language);
 
@@ -1612,7 +1708,7 @@ void OnGenerateSingleLanguage(GenLang language)
 
     if (results.msgs.size())
     {
-        for (auto& iter: results.msgs)
+        for (const auto& iter: results.msgs)
         {
             msg << '\n';
             msg << iter;
@@ -1632,9 +1728,13 @@ void OnGenerateLanguage(GenLang language)
     if (results.updated_files.size())
     {
         if (results.updated_files.size() == 1)
+        {
             msg << "1 file was updated";
+        }
         else
+        {
             msg << " files were updated";
+        }
         msg << '\n';
     }
     else
@@ -1644,7 +1744,7 @@ void OnGenerateLanguage(GenLang language)
 
     if (results.msgs.size())
     {
-        for (auto& iter: results.msgs)
+        for (const auto& iter: results.msgs)
         {
             msg << '\n';
             msg << iter;
@@ -1661,7 +1761,7 @@ tt_string GatherPerlNodeEvents(Node* node)
 
     auto append_perl_events = [&](Node* node)
     {
-        for (auto& iter: node->get_MapEvents())
+        for (const auto& iter: node->get_MapEvents())
         {
             // Only add the event if a handler was specified
             if (iter.second.get_value().size())
@@ -1676,7 +1776,9 @@ tt_string GatherPerlNodeEvents(Node* node)
                     // remove "wx" prefix
                     event_name.remove_prefix(2);
                     if (event_name == "EVT_CLOSE_WINDOW")
+                    {
                         event_name = "EVT_CLOSE";
+                    }
                 }
                 event_set.insert(event_name);
             }
@@ -1688,7 +1790,7 @@ tt_string GatherPerlNodeEvents(Node* node)
         append_perl_events(node);
         if (auto& children = node->get_ChildNodePtrs(); children.size())
         {
-            for (auto child: children)
+            for (const auto& child: children)
             {
                 rlambda(child.get(), rlambda);
             }
@@ -1709,7 +1811,7 @@ tt_string GatherPerlNodeEvents(Node* node)
     {
         qw_events.RightTrim();
         qw_events.insert(0, "use Wx::Event qw(");
-        for (auto& event: event_set)
+        for (const auto& event: event_set)
         {
             qw_events << event << ' ';
         }

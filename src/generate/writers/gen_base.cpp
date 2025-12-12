@@ -548,7 +548,7 @@ void BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, boo
     if (!m_NeedImageFunction)
     {
         if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-            bundle && bundle->lst_filenames.size())
+            bundle && !bundle->lst_filenames.empty())
         {
             if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
             {
@@ -576,7 +576,7 @@ void BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
     }
 
     if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-        bundle && bundle->lst_filenames.size())
+        bundle && !bundle->lst_filenames.empty())
     {
         if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
         {

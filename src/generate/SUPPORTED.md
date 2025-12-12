@@ -5,6 +5,8 @@ The following tables indicate whether or not code is being generated in a specif
 - `---` indicates it has not been verified or not implemented yet.
 - `no` indcates that the language doesn't support it.
 - `partial` means that not all properties for the control are supported.
+- 'y' means that wxPerl supports the control, but needs wxUiEditor to generate the code for it.
+- 'n' means that wxPerl does not support the control
 
 ## Categories
 
@@ -18,22 +20,22 @@ The following tables indicate whether or not code is being generated in a specif
 | AuiToolSpacer        | yes | no      | yes    | yes  | yes | gen_aui_toolbar.cpp   |
 | AuiToolStretchSpacer | yes | no      | yes    | yes  | yes | gen_aui_toolbar.cpp   |
 | wxInfoBar            | yes | yes     | yes    | yes  | yes | gen_infobar.cpp       |
-| wxRibbonBar          | yes | ---     | yes    | yes  | --- | gen_ribbon_bar.cpp    |
-| wxRibbonButtonBar    | yes | ---     | yes    | yes  | --- | gen_ribbon_button.cpp |
-| wxRibbonGallery      | yes | ---     | yes    | yes  | --- | ribbon_widgets.cpp    |
-| wxRibbonToolBar      | yes | ---     | yes    | yes  | --- | ribbon_widgets.cpp    |
-| RibbonButton         | yes | ---     | yes    | yes  | --- | ribbon_widgets.cpp    |
-| RibbonGalleryItem    | yes | ---     | yes    | yes  | --- | ribbon_widgets.cpp    |
-| RibbonTool           | yes | ---     | yes    | yes  | --- | ribbon_widgets.cpp    |
-| wxRibbonPage         | yes | ---     | yes    | yes  | --- | gen_ribbon_page.cpp   |
-| wxRibbonPanel        | yes | ---     | yes    | yes  | --- | gen_ribbon_page.cpp   |
-| wxScrollBar          | yes | ---     | yes    | yes  | yes | gen_scrollbar.cpp     |
+| wxRibbonBar          | yes | y       | yes    | yes  | --- | gen_ribbon_bar.cpp    |
+| wxRibbonButtonBar    | yes | y       | yes    | yes  | --- | gen_ribbon_button.cpp |
+| wxRibbonGallery      | yes | y       | yes    | yes  | --- | ribbon_widgets.cpp    |
+| wxRibbonToolBar      | yes | y       | yes    | yes  | --- | ribbon_widgets.cpp    |
+| RibbonButton         | yes | y       | yes    | yes  | --- | ribbon_widgets.cpp    |
+| RibbonGalleryItem    | yes | y       | yes    | yes  | --- | ribbon_widgets.cpp    |
+| RibbonTool           | yes | y       | yes    | yes  | --- | ribbon_widgets.cpp    |
+| wxRibbonPage         | yes | y       | yes    | yes  | --- | gen_ribbon_page.cpp   |
+| wxRibbonPanel        | yes | y       | yes    | yes  | --- | gen_ribbon_page.cpp   |
+| wxScrollBar          | yes | y       | yes    | yes  | yes | gen_scrollbar.cpp     |
 | wxStatusBar          | yes | partial | yes    | yes  | yes | gen_status_bar.cpp    |
-| wxToolBar            | yes | ---     | yes    | yes  | yes | gen_toolbar.cpp       |
-| ToolDropDown         | yes | ---     | ---    | ---  | --- | gen_toolbar.cpp       |
-| ToolGenerator        | yes | ---     | ---    | ---  | --- | gen_toolbar.cpp       |
-| ToolSeparator        | yes | ---     | ---    | ---  | --- | gen_toolbar.cpp       |
-| ToolStretchable      | yes | ---     | ---    | ---  | --- | gen_toolbar.cpp       |
+| wxToolBar            | yes | y       | yes    | yes  | yes | gen_toolbar.cpp       |
+| ToolDropDown         | yes | y       | ---    | ---  | --- | gen_toolbar.cpp       |
+| ToolGenerator        | yes | y       | ---    | ---  | --- | gen_toolbar.cpp       |
+| ToolSeparator        | yes | y       | ---    | ---  | --- | gen_toolbar.cpp       |
+| ToolStretchable      | yes | y       | ---    | ---  | --- | gen_toolbar.cpp       |
 | Separator            | yes | yes     | yes    | yes  | --- | menu_widgets.cpp      |
 
 ### Books
@@ -56,7 +58,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxPanel                | yes | yes  | yes    | yes  | yes | gen_panel.cpp       |
 | wxSplitterWindow       | yes | yes  | yes    | yes  | yes | gen_split_win.cpp   |
 | wxScrolled\<wxPanel\>  | yes | yes  | yes    | yes  | yes | window_widgets.cpp  |
-| wxScrolled\<wxWindow\> | yes | ---  | yes    | yes  | --- | window_widgets.cpp  |
+| wxScrolled\<wxWindow\> | yes | y    | yes    | yes  | --- | window_widgets.cpp  |
 
 ### Forms
 
@@ -66,20 +68,20 @@ The following tables indicate whether or not code is being generated in a specif
 | MdiDocumentMenuBar     | --- | ---  | ---    | ---  | --- | gen_mdi_menu.cpp         |
 | wxDialog               | yes | yes  | yes    | yes  | yes | gen_dialog.cpp           |
 | wxFrame                | yes | yes  | yes    | yes  | yes | gen_frame.cpp            |
-| wxDocParentFrame       | yes | ---  | ---    | no   | --- | gen_doc_parent_frame.cpp |
-| wxDocChildFrame        | yes | ---  | ---    | no   | --- | gen_doc_parent_frame.cpp |
-| wxDocMDIParentFrame    | yes | ---  | ---    | no   | --- | gen_doc_mdi_frame.cpp    |
-| wxDocMDIChildFrame     | yes | ---  | ---    | no   | --- | gen_doc_mdi_frame.cpp    |
-| wxAuiMDIParentFrame    | yes | ---  | ---    | no   | --- | gen_aui_mdi_frame.cpp    |
-| wxAuiMDIChildFrame     | yes | ---  | ---    | no   | --- | gen_aui_mdi_frame.cpp    |
-| wxMenu                 | yes | ---  | yes    | ---  | --- | menu_widgets.cpp         |
-| wxMenuBar              | yes | ---  | yes    | ---  | --- | menu_widgets.cpp         |
+| wxDocParentFrame       | yes | y    | ---    | no   | --- | gen_doc_parent_frame.cpp |
+| wxDocChildFrame        | yes | y    | ---    | no   | --- | gen_doc_parent_frame.cpp |
+| wxDocMDIParentFrame    | yes | y    | ---    | no   | --- | gen_doc_mdi_frame.cpp    |
+| wxDocMDIChildFrame     | yes | y    | ---    | no   | --- | gen_doc_mdi_frame.cpp    |
+| wxAuiMDIParentFrame    | yes | n    | ---    | no   | --- | gen_aui_mdi_frame.cpp    |
+| wxAuiMDIChildFrame     | yes | n    | ---    | no   | --- | gen_aui_mdi_frame.cpp    |
+| wxMenu                 | yes | y    | yes    | ---  | --- | menu_widgets.cpp         |
+| wxMenuBar              | yes | y    | yes    | ---  | --- | menu_widgets.cpp         |
 | wxPanel                | yes | yes  | yes    | yes  | --- | gen_panel_form.cpp       |
-| wxPopupTransientWindow | yes | ---  | yes    | yes  | no  | gen_popup_trans_win.cpp  |
-| wxPropertySheetDialog  | yes | ---  | ---    | ---  | --- | gen_propsheet_dlg.cpp    |
-| wxRibbonBar            | yes | ---  | yes    | ---  | --- | gen_ribbon_bar.cpp       |
-| wxToolBar              | yes | ---  | yes    | ---  | --- | gen_toolbar.cpp          |
-| wxWizard               | yes | ---  | yes    | yes  | yes | gen_wizard.cpp           |
+| wxPopupTransientWindow | yes | y    | yes    | yes  | no  | gen_popup_trans_win.cpp  |
+| wxPropertySheetDialog  | yes | y    | ---    | ---  | --- | gen_propsheet_dlg.cpp    |
+| wxRibbonBar            | yes | y    | yes    | ---  | --- | gen_ribbon_bar.cpp       |
+| wxToolBar              | yes | y    | yes    | ---  | --- | gen_toolbar.cpp          |
+| wxWizard               | yes | y    | yes    | yes  | yes | gen_wizard.cpp           |
 
 ### Menus
 
@@ -106,21 +108,21 @@ The following tables indicate whether or not code is being generated in a specif
 
 | Class                 | C++ | Perl | Python | Ruby | XRC | file                  |
 | --------------------- | --- | ---- | ------ | ---- | --- | --------------------- |
-| PropertyGridCategory  | yes | ---  | ---    | ---  | no  | gen_prop_category.cpp |
-| PropertyGridItem      | yes | ---  | yes    | yes  | no  | gen_prop_item.cpp     |
-| wxPropertyGrid        | yes | ---  | yes    | yes  | no  | gen_prop_grid.cpp     |
-| wxPropertyGridManager | yes | ---  | yes    | yes  | no  | gen_prop_grid_mgr.cpp |
+| PropertyGridCategory  | yes | y    | ---    | ---  | no  | gen_prop_category.cpp |
+| PropertyGridItem      | yes | y    | yes    | yes  | no  | gen_prop_item.cpp     |
+| wxPropertyGrid        | yes | y    | yes    | yes  | no  | gen_prop_grid.cpp     |
+| wxPropertyGridManager | yes | y    | yes    | yes  | no  | gen_prop_grid_mgr.cpp |
 
 ### Sizers
 
 | Class                    | C++ | Perl | Python | Ruby | XRC     | file                       |
 | ------------------------ | --- | ---- | ------ | ---- | ------- | -------------------------- |
 | wxBoxSizer               | yes | yes  | yes    | yes  | yes     | gen_box_sizer.cpp          |
-| wxCheckBoxSizer          | yes | ---  | no     | yes  | ---     | gen_statchkbox_sizer.cpp   |
+| wxCheckBoxSizer          | yes | y    | no     | yes  | ---     | gen_statchkbox_sizer.cpp   |
 | wxFlexGridSizer          | yes | yes  | yes    | yes  | yes     | gen_flexgrid_sizer.cpp     |
 | wxGridBagSizer           | yes | yes  | yes    | yes  | yes     | gen_gridbag_sizer.cpp      |
 | wxGridSizer              | yes | yes  | yes    | yes  | yes     | gen_grid_sizer.cpp         |
-| wxStaticRadioBtnBoxSizer | yes | ---  | no     | yes  | ---     | gen_statradiobox_sizer.cpp |
+| wxStaticRadioBtnBoxSizer | yes | y    | no     | yes  | ---     | gen_statradiobox_sizer.cpp |
 | wxStaticBoxSizer         | yes | yes  | yes    | yes  | yes     | gen_staticbox_sizer.cpp    |
 | wxStdDialogButtonSizer   | yes | yes  | yes    | yes  | partial | gen_std_dlgbtn_sizer.cpp   |
 | wxWrapSizer              | yes | yes  | yes    | yes  | yes     | gen_wrap_sizer.cpp         |
@@ -130,48 +132,48 @@ The following tables indicate whether or not code is being generated in a specif
 | Class                  | C++ | Perl    | Python  | Ruby | XRC     | file                  |
 | ---------------------- | --- | ------- | ------- | ---- | ------- | --------------------- |
 | wxActivityIndicator    | yes | no     | yes     | yes  | yes     | gen_activity.cpp      |
-| wxAnimationCtrl        | yes | ---     | ---     | yes  | ---     | gen_animation.cpp     |
-| wxBannerWindow         | yes | ---     | yes     | yes  | yes     | gen_banner_window.cpp |
-| wxBitmapComboBox       | --- | ---     | ---     | ---  | ---     | gen_bitmap_combo.cpp  |
+| wxAnimationCtrl        | yes | y       | ---     | yes  | ---     | gen_animation.cpp     |
+| wxBannerWindow         | yes | y       | yes     | yes  | yes     | gen_banner_window.cpp |
+| wxBitmapComboBox       | --- | y       | ---     | ---  | ---     | gen_bitmap_combo.cpp  |
 | wxButton               | yes | yes     | yes     | yes  | partial | gen_button.cpp        |
 | wxCalendarCtrl         | yes | yes     | yes     | yes  | yes     | gen_calendar_ctrl.cpp |
 | wxCheckBox             | yes | yes     | yes     | yes  | yes     | gen_checkbox.cpp      |
-| wxCheckListBox         | yes | ---     | yes     | yes  | yes     | gen_check_listbox.cpp |
+| wxCheckListBox         | yes | y       | yes     | yes  | yes     | gen_check_listbox.cpp |
 | wxChoice               | yes | yes     | yes     | yes  | yes     | gen_choice.cpp        |
 | wxComboBox             | yes | yes     | yes     | yes  | yes     | gen_combobox.cpp      |
 | wxCommandLinkButton    | yes | yes     | yes     | yes  | yes     | gen_cmd_link_btn.cpp  |
-| wxDataViewListCtrl     | yes | ---     | yes     | no   | no      | dataview_widgets.cpp  |
-| wxDataViewCtrl         | yes | ---     | yes     | no   | no      | dataview_widgets.cpp  |
-| wxEditableListBox      | yes | ---     | yes     | yes  | yes     | gen_edit_listbox.cpp  |
+| wxDataViewListCtrl     | yes | y       | yes     | no   | no      | dataview_widgets.cpp  |
+| wxDataViewCtrl         | yes | y       | yes     | no   | no      | dataview_widgets.cpp  |
+| wxEditableListBox      | yes | y       | yes     | yes  | yes     | gen_edit_listbox.cpp  |
 | wxFileCtrl             | yes | yes     | yes     | yes  | yes     | gen_file_ctrl.cpp     |
 | wxGauge                | yes | yes     | yes     | yes  | yes     | gen_gauge.cpp         |
-| wxGenericDirCtrl       | yes | ---     | partial | yes  | partial | gen_dir_ctrl.cpp      |
-| wxGrid                 | yes | ---     | yes     | yes  | no      | gen_grid.cpp          |
+| wxGenericDirCtrl       | yes | y       | partial | yes  | partial | gen_dir_ctrl.cpp      |
+| wxGrid                 | yes | y       | yes     | yes  | no      | gen_grid.cpp          |
 | wxHtmlWindow           | yes | yes     | yes     | yes  | yes     | gen_html_window.cpp   |
 | wxHyperlinkCtrl        | yes | yes     | yes     | yes  | yes     | gen_hyperlink.cpp     |
-| wxListBox              | yes | ---     | yes     | yes  | yes     | gen_listbox.cpp       |
-| wxListView             | yes | ---     | yes     | yes  | partial | gen_listview.cpp      |
-| wxRadioBox             | yes | ---     | yes     | yes  | yes     | gen_prop_grid.cpp     |
+| wxListBox              | yes | y       | yes     | yes  | yes     | gen_listbox.cpp       |
+| wxListView             | yes | y       | yes     | yes  | partial | gen_listview.cpp      |
+| wxRadioBox             | yes | y       | yes     | yes  | yes     | gen_prop_grid.cpp     |
 | wxRadioButton          | yes | yes     | yes     | yes  | yes     | gen_radio_btn.cpp     |
-| wxRearrangeCtrl        | yes | ---     | yes     | yes  | no      | gen_rearrange.cpp     |
-| wxRichTextCtrl         | yes | ---     | yes     | yes  | yes     | gen_rich_text.cpp     |
-| wxSearchCtrl           | yes | ---     | yes     | yes  | yes     | gen_search_ctrl.cpp   |
-| wxSimpleHtmlListBox    | yes | ---     | yes     | yes  | yes     | gen_html_listbox.cpp  |
+| wxRearrangeCtrl        | yes | y       | yes     | yes  | no      | gen_rearrange.cpp     |
+| wxRichTextCtrl         | yes | y       | yes     | yes  | yes     | gen_rich_text.cpp     |
+| wxSearchCtrl           | yes | y       | yes     | yes  | yes     | gen_search_ctrl.cpp   |
+| wxSimpleHtmlListBox    | yes | y       | yes     | yes  | yes     | gen_html_listbox.cpp  |
 | wxSlider               | yes | yes     | yes     | yes  | partial | gen_slider.cpp        |
-| wxSpinButton           | yes | ---     | yes     | yes  | yes     | gen_spin_btn.cpp      |
-| wxSpinCtrl             | yes | ---     | yes     | yes  | yes     | gen_spin_ctrl.cpp     |
-| wxSpinCtrlDouble       | yes | ---     | yes     | yes  | yes     | gen_spin_ctrl.cpp     |
-| wxStaticBitmap         | yes | ---     | yes     | yes  | yes     | gen_static_bmp.cpp    |
-| wxStaticBox            | yes | ---     | ---     | ---  | ---     | gen_static_box.cpp    |
+| wxSpinButton           | yes | y       | yes     | yes  | yes     | gen_spin_btn.cpp      |
+| wxSpinCtrl             | yes | y       | yes     | yes  | yes     | gen_spin_ctrl.cpp     |
+| wxSpinCtrlDouble       | yes | y       | yes     | yes  | yes     | gen_spin_ctrl.cpp     |
+| wxStaticBitmap         | yes | y       | yes     | yes  | yes     | gen_static_bmp.cpp    |
+| wxStaticBox            | yes | y       | ---     | ---  | ---     | gen_static_box.cpp    |
 | wxStaticLine           | yes | yes     | yes     | yes  | yes     | gen_static_line.cpp   |
 | wxStaticText           | yes | partial | yes     | yes  | yes     | gen_static_text.cpp   |
-| wxStyledTextCtrl       | yes | ---     | partial | yes  | partial | styled_text.cpp       |
+| wxStyledTextCtrl       | yes | y       | partial | yes  | partial | styled_text.cpp       |
 | wxTextCtrl             | yes | yes     | yes     | yes  | yes     | gen_text_ctrl.cpp     |
-| wxToggleButton         | yes | ---     | yes     | yes  | partial | gen_toggle_btn.cpp    |
-| wxTreeCtrl             | yes | ---     | yes     | yes  | yes     | gen_tree_ctrl.cpp     |
-| wxTreeListCtrl         | yes | ---     | yes     | no   | no      | gen_tree_list.cpp     |
-| wxWebView              | yes | ---     | yes     | no   | no      | gen_web_view.cpp      |
-| wxWizardPageSimple     | yes | ---     | yes     | yes  | yes     | gen_wizard.cpp        |
+| wxToggleButton         | yes | y       | yes     | yes  | partial | gen_toggle_btn.cpp    |
+| wxTreeCtrl             | yes | y       | yes     | yes  | yes     | gen_tree_ctrl.cpp     |
+| wxTreeListCtrl         | yes | y       | yes     | no   | no      | gen_tree_list.cpp     |
+| wxWebView              | yes | y       | yes     | no   | no      | gen_web_view.cpp      |
+| wxWizardPageSimple     | yes | y       | yes     | yes  | yes     | gen_wizard.cpp        |
 
 # Objects
 
@@ -179,16 +181,16 @@ The following tables indicate whether or not code is being generated in a specif
 | ------------------ | --- | ---- | ------ | ---- | --- | -------------------- |
 | BookPage           | yes | yes  | yes    | yes  | yes | gen_book_page.cpp    |
 | Check3State        | yes | yes  | yes    | yes  | yes | gen_checkbox.cpp     |
-| CustomControl      | yes | ---  | no     | ---  | --- | gen_custom_ctrl.cpp  |
-| DataViewColumn     | yes | ---  | yes    | no   | no  | dataview_widgets.cpp |
-| DataViewListColumn | yes | ---  | ---    | ---  | --- | dataview_widgets.cpp |
+| CustomControl      | yes | n    | no     | ---  | --- | gen_custom_ctrl.cpp  |
+| DataViewColumn     | yes | y    | yes    | no   | no  | dataview_widgets.cpp |
+| DataViewListColumn | yes | y    | ---    | ---  | --- | dataview_widgets.cpp |
 | NewCloseButton     | yes | yes  | yes    | yes  | yes | gen_close_btn.cpp    |
-| PageCtrl           | yes | ---  | ---    | ---  | no  | gen_page_ctrl.cpp    |
-| PropertyGridItem   | yes | ---  | yes    | ---  | no  | gen_prop_item.cpp    |
-| PropertyGridPage   | yes | ---  | yes    | ---  | no  | grid_widgets.cpp     |
+| PageCtrl           | yes | n    | ---    | ---  | no  | gen_page_ctrl.cpp    |
+| PropertyGridItem   | yes | y    | yes    | ---  | no  | gen_prop_item.cpp    |
+| PropertyGridPage   | yes | y    | yes    | ---  | no  | grid_widgets.cpp     |
 | Spacer             | yes | yes  | yes    | yes  | yes | gen_spacer_sizer.cpp |
-| TreeListCtrlColumn | yes | ---  | ---    | ---  | no  | gen_tree_list.cpp    |
-| wxContextMenuEvent | yes | ---  | no     | ---  | no  | gen_ctx_menu.cpp     |
+| TreeListCtrlColumn | yes | y    | ---    | ---  | no  | gen_tree_list.cpp    |
+| wxContextMenuEvent | yes | n    | no     | ---  | no  | gen_ctx_menu.cpp     |
 | wxTextProofOptions | yes | no   | no     | ---  | --- | ---                  |
 | wxSizerFlags       | yes | no   | yes    | yes  | no  | ---                  |
 
@@ -199,8 +201,8 @@ The following tables indicate whether or not code is being generated in a specif
 | CreateSeparatedSizer       | yes | no   | yes    | yes  | --- | gen_std_dlgbtn_sizer.cpp |
 | CreateStdDialogButtonSizer | yes | yes  | yes    | yes  | --- | gen_std_dlgbtn_sizer.cpp |
 | FromDIP                    | yes | no   | yes    | yes  | yes | ---                      |
-| GetControlSizer            | yes | ---  | no     | ???  | --- | gen_choicebook.cpp       |
-| GetAffirmativeButton       | yes | ???  | no     | ???  | --- | gen_std_dlgbtn_sizer.cpp |
+| GetControlSizer            | yes | n    | no     | ???  | --- | gen_choicebook.cpp       |
+| GetAffirmativeButton       | yes | n    | no     | ???  | --- | gen_std_dlgbtn_sizer.cpp |
 
 
 # Constants

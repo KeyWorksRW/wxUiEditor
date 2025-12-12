@@ -126,6 +126,60 @@ EVT_BUTTON($frame, $button, \&OnButtonClick);
 - Empty string: `""`  (not `wxEmptyString`)
 - Boolean true/false: typically 1/0 or use `Wx::True`/`Wx::False` if available
 
+### Required Module Imports
+Extension controls require explicit imports. Generate these at the top of the file:
+
+| Controls Used | Required Import |
+|---------------|-----------------|
+| wxAuiNotebook, wxAuiManager | `use Wx::AUI;` |
+| wxGrid | `use Wx::Grid;` |
+| wxHtmlWindow, wxSimpleHtmlListBox | `use Wx::Html;` |
+| wxRichTextCtrl | `use Wx::RichText;` |
+| wxStyledTextCtrl | `use Wx::STC;` |
+| wxPropertyGrid, wxPropertyGridManager | `use Wx::PropertyGrid;` |
+| wxRibbonBar, wxRibbonPage, etc. | `use Wx::Ribbon;` |
+| wxWebView | `use Wx::WebView;` |
+| wxDataViewCtrl, wxDataViewTreeCtrl | `use Wx::DataView;` |
+| wxCalendarCtrl, wxDatePickerCtrl, wxTimePickerCtrl | `use Wx::Calendar;` |
+| wxDocParentFrame, wxDocChildFrame | `use Wx::DocView;` |
+| MDI frame classes | `use Wx::MDI;` |
+| Drag and drop | `use Wx::DND;` |
+
+### wxBitmapBundle::FromSVG() Support
+wxPerl **does** support `wxBitmapBundle::FromSVG()`:
+```perl
+my $bundle = Wx::BitmapBundle::FromSVGFile($svg_path, Wx::Size->new(24, 24));
+my $bundle = Wx::BitmapBundle::FromSVG($svg_data, Wx::Size->new(24, 24));
+```
+
+### Controls NOT Supported in wxPerl
+These controls are **not wrapped** - skip generation or emit a comment:
+- `wxAuiToolBar` (only wxAuiNotebook/wxAuiManager in AUI extension)
+- `wxSimplebook`
+- `wxActivityIndicator`
+
+### Unsupported Methods/Functions
+These methods do **not exist** in wxPerl - do NOT generate calls to them:
+- `wxWindow::FromDIP()` - use raw pixel values instead
+- `wxButton::SetLabelMarkup()` - use `SetLabel()` instead
+- `wxStaticText::SetLabelMarkup()` - use `SetLabel()` instead
+- `wxTextCtrl::SetHint()` - not available
+- `wxDialog::CreateSeparatedSizer()` - not available
+
+### Unsupported Constants
+These constants are **not exported** in wxPerl - use alternatives or skip:
+- `wxDefaultCoord` - use `-1` instead
+- `wxSHOW_EFFECT_*` constants - not available
+- `wxREMOVE_LEADING_SPACES` - not valid for wxWrapSizer
+- `wxWRAPSIZER_DEFAULT_FLAGS` - not valid for wxWrapSizer
+- `wxBU_NOTEXT` - not supported as button style
+- `wxSB_SUNKEN` - not supported for wxStatusBar
+
+### wxStatusBar Limitations
+wxPerl's wxStatusBar has limited support:
+- `wxSB_SUNKEN` style not supported
+- Multiple fields may not work correctly (single field issues reported)
+
 ## Workflow
 1. Read the generator class file (e.g., `src/generate/gen_button.cpp`)
 2. Understand what Perl code should be generated

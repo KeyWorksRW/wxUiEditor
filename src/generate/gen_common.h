@@ -109,7 +109,7 @@ auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
 void OnGenerateSingleLanguage(GenLang language);
 void OnGenerateLanguage(GenLang language);
 
-/////////////////////////////////////// Code-enabled Functions //////////////////////////////////////////
+/////////////////////////////////////// Code-enabled Functions /////////////////////////////////
 
 // Generate settings common to all forms
 void GenFormSettings(Code& code);
@@ -121,7 +121,7 @@ void GenToolCode(Code& code);
 //
 // C++ Caller should add the function that uses the bitmaps, add the closing brace, and if
 // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
-auto BitmapList(Code& code,  GenEnum::PropName prop) -> bool;
+auto BitmapList(Code& code, GenEnum::PropName prop) -> bool;
 
 /////////////////////////////////////// wxPerl Functions ///////////////////////////////////////
 

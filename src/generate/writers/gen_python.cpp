@@ -783,6 +783,9 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
     return true;
 }
 
+// REVIEW: [Randalphwa - 12-11-2025]
+// TODO this struct and auto btn_bmp_types are duplicated in gen_common.cpp. Why does Python need
+// it's own version of GenBtnBimapCode()?
 struct BTN_BMP_TYPES
 {
     GenEnum::PropName prop_name;

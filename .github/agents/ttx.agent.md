@@ -60,7 +60,7 @@ This class is derived from std::string with additional methods. Apply replacemen
 
 1. **std::string** - The preferred replacement. Use ttwx.h functions for missing tt_string methods:
    - `str.locate(sub)` → `str.find(sub)` (exact case only)
-   - `str.locate(sub, start, tt::CASE::either)` → `ttwx::locate(str, sub, start, ttwx::CASE::either)` (add to ttwx if missing)
+   - `str.locate(sub, start, tt::CASE::either)` → `ttwx::locate(str, sub, start, ttwx::CASE::either)`
    - `str.contains(sub)` → `str.find(sub) != std::string::npos` or `str.contains(sub)` (C++23)
    - `str.is_sameas(other)` → `str == other`
    - `str.is_sameas(other, tt::CASE::either)` → `ttwx::is_sameas(str, other, ttwx::CASE::either)`

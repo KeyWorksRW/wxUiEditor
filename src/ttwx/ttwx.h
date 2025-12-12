@@ -30,6 +30,7 @@
     #error "<string_view> header not found. Please use a compiler that supports C++17 or later."
 #endif
 
+#include <ranges>
 #include <string>
 #include <string_view>
 
@@ -42,6 +43,13 @@ namespace ttwx
         left,
         both,
         none
+    };
+
+    enum class CASE : std::uint8_t
+    {
+        exact,
+        either,
+        utf8  // comparisons are done by converting characters to lowercase UTF8
     };
 
     // clang-format off
@@ -140,6 +148,34 @@ namespace ttwx
         return std::string_view(str.ToStdString());
     }
 
+    // Remove locale-dependent whitespace from right side of string
+    inline void RightTrim(std::string& str)
+    {
+        str.erase(std::ranges::find_if(str | std::views::reverse,
+                                       [](unsigned char character) -> bool
+                                       {
+                                           return !std::isspace(character);
+                                       }).base(),
+                  str.end());
+    }
+
+    // Remove locale-dependent whitespace from left side of string
+    inline void LeftTrim(std::string& str)
+    {
+        str.erase(str.begin(), std::ranges::find_if(str,
+                                                    [](unsigned char character) -> bool
+                                                    {
+                                                        return !std::isspace(character);
+                                                    }));
+    }
+
+    // Remove locale-dependent whitespace from left and right side of string
+    inline void BothTrim(std::string& str)
+    {
+        LeftTrim(str);
+        RightTrim(str);
+    }
+
     // Extracts a string from another string using start and end characters deduced from
     // the first non-whitespace character after offset. Supports double and single quotes,
     // angle and square brackets, and parenthesis.
@@ -156,10 +192,24 @@ namespace ttwx
         return dest;
     }
 
+    auto locate(std::string_view haystack, std::string_view needle, size_t posStart, CASE checkcase)
+        -> size_t;
+
+    auto contains(std::string_view haystack, char character, CASE checkcase) -> bool;
+
+    // Returns true if strings are identical
+
+    auto is_sameas(std::string_view str1, std::string_view str2,
+                   CASE checkcase = CASE::exact) -> bool;
+
+    // Returns true if the sub-string is identical to the first part of the main string
+    auto is_sameprefix(std::string_view strMain, std::string_view strSub,
+                       CASE checkcase = CASE::exact) -> bool;
+
     // **************** File/path related functions ****************
 
-    // wxWidgets normally uses wxFileName for path manipulations. These functions allow you to use a
-    // wxString for a file/path name while still allowing some common path manipulations.
+    // wxWidgets normally uses wxFileName for path manipulations. These functions allow you to
+    // use a wxString for a file/path name while still allowing some common path manipulations.
 
     auto find_extension(std::string_view str) -> std::string_view;
     template <typename T>

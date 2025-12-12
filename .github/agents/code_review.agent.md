@@ -62,6 +62,16 @@ For each issue: provide line number, code snippet, clear description, severity (
 4. Organize by file and category, prioritize Critical/High issues
 
 **CRITICAL:** Never reference line numbers from attachment snippets or editor context - these are often truncated or incomplete. Always use `read_file` to get accurate line numbers before conducting the review.
+**CRITICAL - Line Number Accuracy:**
+- Never reference line numbers from attachment snippets or editor context - these are often truncated or incomplete
+- Always use `read_file` to get accurate line numbers before conducting the review
+- If uncertain about a line number, use `grep_search` with the file path to verify exact location
+- Report line numbers exactly as they appear in tool output - never estimate
+
+**CRITICAL - File References (No Links):**
+- Do NOT create markdown file links (they are unreliable in VS Code)
+- Reference files using plain text: `src/file.cpp` or `src/file.cpp:123`
+- For header files reviewed alongside .cpp files, mention them by path only: "Also reviewed: `src/file.h`"
 
 ## Guidelines
 

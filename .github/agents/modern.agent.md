@@ -393,6 +393,15 @@ If you miss a pattern, update the relevant checklist item to include it (add exa
 
 ## Guidelines
 
+**Line Number Accuracy:**
+- Always use `read_file` to get the complete file with accurate line numbers
+- Never reference line numbers from attachment snippets or editor context (often truncated/incomplete)
+- Report line numbers exactly as they appear in tool output - never estimate
+
+**File References (No Links):**
+- Do NOT create markdown file links (they are unreliable in VS Code)
+- Reference files using plain text format: `src/file.cpp` or `src/file.cpp:123`
+
 **Required:**
 - Read entire file, process all 13 items in order, apply all occurrences of each pattern
 - Build after fixes and verify success (fix errors and rebuild until successful)
@@ -402,6 +411,7 @@ If you miss a pattern, update the relevant checklist item to include it (add exa
 **Prohibited:**
 - Changes beyond checklist patterns, function signature modifications, unnecessary includes
 - Stopping on build failure without resolution
+- Creating markdown file links
 
 ## Reporting Format
 

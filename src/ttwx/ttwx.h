@@ -155,7 +155,8 @@ namespace ttwx
                                        [](unsigned char character) -> bool
                                        {
                                            return !std::isspace(character);
-                                       }).base(),
+                                       })
+                      .base(),
                   str.end());
     }
 
@@ -199,8 +200,8 @@ namespace ttwx
 
     // Returns true if strings are identical
 
-    auto is_sameas(std::string_view str1, std::string_view str2,
-                   CASE checkcase = CASE::exact) -> bool;
+    auto is_sameas(std::string_view str1, std::string_view str2, CASE checkcase = CASE::exact)
+        -> bool;
 
     // Returns true if the sub-string is identical to the first part of the main string
     auto is_sameprefix(std::string_view strMain, std::string_view strSub,

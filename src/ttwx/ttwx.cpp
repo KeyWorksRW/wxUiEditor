@@ -24,7 +24,7 @@ auto ttwx::find_oneof(const wxString& src, const std::string& group, size_t src_
 
     for (; src_start < src.size(); ++src_start)
     {
-        if (std::strchr(group.c_str(), src.at(src_start)) != nullptr)
+        if (group.find(src[src_start]) != std::string::npos)
         {
             break;
         }
@@ -36,12 +36,14 @@ auto ttwx::find_nonspace(std::string_view str) noexcept -> std::string_view
 {
     if (!str.empty())
     {
-        for (size_t pos = 0; pos < str.size(); ++pos)
+        auto iter = std::ranges::find_if(str,
+                                         [](auto chr)
+                                         {
+                                             return !is_whitespace(chr);
+                                         });
+        if (iter != str.end())
         {
-            if (!is_whitespace(str.at(pos)))
-            {
-                return str.substr(pos);
-            }
+            return str.substr(std::distance(str.begin(), iter));
         }
     }
 
@@ -307,8 +309,6 @@ auto ttwx::atoi(std::string_view str) noexcept -> int
     (void) original;
 #endif  // _DEBUG
     str = find_nonspace(str);
-    // ASSERT_MSG(!str.empty(), "non-empty string that doesn't have non-empty spaces -- shouldn't be
-    // possible");
 
     if (str.empty())
     {
@@ -335,6 +335,7 @@ auto ttwx::atoi(std::string_view str) noexcept -> int
 
     int value = 0;
     const char* begin = str.data();
+    // Suppress warning about pointer arithmetic -- we need it for std::from_chars()
     const char* end =
         begin + str.size();  // NOLINT (pointer-arithmetic) // cppcheck-suppress pointerArithmetic
     auto result = std::from_chars(begin, end, value, base);
@@ -344,4 +345,168 @@ auto ttwx::atoi(std::string_view str) noexcept -> int
     }
 
     return 0;
+}
+
+auto ttwx::locate(std::string_view haystack, std::string_view needle, size_t posStart,
+                  ttwx::CASE checkcase) -> size_t
+{
+    if (needle.empty() || posStart >= haystack.size())
+    {
+        return std::string::npos;
+    }
+
+    if (checkcase == ttwx::CASE::exact)
+    {
+        return haystack.find(needle, posStart);
+    }
+
+    if (checkcase == ttwx::CASE::either)
+    {
+        auto chLower = std::tolower(needle[0]);
+        for (auto pos = posStart; pos < haystack.length(); ++pos)
+        {
+            if (std::tolower(haystack.at(pos)) == chLower)
+            {
+                size_t posSub;
+                for (posSub = 1; posSub < needle.length(); ++posSub)
+                {
+                    if (pos + posSub >= haystack.length())
+                    {
+                        return std::string::npos;
+                    }
+                    if (std::tolower(haystack.at(pos + posSub)) != std::tolower(needle.at(posSub)))
+                    {
+                        break;
+                    }
+                }
+                if (posSub >= needle.length())
+                {
+                    return pos;
+                }
+            }
+        }
+    }
+    else
+    {
+        // For UTF-8, use wxString which properly handles multi-byte sequences
+        wxString wxHaystack = wxString::FromUTF8(haystack.data(), haystack.length());
+        wxString wxNeedle = wxString::FromUTF8(needle.data(), needle.length());
+        wxHaystack.MakeLower();
+        wxNeedle.MakeLower();
+
+        auto wxPos = wxHaystack.find(wxNeedle, posStart);
+        if (wxPos == wxString::npos)
+        {
+            return std::string::npos;
+        }
+        return wxPos;
+    }
+    return std::string::npos;
+}
+
+auto ttwx::contains(std::string_view haystack, char character, CASE checkcase) -> bool
+{
+    if (checkcase == CASE::exact)
+    {
+        if (auto pos = haystack.find(character); pos < haystack.length())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    auto chLower = std::tolower(character);
+    return std::ranges::any_of(haystack,
+                               [chLower](char chr)
+                               {
+                                   return std::tolower(chr) == chLower;
+                               });
+}
+
+auto ttwx::is_sameas(std::string_view str1, std::string_view str2, CASE checkcase) -> bool
+{
+    if (str1.size() != str2.size())
+    {
+        return false;
+    }
+
+    if (str1.empty())
+    {
+        return str2.empty();
+    }
+
+    if (checkcase == CASE::exact)
+    {
+        return (str1 == str2);
+    }
+
+    auto main = str1.begin();
+    auto sub = str2.begin();
+    while (sub != str2.end())
+    {
+        auto diff = std::tolower(main[0]) - std::tolower(sub[0]);
+        if (diff != 0)
+        {
+            return false;
+        }
+        ++main;
+        ++sub;
+        if (main == str1.end())
+        {
+            return (sub == str2.end());
+        }
+    }
+
+    return (main == str1.end());
+}
+
+auto ttwx::is_sameprefix(std::string_view strMain, std::string_view strSub, CASE checkcase) -> bool
+{
+    if (strSub.empty())
+    {
+        return strMain.empty();
+    }
+
+    if (strMain.empty() || strMain.size() < strSub.size())
+    {
+        return false;
+    }
+
+    if (checkcase == CASE::exact)
+    {
+        auto iterMain = strMain.begin();
+        for (auto iterSub: strSub)
+        {
+            if (*iterMain++ != iterSub)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    if (checkcase == CASE::either)
+    {
+        auto iterMain = strMain.begin();
+        for (auto iterSub: strSub)
+        {
+            if (std::tolower(*iterMain++) != std::tolower(iterSub))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    if (checkcase == CASE::utf8)
+    {
+        // For UTF-8, use wxString which properly handles multi-byte sequences
+        wxString wxMain = wxString::FromUTF8(strMain.data(), strMain.length());
+        wxString wxSub = wxString::FromUTF8(strSub.data(), strSub.length());
+        wxMain.MakeLower();
+        wxSub.MakeLower();
+
+        return wxMain.StartsWith(wxSub);
+    }
+    FAIL_MSG("Unknown CASE value");
+    return false;
 }

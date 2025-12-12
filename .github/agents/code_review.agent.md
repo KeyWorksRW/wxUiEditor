@@ -11,6 +11,14 @@ Conduct thorough code reviews, identifying bugs, safety issues, and maintainabil
 ## Task
 Review files explicitly added to chat. For .cpp files, check corresponding .h files. Document all issues with line numbers, code snippets, severity, and suggested fixes.
 
+## Project-Specific Knowledge
+
+### Assertion Macros (ASSERT, ASSERT_MSG, FAIL_MSG)
+- **Build behavior:** These macros from `assertion_dlg.h` only exist in DEBUG/Internal builds
+- **Release builds:** Macros expand to nothing - the code is completely removed
+- **Important:** Code after these macros is NOT unreachable - it's required for Release builds
+- **Review guideline:** Do not flag return statements or other code after assertion macros as unreachable
+
 ## Review Categories
 
 For each issue: provide line number, code snippet, clear description, severity (Critical/High/Medium/Low), and specific fix.
@@ -61,7 +69,16 @@ For each issue: provide line number, code snippet, clear description, severity (
 3. Review against all categories, document issues with EXACT line numbers from `read_file` output
 4. Organize by file and category, prioritize Critical/High issues
 
-**CRITICAL:** Never reference line numbers from attachment snippets or editor context - these are often truncated or incomplete. Always use `read_file` to get accurate line numbers before conducting the review.
+**CRITICAL - Line Number Accuracy:**
+- Never reference line numbers from attachment snippets or editor context - these are often truncated or incomplete
+- Always use `read_file` to get accurate line numbers before conducting the review
+- If uncertain about a line number, use `grep_search` with the file path to verify exact location
+- Report line numbers exactly as they appear in tool output - never estimate
+
+**CRITICAL - File References (No Links):**
+- Do NOT create markdown file links (they are unreliable in VS Code)
+- Reference files using plain text: `src/file.cpp` or `src/file.cpp:123`
+- For header files reviewed alongside .cpp files, mention them by path only: "Also reviewed: `src/file.h`"
 
 ## Guidelines
 

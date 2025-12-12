@@ -30,7 +30,7 @@
 #include "ui_images.h"         // Contains various images handling functions
 #include "utils.h"             // Miscellaneous utility functions
 
-ImageHandler& ProjectImages = ImageHandler::getInstance();
+ImageHandler& ProjectImages = ImageHandler::getInstance();  // NOLINT (cppcheck-suppress)
 
 namespace wxue_img
 {
@@ -574,28 +574,13 @@ auto ImageHandler::AddNewEmbeddedBundle(const tt_string_vector* parts, std::stri
     ASSERT(parts->size() > 1)
 
     auto lookup_str = ConvertToLookup(parts);
-
     ImageBundle img_bundle;
     tt_string path(org_path);
 
-    if (!path.file_exists())
+    if (!ResolveBundlePath(path))
     {
-        if (m_project_node->HasValue(prop_art_directory))
-        {
-            tt_string art_path = m_project_node->as_string(prop_art_directory);
-            art_path.append_filename(path);
-            if (!art_path.file_exists())
-            {
-                m_bundles[lookup_str] = img_bundle;
-                return true;
-            }
-            path = art_path;
-        }
-        else
-        {
-            m_bundles[lookup_str] = img_bundle;
-            return true;
-        }
+        m_bundles[lookup_str] = img_bundle;
+        return true;
     }
 
     // At this point, the image file has been found.
@@ -637,126 +622,155 @@ auto ImageHandler::AddNewEmbeddedBundle(const tt_string_vector* parts, std::stri
     img_bundle.lst_filenames.emplace_back(path);
 
     /*
-
         Look for suffix combinations -- it's fine if one of them doesn't exist
-
             _16x16, _24x24, _32x32
             _24x24, _36x36, _48x48
             any, _1_5x, _1_75x, _2x
             any, @1_5x, @1_75, x@2x
-
     */
 
     if (tt_string extension = path.extension(); extension.size())
     {
-        if (path.contains("_16x16."))
+        if (path.contains("_16x16.") || path.contains("_24x24."))
         {
-            path.Replace("_16x16.", "_24x24.");
-            if (path.file_exists())
-            {
-                if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
-                {
-                    img_bundle.lst_filenames.emplace_back(path);
-                }
-            }
-            path.Replace("_24x24.", "_32x32.");
-            if (path.file_exists())
-            {
-                if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
-                {
-                    img_bundle.lst_filenames.emplace_back(path);
-                }
-            }
-        }
-        else if (path.contains("_24x24."))
-        {
-            path.Replace("_24x24.", "_36x36.");
-            if (path.file_exists())
-            {
-                if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
-                {
-                    img_bundle.lst_filenames.emplace_back(path);
-                }
-            }
-            path.Replace("_36x36.", "_48x48.");
-            if (path.file_exists())
-            {
-                if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
-                {
-                    img_bundle.lst_filenames.emplace_back(path);
-                }
-            }
+            AddFixedSizeBundleVariants(path, form, embed, img_bundle);
         }
         else
         {
-            tt_string additional_path = path;
-            // size_t file_count = 1;
-            auto map_pos = map_bundle_extensions.begin();
-            for (; map_pos != map_bundle_extensions.end(); ++map_pos)
+            AddScalableBundleVariants(path, form, embed, img_bundle);
+        }
+    }
+
+    m_bundles[lookup_str] = std::move(img_bundle);
+    return true;
+}
+
+auto ImageHandler::ResolveBundlePath(tt_string& path) -> bool
+{
+    if (path.file_exists())
+    {
+        return true;
+    }
+
+    if (!m_project_node->HasValue(prop_art_directory))
+    {
+        return false;
+    }
+
+    tt_string art_path = m_project_node->as_string(prop_art_directory);
+    art_path.append_filename(path);
+    if (!art_path.file_exists())
+    {
+        return false;
+    }
+
+    path = art_path;
+    return true;
+}
+
+auto ImageHandler::AddFixedSizeBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+                                              ImageBundle& img_bundle) -> void
+{
+    if (path.contains("_16x16."))
+    {
+        path.Replace("_16x16.", "_24x24.");
+        if (path.file_exists())
+        {
+            if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
             {
-                if (path.contains(map_pos->first))
-                {
-                    break;
-                }
+                img_bundle.lst_filenames.emplace_back(path);
             }
-
-            // This will be the most common case where the first filename contains no suffix.
-            if (map_pos == map_bundle_extensions.end())
+        }
+        path.Replace("_24x24.", "_32x32.");
+        if (path.file_exists())
+        {
+            if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
             {
-                tt_string file_extension = additional_path.extension();
-                additional_path.remove_extension();
-                auto erase_pos = additional_path.size();
-                for (map_pos = map_bundle_extensions.begin();
-                     map_pos != map_bundle_extensions.end(); ++map_pos)
-                {
-                    if (erase_pos < additional_path.size())
-                    {
-                        additional_path.erase(erase_pos);
-                    }
-                    additional_path << map_pos->first << file_extension;
-                    if (additional_path.file_exists())
-                    {
-                        if (auto* added = AddEmbeddedBundleImage(additional_path, form, embed);
-                            added)
-                        {
-                            img_bundle.lst_filenames.emplace_back(additional_path);
-                            // ++file_count;
-                            break;
-                        }
-                    }
-                }
+                img_bundle.lst_filenames.emplace_back(path);
             }
-
-            bool is_at_suffix =
-                (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
-            // while (file_count < 2 && map_pos != map_bundle_extensions.end())
-            while (map_pos != map_bundle_extensions.end())
+        }
+    }
+    else if (path.contains("_24x24."))
+    {
+        path.Replace("_24x24.", "_36x36.");
+        if (path.file_exists())
+        {
+            if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
             {
-                // If we have a map position, then we have found a suffix, so we now try to find the
-                // next matching filename.
-                additional_path.Replace(map_pos->first, map_pos->second);
-                if (additional_path.file_exists())
-                {
-                    if (auto* added = AddEmbeddedBundleImage(additional_path, form, embed); added)
-                    {
-                        img_bundle.lst_filenames.emplace_back(additional_path);
-                        // ++file_count;
-                    }
-                }
+                img_bundle.lst_filenames.emplace_back(path);
+            }
+        }
+        path.Replace("_36x36.", "_48x48.");
+        if (path.file_exists())
+        {
+            if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
+            {
+                img_bundle.lst_filenames.emplace_back(path);
+            }
+        }
+    }
+}
 
-                ++map_pos;
-                if (is_at_suffix && map_pos != map_bundle_extensions.end() &&
-                    !map_pos->first.starts_with('@'))
+auto ImageHandler::AddScalableBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+                                             ImageBundle& img_bundle) -> void
+{
+    tt_string additional_path = path;
+    auto map_pos = map_bundle_extensions.begin();
+    for (; map_pos != map_bundle_extensions.end(); ++map_pos)
+    {
+        if (path.contains(map_pos->first))
+        {
+            break;
+        }
+    }
+
+    // This will be the most common case where the first filename contains no suffix.
+    if (map_pos == map_bundle_extensions.end())
+    {
+        tt_string file_extension = additional_path.extension();
+        additional_path.remove_extension();
+        auto erase_pos = additional_path.size();
+        for (map_pos = map_bundle_extensions.begin(); map_pos != map_bundle_extensions.end();
+             ++map_pos)
+        {
+            if (erase_pos < additional_path.size())
+            {
+                additional_path.erase(erase_pos);
+            }
+            additional_path << map_pos->first << file_extension;
+            if (additional_path.file_exists())
+            {
+                if (auto* added = AddEmbeddedBundleImage(additional_path, form, embed); added)
                 {
-                    // We have run out of '@' suffixes to look for
+                    img_bundle.lst_filenames.emplace_back(additional_path);
                     break;
                 }
             }
         }
     }
 
-    m_bundles[lookup_str] = std::move(img_bundle);
-    return true;
+    bool is_at_suffix = (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
+    while (map_pos != map_bundle_extensions.end())
+    {
+        // If we have a map position, then we have found a suffix, so we now try to find the
+        // next matching filename.
+        additional_path.Replace(map_pos->first, map_pos->second);
+        if (additional_path.file_exists())
+        {
+            if (auto* added = AddEmbeddedBundleImage(additional_path, form, embed); added)
+            {
+                img_bundle.lst_filenames.emplace_back(additional_path);
+            }
+        }
+
+        ++map_pos;
+        if (is_at_suffix && map_pos != map_bundle_extensions.end() &&
+            !map_pos->first.starts_with('@'))
+        {
+            // We have run out of '@' suffixes to look for
+            break;
+        }
+    }
 }
 
 EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string& path, Node* form,
@@ -771,7 +785,7 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string& path, Node* form,
     auto& list = wxImage::GetHandlers();
     for (auto node = list.GetFirst(); node; node = node->GetNext())
     {
-        handler = (wxImageHandler*) node->GetData();
+        handler = dynamic_cast<wxImageHandler*>(node->GetData());
         if (handler->CanRead(stream))
         {
             wxImage image;
@@ -927,88 +941,13 @@ auto ImageHandler::ProcessBundleProperty(const tt_string_vector* parts, Node* no
 
     if (auto pos = (*parts)[IndexImage].find_last_of('.'); ttwx::is_found(pos))
     {
-        if ((*parts)[IndexImage].contains("_16x16."))
+        if ((*parts)[IndexImage].contains("_16x16.") || (*parts)[IndexImage].contains("_24x24."))
         {
-            tt_string path((*parts)[IndexImage]);
-            path.Replace("_16x16.", "_24x24.");
-            if (!path.file_exists())
-            {
-                if (m_project_node->HasValue(prop_art_directory))
-                {
-                    path = m_project_node->as_string(prop_art_directory);
-                    path.append_filename((*parts)[IndexImage]);
-                    path.Replace("_16x16.", "_24x24.");
-                    if (path.file_exists())
-                    {
-                        img_bundle.lst_filenames.emplace_back(path);
-                    }
-                }
-            }
-            else
-            {
-                img_bundle.lst_filenames.emplace_back(path);
-            }
-
-            // Note that path may now contain the prop_art_directory prefix
-            path.Replace("_24x24.", "_32x32.");
-            if (path.file_exists())
-            {
-                img_bundle.lst_filenames.emplace_back(path);
-            }
-        }
-        else if ((*parts)[IndexImage].contains("_24x24."))
-        {
-            tt_string path((*parts)[IndexImage]);
-            path.Replace("_24x24.", "_36x36.");
-            if (!path.file_exists())
-            {
-                if (m_project_node->HasValue(prop_art_directory))
-                {
-                    path = m_project_node->as_string(prop_art_directory);
-                    path.append_filename((*parts)[IndexImage]);
-                    path.Replace("_24x24.", "_36x36.");
-                    if (path.file_exists())
-                    {
-                        img_bundle.lst_filenames.emplace_back(path);
-                    }
-                }
-            }
-            else
-            {
-                img_bundle.lst_filenames.emplace_back(path);
-            }
-
-            // Note that path may now contain the prop_art_directory prefix
-            path.Replace("_36x36.", "_48x48.");
-            if (path.file_exists())
-            {
-                img_bundle.lst_filenames.emplace_back(path);
-            }
+            AddNonEmbeddedFixedSizeVariants(parts, img_bundle);
         }
         else
         {
-            tt_string path;
-            for (const auto& iter: suffixes)
-            {
-                path = (*parts)[IndexImage];
-                path.insert(pos, iter);
-                if (!path.file_exists())
-                {
-                    if (m_project_node->HasValue(prop_art_directory))
-                    {
-                        tt_string tmp_path = m_project_node->as_string(prop_art_directory);
-                        tmp_path.append_filename(path);
-                        if (tmp_path.file_exists())
-                        {
-                            img_bundle.lst_filenames.emplace_back(tmp_path);
-                        }
-                    }
-                }
-                else
-                {
-                    img_bundle.lst_filenames.emplace_back(path);
-                }
-            }
+            AddNonEmbeddedScalableVariants(parts, img_bundle);
         }
     }
 
@@ -1051,6 +990,82 @@ auto ImageHandler::ProcessBundleProperty(const tt_string_vector* parts, Node* no
     return &m_bundles[lookup_str];
 }
 
+auto ImageHandler::TryResolvePathWithArtDir(tt_string& path) -> bool
+{
+    if (path.file_exists())
+    {
+        return true;
+    }
+
+    if (!m_project_node->HasValue(prop_art_directory))
+    {
+        return false;
+    }
+
+    tt_string art_path = m_project_node->as_string(prop_art_directory);
+    art_path.append_filename(path);
+    if (art_path.file_exists())
+    {
+        path = art_path;
+        return true;
+    }
+
+    return false;
+}
+
+auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const tt_string_vector* parts,
+                                                   ImageBundle& img_bundle) -> void
+{
+    if ((*parts)[IndexImage].contains("_16x16."))
+    {
+        tt_string path((*parts)[IndexImage]);
+        path.Replace("_16x16.", "_24x24.");
+        if (TryResolvePathWithArtDir(path))
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+        }
+
+        // Note that path may now contain the prop_art_directory prefix
+        path.Replace("_24x24.", "_32x32.");
+        if (path.file_exists())
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+        }
+    }
+    else if ((*parts)[IndexImage].contains("_24x24."))
+    {
+        tt_string path((*parts)[IndexImage]);
+        path.Replace("_24x24.", "_36x36.");
+        if (TryResolvePathWithArtDir(path))
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+        }
+
+        // Note that path may now contain the prop_art_directory prefix
+        path.Replace("_36x36.", "_48x48.");
+        if (path.file_exists())
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+        }
+    }
+}
+
+auto ImageHandler::AddNonEmbeddedScalableVariants(const tt_string_vector* parts,
+                                                  ImageBundle& img_bundle) -> void
+{
+    tt_string path;
+    auto pos = (*parts)[IndexImage].find_last_of('.');
+    for (const auto& iter: suffixes)
+    {
+        path = (*parts)[IndexImage];
+        path.insert(pos, iter);
+        if (TryResolvePathWithArtDir(path))
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+        }
+    }
+}
+
 void ImageHandler::UpdateBundle(const tt_string_vector* parts, Node* node)
 {
     if (parts->size() < 2 || node->is_FormParent())
@@ -1087,7 +1102,7 @@ void ImageHandler::UpdateBundle(const tt_string_vector* parts, Node* node)
     }
 }
 
-wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(tt_string_view description)
+auto ImageHandler::GetPropertyBitmapBundle(tt_string_view description) -> wxBitmapBundle
 {
     tt_string_vector parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
@@ -1136,10 +1151,8 @@ const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector* 
     {
         return ProcessBundleProperty(parts, node);
     }
-    else
-    {
-        return nullptr;
-    }
+
+    return nullptr;
 }
 
 void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimation* p_animation)
@@ -1188,7 +1201,7 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
     }
 }
 
-bool ImageHandler::AddSvgBundleImage(tt_string& path, Node* form)
+auto ImageHandler::AddSvgBundleImage(tt_string& path, Node* form) -> bool
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as
     // removing line breaks, leading spaces, etc.
@@ -1303,7 +1316,7 @@ bool ImageHandler::AddSvgBundleImage(tt_string& path, Node* form)
     return true;
 }
 
-bool ImageHandler::AddXpmBundleImage(const tt_string& path, Node* form)
+auto ImageHandler::AddXpmBundleImage(const tt_string& path, Node* form) -> bool
 {
     wxFFileInputStream stream(path.make_wxString());
     if (!stream.IsOk())
@@ -1453,7 +1466,8 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string_vector* parts)
     return name;
 }
 
-auto ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size) -> tt_string
+auto ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size)
+    -> tt_string  // NOLINT (cppcheck-suppress)
 {
     tt_string name;
     if (!embed || embed->get_Form() != Project.get_ImagesForm())

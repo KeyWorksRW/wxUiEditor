@@ -109,6 +109,7 @@ public:
         -> const ImageBundle*;
 
     // If there is an Image form containing this bundle, return it's function name
+    // This can NOT be made static in spite of what Lint says
     auto GetBundleFuncName(const tt_string& description) -> tt_string;
 
     // If there is an Images List containing this bundle, return it's function name
@@ -127,7 +128,7 @@ public:
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
-    void GetPropertyAnimation(const tt_string& description, wxAnimation* p_animate);
+    void GetPropertyAnimation(const tt_string& description, wxAnimation* p_animation);
 
     auto AddEmbeddedImage(tt_string path, Node* form, bool is_animation = false) -> bool;
     auto GetEmbeddedImage(tt_string_view path) -> EmbeddedImage*;
@@ -168,9 +169,23 @@ protected:
     auto AddXpmBundleImage(const tt_string& path, Node* form) -> bool;
 
 private:
+    // Helper functions
     static auto ConvertToLookup(const tt_string& description) -> tt_string;
     static auto ConvertToLookup(const tt_string_vector* parts) -> tt_string;
 
+    auto ResolveBundlePath(tt_string& path) -> bool;
+    auto AddFixedSizeBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+                                    ImageBundle& img_bundle) -> void;
+    auto AddScalableBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+                                   ImageBundle& img_bundle) -> void;
+
+    auto TryResolvePathWithArtDir(tt_string& path) -> bool;
+    auto AddNonEmbeddedFixedSizeVariants(const tt_string_vector* parts, ImageBundle& img_bundle)
+        -> void;
+    auto AddNonEmbeddedScalableVariants(const tt_string_vector* parts, ImageBundle& img_bundle)
+        -> void;
+
+    // Members
     NodeSharedPtr m_project_node { nullptr };
 
     // std::string is the entire property for the image

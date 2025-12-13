@@ -7,21 +7,9 @@
       "scope": "workspace"
     },
     {
-      "name": "modern",
-      "description": "Modernize C++ code to C++20 standards and fix lint warnings.",
-      "instructions": ".github/agents/modern.agent.md",
-      "scope": "workspace"
-    },
-    {
       "name": "complex",
       "description": "Reduce function complexity by extracting helper functions.",
       "instructions": ".github/agents/complex.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "code_review",
-      "description": "Conduct thorough code reviews, identifying bugs, safety issues, and maintainability concerns.",
-      "instructions": ".github/agents/code_review.agent.md",
       "scope": "workspace"
     },
     {
@@ -34,18 +22,6 @@
       "name": "pullrequest",
       "description": "Analyze branch changes and generate comprehensive PR descriptions.",
       "instructions": ".github/agents/pullrequest.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "issue",
-      "description": "Create GitHub issues for the cloud Copilot coding agent.",
-      "instructions": ".github/agents/issue.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "ttx",
-      "description": "Replace tt_string, tt_string_view, tt_string_vector, and tt_view_vector with modern equivalents.",
-      "instructions": ".github/agents/ttx.agent.md",
       "scope": "workspace"
     },
     {
@@ -70,30 +46,6 @@
       "name": "gen_ruby",
       "description": "Generate Ruby code for wxRuby 1.6.1 using the Code class for in-memory code generation.",
       "instructions": ".github/agents/gen_ruby.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "wxperl",
-      "description": "Expert wxPerl GUI development using modern Perl practices to create wxWidgets UI applications.",
-      "instructions": ".github/agents/wxperl.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "wxpython",
-      "description": "Expert wxPython GUI development using modern Python practices to create wxWidgets UI applications.",
-      "instructions": ".github/agents/wxpython.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "wxruby",
-      "description": "Expert wxRuby GUI development using modern Ruby practices to create wxWidgets UI applications.",
-      "instructions": ".github/agents/wxruby.agent.md",
-      "scope": "workspace"
-    },
-    {
-      "name": "powershell",
-      "description": "Expert PowerShell scripting for testing, building, and automation tasks.",
-      "instructions": ".github/agents/powershell.agent.md",
       "scope": "workspace"
     }
   ]

@@ -216,211 +216,247 @@ auto DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
  * base class to be a derived class that they have created.
  */
 
-auto DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent) -> bool
+auto DialogBlocks::DetermineFormGenName(pugi::xml_node& form_xml) -> GenEnum::GenName
 {
-    GenEnum::GenName get_GenName = gen_unknown;
-    if (auto widgets_class = form_xml.find_child_by_attribute("string", "name", "proxy-type");
-        widgets_class)
+    auto widgets_class = form_xml.find_child_by_attribute("string", "name", "proxy-type");
+    if (!widgets_class)
     {
-        auto type_name = ExtractQuotedString(widgets_class);
-        if (type_name.starts_with("wb"))
+        return gen_unknown;
+    }
+
+    auto type_name = ExtractQuotedString(widgets_class);
+    if (type_name.starts_with("wb"))
+    {
+        type_name[1] = 'x';
+    }
+    type_name.Replace("Proxy", "");
+
+    GenEnum::GenName get_GenName = MapClassName(type_name.ToStdString());
+    if (get_GenName == gen_unknown)
+    {
+        if (type_name == "wxApp")
         {
-            type_name[1] = 'x';
+            return gen_unknown;  // Handled specially in CreateFormNode
         }
-        type_name.Replace("Proxy", "");
-
-        get_GenName = MapClassName(type_name.ToStdString());
-        if (get_GenName == gen_unknown)
-        {
-            if (type_name == "wxApp")
-            {
-                // Currently, we don't support creating an app class, but we return true since we
-                // know it's not a folder.
-                return true;
-            }
 #if defined(_DEBUG)
 
-            auto msg = GatherErrorDetails(form_xml, get_GenName);
-            ASSERT_MSG(get_GenName != gen_unknown, wxString("Unrecognized proxy-type class: ")
-                                                       << type_name << "\n"
-                                                       << msg);
+        auto msg = GatherErrorDetails(form_xml, get_GenName);
+        ASSERT_MSG(get_GenName != gen_unknown, wxString("Unrecognized proxy-type class: ")
+                                                   << type_name << "\n"
+                                                   << msg);
 #endif  // _DEBUG
-            m_errors.emplace(std::string("Unrecognized form class: ") + type_name.ToStdString());
-            return false;
+        m_errors.emplace(std::string("Unrecognized form class: ") + type_name.ToStdString());
+        return gen_unknown;
+    }
+
+    return HandleDialogToPanelConversion(form_xml, get_GenName);
+}
+
+auto DialogBlocks::HandleDialogToPanelConversion(pugi::xml_node& form_xml,
+                                                 GenEnum::GenName gen_name) -> GenEnum::GenName
+{
+    if (gen_name != gen_wxDialog)
+    {
+        return gen_name;
+    }
+
+    if (auto base_class = form_xml.find_child_by_attribute("string", "name", "proxy-Base class");
+        base_class)
+    {
+        auto base_name = ExtractQuotedString(base_class);
+        if (base_name == "wxPanel")
+        {
+            return gen_PanelForm;
         }
-        if (get_GenName == gen_wxDialog)
+    }
+
+    if (auto base_class = form_xml.find_child_by_attribute("string", "name", "proxy-Window kind");
+        base_class)
+    {
+        auto base_name = ExtractQuotedString(base_class);
+        if (base_name == "wxPanel")
         {
-            if (auto base_class =
-                    form_xml.find_child_by_attribute("string", "name", "proxy-Base class");
-                base_class)
-            {
-                auto base_name = ExtractQuotedString(base_class);
-                if (base_name == "wxPanel")
-                {
-                    get_GenName = gen_PanelForm;
-                }
-                else if (base_class = form_xml.find_child_by_attribute("string", "name",
-                                                                       "proxy-Window kind");
-                         base_class)
-                {
-                    base_name = ExtractQuotedString(base_class);
-                    if (base_name == "wxPanel")
-                    {
-                        get_GenName = gen_PanelForm;
-                    }
-                }
-            }
+            return gen_PanelForm;
         }
+    }
 
-        auto form = NodeCreation.CreateNode(get_GenName, parent.get()).first;
-        if (!form)
-        {
-            if (parent->is_Gen(gen_Project) || parent->is_Gen(gen_folder) ||
-                parent->is_Gen(gen_sub_folder))
-            {
-                switch (get_GenName)
-                {
-                    default:
-                        {
-#if defined(_DEBUG)
+    return gen_wxDialog;
+}
 
-                            auto msg = GatherErrorDetails(form_xml, get_GenName);
-                            FAIL_MSG(wxString() << "Unable to create " << type_name << "\n" << msg)
-#endif  // _DEBUG
-                            m_errors.emplace(std::string("Unable to create ") +
-                                             type_name.ToStdString());
-                        }
-                        return false;
-
-                    case gen_wxPanel:
-                        get_GenName = gen_PanelForm;
-                        break;
-
-                    case gen_wxMenuBar:
-                        get_GenName = gen_MenuBar;
-                        break;
-
-                    case gen_wxToolBar:
-                        get_GenName = gen_ToolBar;
-                        break;
-
-                    case gen_wxRibbonBar:
-                        get_GenName = gen_RibbonBar;
-                        break;
-
-                    case gen_wxMenu:
-                        get_GenName = gen_PopupMenu;
-                        break;
-                }
-                if (form = NodeCreation.CreateNode(get_GenName, parent.get()).first; !form)
-                {
-#if defined(_DEBUG)
-                    auto msg = GatherErrorDetails(form_xml, get_GenName);
-                    FAIL_MSG(wxString() << "Unable to create " << type_name << "\n" << msg)
-#endif  // _DEBUG
-                    m_errors.emplace(std::string("Unable to create ") + type_name.ToStdString());
-                    return false;
-                }
-            }
-            else
+auto DialogBlocks::TryRecreateFormNode(GenEnum::GenName& gen_name, const NodeSharedPtr& parent,
+                                       pugi::xml_node& form_xml) -> NodeSharedPtr
+{
+    switch (gen_name)
+    {
+        default:
             {
 #if defined(_DEBUG)
-                auto msg = GatherErrorDetails(form_xml, get_GenName);
+                auto widgets_class =
+                    form_xml.find_child_by_attribute("string", "name", "proxy-type");
+                auto type_name = ExtractQuotedString(widgets_class);
+                auto msg = GatherErrorDetails(form_xml, gen_name);
                 FAIL_MSG(wxString() << "Unable to create " << type_name << "\n" << msg)
 #endif  // _DEBUG
-                m_errors.emplace(std::string("Unable to create ") + type_name.ToStdString());
+            }
+            return nullptr;
+
+        case gen_wxPanel:
+            gen_name = gen_PanelForm;
+            break;
+
+        case gen_wxMenuBar:
+            gen_name = gen_MenuBar;
+            break;
+
+        case gen_wxToolBar:
+            gen_name = gen_ToolBar;
+            break;
+
+        case gen_wxRibbonBar:
+            gen_name = gen_RibbonBar;
+            break;
+
+        case gen_wxMenu:
+            gen_name = gen_PopupMenu;
+            break;
+    }
+
+    return NodeCreation.CreateNode(gen_name, parent.get()).first;
+}
+
+void DialogBlocks::SetFormCommonProperties(pugi::xml_node& form_xml, const NodeSharedPtr& form)
+{
+    if (auto* prop = form->get_PropPtr(prop_class_name); prop)
+    {
+        if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-Class"); value)
+        {
+            prop->set_value(ExtractQuotedString(value));
+        }
+    }
+
+    if (auto* prop = form->get_PropPtr(prop_base_file); prop)
+    {
+        if (auto value =
+                form_xml.find_child_by_attribute("string", "name", "proxy-Implementation filename");
+            value)
+        {
+            auto file = ExtractQuotedString(value);
+            ttwx::replace_extension(file, {});
+            prop->set_value(file);
+        }
+    }
+
+    if (auto* prop = form->get_PropPtr(prop_xrc_file); prop)
+    {
+        if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-XRC filename");
+            value)
+        {
+            auto file = ExtractQuotedString(value);
+            prop->set_value(file);
+        }
+    }
+
+    if (auto* prop = form->get_PropPtr(prop_title); prop)
+    {
+        if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-Title"); value)
+        {
+            prop->set_value(ExtractQuotedString(value));
+        }
+    }
+
+    if (auto* prop = form->get_PropPtr(prop_center); prop)
+    {
+        if (auto value = form_xml.find_child_by_attribute("bool", "name", "proxy-Centre");
+            value && value.text().as_bool())
+        {
+            prop->set_value("wxBOTH");
+        }
+        else
+        {
+            prop->set_value("no");
+        }
+    }
+}
+
+auto DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent) -> bool
+{
+    GenEnum::GenName get_GenName = DetermineFormGenName(form_xml);
+    if (get_GenName == gen_unknown)
+    {
+        auto widgets_class = form_xml.find_child_by_attribute("string", "name", "proxy-type");
+        if (widgets_class && ExtractQuotedString(widgets_class) == "wxApp")
+        {
+            return true;  // Don't support app class, but it's not a folder
+        }
+        return false;
+    }
+
+    auto form = NodeCreation.CreateNode(get_GenName, parent.get()).first;
+    if (!form)
+    {
+        if (parent->is_Gen(gen_Project) || parent->is_Gen(gen_folder) ||
+            parent->is_Gen(gen_sub_folder))
+        {
+            form = TryRecreateFormNode(get_GenName, parent, form_xml);
+            if (!form)
+            {
+                auto type_node = form_xml.find_child_by_attribute("string", "name", "proxy-type");
+                auto name_str = ExtractQuotedString(type_node);
+                m_errors.emplace(std::string("Unable to create ") + name_str.ToStdString());
                 return false;
             }
         }
-        parent->AdoptChild(form);
-        if (auto derived_class =
-                form_xml.find_child_by_attribute("string", "name", "proxy-Base class");
-            derived_class)
+        else
         {
-            auto derived_name = ExtractQuotedString(derived_class);
-            if (derived_name != type_name)
-            {
-                form->set_value(prop_subclass, derived_name);
-            }
+            auto type_node = form_xml.find_child_by_attribute("string", "name", "proxy-type");
+            auto name_str = ExtractQuotedString(type_node);
+#if defined(_DEBUG)
+            auto msg = GatherErrorDetails(form_xml, get_GenName);
+            FAIL_MSG(wxString() << "Unable to create " << name_str << "\n" << msg)
+#endif  // _DEBUG
+            m_errors.emplace(std::string("Unable to create ") + name_str.ToStdString());
+            return false;
         }
-
-        m_class_uses_dlg_units = false;
-        if (auto dlg_units = form_xml.find_child_by_attribute("bool", "name", "proxy-Dialog units");
-            dlg_units && dlg_units.text().as_bool())
-        {
-            m_class_uses_dlg_units = true;
-        }
-
-        // Start be setting properties common to most forms
-
-        if (auto* prop = form->get_PropPtr(prop_class_name); prop)
-        {
-            if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-Class");
-                value)
-            {
-                prop->set_value(ExtractQuotedString(value));
-            }
-        }
-
-        if (auto* prop = form->get_PropPtr(prop_base_file); prop)
-        {
-            if (auto value = form_xml.find_child_by_attribute("string", "name",
-                                                              "proxy-Implementation filename");
-                value)
-            {
-                auto file = ExtractQuotedString(value);
-                ttwx::replace_extension(file, {});
-                prop->set_value(file);
-            }
-        }
-
-        if (auto* prop = form->get_PropPtr(prop_xrc_file); prop)
-        {
-            if (auto value =
-                    form_xml.find_child_by_attribute("string", "name", "proxy-XRC filename");
-                value)
-            {
-                auto file = ExtractQuotedString(value);
-                // Note that unlike the base file, we do *not* remove the XRC file extension
-                prop->set_value(file);
-            }
-        }
-
-        if (auto* prop = form->get_PropPtr(prop_title); prop)
-        {
-            if (auto value = form_xml.find_child_by_attribute("string", "name", "proxy-Title");
-                value)
-            {
-                prop->set_value(ExtractQuotedString(value));
-            }
-        }
-
-        if (auto* prop = form->get_PropPtr(prop_center); prop)
-        {
-            if (auto value = form_xml.find_child_by_attribute("bool", "name", "proxy-Centre");
-                value && value.text().as_bool())
-            {
-                prop->set_value("wxBOTH");
-            }
-            else
-            {
-                prop->set_value("no");
-            }
-        }
-
-        SetNodeDimensions(form_xml, form);  // Set pos and size
-        SetNodeID(form_xml, form);          // Set ID
-        ProcessStyles(form_xml, form);      // Set all styles for the current node
-        ProcessEvents(form_xml, form);      // Add all events for the current node
-
-        for (auto& child_xml: form_xml.children("document"))
-        {
-            CreateChildNode(child_xml, form.get());
-        }
-        return true;
     }
 
-    return false;
+    parent->AdoptChild(form);
+
+    if (auto derived_class = form_xml.find_child_by_attribute("string", "name", "proxy-Base class");
+        derived_class)
+    {
+        auto type_node = form_xml.find_child_by_attribute("string", "name", "proxy-type");
+        auto class_type_name = ExtractQuotedString(type_node);
+        if (class_type_name.starts_with("wb"))
+        {
+            class_type_name[1] = 'x';
+        }
+        class_type_name.Replace("Proxy", "");
+
+        auto derived_name = ExtractQuotedString(derived_class);
+        if (derived_name != class_type_name)
+        {
+            form->set_value(prop_subclass, derived_name);
+        }
+    }
+
+    m_class_uses_dlg_units = false;
+    if (auto dlg_units = form_xml.find_child_by_attribute("bool", "name", "proxy-Dialog units");
+        dlg_units && dlg_units.text().as_bool())
+    {
+        m_class_uses_dlg_units = true;
+    }
+
+    SetFormCommonProperties(form_xml, form);
+    SetNodeDimensions(form_xml, form);
+    SetNodeID(form_xml, form);
+    ProcessStyles(form_xml, form);
+    ProcessEvents(form_xml, form);
+
+    for (auto& child_xml: form_xml.children("document"))
+    {
+        CreateChildNode(child_xml, form.get());
+    }
+    return true;
 }
 
 void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
@@ -1697,11 +1733,11 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
                     }
                     else if (str == "Rows")
                     {
-                        node->set_value(prop_selection_mode, "wxGridSelectCells");
+                        node->set_value(prop_selection_mode, "wxGridSelectRowss");
                     }
                     else if (str == "Columns")
                     {
-                        node->set_value(prop_selection_mode, "wxGridSelectRows");
+                        node->set_value(prop_selection_mode, "wxGridSelectColumns");
                     }
                     break;
 

@@ -30,11 +30,12 @@ using ImportNameMap = std::unordered_map<std::string, const char*>;
 class FormBuilder : public ImportXML
 {
 public:
-    FormBuilder() {};
-    ~FormBuilder() {};
+    FormBuilder() = default;
+    ~FormBuilder() = default;
 
-    bool Import(const std::string& filename, bool write_doc = true) override;
-    NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
+    auto Import(const std::string& filename, bool write_doc = true) -> bool override;
+    auto CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr)
+        -> NodeSharedPtr;
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_names);
@@ -43,10 +44,24 @@ protected:
     void ProcessPropValue(pugi::xml_node& xml_prop, std::string_view prop_name,
                           std::string_view class_name, Node* newobject, Node* parent);
 
-    void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
+    void BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop);
     void createProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 
 private:
+    // Helper methods for CreateFbpNode complexity reduction
+    void ProcessXmlProperties(pugi::xml_node& xml_obj, Node* newobject, std::string_view class_name,
+                              Node* parent);
+    void ProcessXmlEvents(pugi::xml_node& xml_obj, Node* newobject, Node* parent);
+    void ValidateAndFixNodeProperties(Node* newobject, Node* parent);
+    auto ProcessChildNodes(pugi::xml_node& xml_obj, NodeSharedPtr& newobject, Node* parent,
+                           Node* sizeritem) -> NodeSharedPtr;
+
+    // Helper methods for ProcessXmlProperties complexity reduction
+    auto HandleBitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop_ptr) -> void;
+    static auto ConvertLegacyWindowStyles(std::string_view text_value) -> std::string;
+    auto HandleNameProperty(pugi::xml_node& xml_prop, Node* newobject) -> void;
+    auto HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobject, Node* parent) -> void;
+
     std::string m_embedPath;
     std::string m_eventGeneration;
     std::string m_baseFile;

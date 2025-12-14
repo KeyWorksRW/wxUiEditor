@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a DialogBlocks project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -79,7 +79,8 @@ protected:
     // the string without quotes.
     static auto ExtractQuotedString(pugi::xml_node& str_xml) -> wxString;
 
-    static auto GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName) -> wxString;
+    static auto GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName)
+        -> wxString;
 
 private:
     // Helper methods for CreateFormNode

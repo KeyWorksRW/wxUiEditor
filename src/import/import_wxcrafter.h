@@ -36,7 +36,8 @@ public:
     ~WxCrafter() {};
 
     auto Import(const std::string& filename, bool write_doc = true) -> bool override;
-    auto CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr) -> NodeSharedPtr;
+    auto CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr)
+        -> NodeSharedPtr;
 
     // wxCrafter only supports C++ code generation
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
@@ -55,7 +56,8 @@ protected:
 
     // Called when the property isn't recognized. Will return prop_processed if it was
     // processed, or a valid prop_name if it was converted, but needs further handling.
-    auto UnknownProperty(Node* node, const rapidjson::Value& value, std::string& name) -> GenEnum::PropName;
+    auto UnknownProperty(Node* node, const rapidjson::Value& value, std::string& name)
+        -> GenEnum::PropName;
 
     // Called when prop_name is a valid property. This will set the property's value after
     // any possible additional processing.

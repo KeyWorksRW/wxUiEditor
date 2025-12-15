@@ -7,7 +7,7 @@ Structure prioritizes efficient parsing with hierarchical organization and clear
 C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applications.
 
 ## Project Context
-- **Language:** C++20 with wxWidgets GUI framework
+- **Language:** C++23 with wxWidgets GUI framework
 - **Architecture:** Visual UI designer/code generator for wxWidgets applications
 - **Platform:** Cross-platform via wxWidgets abstractions (wxDir, wxFileName, etc.)
 - **Build System:** CMake + Ninja
@@ -35,6 +35,22 @@ When the user types "fix" and has selected a comment line:
 ### 🚫 Legacy Code Restrictions (ABSOLUTE)
 **NEVER use `src/tt/` types in new code:** `tt_string`, `tt_string_view`, `tt_cwd`, `tt_view_vector`
 
+**Use instead (choose based on usage pattern):**
+
+| Usage Pattern | Preferred Type |
+|---------------|----------------|
+| Uses `<<` operator chaining for string building | `wxString` |
+| Passed to wxWidgets APIs | `wxString` |
+| Uses wx features (Printf, MakeLower, Format, etc.) | `wxString` |
+| Pure internal processing, no wx interaction | `std::string` |
+| Used with std::filesystem or std:: APIs | `std::string` |
+| String views (read-only references) | `std::string_view` |
+| File paths with path manipulation | `std::filesystem::path` or `wxFileName` |
+| Vector of string views | `ttwx::ViewVector` |
+
+**Rationale:** wxString's `<<` operator supports multiple types with unlimited chaining, making code more concise than std::string's `+=` operator which requires explicit `std::to_string()` conversions.
+
+- Exception: Don't refactor existing tt_* usage unless explicitly requested
 **Use instead:**
 - Standard Library: `std::string`, `std::string_view`, `std::filesystem::path`
 - Project types: `ttwx::ViewVector` (not `tt_view_vector`)
@@ -62,6 +78,10 @@ When the user types "fix" and has selected a comment line:
 - `wxString::ToStdString()` → `std::string`/`std::string_view` (returns `const std::string&`)
 - `wxString::utf8_string()` → Use only for explicit UTF-8 encoding (e.g., filenames)
 - `std::format` → Requires `#include <format>`
+
+**String building preference:**
+- `wxString` with `<<` operator → Preferred for multi-part string building (cleaner than `+=`)
+- `std::format` → Preferred for fixed templates with placeholders
 
 **Array conversions:**
 - `std::to_array` for C-style `char*` arrays → `std::array`
@@ -153,12 +173,15 @@ Use these methods for building (in priority order):
 - Use range-based `for` loops over traditional loops when iterating containers
 - Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) instead of raw pointers
 - Use structured bindings for clarity: `auto [x, y] = get_point();`
-- Prefer C++20 ranges library algorithms over manual loops when applicable
+- Prefer C++23 ranges library algorithms over manual loops when applicable
 - **Prefer prefix increment/decrement (`++i`, `--i`) over postfix (`i++`, `i--`)** – more efficient for iterators and user-defined types, better practice even for built-in types
 
 ### Library Priority (in order)
 1. **C++ Standard Library (`std::`)** – Always check here first
-2. **wxWidgets library** – Use when standard library doesn't provide functionality
+2. **wxWidgets library** – Use when:
+   - Standard library doesn't provide functionality
+   - Building strings with `<<` operator (cleaner than std::string `+=`)
+   - Using wx-specific features (Printf, MakeLower, Format, etc.)
 3. **`ttwx::` namespace** (from `src/ttwx/ttwx.h`) – Project-specific utilities
 4. **Frozen containers** – Immutable collections (`frozen/include/frozen`)
 5. **❌ NEVER `src/tt/` types** – See Legacy Code Restrictions

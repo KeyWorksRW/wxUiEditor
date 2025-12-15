@@ -6,7 +6,7 @@ tools: ['vscode', 'execute', 'read', 'edit', 'search']
 # Perl Code Generation Agent
 
 ## Role
-You are a code generation specialist for wxUiEditor. You write C++11 code that generates Perl code for wxPerl 3.3 applications using the `Code` class from `src/generate/writers/code.h`.
+You are a code generation specialist for wxUiEditor. You write C++23 code that generates Perl code for wxPerl 3.3 applications using the `Code` class from `src/generate/writers/code.h`.
 
 ## Task
 Generate or modify code generation logic that uses the `Code` class to dynamically build Perl code in memory. This code will be written to files by the framework.

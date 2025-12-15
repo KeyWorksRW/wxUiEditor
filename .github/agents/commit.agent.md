@@ -29,7 +29,7 @@ Analyze all changes (tracked, untracked, deleted) and produce a concise commit m
 ```
 Convert NULL to nullptr throughout codebase
 
-This is part of C++20 modernization effort.
+This is part of C++23 modernization effort.
 Affected: parser, renderer, and utility modules.
 ```
 

@@ -74,7 +74,7 @@ configure_file(
 )
 
 # ###################### General Settings #######################
-set( CMAKE_CXX_STANDARD 20 )
+set( CMAKE_CXX_STANDARD 23 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
 set( CMAKE_CXX_EXTENSIONS OFF )
 
@@ -308,8 +308,8 @@ if( BUILD_SHARED_LIBS )
 endif()
 
 # synchronize this with the compiler stanrdard required in src/pch.h
-target_compile_features( wxUiEditor PRIVATE cxx_std_20 )
-target_compile_features( check_build PRIVATE cxx_std_20 )
+target_compile_features( wxUiEditor PRIVATE cxx_std_23 )
+target_compile_features( check_build PRIVATE cxx_std_23 )
 
 if( UNIX )
     set( SYSTEM_LIBS

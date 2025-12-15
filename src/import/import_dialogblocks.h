@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a DialogBlocks project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +36,7 @@ public:
     DialogBlocks(DialogBlocks&&) = delete;
     auto operator=(DialogBlocks&&) -> DialogBlocks& = delete;
 
-    bool Import(const tt_string& filename, bool write_doc = true) override;
+    bool Import(const std::string& filename, bool write_doc = true) override;
 
     [[nodiscard]] auto GetLanguage() const -> int override { return GEN_LANG_CPLUSPLUS; }
 
@@ -54,22 +54,22 @@ protected:
     void SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedPtr& new_node) const;
 
     // Sets disabled and hidden states for a node
-    void SetNodeState(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    static void SetNodeState(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     auto CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent) -> bool;
     auto CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent) -> bool;
-    void CreateChildNode(pugi::xml_node& child_node, Node* parent);
+    void CreateChildNode(pugi::xml_node& child_xml, Node* parent);
     void CreateCustomNode(pugi::xml_node& child_xml, Node* parent);
 
     // Process all the style-like attributes for the current node
-    void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    static void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // Add all events for the current node
     void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // This will walk through all the immediate children of the current node, and process any
     // known proxy settings.
-    void ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    static void ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // This will try to determine the generator to use based on either "proxy-Base class" or
     // "proxy-type" attributes.
@@ -77,11 +77,20 @@ protected:
 
     // Most strings in a DialogBlocks project are quoted, but some are not. This will return
     // the string without quotes.
-    auto ExtractQuotedString(pugi::xml_node& str_xml) -> wxString;
+    static auto ExtractQuotedString(pugi::xml_node& str_xml) -> wxString;
 
-    auto GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName) -> wxString;
+    static auto GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName)
+        -> wxString;
 
 private:
+    // Helper methods for CreateFormNode
+    auto DetermineFormGenName(pugi::xml_node& form_xml) -> GenEnum::GenName;
+    auto HandleDialogToPanelConversion(pugi::xml_node& form_xml, GenEnum::GenName gen_name)
+        -> GenEnum::GenName;
+    auto TryRecreateFormNode(GenEnum::GenName& gen_name, const NodeSharedPtr& parent,
+                             pugi::xml_node& form_xml) -> NodeSharedPtr;
+    void SetFormCommonProperties(pugi::xml_node& form_xml, const NodeSharedPtr& form);
+
     bool m_use_enums { true };
     bool m_class_uses_dlg_units { false };
 };

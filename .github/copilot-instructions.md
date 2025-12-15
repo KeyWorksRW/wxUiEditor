@@ -3,7 +3,7 @@ This file is optimized for Claude Sonnet 4.5 and equivalent high-capability mode
 Structure prioritizes efficient parsing with hierarchical organization and clear semantic markers.
 -->
 
-# AI Coding Guidelines for wxUiEditor
+# AI Coding Guidelines
 C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applications.
 
 ## Project Context
@@ -11,6 +11,19 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 - **Architecture:** Visual UI designer/code generator for wxWidgets applications
 - **Platform:** Cross-platform via wxWidgets abstractions (wxDir, wxFileName, etc.)
 - **Build System:** CMake + Ninja
+
+## Agent Command Interpretation
+When the user types "run" (or similar: "go", "execute", "start"):
+- **Always interpret as:** Execute the current agent's instructions on attached files
+- **Never interpret as:** Run/launch the application this workspace builds
+- To build/run the application, user will explicitly say "build the project" or "run the application"
+
+When the user types "fix" and has selected a comment line:
+- **The selected text will contain the comment** — use this to identify what to fix
+- **If line starts with `// CR:`** → Read the entire comment block, understand the code review issue, and fix the problem on the following line(s)
+- **If line starts with `// TODO`** → Read the entire comment block and implement what the TODO describes
+- After fixing, remove the `// CR:` or `// TODO` comment block
+- **Fix ONLY the single comment at the cursor position** — do not scan for or fix other CR/TODO comments in the file
 
 ## Critical Project Rules
 
@@ -27,8 +40,6 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 - Project types: `ttwx::ViewVector` (not `tt_view_vector`)
 - Exception: Don't refactor existing usage unless explicitly requested
 
-**Note for modernization agent:** When modernizing code, avoid using deprecated `src/tt/` types in any transformations
-
 ### ⚡ Performance-Critical Paths
 **Directories:** `src/nodes/`, `src/generate/` (executed frequently during code generation)
 
@@ -38,21 +49,18 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 3. Cache frequently-accessed values: `get_CodePreference()` results
 4. Node access: `as_view()` > `as_string()` (always prefer views)
 
-**Complexity refactoring:** When reducing function complexity in `src/nodes/` or `src/generate/`, avoid extracting single-use helpers with complexity <20 (higher threshold due to performance impact)
-
 ### 🏗️ Core Architecture
 
 **Node system:**
 - `Node` class: `nodes/node.h` → Pass as `Node*` (not `NodeSharedPtr`)
 - `NodeProperty` class: `nodes/node_prop.h`
-- Access pattern: `node.as_view()` for performance, `as_string()` only when Node unavailable
 
 **Generator system:**
 - All generators inherit from `src/generate/base_generator.h`
 
 **String conversions:**
 - `wxString::ToStdString()` → `std::string`/`std::string_view` (returns `const std::string&`)
-- `wxString::utf8_string()` → Use only for explicit UTF-8 encoding
+- `wxString::utf8_string()` → Use only for explicit UTF-8 encoding (e.g., filenames)
 - `std::format` → Requires `#include <format>`
 
 **Array conversions:**
@@ -67,77 +75,18 @@ C++ project generating C++, Perl, Python, and Ruby code for wxWidgets UI applica
 - Use `ASSERT`, `ASSERT_MSG`, `FAIL_MSG` from `assertion_dlg.h`
 - Never use raw `assert()` or `throw`
 
-**UI patterns:**
-- Busy cursor: `wxBeginBusyCursor()` / `wxEndBusyCursor()` > `wxBusyCursor` (cross-platform reliability)
+## Build Environment
 
-## Custom Language Generation Agents
+### Terminal Commands (CRITICAL)
+**Always check terminal context before running commands.**
 
-### Overview
-This project includes four custom agents for code generation in different target languages. These agents provide specialized context and instructions for writing code generation logic using the `Code` class.
+Look for the terminal type in the context:
+- `Terminal: pwsh` → PowerShell 7.x syntax (modern features, `&&`, `||`, etc.)
+- `Terminal: powershell` → Windows PowerShell 5.x syntax (traditional, `;` for chaining)
+- `Terminal: bash` → bash syntax (`cat`, `$?`, `|`, etc.)
+- `Terminal: cmd` → cmd syntax (`type`, `%ERRORLEVEL%`, etc.)
 
-**When to use language-specific agents:**
-- You are working in `src/generate/` files (code generator classes)
-- You are writing or modifying code generation logic (using `Code` class methods)
-- You need to generate code for a specific target language
-
-**When NOT to use language-specific agents:**
-- Writing regular C++ application code anywhere in the project
-- Working in `src/nodes/`, `src/ui/`, `src/panels/`, etc. (project code, not generation code)
-- The **default Copilot behavior** applies (standard C++20 development)
-
-### Available Language Agents
-
-#### gen_cpp
-- **Target:** C++11 code for wxWidgets 3.2
-- **Used for:** Generating C++ code using `Code` class with `GEN_LANG_CPLUSPLUS`
-- **Key:** Handles wxWidgets C++ patterns, object creation, method calls
-- **File:** `.github/agents/gen_cpp.agent.md`
-
-#### gen_perl
-- **Target:** Perl code for wxPerl 3.3
-- **Used for:** Generating Perl code using `Code` class with `GEN_LANG_PERL`
-- **Key:** Handles `Wx::` prefix conversion, method syntax, event binding patterns
-- **File:** `.github/agents/gen_perl.agent.md`
-
-#### gen_python
-- **Target:** Python code for wxPython 4.2
-- **Used for:** Generating Python code using `Code` class with `GEN_LANG_PYTHON`
-- **Key:** Handles `wx.` prefix conversion, `self.` prefixing, event binding patterns
-- **File:** `.github/agents/gen_python.agent.md`
-
-#### gen_ruby
-- **Target:** Ruby code for wxRuby 1.6.1
-- **Used for:** Generating Ruby code using `Code` class with `GEN_LANG_RUBY`
-- **Key:** Handles `Wx::` prefix, snake_case conversion, 2-space indentation, event binding patterns
-- **File:** `.github/agents/gen_ruby.agent.md`
-
-### How to Use
-
-**Example workflow:**
-1. Open a file in `src/generate/` that needs code generation changes
-2. Select the relevant code block that needs work
-3. Open the appropriate language agent (e.g., `gen_python` if working on Python generation)
-4. Ask the agent to generate or modify the code generation logic
-5. The agent will use Code class methods and language-specific patterns
-6. Paste the result back into your file
-
-**Or as a single agent session:**
-1. Start with one of the gen_* agents already active
-2. Ask it to work on code generation within `src/generate/` files
-3. The agent will automatically use proper Code class patterns for the language
-
-### Important Notes
-
-- **Default behavior (no agent):** Working in `src/generate/` without a language agent active means you are writing regular C++20 code (the project language itself)
-- **With language agent active:** You are writing C++20 code that generates target language code using the Code class
-- **Code class is crucial:** Always use `Code` class methods (`Add()`, `Eol()`, `Comma()`, etc.) rather than direct string operations
-- **Build verification:** After changes, use `cmake --build build --config Debug` to verify correctness
-
-## Shell Environment
-
-### Configuration Priority
-1. **Check `.private/shell.md` first** - if exists, follow all instructions within
-2. **Default**: Use cross-platform commands (git, cmake, ninja) when shell.md absent
+**Never assume bash by default.** Match syntax to the active terminal type.
 
 ### Build Commands
 Use these methods for building (in priority order):
@@ -164,21 +113,6 @@ Use these methods for building (in priority order):
    - Analyze and fix root cause in source code
    - Re-run build to verify the fix
 
-### Local Environment Extensions
-
-| Operation | PowerShell Syntax |
-|-----------|-------------------|
-| Tail file | `Get-Content file.txt \| Select-Object -Last 20` |
-| Head file | `Get-Content file.txt -TotalCount 20` |
-| Exit code | `$LASTEXITCODE` |
-| Navigate | `cd` or `Set-Location` |
-| List | `Get-ChildItem` |
-| Copy | `Copy-Item` |
-| Remove | `Remove-Item` |
-| Search | `Select-String` |
-| Count | `Measure-Object` |
-| Sort | `Sort-Object` |
-
 # Language-Specific Coding Standards
 
 ## C++ (Primary Language)
@@ -197,7 +131,7 @@ Use these methods for building (in priority order):
 
 ### Function Declarations and Definitions
 - Always use trailing return type syntax for both declarations and definitions: `auto FunctionName() -> ReturnType`
-- Functions returning `bool` or `int` must have `[[nodiscard]]` attribute
+- Functions returning `bool` must have `[[nodiscard]]` attribute
 
 ### Enum Guidelines
 - Use `enum class` for type safety (never traditional enums)
@@ -210,7 +144,11 @@ Use these methods for building (in priority order):
 - Do not use `else` after a conditional that exits (return, throw, break)
 
 ### Modern C++ Features
-- Prefer `auto` for variable declarations when type is obvious
+- Prefer `auto` for variable declarations when type is obvious, but use lint-friendly variants:
+  - `auto*` for pointer assignments (e.g., `auto* node = GetNode();`)
+  - `const auto` for const values (e.g., `const auto count = GetCount();`)
+  - `const auto&` for const references (e.g., `const auto& name = GetName();`)
+  - `auto&` for non-const references
 - Use `constexpr` for compile-time constants and functions
 - Use range-based `for` loops over traditional loops when iterating containers
 - Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) instead of raw pointers
@@ -246,53 +184,6 @@ constexpr auto color_map = frozen::make_map<std::string_view, int>({
     {"green", 0x00FF00}
 });
 ```
-
-## AI Context Documentation (Header Files)
-
-**When to add:** Documenting header files or adding architectural context
-
-**Process:**
-1. Analyze: Design patterns, class hierarchy, key methods, system integration
-2. Add comment block after license header
-3. Update `docs/contributors/architecture.md`
-
-**AI Context format:**
-```cpp
-// AI Context: [One-sentence "This file implements..." summary]
-// [3-8 lines covering: patterns, class roles, method flow, constraints, memory management]
-```
-
-**Include:** Architecture, patterns, responsibilities, constraints, behavior
-**Exclude:** Implementation details, API docs, history, TODOs
-
-**Example:**
-```cpp
-// AI Context: This file implements a command pattern-based undo/redo system for wxUiEditor.
-// UndoAction is an abstract base class requiring derived classes to implement Change()
-// (apply/redo), Revert() (undo), and GetMemorySize(). GroupUndoActions allows multiple actions to
-// be treated as a single undoable operation. UndoStack manages two vectors (undo/redo stacks) where
-// Push() executes Change() and adds to undo stack, Undo() calls Revert() and moves to redo stack,
-// and Redo() calls Change() and moves back to undo stack. The stack can be locked to execute
-// actions without affecting undo/redo history. Actions may optionally store Node pointers and
-// control UI selection events.
-```
-
-**Contributor docs format** (`docs/contributors/architecture.md`):
-```markdown
-## [Descriptive Title]
-
-**File:** `src/path/to/file.h`
-
-[Convert AI Context to paragraphs. Focus on architectural understanding.]
-
----
-```
-
-Reference: `docs/contributors/ai-context-template.md`
-- Documentation lives with code and is version controlled
-- Single source of truth automatically extracted to docs
-
-See `docs/contributors/ai-context-template.md` for complete guidelines and examples.
 
 ## Perl Coding Standards
 
@@ -334,23 +225,6 @@ See `docs/contributors/ai-context-template.md` for complete guidelines and examp
 | Indentation | 4 spaces | 4 spaces | 2 spaces |
 | Line length | 100 chars | 90 chars | 80 chars |
 | Special | — | — | `_event` for unused params |
-
-## Refactoring Code Generation Functions
-
-When asked to "Refactor codegen function [name]" or when refactoring any code in `src/generate/` or `src/nodes/`:
-
-1. **Make the requested changes** to the function/class
-2. **Build the project**: `cmake --build build --config Debug`
-3. **Verify code generation unchanged**:
-   ```powershell
-   build/bin/Debug/wxUiEditor.exe --verify_cpp .local/tests/wxUiTesting.wxui; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-   ```
-4. On failure (exit code ≠ 0):
-   - Read diff: `.local/tests`
-   - Analyze changes in generated code
-   - Fix refactoring to preserve behavior
-   - Rebuild and re-verify
-5. **Success criteria:** Build clean + verification exit code 0
 
 ## Critical Reminders for All Code
 

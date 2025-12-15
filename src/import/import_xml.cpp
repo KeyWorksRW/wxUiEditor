@@ -5,20 +5,23 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <filesystem>
+
 #include <frozen/map.h>
 
 #include <format>
 
 #include "import_xml.h"
 
-#include "base_generator.h"    // BaseGenerator -- Base Generator class
-#include "gen_enums.h"         // Enumerations for generators
-#include "mainframe.h"         // Main window frame
-#include "node.h"              // Node class
-#include "node_creator.h"      // NodeCreator class
-#include "ttwx.h"              // ttwx helpers for character and numeric conversions
-#include "ttwx_view_vector.h"  // ttwx_view_vector class
-#include "utils.h"             // Utility functions that work with properties
+#include "base_generator.h"      // BaseGenerator -- Base Generator class
+#include "gen_enums.h"           // Enumerations for generators
+#include "mainframe.h"           // Main window frame
+#include "node.h"                // Node class
+#include "node_creator.h"        // NodeCreator class
+#include "ttwx.h"                // ttwx helpers for character and numeric conversions
+#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "ttwx_view_vector.h"    // ttwx_view_vector class
+#include "utils.h"               // Utility functions that work with properties
 
 using namespace GenEnum;
 
@@ -139,7 +142,7 @@ namespace xrc_import
 
 using namespace xrc_import;
 
-std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
+std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file)
 {
     pugi::xml_document doc;
 
@@ -161,7 +164,7 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const tt_string& file)
 void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
 {
     auto flag_value = xml_prop.text().as_sview();
-    std::string border_value;
+    std::string border_value = "";
 
     auto append_with_pipe = [](std::string& value, std::string_view val) -> void
     {
@@ -214,7 +217,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         }
     }
 
-    std::string align_value;
+    std::string align_value = "";
     if (flag_value.contains("wxALIGN_LEFT") && !is_HorizontalSizer)
     {
         align_value = "wxALIGN_LEFT";
@@ -265,7 +268,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         node->set_value(prop_alignment, align_value);
     }
 
-    std::string flags_value;
+    std::string flags_value = "";
     if (flag_value.contains("wxEXPAND") || flag_value.contains("wxGROW"))
     {
         // You can't use wxEXPAND with any alignment flags
@@ -443,7 +446,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->is_Gen(gen_wxListView))
     {
-        std::string style;
+        std::string style = "";
         ttwx::ViewVector mstr(xml_prop.text().as_view(), '|');
         for (auto& iter: mstr)
         {
@@ -542,7 +545,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
 }
 
-GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node* parent)
+GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name, Node* parent)
 {
     auto get_GenName = MapClassName(object_name);
 
@@ -576,7 +579,8 @@ GenEnum::GenName ImportXML::ConvertToGenName(const tt_string& object_name, Node*
     {
         return gen_gbsizeritem;
     }
-    else if (object_name.contains("Panel") && parent && parent->is_Gen(gen_Project))
+    else if (object_name.find("Panel") != std::string::npos && parent &&
+             parent->is_Gen(gen_Project))
     {
         return gen_PanelForm;
     }
@@ -732,13 +736,13 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
             case prop_label:
                 {
-                    tt_string label = ConvertEscapeSlashes(iter.text().as_view());
-                    label.Replace("_", "&");
+                    std::string label = ConvertEscapeSlashes(iter.text().as_view());
+                    std::ranges::replace(label, '_', '&');
                     auto pos = label.find("\\t");
                     if (ttwx::is_found(pos))
                     {
                         label[pos] = 0;
-                        node->set_value(prop_shortcut, label.subview(pos + 2));
+                        node->set_value(prop_shortcut, std::string_view(label).substr(pos + 2));
                     }
                     if (auto* prop = node->get_PropPtr(prop_label); prop)
                     {
@@ -749,14 +753,16 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
             case prop_extra_accels:
                 {
-                    tt_string accel_list;
-                    for (auto& accel: iter.children())
+                    std::string accel_list;
+                    for (const auto& accel: iter.children())
                     {
                         if (accel_list.size())
                         {
-                            accel_list << " ";
+                            accel_list += " ";
                         }
-                        accel_list << '"' << accel.text().as_view() << '"';
+                        accel_list += '"';
+                        accel_list += accel.text().as_view();
+                        accel_list += '"';
                     }
                     node->set_value(prop_extra_accels, accel_list);
                     continue;
@@ -883,7 +889,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_cellpos:
-                if (tt_string_vector mstr(xml_obj.text().as_view(), ','); mstr.size())
+                if (ttwx::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
                 {
                     if (mstr[0].size())
                     {
@@ -897,7 +903,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_cellspan:
-                if (tt_string_vector mstr(xml_obj.text().as_view(), ','); mstr.size())
+                if (ttwx::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
                 {
                     if (mstr[0].size() && ttwx::atoi(mstr[0]) > 0)
                     {
@@ -951,16 +957,25 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                     {
                         if (parent && parent->get_Form())
                         {
-                            MSG_INFO(tt_string(m_importProjectFile.filename())
-                                     << ": Unrecognized property: " << xml_obj.name() << " for "
-                                     << node->get_DeclName() << " in "
-                                     << parent->get_Form()->as_string(prop_class_name));
+                            std::string msg =
+                                std::filesystem::path(m_importProjectFile).filename().string();
+                            msg += ": Unrecognized property: ";
+                            msg += xml_obj.name();
+                            msg += " for ";
+                            msg += node->get_DeclName();
+                            msg += " in ";
+                            msg += parent->get_Form()->as_string(prop_class_name);
+                            MSG_INFO(msg);
                         }
                         else
                         {
-                            MSG_INFO(tt_string(m_importProjectFile.filename())
-                                     << ": Unrecognized property: " << xml_obj.name() << " for "
-                                     << node->get_DeclName());
+                            std::string msg =
+                                std::filesystem::path(m_importProjectFile).filename().string();
+                            msg += ": Unrecognized property: ";
+                            msg += xml_obj.name();
+                            msg += " for ";
+                            msg += node->get_DeclName();
+                            MSG_INFO(msg);
                         }
                     }
                     return;
@@ -992,16 +1007,25 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                     // spacer's don't use alignment or border styles
                     if (parent && parent->get_Form())
                     {
-                        MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": " << xml_obj.name() << " not supported for "
-                                 << node->get_DeclName() << " in "
-                                 << parent->get_Form()->as_string(prop_class_name));
+                        std::string msg =
+                            std::filesystem::path(m_importProjectFile).filename().string();
+                        msg += ": ";
+                        msg += xml_obj.name();
+                        msg += " not supported for ";
+                        msg += node->get_DeclName();
+                        msg += " in ";
+                        msg += parent->get_Form()->as_string(prop_class_name);
+                        MSG_INFO(msg);
                     }
                     else
                     {
-                        MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": " << xml_obj.name() << " not supported for "
-                                 << node->get_DeclName());
+                        std::string msg =
+                            std::filesystem::path(m_importProjectFile).filename().string();
+                        msg += ": ";
+                        msg += xml_obj.name();
+                        msg += " not supported for ";
+                        msg += node->get_DeclName();
+                        MSG_INFO(msg);
                     }
                 }
                 return;
@@ -1029,21 +1053,24 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         // wxSmith does this, so ignore it
                         if (!node->is_Gen(gen_gbsizeritem))
                         {
-                            MSG_INFO(tt_string(m_importProjectFile.filename())
-                                     << ": "
-                                     << "\"option\" specified for node that doesn't have "
-                                        "prop_proportion: "
-                                     << node->get_DeclName() << " in "
-                                     << parent->get_Form()->as_string(prop_class_name));
+                            std::string msg =
+                                std::filesystem::path(m_importProjectFile).filename().string();
+                            msg += ": \"option\" specified for node that does not have "
+                                   "prop_proportion: ";
+                            msg += node->get_DeclName();
+                            msg += " in ";
+                            msg += parent->get_Form()->as_string(prop_class_name);
+                            MSG_INFO(msg);
                         }
                     }
                     else
                     {
-                        MSG_INFO(
-                            tt_string(m_importProjectFile.filename())
-                            << ": "
-                            << "\"option\" specified for node that doesn't have prop_proportion: "
-                            << node->get_DeclName());
+                        std::string msg =
+                            std::filesystem::path(m_importProjectFile).filename().string();
+                        msg +=
+                            ": \"option\" specified for node that does not have prop_proportion: ";
+                        msg += node->get_DeclName();
+                        MSG_INFO(msg);
                     }
                 }
                 return;
@@ -1086,7 +1113,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_size:
                 if (node->is_Gen(gen_spacer))
                 {
-                    if (tt_string_vector mstr(xml_obj.text().as_view(), ','); mstr.size())
+                    if (ttwx::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
                     {
                         if (mstr[0].size())
                         {
@@ -1110,10 +1137,10 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         // forward_declare. Or at least it is supposed to. In version 3.10, it
                         // doesn't properly handle an empty class name, so the header file can
                         // appear first.
-                        tt_string_vector parts(value, ';', tt::TRIM::both);
+                        ttwx::StringVector parts { value, ';', ttwx::TRIM::both };
                         if (parts.size() > 0)
                         {
-                            if (parts[0].contains(".h"))
+                            if (parts[0].find(".h") != std::string::npos)
                             {
                                 node->set_value(prop_subclass_header, parts[0]);
                             }
@@ -1151,24 +1178,31 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
     {
         if (parent && parent->get_Form())
         {
-            MSG_INFO(tt_string(m_importProjectFile.filename())
-                     << ": " << "Unrecognized property: " << xml_obj.name() << " for "
-                     << node->get_DeclName() << " in "
-                     << parent->get_Form()->as_string(prop_class_name));
+            std::string msg = m_importProjectFile;
+            msg += ": Unrecognized property: ";
+            msg += xml_obj.name();
+            msg += " for ";
+            msg += node->get_DeclName();
+            msg += " in ";
+            msg += parent->get_Form()->as_string(prop_class_name);
+            MSG_INFO(msg);
         }
         else
         {
-            MSG_INFO(tt_string(m_importProjectFile.filename())
-                     << ": " << "Unrecognized property: " << xml_obj.name() << " for "
-                     << node->get_DeclName());
+            std::string msg = m_importProjectFile;
+            msg += ": Unrecognized property: ";
+            msg += xml_obj.name();
+            msg += " for ";
+            msg += node->get_DeclName();
+            MSG_INFO(msg);
         }
     }
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
 {
-    tt_string choices;
-    for (auto& iter: xml_obj.children())
+    std::string choices = "";
+    for (const auto& iter: xml_obj.children())
     {
         if (iter.name() == "item" || iter.name() == "choice")
         {
@@ -1176,9 +1210,11 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
             child.Replace("\"", "\\\"", true);
             if (choices.size())
             {
-                choices << " ";
+                choices += " ";
             }
-            choices << '\"' << child << '\"';
+            choices += '"';
+            choices += child.ToStdString();
+            choices += '"';
         }
     }
 
@@ -1191,7 +1227,7 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
 void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */)
 {
     m_notebook_tabs.clear();
-    for (auto& iter: xml_obj.children())
+    for (const auto& iter: xml_obj.children())
     {
         if (iter.name() == "tab")
         {
@@ -1208,17 +1244,18 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
-        tt_string bitmap("Art; ");
-        bitmap << xml_obj.attribute("stock_id").value() << "|";
+        std::string bitmap("Art; ");
+        bitmap += xml_obj.attribute("stock_id").value();
+        bitmap += "|";
         if (!xml_obj.attribute("stock_client").empty())
         {
-            bitmap << xml_obj.attribute("stock_client").value();
+            bitmap += xml_obj.attribute("stock_client").value();
         }
         else
         {
-            bitmap << "wxART_OTHER";
+            bitmap += "wxART_OTHER";
         }
-        bitmap << ";[-1,-1]";
+        bitmap += ";[-1,-1]";
 
         if (auto* prop = node->get_PropPtr(node_prop); prop)
         {
@@ -1227,18 +1264,18 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
     }
     else
     {
-        auto file = xml_obj.child_as_cstr();
-        if (file.starts_with("code:"))
+        wxString file = xml_obj.child_as_cstr();
+        if (file.StartsWith("code:"))
         {
             // This is a wxGlade bitmap
             // TODO: [Randalphwa - 10-12-2023] wxGlade bitmaps are not yet supported
         }
 
-        if (file.contains(".xpm", tt::CASE::either))
+        if (file.Lower().Find(".xpm") != wxNOT_FOUND)
         {
-            tt_string bitmap("XPM; ");
-            bitmap << file;
-            bitmap << ";[-1,-1]";
+            std::string bitmap("XPM; ");
+            bitmap += file.ToStdString();
+            bitmap += ";[-1,-1]";
 
             if (auto* prop = node->get_PropPtr(prop_bitmap); prop)
             {
@@ -1251,17 +1288,18 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
         }
         else
         {
-            tt_string bitmap("Embed;");
+            std::string bitmap("Embed;");
 
             // wxGlade doubles the backslash after the drive letter on Windows, and that causes
             // the conversion to a relative path to be incorrect
-            file.Replace(":\\\\", ":\\");
+            file.Replace(":\\\\\\\\", ":\\\\");
 
-            tt_string relative(file.make_wxString());
-            relative.make_relative(tt_string::GetCwd());
-            relative.backslashestoforward();
-            bitmap << relative;
-            bitmap << ";[-1,-1]";
+            wxFileName fn(file);
+            fn.MakeRelativeTo(wxString::FromUTF8(wxGetCwd()));
+            wxString relative = fn.GetFullPath();
+            ttwx::back_slashesto_forward(relative);
+            bitmap += relative.ToStdString();
+            bitmap += ";[-1,-1]";
 
             if (auto* prop = node->get_PropPtr(prop_bitmap); prop)
             {
@@ -1282,8 +1320,8 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
         return;
     }
 
-    tt_string event_name("wx");
-    event_name << xml_obj.attribute("entry").value();
+    std::string event_name("wx");
+    event_name += xml_obj.attribute("entry").value();
     auto* event = node->get_Event(event_name);
     if (event)
     {
@@ -1302,7 +1340,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
     bool is_generic_version = false;
-    auto get_GenName = ConvertToGenName(object_name, parent);
+    auto get_GenName = ConvertToGenName(object_name.ToStdString(), parent);
     if (get_GenName == gen_unknown)
     {
         if (object_name.ends_with("bookpage") || object_name == "propertysheetpage")
@@ -1335,25 +1373,35 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                     auto* form = parent->get_Form();
                     if (form && form->HasValue(prop_class_name))
                     {
-                        MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": "
-                                    "Unrecognized object: "
-                                 << object_name << " in " << map_GenNames.at(parent->get_GenName())
-                                 << " (" << form->as_string(prop_class_name) << ')');
+                        std::string msg =
+                            std::filesystem::path(m_importProjectFile).filename().string();
+                        msg += ": Unrecognized object: ";
+                        msg += object_name;
+                        msg += " in ";
+                        msg += map_GenNames.at(parent->get_GenName());
+                        msg += " (";
+                        msg += form->as_string(prop_class_name);
+                        msg += ")";
+                        MSG_INFO(msg);
                     }
                     else
                     {
-                        MSG_INFO(tt_string(m_importProjectFile.filename())
-                                 << ": "
-                                    "Unrecognized object: "
-                                 << object_name << " in "
-                                 << map_GenNames.at(parent->get_GenName()));
+                        std::string msg =
+                            std::filesystem::path(m_importProjectFile).filename().string();
+                        msg += ": Unrecognized object: ";
+                        msg += object_name;
+                        msg += " in ";
+                        msg += map_GenNames.at(parent->get_GenName());
+                        MSG_INFO(msg);
                     }
                 }
                 else
                 {
-                    MSG_INFO(tt_string(m_importProjectFile.filename())
-                             << ": " << "Unrecognized object: " << object_name);
+                    std::string msg =
+                        std::filesystem::path(m_importProjectFile).filename().string();
+                    msg += ": Unrecognized object: ";
+                    msg += object_name;
+                    MSG_INFO(msg);
                 }
             }
             return {};
@@ -1443,8 +1491,8 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             }
         }
 
-        tt_string msg("Unable to create ");
-        msg << object_name;
+        std::string msg("Unable to create ");
+        msg += object_name.ToStdString();
         if (parent)
         {
             // We can't use the class name because that won't necessarily be the wxWidgets
@@ -1462,7 +1510,8 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
 
                 name.erase_from('(');
 #endif  // _DEBUG
-                msg << " as a child of " << name;
+                msg += " as a child of ";
+                msg += name;
             }
         }
         m_errors.emplace(msg);
@@ -1661,7 +1710,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     return new_node;
 }
 
-GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
+auto ImportXML::MapPropName(std::string_view name) const -> GenEnum::PropName
 {
     if (name.size())
     {
@@ -1679,7 +1728,7 @@ GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
     return prop_unknown;
 }
 
-GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
+auto ImportXML::MapClassName(std::string_view name) const -> GenEnum::GenName
 {
     if (!name.empty())
     {
@@ -1695,7 +1744,7 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
     return gen_unknown;
 }
 
-tt_string_view ImportXML::GetCorrectEventName(tt_string_view name)
+auto ImportXML::GetCorrectEventName(std::string_view name) -> std::string_view
 {
     if (const auto* result = map_old_events.find(name); result != map_old_events.end())
     {

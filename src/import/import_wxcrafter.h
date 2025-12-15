@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxCrafter project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -35,38 +35,41 @@ public:
     WxCrafter();
     ~WxCrafter() {};
 
-    bool Import(const tt_string& filename, bool write_doc = true) override;
-    NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
+    auto Import(const std::string& filename, bool write_doc = true) -> bool override;
+    auto CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr)
+        -> NodeSharedPtr;
 
     // wxCrafter only supports C++ code generation
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
 
 protected:
-    bool ProcessFont(Node* node, const rapidjson::Value& object);
-    bool ProcessScintillaProperty(Node* node, const rapidjson::Value& object);
-    void ProcessBitmapPropety(Node* parent, const rapidjson::Value& object);
-    void ProcessChild(Node* parent, const rapidjson::Value& object);
-    void ProcessEvents(Node* parent, const rapidjson::Value& array);
-    void ProcessForm(const rapidjson::Value& value);
-    void ProcessProperties(Node* node, const rapidjson::Value& array);
-    void ProcessSizerFlags(Node* node, const rapidjson::Value& array);
-    void ProcessStdBtnChildren(Node* parent, const rapidjson::Value& array);
-    void ProcessStyles(Node* parent, const rapidjson::Value& array);
+    auto ProcessFont(Node* node, const rapidjson::Value& object) -> bool;
+    auto ProcessScintillaProperty(Node* node, const rapidjson::Value& object) -> bool;
+    auto ProcessBitmapPropety(Node* parent, const rapidjson::Value& object) -> void;
+    auto ProcessChild(Node* parent, const rapidjson::Value& object) -> void;
+    auto ProcessEvents(Node* parent, const rapidjson::Value& array) -> void;
+    auto ProcessForm(const rapidjson::Value& value) -> void;
+    auto ProcessProperties(Node* node, const rapidjson::Value& array) -> void;
+    auto ProcessSizerFlags(Node* node, const rapidjson::Value& array) -> void;
+    auto ProcessStdBtnChildren(Node* parent, const rapidjson::Value& array) -> void;
+    auto ProcessStyles(Node* parent, const rapidjson::Value& array) -> void;
 
     // Called when the property isn't recognized. Will return prop_processed if it was
     // processed, or a valid prop_name if it was converted, but needs further handling.
-    GenEnum::PropName UnknownProperty(Node* node, const rapidjson::Value& value, tt_string& name);
+    auto UnknownProperty(Node* node, const rapidjson::Value& value, std::string& name)
+        -> GenEnum::PropName;
 
     // Called when prop_name is a valid property. This will set the property's value after
     // any possible additional processing.
-    void KnownProperty(Node* node, const rapidjson::Value& value, GenEnum::PropName prop_name);
+    auto KnownProperty(Node* node, const rapidjson::Value& value, GenEnum::PropName prop_name)
+        -> void;
 
     // Called to handle prop_value which may get converted to a different property before
     // saving.
-    void ValueProperty(Node* node, const rapidjson::Value& value);
+    auto ValueProperty(Node* node, const rapidjson::Value& value) -> void;
 
 private:
-    tt_string m_output_name;
+    std::string m_output_name;
 
     bool m_is_output_name_used { false };
 

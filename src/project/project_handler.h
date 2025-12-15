@@ -206,7 +206,7 @@ public:
     auto LoadProject(const tt_string& file, bool allow_ui = true) -> bool;
     auto LoadProject(pugi::xml_document& doc, bool allow_ui = true) -> NodeSharedPtr;
 
-    auto Import(ImportXML& import, tt_string& file, bool append = false, bool allow_ui = true)
+    auto Import(ImportXML& import, std::string& file, bool append = false, bool allow_ui = true)
         -> bool;
     auto ImportProject(std::string_view file, bool allow_ui = true) -> bool;
 

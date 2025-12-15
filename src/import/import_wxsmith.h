@@ -26,7 +26,7 @@ class WxSmith : public ImportXML
 public:
     WxSmith();
 
-    bool Import(const tt_string& filename, bool write_doc = true) override;
+    bool Import(const std::string& filename, bool write_doc = true) override;
 
     // wxSmith only supports C++ code generation
     int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }

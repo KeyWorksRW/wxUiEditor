@@ -5,6 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <filesystem>
+#include <format>
+
 #include "import_wxsmith.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
@@ -15,7 +18,7 @@
 
 WxSmith::WxSmith() {}
 
-bool WxSmith::Import(const tt_string& filename, bool write_doc)
+bool WxSmith::Import(const std::string& filename, bool write_doc)
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -45,7 +48,7 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
         if (!m_project->get_ChildCount())
         {
-            wxMessageBox(wxString() << filename.make_wxString()
+            wxMessageBox(wxString() << wxString::FromUTF8(filename)
                                     << " does not contain any top level forms.",
                          "Import");
             return false;
@@ -64,15 +67,18 @@ bool WxSmith::Import(const tt_string& filename, bool write_doc)
 
     if (m_errors.size())
     {
-        tt_string errMsg("Not everything in the project could be converted:\n\n");
-        MSG_ERROR(tt_string() << "------  " << m_importProjectFile.filename() << "------");
+        std::string errMsg("Not everything in the project could be converted:\n\n");
+        MSG_ERROR(std::format("------  {}------",
+                              std::filesystem::path(m_importProjectFile).filename().string()));
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
-            errMsg << iter << '\n';
+            errMsg += iter;
+            errMsg += '\n';
         }
 
-        wxMessageDialog dlg(nullptr, errMsg, "Import Project", wxICON_WARNING | wxOK);
+        wxMessageDialog dlg(nullptr, wxString::FromUTF8(errMsg), "Import Project",
+                            wxICON_WARNING | wxOK);
         dlg.ShowModal();
     }
 

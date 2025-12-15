@@ -16,9 +16,9 @@
 #include "node_creator.h"    // NodeCreator class
 #include "utils.h"           // Utility functions that work with properties
 
-WxSmith::WxSmith() {}
+WxSmith::WxSmith() = default;
 
-bool WxSmith::Import(const std::string& filename, bool write_doc)
+auto WxSmith::Import(const std::string& filename, bool write_doc) -> bool
 {
     auto result = LoadDocFile(filename);
     if (!result)
@@ -27,8 +27,8 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
     }
     auto root = result.value().first_child();
 
-    if (!tt::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
-        !tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!ttwx::is_sameas(root.name(), "wxsmith", ttwx::CASE::either) &&
+        !ttwx::is_sameas(root.name(), "resource", ttwx::CASE::either))
     {
         dlgInvalidProject(filename, "wxSmith or XRC", "Import project");
         return false;
@@ -55,7 +55,9 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
         }
 
         if (write_doc)
+        {
             m_project->CreateDoc(m_docOut);
+        }
     }
 
     catch (const std::exception& err)
@@ -65,12 +67,12 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
         return false;
     }
 
-    if (m_errors.size())
+    if (!m_errors.empty())
     {
         std::string errMsg("Not everything in the project could be converted:\n\n");
         MSG_ERROR(std::format("------  {}------",
                               std::filesystem::path(m_importProjectFile).filename().string()));
-        for (auto& iter: m_errors)
+        for (const auto& iter: m_errors)
         {
             MSG_ERROR(iter);
             errMsg += iter;
@@ -85,7 +87,8 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
     return true;
 }
 
-bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
+auto WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,
+                                    Node* /* parent unused */) -> bool
 {
     auto node_name = xml_obj.name();
 
@@ -93,7 +96,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     {
         return true;
     }
-    else if (node_name == "labelrowheight")
+    if (node_name == "labelrowheight")
     {
         if (node->is_Gen(gen_wxGrid))
         {
@@ -121,21 +124,25 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     {
         if (node->is_Gen(gen_wxGrid))
         {
-            tt_string choices;
-            for (auto& iter: xml_obj.children())
+            wxString choices;
+            for (const auto& iter: xml_obj.children())
             {
                 if (iter.name() == "item")
                 {
-                    auto child = iter.child_as_cstr();
+                    wxString child = iter.child_as_str();
                     child.Replace("\"", "\\\"", true);
-                    if (choices.size())
+                    if (!choices.empty())
+                    {
                         choices << " ";
+                    }
                     choices << '\"' << child << '\"';
                 }
             }
 
-            if (choices.size())
+            if (!choices.empty())
+            {
                 node->set_value(prop_col_label_values, choices);
+            }
             return true;
         }
     }
@@ -146,7 +153,7 @@ bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "val")
     {
-        node->set_value(prop_validator_variable, xml_obj.text().as_sview());
+        node->set_value(prop_validator_variable, xml_obj.text().as_view());
         return true;
     }
     return false;

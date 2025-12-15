@@ -145,7 +145,7 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 }
                 else if (prop_name.as_view() == "path")
                 {
-                    wxFileName path(wxString::FromUTF8(xml_prop.text().as_sview()));
+                    wxFileName path(wxString::FromUTF8(xml_prop.text().as_view()));
                     if (!path.IsOk())
                     {
                         continue;
@@ -205,10 +205,10 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
 auto FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
     -> NodeSharedPtr
 {
-    auto class_name = xml_obj.attribute("class").as_sview();
+    auto class_name = xml_obj.attribute("class").as_view();
     if (class_name.empty())
     {
-        return NodeSharedPtr();
+        return {};
     }
 
     auto get_GenName = MapClassName(xml_obj.attribute("class").value());
@@ -263,7 +263,7 @@ auto FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* siz
         {
             if (iter.attribute("name").as_view() == "style")
             {
-                if (iter.text().as_sview().find("wxCHK_3STATE") != std::string_view::npos)
+                if (iter.text().as_view().contains("wxCHK_3STATE"))
                 {
                     get_GenName = gen_Check3State;
                 }
@@ -552,7 +552,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
     else if (prop_name == "flags" && class_name == "wxWrapSizer")
     {
         auto* prop = newobject->get_PropPtr(prop_wrap_flags);
-        auto prop_value = xml_prop.text().as_sview();
+        auto prop_value = xml_prop.text().as_view();
         if (prop_value.find("wxWRAPSIZER_DEFAULT_FLAGS") != std::string_view::npos)
         {
             prop_value = "wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES";
@@ -623,7 +623,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
         if (auto* prop = newobject->get_PropPtr(prop_subclass); prop)
         {
             prop->set_value(parts[0]);
-            if (parts.size() > 0 && parts[1].find("forward_declare") == std::string::npos)
+            if (parts.size() > 1 && parts[1].contains("forward_declare"))
             {
                 prop = newobject->get_PropPtr(prop_subclass_header);
                 if (prop)
@@ -657,7 +657,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
     }
     else if (prop_name == "window_style" && newobject->is_Gen(gen_wxDialog))
     {
-        if (xml_prop.text().as_sview().find("wxFULL_REPAINT_ON_RESIZE") != std::string_view::npos)
+        if (xml_prop.text().as_view().contains("wxFULL_REPAINT_ON_RESIZE"))
         {
             std::string value(newobject->as_string(prop_style));
             if (value.size())
@@ -711,9 +711,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
 
 void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
 {
-    auto org_value = xml_prop.text().as_cstr();
-    if (org_value.ToStdString().find("Load From File") != std::string::npos ||
-        org_value.ToStdString().find("Load From Embedded File") != std::string::npos)
+    auto org_value = xml_prop.text().as_str();
+    if (org_value.contains("Load From File") || org_value.contains("Load From Embedded File"))
     {
         auto pos_semi = org_value.find(';');
         if (!ttwx::is_found(pos_semi))
@@ -725,17 +724,20 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         {
             // Older version of wxFB placed the filename first
             org_value.erase(pos_semi);
-            filename = org_value.ToStdString();
+            filename = org_value;
         }
         else
         {
-            auto view = std::string_view(org_value).substr(pos_semi + 1);
-            // Skip leading whitespace
-            while (!view.empty() && (view[0] == ' ' || view[0] == '\t'))
+            if (pos_semi + 1 < org_value.size())
             {
-                view = view.substr(1);
+                auto view = std::string_view(org_value).substr(pos_semi + 1);
+                // Skip leading whitespace
+                while (!view.empty() && (view[0] == ' ' || view[0] == '\t'))
+                {
+                    view = view.substr(1);
+                }
+                filename = view;
             }
-            filename = view;
         }
         if (filename.empty())
         {
@@ -761,7 +763,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
             prop->set_value(bitmap);
         }
     }
-    else if (org_value.ToStdString().find("Load From Art") != std::string::npos &&
+    else if (org_value.contains("Load From Art") &&
              xml_prop.text().as_view() != "Load From Art Provider; ;")
     {
         wxString value(xml_prop.text().as_str());
@@ -820,26 +822,26 @@ auto FormBuilder::ConvertLegacyWindowStyles(std::string_view text_value) -> std:
     // the 3.x names, and remove the ones that are no longer used.
     std::string result(text_value);
 
-    if (result.find("wxSIMPLE_BORDER") != std::string::npos)
+    if (auto pos = result.find("wxSIMPLE_BORDER"); pos != std::string::npos)
     {
-        result.replace(result.find("wxSIMPLE_BORDER"), 15, "wxBORDER_SIMPLE");
+        result.replace(pos, 15, "wxBORDER_SIMPLE");
     }
-    else if (result.find("wxRAISED_BORDER") != std::string::npos)
+    else if (auto pos = result.find("wxRAISED_BORDER"); pos != std::string::npos)
     {
-        result.replace(result.find("wxRAISED_BORDER"), 15, "wxBORDER_RAISED");
+        result.replace(pos, 15, "wxBORDER_RAISED");
     }
-    else if (result.find("wxSTATIC_BORDER") != std::string::npos)
+    else if (auto pos = result.find("wxSTATIC_BORDER"); pos != std::string::npos)
     {
-        result.replace(result.find("wxSTATIC_BORDER"), 15, "wxBORDER_STATIC");
+        result.replace(pos, 15, "wxBORDER_STATIC");
     }
-    else if (result.find("wxNO_BORDER") != std::string::npos)
+    else if (auto pos = result.find("wxNO_BORDER"); pos != std::string::npos)
     {
-        result.replace(result.find("wxNO_BORDER"), 11, "wxBORDER_NONE");
+        result.replace(pos, 11, "wxBORDER_NONE");
     }
-    else if (result.find("wxDOUBLE_BORDER") != std::string::npos)
+    else if (auto pos = result.find("wxDOUBLE_BORDER"); pos != std::string::npos)
     {
         // This style is obsolete
-        result.replace(result.find("wxDOUBLE_BORDER"), 15, "");
+        result.replace(pos, 15, "");
     }
 
     return result;
@@ -877,7 +879,7 @@ auto FormBuilder::HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobjec
 {
     if (m_language & GEN_LANG_PYTHON)
     {
-        std::string header(xml_prop.text().as_sview());
+        std::string header(xml_prop.text().as_view());
         if (parent)
         {
             auto* form = parent->get_Form();
@@ -893,7 +895,7 @@ auto FormBuilder::HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobjec
     }
 
     wxString header;
-    ttwx::extract_substring(xml_prop.text().as_sview(), header, 0);
+    ttwx::extract_substring(xml_prop.text().as_view(), header, 0);
     if (header.size())
     {
         newobject->set_value(prop_header, header.ToStdString());

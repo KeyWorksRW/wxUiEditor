@@ -30,7 +30,7 @@
 #include <frozen/set.h>
 #include <frozen/string.h>
 
-#include "import_dialogblocks.h"
+#include "import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 
 #include "dlg_msgs.h"            // wxMessageDialog dialogs
 #include "mainapp.h"             // App -- Main application class

@@ -49,6 +49,6 @@ When you specify an SVG file, **wxUiEdiutor** will read the file, strip out some
 
 # XPM images
 
-Several graphics applications will save an XPM file using a `static char` array. This will generate a compiler error when compiled with a c++20 compiler since it is invalid to assign a literal string to a non-const char array pointer. In addition, while most applications create an array name consisting of the base filename with a `_xpm` suffix, not all do. If you add an XPM file using the XPM image type, then **wxUiEditor** expects the `_xpm` suffix, and your code will not compile if it does not have the expected array name.
+Several graphics applications will save an XPM file using a `static char` array. This will generate a compiler error when compiled with a C++20 or later compiler since it is invalid to assign a literal string to a non-const char array pointer. In addition, while most applications create an array name consisting of the base filename with a `_xpm` suffix, not all do. If you add an XPM file using the XPM image type, then **wxUiEditor** expects the `_xpm` suffix, and your code will not compile if it does not have the expected array name.
 
 Both of these problems can be avoided by using the Embed command to specify your filename. Internally, **wxUiEditor** will convert the image to a PNG format (using any mask as the alpha channel) and then embed the image in the generated source code. The image should appear the same as it would if you used the XPM type, but without the potential problems mentioned above.

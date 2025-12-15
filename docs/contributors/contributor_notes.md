@@ -4,7 +4,7 @@ Contributions are welcome! If you are interested in contributing, please read th
 
 Note that in addition to this file, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../src/generate/README.md), [nodes](../src/nodes/README.md), [winres](../src/winres/README.md) and [xml](../src/xml/README.md).
 
-The code requires a C++20 compliant compiler -- which means you should be using C++20 coding conventions. That includes using `std::string_view` (or `tt_stringview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
+The code requires a C++23 compliant compiler -- which means you should be using C++23 coding conventions. That includes using `std::string_view` (or `tt_stringview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
 
 ## wxWidgets libraries
 

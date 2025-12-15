@@ -22,7 +22,7 @@ For Windows, you can either run the wxUiEditor-_ver_-win64.exe installer from [r
 
 ## Building
 
-You will need a C++20 compliant compiler to build **wxUiEditor**. To build using CMake 3.20 or higher, run the following two commands from the root of the repository:
+You will need a C++23 compliant compiler to build **wxUiEditor**. To build using CMake 3.20 or higher, run the following two commands from the root of the repository:
 
 ```
     cmake -G "Ninja Multi-Config" . -B build

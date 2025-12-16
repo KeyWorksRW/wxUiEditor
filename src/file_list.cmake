@@ -443,19 +443,27 @@ set( workflow_list
 
 set ( agents
     ../.github/agents/architect.agent.md
-    ../.github/agents/code_review.agent.md
     ../.github/agents/commit.agent.md
     ../.github/agents/complex.agent.md
-    ../.github/agents/issue.agent.md
-    ../.github/agents/modern.agent.md
-    ../.github/agents/pullrequest.agent.md
-    ../.github/agents/ttx.agent.md
-
+    ../.github/agents/docs.agent.md
     ../.github/agents/gen_cpp.agent.md
-    ../.github/agents/perl.agent.md
-    ../.github/agents/python.agent.md
-    ../.github/agents/ruby.agent.md
+    ../.github/agents/gen_perl.agent.md
+    ../.github/agents/gen_python.agent.md
+    ../.github/agents/gen_ruby.agent.md
+    ../.github/agents/pullrequest.agent.md
 
+# private agents
+    ../../Junctions/agents/agent_editor.agent.md
+    ../../Junctions/agents/ai_comments.agent.md
+    ../../Junctions/agents/code_review.agent.md
+    ../../Junctions/agents/issue.agent.md
+    ../../Junctions/agents/lint_fixer.agent.md
+    ../../Junctions/agents/modern.agent.md
+    ../../Junctions/agents/powershell.agent.md
+    ../../Junctions/agents/ttx.agent.md
+    ../../Junctions/agents/wxperl.agent.md
+    ../../Junctions/agents/wxpython.agent.md
+    ../../Junctions/agents/wxruby.agent.md
 )
 
 # ============================================================================

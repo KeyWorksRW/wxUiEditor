@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Stores messages
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+#include <string_view>
 
 #include <wx/log.h>
 
@@ -18,16 +20,22 @@ public:
 
     void OnNodeSelected();
 
-    void AddErrorMsg(tt_string_view msg);
-    void Add_wxErrorMsg(tt_string_view msg);
+    void AddErrorMsg(std::string_view msg);
+    void Add_wxErrorMsg(std::string_view msg);
 
-    void AddWarningMsg(tt_string_view msg);
-    void Add_wxWarningMsg(tt_string_view msg);
+    void AddWarningMsg(std::string_view msg);
+    void Add_wxWarningMsg(std::string_view msg);
 
-    void AddInfoMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.make_wxString()); };
-    void AddEventMsg(tt_string_view msg) { m_textCtrl->AppendText(msg.make_wxString()); };
+    void AddInfoMsg(std::string_view msg)
+    {
+        m_textCtrl->AppendText(wxString::FromUTF8(msg.data(), msg.size()));
+    };
+    void AddEventMsg(std::string_view msg)
+    {
+        m_textCtrl->AppendText(wxString::FromUTF8(msg.data(), msg.size()));
+    };
 
-    void Add_wxInfoMsg(tt_string_view msg);
+    void Add_wxInfoMsg(std::string_view msg);
 
     void Clear();
 

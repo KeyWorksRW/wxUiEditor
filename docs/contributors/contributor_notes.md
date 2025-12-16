@@ -2,13 +2,11 @@
 
 Contributions are welcome! If you are interested in contributing, please read the following sections.
 
-Note that in addition to this file, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../src/generate/README.md), [nodes](../src/nodes/README.md), [winres](../src/winres/README.md) and [xml](../src/xml/README.md).
+Note that in addition to this file, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../../src/generate/README.md) and [internal](../../src/internal/README.md). Also see [build_notes.md](build_notes.md) for information about building the project.
 
-The code requires a C++23 compliant compiler -- which means you should be using C++23 coding conventions. That includes using `std::string_view` (or `tt_stringview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
+## GitHub Copilot Agents
 
-## wxWidgets libraries
-
-The `wxWidgets/` directory contains a snapshot of wxWidgets 3.3.x. Note that the `setup.h` file used to build this is fairly restritctive, avoiding many sections of the library that aren't used by wxUiEditor. This particular build is not intended to be used for anything other than wxUiEditor.
+If you are using a current version of VS Code with GitHub Copilot, the project includes custom agents to assist with development. See [.github/agents.json](../../.github/agents.json) for a list of available custom agents. Additionally, there is a comprehensive [.github/copilot-instructions.md](../../.github/copilot-instructions.md) file that provides general guidance for agents working in this project.
 
 ## Debug builds
 
@@ -16,9 +14,13 @@ When you create a Debug build, there will be an additional `Testing` and `Intern
 
 ## Strings
 
-Unfortunately, the names don't reflect this, but it's import to know that wxString::utf8_string() creates a _copy_ while wxString::ToStdString() creates a _reference_. That means that if you call a function with a `std::stringview` parameter, you can pass it `wxString::ToStdString()`. It also works for functions expecting `tt_string_view` since that class is derived from `std::string_view`.
+This project is built using wxWidgets 3.3 or higher with UTF-8 encoding for wxString and other string types.
 
-Internally strings are normally placed into `tt_string` or `tt_stringview` classes. These classes inherit from `std::string` and `std::string_view` respectively, and provide additional functionality common across both of these classes. Note that the wxWidgets library is built as UTF8 even on Windows (new option in wxWidgets 3.3).
+When converting wxString to std types, it's important to understand the difference between the two main conversion methods:
+- `wxString::utf8_string()` creates a **copy** of the string
+- `wxString::ToStdString()` returns a **const reference** to the underlying string
+
+Because `ToStdString()` returns a reference, you can pass it directly to functions expecting `std::string_view` parameters without creating an unnecessary copy.
 
 ### Debugging macros
 
@@ -31,37 +33,3 @@ The `MSG_...` macros allow for display information in the custom logging window.
 All PRs get run through a github action that runs clang-format. This will report a failure if clang-format would have changed your code formatting. To ensure a successful PR submission, run your code through clang-format before committing it.
 
 If you are adding a comment to a function or variable in a header file, please wrap the comment to a maximum of 93 characters -- that makes the comment more likely to display correctly when displayed in a Intellisense popup.
-
-## Comments: // and /* */
-
-Prior to AI being available to generate code, comments in the code explained _why_ the code was written not _what_ the code did. The reasoning is that _what_ the code did should be obvious just by reading the code, but _why_ the code was written in a specific way might not be obvious.
-
-With AI, prefixing code with a comment that says _what_ the code should do will help the AI generate more accurate code. In addition, a comment that explains _what_ the code is doing can help AI training making the code more likely to be generated for someone else. This project is Open Source, and uses an Apache License, so there are no restrictions on how a section of the code is used in other projects.
-
-## Default variable names
-
-A variable's class access (public, protected or none) determines it's default prefix, which differs based on the Preferred language.
-
-Note: Ruby uses a leading `_` for an unused parameter, e.g. `_event`.
-
-#### none
-
-- C++: no prefix
-- Python: no prefix
-- Ruby: no prefix
-
-#### protected
-
-- C++: `m_`
-- Python: self. if not a form
-- Ruby: `@`
-
-#### public
-
-- C++: `m_`
-- Python: self. if not a form
-- Ruby: `@`
-
-## Ruby Notes
-
-The project file has a setting for disabling robocop warnings. In a Release build, this disables all warnings, however in a Debug build only specific warnings that we can't reasonably prevent are disabled.

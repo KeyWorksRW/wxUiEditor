@@ -32,6 +32,43 @@ auto ttwx::find_oneof(const wxString& src, const std::string& group, size_t src_
     return (src_start < src.size() ? src_start : std::string::npos);
 }
 
+auto ttwx::stepover(std::string_view str) noexcept -> std::string_view
+{
+    if (str.empty())
+    {
+        return {};
+    }
+
+    // Find first whitespace character
+    size_t pos = 0;
+    for (; pos < str.size(); ++pos)
+    {
+        if (is_whitespace(str.at(pos)))
+        {
+            break;
+        }
+    }
+    if (pos >= str.size())
+    {
+        return {};
+    }
+
+    // Find first non-whitespace after the whitespace
+    for (; pos < str.size(); ++pos)
+    {
+        if (!is_whitespace(str.at(pos)))
+        {
+            break;
+        }
+    }
+    if (pos >= str.size())
+    {
+        return {};
+    }
+
+    return str.substr(pos);
+}
+
 auto ttwx::find_nonspace(std::string_view str) noexcept -> std::string_view
 {
     if (!str.empty())

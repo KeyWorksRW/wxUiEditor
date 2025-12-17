@@ -1,5 +1,35 @@
 {
+  // ═══════════════════════════════════════════════════════════════════════════════════════════════
+  // REQUIRED: Serena MCP Server
+  // ═══════════════════════════════════════════════════════════════════════════════════════════════
+  // These agents require the Serena MCP server for symbolic code analysis and editing.
+  //
+  // Installation:
+  // 1. Enable the MCP Gallery in VS Code settings:
+  //    "chat.mcp.discovery.enabled": true
+  // 2. Open the MCP Gallery: Ctrl+Shift+P → "MCP: Open MCP Gallery"
+  // 3. Search for "Serena" and click Install
+  // 4. Restart VS Code
+  //
+  // Alternative (manual installation via pip):
+  //    pip install serena
+  //    Then add to your MCP configuration in VS Code settings.
+  //
+  // Documentation: https://github.com/oraios/serena
+  // ═══════════════════════════════════════════════════════════════════════════════════════════════
   "agents": [
+    {
+      "name": "agent_editor",
+      "description": "Edit custom agents for VSCode.",
+      "instructions": ".github/agents/agent_editor.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "ai_comments",
+      "description": "Add AI Context Documentation to header files.",
+      "instructions": ".github/agents/ai_comments.agent.md",
+      "scope": "workspace"
+    },
     {
       "name": "architect",
       "description": "Analyze complex problems and create detailed architectural plans before implementation.",
@@ -7,9 +37,9 @@
       "scope": "workspace"
     },
     {
-      "name": "complex",
-      "description": "Reduce function complexity by extracting helper functions.",
-      "instructions": ".github/agents/complex.agent.md",
+      "name": "code_review",
+      "description": "Review code for bugs, safety issues, and maintainability concerns.",
+      "instructions": ".github/agents/code_review.agent.md",
       "scope": "workspace"
     },
     {
@@ -19,9 +49,15 @@
       "scope": "workspace"
     },
     {
-      "name": "pullrequest",
-      "description": "Analyze branch changes and generate comprehensive PR descriptions.",
-      "instructions": ".github/agents/pullrequest.agent.md",
+      "name": "complex",
+      "description": "Reduce function complexity by extracting helper functions.",
+      "instructions": ".github/agents/complex.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "docs",
+      "description": "Create and maintain User, Contributor, and folder README documentation.",
+      "instructions": ".github/agents/docs.agent.md",
       "scope": "workspace"
     },
     {
@@ -46,6 +82,54 @@
       "name": "gen_ruby",
       "description": "Generate Ruby code for wxRuby 1.6.1 using the Code class for in-memory code generation.",
       "instructions": ".github/agents/gen_ruby.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "issue",
+      "description": "Create GitHub issues for the cloud Copilot coding agent.",
+      "instructions": ".github/agents/issue.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "lint_fixer",
+      "description": "Fix clang-tidy warnings listed in the Warning List.",
+      "instructions": ".github/agents/lint_fixer.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "modern",
+      "description": "Modernize C++ files with clang-tidy fixes and C++23 patterns.",
+      "instructions": ".github/agents/modern.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "powershell",
+      "description": "PowerShell scripting for testing, building, and automation tasks.",
+      "instructions": ".github/agents/powershell.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "pullrequest",
+      "description": "Analyze branch changes and generate comprehensive PR descriptions.",
+      "instructions": ".github/agents/pullrequest.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "wxperl",
+      "description": "wxPerl GUI development using modern Perl practices.",
+      "instructions": ".github/agents/wxperl.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "wxpython",
+      "description": "wxPython GUI development using modern Python practices.",
+      "instructions": ".github/agents/wxpython.agent.md",
+      "scope": "workspace"
+    },
+    {
+      "name": "wxruby",
+      "description": "wxRuby GUI development using modern Ruby practices.",
+      "instructions": ".github/agents/wxruby.agent.md",
       "scope": "workspace"
     }
   ]

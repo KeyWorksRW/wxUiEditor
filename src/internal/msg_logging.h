@@ -14,6 +14,8 @@
 
 #include <wx/generic/logg.h>  // wxLogGui class
 
+#include "ttwx/ttwx.h"  // ttwx functions
+
 class MsgFrame;
 
 class MsgLogging : public wxLogGui
@@ -40,5 +42,5 @@ private:
     bool m_isFirstShown { false };  // If false, and PREFS_MSG_WINDOW is set, then show the window
 };
 
-extern MsgLogging* g_pMsgLogging;          // NOLINT (cppcheck-suppress)
-extern std::vector<tt_string> g_log_msgs;  // NOLINT (cppcheck-suppress)
+extern MsgLogging* g_pMsgLogging;         // NOLINT (cppcheck-suppress)
+extern std::vector<wxString> g_log_msgs;  // NOLINT (cppcheck-suppress)

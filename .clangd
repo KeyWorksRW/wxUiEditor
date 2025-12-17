@@ -1,6 +1,7 @@
 CompileFlags:
   Compiler: clang-cl
   Add: [/std:c++latest, /Zc:__cplusplus]
+  CompilationDatabase: build
 
 Index:
   Background: Build

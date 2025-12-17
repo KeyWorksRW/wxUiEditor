@@ -687,7 +687,7 @@ auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
 void App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
                                bool test_only, std::string_view language_type)
 {
-    if (results.updated_files.size() || class_list.size())
+    if (results.GetUpdatedFiles().size() || class_list.size())
     {
         if (test_only)
         {
@@ -699,7 +699,7 @@ void App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
         }
         else
         {
-            for (auto& iter: results.updated_files)
+            for (auto& iter: results.GetUpdatedFiles())
             {
                 auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
                 log_msg << "Updated: " << iter;
@@ -709,11 +709,11 @@ void App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
     else
     {
         auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
-        log_msg << "All " << results.file_count << " generated " << language_type
+        log_msg << "All " << results.GetFileCount() << " generated " << language_type
                 << " files are current";
     }
 
-    for (auto& iter: results.msgs)
+    for (auto& iter: results.GetMsgs())
     {
         if (iter.contains("Elapsed time"))
         {
@@ -732,7 +732,7 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
     {
         if (generate_type & language)
         {
-            results.clear();
+            results.Clear();
             GenerateLanguageFiles(results, test_only ? &class_list : nullptr, language);
             LogGenerationResults(results, class_list, test_only, GenLangToString(language));
         }

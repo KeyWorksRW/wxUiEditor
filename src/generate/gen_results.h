@@ -14,34 +14,31 @@ namespace pugi
 
 #include <chrono>
 
-struct GenResults
+class GenResults
 {
-    size_t file_count { 0 };
-    std::vector<tt_string> msgs;
-    std::vector<tt_string> updated_files;
+public:
+    void StartClock();
+    void EndClock();
+    void Clear();
 
-    std::chrono::steady_clock::time_point start_time;
-    size_t elapsed;
+    [[nodiscard]] auto GetFileCount() const { return m_file_count; }
+    void SetFileCount(size_t count) { m_file_count = count; }
+    void IncrementFileCount() { ++m_file_count; }
 
-    void StartClock() { start_time = std::chrono::steady_clock::now(); }
+    [[nodiscard]] auto GetElapsed() const { return m_elapsed; }
 
-    void EndClock()
-    {
-        auto end_time = std::chrono::steady_clock::now();
-        elapsed =
-            std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-        tt_string msg;
-        msg << "Elapsed time: " << elapsed << " milliseconds";
-        msgs.emplace_back(msg);
-    }
+    [[nodiscard]] auto GetMsgs() -> auto& { return m_msgs; }
+    [[nodiscard]] auto GetMsgs() const -> const auto& { return m_msgs; }
 
-    void clear()
-    {
-        elapsed = 0;
-        file_count = 0;
-        msgs.clear();
-        updated_files.clear();
-    }
+    [[nodiscard]] auto GetUpdatedFiles() -> auto& { return m_updated_files; }
+    [[nodiscard]] auto GetUpdatedFiles() const -> const auto& { return m_updated_files; }
+
+private:
+    size_t m_file_count { 0 };
+    size_t m_elapsed { 0 };
+    std::vector<std::string> m_msgs;
+    std::vector<std::string> m_updated_files;
+    std::chrono::steady_clock::time_point m_start_time;
 };
 
 // If pClassList is non-null, it must contain the base class name of every form that needs

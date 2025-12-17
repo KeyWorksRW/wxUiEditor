@@ -1493,8 +1493,8 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
         // For a lot of testing of projects with multiple dialogs, there may only be a
         // few forms where generation is being tested, so don't nag in Debug builds.
         // :-)
-        results.msgs.emplace_back()
-            << "No filename specified for " << form->as_string(prop_class_name) << '\n';
+        results.GetMsgs().emplace_back(
+            std::format("No filename specified for {}\n", form->as_string(prop_class_name)));
 #endif  // _DEBUG
         return false;
     }
@@ -1580,7 +1580,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
     {
         for (const auto& iter: warning_msgs)
         {
-            results.msgs.emplace_back() << iter << '\n';
+            results.GetMsgs().emplace_back(std::string(iter) + "\n");
         }
     }
 
@@ -1588,7 +1588,7 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
     {
         if (!pClassList)
         {
-            results.updated_files.emplace_back(path);
+            results.GetUpdatedFiles().emplace_back(path);
         }
         else
         {
@@ -1610,11 +1610,12 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
 
     else if (retval < 0)
     {
-        results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+        results.GetMsgs().emplace_back(
+            std::format("Cannot create or write to the file {}\n", path));
     }
     else  // retval == result::exists
     {
-        ++results.file_count;
+        results.IncrementFileCount();
     }
     return true;
 }
@@ -1658,7 +1659,7 @@ auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClass
         {
             GenerateLanguageForm(form, results, pClassList, language);
 
-            if (results.updated_files.size())
+            if (results.GetUpdatedFiles().size())
             {
                 generate_result = true;
             }
@@ -1689,15 +1690,15 @@ void OnGenerateSingleLanguage(GenLang language)
     GenerateLanguageForm(form, results, nullptr, language);
 
     tt_string msg;
-    if (results.updated_files.size())
+    if (results.GetUpdatedFiles().size())
     {
-        if (results.updated_files.size() == 1)
+        if (results.GetUpdatedFiles().size() == 1)
         {
             msg << "1 file was updated";
         }
         else
         {
-            msg << results.updated_files.size() << " files were updated";
+            msg << results.GetUpdatedFiles().size() << " files were updated";
         }
         msg << '\n';
     }
@@ -1706,9 +1707,9 @@ void OnGenerateSingleLanguage(GenLang language)
         msg << "Generated file is current";
     }
 
-    if (results.msgs.size())
+    if (results.GetMsgs().size())
     {
-        for (const auto& iter: results.msgs)
+        for (const auto& iter: results.GetMsgs())
         {
             msg << '\n';
             msg << iter;
@@ -1725,9 +1726,9 @@ void OnGenerateLanguage(GenLang language)
     GenerateLanguageFiles(results, nullptr, language);
 
     tt_string msg;
-    if (results.updated_files.size())
+    if (results.GetUpdatedFiles().size())
     {
-        if (results.updated_files.size() == 1)
+        if (results.GetUpdatedFiles().size() == 1)
         {
             msg << "1 file was updated";
         }
@@ -1739,12 +1740,12 @@ void OnGenerateLanguage(GenLang language)
     }
     else
     {
-        msg << "All " << results.file_count << " generated files are current";
+        msg << "All " << results.GetFileCount() << " generated files are current";
     }
 
-    if (results.msgs.size())
+    if (results.GetMsgs().size())
     {
-        for (const auto& iter: results.msgs)
+        for (const auto& iter: results.GetMsgs())
         {
             msg << '\n';
             msg << iter;

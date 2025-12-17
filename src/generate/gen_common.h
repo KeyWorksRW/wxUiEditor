@@ -97,10 +97,10 @@ auto GenerateIconCode(const tt_string& description) -> tt_string;
 // Generates wxNullColour if the property is empty.
 void ColourCode(Code& code, GenEnum::PropName prop_name);
 
-struct GenResults;
+class GenResults;
 // Common function to generate all files for a specific language
-bool GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
-                           GenLang language);
+auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
+                           GenLang language) -> bool;
 
 // Called by GenerateLanguageFiles and in OnGenSingle...() to generate a single form
 auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::string>* pClassList,

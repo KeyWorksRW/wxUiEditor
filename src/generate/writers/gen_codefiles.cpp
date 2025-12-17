@@ -56,12 +56,12 @@ void GenInhertedClass(GenResults& results)
                 path.replace_extension(header_ext);
                 if (path.file_exists())
                 {
-                    results.file_count += 2;
+                    results.SetFileCount(results.GetFileCount() + 2);
                     continue;
                 }
                 else
                 {
-                    ++results.file_count;
+                    results.IncrementFileCount();
                 }
             }
         }
@@ -83,7 +83,8 @@ void GenInhertedClass(GenResults& results)
         auto retval = codegen.GenerateDerivedClass(Project.get_ProjectNode(), form);
         if (retval == result::fail)
         {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path));
             continue;
         }
         else if (retval == result::exists)
@@ -91,7 +92,7 @@ void GenInhertedClass(GenResults& results)
             path.replace_extension(header_ext);
             if (path.file_exists())
             {
-                ++results.file_count;
+                results.IncrementFileCount();
                 continue;
             }
 
@@ -102,16 +103,16 @@ void GenInhertedClass(GenResults& results)
             retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
             if (retval == result::fail)
             {
-                results.msgs.emplace_back()
-                    << "Cannot create or write to the file " << path << '\n';
+                results.GetMsgs().emplace_back(
+                    std::format("Cannot create or write to the file {}\n", path));
             }
             else if (retval == result::exists)
             {
-                ++results.file_count;
+                results.IncrementFileCount();
             }
             else
             {
-                results.updated_files.emplace_back(path);
+                results.GetUpdatedFiles().emplace_back(path);
             }
             continue;
         }
@@ -137,30 +138,32 @@ void GenInhertedClass(GenResults& results)
 
         if (retval == result::fail)
         {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path));
         }
         else if (retval == result::exists)
         {
-            ++results.file_count;
+            results.IncrementFileCount();
         }
         else
         {
-            results.updated_files.emplace_back(path);
+            results.GetUpdatedFiles().emplace_back(path);
         }
 
         path.replace_extension(source_ext);
         retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
         if (retval == result::fail)
         {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path));
         }
         else if (retval == result::exists)
         {
-            ++results.file_count;
+            results.IncrementFileCount();
         }
         else
         {
-            results.updated_files.emplace_back(path);
+            results.GetUpdatedFiles().emplace_back(path);
         }
     }
 }
@@ -250,7 +253,7 @@ void GenerateTmpFiles(const std::vector<std::string>& ClassList, pugi::xml_node 
                 // We need to tweak the call to WriteCMakeFile() to get it to write to our temporary
                 // .cmake file.
                 GenResults tmp_results;
-                tmp_results.updated_files.emplace_back(tmp_path);
+                tmp_results.GetUpdatedFiles().emplace_back(tmp_path);
                 WriteCMakeFile(Project.get_ProjectNode(), tmp_results, 2);
 
                 auto paths = root.append_child("paths");

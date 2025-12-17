@@ -254,13 +254,13 @@ void MainFrame::OnGenerationTimer(wxTimerEvent& /* event unused */)
 
 void MainFrame::ShowGenerationResults(const GenResults& results)
 {
-    if (results.updated_files.size() || results.msgs.size())
+    if (results.GetUpdatedFiles().size() || results.GetMsgs().size())
     {
         GeneratedResultsDlg results_dlg;
         results_dlg.Create(this);
-        for (const auto& iter: results.updated_files)
+        for (const auto& iter: results.GetUpdatedFiles())
         {
-            auto relative_path = iter;
+            tt_string relative_path(iter);
             relative_path.make_relative(Project.get_ProjectPath());
             results_dlg.m_lb_files->Append(relative_path);
         }
@@ -268,14 +268,15 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
         // TODO: [Randalphwa - 11-29-2025] If we derive from GeneratedResultsDlg then we could make
         // a hidden section that contains "Updated files: and a dropdown combo box that contains the
         // names of all the files that have been updated.
-        auto msgs = results.msgs;  // Make a mutable copy
-        if (results.updated_files.size() == 1)
+        auto msgs = results.GetMsgs();  // Make a mutable copy
+        if (results.GetUpdatedFiles().size() == 1)
         {
             msgs.emplace_back("1 file was updated");
         }
         else
         {
-            msgs.emplace_back() << results.updated_files.size() << " files were updated";
+            msgs.emplace_back(
+                std::format("{} files were updated", results.GetUpdatedFiles().size()));
         }
 
         for (const auto& iter: msgs)
@@ -285,10 +286,10 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
 
         results_dlg.ShowModal();
     }
-    else if (results.file_count)
+    else if (results.GetFileCount())
     {
         tt_string msg;
-        msg << '\n' << "All " << results.file_count << " generated files are current";
+        msg << '\n' << "All " << results.GetFileCount() << " generated files are current";
         wxMessageBox(msg, "Code Generation", wxOK, this);
     }
 }

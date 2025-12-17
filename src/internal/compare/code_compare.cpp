@@ -5,6 +5,8 @@
 // License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <format>
+
 #include "code_compare.h"
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
@@ -155,20 +157,39 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     wxCommandEvent dummy;
     switch (language)
     {
+        case GEN_LANG_PERL:
+            m_radio_perl->SetValue(true);
+            break;
+
         case GEN_LANG_PYTHON:
             m_radio_python->SetValue(true);
-            OnPython(dummy);
             break;
+
         case GEN_LANG_RUBY:
             m_radio_ruby->SetValue(true);
-            OnRuby(dummy);
             break;
+
         case GEN_LANG_CPLUSPLUS:
-        default:
             m_radio_cplusplus->SetValue(true);
-            OnCPlusPlus(dummy);
+            break;
+
+            // TODO: [Randalphwa - 12-17-2025] We need to support XRC, but we don't currently have a
+            // verified way of comparing XRC files
+
+        default:
+            {
+                auto msg = std::format("Unsupported code generation language: {}",
+                                       GenLangToString(language));
+                FAIL_MSG(msg);
+
+                // The dialog has not been shown yet, so we displaying a user message box won't make
+                // sense. Instead, default to C++ generation.
+                m_radio_cplusplus->SetValue(true);
+                language = GEN_LANG_CPLUSPLUS;
+            }
             break;
     }
+    OnRadioButton(language);
 }
 
 void CodeCompare::OnRadioButton(GenLang language)
@@ -180,32 +201,14 @@ void CodeCompare::OnRadioButton(GenLang language)
     m_list_changes->Clear();
     m_btn->Enable(false);
 
-    bool result = false;
-    switch (language)
+    if (!gen_lang_set.contains(language))
     {
-        case GEN_LANG_CPLUSPLUS:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_CPLUSPLUS);
-            break;
-        case GEN_LANG_PERL:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PERL);
-            break;
-        case GEN_LANG_PYTHON:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_PYTHON);
-            break;
-        case GEN_LANG_RUBY:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_RUBY);
-            break;
-        case GEN_LANG_XRC:
-            result = GenerateLanguageFiles(results, &m_class_list, GEN_LANG_XRC);
-            break;
-
-        default:
-            m_current_language = GEN_LANG_CPLUSPLUS;
-            FAIL_MSG(tt_string() << "Unknown language: " << language);
-            break;
+        auto msg = std::format("Unknown language: {}", GenLangToString(language));
+        FAIL_MSG(msg);
+        return;
     }
 
-    if (result)
+    if (auto result = GenerateLanguageFiles(results, &m_class_list, language); result)
     {
         for (auto& iter: m_class_list)
         {

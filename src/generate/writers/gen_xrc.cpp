@@ -358,7 +358,7 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
                 {
                     if (std::memcmp(buffer.get(), new_str.data(), in_size) == 0)
                     {
-                        ++results.file_count;
+                        results.IncrementFileCount();
                     }
                 }
             }
@@ -368,20 +368,23 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
                 file_original.Close();
                 if (!file_original.Create(path.make_wxString(), true))
                 {
-                    results.msgs.emplace_back() << "Cannot create the file " << path << '\n';
+                    results.GetMsgs().emplace_back(
+                        std::format("Cannot create the file {}\n", path));
                 }
                 else
                 {
                     if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
                     {
-                        results.msgs.emplace_back() << "Cannot write to the file " << path << '\n';
+                        results.GetMsgs().emplace_back(
+                            std::format("Cannot write to the file {}\n", path));
                     }
                     else
                     {
-                        results.updated_files.emplace_back(path);
-                        if (results.updated_files.size())
+                        results.GetUpdatedFiles().emplace_back(path);
+                        if (results.GetUpdatedFiles().size())
                         {
-                            results.file_count += results.updated_files.size();
+                            results.SetFileCount(results.GetFileCount() +
+                                                 results.GetUpdatedFiles().size());
                         }
                     }
                 }
@@ -392,25 +395,26 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
     {
         if (!xrc_gen.getDocument().save_file(path))
         {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path));
         }
         else
         {
-            results.updated_files.emplace_back(path);
-            if (results.updated_files.size())
+            results.GetUpdatedFiles().emplace_back(path);
+            if (results.GetUpdatedFiles().size())
             {
-                results.file_count += results.updated_files.size();
+                results.SetFileCount(results.GetFileCount() + results.GetUpdatedFiles().size());
             }
         }
     }
 
     tt_string msg;
-    if (results.updated_files.size())
+    if (results.GetUpdatedFiles().size())
     {
-        if (results.updated_files.size() == 1)
+        if (results.GetUpdatedFiles().size() == 1)
             msg << "1 file was updated";
         else
-            msg << results.updated_files.size() << " files were updated";
+            msg << results.GetUpdatedFiles().size() << " files were updated";
         msg << '\n';
     }
     else
@@ -418,9 +422,9 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
         msg << "Generated file is current";
     }
 
-    if (results.msgs.size())
+    if (results.GetMsgs().size())
     {
-        for (auto& iter: results.msgs)
+        for (auto& iter: results.GetMsgs())
         {
             msg << '\n';
             msg << iter;
@@ -481,7 +485,7 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
         auto path = Project.as_string(prop_combined_xrc_file);
         if (path.empty())
         {
-            results.msgs.emplace_back() << "No combined XRC filename specified for the project.\n";
+            results.GetMsgs().emplace_back("No combined XRC filename specified for the project.\n");
             return;
         }
         ClearDocument();
@@ -502,8 +506,8 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
                 // If the form type is supported, warn the user about not having an XRC file for it.
                 if (!form->is_Gen(gen_Images) && !form->is_Gen(gen_Data) &&
                     !form->is_Gen(gen_wxPopupTransientWindow))
-                    results.msgs.emplace_back() << "No XRC filename specified for "
-                                                << form->as_string(prop_class_name) << '\n';
+                    results.GetMsgs().emplace_back(std::format("No XRC filename specified for {}\n",
+                                                               form->as_string(prop_class_name)));
                 continue;
             }
             if (path.extension().empty())
@@ -540,7 +544,7 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
                                 }
                                 else
                                 {
-                                    ++results.file_count;
+                                    results.IncrementFileCount();
                                 }
                                 continue;
                             }
@@ -552,23 +556,24 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
                         file_original.Close();
                         if (!file_original.Create(path.make_wxString(), true))
                         {
-                            results.msgs.emplace_back()
-                                << "Cannot create the file " << path << '\n';
+                            results.GetMsgs().emplace_back(
+                                std::format("Cannot create the file {}\n", path));
                         }
                         else
                         {
                             if (file_original.Write(new_str.c_str(), new_str.length()) !=
                                 new_str.length())
                             {
-                                results.msgs.emplace_back()
-                                    << "Cannot write to the file " << path << '\n';
+                                results.GetMsgs().emplace_back(
+                                    std::format("Cannot write to the file {}\n", path));
                             }
                             else
                             {
-                                results.updated_files.emplace_back(path);
-                                if (results.updated_files.size())
+                                results.GetUpdatedFiles().emplace_back(path);
+                                if (results.GetUpdatedFiles().size())
                                 {
-                                    results.file_count += results.updated_files.size();
+                                    results.SetFileCount(results.GetFileCount() +
+                                                         results.GetUpdatedFiles().size());
                                 }
                             }
                         }
@@ -579,15 +584,16 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
             {
                 if (!m_doc.save_file(path))
                 {
-                    results.msgs.emplace_back()
-                        << "Cannot create or write to the file " << path << '\n';
+                    results.GetMsgs().emplace_back(
+                        std::format("Cannot create or write to the file {}\n", path));
                 }
                 else
                 {
-                    results.updated_files.emplace_back(path);
-                    if (results.updated_files.size())
+                    results.GetUpdatedFiles().emplace_back(path);
+                    if (results.GetUpdatedFiles().size())
                     {
-                        results.file_count += results.updated_files.size();
+                        results.SetFileCount(results.GetFileCount() +
+                                             results.GetUpdatedFiles().size());
                     }
                 }
             }
@@ -637,10 +643,11 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
 
         if (!m_doc.save_file(path))
         {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path));
             return;
         }
-        results.updated_files.emplace_back(path);
+        results.GetUpdatedFiles().emplace_back(path);
     }
 }
 

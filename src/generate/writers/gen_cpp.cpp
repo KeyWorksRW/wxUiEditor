@@ -46,12 +46,12 @@ namespace
 
         void AddUpdateFilename(tt_string& path) const
         {
-            m_results->updated_files.emplace_back(path);
+            m_results->GetUpdatedFiles().emplace_back(path);
         };
 
-        void AddResultMsg(tt_string& msg) const { m_results->msgs.emplace_back(msg); };
+        void AddResultMsg(std::string_view msg) const { m_results->GetMsgs().emplace_back(msg); };
 
-        void UpdateFileCount() const { m_results->file_count += 1; };
+        void UpdateFileCount() const { m_results->IncrementFileCount(); };
 
         void AddClassName(std::string_view class_name) const
         {
@@ -201,26 +201,26 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
     GenCppForm(gen_data, form);
 
     wxString msg;
-    if (results.updated_files.size())
+    if (results.GetUpdatedFiles().size())
     {
-        if (results.updated_files.size() == 1)
+        if (results.GetUpdatedFiles().size() == 1)
         {
             msg << "1 file was updated";
         }
         else
         {
-            msg << results.updated_files.size() << " files were updated";
+            msg << results.GetUpdatedFiles().size() << " files were updated";
         }
         msg << '\n';
     }
     else
     {
-        msg << "All " << results.file_count << " generated files are current";
+        msg << "All " << results.GetFileCount() << " generated files are current";
     }
 
-    if (results.msgs.size())
+    if (results.GetMsgs().size())
     {
-        for (auto& iter: results.msgs)
+        for (auto& iter: results.GetMsgs())
         {
             msg << '\n';
             msg << iter;
@@ -311,8 +311,7 @@ namespace
         }
         else if (retval < 0)
         {
-            gen_data.AddResultMsg(tt_string()
-                                  << "Cannot create or write to the file " << path << '\n');
+            gen_data.AddResultMsg(std::format("Cannot create or write to the file {}\n", path));
         }
         else  // retval == result::exists)
         {
@@ -349,8 +348,7 @@ namespace
 
         else if (retval < 0)
         {
-            gen_data.AddResultMsg(tt_string()
-                                  << "Cannot create or write to the file " << path << '\n');
+            gen_data.AddResultMsg(std::format("Cannot create or write to the file {}\n", path));
         }
         else  // retval == result::exists
         {
@@ -371,7 +369,7 @@ auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList)
                 auto result = WriteCMakeFile(iter.get(), results, is_testing);
                 if (result == result::created || result == result::needs_writing)
                 {
-                    ++results.file_count;
+                    results.IncrementFileCount();
                     if (is_testing)
                     {
                         pClassList->emplace_back(iter.get()->as_view(prop_cmake_file));
@@ -384,7 +382,7 @@ auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList)
             auto result = WriteCMakeFile(Project.get_ProjectNode(), results, is_testing);
             if (result == result::created || result == result::needs_writing)
             {
-                ++results.file_count;
+                results.IncrementFileCount();
                 if (is_testing)
                 {
                     pClassList->emplace_back(Project.get_ProjectNode()->as_view(prop_cmake_file));
@@ -440,7 +438,7 @@ auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList)
     {
         frame->setStatusText("Code generation completed");
     }
-    return results.updated_files.size() > 0;
+    return results.GetUpdatedFiles().size() > 0;
 }
 
 void CppCodeGenerator::GenCppImageFunctions()

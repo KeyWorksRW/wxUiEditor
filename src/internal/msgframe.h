@@ -13,10 +13,12 @@
 
 #include "msgframe_base.h"
 
+#include "ttwx/ttwx.h"  // ttwx functions
+
 class MsgFrame : public MsgFrameBase
 {
 public:
-    MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
+    MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
 
     void OnNodeSelected();
 
@@ -54,7 +56,7 @@ protected:
     void OnWarnings(wxCommandEvent& /* event unused */) override;
 
 private:
-    std::vector<tt_string>* m_pMsgs;
+    std::vector<wxString>* m_pMsgs;
     bool* m_pDestroyed;
 
     bool m_isNodeInfoPage { false };

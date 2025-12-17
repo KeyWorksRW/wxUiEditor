@@ -13,7 +13,7 @@
 #include "preferences.h"  // Set/Get wxUiEditor preferences
 
 MsgLogging* g_pMsgLogging { nullptr };  // NOLINT (cppcheck-suppress)
-std::vector<tt_string> g_log_msgs;      // NOLINT (cppcheck-suppress)
+std::vector<wxString> g_log_msgs;       // NOLINT (cppcheck-suppress)
 
 void MSG_INFO(const std::string& msg)
 {
@@ -67,7 +67,7 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
-        auto& str = g_log_msgs.emplace_back(msg);
+        auto& str = g_log_msgs.emplace_back(wxString::FromUTF8(msg.data(), msg.size()));
         str << '\n';
 
         if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
@@ -83,7 +83,7 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
 
         else if (!m_bDestroyed)
         {
-            m_msgFrame->AddInfoMsg(str);
+            m_msgFrame->AddInfoMsg(str.ToStdString());
         }
     }
 
@@ -117,7 +117,7 @@ void MsgLogging::AddEventMsg(std::string_view msg)
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_EVENT)
     {
         auto& str = g_log_msgs.emplace_back("Event: ");
-        str << msg << '\n';
+        str << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
 
         if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
         {
@@ -132,7 +132,7 @@ void MsgLogging::AddEventMsg(std::string_view msg)
 
         else if (!m_bDestroyed)
         {
-            m_msgFrame->AddEventMsg(str);
+            m_msgFrame->AddEventMsg(str.ToStdString());
         }
     }
 
@@ -144,7 +144,8 @@ void MsgLogging::AddEventMsg(std::string_view msg)
     auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
-        frame->setRightStatusField(tt_string("Event: ") << msg);
+        frame->setRightStatusField(wxString("Event: ")
+                                   << wxString::FromUTF8(msg.data(), msg.size()));
     }
 }
 
@@ -158,7 +159,7 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
         auto& str = g_log_msgs.emplace_back("Warning: ");
-        str << msg << '\n';
+        str << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
 
         if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
         {
@@ -175,7 +176,7 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
         {
             // Only add the message if the window was already displayed. Otherwise, it will have
             // already added the message from g_log_msgs.
-            m_msgFrame->AddWarningMsg(str.view_stepover());
+            m_msgFrame->AddWarningMsg(ttwx::stepover(str));
         }
     }
 
@@ -187,7 +188,8 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
     auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
-        frame->setRightStatusField(tt_string("Warning: ") << msg);
+        frame->setRightStatusField(wxString("Warning: ")
+                                   << wxString::FromUTF8(msg.data(), msg.size()));
     }
 }
 
@@ -199,7 +201,7 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
     }
 
     auto& str = g_log_msgs.emplace_back("Error: ");
-    str << msg << '\n';
+    str << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
 
     // [Randalphwa - 03-04-2024]
     // If AddErrorMsg is called during an event handler then FAIL_MSG can be called multiple
@@ -221,7 +223,7 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
 
     else if (!m_bDestroyed)
     {
-        m_msgFrame->AddErrorMsg(str.view_stepover());
+        m_msgFrame->AddErrorMsg(ttwx::stepover(str));
     }
 
     auto* frame = wxGetMainFrame();
@@ -261,7 +263,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxErrorMsg(str.view_stepover());
+                    m_msgFrame->Add_wxErrorMsg(ttwx::stepover(str));
                 }
 
                 auto* frame = wxGetMainFrame();
@@ -293,7 +295,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxWarningMsg(str.view_stepover());
+                    m_msgFrame->Add_wxWarningMsg(ttwx::stepover(str));
                 }
 
                 auto* frame = wxGetMainFrame();
@@ -326,7 +328,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxInfoMsg(str.view_stepover());
+                    m_msgFrame->Add_wxInfoMsg(ttwx::stepover(str));
                 }
 
                 auto* frame = wxGetMainFrame();
@@ -347,7 +349,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(tt_string() << msg.utf8_string());
+                    frame->setRightStatusField(msg);
                 }
             }
             break;

@@ -190,7 +190,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         // and add a warning comment. The fake user content (Ruby 'end' or C++ '};')
         // was already added by AppendEndOfFileBlock(), so we don't need to add it again.
         AppendMissingCommentBlockWarning();
-        return WriteToFile();
+        return (m_flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
     if (m_org_file.size() > static_cast<size_t>(line))
@@ -199,7 +199,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         // Set m_additional_content to mark where user content begins, then append it.
         m_additional_content = line;
         (void) AppendOriginalUserContent(0);
-        return WriteToFile();
+        return (m_flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
     // Original file had no user content after the comment block, but files still differ.
@@ -563,6 +563,12 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
 
 [[nodiscard]] auto FileCodeWriter::EnsureDirectoryExists(int flags) -> int
 {
+    // In test-only mode, we don't need to check or create directories
+    if (flags & flag_test_only)
+    {
+        return 0;
+    }
+
     wxFileName dir(m_filename);
     dir.ClearExt();
     dir.RemoveLastDir();

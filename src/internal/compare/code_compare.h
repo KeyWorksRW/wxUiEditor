@@ -51,6 +51,7 @@ protected:
 
 private:
     auto CollectFileDiffs() -> std::vector<FileDiff>;
+    auto GetGeneratedCodeRange(const ttwx::ViewVector& content) -> std::pair<size_t, size_t>;
 
     std::vector<std::string> m_class_list;
     GenLang m_current_language = GEN_LANG_CPLUSPLUS;

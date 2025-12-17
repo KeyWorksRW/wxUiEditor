@@ -9,26 +9,26 @@
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
-#include "../../generate/gen_common.h"        // Common code generation functions
-#include "../../generate/gen_results.h"       // Code generation file writing functions
-#include "../../generate/writers/gen_cpp.h"   // CppCodeGenerator -- Generate C++ source code files
-#include "../../generate/writers/gen_perl.h"  // PerlCodeGenerator -- Generate Perl code
-#include "../../generate/writers/gen_python.h"  // PythonCodeGenerator -- Generate Python code
-#include "../../generate/writers/gen_ruby.h"    // RubyCodeGenerator -- Generate Ruby code
-#include "../../generate/writers/gen_xrc.h"     // XrcCodeGenerator -- Generate XRC code files
-#include "../../mainframe.h"                    // MainFrame -- Main window frame
-#include "../../nodes/node.h"                   // Node class
-#include "../../project/project_handler.h"      // ProjectHandler class
-#include "../../ttwx/ttwx_view_vector.h"        // ttwx::ViewVector
-#include "diff.h"                               // Diff -- Simple diff algorithm
-#include "diff_viewer.h"         // DiffViewer -- Dialog for displaying file differences
-#include "string_code_writer.h"  // StringCodeWriter
+#include "diff.h"              // Diff -- Simple diff algorithm
+#include "diff_viewer.h"       // DiffViewer -- Dialog for displaying file differences
+#include "file_codewriter.h"   // FileCodeWriter -- Write code to disk with test mode support
+#include "gen_common.h"        // Common code generation functions
+#include "gen_cpp.h"           // CppCodeGenerator -- Generate C++ source code files
+#include "gen_perl.h"          // PerlCodeGenerator -- Generate Perl code
+#include "gen_python.h"        // PythonCodeGenerator -- Generate Python code
+#include "gen_results.h"       // Code generation file writing functions
+#include "gen_ruby.h"          // RubyCodeGenerator -- Generate Ruby code
+#include "gen_xrc.h"           // XrcCodeGenerator -- Generate XRC code files
+#include "mainframe.h"         // MainFrame -- Main window frame
+#include "node.h"              // Node class
+#include "project_handler.h"   // ProjectHandler class
+#include "ttwx_view_vector.h"  // ttwx::ViewVector
 
 // clang-format on
 
 // AI Context: Get the range of lines containing actual generated code (excluding comment blocks).
 // Returns pair of [start_index, end_index) for the generated code section.
-static auto GetGeneratedCodeRange(const ttwx::ViewVector& content, GenLang language)
+auto CodeCompare::GetGeneratedCodeRange(const ttwx::ViewVector& content)
     -> std::pair<size_t, size_t>
 {
     if (content.empty())
@@ -36,8 +36,8 @@ static auto GetGeneratedCodeRange(const ttwx::ViewVector& content, GenLang langu
         return { 0, 0 };
     }
 
-    const std::string_view comment_char = (language == GEN_LANG_CPLUSPLUS) ? "//" : "#";
-    const std::string_view end_marker = (language == GEN_LANG_CPLUSPLUS) ?
+    const std::string_view comment_char = (m_current_language == GEN_LANG_CPLUSPLUS) ? "//" : "#";
+    const std::string_view end_marker = (m_current_language == GEN_LANG_CPLUSPLUS) ?
                                             "// ************* End of generated code" :
                                             "# ************* End of generated code";
 
@@ -79,21 +79,26 @@ static auto GetGeneratedCodeRange(const ttwx::ViewVector& content, GenLang langu
     return { start_idx, end_idx };
 }
 
-// Reconstruct string from ViewVector range
-static auto ReconstructString(const ttwx::ViewVector& content, size_t start_idx, size_t end_idx)
-    -> std::string
+namespace
 {
-    std::string result;
-    for (size_t i = start_idx; i < end_idx; ++i)
+
+    // Reconstruct string from ViewVector range
+    auto ReconstructString(const ttwx::ViewVector& content, size_t start_idx, size_t end_idx)
+        -> std::string
     {
-        result += content[i];
-        if (i < end_idx - 1)
+        std::string result;
+        for (size_t i = start_idx; i < end_idx; ++i)
         {
-            result += '\n';
+            result += content[i];
+            if (i < end_idx - 1)
+            {
+                result += '\n';
+            }
         }
+        return result;
     }
-    return result;
-}
+
+}  // namespace
 
 CodeCompare::~CodeCompare()
 {
@@ -245,6 +250,9 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
     std::vector<Node*> forms;
     Project.CollectForms(forms);
 
+    // Build flags for test-only comparison with no UI
+    int write_flags = code::flag_test_only | code::flag_no_ui;
+
     for (const auto& class_name: m_class_list)
     {
         for (const auto& form: forms)
@@ -306,22 +314,41 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
                     break;
             }
 
-            // Generate code to string
-            if (code_generator)
+            if (!code_generator)
             {
-                StringCodeWriter header_writer;
-                StringCodeWriter source_writer;
+                continue;
+            }
 
-                code_generator->SetHdrWriteCode(&header_writer);
-                code_generator->SetSrcWriteCode(&source_writer);
+            if (m_current_language == GEN_LANG_CPLUSPLUS)
+            {
+                // For C++: compare header file (.h)
+                tt_string hdr_path(path);
+                hdr_path += Project.get_ProjectNode()->as_string(prop_header_ext);
+
+                auto h_cw = std::make_unique<FileCodeWriter>(hdr_path);
+                code_generator->SetHdrWriteCode(h_cw.get());
+
+                // For C++: also compare source file (.cpp)
+                tt_string src_path(path);
+                src_path += Project.get_ProjectNode()->as_string(prop_source_ext);
+
+                auto cpp_cw = std::make_unique<FileCodeWriter>(src_path);
+                code_generator->SetSrcWriteCode(cpp_cw.get());
+
+                // Generate code into the FileCodeWriter buffers
                 code_generator->GenerateClass(m_current_language);
 
-                if (m_current_language == GEN_LANG_CPLUSPLUS)
+                // Check if header file needs updating using FileCodeWriter's comparison logic
+                int hdr_flags = write_flags;
+                if (form->as_bool(prop_no_closing_brace))
                 {
-                    // For C++: compare header file (.h)
-                    tt_string hdr_path(path);
-                    hdr_path += Project.get_ProjectNode()->as_string(prop_header_ext);
+                    hdr_flags |= code::flag_add_closing_brace;
+                }
+                int hdr_result = h_cw->WriteFile(m_current_language, hdr_flags, form);
 
+                if (hdr_result == code::write_needed)
+                {
+                    // File needs updating - create a diff for display
                     ttwx::ViewVector hdr_disk_content;
                     if (hdr_path.file_exists())
                     {
@@ -329,13 +356,11 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
                     }
 
                     ttwx::ViewVector hdr_generated;
-                    hdr_generated.ReadString(std::string_view(header_writer.GetContent()));
+                    hdr_generated.ReadString(std::string_view(h_cw->GetString()));
 
-                    // Get ranges for comparison (strips comment blocks)
-                    auto [disk_start, disk_end] =
-                        GetGeneratedCodeRange(hdr_disk_content, m_current_language);
-                    auto [gen_start, gen_end] =
-                        GetGeneratedCodeRange(hdr_generated, m_current_language);
+                    // Get ranges for comparison (strips comment blocks for cleaner diff)
+                    auto [disk_start, disk_end] = GetGeneratedCodeRange(hdr_disk_content);
+                    auto [gen_start, gen_end] = GetGeneratedCodeRange(hdr_generated);
 
                     // Create stripped vectors for comparison
                     ttwx::ViewVector hdr_disk_stripped;
@@ -362,11 +387,14 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
                         file_diff.diff_result = std::move(hdr_diff);
                         diffs.push_back(std::move(file_diff));
                     }
+                }
 
-                    // For C++: also compare source file (.cpp)
-                    tt_string src_path(path);
-                    src_path += Project.get_ProjectNode()->as_string(prop_source_ext);
+                // Check if source file needs updating using FileCodeWriter's comparison logic
+                int src_result = cpp_cw->WriteFile(m_current_language, write_flags, form);
 
+                if (src_result == code::write_needed)
+                {
+                    // File needs updating - create a diff for display
                     ttwx::ViewVector src_disk_content;
                     if (src_path.file_exists())
                     {
@@ -374,13 +402,11 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
                     }
 
                     ttwx::ViewVector src_generated;
-                    src_generated.ReadString(std::string_view(source_writer.GetContent()));
+                    src_generated.ReadString(std::string_view(cpp_cw->GetString()));
 
-                    // Get ranges for comparison (strips comment blocks)
-                    auto [src_disk_start, src_disk_end] =
-                        GetGeneratedCodeRange(src_disk_content, m_current_language);
-                    auto [src_gen_start, src_gen_end] =
-                        GetGeneratedCodeRange(src_generated, m_current_language);
+                    // Get ranges for comparison (strips comment blocks for cleaner diff)
+                    auto [src_disk_start, src_disk_end] = GetGeneratedCodeRange(src_disk_content);
+                    auto [src_gen_start, src_gen_end] = GetGeneratedCodeRange(src_generated);
 
                     // Create stripped vectors for comparison
                     ttwx::ViewVector src_disk_stripped;
@@ -408,28 +434,41 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
                         diffs.push_back(std::move(src_file_diff));
                     }
                 }
-                else
+            }
+            else
+            {
+                // For script languages: only compare source file
+                tt_string script_path(path);
+                switch (m_current_language)
                 {
-                    // For script languages: only compare source_writer (the actual script file)
-                    tt_string script_path(path);
-                    switch (m_current_language)
-                    {
-                        case GEN_LANG_PERL:
-                            script_path += ".pl";
-                            break;
-                        case GEN_LANG_PYTHON:
-                            script_path += ".py";
-                            break;
-                        case GEN_LANG_RUBY:
-                            script_path += ".rb";
-                            break;
-                        case GEN_LANG_XRC:
-                            script_path += ".xrc";
-                            break;
-                        default:
-                            break;
-                    }
+                    case GEN_LANG_PERL:
+                        script_path += ".pl";
+                        break;
+                    case GEN_LANG_PYTHON:
+                        script_path += ".py";
+                        break;
+                    case GEN_LANG_RUBY:
+                        script_path += ".rb";
+                        break;
+                    case GEN_LANG_XRC:
+                        script_path += ".xrc";
+                        break;
+                    default:
+                        break;
+                }
 
+                auto script_cw = std::make_unique<FileCodeWriter>(script_path);
+                code_generator->SetSrcWriteCode(script_cw.get());
+
+                // Generate code into the FileCodeWriter buffer
+                code_generator->GenerateClass(m_current_language);
+
+                // Check if script file needs updating using FileCodeWriter's comparison logic
+                int script_result = script_cw->WriteFile(m_current_language, write_flags, form);
+
+                if (script_result == code::write_needed)
+                {
+                    // File needs updating - create a diff for display
                     ttwx::ViewVector script_disk_content;
                     if (script_path.file_exists())
                     {
@@ -437,13 +476,13 @@ auto CodeCompare::CollectFileDiffs() -> std::vector<FileDiff>
                     }
 
                     ttwx::ViewVector script_generated;
-                    script_generated.ReadString(std::string_view(source_writer.GetContent()));
+                    script_generated.ReadString(std::string_view(script_cw->GetString()));
 
-                    // Get ranges for comparison (strips comment blocks)
+                    // Get ranges for comparison (strips comment blocks for cleaner diff)
                     auto [script_disk_start, script_disk_end] =
-                        GetGeneratedCodeRange(script_disk_content, m_current_language);
+                        GetGeneratedCodeRange(script_disk_content);
                     auto [script_gen_start, script_gen_end] =
-                        GetGeneratedCodeRange(script_generated, m_current_language);
+                        GetGeneratedCodeRange(script_generated);
 
                     // Create stripped vectors for comparison
                     ttwx::ViewVector script_disk_stripped;

@@ -48,9 +48,7 @@ namespace
     }
 }  // namespace
 
-// CR: 48: Uses legacy tt_string type which violates project coding standards.
-// Should use std::string or wxString instead per coding guidelines.
-MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* parent) :
+MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
 {
     // These will adjust for both dark mode and high contrast mode if needed
@@ -85,10 +83,10 @@ MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* pa
     {
         textAttr.SetTextColour(color);
         m_textCtrl->SetDefaultStyle(textAttr);
-        m_textCtrl->AppendText(wxString::FromUTF8(prefix.data(), prefix.size()));
+        m_textCtrl->AppendText(wxString(prefix));
         textAttr.SetTextColour(clr_fg);
         m_textCtrl->SetDefaultStyle(textAttr);
-        m_textCtrl->AppendText(wxString::FromUTF8(remaining.data(), remaining.size()));
+        m_textCtrl->AppendText(wxString(remaining));
     };
 
     for (const auto& iter: *m_pMsgs)
@@ -96,9 +94,9 @@ MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* pa
         bool handled = false;
         for (const auto& [prefix, color]: prefix_colors)
         {
-            if (iter.starts_with(prefix))
+            if (iter.starts_with(wxString(prefix)))
             {
-                const auto remaining = iter.view_stepover();
+                const auto remaining = ttwx::stepover(iter);
                 append_message(prefix, color, remaining);
                 handled = true;
                 break;
@@ -106,7 +104,7 @@ MsgFrame::MsgFrame(std::vector<tt_string>* pMsgs, bool* pDestroyed, wxWindow* pa
         }
         if (!handled)
         {
-            m_textCtrl->AppendText(wxString::FromUTF8(iter.data(), iter.size()));
+            m_textCtrl->AppendText(iter);
         }
     }
 

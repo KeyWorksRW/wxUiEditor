@@ -16,20 +16,19 @@
 #include <wx/stattext.h>
 
 #include <wx/checkbox.h>
-#include <wx/sizer.h>
 #include <wx/valgen.h>
 
 class GenerateDlg : public wxDialog
 {
 public:
     GenerateDlg() {}
-    GenerateDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
+    GenerateDlg(wxWindow *parent, wxWindowID window_id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
-        Create(parent, id, title, pos, size, style, name);
+        Create(parent, window_id, title, pos, size, style, name);
     }
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
+    bool Create(wxWindow *parent, wxWindowID window_id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 

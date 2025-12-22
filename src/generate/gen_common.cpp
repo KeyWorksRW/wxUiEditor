@@ -11,19 +11,21 @@
 
 #include "gen_common.h"
 
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
-#include "gen_results.h"      // Code generation file writing functions
-#include "image_gen.h"        // Functions for generating embedded images
-#include "image_handler.h"    // ImageHandler class
-#include "lambdas.h"          // Functions for formatting and storage of lamda events
-#include "mainapp.h"          // wxGetApp()
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
-#include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
-#include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
+#include "file_codewriter.h"     // FileCodeWriter -- Classs to write code to disk
+#include "gen_results.h"         // Code generation file writing functions
+#include "image_gen.h"           // Functions for generating embedded images
+#include "image_handler.h"       // ImageHandler class
+#include "lambdas.h"             // Functions for formatting and storage of lamda events
+#include "mainapp.h"             // wxGetApp()
+#include "mainframe.h"           // MainFrame -- Main window frame
+#include "node.h"                // Node class
+#include "node_creator.h"        // NodeCreator class
+#include "project_handler.h"     // ProjectHandler class
+#include "ttwx.h"                // ttwx utility functions
+#include "ttwx_string_vector.h"  // ttwx::StringVector
+#include "ttwx_view_vector.h"    // ttwx::ViewVector
+#include "utils.h"               // Utility functions that work with properties
+#include "write_code.h"          // WriteCode -- Write code to Scintilla or file
 
 #include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
 #include "gen_perl.h"    // PerlCodeGenerator class
@@ -264,7 +266,7 @@ auto GetStyleInt(Node* node, const char* prefix) -> int
     int result = 0;
     // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
-    tt_string_vector mstr(styles, '|');
+    ttwx::StringVector mstr(styles, '|');
     for (const auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
@@ -278,7 +280,7 @@ auto GetBitlistInt(Node* node, GenEnum::PropName prop_name) -> int
     int result = 0;
     // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
-    tt_string_vector mstr(node->as_string(prop_name), '|');
+    ttwx::StringVector mstr(node->as_string(prop_name), '|');
     for (const auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
@@ -390,7 +392,7 @@ auto GenerateBitmapCode(const tt_string& description) -> tt_string
         return code;
     }
 
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ttwx::ViewVector parts(description, BMP_PROP_SEPARATOR, ttwx::TRIM::both);
 
     if (parts[IndexType].starts_with("SVG"))
     {
@@ -424,11 +426,11 @@ auto GenerateBitmapCode(const tt_string& description) -> tt_string
     }
 
     tt_string result;
-    if (parts[IndexType].is_sameas("XPM"))
+    if (parts[IndexType] == "XPM")
     {
         code << "wxImage(";
 
-        tt_string name(parts[IndexImage].filename());
+        tt_string name(ttwx::find_filename(parts[IndexImage]));
         name.remove_extension();
         code << name << "_xpm)";
     }
@@ -436,7 +438,7 @@ auto GenerateBitmapCode(const tt_string& description) -> tt_string
     {
         code << "wxueImage(";
 
-        tt_string name(parts[1].filename());
+        tt_string name(ttwx::find_filename(parts[1]));
         name.remove_extension();
         name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have
                                        // to be converted to '_'
@@ -463,7 +465,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         return false;
     }
 
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ttwx::ViewVector parts(description, BMP_PROP_SEPARATOR, ttwx::TRIM::both);
 
     if (parts[IndexImage].empty())
     {
@@ -503,7 +505,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
         code << ')';
     }
 
-    else if (parts[IndexType].is_sameas("XPM"))
+    else if (parts[IndexType] == "XPM")
     {
         if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
         {
@@ -553,7 +555,7 @@ bool GenerateBundleCode(const tt_string& description, tt_string& code)
             // This should never happen, but if it does, at least generate something that will
             // compiler
             code << "wxImage(";
-            tt_string name(parts[IndexImage].filename());
+            tt_string name(ttwx::find_filename(parts[IndexImage]));
             name.remove_extension();
             code << name << "_xpm)";
         }
@@ -1012,7 +1014,7 @@ void GenValidatorSettings(Code& code)
         }
     }
 
-    tt_string_vector styles(style, '|', tt::TRIM::both);
+    ttwx::StringVector styles(style, '|', ttwx::TRIM::both);
     if (validator_type == "wxTextValidator")
     {
         if (style.contains("wxFILTER_"))
@@ -1154,14 +1156,14 @@ auto GenerateIconCode(const tt_string& description) -> tt_string
         return code;
     }
 
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ttwx::ViewVector parts(description, BMP_PROP_SEPARATOR, ttwx::TRIM::both);
 
     if (parts.size() < 2 || parts[IndexImage].empty())
     {
         return code;
     }
 
-    if (parts[IndexType].is_sameas("XPM"))
+    if (parts[IndexType] == "XPM")
     {
         // In theory, we could create an alpha channel using black as the transparency, but it just
         // doesn't make sense for the user to be using XPM files as an icon.
@@ -1383,7 +1385,7 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
     }
 
     const auto& description = node->as_string(prop);
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ttwx::ViewVector parts(description, BMP_PROP_SEPARATOR, ttwx::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") ||
         parts[IndexType].contains("SVG"))
@@ -1400,7 +1402,7 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
 
     // If we get here, then the bitmaps need to be put into a vector
 
-    bool is_xpm = (parts[IndexType].is_sameas("XPM"));
+    bool is_xpm = (parts[IndexType] == "XPM");
 
     if (code.is_python())
     {
@@ -1643,7 +1645,7 @@ auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClass
         results.StartClock();
     }
 
-    tt_cwd cwd(true);
+    ttwx::SaveCwd cwd(ttwx::restore_cwd);
     Project.ChangeDir();
 
     bool generate_result = false;

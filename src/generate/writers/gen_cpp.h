@@ -128,7 +128,7 @@ private:
                                               std::vector<std::string>& ordered_includes);
     void WriteSourceIncludes(const std::set<std::string>& src_includes,
                              const std::vector<std::string>& ordered_includes,
-                             const tt_string& file);
+                             const std::string& file);
 
     // Helper methods for GenerateClass - reduce function complexity
     void InitializeGenerationState();

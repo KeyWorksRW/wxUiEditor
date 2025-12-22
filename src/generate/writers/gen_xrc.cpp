@@ -43,7 +43,7 @@ const char* txt_dlg_name = "_wxue_temp_dlg";
 
 int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto generator = node->get_NodeDeclaration()->get_Generator();
+    auto* generator = node->get_NodeDeclaration()->get_Generator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
     if (result == BaseGenerator::xrc_not_supported)
     {
@@ -97,7 +97,9 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
                     if (class_attr.value() != "wxTreebook")
                     {
                         if (class_attr.value() == "treebookpage")
+                        {
                             ++depth;
+                        }
                         actual_object = actual_object.parent();
                         ASSERT(!actual_object.empty())
                     }
@@ -121,7 +123,7 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
         }
         return result;
     }
-    else if (result == BaseGenerator::xrc_updated)
+    if (result == BaseGenerator::xrc_updated)
     {
         if (node->is_Gen(gen_tool_dropdown))
         {
@@ -142,37 +144,36 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
         }
         return result;
     }
-    else if (result == BaseGenerator::xrc_form_not_supported)
+    if (result == BaseGenerator::xrc_form_not_supported)
     {
         if (xrc_flags & xrc::add_comments)
         {
             return result;
         }
-        else
-        {
-            return BaseGenerator::xrc_not_supported;
-        }
-    }
-    else
-    {
         return BaseGenerator::xrc_not_supported;
     }
+    return BaseGenerator::xrc_not_supported;
 }
 
-void CollectHandlers(Node* node, std::set<std::string>& handlers)
+namespace
 {
-    auto generator = node->get_NodeDeclaration()->get_Generator();
-    generator->RequiredHandlers(node, handlers);
-    for (const auto& child: node->get_ChildNodePtrs())
+
+    void CollectHandlers(Node* node, std::set<std::string>& handlers)
     {
-        generator = child->get_NodeDeclaration()->get_Generator();
-        generator->RequiredHandlers(child.get(), handlers);
-        if (child->get_ChildCount())
+        auto* generator = node->get_NodeDeclaration()->get_Generator();
+        generator->RequiredHandlers(node, handlers);
+        for (const auto& child: node->get_ChildNodePtrs())
         {
-            CollectHandlers(child.get(), handlers);
+            auto* child_generator = child->get_NodeDeclaration()->get_Generator();
+            child_generator->RequiredHandlers(child.get(), handlers);
+            if (child->get_ChildCount())
+            {
+                CollectHandlers(child.get(), handlers);
+            }
         }
     }
-}
+
+}  // anonymous namespace
 
 std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
 {
@@ -264,7 +265,9 @@ void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     m_source->Clear();
 
     if (!m_form_node)
+    {
         return;
+    }
 
     if (m_panel_type != PANEL_PAGE::HDR_INFO_PANEL)
     {
@@ -284,8 +287,9 @@ void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     {
         if (m_form_node != Project.get_ProjectNode())
         {
-            m_header->writeLine(tt_string("Resource name is ")
-                                << m_form_node->as_string(prop_class_name));
+            m_header->writeLine(
+                (wxString("Resource name is ") << m_form_node->as_string(prop_class_name))
+                    .ToStdString());
             m_header->writeLine();
         }
         m_header->writeLine("Required handlers:");
@@ -294,7 +298,7 @@ void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
         std::set<std::string> handlers;
         CollectHandlers(m_form_node, handlers);
-        for (auto& iter: handlers)
+        for (const auto& iter: handlers)
         {
             m_header->writeLine(iter);
         }
@@ -311,7 +315,7 @@ bool GenerateXrcFiles(GenResults& results, std::vector<std::string>* pClassList)
 
 void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
 {
-    auto form = wxGetMainFrame()->getSelectedNode();
+    auto* form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->is_Form())
     {
         form = form->get_Form();
@@ -321,8 +325,8 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
         wxMessageBox("You must select a form before you can generate code.", "Code Generation");
         return;
     }
-    else if (form->is_Gen(gen_Images) || form->is_Gen(gen_Data) ||
-             form->is_Gen(gen_wxPopupTransientWindow))
+    if (form->is_Gen(gen_Images) || form->is_Gen(gen_Data) ||
+        form->is_Gen(gen_wxPopupTransientWindow))
     {
         wxMessageBox("You cannot generate an XRC file for this type of form.", "Code Generation");
         return;
@@ -334,13 +338,17 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
     results.SetMode(GenResults::Mode::generate_and_write);
     std::ignore = results.Generate();
 
-    tt_string msg;
+    wxString msg;
     if (results.GetUpdatedFiles().size())
     {
         if (results.GetUpdatedFiles().size() == 1)
+        {
             msg << "1 file was updated";
+        }
         else
+        {
             msg << results.GetUpdatedFiles().size() << " files were updated";
+        }
         msg << '\n';
     }
     else
@@ -408,7 +416,7 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
     bool combine_forms = Project.as_bool(prop_combine_all_forms);
     if (combine_forms)
     {
-        auto path = Project.as_string(prop_combined_xrc_file);
+        const auto& path = Project.as_string(prop_combined_xrc_file);
         if (path.empty())
         {
             results.GetMsgs().emplace_back("No combined XRC filename specified for the project.\n");
@@ -432,8 +440,10 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
                 // If the form type is supported, warn the user about not having an XRC file for it.
                 if (!form->is_Gen(gen_Images) && !form->is_Gen(gen_Data) &&
                     !form->is_Gen(gen_wxPopupTransientWindow))
+                {
                     results.GetMsgs().emplace_back(std::format("No XRC filename specified for {}\n",
                                                                form->as_string(prop_class_name)));
+                }
                 continue;
             }
             if (path.extension().empty())
@@ -545,12 +555,14 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
             {
                 path.backslashestoforward();
                 if (path.back() == '/')
+                {
                     path.pop_back();
+                }
 
                 // If the first part of the base_file is a folder and it matches the last folder in
                 // result, then assume the folder name is duplicated in base_file. Remove the folder
                 // from result before adding the base_file path.
-                if (auto end_folder = base_file.find('/'); end_folder != tt::npos)
+                if (auto end_folder = base_file.find('/'); end_folder != std::string::npos)
                 {
                     if (path.ends_with(base_file.substr(0, end_folder)))
                     {
@@ -654,8 +666,5 @@ std::string XrcGenerator::getIndentationString()
     {
         return "  ";  // Two spaces
     }
-    else
-    {
-        return "\t";  // Tab character
-    }
+    return "\t";  // Tab character
 }

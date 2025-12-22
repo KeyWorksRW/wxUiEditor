@@ -441,9 +441,10 @@ void PythonCodeGenerator::GenerateImagesForm()
 
         m_source->writeLine(code);
         code.clear();
+        constexpr std::uint32_t array_size_mask = 0xFFFFFFFF;
         auto encoded =
             base64_encode(iter_array->base_image().array_data.data(),
-                          iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
+                          iter_array->base_image().array_size & array_size_mask, GEN_LANG_PYTHON);
         if (encoded.size())
         {
             encoded.back() += ")";
@@ -572,7 +573,7 @@ auto PythonCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, 
 
 auto PythonCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& code) -> void
 {
-#if defined(_DEBUG)
+#ifdef _DEBUG
     const auto& dbg_event_name = event->get_name();
     wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
@@ -752,7 +753,8 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
 
-    if (!bundle || bundle->lst_filenames.size() < 3)
+    constexpr size_t min_bitmap_bundle_size = 3;
+    if (!bundle || bundle->lst_filenames.size() < min_bitmap_bundle_size)
     {
         return false;
     }
@@ -762,12 +764,13 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     code += "bitmaps = [ ";
     bool needs_comma = false;
+    constexpr size_t bitmap_list_indent_level = 3;
     for (const auto& iter: bundle->lst_filenames)
     {
         if (needs_comma)
         {
             code.UpdateBreakAt();
-            code.Comma(false).Eol().Tab(3);
+            code.Comma(false).Eol().Tab(bitmap_list_indent_level);
         }
 
         bool is_embed_success = false;

@@ -11,12 +11,12 @@
 
 #include "generate_dlg.h"
 
-bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool GenerateDlg::Create(wxWindow* parent, wxWindowID window_id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, window_id, title, pos, size, style, name))
     {
         return false;
     }
@@ -79,7 +79,8 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/config.h>  // wxConfig base header
+#include <wx/config.h>    // wxConfig base header
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
@@ -102,6 +103,8 @@ namespace
     bool gen_ruby_code = false;
     bool gen_xrc_code = false;
 
+    constexpr int generation_timer_interval_ms = 250;
+
 }  // anonymous namespace
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
@@ -114,7 +117,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
     wxBeginBusyCursor();
     UpdateWakaTime();
 
-    m_generation_timer.Start(250);
+    m_generation_timer.Start(generation_timer_interval_ms);
 
     code_generated = GenerateFromOutputType(results);
 
@@ -280,17 +283,17 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
         // Show updated files first
         for (const auto& iter: results.GetUpdatedFiles())
         {
-            tt_string relative_path(iter);
-            relative_path.make_relative(Project.get_ProjectPath());
-            results_dlg.m_lb_files->Append(wxString("Updated: ") + relative_path.make_wxString());
+            wxFileName relative_path(iter);
+            relative_path.MakeRelativeTo(Project.get_ProjectPath());
+            results_dlg.m_lb_files->Append(wxString("Updated: ") + relative_path.GetFullPath());
         }
 
         // Then show created files
         for (const auto& iter: results.GetCreatedFiles())
         {
-            tt_string relative_path(iter);
-            relative_path.make_relative(Project.get_ProjectPath());
-            results_dlg.m_lb_files->Append(wxString("Created: ") + relative_path.make_wxString());
+            wxFileName relative_path(iter);
+            relative_path.MakeRelativeTo(Project.get_ProjectPath());
+            results_dlg.m_lb_files->Append(wxString("Created: ") + relative_path.GetFullPath());
         }
 
         // TODO: [Randalphwa - 11-29-2025] If we derive from GeneratedResultsDlg then we could make
@@ -328,7 +331,7 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
     }
     else if (results.GetFileCount())
     {
-        tt_string msg;
+        wxString msg;
         msg << '\n' << "All " << results.GetFileCount() << " generated files are current";
         wxMessageBox(msg, "Code Generation", wxOK, this);
     }
@@ -380,7 +383,9 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkPerl->SetValidator(wxGenericValidator(&m_gen_perl_code));
         m_grid_sizer->Add(m_checkPerl, wxSizerFlags().Border(wxALL));
         if (gen_perl_code)
+        {
             m_checkPerl->SetValue(true);
+        }
     }
     if (languages & GEN_LANG_PYTHON || gen_python_code)
     {
@@ -389,7 +394,9 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkPython->SetValidator(wxGenericValidator(&m_gen_python_code));
         m_grid_sizer->Add(m_checkPython, wxSizerFlags().Border(wxALL));
         if (gen_python_code)
+        {
             m_checkPython->SetValue(true);
+        }
     }
     if (languages & GEN_LANG_RUBY || gen_ruby_code)
     {
@@ -398,7 +405,9 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
         m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
         if (gen_ruby_code)
+        {
             m_checkRuby->SetValue(true);
+        }
     }
     if (languages & GEN_LANG_XRC || gen_xrc_code)
     {
@@ -407,7 +416,9 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkXRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
         m_grid_sizer->Add(m_checkXRC, wxSizerFlags().Border(wxALL));
         if (gen_xrc_code)
+        {
             m_checkXRC->SetValue(true);
+        }
     }
 
     // You have to reset minimum size to allow the window to shrink

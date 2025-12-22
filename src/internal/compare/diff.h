@@ -39,6 +39,18 @@ struct DiffResult
     bool has_differences { false };
 };
 
+class Node;
+
+// File difference information for code generation comparison
+struct FileDiff
+{
+    std::string filename;
+    std::string original_content;
+    std::string new_content;
+    DiffResult diff_result;
+    Node* form { nullptr };  // The form node that generated this file
+};
+
 class Diff
 {
 public:

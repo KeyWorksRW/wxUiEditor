@@ -257,17 +257,20 @@ void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     ASSERT(m_language == GEN_LANG_XRC);
     m_panel_type = panel_type;
 
-    m_header->Clear();
+    if (m_header)
+    {
+        m_header->Clear();
+    }
     m_source->Clear();
 
     if (!m_form_node)
         return;
 
-    if (m_panel_type != HDR_PANEL)
+    if (m_panel_type != PANEL_PAGE::HDR_INFO_PANEL)
     {
         XrcGenerator xrc_gen;
         xrc_gen.AddProjectFlags();
-        if (m_panel_type == CPP_PANEL)
+        if (m_panel_type == PANEL_PAGE::SOURCE_PANEL)
         {
             xrc_gen.AddXrcFlags(xrc::add_comments);
         }
@@ -276,7 +279,8 @@ void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         m_source->doWrite(doc_str);
     }
 
-    else  // Info panel
+    // Info panel - only used for display mode, m_header must be valid
+    else if (m_header)
     {
         if (m_form_node != Project.get_ProjectNode())
         {
@@ -325,88 +329,10 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
     }
 
     GenResults results;
-    XrcGenerator xrc_gen;
-    xrc_gen.AddProjectFlags();
-    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_XRC);
-    if (path.empty())
-    {
-        wxMessageBox("No XRC filename specified for " + form->as_string(prop_class_name),
-                     "Code Generation");
-        return;
-    }
-    if (path.extension().empty())
-    {
-        path.replace_extension(".xrc");
-    }
-
-    xrc_gen.AddNode(form);
-
-    if (path.file_exists())
-    {
-        // Compare the new document with the existing file, and only write it if it has changed
-        wxFile file_original(path.make_wxString(), wxFile::read_write);
-        if (file_original.IsOpened())
-        {
-            // Check to see if the file would be changed. If not, we don't need to update it.
-            auto new_str = xrc_gen.getXmlString();
-
-            auto in_size = file_original.Length();
-            if (new_str.size() == (to_size_t) in_size)
-            {
-                auto buffer = std::make_unique<unsigned char[]>(in_size);
-                if (file_original.Read(buffer.get(), in_size) == in_size)
-                {
-                    if (std::memcmp(buffer.get(), new_str.data(), in_size) == 0)
-                    {
-                        results.IncrementFileCount();
-                    }
-                }
-            }
-            else
-            {
-                // The document differs from the file, so write the document to the file.
-                file_original.Close();
-                if (!file_original.Create(path.make_wxString(), true))
-                {
-                    results.GetMsgs().emplace_back(
-                        std::format("Cannot create the file {}\n", path));
-                }
-                else
-                {
-                    if (file_original.Write(new_str.c_str(), new_str.length()) != new_str.length())
-                    {
-                        results.GetMsgs().emplace_back(
-                            std::format("Cannot write to the file {}\n", path));
-                    }
-                    else
-                    {
-                        results.GetUpdatedFiles().emplace_back(path);
-                        if (results.GetUpdatedFiles().size())
-                        {
-                            results.SetFileCount(results.GetFileCount() +
-                                                 results.GetUpdatedFiles().size());
-                        }
-                    }
-                }
-            }
-        }
-    }
-    else  // file doesn't exist, so write it out
-    {
-        if (!xrc_gen.getDocument().save_file(path))
-        {
-            results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", path));
-        }
-        else
-        {
-            results.GetUpdatedFiles().emplace_back(path);
-            if (results.GetUpdatedFiles().size())
-            {
-                results.SetFileCount(results.GetFileCount() + results.GetUpdatedFiles().size());
-            }
-        }
-    }
+    results.SetNodes(form);
+    results.SetLanguages(GEN_LANG_XRC);
+    results.SetMode(GenResults::Mode::generate_and_write);
+    std::ignore = results.Generate();
 
     tt_string msg;
     if (results.GetUpdatedFiles().size())

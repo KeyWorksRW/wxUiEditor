@@ -50,9 +50,6 @@ protected:
     void OnRadioButton(GenLang language);
 
 private:
-    auto CollectFileDiffs() -> std::vector<FileDiff>;
-    auto GetGeneratedCodeRange(const ttwx::ViewVector& content) -> std::pair<size_t, size_t>;
-
-    std::vector<std::string> m_class_list;
+    std::vector<FileDiff> m_file_diffs;  // Diffs collected by OnRadioButton
     GenLang m_current_language = GEN_LANG_CPLUSPLUS;
 };

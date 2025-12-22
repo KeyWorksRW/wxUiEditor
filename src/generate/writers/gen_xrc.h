@@ -71,5 +71,6 @@ public:
     XrcCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(GenLang language = GEN_LANG_XRC, PANEL_PAGE panel_type = NOT_PANEL) override;
+    void GenerateClass(GenLang language = GEN_LANG_XRC,
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
 };

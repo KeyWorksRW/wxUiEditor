@@ -1483,8 +1483,8 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
     return true;
 }
 
-bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::string>* pClassList,
-                          GenLang language)
+auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::string>* pClassList,
+                          GenLang language) -> bool
 {
     auto [path, has_base_file] = Project.GetOutputPath(form, language);
     if (!has_base_file)
@@ -1620,6 +1620,12 @@ bool GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
     return true;
 }
 
+// TODO: [Randalphwa - 12-17-2025] Once GenResults::GenerateLanguageFiles() this function should be
+// removed.
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable : 4996)  // deprecated - internal implementation
+#endif
 auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
                            GenLang language) -> bool
 {
@@ -1672,6 +1678,9 @@ auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClass
 
     return generate_result;
 }
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 void OnGenerateSingleLanguage(GenLang language)
 {
@@ -1687,7 +1696,10 @@ void OnGenerateSingleLanguage(GenLang language)
     }
 
     GenResults results;
-    GenerateLanguageForm(form, results, nullptr, language);
+    results.SetNodes(form);
+    results.SetLanguages(language);
+    results.SetMode(GenResults::Mode::generate_and_write);
+    std::ignore = results.Generate();
 
     tt_string msg;
     if (results.GetUpdatedFiles().size())
@@ -1723,7 +1735,10 @@ void OnGenerateSingleLanguage(GenLang language)
 void OnGenerateLanguage(GenLang language)
 {
     GenResults results;
-    GenerateLanguageFiles(results, nullptr, language);
+    results.SetNodes(Project.get_ProjectNode());
+    results.SetLanguages(language);
+    results.SetMode(GenResults::Mode::generate_and_write);
+    std::ignore = results.Generate();
 
     tt_string msg;
     if (results.GetUpdatedFiles().size())

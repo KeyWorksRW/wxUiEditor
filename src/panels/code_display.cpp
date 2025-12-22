@@ -149,7 +149,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     auto is_event = wxGetFrame().get_PropPanel()->IsEventPageShowing();
     PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
-    if (m_panel_type != GEN_LANG_CPLUSPLUS && page != CPP_PANEL)
+    if (m_panel_type != GEN_LANG_CPLUSPLUS && page != PANEL_PAGE::SOURCE_PANEL)
         return;  // Nothing to search for in secondary pages of non-C++ languages
 
     int line = -1;
@@ -158,7 +158,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     Code code(node, m_panel_type);
 
-    if (page == CPP_PANEL)
+    if (page == PANEL_PAGE::SOURCE_PANEL)
     {
         code.NodeName();
         name << code.GetCode();
@@ -166,7 +166,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     if (is_event)
     {
-        if (page == CPP_PANEL)
+        if (page == PANEL_PAGE::SOURCE_PANEL)
         {
             name << "->Bind";
             line = (to_int) m_view.FindLineContaining(name);
@@ -246,7 +246,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
         if (!ttwx::is_found(line))
         {
-            if (page == CPP_PANEL)
+            if (page == PANEL_PAGE::SOURCE_PANEL)
             {
                 name << " = ";
                 line = (to_int) m_view.FindLineContaining(name);

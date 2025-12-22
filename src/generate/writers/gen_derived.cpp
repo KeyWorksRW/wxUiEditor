@@ -65,7 +65,7 @@ auto CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     GetFileExtensions(project, source_ext, header_ext);
 
     auto derived_file = DetermineDerivedFilePath(form, panel_type, source_ext);
-    if (derived_file.empty() && panel_type == NOT_PANEL)
+    if (derived_file.empty() && panel_type == PANEL_PAGE::NOT_PANEL)
     {
         return result::exists;
     }
@@ -142,13 +142,13 @@ auto CppCodeGenerator::DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_typ
     else
     {
         // If we're writing to disk, return empty to signal "exists"
-        if (panel_type == NOT_PANEL)
+        if (panel_type == PANEL_PAGE::NOT_PANEL)
         {
             return {};
         }
     }
 
-    if (m_is_derived_class && panel_type == NOT_PANEL)
+    if (m_is_derived_class && panel_type == PANEL_PAGE::NOT_PANEL)
     {
         if (derived_file.empty())
         {
@@ -240,7 +240,7 @@ void CppCodeGenerator::GenerateDerivedHeader(const tt_string& derived_name,
                                              const tt_string& namespace_using_name,
                                              const tt_string& header_ext, PANEL_PAGE panel_type)
 {
-    if (panel_type == CPP_PANEL)
+    if (panel_type == PANEL_PAGE::SOURCE_PANEL)
     {
         return;
     }
@@ -298,7 +298,7 @@ void CppCodeGenerator::GenerateDerivedSource(Node* project, const tt_string& der
                                              const tt_string& header_ext,
                                              const tt_string& source_ext, PANEL_PAGE panel_type)
 {
-    if (panel_type == HDR_PANEL)
+    if (panel_type == PANEL_PAGE::HDR_INFO_PANEL)
     {
         return;
     }
@@ -466,7 +466,7 @@ void CppCodeGenerator::GenerateDerivedEventHandlers(const EventVector& events,
 
             WriteEventHandlerDeclaration(event_code, event_class);
 
-            if (panel_type != HDR_PANEL)
+            if (panel_type != PANEL_PAGE::HDR_INFO_PANEL)
             {
                 if (ShouldSkipContextMenuEvent(event))
                 {

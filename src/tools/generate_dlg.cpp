@@ -112,6 +112,7 @@ void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
     GenResults results;
     bool code_generated = false;
     wxBeginBusyCursor();
+    UpdateWakaTime();
 
     m_generation_timer.Start(250);
 
@@ -137,29 +138,36 @@ auto MainFrame::GenerateFromOutputType(GenResults& results) -> bool
 {
     auto output_type = Project.get_OutputType();
 
-    if (output_type == OUTPUT_XRC)
-    {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
-        return true;
-    }
-    if (output_type == OUTPUT_CPLUS)
-    {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
-        return true;
-    }
     if (output_type == OUTPUT_DERIVED)
     {
         GenInhertedClass(results);
         return true;
     }
-    if (output_type == OUTPUT_PYTHON)
+
+    GenLang language = GEN_LANG_NONE;
+    if (output_type == OUTPUT_XRC)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
-        return true;
+        language = GEN_LANG_XRC;
     }
-    if (output_type == OUTPUT_RUBY)
+    else if (output_type == OUTPUT_CPLUS)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
+        language = GEN_LANG_CPLUSPLUS;
+    }
+    else if (output_type == OUTPUT_PYTHON)
+    {
+        language = GEN_LANG_PYTHON;
+    }
+    else if (output_type == OUTPUT_RUBY)
+    {
+        language = GEN_LANG_RUBY;
+    }
+
+    if (language != GEN_LANG_NONE)
+    {
+        results.SetNodes(Project.get_ProjectNode());
+        results.SetLanguages(language);
+        results.SetMode(GenResults::Mode::generate_and_write);
+        std::ignore = results.Generate();
         return true;
     }
 
@@ -176,47 +184,56 @@ auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
 
     bool code_generated = false;
 
+    // Collect all selected languages into a combined flag
+    std::uint16_t lang_flags = GEN_LANG_NONE;
+
     // Always generate XRC files first in case the XRC files need to be added to a gen_Data
     // section of the other languages.
     gen_xrc_code = dlg.is_gen_xrc();
     if (gen_xrc_code)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_XRC);
-        code_generated = true;
+        lang_flags |= GEN_LANG_XRC;
     }
 
     gen_base_code = dlg.is_gen_base();
     if (gen_base_code)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_CPLUSPLUS);
-        code_generated = true;
-    }
-
-    gen_derived_code = dlg.is_gen_inherited();
-    if (gen_derived_code)
-    {
-        GenInhertedClass(results);
-        code_generated = true;
+        lang_flags |= GEN_LANG_CPLUSPLUS;
     }
 
     gen_perl_code = dlg.is_gen_perl();
     if (gen_perl_code)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_PERL);
-        code_generated = true;
+        lang_flags |= GEN_LANG_PERL;
     }
 
     gen_python_code = dlg.is_gen_python();
     if (gen_python_code)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_PYTHON);
-        code_generated = true;
+        lang_flags |= GEN_LANG_PYTHON;
     }
 
     gen_ruby_code = dlg.is_gen_ruby();
     if (gen_ruby_code)
     {
-        GenerateLanguageFiles(results, nullptr, GEN_LANG_RUBY);
+        lang_flags |= GEN_LANG_RUBY;
+    }
+
+    // Generate all selected languages in one call
+    if (lang_flags != GEN_LANG_NONE)
+    {
+        results.SetNodes(Project.get_ProjectNode());
+        results.SetLanguages(static_cast<GenLang>(lang_flags));
+        results.SetMode(GenResults::Mode::generate_and_write);
+        std::ignore = results.Generate();
+        code_generated = true;
+    }
+
+    // Handle derived class generation separately (not part of GenResults yet)
+    gen_derived_code = dlg.is_gen_inherited();
+    if (gen_derived_code)
+    {
+        GenInhertedClass(results);
         code_generated = true;
     }
 
@@ -254,29 +271,52 @@ void MainFrame::OnGenerationTimer(wxTimerEvent& /* event unused */)
 
 void MainFrame::ShowGenerationResults(const GenResults& results)
 {
-    if (results.GetUpdatedFiles().size() || results.GetMsgs().size())
+    if (results.GetUpdatedFiles().size() || results.GetCreatedFiles().size() ||
+        results.GetMsgs().size())
     {
         GeneratedResultsDlg results_dlg;
         results_dlg.Create(this);
+
+        // Show updated files first
         for (const auto& iter: results.GetUpdatedFiles())
         {
             tt_string relative_path(iter);
             relative_path.make_relative(Project.get_ProjectPath());
-            results_dlg.m_lb_files->Append(relative_path);
+            results_dlg.m_lb_files->Append(wxString("Updated: ") + relative_path.make_wxString());
+        }
+
+        // Then show created files
+        for (const auto& iter: results.GetCreatedFiles())
+        {
+            tt_string relative_path(iter);
+            relative_path.make_relative(Project.get_ProjectPath());
+            results_dlg.m_lb_files->Append(wxString("Created: ") + relative_path.make_wxString());
         }
 
         // TODO: [Randalphwa - 11-29-2025] If we derive from GeneratedResultsDlg then we could make
         // a hidden section that contains "Updated files: and a dropdown combo box that contains the
         // names of all the files that have been updated.
         auto msgs = results.GetMsgs();  // Make a mutable copy
+
+        // Report counts for updated and created files
         if (results.GetUpdatedFiles().size() == 1)
         {
             msgs.emplace_back("1 file was updated");
         }
-        else
+        if (results.GetUpdatedFiles().size() > 1)
         {
             msgs.emplace_back(
                 std::format("{} files were updated", results.GetUpdatedFiles().size()));
+        }
+
+        if (results.GetCreatedFiles().size() == 1)
+        {
+            msgs.emplace_back("1 new file was created");
+        }
+        if (results.GetCreatedFiles().size() > 1)
+        {
+            msgs.emplace_back(
+                std::format("{} new files were created", results.GetCreatedFiles().size()));
         }
 
         for (const auto& iter: msgs)

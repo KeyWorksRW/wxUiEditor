@@ -733,7 +733,29 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
         if (generate_type & language)
         {
             results.Clear();
-            GenerateLanguageFiles(results, test_only ? &class_list : nullptr, language);
+            class_list.clear();
+
+            results.SetNodes(Project.get_ProjectNode());
+            results.SetLanguages(language);
+
+            if (test_only)
+            {
+                // Use compare_only mode to check what needs updating
+                results.SetMode(GenResults::Mode::compare_only);
+                std::ignore = results.Generate();
+
+                // Extract filenames from diffs for logging
+                for (const auto& diff: results.GetFileDiffs())
+                {
+                    class_list.emplace_back(diff.filename);
+                }
+            }
+            else
+            {
+                results.SetMode(GenResults::Mode::generate_and_write);
+                std::ignore = results.Generate();
+            }
+
             LogGenerationResults(results, class_list, test_only, GenLangToString(language));
         }
     };

@@ -13,20 +13,12 @@
 #include <string>
 #include <vector>
 
-#include "diff.h"
+#include "diff.h"  // DiffResult, FileDiff
 
 class wxBoxSizer;
 class wxButton;
 class wxChoice;
 class wxStaticText;
-
-struct FileDiff
-{
-    std::string filename;
-    std::string original_content;
-    std::string new_content;
-    DiffResult diff_result;
-};
 
 class DiffViewer : public wxDialog
 {

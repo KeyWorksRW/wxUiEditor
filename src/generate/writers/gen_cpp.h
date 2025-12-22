@@ -16,11 +16,11 @@ public:
 
     // All language generators must implement this method.
     void GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
-                       PANEL_PAGE panel_type = NOT_PANEL) override;
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
-    auto GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL)
-        -> int override;
+    auto GenerateDerivedClass(Node* project, Node* form_node,
+                              PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) -> int override;
 
 protected:
     void GenerateCppClassHeader(bool class_namespace = false);
@@ -224,3 +224,45 @@ private:
     std::thread m_thrd_collect_img_headers;
     std::thread m_thrd_need_img_func;
 };
+
+class GenData
+{
+public:
+    GenData(GenResults& results, std::vector<std::string>* pClassList) :
+        m_pClassList(pClassList), m_results(&results)
+    {
+    }
+
+    void AddUpdateFilename(tt_string& path) const
+    {
+        m_results->GetUpdatedFiles().emplace_back(path);
+    };
+
+    void AddResultMsg(std::string_view msg) const { m_results->GetMsgs().emplace_back(msg); };
+
+    void UpdateFileCount() const { m_results->IncrementFileCount(); };
+
+    void AddClassName(std::string_view class_name) const
+    {
+        if (m_pClassList)
+        {
+            m_pClassList->emplace_back(class_name);
+        }
+    };
+
+    auto get_source_ext() const -> std::string_view { return m_source_ext; }
+    void set_source_ext(std::string_view ext) { m_source_ext = ext; }
+
+    auto get_header_ext() const -> std::string_view { return m_header_ext; }
+    void set_header_ext(std::string_view ext) { m_header_ext = ext; }
+
+    auto get_pClassList() const -> std::vector<std::string>* { return m_pClassList; }
+
+private:
+    std::string m_source_ext;
+    std::string m_header_ext;
+    std::vector<std::string>* m_pClassList { nullptr };
+    GenResults* m_results { nullptr };
+};
+
+void GenCppForm(GenData& gen_data, Node* form);

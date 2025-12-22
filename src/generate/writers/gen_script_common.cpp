@@ -48,7 +48,7 @@ namespace ScriptCommon
                                       std::unordered_set<std::string>& code_lines,
                                       std::string_view func_prefix) -> bool
     {
-        if (panel_type != NOT_PANEL)
+        if (panel_type != PANEL_PAGE::NOT_PANEL)
         {
             return false;
         }

@@ -98,11 +98,18 @@ auto GenerateIconCode(const tt_string& description) -> tt_string;
 void ColourCode(Code& code, GenEnum::PropName prop_name);
 
 class GenResults;
+
+// DEPRECATED: Use GenResults::Generate() instead with SetNodes(), SetLanguages(), SetMode().
+// This function is kept for backward compatibility and will be removed in a future version.
 // Common function to generate all files for a specific language
+[[deprecated("Use GenResults::Generate() with SetNodes(), SetLanguages(), SetMode()")]]
 auto GenerateLanguageFiles(GenResults& results, std::vector<std::string>* pClassList,
                            GenLang language) -> bool;
 
+// DEPRECATED: Use GenResults::Generate() with SetNodes(form), SetLanguages(language).
+// This function is kept for backward compatibility and will be removed in a future version.
 // Called by GenerateLanguageFiles and in OnGenSingle...() to generate a single form
+[[deprecated("Use GenResults::Generate() with SetNodes(form), SetLanguages()")]]
 auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::string>* pClassList,
                           GenLang language) -> bool;
 

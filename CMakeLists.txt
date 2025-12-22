@@ -300,9 +300,6 @@ if( BUILD_SHARED_LIBS )
     target_compile_definitions( wxUiEditor PRIVATE WXUSINGDLL )
 endif()
 
-# synchronize this with the compiler stanrdard required in src/pch.h
-target_compile_features( wxUiEditor PRIVATE cxx_std_23 )
-
 if( UNIX )
     set( SYSTEM_LIBS
         ${GTK3_LIBRARIES}

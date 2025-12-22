@@ -142,9 +142,11 @@ Execute the approved plan:
 - Break complex work into verifiable phases
 - Document risks and verification strategy
 - Write plan to `.vscode/plan.md`
+- **Open modified files in the editor** — When editing files that are not currently open, open them so the user can review all changes before selecting Keep/Undo
 
 **Prohibited:**
 - Vague descriptions without specific references
 - Plans without verification points
 - Assumptions about code behavior without reading it
 - Creating markdown file links
+- Editing files silently without opening them for user review

@@ -84,7 +84,7 @@ void GenInhertedClass(GenResults& results)
         if (retval == result::fail)
         {
             results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", path));
+                std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
             continue;
         }
         else if (retval == result::exists)
@@ -104,7 +104,7 @@ void GenInhertedClass(GenResults& results)
             if (retval == result::fail)
             {
                 results.GetMsgs().emplace_back(
-                    std::format("Cannot create or write to the file {}\n", path));
+                    std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
             }
             else if (retval == result::exists)
             {
@@ -139,7 +139,7 @@ void GenInhertedClass(GenResults& results)
         if (retval == result::fail)
         {
             results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", path));
+                std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
         }
         else if (retval == result::exists)
         {
@@ -155,7 +155,7 @@ void GenInhertedClass(GenResults& results)
         if (retval == result::fail)
         {
             results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", path));
+                std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
         }
         else if (retval == result::exists)
         {

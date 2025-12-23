@@ -90,7 +90,7 @@ public:
     auto GetRubyPanel() -> BasePanel* { return m_rubyPanel; }
     auto GetXrcPanel() -> BasePanel* { return m_xrcPanel; }
 
-    void UpdateLanguagePanels();
+    auto UpdateLanguagePanels() -> void;
 
     auto getTopNotebook() -> wxAuiNotebook* { return m_notebook; }
     auto getDocViewPanel() -> DocViewPanel* { return m_docviewPanel; }
@@ -182,7 +182,7 @@ public:
 
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
-    void CreateToolNode(GenEnum::GenName name);
+    auto CreateToolNode(GenEnum::GenName name) -> void;
 
     auto getFileHistory() -> wxFileHistory& { return m_FileHistory; }
 
@@ -219,13 +219,13 @@ public:
     // This does not use the internal clipboard
     void DuplicateNode(Node* node);
 
-    void setStatusText(const tt_string& txt, int pane = 1);
+    auto setStatusText(const tt_string& txt, int pane = 1) -> void;
     auto OnCreateStatusBar(int number, long style, wxWindowID win_id, const wxString& name)
         -> wxStatusBar* override;
 
-    bool SaveWarning();
-    void UpdateFrame();
-    void OnProjectLoaded();
+    [[nodiscard]] auto SaveWarning() -> bool;
+    auto UpdateFrame() -> void;
+    auto OnProjectLoaded() -> void;
 
     [[nodiscard]] auto isModified() const -> bool { return m_isProject_modified; }
 
@@ -252,16 +252,16 @@ public:
 
     void ToggleBorderFlag(Node* node, int border);
 
-    void PreviewCpp(Node* form_node);
+    auto PreviewCpp(Node* form_node) -> void;
 
     // The following event handlers are used when previewing an XRC form
 
-    void OnXrcKeyUp(wxKeyEvent& event);
-    void OnPreviewWinClose(wxCloseEvent& event);
+    auto OnXrcKeyUp(wxKeyEvent& event) -> void;
+    auto OnPreviewWinClose(wxCloseEvent& event) -> void;
 
     // If the Window is deactivated (switching to another window will do this), this will
     // destroy the preview window.
-    void OnPreviewWinActivate(wxActivateEvent& event);
+    auto OnPreviewWinActivate(wxActivateEvent& event) -> void;
 
     void setPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
     void setPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
@@ -337,10 +337,10 @@ protected:
 
     wxWindow* CreateNoteBook(wxWindow* parent);
 
-    void CreateSplitters();
+    auto CreateSplitters() -> void;
 
-    void UpdateLayoutTools();
-    void UpdateMoveMenu();
+    auto UpdateLayoutTools() -> void;
+    auto UpdateMoveMenu() -> void;
 
     /*
 
@@ -358,7 +358,7 @@ protected:
 
     */
 
-    void UpdateWakaTime(bool FileSavedEvent = false);
+    auto UpdateWakaTime(bool FileSavedEvent = false) -> void;
 
 private:
     // Helper methods for OnGenerateCode

@@ -40,15 +40,15 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
         str << "Comment: " << wxString(msg) << "\n\n";
     }
 
-    str << "File: " << filename << "\n";
-    str << "Function: " << function << "\n";
+    str << "File: " << filename << '\n';
+    str << "Function: " << function << '\n';
     str << "Line: " << line << "\n\n";
     str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
 
     wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
     dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
 
-    auto answer = dlg.ShowModal();
+    const auto answer = dlg.ShowModal();
 
     if (answer == wxID_YES)
     {
@@ -58,21 +58,19 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
     {
         std::quick_exit(2);
     }
-    else
+
+    if (auto* frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
     {
-        if (auto* frame = wxGetApp().getMainFrame(); frame && frame->IsShown())
+        if (wxGetApp().isTestingMenuEnabled())
         {
-            if (wxGetApp().isTestingMenuEnabled())
+            tt_string log_msg = str.ToStdString();
+            if (auto pos = log_msg.find("\n\nPress Yes"); ttwx::is_found(pos))
             {
-                tt_string log_msg = str.ToStdString();
-                if (auto pos = log_msg.find("\n\nPress Yes"); ttwx::is_found(pos))
-                {
-                    log_msg.erase(pos, std::string::npos);
-                }
-                log_msg.Replace("\n\n", "\n", true);
-                log_msg += "\n";
-                MSG_WARNING(log_msg);
+                log_msg.erase(pos, std::string::npos);
             }
+            log_msg.Replace("\n\n", "\n", true);
+            log_msg += '\n';
+            MSG_WARNING(log_msg);
         }
     }
 
@@ -98,15 +96,15 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
         str << "Comment: " << msg << "\n\n";
     }
 
-    str << "File: " << filename << "\n";
-    str << "Function: " << function << "\n";
+    str << "File: " << filename << '\n';
+    str << "Function: " << function << '\n';
     str << "Line: " << line << "\n\n";
     str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
 
     wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
     dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
 
-    auto answer = dlg.ShowModal();
+    const auto answer = dlg.ShowModal();
 
     if (answer == wxID_YES)
     {
@@ -128,7 +126,7 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
                     log_msg.erase(pos, std::string::npos);
                 }
                 log_msg.Replace("\n\n", "\n", true);
-                log_msg += "\n";
+                log_msg += '\n';
                 MSG_WARNING(log_msg);
             }
         }

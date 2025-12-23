@@ -16,7 +16,7 @@
 
 WakaTime::WakaTime()
 {
-    auto result = time(nullptr);
+    const auto result = time(nullptr);
     if (result != -1)
     {
         m_last_heartbeat = static_cast<intmax_t>(result);
@@ -25,9 +25,9 @@ WakaTime::WakaTime()
     SetWakaExePath();
 }
 
-bool WakaTime::IsWakaTimeAvailable()
+auto WakaTime::IsWakaTimeAvailable() -> bool
 {
-    auto result = wxFileName::GetHomeDir();
+    const auto result = wxFileName::GetHomeDir();
     if (result.IsEmpty())
     {
         return false;
@@ -68,9 +68,9 @@ bool WakaTime::IsWakaTimeAvailable()
     return false;
 }
 
-void WakaTime::SetWakaExePath()
+auto WakaTime::SetWakaExePath() -> void
 {
-    auto result = wxFileName::GetHomeDir();
+    const auto result = wxFileName::GetHomeDir();
     ASSERT_MSG(!result.IsEmpty(),
                "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
 
@@ -121,7 +121,7 @@ void WakaTime::SetWakaExePath()
 
 constexpr const intmax_t waka_interval = 120;
 
-void WakaTime::SendHeartbeat(bool FileSavedEvent)
+auto WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent) -> void
 {
     if (!UserPrefs.is_WakaTimeEnabled())
     {
@@ -133,7 +133,7 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
         return;
     }
 
-    auto result = time(nullptr);
+    const auto result = time(nullptr);
     if (result != -1)
     {
         if (FileSavedEvent ||
@@ -158,11 +158,11 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
     }
 }
 
-void WakaTime::ResetHeartbeat()
+auto WakaTime::ResetHeartbeat() -> void
 {
     if (UserPrefs.is_WakaTimeEnabled())
     {
-        auto result = time(nullptr);
+        const auto result = time(nullptr);
 
         if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
         {

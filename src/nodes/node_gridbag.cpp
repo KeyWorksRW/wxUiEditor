@@ -21,7 +21,7 @@ GridBag::GridBag(Node* node_gridbag) : m_gridbag(node_gridbag)
     Initialize();
 }
 
-void GridBag::Initialize()
+auto GridBag::Initialize() -> void
 {
     if (m_gridbag->get_ChildCount())
     {
@@ -32,27 +32,37 @@ void GridBag::Initialize()
             auto col = child->as_int(prop_column);
             auto col_span = child->as_int(prop_colspan);
             if (col_span > 1)
+            {
                 col += (col_span - 1);
+            }
             if (col > m_max_column)
+            {
                 m_max_column = col;
+            }
 
             auto row = child->as_int(prop_row);
             auto row_span = child->as_int(prop_rowspan);
             if (row_span > 1)
+            {
                 row += (row_span - 1);
+            }
             if (row > m_max_row)
+            {
                 m_max_row = row;
+            }
         }
     }
 }
 
-bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
+auto GridBag::InsertNode(Node* gbsizer, Node* new_node) -> bool
 {
     GridBagItem dlg(wxGetMainFrame()->getNavigationPanel());
     dlg.SetGbSizer(gbsizer);
     dlg.SetNewNode(new_node);
     if (dlg.ShowModal() != wxID_OK)
+    {
         return false;
+    }
 
     new_node->set_value(prop_column, dlg.GetColumn());
     new_node->set_value(prop_colspan, dlg.GetColumnSpan());
@@ -165,7 +175,9 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
             while (idx < gbsizer->get_ChildCount())
             {
                 if (gbsizer->get_Child(idx)->as_int(prop_row) != row)
+                {
                     break;
+                }
                 gbsizer->get_Child(idx)->set_value(
                     prop_column, gbsizer->get_Child(idx)->as_int(prop_column) + 1);
                 ++idx;
@@ -178,20 +190,22 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
     return insert_position;
 }
 
-static bool CompareRowNodes(NodeSharedPtr a, NodeSharedPtr b)
+static auto CompareRowNodes(const NodeSharedPtr& a, const NodeSharedPtr& b) -> bool
 {
-    return (a->as_int(prop_row) < b->as_int(prop_row));
+    return a->as_int(prop_row) < b->as_int(prop_row);
 }
 
-static bool CompareColumnNodes(NodeSharedPtr a, NodeSharedPtr b)
+static auto CompareColumnNodes(const NodeSharedPtr& a, const NodeSharedPtr& b) -> bool
 {
-    return (a->as_int(prop_column) < b->as_int(prop_column));
+    return a->as_int(prop_column) < b->as_int(prop_column);
 }
 
-void GridBag::GridBagSort(Node* gridbag)
+auto GridBag::GridBagSort(Node* gridbag) -> void
 {
     if (!gridbag->get_ChildCount())
+    {
         return;  // no children, so nothing to do
+    }
 
     auto& grid_vector = gridbag->get_ChildNodePtrs();
 
@@ -207,7 +221,9 @@ void GridBag::GridBagSort(Node* gridbag)
         {
             ++end;
             if (end >= grid_vector.size())
+            {
                 break;
+            }
         }
 
         std::sort(grid_vector.begin() + idx, grid_vector.begin() + end, CompareColumnNodes);
@@ -216,7 +232,7 @@ void GridBag::GridBagSort(Node* gridbag)
     }
 }
 
-static void SwapNodes(Node* gbSizer, size_t first_pos, size_t second_pos)
+static auto SwapNodes(Node* gbSizer, size_t first_pos, size_t second_pos) -> void
 {
     auto& vector = gbSizer->get_ChildNodePtrs();
     auto temp = std::move(vector[first_pos]);
@@ -224,7 +240,7 @@ static void SwapNodes(Node* gbSizer, size_t first_pos, size_t second_pos)
     vector[second_pos] = std::move(temp);
 }
 
-bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
+auto GridBag::MoveNode(Node* node, MoveDirection where, bool check_only) -> bool
 {
     // This function is completely reliant on the children of the wxGridBagSizer being sorted. That
     // means unless we are just doing a check or know that no action can be taken, then we always
@@ -236,38 +252,42 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
     {
         if (check_only)
         {
-            return (node->as_int(prop_column) > 0);
+            return node->as_int(prop_column) > 0;
         }
-        else if (node->as_int(prop_column) > 0)
+        if (node->as_int(prop_column) > 0)
         {
             MoveLeft(node);
         }
     }
-    else if (where == MoveDirection::Right)
+    if (where == MoveDirection::Right)
     {
         // Unless we decide to enforce a limit, the user can always increase the column number
         if (check_only)
+        {
             return true;
+        }
 
         MoveRight(node);
     }
-    else if (where == MoveDirection::Up)
+    if (where == MoveDirection::Up)
     {
         // This decrease the row, so it's only valid if the row > 0
         if (check_only)
         {
-            return (node->as_int(prop_row) > 0);
+            return node->as_int(prop_row) > 0;
         }
-        else if (node->as_int(prop_row) > 0)
+        if (node->as_int(prop_row) > 0)
         {
             MoveUp(node);
         }
     }
-    else if (where == MoveDirection::Down)
+    if (where == MoveDirection::Down)
     {
         // Unless we decide to enforce a limit, the user can always increase the row
         if (check_only)
+        {
             return true;
+        }
 
         MoveDown(node);
     }
@@ -276,7 +296,7 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
 }
 
 // Decrease column
-void GridBag::MoveLeft(Node* node)
+auto GridBag::MoveLeft(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
     tt_string undo_str;
@@ -326,7 +346,7 @@ void GridBag::MoveLeft(Node* node)
 }
 
 // Increase column
-void GridBag::MoveRight(Node* node)
+auto GridBag::MoveRight(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
 
@@ -376,7 +396,7 @@ void GridBag::MoveRight(Node* node)
 }
 
 // Decrease row
-void GridBag::MoveUp(Node* node)
+auto GridBag::MoveUp(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
 
@@ -455,7 +475,7 @@ void GridBag::MoveUp(Node* node)
 }
 
 // Increase row
-void GridBag::MoveDown(Node* node)
+auto GridBag::MoveDown(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
 

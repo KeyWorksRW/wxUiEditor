@@ -12,7 +12,7 @@
 
 ///////////////////////////////// UndoStack ////////////////////////////////////
 
-void UndoStack::Push(UndoActionPtr ptr)
+auto UndoStack::Push(UndoActionPtr ptr) -> void
 {
     if (!m_locked)
     {
@@ -22,11 +22,11 @@ void UndoStack::Push(UndoActionPtr ptr)
     ptr->Change();
 }
 
-void UndoStack::Undo()
+auto UndoStack::Undo() -> void
 {
     if (m_undo.size())
     {
-        auto command =
+        const auto command =
             m_undo.back();  // make a copy of the share_ptr to increase the reference count
         m_undo.pop_back();
         m_redo.push_back(command);
@@ -34,11 +34,11 @@ void UndoStack::Undo()
     }
 }
 
-void UndoStack::Redo()
+auto UndoStack::Redo() -> void
 {
     if (m_redo.size())
     {
-        auto command =
+        const auto command =
             m_redo.back();  // make a copy of the share_ptr to increase the reference count
         m_redo.pop_back();
         m_undo.push_back(command);
@@ -46,7 +46,7 @@ void UndoStack::Redo()
     }
 }
 
-wxString UndoStack::GetUndoString()
+auto UndoStack::GetUndoString() -> wxString
 {
     wxString str;
     if (m_undo.size())
@@ -56,7 +56,7 @@ wxString UndoStack::GetUndoString()
     return str;
 }
 
-wxString UndoStack::GetRedoString()
+auto UndoStack::GetRedoString() -> wxString
 {
     wxString str;
     if (m_redo.size())
@@ -78,9 +78,9 @@ GroupUndoActions::GroupUndoActions(const tt_string& undo_str, Node* sel_node) :
     }
 }
 
-void GroupUndoActions::Change()
+auto GroupUndoActions::Change() -> void
 {
-    for (auto& iter: m_actions)
+    for (const auto& iter: m_actions)
     {
         iter->Change();
     }
@@ -91,9 +91,9 @@ void GroupUndoActions::Change()
     }
 }
 
-void GroupUndoActions::Revert()
+auto GroupUndoActions::Revert() -> void
 {
-    for (auto& iter: m_actions)
+    for (const auto& iter: m_actions)
     {
         iter->Revert();
     }
@@ -104,10 +104,10 @@ void GroupUndoActions::Revert()
     }
 }
 
-size_t GroupUndoActions::GetMemorySize()
+auto GroupUndoActions::GetMemorySize() -> size_t
 {
     size_t total = sizeof(*this);
-    for (auto& iter: m_actions)
+    for (const auto& iter: m_actions)
     {
         total += iter->GetMemorySize();
     }

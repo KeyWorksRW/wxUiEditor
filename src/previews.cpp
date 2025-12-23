@@ -104,10 +104,12 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 
 // These handlers work with the Preview dialogs and windows.
 
-void MainFrame::OnXrcKeyUp(wxKeyEvent& event)
+auto MainFrame::OnXrcKeyUp(wxKeyEvent& event) -> void
 {
     if (event.GetKeyCode() != WXK_ESCAPE)
+    {
         return;
+    }
 
     if (m_pxrc_dlg)
     {
@@ -116,46 +118,66 @@ void MainFrame::OnXrcKeyUp(wxKeyEvent& event)
     }
 }
 
-void MainFrame::OnPreviewWinClose(wxCloseEvent& /* event */)
+auto MainFrame::OnPreviewWinClose(wxCloseEvent& /* event */) -> void
 {
     if (m_pxrc_win)
+    {
         m_pxrc_win->Destroy();
+    }
     m_pxrc_win = nullptr;
 }
 
-void MainFrame::OnPreviewWinActivate(wxActivateEvent& event)
+auto MainFrame::OnPreviewWinActivate(wxActivateEvent& event) -> void
 {
     if (!event.GetActive())
     {
         if (m_pxrc_win)
+        {
             m_pxrc_win->Destroy();
+        }
         m_pxrc_win = nullptr;
     }
     else
+    {
         event.Skip();
+    }
 }
 
 ////////////////////////////// Top level Preview function //////////////////////////////
 
-void Preview(Node* form_node)
+auto Preview(Node* form_node) -> void
 {
     PreviewSettings dlg_preview_settings(wxGetMainFrame());
     if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
+    {
         dlg_preview_settings.set_type_xrc(true);
+    }
     else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
+    {
         dlg_preview_settings.set_type_both(true);
+    }
     else
+    {
         dlg_preview_settings.set_type_cpp(true);
+    }
 
     if (dlg_preview_settings.ShowModal() == wxID_CANCEL)
+    {
         return;
+    }
 
     if (dlg_preview_settings.is_type_xrc())
+    {
         UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_XRC);
+    }
     else if (dlg_preview_settings.is_type_both())
+    {
         UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_BOTH);
+    }
     else
+    {
         UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_CPP);
+    }
 
     if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
     {
@@ -178,19 +200,19 @@ void Preview(Node* form_node)
         dlg_compare.ShowModal();
         return;
     }
-    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_CPP)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_CPP)
     {
         wxGetMainFrame()->PreviewCpp(form_node);
         return;
     }
-    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
     {
         PreviewXrc(form_node);
         return;
     }
 }
 
-void PreviewXrc(Node* form_node)
+auto PreviewXrc(Node* form_node) -> void
 {
     // Our directory is probably already set correctly, but this will make certain that it is.
     tt_cwd save_cwd(true);
@@ -203,7 +225,9 @@ void PreviewXrc(Node* form_node)
     {
         tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
+        {
             modified_style << '|' << style;
+        }
         form_node->set_value(prop_style, modified_style);
         wxMessageBox(
             "Caption and Close box temporarily added so that you can close the preview dialog.",
@@ -222,7 +246,7 @@ void PreviewXrc(Node* form_node)
     PreviewXrc(doc_str, form_node->get_GenName(), form_node);
 }
 
-void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node)
+auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node) -> void
 {
     pugi::xml_document doc;
     if (auto result = doc.load_string(doc_str.c_str()); !result)

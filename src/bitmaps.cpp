@@ -170,9 +170,9 @@ static const ImageMap png_headers[] = {
 
 };
 
-wxImage GetInternalImage(tt_string_view name)
+auto GetInternalImage(tt_string_view name) -> wxImage
 {
-    for (auto& iter: png_headers)
+    for (const auto& iter: png_headers)
     {
         if (name == iter.name)
         {
@@ -184,7 +184,7 @@ wxImage GetInternalImage(tt_string_view name)
     return LoadHeaderImage(default_png, sizeof(default_png));
 }
 
-wxBitmapBundle GetSvgImage(tt_string_view name, int width, int height)
+auto GetSvgImage(tt_string_view name, int width, int height) -> wxBitmapBundle
 {
     if (auto bndl_function = GetSvgFunction(name); bndl_function)
     {
@@ -194,14 +194,14 @@ wxBitmapBundle GetSvgImage(tt_string_view name, int width, int height)
     return bundle_unknown_svg(width, height);
 }
 
-wxBitmapBundle GetSvgImage(tt_string_view name, const wxSize& size)
+auto GetSvgImage(tt_string_view name, const wxSize& size) -> wxBitmapBundle
 {
     return GetSvgImage(name, size.GetWidth(), size.GetHeight());
 }
 
-wxIcon GetIconImage(tt_string_view name)
+auto GetIconImage(tt_string_view name) -> wxIcon
 {
-    for (auto& iter: png_headers)
+    for (const auto& iter: png_headers)
     {
         if (name.is_sameas(iter.name))
         {
@@ -213,7 +213,7 @@ wxIcon GetIconImage(tt_string_view name)
         }
     }
 
-    auto image = GetInternalImage(name);
+    const auto image = GetInternalImage(name);
     wxIcon icon;
     icon.CopyFromBitmap(image);
     return icon;
@@ -222,7 +222,8 @@ wxIcon GetIconImage(tt_string_view name)
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will
 // be called during project loading, and there could be dozens of calls to the same problem file(s).
 
-wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_string* p_mime_type)
+auto GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_string* p_mime_type)
+    -> wxImage
 {
     wxImage image;
 
@@ -423,7 +424,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
 
 // This is almost identical to GetImageFromArray() -- the only difference is that this one
 // first tries to load the image via the PNG handler.
-wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
+auto LoadHeaderImage(const unsigned char* data, size_t size_data) -> wxImage
 {
     wxMemoryInputStream stream(data, size_data);
     wxImage image;
@@ -439,9 +440,9 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
 
     image.LoadFile(stream);
     return image;
-};
+}
 
-bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
+auto GetAnimationImage(wxAnimation& animation, tt_string_view filename) -> bool
 {
     if (!filename.file_exists())
     {
@@ -619,10 +620,10 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
     return animation.IsOk();
 }
 
-wxAnimation LoadAnimationImage(const unsigned char* data, size_t size_data)
+auto LoadAnimationImage(const unsigned char* data, size_t size_data) -> wxAnimation
 {
     wxMemoryInputStream stream(data, size_data);
     wxAnimation animation;
     animation.Load(stream);
     return animation;
-};
+}

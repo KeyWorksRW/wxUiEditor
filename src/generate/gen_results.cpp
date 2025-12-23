@@ -630,7 +630,7 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     if (result < 0)
     {
         m_msgs.emplace_back(
-            std::format("Error writing file: {}", src_path.make_wxString().utf8_string()));
+            std::format("Error writing file: {}", static_cast<std::string>(src_path)));
     }
     return false;
 }
@@ -747,7 +747,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
         else if (hdr_result < 0)
         {
             m_msgs.emplace_back(
-                std::format("Error writing file: {}", hdr_path.make_wxString().utf8_string()));
+                std::format("Error writing file: {}", static_cast<std::string>(hdr_path)));
         }
     }
 
@@ -809,7 +809,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
         else if (src_result < 0)
         {
             m_msgs.emplace_back(
-                std::format("Error writing file: {}", src_path.make_wxString().utf8_string()));
+                std::format("Error writing file: {}", static_cast<std::string>(src_path)));
         }
     }
 

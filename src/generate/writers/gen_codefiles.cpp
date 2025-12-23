@@ -83,8 +83,8 @@ void GenInhertedClass(GenResults& results)
         auto retval = codegen.GenerateDerivedClass(Project.get_ProjectNode(), form);
         if (retval == result::fail)
         {
-            results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
+            results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
+                                                       static_cast<std::string>(path)));
             continue;
         }
         else if (retval == result::exists)
@@ -103,8 +103,8 @@ void GenInhertedClass(GenResults& results)
             retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
             if (retval == result::fail)
             {
-                results.GetMsgs().emplace_back(
-                    std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
+                results.GetMsgs().emplace_back(std::format(
+                    "Cannot create or write to the file {}\n", static_cast<std::string>(path)));
             }
             else if (retval == result::exists)
             {
@@ -138,8 +138,8 @@ void GenInhertedClass(GenResults& results)
 
         if (retval == result::fail)
         {
-            results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
+            results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
+                                                       static_cast<std::string>(path)));
         }
         else if (retval == result::exists)
         {
@@ -154,8 +154,8 @@ void GenInhertedClass(GenResults& results)
         retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
         if (retval == result::fail)
         {
-            results.GetMsgs().emplace_back(
-                std::format("Cannot create or write to the file {}\n", static_cast<std::string>(path)));
+            results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
+                                                       static_cast<std::string>(path)));
         }
         else if (retval == result::exists)
         {

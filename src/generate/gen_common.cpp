@@ -1612,8 +1612,8 @@ auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
 
     else if (retval < 0)
     {
-        results.GetMsgs().emplace_back(
-            std::format("Cannot create or write to the file {}\n", path));
+        std::string msg = static_cast<std::string>(path);
+        results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n", msg));
     }
     else  // retval == result::exists
     {

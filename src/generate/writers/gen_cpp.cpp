@@ -240,7 +240,8 @@ void GenCppForm(GenData& gen_data, Node* form)
     }
     else if (retval < 0)
     {
-        gen_data.AddResultMsg(std::format("Cannot create or write to the file {}\n", path));
+        std::string msg = static_cast<std::string>(path);
+        gen_data.AddResultMsg(std::format("Cannot create or write to the file {}\n", msg));
     }
     else  // retval == result::exists)
     {
@@ -277,7 +278,8 @@ void GenCppForm(GenData& gen_data, Node* form)
 
     else if (retval < 0)
     {
-        gen_data.AddResultMsg(std::format("Cannot create or write to the file {}\n", path));
+        std::string msg = static_cast<std::string>(path);
+        gen_data.AddResultMsg(std::format("Cannot create or write to the file {}\n", msg));
     }
     else  // retval == result::exists
     {

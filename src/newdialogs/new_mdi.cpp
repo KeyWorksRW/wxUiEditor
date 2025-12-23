@@ -16,7 +16,7 @@
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewMdiForm::OnOK(wxCommandEvent& /* event unused */)
+auto NewMdiForm::OnOK(wxCommandEvent& /* event unused */) -> void
 {
     if (!Validate() || !TransferDataFromWindow())
         return;
@@ -63,7 +63,7 @@ namespace
     };
 }
 
-void NewMdiForm::CreateNode()
+auto NewMdiForm::CreateNode() -> void
 {
     auto folder = NodeCreation.CreateNode(gen_folder, nullptr).first;
     folder->set_value(prop_label, get_folder_name());
@@ -401,7 +401,7 @@ void NewMdiForm::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewMdiForm::VerifyClassName()
+auto NewMdiForm::VerifyClassName() -> void
 {
     // Check all class names to ensure they are unique
     bool has_duplicate = false;
@@ -435,7 +435,7 @@ void NewMdiForm::VerifyClassName()
     }
 }
 
-void NewMdiForm::OnViewType(wxCommandEvent& /* event unused */)
+auto NewMdiForm::OnViewType(wxCommandEvent& /* event unused */) -> void
 {
     auto view_type = m_choice_view_type->GetStringSelection();
     if (view_type == "Image")

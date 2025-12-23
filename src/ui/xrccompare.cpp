@@ -11,8 +11,8 @@
 
 #include "xrccompare.h"
 
-bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+auto XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name) -> bool
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.

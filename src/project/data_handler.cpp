@@ -27,7 +27,7 @@
 
 DataHandler& ProjectData = DataHandler::getInstance();
 
-void DataHandler::Initialize()
+auto DataHandler::Initialize() -> void
 {
     auto* node_data_list = data_list::FindDataList();
     if (!node_data_list)
@@ -58,10 +58,7 @@ void DataHandler::Initialize()
             {
                 break;
             }
-            else
-            {
-                iter = m_embedded_data.begin();
-            }
+            iter = m_embedded_data.begin();
         }
     }
 
@@ -78,7 +75,9 @@ void DataHandler::Initialize()
             {
                 // If the filename is empty, there's nothing to load.
                 if (node->as_string(prop_data_file).empty())
+                {
                     continue;
+                }
 
                 auto& embed = m_embedded_data[node->as_string(prop_var_name)];
 
@@ -87,7 +86,9 @@ void DataHandler::Initialize()
                     // If it's an XML file, then don't continue if xml_condensed has changed
                     if (!node->is_Gen(gen_data_xml) ||
                         node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
+                    {
                         continue;
+                    }
                 }
 
                 // If we get here, the variable name and filename was specified, but either the
@@ -101,7 +102,7 @@ void DataHandler::Initialize()
     rlambda(node_data_list, rlambda);
 }
 
-bool DataHandler::LoadAndCompress(Node* node)
+auto DataHandler::LoadAndCompress(Node* node) -> bool
 {
     ASSERT(node->is_Gen(gen_data_string) || node->is_Gen(gen_data_xml));
     m_embedded_data[node->as_string(prop_var_name)] = {};
@@ -138,15 +139,9 @@ bool DataHandler::LoadAndCompress(Node* node)
         {
             return false;
         }
-        else
-        {
-            embed.filename = project_path;
-        }
+        embed.filename = project_path;
     }
-    else
-    {
-        embed.filename = filename;
-    }
+    embed.filename = filename;
     embed.filename.backslashestoforward();
 
     if (node->is_Gen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
@@ -181,7 +176,7 @@ bool DataHandler::LoadAndCompress(Node* node)
         save_strem.Close();
         size_t org_size = (str.size() & 0xFFFFFFFF);
         size_t compressed_size = memory_stream.TellO();
-        auto read_stream = memory_stream.GetOutputStreamBuffer();
+        auto* read_stream = memory_stream.GetOutputStreamBuffer();
 
         embed.type = 1;
         embed.xml_condensed = true;
@@ -218,7 +213,7 @@ bool DataHandler::LoadAndCompress(Node* node)
             save_strem.Close();
             size_t org_size = (buffer.size() & 0xFFFFFFFF);
             size_t compressed_size = memory_stream.TellO();
-            auto read_stream = memory_stream.GetOutputStreamBuffer();
+            auto* read_stream = memory_stream.GetOutputStreamBuffer();
 
             embed.type = node->is_Gen(gen_data_xml) ? 1 : 0;
             embed.xml_condensed = false;
@@ -247,7 +242,7 @@ bool DataHandler::LoadAndCompress(Node* node)
     return false;
 }
 
-void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
+auto DataHandler::WriteDataConstruction(Code& code, WriteCode* source) -> void
 {
     // Make certain all files have been loaded
     Initialize();
@@ -263,11 +258,15 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             // loaded, so if type is tt::npos then there's no file to load, or it can't be
             // loaded correctly.
             if (embed.type == tt::npos)
+            {
                 continue;
+            }
 
             auto file_time = embed.filename.last_write_time();
             if (file_time == embed.file_time)
+            {
                 continue;
+            }
             ++processed_count;
             if (auto* frame = wxGetMainFrame(); frame)
             {
@@ -399,7 +398,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
     }
 }
 
-void DataHandler::WriteImagePostHeader(WriteCode* header)
+auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
 {
     bool is_namespace_written = false;
 
@@ -443,13 +442,17 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
                                    const std::vector<std::string>& filename_list)
     {
         if (func_list.empty())
+        {
             return;
+        }
 
         size_t max_func_len = 0;
         for (const auto& func: func_list)
         {
             if (func.size() > max_func_len)
+            {
                 max_func_len = func.size();
+            }
         }
         max_func_len += 2;  // Add two spaces before the comment
 

@@ -15,7 +15,8 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "ttwx.h"             // ttwx helpers for wxString path normalization
 
-bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /* property unused */)
+[[nodiscard]] auto ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
+                                                    [[maybe_unused]] wxPGProperty* property) -> bool
 {
     if (m_img_props.type.contains("Art"))
     {
@@ -27,7 +28,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
         }
         return false;
     }
-    else if (m_img_props.type.contains("Embed"))
+    if (m_img_props.type.contains("Embed"))
     {
         tt_cwd cwd(true);
         if (Project.HasValue(prop_art_directory))
@@ -90,7 +91,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* /*
         }
         return false;
     }
-    else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
+    if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
         tt_cwd cwd(true);
         if (Project.HasValue(prop_art_directory))

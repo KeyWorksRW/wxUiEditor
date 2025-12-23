@@ -41,7 +41,7 @@ EmbeddedImage::EmbeddedImage(tt_string_view path, Node* form)
     }
 }
 
-void EmbeddedImage::SetEmbedSize(const wxImage& image)
+auto EmbeddedImage::SetEmbedSize(const wxImage& image) -> void
 {
     m_size = image.GetSize();
 }
@@ -96,7 +96,7 @@ auto EmbeddedImage::get_bundle(wxSize override_size) -> wxBitmapBundle
     return wxBitmapBundle::FromBitmaps(bitmaps);
 }
 
-void EmbeddedImage::UpdateImage(ImageInfo& image_info)
+auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
 {
     if (base_image().type == wxBITMAP_TYPE_SVG)
     {
@@ -140,7 +140,7 @@ void EmbeddedImage::UpdateImage(ImageInfo& image_info)
         save_strem.Close();
         auto compressed_size = static_cast<uint64_t>(memory_stream.TellO());
 
-        auto read_stream = memory_stream.GetOutputStreamBuffer();
+        auto* read_stream = memory_stream.GetOutputStreamBuffer();
         base_image().array_size = (compressed_size | (org_size << 32));
         base_image().array_data.resize(compressed_size);
         memcpy(base_image().array_data.data(), read_stream->GetBufferStart(), compressed_size);
@@ -149,7 +149,9 @@ void EmbeddedImage::UpdateImage(ImageInfo& image_info)
 
     wxFFileInputStream stream(image_info.filename);
     if (!stream.IsOk())
+    {
         return;
+    }
 
     wxImageHandler* handler;
     auto& list = wxImage::GetHandlers();
@@ -177,7 +179,7 @@ void EmbeddedImage::UpdateImage(ImageInfo& image_info)
                     image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
                     image.SaveFile(save_stream, "image/png");
 
-                    auto read_stream = save_stream.GetOutputStreamBuffer();
+                    auto* read_stream = save_stream.GetOutputStreamBuffer();
                     stream.SeekI(0);
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {

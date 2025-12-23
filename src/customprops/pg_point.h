@@ -31,12 +31,12 @@ public:
 
     wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
                            wxVariant& childValue) const override;
-    void RefreshChildren() override;
+    auto RefreshChildren() -> void override;
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
-    void InitValues(tt_string_view value);
-    tt_string CombineValues();
+    auto InitValues(tt_string_view value) -> void;
+    [[nodiscard]] auto CombineValues() -> tt_string;
 
 private:
     wxPoint m_point { wxDefaultPosition };

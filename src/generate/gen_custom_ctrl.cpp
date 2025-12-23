@@ -20,7 +20,7 @@
 
 wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 {
-    tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
+    const tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
     wxWindow* widget = nullptr;
 
     if (parts.size() && parts[0].starts_with("wxStaticText"))

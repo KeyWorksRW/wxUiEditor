@@ -279,7 +279,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("Perl"))
+            if (grid_property->GetLabel().Contains("Perl"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Perl")
                 {
@@ -290,7 +290,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("Python"))
+            if (grid_property->GetLabel().Contains("Python"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Python")
                 {
@@ -301,7 +301,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("Ruby"))
+            if (grid_property->GetLabel().Contains("Ruby"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "Ruby")
                 {
@@ -312,7 +312,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     m_prop_grid->Expand(grid_property);
                 }
             }
-            else if (grid_property->GetLabel().Contains("XRC"))
+            if (grid_property->GetLabel().Contains("XRC"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "XRC")
                 {

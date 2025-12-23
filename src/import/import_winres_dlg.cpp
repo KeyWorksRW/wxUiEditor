@@ -117,7 +117,7 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 
-void MainFrame::OnImportWindowsResource(wxCommandEvent&)
+auto MainFrame::OnImportWindowsResource(wxCommandEvent&) -> void
 {
     ImportWinRes dlg(this);
     if (dlg.ShowModal() == wxID_OK)
@@ -126,7 +126,7 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
     }
 }
 
-void ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */)
+auto ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */) -> void
 {
     if (m_rcFilename.empty())
     {
@@ -145,7 +145,7 @@ void ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */)
     }
 }
 
-void ImportWinRes::ReadRcFile()
+auto ImportWinRes::ReadRcFile() -> void
 {
     m_rcFilename = m_fileResource->GetPath().utf8_string();
     tt_string_vector rc_file;
@@ -180,12 +180,12 @@ void ImportWinRes::ReadRcFile()
     }
 }
 
-void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& /* event unused */)
+auto ImportWinRes::OnResourceFile(wxFileDirPickerEvent& /* event unused */) -> void
 {
     ReadRcFile();
 }
 
-void ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */)
+auto ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */) -> void
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -194,7 +194,7 @@ void ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */)
     }
 }
 
-void ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */)
+auto ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */) -> void
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -203,7 +203,7 @@ void ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */)
     }
 }
 
-void ImportWinRes::OnOk(wxCommandEvent& event)
+auto ImportWinRes::OnOk(wxCommandEvent& event) -> void
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)

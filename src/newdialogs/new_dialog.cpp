@@ -158,12 +158,12 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-void NewDialog::OnInit(wxInitDialogEvent& event)
+auto NewDialog::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewDialog::CreateNode()
+auto NewDialog::CreateNode() -> void
 {
     auto form_node = NodeCreation.CreateNode(gen_wxDialog, nullptr).first;
     ASSERT(form_node);
@@ -243,7 +243,7 @@ void NewDialog::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewDialog::VerifyClassName()
+auto NewDialog::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -257,7 +257,7 @@ void NewDialog::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

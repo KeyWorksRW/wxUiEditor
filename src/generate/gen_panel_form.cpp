@@ -38,11 +38,17 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->is_PropValue(prop_variant, "small"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    }
     else if (node->is_PropValue(prop_variant, "mini"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    }
     else if (node->is_PropValue(prop_variant, "large"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
 
     return widget;
 }
@@ -138,9 +144,13 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
         code.Eol().Str("$name = ");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code += "\"panel\"";
+        }
         code.Str(" unless defined $name;");
 
         code.Eol().Str(
@@ -163,11 +173,17 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         if (code.node()->is_PropValue(prop_variant, "small"))
+        {
             code.Add("wxWINDOW_VARIANT_SMALL");
+        }
         else if (code.node()->is_PropValue(prop_variant, "mini"))
+        {
             code.Add("wxWINDOW_VARIANT_MINI");
+        }
         else
+        {
             code.Add("wxWINDOW_VARIANT_LARGE");
+        }
 
         code.EndFunction();
     }
@@ -176,9 +192,13 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_needed) += "if (!";
         if (code.node()->HasValue(prop_subclass))
+        {
             code.as_string(prop_subclass);
+        }
         else
+        {
             code += "wxPanel";
+        }
         code += "::Create(parent, id, pos, size, style, name))";
         code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
     }
@@ -212,11 +232,15 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
         form = node;
         ASSERT_MSG(form->get_ChildCount(), "Trying to generate code for a wxform with no children.")
         if (!form->get_ChildCount())
+        {
             return true;  // empty dialog, so nothing to do
+        }
         ASSERT_MSG(form->get_Child(0)->is_Sizer() || form->is_Gen(gen_PanelForm),
                    "Expected first child of a wxform to be a sizer.");
         if (form->get_Child(0)->is_Sizer())
+        {
             form_sizer = form->get_Child(0);
+        }
     }
     else
     {

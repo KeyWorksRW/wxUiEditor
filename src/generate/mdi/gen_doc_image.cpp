@@ -76,7 +76,7 @@ void %class%::OnTextChange(wxCommandEvent& event)
 }
 )===";
 
-bool ImageDocGenerator::ConstructionCode(Code& code)
+auto ImageDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -93,9 +93,9 @@ bool ImageDocGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool ImageDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
-                                    std::set<std::string>& /* set_hdr unused */,
-                                    GenLang /* language unused */)
+auto ImageDocGenerator::GetIncludes(Node* [[maybe_unused]] node, std::set<std::string>& set_src,
+                                    std::set<std::string>& [[maybe_unused]] set_hdr,
+                                    GenLang [[maybe_unused]] language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");
     set_src.insert("#include <wx/docview.h>");

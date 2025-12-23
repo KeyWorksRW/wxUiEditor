@@ -142,7 +142,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "undo_cmds.h"               // Undoable command classes derived from UndoAction
 #include "utils.h"                   // Miscellaneous utilities
 
-void NewRibbon::OnInit(wxInitDialogEvent& event)
+auto NewRibbon::OnInit(wxInitDialogEvent& event) -> void
 {
     if (!m_is_form)
     {
@@ -155,7 +155,7 @@ void NewRibbon::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewRibbon::CreateNode()
+auto NewRibbon::CreateNode() -> void
 {
     NodeSharedPtr bar_node;
     if (m_is_form)
@@ -254,7 +254,7 @@ void NewRibbon::CreateNode()
     wxGetFrame().getRibbonPanel()->ActivateBarPage();
 }
 
-bool NewRibbon::IsCreatable(bool notify_user)
+[[nodiscard]] auto NewRibbon::IsCreatable(bool notify_user) -> bool
 {
     auto parent = wxGetFrame().getSelectedNode();
     if (parent->is_Sizer())
@@ -270,10 +270,12 @@ bool NewRibbon::IsCreatable(bool notify_user)
 }
 
 // Called whenever m_classname changes
-void NewRibbon::VerifyClassName()
+auto NewRibbon::VerifyClassName() -> void
 {
     if (!m_is_form)
+    {
         return;
+    }
 
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -287,7 +289,7 @@ void NewRibbon::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

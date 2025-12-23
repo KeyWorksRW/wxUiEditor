@@ -161,7 +161,8 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file
     return doc;
 }
 
-void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
+auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
+    -> void
 {
     auto flag_value = xml_prop.text().as_sview();
     std::string border_value = "";
@@ -298,7 +299,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
     }
 }
 
-void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop)
+auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop) -> void
 {
     if (node->is_Gen(gen_wxListBox) || node->is_Gen(gen_wxCheckListBox))
     {
@@ -545,7 +546,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
 }
 
-GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name, Node* parent)
+[[nodiscard]] auto ImportXML::ConvertToGenName(const std::string& object_name, Node* parent)
+    -> GenEnum::GenName
 {
     auto get_GenName = MapClassName(object_name);
 
@@ -599,7 +601,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name, Nod
 }
 
 // Call this AFTER the node has been hooked up to it's parent to prevent duplicate var_names.
-void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
+auto ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node) -> void
 {
     for (auto& iter: xml_obj.attributes())
     {
@@ -664,7 +666,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
     }
 }
 
-void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent) -> void
 {
     for (auto& iter: xml_obj.children())
     {
@@ -874,7 +876,8 @@ namespace xrc_import
 
 };  // namespace xrc_import
 
-void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+    -> void
 {
     // Mapping the strings to an enum is purely for readability -- it's a lot easier to find
     // the unknown property in a switch statement than it is to find it in a long list of
@@ -1199,7 +1202,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
     }
 }
 
-void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
+auto ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node) -> void
 {
     std::string choices = "";
     for (const auto& iter: xml_obj.children())
@@ -1224,7 +1227,7 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
     }
 }
 
-void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */)
+auto ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */) -> void
 {
     m_notebook_tabs.clear();
     for (const auto& iter: xml_obj.children())
@@ -1239,8 +1242,8 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     }
 }
 
-void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
-                              GenEnum::PropName node_prop)
+auto ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
+                              GenEnum::PropName node_prop) -> void
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
@@ -1313,7 +1316,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
     }
 }
 
-void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
+auto ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node) -> void
 {
     if (xml_obj.attribute("function").empty() || xml_obj.attribute("entry").empty())
     {
@@ -1330,7 +1333,8 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
     }
 }
 
-NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
+[[nodiscard]] auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
+    -> NodeSharedPtr
 {
     auto object_name = xml_obj.attribute("class").as_cstr();
     if (object_name.empty())
@@ -1753,7 +1757,7 @@ auto ImportXML::GetCorrectEventName(std::string_view name) -> std::string_view
     return name;
 }
 
-void ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node)
+auto ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node) -> void
 {
     FontProperty font_info;
     if (auto size_child = xml_obj.child("size"); size_child)

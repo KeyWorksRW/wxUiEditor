@@ -27,7 +27,7 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
         prompt = wxDirSelectorPromptStr;
     }
 
-    auto widget = new wxDirPickerCtrl(
+    auto* widget = new wxDirPickerCtrl(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_initial_path), prompt,
         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 

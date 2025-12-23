@@ -98,14 +98,14 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
             }
         }
     }
-    else if (node_prop->isProp(prop_generate_languages))
+    if (node_prop->isProp(prop_generate_languages))
     {
         ModifyProperty(node_prop, value);
         wxGetFrame().FireProjectUpdatedEvent();
         wxGetFrame().UpdateLanguagePanels();
         return;
     }
-    else if (node_prop->isProp(prop_window_style) && value.empty())
+    if (node_prop->isProp(prop_window_style) && value.empty())
     {
         value = "0";
     }
@@ -141,7 +141,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     {
         value.clear();
     }
-    else if (!value.starts_with("Art"))
+    if (!value.starts_with("Art"))
     {
         const wxString& image_path(parts[IndexImage]);
         auto* embed = ProjectImages.GetEmbeddedImage(image_path.ToStdString());
@@ -155,14 +155,14 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             }
             // If there is an Images List node and it is set to auto add, then fall through
             // to the section below that adds the image to the Images List node.
-            else if ((Project.get_ImagesForm() == nullptr) ||
-                     !Project.get_ImagesForm()->as_bool(prop_auto_add))
+            if ((Project.get_ImagesForm() == nullptr) ||
+                !Project.get_ImagesForm()->as_bool(prop_auto_add))
             {
                 ModifyProperty(node_prop, value);
                 return;
             }
         }
-        else
+        if (embed == nullptr || image_path != embed->base_image().filename)
         {
             // This ensures that all images from a bitmap bundle get added
             ProjectImages.UpdateBundle(&parts, node_prop->getNode());
@@ -351,7 +351,7 @@ namespace
             }
             is_name_changed = true;
         }
-        else if (!access && !name.starts_with("m_"))
+        if (!access && !name.starts_with("m_"))
         {
             name.insert(0, "m_");
             auto final_name = node->get_UniqueName(name.ToStdString());
@@ -376,7 +376,7 @@ namespace
             }
             is_name_changed = true;
         }
-        else if (access && name.starts_with("_"))
+        if (access && name.starts_with("_"))
         {
             name.erase(0, 1);
             auto final_name = node->get_UniqueName(name.ToStdString());
@@ -400,7 +400,7 @@ namespace
             }
             is_name_changed = true;
         }
-        else if (!access && !name.starts_with("@"))
+        if (!access && !name.starts_with("@"))
         {
             name.insert(0, "@");
             auto final_name = node->get_UniqueName(name.ToStdString());

@@ -41,11 +41,17 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->is_PropValue(prop_variant, "small"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    }
     else if (node->is_PropValue(prop_variant, "mini"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    }
     else if (node->is_PropValue(prop_variant, "large"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
 
     return widget;
 }
@@ -246,7 +252,9 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     Node* child_node = form;
     ASSERT_MSG(form->get_ChildCount(), "Trying to generate code for a dialog with no children.")
     if (!form->get_ChildCount())
+    {
         return {};  // empty dialog, so nothing to do
+    }
     ASSERT_MSG(form->get_Child(0)->is_Sizer(), "Expected first child of a dialog to be a sizer.");
     if (form->get_Child(0)->is_Sizer())
     {
@@ -260,8 +268,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
     bool is_scaling_enabled =
-        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size) ? true :
-                                                                                              false;
+        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize &&
         form->as_wxSize(prop_size) == wxDefaultSize && !is_scaling_enabled)

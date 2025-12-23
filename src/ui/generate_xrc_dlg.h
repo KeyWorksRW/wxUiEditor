@@ -26,11 +26,11 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
-        Create(parent, id, title, pos, size, style, name);
+        [[maybe_unused]] auto result = Create(parent, id, title, pos, size, style, name);
     }
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate XRC File(s)",
+    [[nodiscard]] auto Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate XRC File(s)",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr) -> bool;
 
 protected:
 

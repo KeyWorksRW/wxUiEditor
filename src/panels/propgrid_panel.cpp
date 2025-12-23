@@ -209,18 +209,22 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                                                           m_astr_wx_ids);
                     }
                 }
-                else if (propType == type_image || propType == type_animation)
+                if (propType == type_image || propType == type_animation)
                 {
                     m_prop_grid->Expand(pg);
                     if (UserPrefs.is_DarkMode())
+                    {
                         m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#996900"));
+                    }
                     else
+                    {
                         m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
+                    }
 
                     // This causes it to display the bitmap in the image/id property
                     pg->RefreshChildren();
                 }
-                else if (propType == type_string)
+                if (propType == type_string)
                 {
                     if (prop->isProp(prop_class_decoration))
                     {
@@ -241,7 +245,9 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
 
             // Automatically collapse properties that are rarely used
             if (prop_name == prop_unchecked_bitmap)
+            {
                 m_prop_grid->Collapse(pg);
+            }
 
             auto prop_name_iter = map_PropNames.find(prop_name);
             if (prop_name_iter != map_PropNames.end())

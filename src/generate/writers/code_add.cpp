@@ -499,14 +499,16 @@ void Code::AddPublicRubyMembers()
     {
         Indent(1);
         Tab() << "attr_accessor ";
-        for (auto iter = public_members.begin(); iter != public_members.end(); ++iter)
+        bool is_first = true;
+        for (const auto& member: public_members)
         {
-            if (iter != public_members.begin())
+            if (!is_first)
             {
                 *this << ", ";
             }
-            *this << *iter;
+            *this << member;
             CheckLineLength();
+            is_first = false;
         }
         ResetIndent();
         Eol();

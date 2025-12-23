@@ -23,14 +23,17 @@ wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
                         DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
+    {
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
+    }
     else if (node->as_string(prop_theme) == "Generic")
+    {
         widget->SetArtProvider(new wxRibbonAUIArtProvider);
+    }
     else if (node->as_string(prop_theme) == "MSW")
+    {
         widget->SetArtProvider(new wxRibbonMSWArtProvider);
-
-    widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarFormGenerator::OnPageChanged, this);
-
+    }
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -99,22 +102,32 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();

@@ -89,9 +89,9 @@ auto TextDocGenerator::ConstructionCode(Code& code) -> bool
     return false;
 }
 
-auto TextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
-                                   std::set<std::string>& /* set_hdr unused */, GenLang language)
-    -> bool
+auto TextDocGenerator::GetIncludes(Node* [[maybe_unused]] node, std::set<std::string>& set_src,
+                                   std::set<std::string>& [[maybe_unused]] set_hdr,
+                                   GenLang language) -> bool
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {

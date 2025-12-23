@@ -63,7 +63,7 @@ auto SetPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string;
 // Convert a double to a string without needing to switch locales
 auto DoubleToStr(double val) -> tt_string;
 
-auto isPropFlagSet(tt_string_view flag, tt_string_view currentValue) -> bool;
+[[nodiscard]] auto isPropFlagSet(tt_string_view flag, tt_string_view currentValue) -> bool;
 
 auto ConvertToSystemColour(tt_string_view value) -> wxSystemColour;
 
@@ -94,10 +94,11 @@ auto GetSizeInfo(tt_string_view size_description) -> wxSize;
 // Friendly name/wxSTC_WRAP_ constant
 extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppcheck-suppress
 
-auto isConvertibleMime(const tt_string& suffix) -> bool;
+[[nodiscard]] auto isConvertibleMime(const tt_string& suffix) -> bool;
 
 // Checks whether a string is a valid C++ variable name.
-auto isValidVarName(const std::string& str, GenLang language = GEN_LANG_CPLUSPLUS) -> bool;
+[[nodiscard]] auto isValidVarName(const std::string& str, GenLang language = GEN_LANG_CPLUSPLUS)
+    -> bool;
 
 // This takes the class_name of the form, converts it to lowercase, and if the class name
 // ends with Base, the a "_base" suffix is added.
@@ -115,8 +116,8 @@ auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string;
 
 // Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
 // used.
-auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language = GEN_LANG_NONE)
-    -> bool;
+[[nodiscard]] auto isScalingEnabled(Node* node, GenEnum::PropName prop_name,
+                                    GenLang m_language = GEN_LANG_NONE) -> bool;
 
 // Convert the GEN_LANG enum to a string
 auto GenLangToString(GenLang language) -> std::string_view;
@@ -131,19 +132,19 @@ enum class ClassOverrideType : std::uint8_t
     Subclass,  // User specified a subclass
     Generic,   // Use the wxGeneric version of the class
 };
-ClassOverrideType GetClassOverrideType(Node* node);
+auto GetClassOverrideType(Node* node) -> ClassOverrideType;
 
 // This will set the lexer and colors taking into account the user's preferences for dark
 // mode, and specific language colors
-void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
-                  bool add_keywords = true);
+auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
+                  bool add_keywords = true) -> void;
 
 // Call this after creating a wxRibbonBar tool in order to ensure that it has a unique ID/
 void SetUniqueRibbonToolID(Node* node);
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
-auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
-                    size_t compressed_size) -> bool;
+[[nodiscard]] auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
+                                  size_t compressed_size) -> bool;
 
 // Show the Open/Import Project file dialog and return the selected filename.
 // Returns an empty string if the user cancels.

@@ -13,13 +13,16 @@
 
 resForm::resForm() {}
 
-void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
+auto resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
+    -> void
 {
     m_pWinResource = pWinResource;
     tt_string_view line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
     if (end == tt::npos)
+    {
         throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
+    }
 
     bool isDialog = true;
 
@@ -29,7 +32,9 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
         if (line.starts_with("STYLE"))
         {
             if (line.contains("DS_CONTROL"))
+            {
                 isDialog = false;  // This is a panel dialog, typically used by a wizard
+            }
             line = txtfile[curTxtLine].subview();
             break;
         }
@@ -43,7 +48,7 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
         tt_string fullpath;
         fullpath.assignCwd();
         fullpath.append_filename(txtfile.filename().filename());
-#if defined(_WIN32)
+#ifdef _WIN32
         // VSCode File Open dialog can't handle forward slashes on Windows
         fullpath.forwardslashestoback();
 #endif  // _WIN32
@@ -95,7 +100,7 @@ void resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     // derived filenames.
 }
 
-void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
+auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
 {
     tt_string style(txtfile[curTxtLine]);
 
@@ -108,15 +113,21 @@ void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
         {
             tmp = tt::find_nonspace(txtfile[curTxtLine]);
             if (!tmp.empty() && tmp[0] != '/')  // ignore blank lines and comments
+            {
                 break;
+            }
         }
         style += tmp;
     }
 
     if (style.contains("DS_CENTER"))
+    {
         m_form_node->set_value(prop_center, "wxBOTH");
+    }
     if (style.contains("WS_EX_CONTEXTHELP"))
+    {
         m_form_node->set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
+    }
 
     tt_string original_styles(tt::stepover(style));
 
@@ -185,16 +196,20 @@ void resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
+auto resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine) -> void
 {
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         auto line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
+        {
             continue;
+        }
 
         if (line.starts_with("END") || line.starts_with("}"))
+        {
             break;
+        }
 
         auto& control = m_ctrls.emplace_back();
         control.ParseDirective(m_pWinResource, line);
@@ -221,16 +236,18 @@ void resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
+auto resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style) -> void
 {
     tt_string updated_style = m_form_node->as_string(prop_name);
     if (updated_style.size())
+    {
         updated_style << '|';
+    }
     updated_style << style;
     m_form_node->set_value(prop_name, updated_style);
 }
 
-tt_string resForm::ConvertFormID(tt_string_view id)
+[[nodiscard]] auto resForm::ConvertFormID(tt_string_view id) -> tt_string
 {
     id.moveto_nonspace();
     tt_string value;

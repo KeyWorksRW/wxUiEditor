@@ -192,11 +192,17 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         if (code.node()->is_PropValue(prop_variant, "small"))
+        {
             code.Add("wxWINDOW_VARIANT_SMALL");
+        }
         else if (code.node()->is_PropValue(prop_variant, "mini"))
+        {
             code.Add("wxWINDOW_VARIANT_MINI");
+        }
         else
+        {
             code.Add("wxWINDOW_VARIANT_LARGE");
+        }
 
         code.EndFunction();
     }
@@ -223,9 +229,13 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     {
         code.Eol(eol_if_needed) += "if (!";
         if (code.node()->HasValue(prop_subclass))
+        {
             code.as_string(prop_subclass);
+        }
         else
+        {
             code.Class(code.node()->get_DeclName());
+        }
         code += "::Create(";
         if (code.node()->HasValue(prop_subclass_params))
         {
@@ -351,7 +361,9 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
                 {
                     SetChildFocus(iter.get(), SetChildFocus);
                     if (is_focus_set)
+                    {
                         return;
+                    }
                 }
             }
         };
@@ -417,22 +429,32 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();
@@ -491,19 +513,29 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     code.Comma().Str("const wxPoint& pos = ");
 
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();
@@ -526,9 +558,13 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
 
     code.Comma().Str("const wxString &name = ");
     if (node->HasValue(prop_window_name))
+    {
         code.QuotedString(prop_window_name);
+    }
     else
+    {
         code.Str("wxFrameNameStr");
+    }
 
     // Extra eols at end to force space before "Protected:" section
     code.EndFunction().Eol().Eol();
@@ -558,7 +594,9 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
         auto variant = event->GetPropertyValue();
         tt_string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
+        {
             return true;
+        }
 
         if (newValue.contains("wxFRAME_EX_CONTEXTHELP"))
         {

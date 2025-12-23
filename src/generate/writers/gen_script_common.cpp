@@ -34,7 +34,7 @@ namespace ScriptCommon
         }
         catch (const std::system_error& err)
         {
-#if defined(_DEBUG)
+#ifdef _DEBUG
             MSG_ERROR(err.what());
 #else
             wxMessageDialog dlg_error(nullptr, wxString::FromUTF8(err.what()),

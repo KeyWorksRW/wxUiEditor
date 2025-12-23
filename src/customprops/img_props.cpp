@@ -12,7 +12,7 @@
 #include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"           // Utility functions that work with properties
 
-void ImageProperties::InitValues(tt_string_view value)
+auto ImageProperties::InitValues(tt_string_view value) -> void
 {
     tt_view_vector mstr(value, ';', tt::TRIM::both);
 
@@ -64,7 +64,7 @@ void ImageProperties::InitValues(tt_string_view value)
     }
 }
 
-tt_string ImageProperties::CombineValues()
+auto ImageProperties::CombineValues() -> tt_string
 {
     tt_string value;
     image.backslashestoforward();
@@ -81,7 +81,7 @@ tt_string ImageProperties::CombineValues()
     return value;
 }
 
-wxString ImageProperties::CombineDefaultSize()
+auto ImageProperties::CombineDefaultSize() -> wxString
 {
     wxString value;
     value << m_size.x << ',' << m_size.y;

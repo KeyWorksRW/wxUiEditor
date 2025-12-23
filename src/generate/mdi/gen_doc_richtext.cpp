@@ -76,7 +76,7 @@ void %class%::OnTextChange(wxCommandEvent& event)
 }
 )===";
 
-bool RichTextDocGenerator::ConstructionCode(Code& code)
+auto RichTextDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -93,9 +93,9 @@ bool RichTextDocGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool RichTextDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
-                                       std::set<std::string>& /* set_hdr unused */,
-                                       GenLang /* language unused */)
+auto RichTextDocGenerator::GetIncludes(Node* [[maybe_unused]] node, std::set<std::string>& set_src,
+                                       std::set<std::string>& [[maybe_unused]] set_hdr,
+                                       GenLang [[maybe_unused]] language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");
     set_src.insert("#include <wx/docview.h>");

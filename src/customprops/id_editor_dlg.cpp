@@ -213,7 +213,7 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
 
-void IDEditorDlg::OnInit(wxInitDialogEvent& event)
+auto IDEditorDlg::OnInit(wxInitDialogEvent& event) -> void
 {
     m_standard_ids->Append(list_wx_ids);
 
@@ -294,7 +294,7 @@ void IDEditorDlg::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void IDEditorDlg::OnStdChange(wxCommandEvent& /* event unused */)
+auto IDEditorDlg::OnStdChange([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_result = m_standard_ids->GetStringSelection();
     m_final_id->SetLabel(m_result);
@@ -317,7 +317,7 @@ void IDEditorDlg::OnStdChange(wxCommandEvent& /* event unused */)
     Fit();
 }
 
-void IDEditorDlg::OnStandardID(wxCommandEvent& event)
+auto IDEditorDlg::OnStandardID(wxCommandEvent& event) -> void
 {
     m_radioBtn_Custom->SetValue(false);
     m_cstm_id_box->GetStaticBox()->Enable(false);
@@ -328,7 +328,7 @@ void IDEditorDlg::OnStandardID(wxCommandEvent& event)
     OnComboSelect(event);
 }
 
-void IDEditorDlg::OnCustomID(wxCommandEvent& event)
+auto IDEditorDlg::OnCustomID(wxCommandEvent& event) -> void
 {
     m_radioBtn_Custom->SetValue(true);
     m_cstm_id_box->GetStaticBox()->Enable(true);
@@ -342,7 +342,7 @@ void IDEditorDlg::OnCustomID(wxCommandEvent& event)
     OnComboSelect(event);
 }
 
-void IDEditorDlg::OnComboSelect(wxCommandEvent& /* event unused */)
+auto IDEditorDlg::OnComboSelect([[maybe_unused]] wxCommandEvent& event) -> void
 {
     wxString complete_id;
     if (m_radioBtn_Custom->GetValue())
@@ -372,7 +372,7 @@ void IDEditorDlg::OnComboSelect(wxCommandEvent& /* event unused */)
     m_final_id->SetLabel(complete_id);
 }
 
-void IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event)
+auto IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event) -> void
 {
     m_result.clear();
     if (m_radioBtn_Standard->GetValue())
@@ -402,7 +402,7 @@ void IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event)
     event.Skip();
 }
 
-bool IDEditorDlg::SelectPrefixSuffix(Node* node)
+[[nodiscard]] auto IDEditorDlg::SelectPrefixSuffix(Node* node) -> bool
 {
     if (node->HasProp(prop_id))
     {

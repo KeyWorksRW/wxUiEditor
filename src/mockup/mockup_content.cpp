@@ -37,7 +37,7 @@ MockupContent::MockupContent(wxWindow* parent, MockupParent* mockupParent) : wxP
     m_mockupParent = mockupParent;
 }
 
-void MockupContent::RemoveNodes()
+auto MockupContent::RemoveNodes() -> void
 {
     m_obj_node_pair.clear();
     m_node_obj_pair.clear();
@@ -53,7 +53,7 @@ void MockupContent::RemoveNodes()
 }
 
 // This is called by MockupParent in order to create all child components
-void MockupContent::CreateAllGenerators()
+auto MockupContent::CreateAllGenerators() -> void
 {
     wxWindowUpdateLocker lock(this);
 
@@ -181,8 +181,8 @@ void MockupContent::CreateAllGenerators()
     }
 }
 
-void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object,
-                                   wxBoxSizer* parent_sizer)
+auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object,
+                                   wxBoxSizer* parent_sizer) -> void
 {
     ASSERT_MSG(node->get_Generator(), tt_string()
                                           << "Missing component for " << node->get_DeclName());
@@ -404,9 +404,13 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         ASSERT_MSG(!node->as_string(prop_maximum_size).contains("d", tt::CASE::either),
                    "Maximum size should not contain 'd' for dialog units");
         if (node->as_string(prop_maximum_size).contains("d", tt::CASE::either))
+        {
             window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
+        }
         else
+        {
             window->SetMaxSize(convert_win->FromDIP(maxsize));
+        }
     }
 
     if (auto& variant = node->as_string(prop_variant); variant.size() && variant != "normal")
@@ -455,20 +459,22 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
     }
 }
 
-Node* MockupContent::getNode(wxObject* wxobject)
+[[nodiscard]] auto MockupContent::getNode(wxObject* wxobject) -> Node*
 {
     if (auto node = m_obj_node_pair.find(wxobject); node != m_obj_node_pair.end())
+    {
         return node->second;
-    else
-        return nullptr;
+    }
+    return nullptr;
 }
 
-wxObject* MockupContent::Get_wxObject(Node* node)
+[[nodiscard]] auto MockupContent::Get_wxObject(Node* node) -> wxObject*
 {
     if (auto wxobject = m_node_obj_pair.find(node); wxobject != m_node_obj_pair.end())
+    {
         return wxobject->second;
-    else
-        return nullptr;
+    }
+    return nullptr;
 }
 
 // clang-format off
@@ -492,7 +498,7 @@ static const GenEnum::GenName lst_select_nodes[] = {
 };
 // clang-format on
 
-void MockupContent::OnNodeSelected(Node* node)
+auto MockupContent::OnNodeSelected(Node* node) -> void
 {
     if (!node || node->is_Form())
         return;
@@ -534,12 +540,14 @@ void MockupContent::OnNodeSelected(Node* node)
         return;
     }
 
-    else if (node->is_Gen(gen_BookPage) || node->is_Gen(gen_PageCtrl))
+    if (node->is_Gen(gen_BookPage) || node->is_Gen(gen_PageCtrl))
     {
         ASSERT(node->get_Parent());
         auto parent = node->get_Parent();
         if (!parent)
+        {
             return;
+        }
 
         size_t sel_pos = 0;
 
@@ -709,7 +717,7 @@ void MockupContent::OnNodeSelected(Node* node)
     }
 }
 
-void MockupContent::SelectNode(wxObject* wxobject)
+auto MockupContent::SelectNode(wxObject* wxobject) -> void
 {
     if (auto result = m_obj_node_pair.find(wxobject); result != m_obj_node_pair.end())
     {
@@ -717,7 +725,7 @@ void MockupContent::SelectNode(wxObject* wxobject)
     }
 }
 
-void MockupContent::ResetWindowVariant()
+auto MockupContent::ResetWindowVariant() -> void
 {
     // Essentially this is the opposite of wxWindowBase::DoSetWindowVariant found in
     // wxWidgets/src/common/wincmn.cpp -- this just multiplies rather than divides if smaller, or
@@ -753,7 +761,7 @@ void MockupContent::ResetWindowVariant()
     m_variant = wxWINDOW_VARIANT_NORMAL;
 }
 
-void MockupContent::MockupSetWindowVariant(wxWindowVariant variant)
+auto MockupContent::MockupSetWindowVariant(wxWindowVariant variant) -> void
 {
     // adjust the font height to correspond to our new variant (notice that
     // we're only called if something really changed)

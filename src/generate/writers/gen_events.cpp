@@ -36,9 +36,11 @@ constexpr auto prop_sheet_events =
 
 void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    if (auto generator = event->getNode()->get_Generator();
+    if (auto* generator = event->getNode()->get_Generator();
         !generator || !generator->isLanguageVersionSupported(code.get_language()).first)
+    {
         return;  // Current language does not support this node
+    }
 
     Code handler(event->getNode(), code.get_language());
     tt_string event_code;
@@ -66,7 +68,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
 
     if (event_code.empty() || event_code == "none")
+    {
         return;
+    }
 
     // This is what we normally use if an ID is needed. However, a C++ lambda needs to put the
     // ID on it's own line, so we use a string for this to allow the lambda processing code to
@@ -112,7 +116,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         if (code.is_cpp())
         {
             if (event_code[0] != '&' && handler.is_cpp())
+            {
                 handler << '&';
+            }
         }
         else
         {
@@ -127,7 +133,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     else
     {
         tt_string event_name = event->get_name();
-        if (auto result = prop_sheet_events.find(event_name); result != prop_sheet_events.end())
+        if (const auto* result = prop_sheet_events.find(event_name);
+            result != prop_sheet_events.end())
         {
             event_name = "wxEVT_BUTTON";
         }
@@ -144,9 +151,13 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             handler.Add(event_name);
             if (code.is_cpp())
+            {
                 handler << ", &" << class_name << "::" << event_code << ", this";
+            }
             else if (code.is_python())
+            {
                 handler.Add(", self.") << event_code;
+            }
         }
         else if (code.is_perl())
         {
@@ -167,9 +178,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             // remove "wx" prefix, make the rest of the name lower case
             event_name.erase(0, 2);
             std::transform(event_name.begin(), event_name.end(), event_name.begin(),
-                           [](unsigned char c)
+                           [](unsigned char chr)
                            {
-                               return std::tolower(c);
+                               return std::tolower(chr);
                            });
 
             if (event->getNode()->is_Form())
@@ -215,7 +226,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
 
     // With lambdas, line breaks have already been added
-    code.EnableAutoLineBreak(is_lambda ? false : true);
+    code.EnableAutoLineBreak(!is_lambda);
 
     // Do *NOT* assume that code.node() is the same as event->getNode()!
 
@@ -255,8 +266,8 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code << "Bind(" << handler.GetCode() << comma;
             if (event->getNode()->as_string(prop_id) != "wxID_ANY")
             {
-                auto id = event->getNode()->get_PropId();
-                code.AddIfPython("id=").Add(id).EndFunction();
+                const auto& id_value = event->getNode()->get_PropId();
+                code.AddIfPython("id=").Add(id_value).EndFunction();
             }
             else
             {
@@ -274,7 +285,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     else if (event->getNode()->is_Gen(gen_ribbonTool))
     {
         if (code.is_python())
+        {
             code.Add("self.");
+        }
         if (!event->getNode()->HasValue(prop_id))
         {
             code.AddComment(
@@ -308,7 +321,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         {
             code.AddIfPython("self.");
             code << "Bind(" << handler.GetCode();
-            if (auto result = prop_sheet_events.find(event->get_name());
+            if (const auto* result = prop_sheet_events.find(event->get_name());
                 result != prop_sheet_events.end())
             {
                 code.Comma() << result->second;
@@ -318,7 +331,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         else if (code.is_ruby())
         {
             code << handler;
-            if (auto result = prop_sheet_events.find(event->get_name());
+            if (const auto* result = prop_sheet_events.find(event->get_name());
                 result != prop_sheet_events.end())
             {
                 code.Comma() << result->second;
@@ -354,14 +367,14 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
-    auto propName = node->get_PropPtr(prop_class_name);
+    auto* propName = node->get_PropPtr(prop_class_name);
     if (!propName)
     {
         FAIL_MSG(tt_string("Missing \"name\" property in ") << node->get_DeclName() << " class.");
         return;
     }
 
-    auto& class_name = propName->as_string();
+    const auto& class_name = propName->as_string();
     if (class_name.empty())
     {
         FAIL_MSG("Property name cannot be null");
@@ -370,26 +383,25 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 
     Code code(node, m_language);
 
-    auto sort_by_event_name = [](NodeEvent* a, NodeEvent* b)
+    auto sort_by_event_name = [](NodeEvent* lhs, NodeEvent* rhs)
     {
         // If the event names are the same, then sort by the event handler name
-        if (a->get_name() == b->get_name())
+        if (lhs->get_name() == rhs->get_name())
         {
             // If the event handler names are the same, then sort by the property id
-            if (a->get_value() == b->get_value())
+            if (lhs->get_value() == rhs->get_value())
             {
                 // If the property id's are the same, then sort by the node's var_name
-                if (a->getNode()->as_string(prop_id) == b->getNode()->as_string(prop_id))
-                    return (a->getNode()->as_string(prop_var_name) <
-                            b->getNode()->as_string(prop_var_name));
-                else
-                    return (a->getNode()->as_string(prop_id) < b->getNode()->as_string(prop_id));
+                if (lhs->getNode()->as_string(prop_id) == rhs->getNode()->as_string(prop_id))
+                {
+                    return (lhs->getNode()->as_string(prop_var_name) <
+                            rhs->getNode()->as_string(prop_var_name));
+                }
+                return (lhs->getNode()->as_string(prop_id) < rhs->getNode()->as_string(prop_id));
             }
-            else
-                return (a->get_value() < b->get_value());
+            return (lhs->get_value() < rhs->get_value());
         }
-        else
-            return (a->get_name() < b->get_name());
+        return (lhs->get_name() < rhs->get_name());
     };
 
     // Sort events by event name
@@ -401,7 +413,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 
     for (auto& event: events)
     {
-        if (auto generator = event->getNode()->get_Generator(); generator)
+        if (auto* generator = event->getNode()->get_Generator(); generator)
         {
             code.clear();
             if (generator->GenEvent(code, event, class_name); code.size())
@@ -460,12 +472,14 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         code.Eol();
         m_source->writeLine(code);
         if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
+        {
             m_source->Indent();
+        }
 
         for (auto& conditional_event: conditional_events)
         {
             code.clear();
-            if (auto generator = conditional_event->getNode()->get_Generator(); generator)
+            if (auto* generator = conditional_event->getNode()->get_Generator(); generator)
             {
                 if (generator->GenEvent(code, conditional_event, class_name); code.size())
                 {

@@ -86,8 +86,8 @@ auto TextViewGenerator::ConstructionCode(Code& code) -> bool
     return true;
 }
 
-bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                    std::set<std::string>& set_hdr, GenLang language)
+auto TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang language) -> bool
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
@@ -96,7 +96,7 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
         set_hdr.insert("#include <wx/textctrl.h>");
 
         auto* parent = node->get_Parent();
-        for (auto& iter: parent->get_ChildNodePtrs())
+        for (const auto& iter: parent->get_ChildNodePtrs())
         {
             if (iter.get() == node)
             {

@@ -142,12 +142,12 @@ bool NewWizard::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewWizard::OnInit(wxInitDialogEvent& event)
+auto NewWizard::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewWizard::CreateNode()
+auto NewWizard::CreateNode() -> void
 {
     auto new_node = NodeCreation.CreateNode(gen_wxWizard, nullptr).first;
     ASSERT(new_node);
@@ -207,7 +207,7 @@ void NewWizard::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewWizard::VerifyClassName()
+auto NewWizard::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -221,7 +221,7 @@ void NewWizard::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

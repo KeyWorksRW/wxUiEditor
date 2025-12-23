@@ -73,11 +73,17 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->is_PropValue(prop_variant, "small"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    }
     else if (node->is_PropValue(prop_variant, "mini"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    }
     else if (node->is_PropValue(prop_variant, "large"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
 
     return widget;
 }
@@ -116,9 +122,13 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
 
         code.Eol(eol_if_needed) += "if (!";
         if (code.node()->HasValue(prop_subclass))
+        {
             code.as_string(prop_subclass);
+        }
         else
+        {
             code += "wxPropertySheetDialog";
+        }
         code += "::Create(parent, id, title, pos, size, style, name))";
         code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
 

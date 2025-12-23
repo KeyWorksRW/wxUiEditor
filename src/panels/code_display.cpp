@@ -134,7 +134,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         OnEmbedImageSelected(node);
         return;
     }
-    else if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonButton))
+    if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonButton))
     {
         OnRibbonToolSelected(node);
         return;
@@ -191,7 +191,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
             }
         }
     }
-    else if (m_panel_type == GEN_LANG_XRC)
+    if (m_panel_type == GEN_LANG_XRC)
     {
         tt_string search("name=\"");
         if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
@@ -287,14 +287,18 @@ void CodeDisplay::OnRibbonToolSelected(Node* node)
         {
             search << '"' << node->as_string(prop_label) << '"';
         }
-        else if (parent->is_Gen(gen_wxRibbonToolBar))
+        if (parent->is_Gen(gen_wxRibbonToolBar))
         {
             search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id)
                    << ",";
             if (m_panel_type == GEN_LANG_PYTHON)
+            {
                 search.Replace("->", ".");
-            else if (m_panel_type == GEN_LANG_RUBY)
+            }
+            if (m_panel_type == GEN_LANG_RUBY)
+            {
                 search.Replace("->AddTool(", ".add_tool($");
+            }
         }
     }
 

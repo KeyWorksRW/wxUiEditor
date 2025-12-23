@@ -26,9 +26,9 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (tt::contains(node->as_string(prop_animation), ".ani", tt::CASE::either))
     {
-        auto widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                                 wxNullAnimation, DlgPoint(node, prop_pos),
-                                                 DlgSize(node, prop_size), GetStyleInt(node));
+        auto* widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                                  wxNullAnimation, DlgPoint(node, prop_pos),
+                                                  DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
         if (auto prop = node->get_PropPtr(prop_animation); prop)
             prop->as_animation(&animation);
@@ -43,9 +43,9 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
-                                          DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                          GetStyleInt(node));
+        auto* widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                           wxNullAnimation, DlgPoint(node, prop_pos),
+                                           DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
         if (auto prop = node->get_PropPtr(prop_animation); prop)
             prop->as_animation(&animation);

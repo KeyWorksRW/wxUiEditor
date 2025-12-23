@@ -57,7 +57,7 @@ bool TextE%class%ditView::OnClose(bool delete_window)
 }
 )===";
 
-bool ScintillaViewGenerator::ConstructionCode(Code& code)
+auto ScintillaViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
@@ -74,19 +74,21 @@ bool ScintillaViewGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool ScintillaViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                         std::set<std::string>& /* set_hdr */,
-                                         GenLang /* language */)
+auto ScintillaViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& [[maybe_unused]] set_hdr,
+                                         GenLang [[maybe_unused]] language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");
     set_src.insert("#include <wx/docview.h>");
     set_src.insert("#include <wx/textctrl.h>");
 
-    auto parent = node->get_Parent();
-    for (auto& iter: parent->get_ChildNodePtrs())
+    auto* parent = node->get_Parent();
+    for (const auto& iter: parent->get_ChildNodePtrs())
     {
         if (iter.get() == node)
+        {
             continue;
+        }
         if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
         {
             tt_string hdr_file = iter->as_string(prop_base_file);
@@ -128,7 +130,7 @@ private:
 };
 )===";
 
-bool ScintillaViewGenerator::HeaderCode(Code& code)
+auto ScintillaViewGenerator::HeaderCode(Code& code) -> bool
 {
     tt_string_vector lines;
     lines.ReadString(txt_ScintillaViewHdrBlock);

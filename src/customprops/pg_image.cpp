@@ -106,7 +106,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     Item(IndexSize)->SetHelpString("Default size -- ignored unless it's an SVG or ART file.");
 }
 
-void PropertyGrid_Image::RefreshChildren()
+auto PropertyGrid_Image::RefreshChildren() -> void
 {
     wxString value = m_value;
     if (value.size())
@@ -201,7 +201,7 @@ void PropertyGrid_Image::RefreshChildren()
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
 }
 
-void PropertyGrid_Image::SetAutoComplete()
+auto PropertyGrid_Image::SetAutoComplete() -> void
 {
     wxArrayString array_art_ids;
     if (m_img_props.type == "Art")

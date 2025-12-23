@@ -15,8 +15,8 @@
 
 #include "generate_xrc_dlg.h"
 
-bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+auto GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name) -> bool
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
@@ -114,7 +114,7 @@ bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
 #include "project_handler.h"  // ProjectHandler class
 
-void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
+auto GenerateXrcDlg::OnInit(wxInitDialogEvent& event) -> void
 {
     if (Project.HasValue(prop_combined_xrc_file))
     {
@@ -149,7 +149,7 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void GenerateXrcDlg::OnCombinedFile(wxCommandEvent& /* event unused */)
+auto GenerateXrcDlg::OnCombinedFile(wxCommandEvent& /* event unused */) -> void
 {
     if (m_radio_combined->GetValue())
     {
@@ -157,13 +157,15 @@ void GenerateXrcDlg::OnCombinedFile(wxCommandEvent& /* event unused */)
         m_separate_box->GetStaticBox()->Enable(false);
         m_combined_box->GetStaticBox()->Enable(true);
 
-        auto btn = FindWindowById(wxID_SAVE);
+        auto* btn = FindWindowById(wxID_SAVE);
         if (btn)
+        {
             btn->Enable(m_filename.size() > 0);
+        }
     }
 }
 
-void GenerateXrcDlg::OnSeparateFiles(wxCommandEvent& /* event unused */)
+auto GenerateXrcDlg::OnSeparateFiles(wxCommandEvent& /* event unused */) -> void
 {
     if (m_radio_combined->GetValue())
     {
@@ -171,32 +173,38 @@ void GenerateXrcDlg::OnSeparateFiles(wxCommandEvent& /* event unused */)
         m_combined_box->GetStaticBox()->Enable(false);
         m_separate_box->GetStaticBox()->Enable(true);
 
-        auto btn = FindWindowById(wxID_SAVE);
+        auto* btn = FindWindowById(wxID_SAVE);
         if (btn)
+        {
             btn->Enable(m_listbox->GetCount() > 0);
+        }
     }
 }
 
-void GenerateXrcDlg::OnCombinedFilenameChanged(wxFileDirPickerEvent& /* event unused */)
+auto GenerateXrcDlg::OnCombinedFilenameChanged(wxFileDirPickerEvent& /* event unused */) -> void
 {
     m_filename = m_filePicker->GetPath();
-    auto btn = FindWindowById(wxID_SAVE);
+    auto* btn = FindWindowById(wxID_SAVE);
     if (btn)
+    {
         btn->Enable(m_filename.size() > 0);
+    }
 }
 
-void GenerateXrcDlg::OnSave(wxCommandEvent& event)
+auto GenerateXrcDlg::OnSave(wxCommandEvent& event) -> void
 {
     if (!Validate() || !TransferDataFromWindow())
+    {
         return;
+    }
 
     if (IsModal())
-        EndModal(wxID_OK);
-    else
     {
-        SetReturnCode(wxID_OK);
-        Show(false);
+        EndModal(wxID_OK);
     }
+
+    SetReturnCode(wxID_OK);
+    Show(false);
 
     event.Skip();  // This must be called for wxPersistenceManager to work
 }

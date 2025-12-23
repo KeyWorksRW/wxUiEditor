@@ -19,14 +19,18 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = 0;
     if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))
+    {
         style_value |= wxALIGN_RIGHT;
+    }
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                 node->as_wxString(prop_label), DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), style_value | GetStyleInt(node));
+    auto* widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                  node->as_wxString(prop_label), DlgPoint(node, prop_pos),
+                                  DlgSize(node, prop_size), style_value | GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
+    {
         widget->SetValue(true);
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -110,17 +114,23 @@ wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = wxCHK_3STATE | GetStyleInt(node);
 
-    auto widget =
+    auto* widget =
         new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value);
 
     auto& state = node->as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")
+    {
         widget->Set3StateValue(wxCHK_UNCHECKED);
+    }
     else if (state == "wxCHK_CHECKED")
+    {
         widget->Set3StateValue(wxCHK_CHECKED);
+    }
     else
+    {
         widget->Set3StateValue(wxCHK_UNDETERMINED);
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

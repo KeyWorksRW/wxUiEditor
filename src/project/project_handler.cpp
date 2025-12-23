@@ -55,7 +55,7 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     ProjectData.Clear();
 }
 
-void ProjectHandler::set_ProjectPath(const wxFileName* path)
+auto ProjectHandler::set_ProjectPath(const wxFileName* path) -> void
 {
     m_project_path->Assign(*path);
 
@@ -63,7 +63,7 @@ void ProjectHandler::set_ProjectPath(const wxFileName* path)
     m_art_path->Clear();
 }
 
-void ProjectHandler::set_ProjectFile(std::string_view file)
+auto ProjectHandler::set_ProjectFile(std::string_view file) -> void
 {
     ASSERT(m_project_path);
     m_project_path->Assign(wxString(file));
@@ -83,12 +83,12 @@ auto ProjectHandler::get_ProjectPath() const -> tt_string
     return m_project_path->GetPath().utf8_string();
 }
 
-void ProjectHandler::ChangeDir() const
+auto ProjectHandler::ChangeDir() const -> void
 {
     m_project_path->SetCwd();
 }
 
-void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
+auto ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start) -> void
 {
     if (!node_start)
     {
@@ -114,7 +114,7 @@ void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
     }
 }
 
-void ProjectHandler::FixupDuplicatedNode(Node* new_node)
+auto ProjectHandler::FixupDuplicatedNode(Node* new_node) -> void
 {
     std::set<std::string_view> base_classnames;
     std::set<std::string_view> derived_classnames;

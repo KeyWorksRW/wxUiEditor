@@ -49,7 +49,7 @@ HaskellCodeGenerator::HaskellCodeGenerator(Node* form_node) :
 {
 }
 
-void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+auto HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type) -> void
 {
     Code code(m_form_node, GEN_LANG_HASKELL);
 
@@ -83,7 +83,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     if (m_panel_type != NOT_PANEL)
     {
         m_source->writeLine("-- The following comment block is only displayed in a _DEBUG build, "
-                            "or when written to a file.\n\n");
+                            "or when written to a file.\\n\\n");
     }
 #endif  // _DEBUG
     {
@@ -103,7 +103,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         {
             // gen->GetImports(node, imports);
         }
-        for (auto& child: node->get_ChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
             GatherImportModules(child.get(), GatherImportModules);
         }
@@ -123,11 +123,11 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     int id_value = wxID_HIGHEST;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
         m_source->writeLine(tt_string() << "local " << iter << " = " << id_value++);
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
         if (tt::contains(iter, " wx"))
         {
@@ -149,7 +149,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         // TODO: [Randalphwa - 07-13-2023] Need to figure out how to handle images in wxLua.
     }
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -159,7 +159,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->Indent();
 
         id_value = wxID_HIGHEST;
-        for (auto& iter: m_set_enum_ids)
+        for (const auto& iter: m_set_enum_ids)
         {
             m_source->writeLine(tt_string() << '@' << iter << id_value++);
         }
@@ -195,7 +195,9 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 
@@ -220,7 +222,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         m_source->writeLine("# Event handlers");
         GenSrcEventBinding(m_form_node, m_events);
 
-        m_source->writeLine("\tend", indent::none);
+        m_source->writeLine("\\tend", indent::none);
         m_source->SetLastLineBlank();
 
         m_source->ResetIndent();
@@ -231,7 +233,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     else
     {
         m_source->ResetIndent();
-        m_source->writeLine("\t}", indent::none);
+        m_source->writeLine("\\t}", indent::none);
     }
 
     if (m_form_node->is_Gen(gen_wxWizard))
@@ -244,7 +246,7 @@ void HaskellCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_source->writeLine("}\n\n", indent::none);
+    m_source->writeLine("}\\n\\n", indent::none);
 
     m_header->ResetIndent();
 

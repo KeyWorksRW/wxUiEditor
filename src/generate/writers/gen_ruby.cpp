@@ -75,7 +75,7 @@ end
 
 // clang-format on
 
-#if defined(_DEBUG)
+#ifdef _DEBUG
 // clang-format off
 static const std::vector<tt_string> disable_list = {
     "Metrics/MethodLength",
@@ -107,7 +107,7 @@ auto RubyCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set
 
 auto RubyCodeGenerator::WriteSourceHeader() -> void
 {
-#if !defined(_DEBUG)
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #else
     if (m_panel_type != PANEL_PAGE::NOT_PANEL)
@@ -395,14 +395,14 @@ auto RubyCodeGenerator::WriteEmbeddedImages(Code& code) -> void
 
 auto RubyCodeGenerator::WriteRuboCopFooter() -> void
 {
-#if !defined(_DEBUG)
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #endif  // _DEBUG
     {
         if (Project.as_bool(prop_disable_rubo_cop))
         {
             m_source->writeLine();
-#if defined(_DEBUG)
+#ifdef _DEBUG
             for (const auto& iter: disable_list)
             {
                 m_source->writeLine("# rubocop:enable " + iter);

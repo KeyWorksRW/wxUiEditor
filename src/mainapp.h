@@ -18,7 +18,7 @@ class wxMessageOutputStderr;
 #endif
 
 class Project;
-struct GenResults;
+class GenResults;
 
 namespace pugi
 {

@@ -822,23 +822,24 @@ auto FormBuilder::ConvertLegacyWindowStyles(std::string_view text_value) -> std:
     // the 3.x names, and remove the ones that are no longer used.
     std::string result(text_value);
 
-    if (auto pos = result.find("wxSIMPLE_BORDER"); pos != std::string::npos)
+    auto pos = result.find("wxSIMPLE_BORDER");
+    if (pos != std::string::npos)
     {
         result.replace(pos, 15, "wxBORDER_SIMPLE");
     }
-    else if (auto pos = result.find("wxRAISED_BORDER"); pos != std::string::npos)
+    else if (pos = result.find("wxRAISED_BORDER"); pos != std::string::npos)
     {
         result.replace(pos, 15, "wxBORDER_RAISED");
     }
-    else if (auto pos = result.find("wxSTATIC_BORDER"); pos != std::string::npos)
+    else if (pos = result.find("wxSTATIC_BORDER"); pos != std::string::npos)
     {
         result.replace(pos, 15, "wxBORDER_STATIC");
     }
-    else if (auto pos = result.find("wxNO_BORDER"); pos != std::string::npos)
+    else if (pos = result.find("wxNO_BORDER"); pos != std::string::npos)
     {
         result.replace(pos, 11, "wxBORDER_NONE");
     }
-    else if (auto pos = result.find("wxDOUBLE_BORDER"); pos != std::string::npos)
+    else if (pos = result.find("wxDOUBLE_BORDER"); pos != std::string::npos)
     {
         // This style is obsolete
         result.replace(pos, 15, "");

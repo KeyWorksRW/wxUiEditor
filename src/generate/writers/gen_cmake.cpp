@@ -41,8 +41,8 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     tt_string cmake_file;
     if (flag == CMAKE_WRITE_TEMP_FILE)
     {
-        ASSERT(results.updated_files.size());
-        cmake_file = results.updated_files[0];
+        ASSERT(results.GetUpdatedFiles().size());
+        cmake_file = results.GetUpdatedFiles()[0];
     }
     else if (parent_node->is_Gen(gen_folder) && parent_node->HasValue(prop_folder_cmake_file))
     {
@@ -263,16 +263,17 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
     if (flag == CMAKE_WRITE_CHECK_ONLY)
     {
-        results.updated_files.emplace_back(cmake_file);
+        results.GetUpdatedFiles().emplace_back(cmake_file);
         return result::needs_writing;
     }
 
     if (!out.WriteFile(cmake_file))
     {
-        results.msgs.emplace_back() << "Cannot create or write to the file " << cmake_file << '\n';
+        results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
+                                                   static_cast<std::string>(cmake_file)));
         return result::fail;
     }
 
-    results.updated_files.emplace_back(cmake_file);
+    results.GetUpdatedFiles().emplace_back(cmake_file);
     return result::created;
 }

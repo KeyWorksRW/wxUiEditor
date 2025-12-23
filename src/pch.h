@@ -102,6 +102,8 @@
 #include <string_view>  // IWYU pragma: keep
 #include <vector>       // IWYU pragma: keep
 
+#include <frozen/set.h>  // IWYU pragma: keep
+
 // ttwx namespace functions, classes, and declarations
 #include "ttwx.h"  // IWYU pragma: keep
 
@@ -151,6 +153,10 @@ enum GenLang : std::uint16_t
     GEN_LANG_XML = 1 << 7,
     GEN_LANG_RESERVED1 = 1 << 8,  // Reserved for future use
 };
+
+// Frozen set containing all supported code generation languages
+constexpr auto gen_lang_set = frozen::make_set<GenLang>(
+    { GEN_LANG_CPLUSPLUS, GEN_LANG_PERL, GEN_LANG_PYTHON, GEN_LANG_RUBY, GEN_LANG_XRC });
 
 // Used to index fields in a bitmap property
 enum PropIndex : std::uint8_t

@@ -34,6 +34,11 @@ if( NOT isMultiConfig )
     endif()
 endif()
 
+# ###################### General Settings #######################
+set( CMAKE_CXX_STANDARD 23 )
+set( CMAKE_CXX_STANDARD_REQUIRED True )
+set( CMAKE_CXX_EXTENSIONS OFF )
+
 # ###################### Options #######################
 
 # creates a compile_commands.json file in the build directory, suitable for clangd
@@ -72,11 +77,6 @@ configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/src/version.rc
     @ONLY
 )
-
-# ###################### General Settings #######################
-set( CMAKE_CXX_STANDARD 23 )
-set( CMAKE_CXX_STANDARD_REQUIRED True )
-set( CMAKE_CXX_EXTENSIONS OFF )
 
 # ###################### ccache support #######################
 find_program( CCACHE_PROGRAM ccache )
@@ -296,20 +296,9 @@ add_executable( wxUiEditor WIN32
     ${wxui_internal_files} # This will be empty unless INTERNAL_BLD_TESTING is set
 )
 
-# This is just used by a github action to confirm that all the source code can be compiled
-add_library( check_build STATIC EXCLUDE_FROM_ALL
-    ${file_list}
-    ${wxue_generated_code}
-)
-
 if( BUILD_SHARED_LIBS )
     target_compile_definitions( wxUiEditor PRIVATE WXUSINGDLL )
-    target_compile_definitions( check_build PRIVATE WXUSINGDLL )
 endif()
-
-# synchronize this with the compiler stanrdard required in src/pch.h
-target_compile_features( wxUiEditor PRIVATE cxx_std_23 )
-target_compile_features( check_build PRIVATE cxx_std_23 )
 
 if( UNIX )
     set( SYSTEM_LIBS
@@ -326,7 +315,6 @@ endif()
 if( MSVC )
     # /FC -- Full path to source code file in diagnostics
     target_compile_options( wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" )
-    target_compile_options( check_build PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" )
 
     target_link_options( wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>" )
 
@@ -344,18 +332,12 @@ if( MSVC )
     target_link_options( wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/DEBUG:FASTLINK>" )
 elseif( UNIX )
     target_compile_definitions( wxUiEditor PRIVATE __WXGTK__ )
-    target_compile_definitions( check_build PRIVATE __WXGTK__ )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS} )
-    target_link_directories( check_build PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS} )
 endif()
 
 target_precompile_headers( wxUiEditor PRIVATE "src/pch.h" )
-target_precompile_headers( check_build PRIVATE "src/pch.h" )
 
 target_include_directories( wxUiEditor PRIVATE
-    ${wxWidgets_SOURCE_DIR}/include
-)
-target_include_directories( check_build PRIVATE
     ${wxWidgets_SOURCE_DIR}/include
 )
 
@@ -363,24 +345,13 @@ if( WIN32 )
     target_include_directories( wxUiEditor PRIVATE
         ${wxWidgets_BUILD_DIR}/lib/vc_x64_lib/mswu
     )
-    target_include_directories( check_build PRIVATE
-        ${wxWidgets_BUILD_DIR}/lib/vc_x64_lib/mswu
-    )
 elseif( APPLE )
     target_include_directories( wxUiEditor PRIVATE
         ${wxWidgets_SOURCE_DIR}/include
         ${wxWidgets_BUILD_DIR}/lib/osx_cocoa-unicode-static
     )
-    target_include_directories( check_build PRIVATE
-        ${wxWidgets_SOURCE_DIR}/include
-        ${wxWidgets_BUILD_DIR}/lib/osx_cocoa-unicode-static
-    )
 elseif( UNIX )
     target_include_directories( wxUiEditor PRIVATE
-        ${wxWidgets_SOURCE_DIR}/include
-        ${wxWidgets_BUILD_DIR}/lib/gtk3_unixu-3.3/include
-    )
-    target_include_directories( check_build PRIVATE
         ${wxWidgets_SOURCE_DIR}/include
         ${wxWidgets_BUILD_DIR}/lib/gtk3_unixu-3.3/include
     )
@@ -397,26 +368,6 @@ target_include_directories( wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/nodes
     ${CMAKE_CURRENT_LIST_DIR}/src/generate
     ${CMAKE_CURRENT_LIST_DIR}/src/generate/writers
-    ${CMAKE_CURRENT_LIST_DIR}/src/mockup
-    ${CMAKE_CURRENT_LIST_DIR}/src/project
-    ${CMAKE_CURRENT_LIST_DIR}/src/utils
-    ${CMAKE_CURRENT_LIST_DIR}/src/customprops
-    ${CMAKE_CURRENT_LIST_DIR}/src/ui
-    ${CMAKE_CURRENT_LIST_DIR}/src/wxui
-    ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
-)
-
-target_include_directories( check_build PRIVATE
-    ${setup_dir}
-    ${widget_dir}/include
-
-    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
-
-    ${CMAKE_CURRENT_LIST_DIR}/src/
-    ${CMAKE_CURRENT_LIST_DIR}/src/ttwx
-    ${CMAKE_CURRENT_LIST_DIR}/src/tt
-    ${CMAKE_CURRENT_LIST_DIR}/src/nodes
-    ${CMAKE_CURRENT_LIST_DIR}/src/generate
     ${CMAKE_CURRENT_LIST_DIR}/src/mockup
     ${CMAKE_CURRENT_LIST_DIR}/src/project
     ${CMAKE_CURRENT_LIST_DIR}/src/utils

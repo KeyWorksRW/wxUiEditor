@@ -25,7 +25,6 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
@@ -109,9 +108,9 @@ auto RubyCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set
 auto RubyCodeGenerator::WriteSourceHeader() -> void
 {
 #if !defined(_DEBUG)
-    if (m_panel_type == NOT_PANEL)
+    if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #else
-    if (m_panel_type != NOT_PANEL)
+    if (m_panel_type != PANEL_PAGE::NOT_PANEL)
     {
         m_source->writeLine("# The following comment block is only displayed in a _DEBUG build, or "
                             "when written to a file.\n\n");
@@ -148,10 +147,16 @@ auto RubyCodeGenerator::WriteImports(std::set<std::string>& imports) -> void
     for (const auto& import: imports)
     {
         m_source->writeLine(import);
-        m_header->writeLine(import);
+        if (m_header)
+        {
+            m_header->writeLine(import);
+        }
     }
     m_source->writeLine();
-    m_header->writeLine();
+    if (m_header)
+    {
+        m_header->writeLine();
+    }
 }
 
 auto RubyCodeGenerator::WriteRelativeRequires(const std::vector<Node*>& forms) -> void
@@ -210,6 +215,12 @@ auto RubyCodeGenerator::WriteIDConstants() -> void
 
 auto RubyCodeGenerator::WriteInheritedClass() -> void
 {
+    // m_header is only set for display mode, not for file generation
+    if (!m_header)
+    {
+        return;
+    }
+
     tt_string inherit_name = m_form_node->as_string(prop_ruby_inherit_name);
     if (inherit_name.empty())
     {
@@ -339,8 +350,11 @@ auto RubyCodeGenerator::GenerateEventHandlers([[maybe_unused]] Code& code,
         m_source->ResetIndent();
         m_source->writeLine("\tend", indent::none);
     }
-    m_header->ResetIndent();
-    m_header->writeLine("end", indent::none);
+    if (m_header)
+    {
+        m_header->ResetIndent();
+        m_header->writeLine("end", indent::none);
+    }
 }
 
 auto RubyCodeGenerator::WriteHelperFunctions() -> void
@@ -382,7 +396,7 @@ auto RubyCodeGenerator::WriteEmbeddedImages(Code& code) -> void
 auto RubyCodeGenerator::WriteRuboCopFooter() -> void
 {
 #if !defined(_DEBUG)
-    if (m_panel_type == NOT_PANEL)
+    if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #endif  // _DEBUG
     {
         if (Project.as_bool(prop_disable_rubo_cop))
@@ -421,7 +435,7 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         InitializeThreads(img_include_set);
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
-    if (panel_type != NOT_PANEL)
+    if (panel_type != PANEL_PAGE::NOT_PANEL)
     {
         ProjectImages.UpdateEmbedNodes();
     }
@@ -431,7 +445,10 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
     m_panel_type = panel_type;
 
-    m_header->Clear();
+    if (m_header)
+    {
+        m_header->Clear();
+    }
     m_source->Clear();
     m_source->SetTabToSpaces(2);
     m_source->SetLastLineBlank();
@@ -457,11 +474,14 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         return;
     }
 
-    m_header->writeLine(
-        "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-    m_header->writeLine(tt_string("# Sample inherited class from ")
-                        << m_form_node->as_string(prop_class_name));
-    m_header->writeLine();
+    if (m_header)
+    {
+        m_header->writeLine(
+            "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
+        m_header->writeLine(tt_string("# Sample inherited class from ")
+                            << m_form_node->as_string(prop_class_name));
+        m_header->writeLine();
+    }
 
     std::set<std::string> imports;
     WriteImports(imports);
@@ -477,9 +497,13 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     }
 
     m_source->writeLine();
-    m_header->writeLine();
-    m_header->writeLine(tt_string("requires '") << m_form_node->as_string(prop_ruby_file) << "'\n");
-    m_header->writeLine();
+    if (m_header)
+    {
+        m_header->writeLine();
+        m_header->writeLine(tt_string("requires '")
+                            << m_form_node->as_string(prop_ruby_file) << "'\n");
+        m_header->writeLine();
+    }
 
     if (m_form_node->HasValue(prop_ruby_insert))
     {
@@ -512,7 +536,10 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_header->ResetIndent();
+    if (m_header)
+    {
+        m_header->ResetIndent();
+    }
 
     WriteEmbeddedImages(code);
     WriteRuboCopFooter();
@@ -702,8 +729,11 @@ auto RubyCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers)
         m_source->writeLine("end", indent::none);
         m_source->writeLine(ruby_end_cmt_block, indent::none);
 
-        m_header->writeLine("# Event handler functions");
-        m_header->writeLine(undefined_handlers);
+        if (m_header)
+        {
+            m_header->writeLine("# Event handler functions");
+            m_header->writeLine(undefined_handlers);
+        }
     }
 }
 
@@ -730,14 +760,17 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::ranges::sort(events, sort_event_handlers);
 
     bool inherited_class = m_form_node->HasValue(prop_ruby_inherit_name);
-    if (!inherited_class)
+    if (m_header)
     {
-        m_header->Indent();
-    }
-    else
-    {
-        m_header->Unindent();
-        m_header->writeLine();
+        if (!inherited_class)
+        {
+            m_header->Indent();
+        }
+        else
+        {
+            m_header->Unindent();
+            m_header->writeLine();
+        }
     }
 
     bool found_user_handlers = CollectExistingEventHandlers(code_lines);
@@ -768,7 +801,10 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     }
 
     WriteEventHandlers(code, undefined_handlers);
-    m_header->Unindent();
+    if (m_header)
+    {
+        m_header->Unindent();
+    }
 }
 
 auto MakeRubyPath(Node* node) -> tt_string

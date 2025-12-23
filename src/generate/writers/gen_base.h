@@ -74,11 +74,11 @@ public:
     void SetSrcWriteCode(WriteCode* code_to_write) { m_source = code_to_write; }
 
     // All language generators must implement this method.
-    virtual void GenerateClass(GenLang language, PANEL_PAGE panel_type = NOT_PANEL) = 0;
+    virtual void GenerateClass(GenLang language, PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
     virtual auto GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
-                                      PANEL_PAGE panel_type = NOT_PANEL) -> int
+                                      PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) -> int
     {
         m_panel_type = panel_type;
         return result::fail;
@@ -190,7 +190,7 @@ protected:
     Node* m_ImagesForm { nullptr };
     tt_string m_include_images_statement;
 
-    PANEL_PAGE m_panel_type { NOT_PANEL };
+    PANEL_PAGE m_panel_type { PANEL_PAGE::NOT_PANEL };
 
     GenLang m_language { GEN_LANG_CPLUSPLUS };
 

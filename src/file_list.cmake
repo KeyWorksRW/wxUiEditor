@@ -98,6 +98,7 @@ set( file_list
     generate/base_generator.cpp    # BaseGenerator -- Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes
     generate/gen_common.cpp        # Common widget generation functions
+    generate/gen_results.cpp       # GenResults -- Code generation results class
 
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
     generate/gen_book_utils.cpp    # Common Book utilities

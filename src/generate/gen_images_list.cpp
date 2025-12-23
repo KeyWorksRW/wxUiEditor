@@ -175,7 +175,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         return;
     }
 
-    if (m_panel_type != HDR_PANEL)
+    if (m_panel_type != PANEL_PAGE::HDR_INFO_PANEL)
     {
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
         m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
@@ -375,7 +375,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     /////////////// Header code ///////////////
 
-    if (m_panel_type != CPP_PANEL)
+    if (m_panel_type != PANEL_PAGE::SOURCE_PANEL)
     {
         m_header->writeLine("#include <wx/bmpbndl.h>");
 

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <wx/panel.h>  // Base header for wxPanel
 
 class CodeDisplay;
@@ -17,11 +19,11 @@ class wxAuiNotebook;
 class wxFindDialogEvent;
 class wxStyledTextCtrl;
 
-enum PANEL_PAGE
+enum class PANEL_PAGE : std::uint8_t
 {
     NOT_PANEL,
-    CPP_PANEL,
-    HDR_PANEL,
+    SOURCE_PANEL,
+    HDR_INFO_PANEL,
     DERIVED_SRC_PANEL,
     DERIVED_HDR_PANEL,
 };
@@ -32,10 +34,15 @@ public:
     BasePanel(wxWindow* parent, MainFrame* frame, GenLang GenerateDerivedCode);
     ~BasePanel() override;
 
-    void GenerateBaseClass();
-    wxString GetSelectedText();
+    BasePanel(const BasePanel&) = delete;
+    BasePanel& operator=(const BasePanel&) = delete;
+    BasePanel(BasePanel&&) = delete;
+    BasePanel& operator=(BasePanel&&) = delete;
 
-    PANEL_PAGE GetPanelPage() const;
+    void GenerateBaseClass();
+    auto GetSelectedText() -> wxString;
+
+    auto GetPanelPage() const -> PANEL_PAGE;
 
     void OnFind(wxFindDialogEvent& event);
 
@@ -46,8 +53,8 @@ public:
 
 protected:
 private:
-    CodeDisplay* m_cppPanel;
-    CodeDisplay* m_hPanel;  // Header, inherit, info panel
+    CodeDisplay* m_source_panel;
+    CodeDisplay* m_hdr_info_panel;  // Header, inherit, info panel
     CodeDisplay* m_derived_src_panel { nullptr };
     CodeDisplay* m_derived_hdr_panel { nullptr };
     wxAuiNotebook* m_notebook;

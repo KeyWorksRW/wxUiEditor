@@ -119,9 +119,9 @@ auto PerlCodeGenerator::WriteSourceHeader() -> void
     m_source->SetLastLineBlank();
 
 #if !defined(_DEBUG)
-    if (m_panel_type == NOT_PANEL)
+    if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #else
-    if (m_panel_type != NOT_PANEL)
+    if (m_panel_type != PANEL_PAGE::NOT_PANEL)
     {
         m_source->writeLine("# The following comment block is only displayed in a _DEBUG build, "
                             "or when written to a file.\n\n");
@@ -173,6 +173,12 @@ auto PerlCodeGenerator::WriteIDConstants() -> void
 
 auto PerlCodeGenerator::WriteSampleFrameApp(Code& code) -> void
 {
+    // m_header is only set for display mode, not for file generation
+    if (!m_header)
+    {
+        return;
+    }
+
     if (m_form_node->is_Type(type_frame_form))
     {
         code += txt_perl_frame_app;
@@ -344,7 +350,7 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         InitializeThreads(img_include_set);
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
-    if (panel_type != NOT_PANEL)
+    if (panel_type != PANEL_PAGE::NOT_PANEL)
     {
         ProjectImages.UpdateEmbedNodes();
     }
@@ -354,7 +360,10 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
     m_panel_type = panel_type;
 
-    m_header->Clear();
+    if (m_header)
+    {
+        m_header->Clear();
+    }
     m_source->Clear();
 
     WriteSampleFrameApp(code);
@@ -406,12 +415,15 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     // the comment block, and only if there is no user code after the comment
     // block. This is to ensure that the user can add event handlers that are
     // part of the package.
-    if (panel_type != NOT_PANEL)
+    if (panel_type != PANEL_PAGE::NOT_PANEL)
     {
         m_source->writeLine("1;", indent::none);
     }
 
-    m_header->ResetIndent();
+    if (m_header)
+    {
+        m_header->ResetIndent();
+    }
 
     WriteEmbeddedImages(code);
 }
@@ -499,8 +511,11 @@ auto PerlCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers)
         m_source->writeLine(perl_end_cmt_block);
         m_source->Indent();
 
-        m_header->writeLine(code);
-        m_header->writeLine(undefined_handlers);
+        if (m_header)
+        {
+            m_header->writeLine(code);
+            m_header->writeLine(undefined_handlers);
+        }
     }
 }
 

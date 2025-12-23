@@ -70,7 +70,7 @@ auto PythonCodeGenerator::InitializeThreads(std::set<std::string>& img_include_s
 
 auto PythonCodeGenerator::WriteSourceHeader() -> void
 {
-    if (m_panel_type == NOT_PANEL)
+    if (m_panel_type == PANEL_PAGE::NOT_PANEL)
     {
         m_source->writeLine(txt_PythonCmtBlock);
         // Python style guidelines want a module document string
@@ -97,7 +97,10 @@ auto PythonCodeGenerator::WriteImports(std::set<std::string>& imports) -> void
     for (const auto& import: imports)
     {
         m_source->writeLine(import);
-        m_header->writeLine(import);
+        if (m_header)
+        {
+            m_header->writeLine(import);
+        }
     }
 }
 
@@ -161,6 +164,12 @@ auto PythonCodeGenerator::WriteIDConstants() -> void
 
 auto PythonCodeGenerator::WriteInheritedClass() -> void
 {
+    // m_header is only set for display mode, not for file generation
+    if (!m_header)
+    {
+        return;
+    }
+
     m_header->writeLine(tt_string("# Sample inherited class from ")
                         << m_form_node->as_string(prop_class_name));
     m_header->writeLine();
@@ -330,7 +339,7 @@ void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     auto [thrd_get_events, thrd_collect_img_headers] = InitializeThreads(img_include_set);
 
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
-    if (panel_type != NOT_PANEL)
+    if (panel_type != PANEL_PAGE::NOT_PANEL)
     {
         ProjectImages.UpdateEmbedNodes();
     }
@@ -340,7 +349,10 @@ void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
     m_panel_type = panel_type;
 
-    m_header->Clear();
+    if (m_header)
+    {
+        m_header->Clear();
+    }
     m_source->Clear();
     m_source->SetLastLineBlank();
 
@@ -381,7 +393,10 @@ void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-    m_header->ResetIndent();
+    if (m_header)
+    {
+        m_header->ResetIndent();
+    }
 
     std::ranges::sort(
         m_embedded_images,
@@ -426,9 +441,10 @@ void PythonCodeGenerator::GenerateImagesForm()
 
         m_source->writeLine(code);
         code.clear();
+        constexpr std::uint32_t array_size_mask = 0xFFFFFFFF;
         auto encoded =
             base64_encode(iter_array->base_image().array_data.data(),
-                          iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
+                          iter_array->base_image().array_size & array_size_mask, GEN_LANG_PYTHON);
         if (encoded.size())
         {
             encoded.back() += ")";
@@ -557,7 +573,7 @@ auto PythonCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, 
 
 auto PythonCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& code) -> void
 {
-#if defined(_DEBUG)
+#ifdef _DEBUG
     const auto& dbg_event_name = event->get_name();
     wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
@@ -640,15 +656,18 @@ auto PythonCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handler
                                              bool found_user_handlers,
                                              bool is_all_events_implemented) -> void
 {
-    if (found_user_handlers && !is_all_events_implemented)
+    if (m_header)
     {
-        m_header->writeLine("# Unimplemented Event handler functions");
+        if (found_user_handlers && !is_all_events_implemented)
+        {
+            m_header->writeLine("# Unimplemented Event handler functions");
+        }
+        else
+        {
+            m_header->writeLine("# Event handler functions");
+        }
+        m_header->writeLine(undefined_handlers);
     }
-    else
-    {
-        m_header->writeLine("# Event handler functions");
-    }
-    m_header->writeLine(undefined_handlers);
 
     if (!is_all_events_implemented)
     {
@@ -681,14 +700,17 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
     std::sort(events.begin(), events.end(), sort_event_handlers);
 
     bool inherited_class = m_form_node->HasValue(prop_python_inherit_name);
-    if (!inherited_class)
+    if (m_header)
     {
-        m_header->Indent();
-    }
-    else
-    {
-        m_header->Unindent();
-        m_header->writeLine();
+        if (!inherited_class)
+        {
+            m_header->Indent();
+        }
+        else
+        {
+            m_header->Unindent();
+            m_header->writeLine();
+        }
     }
 
     bool found_user_handlers = CollectExistingEventHandlers(code_lines);
@@ -711,7 +733,7 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
 
     WriteEventHandlers(code, undefined_handlers, found_user_handlers, is_all_events_implemented);
 
-    if (!inherited_class)
+    if (m_header && !inherited_class)
     {
         m_header->Unindent();
     }
@@ -731,7 +753,8 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
 
-    if (!bundle || bundle->lst_filenames.size() < 3)
+    constexpr size_t min_bitmap_bundle_size = 3;
+    if (!bundle || bundle->lst_filenames.size() < min_bitmap_bundle_size)
     {
         return false;
     }
@@ -741,12 +764,13 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
     code += "bitmaps = [ ";
     bool needs_comma = false;
+    constexpr size_t bitmap_list_indent_level = 3;
     for (const auto& iter: bundle->lst_filenames)
     {
         if (needs_comma)
         {
             code.UpdateBreakAt();
-            code.Comma(false).Eol().Tab(3);
+            code.Comma(false).Eol().Tab(bitmap_list_indent_level);
         }
 
         bool is_embed_success = false;

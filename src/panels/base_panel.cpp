@@ -19,11 +19,12 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
-#include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
-#include "gen_perl.h"    // PerlCodeGenerator class
-#include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
-#include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
+#include "gen_cpp.h"      // CppCodeGenerator -- Generate C++ code
+#include "gen_perl.h"     // PerlCodeGenerator class
+#include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
+#include "gen_results.h"  // GenResults -- Code generation orchestrator
+#include "gen_ruby.h"     // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_xrc.h"      // XrcGenerator -- Generate XRC code
 
 // These are used everywhere we use scintilla to edit C++ code. It is also used to verify valid
 // var_name values.
@@ -64,16 +65,17 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    // Note that a lot of code assumes m_hPanel is valid. It is up to the language generator to
-    // generate inherited classes, or just generate generation information about the class.
+    // Note that a lot of code assumes m_hdr_info_panel is valid. It is up to the language
+    // generator to generate inherited classes, or just generate generation information about
+    // the class.
 
     if (m_panel_type == GEN_LANG_CPLUSPLUS)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
 
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "header", false, wxWithImages::NO_IMAGE);
 
         m_derived_src_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_derived_src_panel, "derived_src", false, wxWithImages::NO_IMAGE);
@@ -83,31 +85,31 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
     }
     else if (m_panel_type == GEN_LANG_PERL)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_PYTHON)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_RUBY)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_XRC)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
     else
     {
@@ -115,11 +117,11 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
 
         // Add default panel creation just to prevent crashing
 
-        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
 
-        m_hPanel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "header", false, wxWithImages::NO_IMAGE);
     }
 
     top_sizer->Add(m_notebook, wxSizerFlags(1).Expand());
@@ -187,11 +189,11 @@ BasePanel::~BasePanel()
 
 wxString BasePanel::GetSelectedText()
 {
-    auto notebook = wxStaticCast(m_cppPanel->GetParent(), wxAuiNotebook);
+    auto notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
     auto text = notebook->GetPageText(notebook->GetSelection());
     if (text == "source")
     {
-        return m_cppPanel->GetTextCtrl()->GetSelectedText();
+        return m_source_panel->GetTextCtrl()->GetSelectedText();
     }
     else if (text == "derived_src")
     {
@@ -199,7 +201,7 @@ wxString BasePanel::GetSelectedText()
     }
     else if (text == "header" || text == "inherit" || text == "info")
     {
-        return m_hPanel->GetTextCtrl()->GetSelectedText();
+        return m_hdr_info_panel->GetTextCtrl()->GetSelectedText();
     }
     else if (text == "derived_hdr")
     {
@@ -211,13 +213,13 @@ wxString BasePanel::GetSelectedText()
 
 void BasePanel::OnFind(wxFindDialogEvent& event)
 {
-    auto notebook = wxStaticCast(m_cppPanel->GetParent(), wxAuiNotebook);
+    auto notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
     ASSERT(notebook);
 
     auto text = notebook->GetPageText(notebook->GetSelection());
     if (text == "source")
     {
-        m_cppPanel->GetEventHandler()->ProcessEvent(event);
+        m_source_panel->GetEventHandler()->ProcessEvent(event);
     }
     else if (text == "derived_src")
     {
@@ -225,7 +227,7 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     }
     else if (text == "header" || text == "inherit" || text == "info")
     {
-        m_hPanel->GetEventHandler()->ProcessEvent(event);
+        m_hdr_info_panel->GetEventHandler()->ProcessEvent(event);
     }
     else if (text == "derived_hdr")
     {
@@ -239,16 +241,16 @@ PANEL_PAGE BasePanel::GetPanelPage() const
     auto* child_panel = static_cast<BasePanel*>(top_notebook->GetCurrentPage());
     if (auto* page = child_panel->m_notebook->GetCurrentPage(); page)
     {
-        if (page == child_panel->m_cppPanel)
-            return CPP_PANEL;
-        else if (page == child_panel->m_hPanel)
-            return HDR_PANEL;
+        if (page == child_panel->m_source_panel)
+            return PANEL_PAGE::SOURCE_PANEL;
+        else if (page == child_panel->m_hdr_info_panel)
+            return PANEL_PAGE::HDR_INFO_PANEL;
         else if (page == child_panel->m_derived_src_panel)
-            return DERIVED_SRC_PANEL;
+            return PANEL_PAGE::DERIVED_SRC_PANEL;
         else if (page == child_panel->m_derived_hdr_panel)
-            return DERIVED_HDR_PANEL;
+            return PANEL_PAGE::DERIVED_HDR_PANEL;
     }
-    return CPP_PANEL;
+    return PANEL_PAGE::SOURCE_PANEL;
 }
 
 void BasePanel::GenerateBaseClass()
@@ -272,8 +274,8 @@ void BasePanel::GenerateBaseClass()
         }
         else
         {
-            m_cppPanel->Clear();
-            m_hPanel->Clear();
+            m_source_panel->Clear();
+            m_hdr_info_panel->Clear();
             if (m_derived_src_panel)
                 m_derived_src_panel->Clear();
             if (m_derived_hdr_panel)
@@ -284,102 +286,74 @@ void BasePanel::GenerateBaseClass()
 
     wxWindowUpdateLocker freeze(this);
 
-    PANEL_PAGE panel_page = CPP_PANEL;
+    PANEL_PAGE panel_page = PANEL_PAGE::SOURCE_PANEL;
     if (auto page = m_notebook->GetCurrentPage(); page)
     {
-        if (page == m_hPanel || page == m_derived_hdr_panel)
+        if (page == m_hdr_info_panel)
         {
-            panel_page = HDR_PANEL;
+            panel_page = PANEL_PAGE::HDR_INFO_PANEL;
+        }
+        else if (page == m_derived_src_panel)
+        {
+            panel_page = PANEL_PAGE::DERIVED_SRC_PANEL;
+        }
+        else if (page == m_derived_hdr_panel)
+        {
+            panel_page = PANEL_PAGE::DERIVED_HDR_PANEL;
         }
     }
 
-    std::unique_ptr<class BaseCodeGenerator> code_generator;
-    switch (m_panel_type)
+    // All languages except C++ derived panels use GenResults for unified code generation
+    // C++ base class panels (SOURCE_PANEL, HDR_INFO_PANEL) also use GenResults
+    if (m_panel_type != GEN_LANG_CPLUSPLUS || panel_page == PANEL_PAGE::SOURCE_PANEL ||
+        panel_page == PANEL_PAGE::HDR_INFO_PANEL)
     {
-        case GEN_LANG_CPLUSPLUS:
-            code_generator = std::make_unique<CppCodeGenerator>(m_cur_form);
-            break;
+        m_source_panel->Clear();
+        m_hdr_info_panel->Clear();
 
-        case GEN_LANG_PYTHON:
-            code_generator = std::make_unique<PythonCodeGenerator>(m_cur_form);
-            break;
-
-        case GEN_LANG_RUBY:
-            code_generator = std::make_unique<RubyCodeGenerator>(m_cur_form);
-            break;
-
-        case GEN_LANG_PERL:
-            code_generator = std::make_unique<PerlCodeGenerator>(m_cur_form);
-            break;
-
-        case GEN_LANG_XRC:
-            code_generator = std::make_unique<XrcCodeGenerator>(m_cur_form);
-            break;
-
-        default:
-            FAIL_MSG(tt_string() << "Unknown panel type: " << m_panel_type);
-            break;
-    }
-
-    // BaseCodeGenerator codegen(m_panel_type, m_cur_form);
-
-    m_cppPanel->Clear();
-    code_generator->SetSrcWriteCode(m_cppPanel);
-
-    m_hPanel->Clear();
-    code_generator->SetHdrWriteCode(m_hPanel);
-
-    switch (m_panel_type)
-    {
-        case GEN_LANG_CPLUSPLUS:
-            code_generator->GenerateClass(GEN_LANG_CPLUSPLUS, panel_page);
-
-            m_derived_src_panel->Clear();
-            code_generator->SetSrcWriteCode(m_derived_src_panel);
-            m_derived_hdr_panel->Clear();
-            code_generator->SetHdrWriteCode(m_derived_hdr_panel);
-
-            code_generator->GenerateDerivedClass(Project.get_ProjectNode(), m_cur_form, panel_page);
-            break;
-
-        case GEN_LANG_PERL:
-            code_generator->GenerateClass(GEN_LANG_PERL, panel_page);
-            break;
-
-        case GEN_LANG_PYTHON:
-            code_generator->GenerateClass(GEN_LANG_PYTHON, panel_page);
-            break;
-
-        case GEN_LANG_RUBY:
-            code_generator->GenerateClass(GEN_LANG_RUBY, panel_page);
-            break;
-
-        case GEN_LANG_XRC:
-            code_generator->GenerateClass(GEN_LANG_XRC, panel_page);
-            break;
-
-        default:
-            FAIL_MSG("Unknown language!");
-            break;
-    }
-
-    if (panel_page == CPP_PANEL)
-    {
-        m_cppPanel->CodeGenerationComplete();
-        m_cppPanel->OnNodeSelected(wxGetFrame().getSelectedNode());
-        if (m_panel_type == GEN_LANG_CPLUSPLUS)
+        GenResults results;
+        if (results.SetDisplayTarget(m_cur_form, m_panel_type, m_source_panel, m_hdr_info_panel,
+                                     panel_page))
         {
-            m_derived_src_panel->CodeGenerationComplete();
-            m_derived_src_panel->OnNodeSelected(wxGetFrame().getSelectedNode());
+            std::ignore = results.Generate();
         }
+
+        if (panel_page == PANEL_PAGE::SOURCE_PANEL || panel_page == PANEL_PAGE::HDR_INFO_PANEL)
+        {
+            if (panel_page == PANEL_PAGE::SOURCE_PANEL)
+            {
+                m_source_panel->CodeGenerationComplete();
+                m_source_panel->OnNodeSelected(wxGetFrame().getSelectedNode());
+            }
+            else
+            {
+                m_hdr_info_panel->CodeGenerationComplete();
+            }
+        }
+        return;
+    }
+
+    // C++ derived class panels only - generate derived code without regenerating base class
+    ASSERT(m_panel_type == GEN_LANG_CPLUSPLUS);
+    ASSERT(panel_page == PANEL_PAGE::DERIVED_SRC_PANEL ||
+           panel_page == PANEL_PAGE::DERIVED_HDR_PANEL);
+
+    m_derived_src_panel->Clear();
+    m_derived_hdr_panel->Clear();
+
+    CppCodeGenerator code_generator(m_cur_form);
+    code_generator.SetSrcWriteCode(m_derived_src_panel);
+    code_generator.SetHdrWriteCode(m_derived_hdr_panel);
+    code_generator.GenerateDerivedClass(Project.get_ProjectNode(), m_cur_form, panel_page);
+
+    if (panel_page == PANEL_PAGE::DERIVED_SRC_PANEL)
+    {
+        m_derived_src_panel->CodeGenerationComplete();
+        m_derived_src_panel->OnNodeSelected(wxGetFrame().getSelectedNode());
     }
     else
     {
-        m_hPanel->CodeGenerationComplete();
-        if (m_panel_type == GEN_LANG_CPLUSPLUS)
-        {
-            m_derived_hdr_panel->CodeGenerationComplete();
-        }
+        m_derived_hdr_panel->CodeGenerationComplete();
     }
 }
 
@@ -398,27 +372,27 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
 
     if (auto page = m_notebook->GetCurrentPage(); page)
     {
-        if (page == m_hPanel)
+        if (page == m_hdr_info_panel)
         {
-            m_hPanel->OnNodeSelected(event.getNode());
+            m_hdr_info_panel->OnNodeSelected(event.getNode());
         }
         else
         {
-            m_cppPanel->OnNodeSelected(event.getNode());
+            m_source_panel->OnNodeSelected(event.getNode());
         }
     }
 }
 
 void BasePanel::SetColor(int style, const wxColour& color)
 {
-    m_cppPanel->SetColor(style, color);
-    m_hPanel->SetColor(style, color);
+    m_source_panel->SetColor(style, color);
+    m_hdr_info_panel->SetColor(style, color);
 }
 
 void BasePanel::SetCodeFont(const wxFont& font)
 {
-    m_cppPanel->SetCodeFont(font);
-    m_hPanel->SetCodeFont(font);
+    m_source_panel->SetCodeFont(font);
+    m_hdr_info_panel->SetCodeFont(font);
     if (m_panel_type == GEN_LANG_CPLUSPLUS)
     {
         m_derived_src_panel->SetCodeFont(font);

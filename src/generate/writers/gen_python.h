@@ -14,7 +14,7 @@ public:
 
     // All language generators must implement this method.
     void GenerateClass(GenLang language = GEN_LANG_PYTHON,
-                       PANEL_PAGE panel_type = NOT_PANEL) override;
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
 
 protected:
     // Helper methods to break down GenerateClass complexity

@@ -32,7 +32,14 @@ When the user types "fix" and has selected a comment line:
 - Auto-generated sections will be overwritten
 - Add modifications AFTER the `// End of generated code` marker only
 
-### 🚫 Legacy Code Restrictions (ABSOLUTE)
+### � Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
+### �🚫 Legacy Code Restrictions (ABSOLUTE)
 **NEVER use `src/tt/` types in new code:** `tt_string`, `tt_string_view`, `tt_cwd`, `tt_view_vector`
 
 **Use instead (choose based on usage pattern):**

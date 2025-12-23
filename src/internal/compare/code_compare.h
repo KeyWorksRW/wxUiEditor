@@ -50,8 +50,6 @@ protected:
     void OnRadioButton(GenLang language);
 
 private:
-    auto CollectFileDiffs() -> std::vector<FileDiff>;
-
-    std::vector<std::string> m_class_list;
+    std::vector<FileDiff> m_file_diffs;  // Diffs collected by OnRadioButton
     GenLang m_current_language = GEN_LANG_CPLUSPLUS;
 };

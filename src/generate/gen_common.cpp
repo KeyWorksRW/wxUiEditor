@@ -1496,7 +1496,7 @@ auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
         // few forms where generation is being tested, so don't nag in Debug builds.
         // :-)
         results.GetMsgs().emplace_back(
-            std::format("No filename specified for {}\n", form->as_string(prop_class_name)));
+            std::format("No filename specified for {}\n", form->as_view(prop_class_name));
 #endif  // _DEBUG
         return false;
     }

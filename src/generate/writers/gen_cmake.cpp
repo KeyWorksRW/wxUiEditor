@@ -269,8 +269,8 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
     if (!out.WriteFile(cmake_file))
     {
-        results.GetMsgs().emplace_back(
-            std::format("Cannot create or write to the file {}\n", cmake_file));
+        results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
+                                                   static_cast<std::string>(cmake_file)));
         return result::fail;
     }
 

@@ -313,11 +313,12 @@ void Code::AddPythonMultiBitmapBundle(const tt_string_vector& parts, const Image
 {
     *this += "wx.BitmapBundle.FromBitmaps([";
 
-    for (size_t idx = 0; idx < bundle->lst_filenames.size(); ++idx)
+    size_t idx = 0;
+    for (const auto& filename: bundle->lst_filenames)
     {
         if (parts[IndexType].starts_with("Embed"))
         {
-            if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]); embed)
+            if (auto* embed = ProjectImages.GetEmbeddedImage(filename); embed)
             {
                 CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap"));
                 AddPythonImageName(embed);

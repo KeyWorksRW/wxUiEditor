@@ -31,25 +31,35 @@ GenType aftercode_types[] = {
 };
 // clang-format on
 
-void BaseCodeGenerator::GenConstruction(Node* node)
+auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 {
     if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
     {
         if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+        {
             return;
-        else if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+        }
+        if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+        {
             return;
-        else if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        }
+        if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        {
             return;
-        else if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        }
+        if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        {
             return;
+        }
     }
 
     auto type = node->get_GenType();
     auto declaration = node->get_NodeDeclaration();
     auto generator = declaration->get_Generator();
     if (!generator)
+    {
         return;
+    }
 
     if (auto warning_msg = generator->GetWarning(node, m_language); warning_msg)
     {
@@ -118,7 +128,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_source->writeLine(gen_code);
         return;
     }
-    else if (type == type_tool_dropdown)
+    if (type == type_tool_dropdown)
     {
         return;
     }
@@ -294,7 +304,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
 }
 
-void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms)
+auto BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms) -> void
 {
     if (platforms.contains("Windows"))
     {
@@ -407,7 +417,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
     }
 }
 
-void BaseCodeGenerator::EndPlatformCode()
+auto BaseCodeGenerator::EndPlatformCode() -> void
 {
     switch (m_language)
     {
@@ -432,7 +442,7 @@ void BaseCodeGenerator::EndPlatformCode()
     }
 }
 
-void BaseCodeGenerator::BeginBrace()
+auto BaseCodeGenerator::BeginBrace() -> void
 {
     if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
     {
@@ -441,7 +451,7 @@ void BaseCodeGenerator::BeginBrace()
     }
 }
 
-void BaseCodeGenerator::EndBrace()
+auto BaseCodeGenerator::EndBrace() -> void
 {
     if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
     {
@@ -450,7 +460,7 @@ void BaseCodeGenerator::EndBrace()
     }
 }
 
-void BaseCodeGenerator::GenSettings(Node* node, bool within_brace)
+auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
 {
     auto generator = node->get_Generator();
 
@@ -577,7 +587,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
     }
 }
 
-void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
+auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> void
 {
     auto declaration = node->get_NodeDeclaration();
     auto generator = declaration->get_Generator();

@@ -74,7 +74,8 @@ inline const char* lst_widgets_keywords[] = {
 };
 // clang-format on
 
-void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool add_keywords)
+auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool add_keywords)
+    -> void
 {
     wxColor clr_comments(0, 128, 0);
     wxColor clr_functions("#c76605");

@@ -142,12 +142,12 @@ bool NewPropSheet::Create(wxWindow* parent, wxWindowID id, const wxString& title
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewPropSheet::OnInit(wxInitDialogEvent& event)
+auto NewPropSheet::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewPropSheet::CreateNode()
+auto NewPropSheet::CreateNode() -> void
 {
     auto form_node = NodeCreation.CreateNode(gen_wxPropertySheetDialog, nullptr).first;
     ASSERT(form_node);
@@ -202,7 +202,7 @@ void NewPropSheet::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewPropSheet::VerifyClassName()
+auto NewPropSheet::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -216,7 +216,7 @@ void NewPropSheet::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

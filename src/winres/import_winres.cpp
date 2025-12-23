@@ -11,7 +11,7 @@
 #include "node_creator.h"  // NodeCreator class
 #include "ttwx.h"          // ttwx helpers for numeric conversions
 
-WinResource::WinResource() {}
+WinResource::WinResource() : m_curline(0), m_codepage(1252) {}
 
 bool WinResource::Import(const std::string& filename, bool write_doc)
 {
@@ -19,7 +19,9 @@ bool WinResource::Import(const std::string& filename, bool write_doc)
     if (ImportRc(filename, forms))
     {
         if (write_doc)
+        {
             m_project->CreateDoc(m_docOut);
+        }
         return true;
     }
 
@@ -134,13 +136,19 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
             tt_string_view line = file[idx].view_nonspace();
             tt_string id;
             if (line.at(0) == '"')
+            {
                 id.AssignSubString(line);
+            }
             else
+            {
                 id = line.subview(0, line.find_space());
+            }
             line.moveto_nextword();
             tt_string type = line.subview(0, line.find_space());
             if (!type.is_sameas("ICON") && !type.is_sameas("BITMAP"))
+            {
                 continue;  // type must be an exact match at this point.
+            }
 
             while (line.moveto_nextword())
             {
@@ -157,9 +165,13 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
             filename.make_absolute();
             filename.make_relative(m_OutDirectory);
             if (type.is_sameas("ICON"))
+            {
                 m_map_icons[id] = filename;
+            }
             else
+            {
                 m_map_bitmaps[id] = filename;
+            }
         }
     }
 
@@ -191,7 +203,9 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
             tt_string_view curline = file[m_curline].view_nonspace();
             auto start = curline.find_nonspace();
             if (curline.empty() || curline[start] == '/')  // Ignore blank lines and comments.
+            {
                 continue;
+            }
             if (curline[start] == '#')
             {
                 auto directive = curline.subview(curline.find_nonspace(start + 1));
@@ -208,7 +222,9 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                             start = line.find_nonspace();
                             if (line.empty() ||
                                 line[start] == '/')  // Ignore blank lines and comments.
+                            {
                                 continue;
+                            }
                             if (line[start] == '#')
                             {
                                 if (auto tmp = line.subview(line.find_nonspace() + 1);
@@ -220,45 +236,41 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
                         }
                         continue;
                     }
-                    else
-                    {
-                        // This is a custom #ifdef and since we're not a compiler, we have no way of
-                        // knowing whether the definition being checked is true or not. All we can
-                        // do is assume the #ifdef is true and parse until either a #else of #endif.
+                    // This is a custom #ifdef and since we're not a compiler, we have no way of
+                    // knowing whether the definition being checked is true or not. All we can
+                    // do is assume the #ifdef is true and parse until either a #else of #endif.
 
-                        file.RemoveLine(m_curline);
-                        for (auto erase_position = m_curline; erase_position < file.size();
-                             ++erase_position)
+                    file.RemoveLine(m_curline);
+                    for (auto erase_position = m_curline; erase_position < file.size();
+                         ++erase_position)
+                    {
+                        curline = file[erase_position].view_nonspace();
+                        if (curline.starts_with("#else"))
                         {
-                            curline = file[erase_position].view_nonspace();
-                            if (curline.starts_with("#else"))
-                            {
-                                do
-                                {
-                                    file.RemoveLine(erase_position);
-                                    curline = file[erase_position].view_nonspace();
-                                    if (curline.starts_with("#endif"))
-                                    {
-                                        break;
-                                    }
-                                } while (erase_position < file.size());
-                            }
-                            if (curline.starts_with("#endif"))
+                            while (erase_position < file.size())
                             {
                                 file.RemoveLine(erase_position);
-
-                                while (file[erase_position - 1].size() &&
-                                       (file[erase_position - 1].back() == ',' ||
-                                        file[erase_position - 1].back() == '|'))
+                                curline = file[erase_position].view_nonspace();
+                                if (curline.starts_with("#endif"))
                                 {
-                                    file[erase_position - 1]
-                                        << file[erase_position].view_nonspace();
-                                    file[erase_position - 1].trim();
-                                    file.RemoveLine(erase_position);
+                                    break;
                                 }
-
-                                break;
                             }
+                        }
+                        if (curline.starts_with("#endif"))
+                        {
+                            file.RemoveLine(erase_position);
+
+                            while (file[erase_position - 1].size() &&
+                                   (file[erase_position - 1].back() == ',' ||
+                                    file[erase_position - 1].back() == '|'))
+                            {
+                                file[erase_position - 1] << file[erase_position].view_nonspace();
+                                file[erase_position - 1].trim();
+                                file.RemoveLine(erase_position);
+                            }
+
+                            break;
                         }
                     }
                 }
@@ -290,7 +302,9 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
             {
                 auto view = curline.subview(curline.find(" MENU"));
                 if (view.size() > 5)
+                {
                     continue;  // Means this isn't really a menu command
+                }
 
                 if (forms.size())
                 {
@@ -326,7 +340,7 @@ bool WinResource::ImportRc(const tt_string& rc_file, std::vector<tt_string>& for
     if (!isNested)
     {
         std::sort(m_forms.begin(), m_forms.end(),
-                  [](resForm a, resForm b)
+                  [](const resForm& a, const resForm& b)
                   {
                       return (a.GetFormName().compare(b.GetFormName()) < 0);
                   });
@@ -343,16 +357,22 @@ void WinResource::ParseDialog(tt_string_vector& file)
         auto line = file[m_curline].subview();
         auto end = line.find_space();
         if (end == tt::npos)
+        {
             throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
+        }
 
         auto settings = line.subview(line.find_nonspace(end));
 
         if (!settings.starts_with("DIALOG"))  // verify this is a dialog
+        {
             throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
+        }
 
         auto pos = tt::stepover_pos(settings);
         if (pos == tt::npos)
+        {
             throw std::invalid_argument("Expected dimensions following DIALOG or DIALOGEX.");
+        }
 
         auto& form = m_forms.emplace_back();
         form.ParseDialog(this, file, m_curline);
@@ -375,12 +395,16 @@ void WinResource::ParseMenu(tt_string_vector& file)
         auto line = file[m_curline].subview();
         auto end = line.find_space();
         if (end == tt::npos)
+        {
             throw std::invalid_argument("Expected an ID then a MENU.");
+        }
 
         auto settings = line.subview(line.find_nonspace(end));
 
         if (!settings.starts_with("MENU"))  // verify this is a dialog
+        {
             throw std::invalid_argument("Expected an ID then a MENU.");
+        }
 
         auto& form = m_forms.emplace_back();
         form.ParseMenu(this, file, m_curline);
@@ -402,7 +426,9 @@ void WinResource::ParseStringTable(tt_string_vector& file)
     {
         auto line = file[m_curline].subview(file[m_curline].find_nonspace());
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
+        {
             continue;
+        }
 
         if (line.starts_with("END") || line.starts_with("}"))
         {
@@ -419,7 +445,9 @@ void WinResource::ParseStringTable(tt_string_vector& file)
             tt_string id(line.substr(0, pos));
             id.trim(tt::TRIM::right);
             if (id.back() == ',')
+            {
                 id.pop_back();
+            }
 
             pos = line.find_nonspace(pos);
             if (ttwx::is_found(pos))
@@ -460,7 +488,9 @@ void WinResource::InsertDialogs(std::vector<tt_string>& dialogs)
 void WinResource::FormToNode(resForm& form)
 {
     if (form.GetFormType() == resForm::form_dialog || form.GetFormType() == resForm::form_panel)
+    {
         form.CreateDialogLayout();
+    }
 
     switch (form.GetFormType())
     {
@@ -484,32 +514,37 @@ void WinResource::FormToNode(resForm& form)
 std::optional<tt_string> WinResource::FindIcon(const std::string& id)
 {
     if (auto result = m_map_icons.find(id); result != m_map_icons.end())
+    {
         return result->second;
-    else
-        return {};
+    }
+    return {};
 }
 
 std::optional<tt_string> WinResource::FindBitmap(const std::string& id)
 {
     if (auto result = m_map_bitmaps.find(id); result != m_map_bitmaps.end())
+    {
         return result->second;
-    else
-        return {};
+    }
+    return {};
 }
 
 std::optional<tt_string> WinResource::FindStringID(const std::string& id)
 {
     if (auto result = m_map_stringtable.find(id); result != m_map_stringtable.end())
+    {
         return result->second;
-    else
-        return {};
+    }
+    return {};
 }
 
 tt_string WinResource::ConvertCodePageString(std::string_view str)
 {
     if (m_codepage == 65001)  // utf8 code page
+    {
         return tt_string(str);
-#if defined(_WIN32)
+    }
+#ifdef _WIN32
     std::wstring result;
     auto out_size = (str.size() * sizeof(wchar_t)) + sizeof(wchar_t);
     result.reserve(out_size);

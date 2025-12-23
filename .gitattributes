@@ -1,2 +1,33 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Force LF line endings for all text files
+* text=auto eol=lf
+
+# Explicitly declare text files
+*.cpp text eol=lf
+*.h text eol=lf
+*.c text eol=lf
+*.cmake text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.pl text eol=lf
+*.rb text eol=lf
+*.xml text eol=lf
+*.wxui text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+*.lib binary
+*.obj binary
+*.o binary

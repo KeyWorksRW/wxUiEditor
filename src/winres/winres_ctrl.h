@@ -75,7 +75,8 @@ public:
         getNode()->set_value(name, value);
     }
 
-    bool ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect);
+    [[nodiscard]] auto ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
+        -> bool;
     auto& GetOrginalLine() { return m_original_line; }
 
     NodeSharedPtr SetNodePtr(NodeSharedPtr node)
@@ -92,22 +93,22 @@ protected:
     void ParseButtonStyles(tt_string_view line);
 
     void AddSpecialStyles(tt_string_view line);
-    void AppendStyle(GenEnum::PropName prop_name, tt_string_view style);
+    auto AppendStyle(GenEnum::PropName prop_name, tt_string_view style) -> void;
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)
-    void ParseCommonStyles(tt_string_view line);
+    auto ParseCommonStyles(tt_string_view line) -> void;
 
     // This will set prop_id, and return a sview to the position past the id
-    tt_string_view GetID(tt_string_view line);
+    auto GetID(tt_string_view line) -> tt_string_view;
 
     // This will set prop_label, and return a sview to the position past the id
-    tt_string_view GetLabel(tt_string_view line);
+    auto GetLabel(tt_string_view line) -> tt_string_view;
 
     // Returns a view past the closing quote, or an empty view if there was no closing quote
-    tt_string_view StepOverQuote(tt_string_view line, tt_string& str);
+    auto StepOverQuote(tt_string_view line, tt_string& str) -> tt_string_view;
 
     // Retrieves any string between commas, returns view past the closing comma
-    tt_string_view StepOverComma(tt_string_view line, tt_string& str);
+    auto StepOverComma(tt_string_view line, tt_string& str) -> tt_string_view;
 
     // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
     // has already been created.

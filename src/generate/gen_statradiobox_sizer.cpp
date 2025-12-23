@@ -32,9 +32,13 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
         m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY,
                                        node->as_wxString(prop_label));
         if (node->as_bool(prop_checked))
+        {
             m_radiobtn->SetValue(true);
+        }
         if (node->HasValue(prop_tooltip))
+        {
             m_radiobtn->SetToolTip(node->as_wxString(prop_tooltip));
+        }
 
         auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_radiobtn);
 
@@ -53,7 +57,9 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     }
 
     if (node->HasValue(prop_minimum_size))
+    {
         sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
+    }
 
     return sizer;
 }

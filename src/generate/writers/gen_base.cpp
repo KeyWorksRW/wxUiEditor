@@ -103,7 +103,7 @@ namespace
         { prop_Close, "Close" }, { prop_Help, "Help" }, { prop_ContextHelp, "ContextHelp" },
     };
 
-    void AddStdDialogButtonDeclaration(Node* node, tt_string& code)
+    auto AddStdDialogButtonDeclaration(Node* node, tt_string& code) -> void
     {
         for (const auto& [prop, button_name]: button_map)
         {
@@ -115,8 +115,8 @@ namespace
     }
 }  // namespace
 
-void BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, Node* node,
-                                                  tt_string& code)
+auto BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, Node* node,
+                                                  tt_string& code) -> void
 {
     if (node->HasValue(prop_subclass))
     {
@@ -139,8 +139,9 @@ void BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, N
         {
             AddStdDialogButtonDeclaration(node, code);
         }
+        return;
     }
-    else if (class_name == "wxStaticBitmap")
+    if (class_name == "wxStaticBitmap")
     {
         // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to
         // support it.
@@ -151,8 +152,8 @@ void BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, N
     }
 }
 
-void BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
-                                                         tt_string& code)
+auto BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
+                                                         tt_string& code) -> void
 {
     if (class_name == "StaticCheckboxBoxSizer")
     {
@@ -161,7 +162,7 @@ void BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_
             code << "wxCheckBox* " << node->as_view(prop_checkbox_var_name) << ';';
         }
     }
-    else if (class_name == "StaticRadioBtnBoxSizer")
+    if (class_name == "StaticRadioBtnBoxSizer")
     {
         if (node->HasValue(prop_radiobtn_var_name))
         {
@@ -179,31 +180,30 @@ void BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_
     }
 }
 
-void BaseCodeGenerator::ProcessToolDeclaration(Node* node, tt_string& code)
+auto BaseCodeGenerator::ProcessToolDeclaration(Node* node, tt_string& code) -> void
 {
     tt_string parent_class_name(node->get_Parent()->get_DeclName());
     if (parent_class_name == "wxAuiToolBar")
     {
         code << "wxAuiToolBarItem* " << node->get_NodeName() << ';';
+        return;
     }
-    else if (parent_class_name == "wxToolBar" || parent_class_name == "ToolBar")
+    if (parent_class_name == "wxToolBar" || parent_class_name == "ToolBar")
     {
         code << "wxToolBarToolBase* " << node->get_NodeName() << ';';
+        return;
     }
-    else
-    {
-        FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.")
-    }
+    FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.")
 }
 
-void BaseCodeGenerator::ProcessCustomClassDeclaration(Node* node, tt_string& code)
+auto BaseCodeGenerator::ProcessCustomClassDeclaration(Node* node, tt_string& code) -> void
 {
     if (auto* node_namespace = node->get_Folder();
         node_namespace && node_namespace->HasValue(prop_folder_namespace))
     {
         code << node_namespace->as_view(prop_folder_namespace) << "::";
     }
-    else if (node->HasValue(prop_namespace))
+    if (node->HasValue(prop_namespace))
     {
         code << node->as_view(prop_namespace) << "::";
     }
@@ -211,10 +211,10 @@ void BaseCodeGenerator::ProcessCustomClassDeclaration(Node* node, tt_string& cod
 }
 
 // This is a static function
-void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
-                                   std::set<std::string>& set_const_ids)
+auto BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
+                                   std::set<std::string>& set_const_ids) -> void
 {
-    for (auto& iter: node->get_PropsVector())
+    for (const auto& iter: node->get_PropsVector())
     {
         if (iter.type() == type_id)
         {
@@ -240,7 +240,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_enum_i
     }
 }
 
-void BaseCodeGenerator::AddConditionalEvent(std::string_view platform, NodeEvent* event)
+auto BaseCodeGenerator::AddConditionalEvent(std::string_view platform, NodeEvent* event) -> void
 {
     if (!m_map_conditional_events.contains(platform))
     {
@@ -258,7 +258,8 @@ void BaseCodeGenerator::AddConditionalEvent(std::string_view platform, NodeEvent
     }
 }
 
-void BaseCodeGenerator::AddEventToProperContainer(Node* node, NodeEvent* event, EventVector& events)
+auto BaseCodeGenerator::AddEventToProperContainer(Node* node, NodeEvent* event, EventVector& events)
+    -> void
 {
     if (node->get_Parent()->is_Gen(gen_wxContextMenuEvent))
     {
@@ -269,7 +270,8 @@ void BaseCodeGenerator::AddEventToProperContainer(Node* node, NodeEvent* event, 
     events.push_back(event);
 }
 
-void BaseCodeGenerator::ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events)
+auto BaseCodeGenerator::ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events)
+    -> void
 {
     // Check if node has platform-specific constraint
     if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
@@ -289,7 +291,7 @@ void BaseCodeGenerator::ProcessEventHandler(Node* node, NodeEvent* event, EventV
     AddEventToProperContainer(node, event, events);
 }
 
-void BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events)
+auto BaseCodeGenerator::CollectEventHandlers(Node* node, std::vector<NodeEvent*>& events) -> void
 {
     ASSERT(node);
 
@@ -329,7 +331,7 @@ auto BaseCodeGenerator::IsEmbeddedImageInCollection(const EmbeddedImage* embed) 
                                });
 }
 
-void BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& filenames)
+auto BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& filenames) -> void
 {
     size_t processed_count = 0;
     for (const auto& idx_image: filenames)
@@ -376,8 +378,8 @@ void BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& file
     }
 }
 
-void BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
-                                            std::set<std::string>& embedset)
+auto BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
+                                            std::set<std::string>& embedset) -> void
 {
     for (const auto& idx_image: filenames)
     {
@@ -402,7 +404,7 @@ void BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<tt_str
     }
 }
 
-void BaseCodeGenerator::ProcessAnimationEmbed(std::string_view value)
+auto BaseCodeGenerator::ProcessAnimationEmbed(std::string_view value) -> void
 {
     tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -433,8 +435,8 @@ void BaseCodeGenerator::ProcessAnimationEmbed(std::string_view value)
     }
 }
 
-void BaseCodeGenerator::ProcessAnimationHeaders(std::string_view value, Node* node,
-                                                std::set<std::string>& embedset)
+auto BaseCodeGenerator::ProcessAnimationHeaders(std::string_view value, Node* node,
+                                                std::set<std::string>& embedset) -> void
 {
     tt_view_vector parts(value);
     if (ttwx::is_whitespace(parts[IndexImage].front()))
@@ -462,9 +464,9 @@ void BaseCodeGenerator::ProcessAnimationHeaders(std::string_view value, Node* no
 }
 
 // This function is called by the thread thrd_collect_img_headers
-void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
+auto BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset) -> void
 {
-    for (auto& iter: node->get_PropsVector())
+    for (const auto& iter: node->get_PropsVector())
     {
         if (!iter.HasValue())
         {
@@ -479,8 +481,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 if (value.starts_with("Embed") || value.starts_with("SVG"))
                 {
                     ProcessEmbeddedImages(bundle->lst_filenames);
+                    continue;
                 }
-                else if (value.starts_with("Header") || value.starts_with("XPM"))
+                if (value.starts_with("Header") || value.starts_with("XPM"))
                 {
                     ProcessHeaderImages(node, bundle->lst_filenames, embedset);
                 }
@@ -492,21 +495,22 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             if (value.starts_with("Embed"))
             {
                 ProcessAnimationEmbed(value);
+                continue;
             }
-            else if (value.starts_with("Header") || value.starts_with("XPM"))
+            if (value.starts_with("Header") || value.starts_with("XPM"))
             {
                 ProcessAnimationHeaders(value, node, embedset);
             }
         }
     }
 
-    for (auto& child: node->get_ChildNodePtrs())
+    for (const auto& child: node->get_ChildNodePtrs())
     {
         CollectImageHeaders(child.get(), embedset);
     }
 }
 
-void BaseCodeGenerator::ProcessFormIcon(Node* node)
+auto BaseCodeGenerator::ProcessFormIcon(Node* node) -> void
 {
     if (node->is_Form() && node->HasValue(prop_icon))
     {
@@ -528,7 +532,8 @@ void BaseCodeGenerator::ProcessFormIcon(Node* node)
     }
 }
 
-void BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation)
+auto BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation)
+    -> void
 {
     if (is_animation)
     {
@@ -561,8 +566,8 @@ void BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, boo
     }
 }
 
-void BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
-                                            [[maybe_unused]] bool is_animation)
+auto BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
+                                            [[maybe_unused]] bool is_animation) -> void
 {
     if (!m_ImagesForm)
     {
@@ -588,13 +593,15 @@ void BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
     }
 }
 
-void BaseCodeGenerator::ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation)
+auto BaseCodeGenerator::ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation)
+    -> void
 {
     if (is_animation)
     {
         m_NeedAnimationFunction = true;
+        return;
     }
-    else if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+    if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
     {
         m_NeedHeaderFunction = true;
     }
@@ -604,7 +611,7 @@ void BaseCodeGenerator::ProcessChildHeaderType(const tt_string_vector& parts, bo
 //
 // Determine if Header or Animation functions need to be generated, and whether the
 // wx/artprov.h header is needed
-void BaseCodeGenerator::ParseImageProperties(Node* node)
+auto BaseCodeGenerator::ParseImageProperties(Node* node) -> void
 {
     ASSERT(node);
     if (node->is_Form() && node->HasValue(prop_icon))
@@ -614,7 +621,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
-        for (auto& iter: child->get_PropsVector())
+        for (const auto& iter: child->get_PropsVector())
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
@@ -627,12 +634,14 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 if (parts[IndexType] == "Embed")
                 {
                     ProcessChildEmbedType(parts, iter.type() == type_animation);
+                    continue;
                 }
-                else if ((parts[IndexType] == "SVG"))
+                if ((parts[IndexType] == "SVG"))
                 {
                     ProcessChildSVGType(parts, iter.type() == type_animation);
+                    continue;
                 }
-                else if (parts[IndexType] == "Header")
+                if (parts[IndexType] == "Header")
                 {
                     ProcessChildHeaderType(parts, iter.type() == type_animation);
                 }
@@ -645,7 +654,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
     }
 }
 
-void BaseCodeGenerator::AddPersistCode(Node* node)
+auto BaseCodeGenerator::AddPersistCode(Node* node) -> void
 {
     if (node->HasValue(prop_persist_name))
     {
@@ -660,17 +669,17 @@ void BaseCodeGenerator::AddPersistCode(Node* node)
     }
 }
 
-void BaseCodeGenerator::WriteSetLines(WriteCode* write_code, std::set<std::string>& set_lines)
+auto BaseCodeGenerator::WriteSetLines(WriteCode* write_code, std::set<std::string>& set_lines)
+    -> void
 {
-    for (auto iter: set_lines)
+    for (const auto& iter: set_lines)
     {
-        // write_code->writeLine((tt_string&) (iter));
         write_code->writeLine(iter);
     }
     set_lines.clear();
 }
 
-void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
+auto BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu) -> void
 {
     if (auto* generator = node_ctx_menu->get_Generator(); generator)
     {
@@ -682,13 +691,13 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu)
     }
 }
 
-void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
+auto BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop) -> void
 {
     tt_string convert(node->as_string(prop));
     convert.Replace("@@", "\n", tt::REPLACE::all);
     tt_string_vector lines(convert, '\n');
     bool initial_bracket = false;
-    for (auto& code: lines)
+    for (const auto& code: lines)
     {
         if (code.contains("}"))
         {
@@ -711,7 +720,7 @@ void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
     m_source->writeLine();
 }
 
-void BaseCodeGenerator::SetImagesForm()
+auto BaseCodeGenerator::SetImagesForm() -> void
 {
     m_ImagesForm = nullptr;
     for (const auto& form: Project.get_ChildNodePtrs())

@@ -65,38 +65,40 @@ public:
     // since the file was first loaded.
     //
     // size parameter is only used for SVG files
-    wxBitmapBundle get_bundle(wxSize size = { -1, -1 });
+    auto get_bundle(wxSize size = { -1, -1 }) -> wxBitmapBundle;
 
     // imgs[0] is always the base image that can either be a single image, or the first image
     // in a bundle of images.
-    ImageInfo& base_image() { return m_images[0]; }
-    const ImageInfo& base_image() const { return m_images[0]; }
+    auto base_image() -> ImageInfo& { return m_images[0]; }
+    auto base_image() const -> const ImageInfo& { return m_images[0]; }
 
-    void add_ImageInfo() { m_images.push_back(ImageInfo()); }
+    auto add_ImageInfo() -> void { m_images.push_back(ImageInfo()); }
 
-    std::vector<ImageInfo>& get_ImageInfos() { return m_images; }
-    const std::vector<ImageInfo>& get_ImageInfos() const { return m_images; }
+    auto get_ImageInfos() -> std::vector<ImageInfo>& { return m_images; }
+    auto get_ImageInfos() const -> const std::vector<ImageInfo>& { return m_images; }
 
-    ImageInfo& get_ImageInfo(size_t index = 0)
+    auto get_ImageInfo(size_t index = 0) -> ImageInfo&
     {
         ASSERT_MSG(index < m_images.size(), "EmbeddedImage::get_ImageInfo() index out of range");
         if (index >= m_images.size())
+        {
             index = 0;
+        }
         return m_images[index];
     }
 
-    Node* get_Form() const { return m_form; }
-    void set_Form(Node* form) { m_form = form; }
+    [[nodiscard]] auto get_Form() const -> Node* { return m_form; }
+    auto set_Form(Node* form) -> void { m_form = form; }
 
-    const wxSize& get_wxSize() const { return m_size; }
-    void set_wxSize(const wxSize& size) { m_size = size; }
+    [[nodiscard]] auto get_wxSize() const -> const wxSize& { return m_size; }
+    auto set_wxSize(const wxSize& size) -> void { m_size = size; }
 
     // Uses image.GetSize() to set size member
-    void SetEmbedSize(const wxImage& image);
+    auto SetEmbedSize(const wxImage& image) -> void;
 
     // Call this is the image file has been modified. This will update the array_data and
     // array_size for the image from the updated image file.
-    void UpdateImage(ImageInfo& image_info);
+    auto UpdateImage(ImageInfo& image_info) -> void;
 
 private:
     // ctor/Initialize() will always create at least one ImageInfo structure

@@ -30,7 +30,7 @@ enum
     IMPORT_XRC,
 };
 
-void ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */)
+auto ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */) -> void
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -83,7 +83,9 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */)
             }
 
             if (files.size())
+            {
                 m_checkListProjects->InsertItems(files, 0);
+            }
         }
     }
 

@@ -34,7 +34,7 @@ public:
     }
 
 protected:
-    void RemoveProjectFilename(wxCommandEvent& event)
+    auto RemoveProjectFilename(wxCommandEvent& event) -> void
     {
         event.SetString(GetURL());
         if (GetParent())
@@ -43,7 +43,7 @@ protected:
         }
     }
 
-    void DoContextMenu(const wxPoint& pos) override
+    auto DoContextMenu(const wxPoint& pos) -> void override
     {
         auto menu_popup = std::make_unique<wxMenu>(wxEmptyString, wxMENU_TEAROFF);
         menu_popup->Append(wxID_REMOVE, "Remove Project from List");
@@ -55,8 +55,8 @@ protected:
 // use_standard_colors: true for main history (uses RemovableProjectHyperlinkCtrl with remove
 // option),
 //                      false for testing imports (uses wxGenericHyperlinkCtrl with inverted colors)
-void StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& url,
-                                  const wxFileName& project_file, bool use_standard_colors)
+auto StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& url,
+                                  const wxFileName& project_file, bool use_standard_colors) -> void
 {
     wxGenericHyperlinkCtrl* hyperlink = nullptr;
     if (use_standard_colors)
@@ -95,7 +95,7 @@ void StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& 
     m_recent_flex_grid->Add(path, wxSizerFlags().Border(wxALL));
 }
 
-void StartupDlg::OnInit(wxInitDialogEvent& event)
+auto StartupDlg::OnInit(wxInitDialogEvent& event) -> void
 {
     if (!GetParent())
     {

@@ -118,7 +118,7 @@ auto PerlCodeGenerator::WriteSourceHeader() -> void
 {
     m_source->SetLastLineBlank();
 
-#if !defined(_DEBUG)
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #else
     if (m_panel_type != PANEL_PAGE::NOT_PANEL)
@@ -600,7 +600,7 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
 
         undefined_handlers.Str(set_code).Eol();
         undefined_handlers.Tab().Str("my ($self, $event) = @_;").Eol();
-#if defined(_DEBUG)
+#ifdef _DEBUG
         const auto& dbg_event_name = event->get_name();
         wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG

@@ -23,7 +23,7 @@ GrowRowsDialog::GrowRowsDialog(wxWindow* parent, NodeProperty* prop) : GridPrope
     m_prop = prop;
 };
 
-void GrowRowsDialog::OnInit(wxInitDialogEvent& /* event unused */)
+auto GrowRowsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void
 {
     m_prop_label->SetLabel("Growable Rows");
     m_grid->SetColLabelValue(0, "Row");
@@ -100,7 +100,7 @@ void GrowRowsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     Fit();
 }
 
-void GrowRowsDialog::OnOK(wxCommandEvent& event)
+auto GrowRowsDialog::OnOK(wxCommandEvent& event) -> void
 {
     m_grow_entries.clear();
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
@@ -130,13 +130,13 @@ void GrowRowsDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void GrowRowsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
+auto GrowRowsDialog::OnUpdateUI([[maybe_unused]] wxUpdateUIEvent& event) -> void
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
 }
 
-void GrowRowsDialog::OnNewRow(wxCommandEvent& /* event unused */)
+auto GrowRowsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
@@ -156,7 +156,7 @@ void GrowRowsDialog::OnNewRow(wxCommandEvent& /* event unused */)
     Fit();
 }
 
-void GrowRowsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
+auto GrowRowsDialog::OnDeleteRow([[maybe_unused]] wxCommandEvent& event) -> void
 {
     auto array = m_grid->GetSelectedRows();
     if (array.empty())
@@ -173,8 +173,9 @@ void GrowRowsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
     Fit();
 }
 
-bool GrowRowsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
-                                         wxPGProperty* /* property unused */)
+[[nodiscard]] auto GrowRowsDialogAdapter::DoShowDialog([[maybe_unused]] wxPropertyGrid* propGrid,
+                                                       [[maybe_unused]] wxPGProperty* property)
+    -> bool
 {
     GrowRowsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

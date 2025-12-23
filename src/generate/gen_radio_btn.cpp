@@ -20,12 +20,14 @@
 
 wxObject* RadioButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                           DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_bool(prop_checked))
+    {
         widget->SetValue(true);
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

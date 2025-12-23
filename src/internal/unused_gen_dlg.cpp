@@ -19,8 +19,8 @@
 #include "node.h"
 #include "project_handler.h"
 
-bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+auto UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name) -> bool
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.

@@ -14,12 +14,12 @@
 
 #include "edit_custom_mockup_base.h"
 
-bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID win_id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, win_id, title, pos, size, style, name))
     {
         return false;
     }
@@ -146,7 +146,9 @@ void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
                 tt_string_vector options(m_widget_type.Mid(pos + 1).utf8_string(), ",");
                 m_text_static->SetValue(options[0]);
                 if (options.size() > 1)
+                {
                     m_check_centered->SetValue(options[1].contains("1"));
+                }
             }
 
             m_widget_types->SetStringSelection("wxStaticText");
@@ -176,7 +178,9 @@ void EditCustomMockupBase::OnSelect(wxCommandEvent& /* event unused */)
 void EditCustomMockupBase::OnOK(wxCommandEvent& event)
 {
     if (!Validate() || !TransferDataFromWindow())
+    {
         return;
+    }
 
     m_result.clear();
     m_result << m_widget_type;

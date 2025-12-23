@@ -39,10 +39,9 @@ auto utils::replace_in_line(std::string& line, std::string_view search,
     }
 }
 
-tt_string DoubleToStr(double val)
+auto DoubleToStr(double val) -> tt_string
 {
     tt_string result;
-
     std::array<char, 20> str {};
     if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), val); ec == std::errc())
     {
@@ -51,17 +50,16 @@ tt_string DoubleToStr(double val)
     return result;
 }
 
-tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue)
+auto ClearPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string
 {
-    tt_string result;
     if (flag.empty() || currentValue.empty())
     {
-        result = currentValue;
-        return result;
+        return tt_string(currentValue);
     }
 
+    tt_string result;
     tt_view_vector mstr(currentValue, '|');
-    for (auto& iter: mstr)
+    for (const auto& iter: mstr)
     {
         if (iter != flag)
         {
@@ -75,22 +73,22 @@ tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue)
     return result;
 }
 
-tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue)
+auto ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue) -> tt_string
 {
-    tt_string result;
     if (flags.empty() || currentValue.empty())
     {
-        result = currentValue;
-        return result;
+        return tt_string(currentValue);
     }
+
+    tt_string result;
 
     tt_string_vector mflags(flags, '|');
 
     tt_string_vector mstr(currentValue, '|');
-    for (auto& iter: mstr)
+    for (const auto& iter: mstr)
     {
         bool isFlagged = false;
-        for (auto& itFlags: mflags)
+        for (const auto& itFlags: mflags)
         {
             if (iter == itFlags)
             {
@@ -111,7 +109,7 @@ tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentVal
     return result;
 }
 
-tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue)
+auto SetPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string
 {
     tt_string result(currentValue);
     if (flag.empty())
@@ -199,34 +197,23 @@ wxSystemColour ConvertToSystemColour(tt_string_view value)
 
 auto ConvertFontFamilyToString(wxFontFamily family) -> const char*
 {
-    const char* result;
-
     switch (family)
     {
         case wxFONTFAMILY_DECORATIVE:
-            result = "wxFONTFAMILY_DECORATIVE";
-            break;
+            return "wxFONTFAMILY_DECORATIVE";
         case wxFONTFAMILY_ROMAN:
-            result = "wxFONTFAMILY_ROMAN";
-            break;
+            return "wxFONTFAMILY_ROMAN";
         case wxFONTFAMILY_SCRIPT:
-            result = "wxFONTFAMILY_SCRIPT";
-            break;
+            return "wxFONTFAMILY_SCRIPT";
         case wxFONTFAMILY_SWISS:
-            result = "wxFONTFAMILY_SWISS";
-            break;
+            return "wxFONTFAMILY_SWISS";
         case wxFONTFAMILY_MODERN:
-            result = "wxFONTFAMILY_MODERN";
-            break;
+            return "wxFONTFAMILY_MODERN";
         case wxFONTFAMILY_TELETYPE:
-            result = "wxFONTFAMILY_TELETYPE";
-            break;
+            return "wxFONTFAMILY_TELETYPE";
         default:
-            result = "wxFONTFAMILY_DEFAULT";
-            break;
+            return "wxFONTFAMILY_DEFAULT";
     }
-
-    return result;
 }
 
 auto ConvertEscapeSlashes(tt_string_view str) -> tt_string
@@ -277,10 +264,7 @@ auto ConvertEscapeSlashes(tt_string_view str) -> tt_string
                 }
             }
         }
-        else
-        {
-            result += current_char;
-        }
+        result += current_char;
     }
 
     return result;
@@ -295,7 +279,7 @@ auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxPoint(prop));
 }
 
-wxSize DlgSize(Node* node, GenEnum::PropName prop)
+auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize
 {
     if (!isScalingEnabled(node, prop))
     {
@@ -364,7 +348,7 @@ inline constexpr auto lst_no_png_conversion = std::to_array<const char*>({
 });
 // clang-format on
 
-bool isConvertibleMime(const tt_string& suffix)
+auto isConvertibleMime(const tt_string& suffix) -> bool
 {
     return std::ranges::all_of(lst_no_png_conversion,
                                [&](const char* iter)
@@ -565,16 +549,16 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
         var_name += "img_";
     }
 
-    for (size_t pos = 0; pos < filename.size(); pos++)
+    for (size_t pos = 0; pos < filename.size(); ++pos)
     {
-        auto iter = static_cast<char>(filename[pos]);
-        if (ttwx::is_alnum(iter) || iter == '_')
+        auto current_ch = static_cast<char>(filename[pos]);
+        if (ttwx::is_alnum(current_ch) || current_ch == '_')
         {
-            var_name += iter;
+            var_name += current_ch;
         }
         else
         {
-            if (iter == '.')
+            if (current_ch == '.')
             {
                 // Always convert a period to an underscore in case it is preceeding the extension
                 var_name += '_';
@@ -585,9 +569,9 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
                 var_name += '_';
             }
             // Ignore the first byte of a UTF-8 character sequence
-            else if (static_cast<unsigned char>(iter) != 0xFF)
+            else if (static_cast<unsigned char>(current_ch) != 0xFF)
             {
-                var_name += std::format("{:02x}", static_cast<unsigned char>(iter));
+                var_name += std::format("{:02x}", static_cast<unsigned char>(current_ch));
             }
         }
 
@@ -602,7 +586,7 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
     return var_name;
 }
 
-bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language)
+auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language) -> bool
 {
     if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either))
     {
@@ -627,23 +611,16 @@ auto GenLangToString(GenLang language) -> std::string_view
     {
         case GEN_LANG_CPLUSPLUS:
             return "C++";
-            break;
         case GEN_LANG_PERL:
             return "Perl";
-            break;
         case GEN_LANG_PYTHON:
             return "Python";
-            break;
         case GEN_LANG_RUBY:
             return "Ruby";
-            break;
         case GEN_LANG_XRC:
             return "XRC";
-            break;
-
         default:
             return "an unknown language";
-            break;
     }
 }
 
@@ -671,9 +648,8 @@ auto ConvertToGenLang(tt_string_view language) -> GenLang
     if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
     {
         return GEN_LANG_XRC;
-
-        // If this wasn't an actual language setting, then return all languages
     }
+    // If this wasn't an actual language setting, then return all languages
     return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
                                 GEN_LANG_PERL | GEN_LANG_XRC);
 }

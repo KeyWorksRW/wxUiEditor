@@ -20,8 +20,8 @@
 
 wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
-                                                 node->as_int(prop_vgap), node->as_int(prop_hgap));
+    auto* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
+                                      node->as_int(prop_vgap), node->as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -36,9 +36,9 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
             auto rows = node->as_int(prop_rows);
             auto cols = node->as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
-            for (auto& iter: values)
+            for (const auto& iter: values)
             {
-                auto value = iter.atoi();
+                const auto value = iter.atoi();
                 if (value <= row_or_col)
                 {
                     int proportion = 0;
@@ -97,9 +97,9 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
             auto rows = node->as_int(prop_rows);
             auto cols = node->as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
-            for (auto& iter: values)
+            for (const auto& iter: values)
             {
-                auto val = iter.atoi();
+                const auto val = iter.atoi();
                 if (val <= row_or_col)
                 {
                     if (!is_within_braces)

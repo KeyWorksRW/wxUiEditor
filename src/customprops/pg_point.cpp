@@ -76,7 +76,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     }
 }
 
-void CustomPointProperty::RefreshChildren()
+auto CustomPointProperty::RefreshChildren() -> void
 {
     wxString value = m_value;
     if (value.size())
@@ -89,7 +89,7 @@ void CustomPointProperty::RefreshChildren()
     }
 }
 
-wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int childIndex,
+wxVariant CustomPointProperty::ChildChanged([[maybe_unused]] wxVariant& thisValue, int childIndex,
                                             wxVariant& childValue) const
 {
     wxString value = childValue;
@@ -123,7 +123,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
     return value;
 }
 
-void CustomPointProperty::InitValues(tt_string_view value)
+auto CustomPointProperty::InitValues(tt_string_view value) -> void
 {
     if (value.empty())
     {
@@ -177,7 +177,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
     }
 }
 
-tt_string CustomPointProperty::CombineValues()
+auto CustomPointProperty::CombineValues() -> tt_string
 {
     tt_string value;
     value << m_point.x << ',' << m_point.y;
@@ -198,13 +198,10 @@ wxString CustomBoolProperty::ValueToString(wxVariant& value, wxPGPropValFormatFl
         {
             return m_label;
         }
-        else
-        {
-            if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
-                return wxString();
+        if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
+            return wxString();
 
-            return (wxString("No ") + m_label);
-        }
+        return (wxString("No ") + m_label);
     }
 
     if (!(flags & wxPGPropValFormatFlags::FullValue))

@@ -389,13 +389,13 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
                          << "You can't drop a " << node_src->get_DeclName() << " onto a sizer.");
             return;
         }
-        else if (dst_parent->is_Container())
+        if (dst_parent->is_Container())
         {
             wxMessageBox(tt_string() << "You can't drop a " << node_src->get_DeclName()
                                      << " onto a " << dst_parent->get_DeclName() << '.');
             return;
         }
-        else if (dst_parent->is_Gen(gen_Project))
+        if (dst_parent->is_Gen(gen_Project))
         {
             wxMessageBox("Only forms can be dropped onto your project.");
             return;
@@ -426,7 +426,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
             return;
         }
     }
-    else if (src_parent == dst_parent)
+    if (src_parent == dst_parent)
     {
         m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(
             node_src, dst_parent->get_ChildPosition(node_dst)));

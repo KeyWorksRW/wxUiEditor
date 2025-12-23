@@ -60,23 +60,23 @@ public:
     }
 
     // Call this whenever a project is loaded
-    void Clear() { m_embedded_data.clear(); }
+    auto Clear() -> void { m_embedded_data.clear(); }
 
     // Only call this when the datalist code needs to be generated.
-    void Initialize();
+    auto Initialize() -> void;
 
     // Generate data list construction code in source
     //
     // This will call code.clear() before writing any code.
-    void WriteDataConstruction(Code& code, WriteCode* source);
+    auto WriteDataConstruction(Code& code, WriteCode* source) -> void;
 
     // Write extern statements to the header file
-    void WriteImagePostHeader(WriteCode* header);
+    auto WriteImagePostHeader(WriteCode* header) -> void;
 
-    bool NeedsUtilityHeader() const;
+    [[nodiscard]] auto NeedsUtilityHeader() const -> bool;
 
 protected:
-    bool LoadAndCompress(Node* node);
+    auto LoadAndCompress(Node* node) -> bool;
 
 private:
     std::map<std::string, EmbeddedData, std::less<>> m_embedded_data;
@@ -86,6 +86,6 @@ extern DataHandler& ProjectData;
 
 namespace data_list
 {
-    Node* FindDataList();
+    auto FindDataList() -> Node*;
 
 };  // namespace data_list

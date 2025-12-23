@@ -153,11 +153,17 @@ bool PopupWinBaseGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         if (code.node()->is_PropValue(prop_variant, "small"))
+        {
             code.Add("wxWINDOW_VARIANT_SMALL");
+        }
         else if (code.node()->is_PropValue(prop_variant, "mini"))
+        {
             code.Add("wxWINDOW_VARIANT_MINI");
+        }
         else
+        {
             code.Add("wxWINDOW_VARIANT_LARGE");
+        }
 
         code.EndFunction();
     }
@@ -179,7 +185,9 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
     ASSERT_MSG(form->is_Gen(gen_wxPopupWindow) || form->get_ChildCount(),
                "Trying to generate code for wxPopup with no children.")
     if (!form->get_ChildCount())
+    {
         return {};  // empty popup window, so nothing to do
+    }
     ASSERT_MSG(form->get_Child(0)->is_Sizer(), "Expected first child of wxPopup to be a sizer.");
     if (form->get_Child(0)->is_Sizer())
     {

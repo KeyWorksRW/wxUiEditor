@@ -35,7 +35,7 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 }
 
-void PropertyGrid_Animation::RefreshChildren()
+auto PropertyGrid_Animation::RefreshChildren() -> void
 {
     wxString value = m_value;
     if (value.size())

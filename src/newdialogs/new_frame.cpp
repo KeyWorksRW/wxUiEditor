@@ -167,7 +167,7 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"         // ProjectHandler class
 #include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-void NewFrame::OnCheckMainFrame(wxCommandEvent& /* event unused */)
+auto NewFrame::OnCheckMainFrame(wxCommandEvent& /* event unused */) -> void
 {
     if (m_checkBox_mainframe->GetValue())
     {
@@ -183,24 +183,38 @@ void NewFrame::OnCheckMainFrame(wxCommandEvent& /* event unused */)
     }
 }
 
-void NewFrame::CreateNode()
+auto NewFrame::CreateNode() -> void
 {
     auto frame_type = m_choiceFrameType->GetStringSelection();
     auto generator = gen_wxFrame;
     if (frame_type == "wxFrame")
+    {
         generator = gen_wxFrame;
+    }
     else if (frame_type == "wxDocParentFrame")
+    {
         generator = gen_wxDocChildFrame;
+    }
     else if (frame_type == "wxDocChildFrame")
+    {
         generator = gen_wxDocChildFrame;
+    }
     else if (frame_type == "wxDocMDIParentFrame")
+    {
         generator = gen_wxDocMDIParentFrame;
+    }
     else if (frame_type == "wxDocMDIChildFrame")
+    {
         generator = gen_wxDocMDIChildFrame;
+    }
     else if (frame_type == "wxAuiMDIParentFrame")
+    {
         generator = gen_wxAuiMDIParentFrame;
+    }
     else if (frame_type == "wxAuiMDIChildFrame")
+    {
         generator = gen_wxAuiMDIChildFrame;
+    }
 
     auto form_node = NodeCreation.CreateNode(generator, nullptr).first;
     ASSERT(form_node);
@@ -255,11 +269,13 @@ void NewFrame::CreateNode()
     // If it's a mainframe then bars were probably added, so it makes sense to switch to the Bars
     // ribbon bar page since that's likely what the user will be doing next (adding tools or menus).
     if (m_has_mainframe)
+    {
         wxGetFrame().getRibbonPanel()->ActivateBarPage();
+    }
 }
 
 // Called whenever m_classname changes
-void NewFrame::VerifyClassName()
+auto NewFrame::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -273,7 +289,7 @@ void NewFrame::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

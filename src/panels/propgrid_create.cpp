@@ -227,7 +227,7 @@ void PropGridPanel::Create()
                     CreateLayoutCategory(node);
                 }
             }
-            else if ((node->get_Parent() != nullptr) && node->get_Parent()->is_Sizer())
+            if ((node->get_Parent() != nullptr) && node->get_Parent()->is_Sizer())
             {
                 CreateLayoutCategory(node);
             }

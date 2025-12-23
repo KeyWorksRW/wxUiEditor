@@ -22,13 +22,12 @@ EditCodeSingleProperty::EditCodeSingleProperty(const wxString& label, NodeProper
 class EditCodeSingleDialog : public EditStringDialogBase
 {
 public:
-    EditCodeSingleDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
+    EditCodeSingleDialog(wxWindow* parent, NodeProperty* prop) :
+        EditStringDialogBase(parent), m_node(prop->getNode()), m_prop(prop)
     {
         SetTitle(tt_string() << prop->get_DeclName() << " property editor");
         m_value = prop->as_wxString();
         m_static_hdr_text->Show();
-        m_node = prop->getNode();
-        m_prop = prop;
 
         m_textCtrl->Bind(wxEVT_TEXT, &EditCodeSingleDialog::UpdateStaticText, this);
         Fit();
@@ -41,13 +40,17 @@ public:
         {
             auto text = m_textCtrl->GetValue().utf8_string();
             if (!text.starts_with("#"))
+            {
                 static_text << "#if ";
+            }
             static_text << m_textCtrl->GetValue().utf8_string();
         }
         else
         {
             if (m_node->is_PropValue(prop_class_access, "none"))
+            {
                 static_text << "auto ";
+            }
             static_text << m_node->as_string(prop_var_name) << " = new "
                         << m_node->as_string(prop_class_name);
             static_text << m_textCtrl->GetValue().utf8_string() << ';';

@@ -24,13 +24,13 @@
 #include "write_code.h"       // Write code to Scintilla or file
 
 // Generate code after the construcor for embedded images not defined in the gen_Images node.
-void BaseCodeGenerator::WriteImageConstruction(Code& code)
+auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
 {
     code.clear();
 
     bool is_namespace_written = false;
     // -12 to account for 8 indent + max 3 chars for number + comma
-    size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
+    const size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
 
     for (auto iter_array: m_embedded_images)
     {
@@ -50,7 +50,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
 
             // SVG images store the original size in the high 32 bits
-            size_t max_pos = (iter_array->base_image().array_size & 0xFFFFFFFF);
+            const size_t max_pos = (iter_array->base_image().array_size & 0xFFFFFFFF);
 
             if (iter_array->base_image().filename.size())
             {
@@ -302,7 +302,7 @@ namespace
     // Helper constants for bundle generation
 }  // end anonymous namespace
 
-void Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap)
+auto Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap) -> void
 {
     wxSize svg_size { -1, -1 };
     if (parts[IndexSize].size())
@@ -322,13 +322,11 @@ void Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap)
             {
                 Str("(FromDIP(").itoa(svg_size.x).Str("), FromDIP(").itoa(svg_size.y) += "))";
                 Str(".").Add("GetBitmap(").Add("wxDefaultSize)");
+                return;
             }
-            else
-            {
-                // For SVG files, just provide the default size, and wxWidgets will scale it
-                // before converting it to a bitmap for rendering.
-                Str("(").itoa(svg_size.x).Str(", ").itoa(svg_size.y) += ")";
-            }
+            // For SVG files, just provide the default size, and wxWidgets will scale it
+            // before converting it to a bitmap for rendering.
+            Str("(").itoa(svg_size.x).Str(", ").itoa(svg_size.y) += ")";
             return;
         }
     }
@@ -409,7 +407,7 @@ void Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap)
     }
 }
 
-void Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap)
+auto Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap) -> void
 {
     Class("wxArtProvider");
     if (get_bitmap)
@@ -428,7 +426,7 @@ void Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap)
 
     tt_string art_id(parts[IndexArtID]);
     tt_string art_client;
-    if (auto pos = art_id.find('|'); ttwx::is_found(pos))
+    if (const auto pos = art_id.find('|'); ttwx::is_found(pos))
     {
         art_client = art_id.subview(pos + 1);
         art_id.erase(pos);
@@ -469,7 +467,7 @@ void Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap)
     *this << ')';
 }
 
-void Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap)
+auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -> void
 {
     if (is_cpp())
     {

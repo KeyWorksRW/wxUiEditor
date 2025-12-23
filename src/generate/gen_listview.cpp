@@ -17,8 +17,9 @@
 
 wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget =
+        new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {

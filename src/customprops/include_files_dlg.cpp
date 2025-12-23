@@ -129,7 +129,7 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 #include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
 #include "tt_view_vector.h"    // tt_view_vector -- Read/Write line-oriented strings/files
 
-void IncludeFilesDialog::Initialize(NodeProperty* prop)
+auto IncludeFilesDialog::Initialize(NodeProperty* prop) -> void
 {
     m_prop = prop;
     if (m_prop->isProp(prop_relative_require_list))
@@ -140,7 +140,7 @@ void IncludeFilesDialog::Initialize(NodeProperty* prop)
         m_language = GEN_LANG_CPLUSPLUS;
 }
 
-void IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn)
+auto IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn) -> void
 {
     int sel = m_listbox->GetSelection();
     m_btn_remove->Enable(sel != wxNOT_FOUND);
@@ -152,7 +152,7 @@ void IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn)
         FindWindow(GetAffirmativeId())->Enable(m_listbox->GetCount() > 0);
 }
 
-void IncludeFilesDialog::OnInit(wxInitDialogEvent& /* event unused */)
+auto IncludeFilesDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void
 {
     if (m_prop->isProp(prop_relative_require_list))
     {
@@ -186,7 +186,7 @@ void IncludeFilesDialog::OnInit(wxInitDialogEvent& /* event unused */)
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnAdd(wxCommandEvent& /* event unused */)
+auto IncludeFilesDialog::OnAdd([[maybe_unused]] wxCommandEvent& event) -> void
 {
     if (m_prop->isProp(prop_system_src_includes) || m_prop->isProp(prop_system_hdr_includes))
     {
@@ -274,12 +274,12 @@ void IncludeFilesDialog::OnAdd(wxCommandEvent& /* event unused */)
     }
 }
 
-void IncludeFilesDialog::OnItemSelected(wxCommandEvent& /* event unused */)
+auto IncludeFilesDialog::OnItemSelected([[maybe_unused]] wxCommandEvent& event) -> void
 {
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnMoveUp(wxCommandEvent& /* event unused */)
+auto IncludeFilesDialog::OnMoveUp([[maybe_unused]] wxCommandEvent& event) -> void
 {
     // Move the currently selected item up one position in the listbox
     int sel = m_listbox->GetSelection();
@@ -292,7 +292,7 @@ void IncludeFilesDialog::OnMoveUp(wxCommandEvent& /* event unused */)
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnMoveDown(wxCommandEvent& /* event unused */)
+auto IncludeFilesDialog::OnMoveDown([[maybe_unused]] wxCommandEvent& event) -> void
 {
     // Move the currently selected item down one position in the listbox
     int sel = m_listbox->GetSelection();
@@ -305,7 +305,7 @@ void IncludeFilesDialog::OnMoveDown(wxCommandEvent& /* event unused */)
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnRemove(wxCommandEvent& /* event unused */)
+auto IncludeFilesDialog::OnRemove([[maybe_unused]] wxCommandEvent& event) -> void
 {
     if (int sel = m_listbox->GetSelection(); sel != wxNOT_FOUND)
     {
@@ -319,7 +319,7 @@ void IncludeFilesDialog::OnRemove(wxCommandEvent& /* event unused */)
     }
 }
 
-void IncludeFilesDialog::OnSort(wxCommandEvent& /* event unused */)
+auto IncludeFilesDialog::OnSort([[maybe_unused]] wxCommandEvent& event) -> void
 {
     if (m_listbox->GetCount() < 2)
         return;
@@ -343,7 +343,7 @@ void IncludeFilesDialog::OnSort(wxCommandEvent& /* event unused */)
     SetButtonsEnableState();
 }
 
-void IncludeFilesDialog::OnOK(wxCommandEvent& event)
+auto IncludeFilesDialog::OnOK(wxCommandEvent& event) -> void
 {
     if (m_listbox->GetCount() > 0)
     {

@@ -47,10 +47,10 @@ namespace font
 
 // All the pairs are declared in font_prop.h
 
-FontSymbolPairs font_symbol_pairs;
-FontFamilyPairs font_family_pairs;
-FontWeightPairs font_weight_pairs;
-FontStylePairs font_style_pairs;
+const FontSymbolPairs font_symbol_pairs;
+const FontFamilyPairs font_family_pairs;
+const FontWeightPairs font_weight_pairs;
+const FontStylePairs font_style_pairs;
 
 FontProperty::FontProperty()
 {
@@ -106,7 +106,7 @@ FontProperty::FontProperty(NodeProperty* prop)
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-void FontProperty::Convert(tt_string_view font, bool old_style)
+auto FontProperty::Convert(tt_string_view font, bool old_style) -> void
 {
     if (font.empty())
     {
@@ -274,7 +274,7 @@ void FontProperty::Convert(tt_string_view font, bool old_style)
     }
 }
 
-wxString FontProperty::as_wxString() const
+auto FontProperty::as_wxString() const -> wxString
 {
     wxString str;
     if (m_isDefGuiFont)
@@ -395,13 +395,13 @@ wxString FontProperty::as_wxString() const
     return str;
 }
 
-tt_string FontProperty::as_string() const
+auto FontProperty::as_string() const -> tt_string
 {
     tt_string str(as_wxString().utf8_string());
     return str;
 }
 
-wxFont FontProperty::GetFont() const
+auto FontProperty::GetFont() const -> wxFont
 {
     if (m_isDefGuiFont)
     {

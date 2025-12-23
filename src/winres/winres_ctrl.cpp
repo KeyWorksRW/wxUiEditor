@@ -12,7 +12,10 @@
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 #include "utils.h"          // Utility functions that work with properties
 
-resCtrl::resCtrl() {}
+resCtrl::resCtrl() :
+    m_pWinResource(nullptr), m_add_min_width_property(false), m_add_wrap_property(false)
+{
+}
 
 struct ClassGenPair
 {
@@ -24,7 +27,7 @@ struct ClassGenPair
 
 // lst_class_gen is used when CONTROL is specified, and the class parameter is used to
 // deterime what generator to create.
-static const ClassGenPair lst_class_gen[] = {
+static constexpr auto lst_class_gen = std::to_array<ClassGenPair>({
 
     { "\"ComboBoxEx32\"", gen_wxComboBox },
     { "\"ComboBox\"", gen_wxComboBox },
@@ -60,10 +63,10 @@ static const ClassGenPair lst_class_gen[] = {
     // TODO: [KeyWorks - 11-22-2021] Supporting this would mean creating a custom control that has a wxMenu as a child
     // { "\"MfcMenuButton\"", ??? },
 
-};
+});
 
 // lst_name_gen is used when there is a resource directive rather than a CONTROL directive.
-static const ClassGenPair lst_name_gen[] = {
+static constexpr auto lst_name_gen = std::to_array<ClassGenPair>({
 
     { "COMBOBOX", gen_wxComboBox },
     { "AUTO3STATE", gen_Check3State },
@@ -75,7 +78,7 @@ static const ClassGenPair lst_name_gen[] = {
     { "PUSHBUTTON", gen_wxButton },
     { "STATE3", gen_Check3State },
 
-};
+});
 
 // clang-format on
 
@@ -137,7 +140,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
     {
         line.moveto_nextword();
 
-        for (auto& iter: lst_class_gen)
+        for (const auto& iter: lst_class_gen)
         {
             if (line.contains(iter.class_name, tt::CASE::either))
             {
@@ -161,14 +164,20 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         else if (line.contains("\"Button\"", tt::CASE::either))
         {
             if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
+            {
                 m_node = NodeCreation.NewNode(gen_Check3State);
+            }
             else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
+            {
                 m_node = NodeCreation.NewNode(gen_wxCheckBox);
+            }
             else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
             {
                 m_node = NodeCreation.NewNode(gen_wxRadioButton);
                 if (line.contains("WX_GROUP"))
+                {
                     AppendStyle(prop_style, "wxRB_GROUP");
+                }
             }
             else if (line.contains("BS_DEFPUSHBUTTON"))
             {
@@ -176,11 +185,17 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
                 m_node->set_value(prop_default, true);
             }
             else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
+            {
                 m_node = NodeCreation.NewNode(gen_wxCommandLinkButton);
+            }
             else if (line.contains("BS_PUSHLIKE"))
+            {
                 m_node = NodeCreation.NewNode(gen_wxToggleButton);
+            }
             else if (line.contains("BS_GROUPBOX"))
+            {
                 m_node = NodeCreation.NewNode(gen_wxStaticBoxSizer);
+            }
             else
             {
                 // This covers BS_PUSHBUTTON and BS_OWNERDRAW or any unsupported style
@@ -190,9 +205,13 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         else if (line.contains("\"Static\"", tt::CASE::either))
         {
             if (line.contains("SS_BITMAP") || line.contains("SS_ICON"))
+            {
                 m_node = NodeCreation.NewNode(gen_wxStaticBitmap);
+            }
             else
+            {
                 m_node = NodeCreation.NewNode(gen_wxStaticText);
+            }
         }
         else if (line.contains("\"SysDateTimePick32\"", tt::CASE::either))
         {
@@ -207,8 +226,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
                 m_node = NodeCreation.NewNode(gen_wxTimePickerCtrl);
             }
 
-            else
-                m_node = NodeCreation.NewNode(gen_wxDatePickerCtrl);
+            m_node = NodeCreation.NewNode(gen_wxDatePickerCtrl);
         }
         else if (line.contains("\"MfcButton\"", tt::CASE::either))
         {
@@ -217,9 +235,13 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         else if (line.contains("\"SysTabControl32\"", tt::CASE::either))
         {
             if (line.contains("TCS_BUTTONS"))
+            {
                 m_node = NodeCreation.NewNode(gen_wxToolbook);
+            }
             else
+            {
                 m_node = NodeCreation.NewNode(gen_wxNotebook);
+            }
         }
 
         else
@@ -240,7 +262,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
     {
         ////////// This section handles non-CONTROL statements //////////
 
-        for (auto& iter: lst_name_gen)
+        for (const auto& iter: lst_name_gen)
         {
             if (line.is_sameprefix(iter.class_name, tt::CASE::either))
             {
@@ -262,7 +284,9 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             m_node = NodeCreation.NewNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
+            {
                 AppendStyle(prop_style, "wxRB_GROUP");
+            }
         }
         else if (line.starts_with("CTEXT"))
         {
@@ -290,14 +314,18 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             m_node = NodeCreation.NewNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
+            {
                 AppendStyle(prop_style, "wxRB_GROUP");
+            }
         }
         else if (line.starts_with("SCROLLBAR"))
         {
             m_node = NodeCreation.NewNode(gen_wxScrollBar);
             label_required = false;
             if (line.contains("SBS_VERT"))
+            {
                 m_node->set_value(prop_style, "wxSB_VERTICAL");
+            }
         }
         else if (line.starts_with("ICON"))
         {
@@ -334,7 +362,9 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
     ASSERT_MSG(m_node, "Node not created!");
     if (!m_node)
+    {
         return;
+    }
 
     if (m_node->is_Gen(gen_wxStaticBitmap))
     {
@@ -405,7 +435,9 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         case gen_wxSpinCtrl:
             ParseStyles(line);
             if (line.contains("UDS_AUTOBUDDY") && line.contains("UDS_SETBUDDYINT"))
+            {
                 m_non_processed_style = "UDS_AUTOBUDDY";
+            }
             is_style_processed = true;
             break;
 
@@ -421,22 +453,30 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         case gen_wxGauge:
             if (line.contains("PBS_SMOOTH"))
+            {
                 AppendStyle(prop_style, "wxGA_SMOOTH");
+            }
             if (line.contains("PBS_VERTICAL"))
+            {
                 m_node->set_value(prop_orientation, "wxCAL_SHOW_WEEK_NUMBERS");
+            }
             is_style_processed = true;
             break;
 
         case gen_wxCalendarCtrl:
             if (line.contains("MCS_WEEKNUMBERS"))
+            {
                 AppendStyle(prop_style, "wxGA_SMOOTH");
+            }
             is_style_processed = true;
             break;
 
         case gen_wxTreeCtrl:
             ParseStyles(line);
             if (!line.contains("TVS_HASLINES"))
+            {
                 AppendStyle(prop_style, "wxTR_NO_LINES");
+            }
             is_style_processed = true;
             break;
 

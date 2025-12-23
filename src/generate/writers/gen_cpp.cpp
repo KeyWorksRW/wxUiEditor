@@ -502,7 +502,7 @@ void CppCodeGenerator::InitializeGenerationState()
     m_NeedSVGFunction = false;
 }
 
-void CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) -> void
 {
     m_language = language;
     m_panel_type = panel_type;

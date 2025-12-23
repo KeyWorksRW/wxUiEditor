@@ -22,11 +22,11 @@ public:
 
     wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
                            wxVariant& childValue) const override;
-    void RefreshChildren() override;
+    auto RefreshChildren() -> void override;
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
-    ImageProperties& GetImageProperties() { return m_img_props; }
+    [[nodiscard]] auto GetImageProperties() -> ImageProperties& { return m_img_props; }
 
 private:
     ImageProperties m_img_props;

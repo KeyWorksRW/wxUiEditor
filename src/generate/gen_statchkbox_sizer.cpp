@@ -37,7 +37,9 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
             new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                            wxDefaultPosition, wxDefaultSize, style_value);
         if (node->as_bool(prop_checked))
+        {
             m_checkbox->SetValue(true);
+        }
 
         if (node->HasValue(prop_tooltip))
             m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
@@ -59,7 +61,9 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     }
 
     if (node->HasValue(prop_minimum_size))
+    {
         sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
+    }
 
     return sizer;
 }

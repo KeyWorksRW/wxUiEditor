@@ -45,7 +45,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
 }  // namespace wxue_img
 
-void MainFrame::OnAbout(wxCommandEvent&)
+auto MainFrame::OnAbout(wxCommandEvent&) -> void
 {
     wxAboutDialogInfo aboutInfo;
     aboutInfo.SetName(txtVersion);
@@ -79,7 +79,7 @@ void MainFrame::OnAbout(wxCommandEvent&)
     wxAboutBox(aboutInfo);
 }
 
-void MainFrame::OnAppendCrafter(wxCommandEvent& /* event unused */)
+auto MainFrame::OnAppendCrafter(wxCommandEvent& /* event unused */) -> void
 {
     ttwx::SaveCwd cwd(ttwx::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
@@ -93,7 +93,7 @@ void MainFrame::OnAppendCrafter(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnAppendDialogBlocks(wxCommandEvent& /* event unused */)
+auto MainFrame::OnAppendDialogBlocks(wxCommandEvent& /* event unused */) -> void
 {
     ttwx::SaveCwd cwd(ttwx::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
@@ -107,7 +107,7 @@ void MainFrame::OnAppendDialogBlocks(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnAppendFormBuilder(wxCommandEvent& /* event unused */)
+auto MainFrame::OnAppendFormBuilder(wxCommandEvent& /* event unused */) -> void
 {
     ttwx::SaveCwd cwd(ttwx::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
@@ -121,7 +121,7 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnAppendGlade(wxCommandEvent& /* event unused */)
+auto MainFrame::OnAppendGlade(wxCommandEvent& /* event unused */) -> void
 {
     ttwx::SaveCwd cwd(ttwx::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
@@ -135,7 +135,7 @@ void MainFrame::OnAppendGlade(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnAppendSmith(wxCommandEvent& /* event unused */)
+auto MainFrame::OnAppendSmith(wxCommandEvent& /* event unused */) -> void
 {
     ttwx::SaveCwd cwd(ttwx::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
@@ -149,7 +149,7 @@ void MainFrame::OnAppendSmith(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnAppendXRC(wxCommandEvent& /* event unused */)
+auto MainFrame::OnAppendXRC(wxCommandEvent& /* event unused */) -> void
 {
     ttwx::SaveCwd cwd(ttwx::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
@@ -162,7 +162,7 @@ void MainFrame::OnAppendXRC(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
+auto MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */) -> void
 {
     UpdateFrame();
     if (auto* page = m_notebook->GetCurrentPage(); page)
@@ -184,7 +184,7 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnBrowseDocs(wxCommandEvent& /* event unused */)
+auto MainFrame::OnBrowseDocs(wxCommandEvent& /* event unused */) -> void
 {
     wxString url;
     url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
@@ -212,7 +212,7 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& /* event unused */)
     wxLaunchDefaultBrowser(url);
 }
 
-void MainFrame::OnBrowsePython(wxCommandEvent& /* event unused */)
+auto MainFrame::OnBrowsePython(wxCommandEvent& /* event unused */) -> void
 {
     if (m_selected_node)
     {
@@ -231,7 +231,7 @@ void MainFrame::OnBrowsePython(wxCommandEvent& /* event unused */)
     wxLaunchDefaultBrowser("https://docs.wxpython.org/index.html");
 }
 
-void MainFrame::OnBrowseRuby(wxCommandEvent& /* event unused */)
+auto MainFrame::OnBrowseRuby(wxCommandEvent& /* event unused */) -> void
 {
     if (m_selected_node)
     {
@@ -250,7 +250,7 @@ void MainFrame::OnBrowseRuby(wxCommandEvent& /* event unused */)
     wxLaunchDefaultBrowser("https://mcorino.github.io/wxRuby3/");
 }
 
-void MainFrame::OnChangeAlignment(wxCommandEvent& event)
+auto MainFrame::OnChangeAlignment(wxCommandEvent& event) -> void
 {
     int align = 0;
     bool vertical = (event.GetId() == id_AlignTop || event.GetId() == id_AlignBottom ||
@@ -284,7 +284,7 @@ void MainFrame::OnChangeAlignment(wxCommandEvent& event)
     UpdateLayoutTools();
 }
 
-void MainFrame::OnChangeBorder(wxCommandEvent& event)
+auto MainFrame::OnChangeBorder(wxCommandEvent& event) -> void
 {
     int border = 0;
 
@@ -316,7 +316,7 @@ void MainFrame::OnChangeBorder(wxCommandEvent& event)
     UpdateLayoutTools();
 }
 
-void MainFrame::OnClose(wxCloseEvent& event)
+auto MainFrame::OnClose(wxCloseEvent& event) -> void
 {
     if (!SaveWarning())
     {
@@ -364,7 +364,7 @@ void MainFrame::OnClose(wxCloseEvent& event)
     event.Skip();
 }
 
-void MainFrame::OnCopy(wxCommandEvent& /* event unused */)
+auto MainFrame::OnCopy(wxCommandEvent& /* event unused */) -> void
 {
     if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
@@ -378,7 +378,7 @@ void MainFrame::OnCopy(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnCut(wxCommandEvent& /* event unused */)
+auto MainFrame::OnCut(wxCommandEvent& /* event unused */) -> void
 {
     if (auto* win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
@@ -389,14 +389,14 @@ void MainFrame::OnCut(wxCommandEvent& /* event unused */)
     UpdateFrame();
 }
 
-void MainFrame::OnDelete(wxCommandEvent& /* event unused */)
+auto MainFrame::OnDelete(wxCommandEvent& /* event unused */) -> void
 {
     ASSERT(m_selected_node);
     RemoveNode(m_selected_node.get(), false);
     UpdateFrame();
 }
 
-void MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */)
+auto MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */) -> void
 {
     if (!SaveWarning())
     {
@@ -406,13 +406,13 @@ void MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */)
     (void) DsisplayStartupDlg(m_nav_panel);
 }
 
-void MainFrame::OnDuplicate(wxCommandEvent& /* event unused */)
+auto MainFrame::OnDuplicate(wxCommandEvent& /* event unused */) -> void
 {
     ASSERT(m_selected_node);
     DuplicateNode(m_selected_node.get());
 }
 
-void MainFrame::OnFind(wxFindDialogEvent& event)
+auto MainFrame::OnFind(wxFindDialogEvent& event) -> void
 {
     if (auto* page = m_notebook->GetCurrentPage(); page)
     {
@@ -422,13 +422,13 @@ void MainFrame::OnFind(wxFindDialogEvent& event)
     }
 }
 
-void MainFrame::OnFindClose(wxFindDialogEvent&)
+auto MainFrame::OnFindClose(wxFindDialogEvent&) -> void
 {
     m_findDialog->Destroy();
     m_findDialog = nullptr;
 }
 
-void MainFrame::OnFindDialog(wxCommandEvent&)
+auto MainFrame::OnFindDialog(wxCommandEvent&) -> void
 {
     if (!m_findDialog)
     {
@@ -449,7 +449,7 @@ void MainFrame::OnFindDialog(wxCommandEvent&)
     m_findDialog->Show(true);
 }
 
-void MainFrame::OnImportProject(wxCommandEvent&)
+auto MainFrame::OnImportProject(wxCommandEvent&) -> void
 {
     if (!SaveWarning())
     {
@@ -464,7 +464,7 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     Project.NewProject();
 }
 
-void MainFrame::OnImportRecent(wxCommandEvent& event)
+auto MainFrame::OnImportRecent(wxCommandEvent& event) -> void
 {
     tt_string file =
         m_ImportHistory.GetHistoryFile(event.GetId() - (START_IMPORT_FILE_IDS)).utf8_string();
@@ -488,7 +488,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     }
 }
 
-void MainFrame::OnNewProject(wxCommandEvent& /* event unused */)
+auto MainFrame::OnNewProject(wxCommandEvent& /* event unused */) -> void
 {
     if (!SaveWarning())
     {
@@ -499,7 +499,7 @@ void MainFrame::OnNewProject(wxCommandEvent& /* event unused */)
     Project.NewProject(true);
 }
 
-void MainFrame::OnNodeSelected(CustomEvent& event)
+auto MainFrame::OnNodeSelected(CustomEvent& event) -> void
 {
     // This event is normally only fired if the current selection has changed. We dismiss any
     // previous infobar message, and check to see if the current selection has any kind of issue
@@ -533,7 +533,7 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
     UpdateFrame();
 }
 
-void MainFrame::OnOpenProject(wxCommandEvent&)
+auto MainFrame::OnOpenProject(wxCommandEvent&) -> void
 {
     if (!SaveWarning())
     {
@@ -558,7 +558,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
     }
 }
 
-void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
+auto MainFrame::OnOpenRecentProject(wxCommandEvent& event) -> void
 {
     if (!SaveWarning())
     {
@@ -579,7 +579,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     }
 }
 
-void MainFrame::OnPaste(wxCommandEvent& /* event unused */)
+auto MainFrame::OnPaste(wxCommandEvent& /* event unused */) -> void
 {
     if (auto* win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
@@ -594,18 +594,18 @@ void MainFrame::OnPaste(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnPreferencesDlg(wxCommandEvent& /* event unused */)
+auto MainFrame::OnPreferencesDlg(wxCommandEvent& /* event unused */) -> void
 {
     PreferencesDlg dlg(this);
     dlg.ShowModal();
 }
 
-void MainFrame::OnProjectLoaded()
+auto MainFrame::OnProjectLoaded() -> void
 {
     UpdateFrame();
 }
 
-void MainFrame::OnReloadProject(wxCommandEvent& /* event unused */)
+auto MainFrame::OnReloadProject(wxCommandEvent& /* event unused */) -> void
 {
     if (wxMessageBox(
             wxString() << "This will lose any changes you have made since the last save.\n\n"
@@ -616,7 +616,7 @@ void MainFrame::OnReloadProject(wxCommandEvent& /* event unused */)
     }
 }
 
-void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
+auto MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */) -> void
 {
     wxFileName filename(*Project.get_wxFileName());
     if (!filename.IsOk())
@@ -702,7 +702,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
     };
 }
 
-void MainFrame::OnSaveProject(wxCommandEvent& event)
+auto MainFrame::OnSaveProject(wxCommandEvent& event) -> void
 {
     if (m_isImported || Project.get_ProjectFile().empty() ||
         Project.get_ProjectFile().filename().is_sameas(txtEmptyProject))
@@ -738,7 +738,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     }
 }
 
-void MainFrame::OnToggleExpandLayout(wxCommandEvent& /* event unused */)
+auto MainFrame::OnToggleExpandLayout(wxCommandEvent& /* event unused */) -> void
 {
     if (!m_selected_node || !m_selected_node->get_Parent() ||
         !m_selected_node->get_Parent()->is_Sizer())
@@ -771,7 +771,7 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent& /* event unused */)
     ModifyProperty(propFlag, value);
 }
 
-void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
+auto MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event) -> void
 {
     if (m_selected_node)
     {
@@ -791,7 +791,7 @@ void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
     event.SetText("wxWidgets Documentation");
 }
 
-void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
+auto MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event) -> void
 {
     if (m_selected_node)
     {
@@ -811,7 +811,7 @@ void MainFrame::OnUpdateBrowsePython(wxUpdateUIEvent& event)
     event.SetText("wxPython Documentation");
 }
 
-void MainFrame::OnUpdateBrowseRuby(wxUpdateUIEvent& event)
+auto MainFrame::OnUpdateBrowseRuby(wxUpdateUIEvent& event) -> void
 {
     if (m_selected_node)
     {

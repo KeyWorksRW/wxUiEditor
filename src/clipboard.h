@@ -17,22 +17,22 @@ using NodeSharedPtr = std::shared_ptr<Node>;
 // Declared in clipboard.h. Returns true if the external clipboard condtains data that we can
 // paste. This will either be from a different instance of wxUiEditor, or from wxFormBuilder
 // or wxSmith.
-bool isClipboardDataAvailable();
+[[nodiscard]] auto isClipboardDataAvailable() -> bool;
 
 // Pass false as the parameter to prevent any error messages
-NodeSharedPtr GetClipboardNode(bool warn_if_problems = true);
+[[nodiscard]] auto GetClipboardNode(bool warn_if_problems = true) -> NodeSharedPtr;
 
 class wxUtf8DataObject : public wxDataObjectSimple
 {
 public:
     wxUtf8DataObject() : wxDataObjectSimple(wxDF_TEXT) {}
 
-    bool SetData(size_t len, const void* buf) override;
-    size_t GetDataSize() const override { return (m_text.size() + 1); }
-    bool GetDataHere(void* buf) const override;
+    auto SetData(size_t len, const void* buf) -> bool override;
+    [[nodiscard]] auto GetDataSize() const -> size_t override { return (m_text.size() + 1); }
+    [[nodiscard]] auto GetDataHere(void* buf) const -> bool override;
 
     // Note that this ia *not* a const return, so you can modify it if needed
-    tt_string& GetText() { return m_text; }
+    [[nodiscard]] auto GetText() -> tt_string& { return m_text; }
 
 private:
     tt_string m_text;
@@ -44,22 +44,24 @@ class wxUEDataObject : public wxDataObjectSimple
 public:
     wxUEDataObject() : wxDataObjectSimple(wxDataFormat(txt_OurClipboardFormat)) {}
 
-    bool SetData(size_t len, const void* buf) override
+    auto SetData(size_t len, const void* buf) -> bool override
     {
         if (len == sizeof(size_t))
+        {
             memcpy(&m_hash, buf, len);
+        }
         return true;
     }
 
-    size_t GetDataSize() const override { return sizeof(size_t); }
-    bool GetDataHere(void* buf) const override
+    [[nodiscard]] auto GetDataSize() const -> size_t override { return sizeof(size_t); }
+    [[nodiscard]] auto GetDataHere(void* buf) const -> bool override
     {
         memcpy(buf, &m_hash, sizeof(size_t));
         return true;
     }
 
     // Note that this ia *not* a const return, so you can modify it if needed
-    size_t& GetHash() { return m_hash; }
+    [[nodiscard]] auto GetHash() -> size_t& { return m_hash; }
 
 private:
     size_t m_hash { 0 };
@@ -72,7 +74,7 @@ public:
     SmartClipboard() { m_is_opened = wxTheClipboard->Open(); }
     ~SmartClipboard() { wxTheClipboard->Close(); }
 
-    bool IsOpened() { return m_is_opened; }
+    [[nodiscard]] auto IsOpened() -> bool { return m_is_opened; }
 
 private:
     bool m_is_opened;

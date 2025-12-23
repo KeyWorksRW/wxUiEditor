@@ -11,9 +11,9 @@ class Node;
 
 extern const char* txt_dlg_name;  // "_wxue_temp_dlg"
 
-void PreviewXrc(Node* form_node);
+auto PreviewXrc(Node* form_node) -> void;
 
 // form_node is required for a wxWizard
-void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node = nullptr);
+auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node = nullptr) -> void;
 
-void Preview(Node* form_node);
+auto Preview(Node* form_node) -> void;

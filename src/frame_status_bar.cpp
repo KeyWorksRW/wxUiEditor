@@ -39,10 +39,10 @@ public:
         Create(parent, id, style, name);
     }
 
-    virtual void DoUpdateStatusText(int number) override
+    auto DoUpdateStatusText(int number) -> void override
     {
-        ASSERT(m_panes.size() > (size_t) number);
-        auto text = GetStatusText(number);
+        ASSERT(m_panes.size() > static_cast<size_t>(number));
+        const auto text = GetStatusText(number);
         if (text.size() && number == 0)
         {
             SetStatusText(text, 2);
@@ -51,24 +51,29 @@ public:
         wxStatusBar::DoUpdateStatusText(number);
     }
 
-    void setText(const tt_string& txt, int pane = 1) { SetStatusText(txt.make_wxString(), pane); }
+    auto setText(const tt_string& txt, int pane = 1) -> void
+    {
+        SetStatusText(txt.make_wxString(), pane);
+    }
 };
 
-wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id,
-                                          const wxString& name)
+auto MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name)
+    -> wxStatusBar*
 {
     m_statBar = new ueStatusBar(this, id, style, name);
     m_statBar->SetFieldsCount(number);
     {
-        int styles[STATUS_PANELS] = { wxSB_FLAT, wxSB_NORMAL, wxSB_NORMAL };
-        m_statBar->SetStatusStyles(STATUS_PANELS, styles);
+        const std::array<int, STATUS_PANELS> styles = { wxSB_FLAT, wxSB_NORMAL, wxSB_NORMAL };
+        m_statBar->SetStatusStyles(STATUS_PANELS, styles.data());
     }
 
     return m_statBar;
 }
 
-void MainFrame::setStatusText(const tt_string& txt, int pane)
+auto MainFrame::setStatusText(const tt_string& txt, int pane) -> void
 {
     if (m_statBar)
+    {
         m_statBar->setText(txt, pane);
+    }
 }

@@ -80,7 +80,7 @@ namespace
     wxString s_filename;  // NOLINT (cppcheck-suppress)
 
     // Helper to process and normalize a filename (add extension, handle wildcards)
-    void ProcessFilename(wxString& filename)
+    auto ProcessFilename(wxString& filename) -> void
     {
         if (filename.empty())
         {
@@ -149,14 +149,17 @@ namespace
 class DarkSettings : public wxDarkModeSettings
 {
 public:
-    wxColour GetColour(wxSystemColour index) { return UserPrefs.GetColour(index); }
+    [[nodiscard]] auto GetColour(wxSystemColour index) -> wxColour
+    {
+        return UserPrefs.GetColour(index);
+    }
 };
 
 #endif
 
 App::App() {}
 
-bool App::OnInit()
+auto App::OnInit() -> bool
 {
 #if defined(_WIN32) && defined(_DEBUG)
     #if !defined(USE_CRT_MEMORY_DUMP)
@@ -216,7 +219,7 @@ bool App::OnInit()
     return true;
 }
 
-int App::OnRun()
+auto App::OnRun() -> int
 {
 #if defined(_DEBUG)
     // Attach to parent console for command-line output
@@ -447,7 +450,7 @@ auto App::OnExit() -> int
 }
 
 #if defined(_DEBUG)
-void App::DebugOutput(const wxString& str)
+auto App::DebugOutput(const wxString& str) -> void
 {
     if (m_stderr_output)
     {
@@ -480,10 +483,10 @@ auto App::AutoMsgWindow() -> bool
 class StackLogger : public wxStackWalker
 {
 public:
-    auto GetCalls() -> auto& { return m_calls; }
+    [[nodiscard]] auto GetCalls() -> auto& { return m_calls; }
 
 protected:
-    void OnStackFrame(const wxStackFrame& frame) override
+    auto OnStackFrame(const wxStackFrame& frame) -> void override
     {
         if (frame.HasSourceLocation())
         {
@@ -533,7 +536,7 @@ private:
 
 #if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-void App::OnFatalException()
+auto App::OnFatalException() -> void
 {
     #if defined(_DEBUG) && defined(wxUSE_STACKWALKER)
 
@@ -561,7 +564,7 @@ void App::OnFatalException()
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-void App::ShowMsgWindow()
+auto App::ShowMsgWindow() -> void
 {
     g_pMsgLogging->ShowLogger();
 }
@@ -571,7 +574,7 @@ void App::ShowMsgWindow()
     #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
 // Don't make this static or Bind() will not work
-void App::DbgCurrentTest(wxCommandEvent& /* event unused */)  // NOLINT (cppcheck-suppress)
+auto App::DbgCurrentTest(wxCommandEvent& /* event unused */) -> void  // NOLINT (cppcheck-suppress)
 {
     wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
 
@@ -684,8 +687,8 @@ auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
 }
 
 // Helper: Log results for each language generation
-void App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
-                               bool test_only, std::string_view language_type)
+auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
+                               bool test_only, std::string_view language_type) -> void
 {
     if (results.GetUpdatedFiles().size() || class_list.size())
     {
@@ -725,8 +728,8 @@ void App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
 }
 
 // Helper: Generate code for all requested languages
-void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                               std::vector<std::string>& class_list)
+auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                               std::vector<std::string>& class_list) -> void
 {
     auto GenCode = [&](GenLang language)
     {

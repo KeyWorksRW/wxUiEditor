@@ -92,7 +92,8 @@ public:
 
     [[nodiscard]] auto GetBaseClass(size_t idx, bool inherited = true) const -> NodeDeclaration*;
 
-    void GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited = true) const;
+    auto GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited = true) const
+        -> void;
 
     [[nodiscard]] auto GetBaseClassCount(bool inherited = true) const -> size_t;
     [[nodiscard]] auto hasBaseClasses() const -> bool { return !m_base.empty(); }

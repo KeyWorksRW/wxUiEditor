@@ -607,25 +607,25 @@ auto Node::get_FormName() -> const tt_string&
 
 auto Node::GetBorderDirection(std::string_view border_settings) -> int
 {
-    if (border_settings.find("wxALL") != std::string_view::npos)
+    if (border_settings.contains("wxALL"))
     {
         return wxALL;
     }
 
     int direction = 0;
-    if (border_settings.find("wxLEFT") != std::string_view::npos)
+    if (border_settings.contains("wxLEFT"))
     {
         direction |= wxLEFT;
     }
-    if (border_settings.find("wxRIGHT") != std::string_view::npos)
+    if (border_settings.contains("wxRIGHT"))
     {
         direction |= wxRIGHT;
     }
-    if (border_settings.find("wxTOP") != std::string_view::npos)
+    if (border_settings.contains("wxTOP"))
     {
         direction |= wxTOP;
     }
-    if (border_settings.find("wxBOTTOM") != std::string_view::npos)
+    if (border_settings.contains("wxBOTTOM"))
     {
         direction |= wxBOTTOM;
     }
@@ -906,7 +906,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
             return HandleGridBagInsertion(this, new_node.get());
         }
 
-#if defined(_WIN32)
+#ifdef _WIN32
         // In a Windows build, the default background colour of white doesn't match the normal
         // background color of the parent so we set it to the more normal Windows colour.
         if (name == gen_BookPage)
@@ -1124,7 +1124,7 @@ auto Node::FixDuplicateName() -> bool
     {
         if (const auto& name = as_string(iter); name.size())
         {
-            if (auto it = name_set.find(name); it != name_set.end())
+            if (auto iter_find = name_set.find(name); iter_find != name_set.end())
             {
                 // We get here if the name has already been used.
 
@@ -1140,7 +1140,8 @@ auto Node::FixDuplicateName() -> bool
                 }
 
                 std::string new_name;
-                for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
+                for (int i = 2; iter_find != name_set.end();
+                     iter_find = name_set.find(new_name), ++i)
                 {
                     new_name.clear();
                     new_name = org_name + std::to_string(i);

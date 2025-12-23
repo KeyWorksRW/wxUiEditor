@@ -1013,7 +1013,7 @@ void MainFrame::PasteNode(Node* parent)
     if (parent->is_Gen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(parent);
-        grid_bag.InsertNode(parent, new_node.get());
+        [[maybe_unused]] auto result = grid_bag.InsertNode(parent, new_node.get());
         return;
     }
 
@@ -1034,7 +1034,7 @@ void MainFrame::DuplicateNode(Node* node)
     if (parent->is_Gen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(parent);
-        grid_bag.InsertNode(parent, new_node.get());
+        [[maybe_unused]] auto result = grid_bag.InsertNode(parent, new_node.get());
         // GridBag::InsertNode() will have already fired events
     }
     else

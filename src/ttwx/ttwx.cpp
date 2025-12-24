@@ -329,6 +329,48 @@ auto ttwx::MakeLower(std::string& str) -> std::string&
     return str;
 }
 
+auto ttwx::Replace(std::string& original, std::string_view oldtext, std::string_view newtext,
+                   bool replace_all, bool case_sensitive) -> bool
+{
+    if (original.empty() || oldtext.empty())
+    {
+        return false;
+    }
+
+    bool replaced = false;
+    size_t pos = 0;
+
+    while (true)
+    {
+        size_t found_pos =
+            locate(original, oldtext, pos, case_sensitive ? ttwx::CASE::exact : ttwx::CASE::either);
+
+        if (found_pos == std::string::npos)
+        {
+            break;
+        }
+
+        original.replace(found_pos, oldtext.size(), newtext);
+        replaced = true;
+
+        if (!replace_all)
+        {
+            break;
+        }
+
+        // Continue searching after the replaced text
+        pos = found_pos + newtext.size();
+
+        // Prevent infinite loop if newtext contains oldtext
+        if (pos >= original.size())
+        {
+            break;
+        }
+    }
+
+    return replaced;
+}
+
 constexpr int hex_base = 16;
 constexpr int dec_base = 10;
 
@@ -341,11 +383,13 @@ auto ttwx::atoi(std::string_view str) noexcept -> int
         return 0;
     }
 
-#if defined(_DEBUG)
+#ifdef _DEBUG
     std::string_view original = str;
     (void) original;
 #endif  // _DEBUG
     str = find_nonspace(str);
+    // ASSERT_MSG(!str.empty(), "non-empty string that doesn't have non-empty spaces -- shouldn't be
+    // possible");
 
     if (str.empty())
     {
@@ -404,8 +448,8 @@ auto ttwx::locate(std::string_view haystack, std::string_view needle, size_t pos
         {
             if (std::tolower(haystack.at(pos)) == chLower)
             {
-                size_t posSub;
-                for (posSub = 1; posSub < needle.length(); ++posSub)
+                size_t posSub = 1;
+                for (; posSub < needle.length(); ++posSub)
                 {
                     if (pos + posSub >= haystack.length())
                     {

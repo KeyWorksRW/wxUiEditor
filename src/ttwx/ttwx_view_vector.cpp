@@ -271,3 +271,33 @@ auto ttwx::ViewVector::is_sameas(const ttwx::ViewVector& other) const -> bool
     }
     return true;
 }
+
+auto ttwx::ViewVector::FindLineContaining(std::string_view str, size_t start,
+                                          bool case_sensitive) const -> size_t
+{
+    if (case_sensitive)
+    {
+        for (; start < size(); ++start)
+        {
+            if (at(start).find(str) != std::string_view::npos)
+            {
+                return start;
+            }
+        }
+    }
+    else
+    {
+        std::string search_str(str);
+        ttwx::MakeLower(search_str);
+        for (; start < size(); ++start)
+        {
+            std::string line(at(start));
+            ttwx::MakeLower(line);
+            if (line.find(search_str) != std::string::npos)
+            {
+                return start;
+            }
+        }
+    }
+    return std::string::npos;
+}

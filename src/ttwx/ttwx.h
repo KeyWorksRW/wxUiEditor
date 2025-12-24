@@ -52,6 +52,16 @@ namespace ttwx
         utf8  // comparisons are done by converting characters to lowercase UTF8
     };
 
+    // Returns true if the two strings are the same (case insensitive comparison is only for ANSI
+    // characters)
+    [[nodiscard]] auto is_sameas(std::string_view str1, std::string_view str2,
+                                 CASE checkcase = CASE::exact) -> bool;
+
+    // Returns true if the prefix is the same as the beginning of the string (case insensitive
+    // comparison is only for ANSI characters)
+    [[nodiscard]] auto is_sameprefix(std::string_view str, std::string_view prefix,
+                                     CASE checkcase = CASE::exact) -> bool;
+
     // clang-format off
 
     // These functions are provided for convenience since they cast a char to unsigned char before
@@ -106,6 +116,14 @@ namespace ttwx
     // Only use for non-UTF-8 strings -- otherwise use wxString::MakeLower()
     auto MakeLower(std::string& str) -> std::string&;
 
+    // wxString::Replace always does case-sensitive replacements. This function can do either with
+    // the default being case-insensitive. Note that only ANSI characters can be compared in a
+    // case-insensitive manner.
+    //
+    //  Returns true if at least one replacement was made.
+    auto Replace(std::string& original, std::string_view oldtext, std::string_view newtext,
+                 bool replace_all = false, bool case_sensitive = false) -> bool;
+
     // Unlike std::stoi, ttwx::atoi accepts a std::string_view, returns 0 instead of throwing
     // exceptions, and handles hexadecimal numbers beginning with 0x or 0X.
 
@@ -146,6 +164,16 @@ namespace ttwx
     inline auto get_View(const wxString& str) -> std::string_view
     {
         return std::string_view(str.ToStdString());
+    }
+
+    // Replaces all occurrences of old_text with new_text in str
+    inline void replace_all(std::string& str, std::string_view old_text, std::string_view new_text)
+    {
+        for (size_t pos = 0; (pos = str.find(old_text, pos)) != std::string::npos;)
+        {
+            str.replace(pos, old_text.length(), new_text);
+            pos += new_text.length();
+        }
     }
 
     // Remove locale-dependent whitespace from right side of string
@@ -200,12 +228,10 @@ namespace ttwx
 
     // Returns true if strings are identical
 
-    auto is_sameas(std::string_view str1, std::string_view str2, CASE checkcase = CASE::exact)
-        -> bool;
+    auto is_sameas(std::string_view str1, std::string_view str2, CASE checkcase) -> bool;
 
     // Returns true if the sub-string is identical to the first part of the main string
-    auto is_sameprefix(std::string_view strMain, std::string_view strSub,
-                       CASE checkcase = CASE::exact) -> bool;
+    auto is_sameprefix(std::string_view strMain, std::string_view strSub, CASE checkcase) -> bool;
 
     // **************** File/path related functions ****************
 
@@ -247,13 +273,13 @@ namespace ttwx
     class SaveCwd
     {
     public:
-        enum : bool
+        enum class RestoreOption : std::uint8_t
         {
-            no_restore = false,
-            restore = true
+            no_restore = 0,
+            restore = 1
         };
 
-        explicit SaveCwd(bool option = restore) : m_restore_option(option)
+        explicit SaveCwd(RestoreOption option = RestoreOption::restore) : m_restore_option(option)
         {
             m_saved_cwd = wxGetCwd();
         }
@@ -267,7 +293,7 @@ namespace ttwx
 
         ~SaveCwd()
         {
-            if (m_restore_option)
+            if (m_restore_option == RestoreOption::restore)
             {
                 // Deliberately ignoring the return value because there's nothing we can do about it
                 // here.
@@ -277,10 +303,10 @@ namespace ttwx
 
     private:
         wxString m_saved_cwd;
-        bool m_restore_option;
+        RestoreOption m_restore_option;
     };
 
-    // Named constants for SaveCwd options
-    constexpr bool restore_cwd = SaveCwd::restore;
-    constexpr bool no_restore_cwd = SaveCwd::no_restore;
+    // Convenience constant for SaveCwd constructor
+    inline constexpr auto restore_cwd = SaveCwd::RestoreOption::restore;
+
 }  // namespace ttwx

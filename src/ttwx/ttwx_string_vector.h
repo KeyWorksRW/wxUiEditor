@@ -47,7 +47,7 @@
 
 namespace ttwx
 {
-    class StringVector : public std::vector<std::string>
+    class StringVector : public std::vector<wxString>
     {
     public:
         StringVector() = default;
@@ -57,6 +57,14 @@ namespace ttwx
             SetString(str, separator, trim);
         }
         StringVector(std::string_view str, char separator = ';', TRIM trim = TRIM::none)
+        {
+            SetString(str, separator, trim);
+        }
+        StringVector(const wxString& str, char separator = ';', TRIM trim = TRIM::none)
+        {
+            SetString(str, separator, trim);
+        }
+        StringVector(const wxString& str, std::string_view separator, TRIM trim = TRIM::none)
         {
             SetString(str, separator, trim);
         }
@@ -89,20 +97,14 @@ namespace ttwx
             SetString(get_View(str), separator, trim);
         }
 
-        // Reads a line-oriented file and creates a vector of string_views, one for each
+        // Reads a line-oriented file and creates a vector of wxStrings, one for each
         // line. If the file contains a BOM utf-8 header it will be skipped over and the file
         // processed normally. No other BOM types are supported.
         // File size must be less than 100 MB.
-        auto ReadFile(std::string_view filename) -> bool;
-        auto ReadFile(const wxString& filename) -> bool
-        {
-            m_filename = filename;
-            return ReadFile(std::string_view(m_filename.ToStdString()));
-        }
+        auto ReadFile(const wxString& filename) -> bool;
         auto ReadFile(const wxFileName& filename) -> bool
         {
-            m_filename = filename.GetFullPath();
-            return ReadFile(std::string_view(m_filename.ToStdString()));
+            return ReadFile(filename.GetFullPath());
         }
 
         // This will be the filename passed to ReadFile()
@@ -110,11 +112,58 @@ namespace ttwx
 
         // Reads a string as if it was a file (see ReadFile). This will duplicate the string,
         // so you can delete the original if needed after calling this method.
-        void ReadString(std::string_view str);
-
-        void ReadString(const wxString& str) { ReadString(get_View(str)); }
+        void ReadString(const wxString& str);
 
         [[nodiscard]] auto is_sameas(const ttwx::StringVector& other) const -> bool;
+
+        // Insert a line at the specified position
+        auto insertLine(size_t pos, std::string_view str) -> wxString&
+        {
+            if (pos >= size())
+            {
+                return emplace_back(wxString::FromUTF8(str.data(), str.size()));
+            }
+            emplace(begin() + static_cast<difference_type>(pos),
+                    wxString::FromUTF8(str.data(), str.size()));
+            return at(pos);
+        }
+
+        // Insert a line at the specified position (wxString version)
+        auto insertLine(size_t pos, const wxString& str) -> wxString&
+        {
+            if (pos >= size())
+            {
+                return emplace_back(str);
+            }
+            emplace(begin() + static_cast<difference_type>(pos), str);
+            return at(pos);
+        }
+
+        // Insert an empty line at the specified position and return a reference to it
+        auto insertEmptyLine(size_t pos) -> wxString&
+        {
+            if (pos >= size())
+            {
+                return emplace_back(wxString());
+            }
+            emplace(begin() + static_cast<difference_type>(pos), wxString());
+            return at(pos);
+        }
+
+        // Remove the line at the specified position
+        void RemoveLine(size_t pos)
+        {
+            if (pos < size())
+            {
+                erase(begin() + static_cast<difference_type>(pos));
+            }
+        }
+
+        // Find the first line containing the specified string. Returns the index of the line
+        // or std::string::npos if not found.
+        // case_sensitive: true for exact match, false for case-insensitive match
+        [[nodiscard]] auto FindLineContaining(std::string_view str, size_t start = 0,
+                                              bool case_sensitive = true) const -> size_t;
 
         // Writes each line to the file adding a '\n' to the end of the line.
         [[nodiscard]] auto WriteFile(const wxString& filename) const -> bool;

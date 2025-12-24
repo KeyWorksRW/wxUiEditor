@@ -104,6 +104,9 @@
 
 #include <frozen/set.h>  // IWYU pragma: keep
 
+#include "wxue.h"
+#include "wxue_string.h"
+
 // ttwx namespace functions, classes, and declarations
 #include "ttwx.h"  // IWYU pragma: keep
 

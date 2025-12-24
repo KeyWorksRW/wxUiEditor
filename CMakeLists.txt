@@ -130,7 +130,7 @@ if( MSVC )
     endif()
 
     # Increase stack size for large projects with many object files
-    string(APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608")  # 8MB stack
+    string( APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608" ) # 8MB stack
 else()
     # Use the package PkgConfig to detect GTK+ headers/library files
     find_package( PkgConfig REQUIRED )
@@ -360,8 +360,8 @@ else()
 endif()
 
 target_include_directories( wxUiEditor PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
 
+    ${CMAKE_CURRENT_LIST_DIR}/src/wxue_namespace
     ${CMAKE_CURRENT_LIST_DIR}/src/
     ${CMAKE_CURRENT_LIST_DIR}/src/ttwx
     ${CMAKE_CURRENT_LIST_DIR}/src/tt
@@ -374,6 +374,8 @@ target_include_directories( wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
+
+    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
 )
 

@@ -25,13 +25,14 @@
 namespace wxue
 {
     // An empty string for returning as a reference when no string is available.
-// AI Context: This file defines the wxue namespace with core utilities shared across wxue::string
-// and wxue::string_view classes. Provides TRIM/CASE/REPLACE enums for method parameters, safe
-// character classification wrappers (is_alnum, is_digit, etc.) that cast to unsigned char, and
-// string utility functions (find_space, stepover, atoi, trim functions). File path helpers
-// (find_extension, find_filename, append_filename) work with wxString for path manipulation.
-// SaveCwd class saves/restores the current working directory using RAII pattern with optional
-// restore on destruction. Requires both wxUSE_UNICODE_UTF8 and wxUSE_UTF8_LOCALE_ONLY enabled.
+    // AI Context: This file defines the wxue namespace with core utilities shared across
+    // wxue::string and wxue::string_view classes. Provides TRIM/CASE/REPLACE enums for method
+    // parameters, safe character classification wrappers (is_alnum, is_digit, etc.) that cast to
+    // unsigned char, and string utility functions (find_space, stepover, atoi, trim functions).
+    // File path helpers (find_extension, find_filename, append_filename) work with wxString for
+    // path manipulation. SaveCwd class saves/restores the current working directory using RAII
+    // pattern with optional restore on destruction. Requires both wxUSE_UNICODE_UTF8 and
+    // wxUSE_UTF8_LOCALE_ONLY enabled.
 
     inline const std::string emptystring;
 

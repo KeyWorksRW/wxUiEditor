@@ -34,6 +34,12 @@ set( file_list
     ttwx/ttwx_view_vector.cpp   # ttwx::ViewVector class
     ttwx/ttwx_string_vector.cpp # ttwx::StringVector class
 
+    wxue_namespace/wxue.cpp
+    wxue_namespace/wxue_string.cpp          # wxue::tt_string class
+    wxue_namespace/wxue_string_view.cpp     # wxue::tt_string_view class
+    wxue_namespace/wxue_string_vector.cpp   # wxue::tt_string_vector class
+    wxue_namespace/wxue_view_vector.cpp     # wxue::tt_view_vector class
+
     tt/tt.cpp                   # tt namespace functions
     tt/tt_string.cpp            # std::string with additional methods
     tt/tt_string_view.cpp       # std::string_view with additional methods

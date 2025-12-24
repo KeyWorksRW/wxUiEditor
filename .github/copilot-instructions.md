@@ -39,29 +39,39 @@ When the user types "fix" and has selected a comment line:
 - When creating or editing files, ensure line endings remain LF
 - Do not convert existing LF line endings to CRLF
 
-### �🚫 Legacy Code Restrictions (ABSOLUTE)
+### 🚫 Legacy Code Restrictions (ABSOLUTE)
 **NEVER use `src/tt/` types in new code:** `tt_string`, `tt_string_view`, `tt_cwd`, `tt_view_vector`
 
 **Use instead (choose based on usage pattern):**
 
+| Legacy Type | Replacement Type |
+|-------------|------------------|
+| `tt_string` | `wxue::string` (extends `std::string` with utility methods) |
+| `tt_string_view` | `wxue::string_view` (extends `std::string_view` with utility methods) |
+| `tt_cwd` | `wxue::cwd` (current working directory with optional restore) |
+| `tt_view_vector` | `wxue::ViewVector` (vector of string views) |
+| `tt_string_vector` | `wxue::StringVector` (vector of strings) |
+| `tt::` namespace functions | `wxue::` namespace equivalents |
+
+**When to use wxue:: vs standard types:**
+
 | Usage Pattern | Preferred Type |
 |---------------|----------------|
+| Needs utility methods (locate, contains, trim, etc.) | `wxue::string` or `wxue::string_view` |
+| File path manipulation (extension, filename, etc.) | `wxue::string` |
 | Uses `<<` operator chaining for string building | `wxString` |
 | Passed to wxWidgets APIs | `wxString` |
 | Uses wx features (Printf, MakeLower, Format, etc.) | `wxString` |
-| Pure internal processing, no wx interaction | `std::string` |
-| Used with std::filesystem or std:: APIs | `std::string` |
-| String views (read-only references) | `std::string_view` |
-| File paths with path manipulation | `std::filesystem::path` or `wxFileName` |
-| Vector of string views | `ttwx::ViewVector` |
+| Pure internal processing, no special methods needed | `std::string` |
+| String views without utility methods | `std::string_view` |
 
-**Rationale:** wxString's `<<` operator supports multiple types with unlimited chaining, making code more concise than std::string's `+=` operator which requires explicit `std::to_string()` conversions.
+**Refactoring existing tt_* code:**
+- Refactoring `tt_*` types to `wxue::` equivalents is encouraged
+- The `wxue::` classes are drop-in replacements with identical method signatures
+- Header: `#include "wxue_namespace/wxue_string.h"` (includes both string and string_view)
+- Both classes require `wxUSE_UNICODE_UTF8` and `wxUSE_UTF8_LOCALE_ONLY` to be enabled
 
-- Exception: Don't refactor existing tt_* usage unless explicitly requested
-**Use instead:**
-- Standard Library: `std::string`, `std::string_view`, `std::filesystem::path`
-- Project types: `ttwx::ViewVector` (not `tt_view_vector`)
-- Exception: Don't refactor existing usage unless explicitly requested
+**Rationale:** The `wxue::` namespace provides modern replacements that extend standard library types rather than creating custom string classes. wxString's `<<` operator supports multiple types with unlimited chaining, making code more concise than std::string's `+=` operator.
 
 ### ⚡ Performance-Critical Paths
 **Directories:** `src/nodes/`, `src/generate/` (executed frequently during code generation)

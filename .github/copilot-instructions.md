@@ -199,9 +199,28 @@ Use these methods for building (in priority order):
    - Standard library doesn't provide functionality
    - Building strings with `<<` operator (cleaner than std::string `+=`)
    - Using wx-specific features (Printf, MakeLower, Format, etc.)
-3. **`ttwx::` namespace** (from `src/ttwx/ttwx.h`) – Project-specific utilities
+3. **`wxue::` namespace** (from `src/wxue_namespace/`) – Project-specific string utilities
 4. **Frozen containers** – Immutable collections (`frozen/include/frozen`)
 5. **❌ NEVER `src/tt/` types** – See Legacy Code Restrictions
+6. **❌ NEVER `ttwx::` namespace** – Obsolete, use `wxue::` equivalents
+
+### String Type Selection Guide
+
+| Use Case | Recommended Type |
+|----------|------------------|
+| Utility methods needed (locate, contains, trim, file paths) | `wxue::string` |
+| Parsing with in-place view modification | `wxue::string_view` |
+| Building strings with `<<` operator chaining | `wxString` |
+| Passed directly to wxWidgets APIs | `wxString` |
+| wx-specific features (Printf, Format, MakeLower) | `wxString` |
+| Pure internal processing, no special methods | `std::string` |
+| Lightweight views, no utility methods needed | `std::string_view` |
+
+**Notes:**
+- `wxue::string` extends `std::string` – all standard algorithms work
+- `wxue::string_view` extends `std::string_view` – efficient parsing with `moveto_*()` methods
+- Both provide `wx()` method for efficient `wxString` interop (requires `wxUSE_UNICODE_UTF8`)
+- Header: `#include "wxue_namespace/wxue_string.h"` (includes both classes)
 
 ### Creating Helper Functions
 - **Within a class and needing access to class members:** Create **private class methods**

@@ -1802,8 +1802,8 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
         else if (name == "Field widths")
         {
             auto width_value = ExtractQuotedString(string_xml);
-            ttwx::StringVector widths(width_value.ToStdString(), ',');
-            ttwx::StringVector fields(node->as_string(prop_fields), ';');
+            ttwx::StringVector widths(std::string_view(width_value.ToStdString()), ',');
+            ttwx::StringVector fields(std::string_view(node->as_string(prop_fields)), ';');
             size_t pos = 0;
             for (auto& iter: widths)
             {

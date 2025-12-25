@@ -24,9 +24,10 @@
 #include <cstdint>  // for std::uint8_t
 #include <utility>  // for pair<>
 
-#include "gen_enums.h"    // Enumerations for generators
-#include "node.h"         // Node class
-#include "utils/utils.h"  // NodesFormChild structure
+#include "gen_enums.h"                   // Enumerations for generators
+#include "node.h"                        // Node class
+#include "utils/utils.h"                 // NodesFormChild structure
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 namespace pugi
 {
@@ -82,13 +83,13 @@ public:
     void set_ProjectPath(const wxFileName* path);
 
     // Returns the full path to the directory the project file is in
-    [[nodiscard]] auto get_ProjectPath() const -> tt_string;
+    [[nodiscard]] auto get_ProjectPath() const -> wxue::string;
 
     // Returns the full path to the directory the project file is in
-    [[nodiscard]] auto get_wxProjectPath() const -> tt_string;
+    [[nodiscard]] auto get_wxProjectPath() const -> wxue::string;
 
     // Returns the full path to the project filename
-    [[nodiscard]] auto get_ProjectFile() const -> tt_string;
+    [[nodiscard]] auto get_ProjectFile() const -> wxue::string;
 
     [[nodiscard]] auto get_wxFileName() const -> const wxFileName*;
 
@@ -100,17 +101,17 @@ public:
     // Change to the project's directory
     void ChangeDir() const;
 
-    auto ArtDirectory() -> tt_string;
+    auto ArtDirectory() -> wxue::string;
     auto get_ArtPath() -> const wxFileName*;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
-    auto get_BaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const -> tt_string;
+    auto get_BaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const -> wxue::string;
 
     // Returns the absolute path to the output file for this node. If no output filename is
     // specified, first will still contain a path with no filename, and second will be false.
     auto GetOutputPath(Node* form, GenLang language = GEN_LANG_CPLUSPLUS) const
-        -> std::pair<tt_string, bool>;
+        -> std::pair<wxue::string, bool>;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
@@ -119,7 +120,7 @@ public:
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
-    auto get_DerivedFilename(Node*) const -> tt_string;
+    auto get_DerivedFilename(Node*) const -> wxue::string;
 
     [[nodiscard]] auto get_ProjectNode() const -> Node* { return m_project_node.get(); }
     auto get_ChildNodePtrs() -> auto& { return m_project_node->get_ChildNodePtrs(); }
@@ -203,7 +204,7 @@ public:
         return m_project_node->HasValue(name);
     }
 
-    auto LoadProject(const tt_string& file, bool allow_ui = true) -> bool;
+    auto LoadProject(const wxue::string& file, bool allow_ui = true) -> bool;
     auto LoadProject(pugi::xml_document& doc, bool allow_ui = true) -> NodeSharedPtr;
 
     auto Import(ImportXML& import, std::string& file, bool append = false, bool allow_ui = true)
@@ -216,7 +217,7 @@ public:
     void AppendGlade(wxArrayString& files);
     void AppendSmith(wxArrayString& files);
     void AppendXRC(wxArrayString& files);
-    void AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs);
+    void AppendWinRes(const wxue::string& rc_file, std::vector<wxue::string>& dialogs);
 
     bool NewProject(bool create_empty = false, bool allow_ui = true);
 
@@ -276,10 +277,10 @@ private:
 
     // Helper functions for GetOutputPath complexity reduction
     [[nodiscard]] auto GetFolderOutputPath(Node* folder, GenLang language, Node*& form) const
-        -> tt_string;
-    [[nodiscard]] auto GetProjectOutputPath(GenLang language) const -> tt_string;
-    [[nodiscard]] auto GetBaseFilename(Node* form, GenLang language) const -> tt_string;
-    void MergeBaseFilePath(tt_string& result, const tt_string& base_file) const;
+        -> wxue::string;
+    [[nodiscard]] auto GetProjectOutputPath(GenLang language) const -> wxue::string;
+    [[nodiscard]] auto GetBaseFilename(Node* form, GenLang language) const -> wxue::string;
+    void MergeBaseFilePath(wxue::string& result, const wxue::string& base_file) const;
 
     // Helper functions for FindWxueFunctions complexity reduction
     [[nodiscard]] auto AllFormTypesFound() const -> bool;

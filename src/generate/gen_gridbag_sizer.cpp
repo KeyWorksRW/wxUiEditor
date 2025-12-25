@@ -9,12 +9,12 @@
 
 #include "gen_gridbag_sizer.h"
 
-#include "gen_common.h"      // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"   // Common XRC generating functions
-#include "mockup_parent.h"   // Top-level MockUp Parent window
-#include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "ttwx.h"            // ttwx helpers for numeric and whitespace parsing
+#include "gen_common.h"                       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"                    // Common XRC generating functions
+#include "mockup_parent.h"                    // Top-level MockUp Parent window
+#include "node.h"                             // Node class
+#include "wxue_namespace/wxue.h"              // wxue helpers for numeric and whitespace parsing
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -123,13 +123,13 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
     {
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
-            tt_view_vector values(growable, ',');
+            wxue::ViewVector values(growable, ',');
             for (const auto& iter: values)
             {
                 int proportion = 0;
-                if (auto pos = iter.find(':'); ttwx::is_found(pos))
+                if (auto pos = iter.find(':'); wxue::is_found(pos))
                 {
-                    proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
+                    proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                 }
 
                 // REVIEW: [Randalphwa - 03-14-2025] Forcing the column/row count to be at least one
@@ -207,7 +207,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
     {
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
-            tt_view_vector values(growable, ',');
+            wxue::ViewVector values(growable, ',');
             for (const auto& iter: values)
             {
                 const auto val = iter.atoi();
@@ -217,11 +217,11 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
                     is_within_braces = true;
                 }
                 int proportion = 0;
-                if (auto pos = iter.find(':'); ttwx::is_found(pos))
+                if (auto pos = iter.find(':'); wxue::is_found(pos))
                 {
-                    proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
+                    proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                 }
-                if (!code.size() || !ttwx::is_whitespace(code.GetCode().back()))
+                if (!code.size() || !wxue::is_whitespace(code.GetCode().back()))
                     code.Eol();
 
                 // Note that iter may start with a space, so using itoa() ensures that we

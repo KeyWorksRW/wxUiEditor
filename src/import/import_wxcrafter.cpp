@@ -1259,16 +1259,16 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         {
             if (node->HasProp(prop_contents))
             {
-                ttwx::StringVector contents(setting.GetString(), ';');
+                ttwx::StringVector contents(std::string_view(setting.GetString()), ';');
                 auto str_ptr = node->get_PropPtr(prop_contents)->as_raw_ptr();
                 str_ptr->clear();  // remove any default string
-                for (auto& item: contents)
+                for (const auto& item: contents)
                 {
                     if (item.size())
                     {
                         if (str_ptr->size())
                             *str_ptr << ' ';
-                        *str_ptr << '"' << item << '"';
+                        *str_ptr << '"' << item.ToStdString() << '"';
                     }
                 }
             }

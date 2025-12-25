@@ -27,8 +27,8 @@ public:
 
     // Note that XRC does not support this class
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.docview.DocParentFrame"; }
-    tt_string GetPythonURL(Node*) override { return "wx.lib.docview.DocParentFrame.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.docview.DocParentFrame"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.lib.docview.DocParentFrame.html"; }
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };
@@ -49,8 +49,8 @@ public:
 
     // Note that XRC does not support this class
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.docview.DocParentFrame"; }
-    tt_string GetPythonURL(Node*) override { return "wx.lib.docview.DocParentFrame.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.docview.DocParentFrame"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.lib.docview.DocParentFrame.html"; }
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

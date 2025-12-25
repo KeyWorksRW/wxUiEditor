@@ -195,7 +195,7 @@ protected:
 
     void ChangeNode(GenEnum::GenName new_node_gen);
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
-    void CreateSizerParent(tt_string_view widget);
+    void CreateSizerParent(std::string_view widget);
 
     void AddSeparatorIfNeeded();
 

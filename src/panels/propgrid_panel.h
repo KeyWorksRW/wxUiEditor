@@ -24,7 +24,8 @@
 #include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
-#include "gen_enums.h"  // Enumerations for generators
+#include "gen_enums.h"                   // Enumerations for generators
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 using namespace GenEnum;
 
@@ -60,7 +61,7 @@ public:
     void OnNodePropChange(CustomEvent& event);
 
 protected:
-    auto GetPropHelp(NodeProperty* prop) const -> tt_string;
+    auto GetPropHelp(NodeProperty* prop) const -> wxue::string;
     auto GetCategoryDisplayName(const wxString& original) -> wxString;
 
     // Called to determine if a property should be displayed or not
@@ -70,22 +71,22 @@ protected:
     // needed.
     void OnPostPropChange(CustomEvent& event);
 
-    void CreatePropCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info,
+    void CreatePropCategory(wxue::string_view name, Node* node, NodeDeclaration* obj_info,
                             PropNameSet& prop_set);
-    void CreateEventCategory(tt_string_view name, Node* node, NodeDeclaration* obj_info,
+    void CreateEventCategory(wxue::string_view name, Node* node, NodeDeclaration* obj_info,
                              EventSet& event_set);
     void CreateLayoutCategory(Node* node);
 
-    void AddEvents(tt_string_view name, Node* node, NodeCategory& category, EventSet& event_set);
-    void AddProperties(tt_string_view name, Node* node, NodeCategory& category,
+    void AddEvents(wxue::string_view name, Node* node, NodeCategory& category, EventSet& event_set);
+    void AddProperties(wxue::string_view name, Node* node, NodeCategory& category,
                        PropNameSet& prop_set, bool is_child_cat = false);
 
-    void ReplaceDerivedName(const tt_string& formName, NodeProperty* propType);
-    void ReplaceDerivedFile(const tt_string& formName, NodeProperty* propType);
+    void ReplaceDerivedName(const wxue::string& formName, NodeProperty* propType);
+    void ReplaceDerivedFile(const wxue::string& formName, NodeProperty* propType);
 
     // Called when the class_name for a form changes. If the preferred code language output
     // file is empty, then create a suggested file name based on the class name.
-    void CheckOutputFile(const tt_string& formName, Node* node);
+    void CheckOutputFile(const wxue::string& formName, Node* node);
 
     auto CreatePGProperty(NodeProperty* prop) -> wxPGProperty*;
 
@@ -113,8 +114,8 @@ protected:
     void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
     void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
     void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
-    void ChangeDerivedDirectory(tt_string& path);
-    void ChangeBaseDirectory(tt_string& path);
+    void ChangeDerivedDirectory(wxue::string& path);
+    void ChangeBaseDirectory(wxue::string& path);
 
     // Event handlers
 

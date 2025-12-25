@@ -7,7 +7,9 @@
 
 #include "gen_doc_textctrl.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"                // Code -- Helper class for generating code
+#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_TextCtrlDocBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
@@ -75,12 +77,13 @@ auto TextDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        tt_string_vector lines;
-        lines.ReadString(txt_TextCtrlDocBlock);
-        tt_string class_name = code.node()->as_string(prop_class_name);
-        for (auto& line: lines)
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_TextCtrlDocBlock));
+        auto class_name = code.node()->as_view(prop_class_name);
+        for (const auto& wxline: lines)
         {
-            line.Replace("%class%", class_name, true);
+            std::string line = wxline.ToStdString();
+            utils::replace_in_line(line, "%class%", class_name, true);
             code.Str(line).Eol();
         }
         return true;
@@ -131,12 +134,13 @@ private:
 
 auto TextDocGenerator::HeaderCode(Code& code) -> bool
 {
-    tt_string_vector lines;
-    lines.ReadString(txt_TextCtrlDocHdrBlock);
-    tt_string class_name = code.node()->as_string(prop_class_name);
-    for (auto& line: lines)
+    ttwx::StringVector lines;
+    lines.ReadString(std::string_view(txt_TextCtrlDocHdrBlock));
+    auto class_name = code.node()->as_view(prop_class_name);
+    for (const auto& wxline: lines)
     {
-        line.Replace("%class%", class_name, true);
+        std::string line = wxline.ToStdString();
+        utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
     }
 

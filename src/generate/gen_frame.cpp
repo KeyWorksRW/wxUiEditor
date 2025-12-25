@@ -20,6 +20,7 @@
 #include "pugixml.hpp"         // xml_object_range
 #include "utils.h"             // Utility functions that work with properties
 #include "write_code.h"        // WriteCode -- Write code to Scintilla or file
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 bool FrameFormGenerator::ConstructionCode(Code& code)
 {
@@ -74,11 +75,11 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
     if (node->HasValue(prop_icon))
     {
-        tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
+        wxue::StringVector parts(node->as_string(prop_icon), ';', wxue::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            tt_string_vector art_parts(parts[IndexArtID], '|');
+            wxue::StringVector art_parts(parts[IndexArtID], '|');
             auto icon = object.append_child("icon");
             icon.append_attribute("stock_id").set_value(art_parts[0]);
             icon.append_attribute("stock_client").set_value(art_parts[1]);

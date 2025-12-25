@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <format>
+
 #include <wx/gbsizer.h>  // wxGridBagSizer:  A sizer that can lay out items in a grid
 
 #include "node_gridbag.h"  // GridBag class
@@ -15,6 +17,7 @@
 #include "mainframe.h"            // Main window frame
 #include "node.h"                 // Node class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
+#include "wxue_namespace/wxue.h"  // wxue::npos
 
 GridBag::GridBag(Node* node_gridbag) : m_gridbag(node_gridbag)
 {
@@ -110,8 +113,7 @@ auto GridBag::InsertNode(Node* gbsizer, Node* new_node) -> bool
     // If we get here, then either the row or the column must be inserted. That means any duplicate
     // row/column needs to be incremented, which has to be done recursively.
 
-    tt_string undo_str;
-    undo_str << "Insert " << map_GenNames.at(new_node->get_GenName());
+    auto undo_str = std::format("Insert {}", map_GenNames.at(new_node->get_GenName()));
 
     // Unlike a normal undo command, this one will simply make a copy of the current gbsizer and the
     // current selection.
@@ -144,7 +146,7 @@ auto GridBag::InsertNode(Node* gbsizer, Node* new_node) -> bool
 
 size_t GridBag::IncrementRows(int row, Node* gbsizer)
 {
-    size_t insert_position = tt::npos;
+    size_t insert_position = wxue::npos;
     for (size_t idx = 0; const auto& child: gbsizer->get_ChildNodePtrs())
     {
         if (child->as_int(prop_row) == row)
@@ -166,7 +168,7 @@ size_t GridBag::IncrementRows(int row, Node* gbsizer)
 
 size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
 {
-    size_t insert_position = tt::npos;
+    size_t insert_position = wxue::npos;
     for (size_t idx = 0; const auto& child: gbsizer->get_ChildNodePtrs())
     {
         if (child->as_int(prop_row) == row && child->as_int(prop_column) == column)
@@ -299,8 +301,7 @@ auto GridBag::MoveNode(Node* node, MoveDirection where, bool check_only) -> bool
 auto GridBag::MoveLeft(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
-    tt_string undo_str;
-    undo_str << "Decrease column of " << map_GenNames.at(node->get_GenName());
+    auto undo_str = std::format("Decrease column of {}", map_GenNames.at(node->get_GenName()));
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
@@ -350,8 +351,7 @@ auto GridBag::MoveRight(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
 
-    tt_string undo_str;
-    undo_str << "Increase column of " << map_GenNames.at(node->get_GenName());
+    auto undo_str = std::format("Increase column of {}", map_GenNames.at(node->get_GenName()));
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
@@ -400,8 +400,7 @@ auto GridBag::MoveUp(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
 
-    tt_string undo_str;
-    undo_str << "Decrease row";
+    std::string undo_str("Decrease row");
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.
@@ -479,8 +478,7 @@ auto GridBag::MoveDown(Node* node) -> void
 {
     auto gbsizer = node->get_Parent();
 
-    tt_string undo_str;
-    undo_str << "Increase row";
+    std::string undo_str("Increase row");
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
     // the current node.

@@ -120,7 +120,7 @@ void MenuGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
     }
 }
 
-bool MenuGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+bool MenuGenerator::ModifyProperty(NodeProperty* prop, wxue::string_view value)
 {
     if (prop->isProp(prop_stock_id))
     {

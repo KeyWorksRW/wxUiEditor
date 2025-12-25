@@ -66,14 +66,14 @@ void TreeListCtrlGenerator::GenEvent(Code& code, NodeEvent* event, const std::st
     // Ruby currently does not support wxTreeListCtrl, so don't generate any events
 }
 
-std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_RUBY:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -86,13 +86,13 @@ std::optional<tt_string> TreeListCtrlGenerator::GetWarning(Node* node, GenLang l
     }
 }
 
-std::pair<bool, tt_string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
+std::pair<bool, wxue::string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
     return { false,
-             tt_string() << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
+             wxue::string() << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
 }
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator

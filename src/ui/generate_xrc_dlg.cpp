@@ -128,7 +128,7 @@ auto GenerateXrcDlg::OnInit(wxInitDialogEvent& event) -> void
     {
         if (form->HasValue(prop_xrc_file))
         {
-            m_listbox->AppendString(tt_string(form->as_string(prop_xrc_file))
+            m_listbox->AppendString(wxue::string(form->as_string(prop_xrc_file))
                                     << '(' << form->as_string(prop_class_name) << ')');
         }
     }

@@ -14,10 +14,10 @@
 
 #include "mainframe.h"  // for wxGetMainFrame()
 #include "pugixml.hpp"  // For XML parsing of SVG files
-#include "ttwx.h"       // ttwx namespace helpers for wxStrings
 #include "utils.h"      // For FileNameToVarName()
+#include "wxue_namespace/wxue_string.h"
 
-EmbeddedImage::EmbeddedImage(tt_string_view path, Node* form)
+EmbeddedImage::EmbeddedImage(wxue::string_view path, Node* form)
 {
     ASSERT(path.size());
     ASSERT(m_images.empty());
@@ -28,12 +28,12 @@ EmbeddedImage::EmbeddedImage(tt_string_view path, Node* form)
     auto result = FileNameToVarName(path.filename());
     base_image().array_name = result.value_or("image_");
 
-    tt_string check_filename(path.filename());
+    wxue::string check_filename(path.filename());
     check_filename.Replace(".", "_");
 
     for (size_t idx = 0; idx < base_image().array_name.size(); ++idx)
     {
-        if (ttwx::is_alnum(base_image().array_name[idx]) || base_image().array_name[idx] == '_')
+        if (wxue::is_alnum(base_image().array_name[idx]) || base_image().array_name[idx] == '_')
         {
             continue;
         }

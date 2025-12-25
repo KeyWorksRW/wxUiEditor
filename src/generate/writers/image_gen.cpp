@@ -22,6 +22,8 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 // Generate code after the construcor for embedded images not defined in the gen_Images node.
 auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
@@ -302,7 +304,7 @@ namespace
     // Helper constants for bundle generation
 }  // end anonymous namespace
 
-auto Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap) -> void
+auto Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap) -> void
 {
     wxSize svg_size { -1, -1 };
     if (parts[IndexSize].size())
@@ -334,14 +336,14 @@ auto Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap) -> 
     auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
     if (!embed)
     {
-        MSG_WARNING(tt_string() << parts[IndexImage] << " not embedded!");
+        MSG_WARNING(wxue::string() << parts[IndexImage] << " not embedded!");
         Add("wxNullBitmap");
         return;
     }
 
     if (is_cpp())
     {
-        tt_string name = "wxue_img::" + embed->base_image().array_name;
+        wxue::string name = "wxue_img::" + embed->base_image().array_name;
         Eol() << "\twxueBundleSVG(" << name << ", "
               << (to_size_t) (embed->base_image().array_size & 0xFFFFFFFF) << ", ";
         itoa((to_size_t) (embed->base_image().array_size >> 32)).Comma();
@@ -359,7 +361,7 @@ auto Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap) -> 
     }
     if (is_python())
     {
-        tt_string svg_name;
+        wxue::string svg_name;
 
         if (embed->get_Form() != node()->get_Form())
         {
@@ -371,15 +373,15 @@ auto Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap) -> 
         {
             svg_name = embed->base_image().array_name;
         }
-        insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(")
+        insert(0, wxue::string("_svg_string_ = zlib.decompress(base64.b64decode(")
                       << svg_name << "))\n");
         Eol() += "\twx.BitmapBundle.FromSVG(_svg_string_";
     }
     else if (is_ruby())
     {
-        tt_string svg_name;
+        wxue::string svg_name;
         svg_name = "$" + embed->base_image().array_name;
-        insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
+        insert(0, wxue::string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
                       << svg_name << "))\n");
         *this += "Wx::BitmapBundle.from_svg(_svg_string_";
         Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
@@ -407,7 +409,7 @@ auto Code::GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap) -> 
     }
 }
 
-auto Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap) -> void
+auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -> void
 {
     Class("wxArtProvider");
     if (get_bitmap)
@@ -424,9 +426,9 @@ auto Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap) -> 
         ClassMethod("GetBitmapBundle(");
     }
 
-    tt_string art_id(parts[IndexArtID]);
-    tt_string art_client;
-    if (const auto pos = art_id.find('|'); ttwx::is_found(pos))
+    wxue::string art_id(parts[IndexArtID]);
+    wxue::string art_client;
+    if (const auto pos = art_id.find('|'); wxue::is_found(pos))
     {
         art_client = art_id.subview(pos + 1);
         art_id.erase(pos);
@@ -467,7 +469,7 @@ auto Code::GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap) -> 
     *this << ')';
 }
 
-auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -> void
+auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap) -> void
 {
     if (is_cpp())
     {
@@ -503,7 +505,7 @@ auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -
     auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
     if (!embed)
     {
-        FAIL_MSG(tt_string("Missing embed for ") << bundle->lst_filenames[0]);
+        FAIL_MSG(wxue::string("Missing embed for ") << bundle->lst_filenames[0]);
         Add("wxNullBitmap");
         return;
     }
@@ -578,7 +580,7 @@ auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -
         }
     }
 
-    tt_string path;
+    wxue::string path;
     if (is_python())
     {
         path = MakePythonPath(node());
@@ -588,7 +590,7 @@ auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -
         path = MakeRubyPath(node());
     }
 
-    tt_string name(bundle->lst_filenames[0]);
+    wxue::string name(bundle->lst_filenames[0]);
     name.make_absolute();
     name.make_relative(path);
     name.backslashestoforward();
@@ -694,7 +696,7 @@ auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -
 
             for (const auto& iter: bundle->lst_filenames)
             {
-                tt_string name_img(iter.filename());
+                wxue::string name_img(iter.filename());
                 name_img.remove_extension();
                 name_img.Replace(".", "_", true);
                 if (parts[IndexType].starts_with("Embed"))
@@ -737,7 +739,7 @@ auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -
 
                 if (!is_embed_success)
                 {
-                    tt_string name_img(iter);
+                    wxue::string name_img(iter);
                     name.make_absolute();
                     name.make_relative(path);
                     name.backslashestoforward();
@@ -766,12 +768,12 @@ auto Code::GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap) -
     }
 }
 
-void Code::GenerateXpmBitmap(const tt_string_vector& parts, bool /* get_bitmap */)
+void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap */)
 {
     // We only marginally support XPM files -- we only allow a single file, and we don't attempt
     // to scale it.
 
-    tt_string name(parts[IndexImage].filename());
+    wxue::string name(parts[IndexImage].filename());
     if (is_cpp())
     {
         Str("wxBitmap(");
@@ -831,7 +833,7 @@ void Code::GenerateXpmBitmap(const tt_string_vector& parts, bool /* get_bitmap *
     }
 }
 
-void Code::GenerateBundleParameter(const tt_string_vector& parts, bool get_bitmap)
+void Code::GenerateBundleParameter(const wxue::StringVector& parts, bool get_bitmap)
 {
     if (parts.size() <= 1 || parts[IndexImage].empty())
     {

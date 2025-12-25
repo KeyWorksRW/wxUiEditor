@@ -29,7 +29,7 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         for (auto& iter: items)
         {
-            auto pos = widget->Append(iter.label.make_wxString());
+            auto pos = widget->Append(iter.label.wx());
             if (iter.checked == "1")
                 widget->Check(pos);
         }

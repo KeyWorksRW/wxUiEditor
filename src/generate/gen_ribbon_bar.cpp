@@ -7,12 +7,13 @@
 
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mockup_parent.h"  // Top-level MockUp Parent window
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"                        // Code -- Helper class for generating code
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mockup_parent.h"               // Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "gen_ribbon_bar.h"
 
@@ -203,7 +204,7 @@ void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::s
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would
     // normally create
-    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
+    code.Replace(wxue::string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
 bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
@@ -334,7 +335,7 @@ int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     GenXrcObjectAttributes(node, item, "wxRibbonBar");
 
-    tt_string art(node->as_string(prop_theme));
+    wxue::string art(node->as_string(prop_theme));
     if (art == "Generic")
         art = "aui";
     else if (art == "MSW")

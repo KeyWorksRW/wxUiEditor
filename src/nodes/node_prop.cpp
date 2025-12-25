@@ -14,15 +14,15 @@
 
 #include "node_prop.h"
 
-#include "font_prop.h"        // FontProperty -- FontProperty class
-#include "image_handler.h"    // ImageHandler class
-#include "mainapp.h"          // App -- Main application class
-#include "node.h"             // Node -- Node class
-#include "node_creator.h"     // NodeCreator class
-#include "project_handler.h"  // ProjectHandler singleton class
-#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
-#include "ttwx.h"             // ttwx helpers for character classification
-#include "utils.h"            // Utility functions that work with properties
+#include "font_prop.h"                          // FontProperty -- FontProperty class
+#include "image_handler.h"                      // ImageHandler class
+#include "mainapp.h"                            // App -- Main application class
+#include "node.h"                               // Node -- Node class
+#include "node_creator.h"                       // NodeCreator class
+#include "project_handler.h"                    // ProjectHandler singleton class
+#include "utils.h"                              // Utility functions that work with properties
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 using namespace GenEnum;
 
@@ -49,7 +49,7 @@ auto NodeProperty::as_int() const -> int
         case type_bitlist:
             {
                 int result = 0;
-                tt_string_vector mstr(m_value, '|', tt::TRIM::both);
+                wxue::StringVector mstr(m_value, '|', wxue::TRIM::both);
                 for (const auto& iter: mstr)
                 {
                     result |= NodeCreation.get_ConstantAsInt(iter);
@@ -68,12 +68,12 @@ auto NodeProperty::as_id() const -> int
 }
 
 // Static class function
-tt_string NodeProperty::get_PropId(const tt_string& complete_id)
+auto NodeProperty::get_PropId(const tt_string& complete_id) -> wxue::string
 {
-    tt_string id;
-    if (auto pos = complete_id.find('='); pos != tt::npos)
+    wxue::string id;
+    if (auto pos = complete_id.find('='); pos != wxue::npos)
     {
-        while (pos > 0 && ttwx::is_whitespace(complete_id[pos - 1]))
+        while (pos > 0 && wxue::is_whitespace(complete_id[pos - 1]))
         {
             --pos;
         }
@@ -86,12 +86,12 @@ tt_string NodeProperty::get_PropId(const tt_string& complete_id)
     return id;
 }
 
-tt_string NodeProperty::get_PropId() const
+auto NodeProperty::get_PropId() const -> wxue::string
 {
     return get_PropId(m_value);
 }
 
-int NodeProperty::as_mockup(std::string_view prefix) const
+auto NodeProperty::as_mockup(std::string_view prefix) const -> int
 {
     switch (type())
     {
@@ -104,7 +104,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
             }
             if (prefix.size())
             {
-                tt_string name;
+                wxue::string name;
                 name << prefix << m_value;
                 if (auto result = g_friend_constant.find(name); result != g_friend_constant.end())
                 {
@@ -119,7 +119,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
 
         case type_bitlist:
             {
-                tt_string_vector mstr(m_value, '|', tt::TRIM::both);
+                wxue::StringVector mstr(m_value, '|', wxue::TRIM::both);
                 int value = 0;
                 for (auto& iter: mstr)
                 {
@@ -189,7 +189,7 @@ const tt_string& NodeProperty::as_constant(std::string_view prefix)
 
         case type_bitlist:
             {
-                tt_string_vector mstr(m_value, '|', tt::TRIM::both);
+                wxue::StringVector mstr(m_value, '|', wxue::TRIM::both);
                 m_constant.clear();
                 for (auto& iter: mstr)
                 {
@@ -231,7 +231,7 @@ auto NodeProperty::as_point() const -> wxPoint
     wxPoint result { -1, -1 };
     if (m_value.size())
     {
-        tt_view_vector tokens(m_value, ',');
+        wxue::ViewVector tokens(m_value, ',');
         if (tokens.size())
         {
             if (tokens[0].size())
@@ -249,7 +249,7 @@ auto NodeProperty::as_size() const -> wxSize
     wxSize result { -1, -1 };
     if (m_value.size())
     {
-        tt_view_vector tokens(m_value, ',');
+        wxue::ViewVector tokens(m_value, ',');
         if (tokens.size())
         {
             if (tokens[0].size())
@@ -286,16 +286,16 @@ auto NodeProperty::as_color() const -> wxColour
     {
         return wxColour(m_value);
     }
-    if (ttwx::is_alpha(m_value[0]))
+    if (wxue::is_alpha(m_value[0]))
     {
         if (auto result = kw_css_colors.find(m_value); result != kw_css_colors.end())
         {
             return wxColour(result->second);
         }
-        MSG_ERROR(tt_string("Unknown CSS color: ") << m_value);
+        MSG_ERROR(wxue::string("Unknown CSS color: ") << m_value);
         return wxNullColour;
     }
-    tt_view_vector mstr(m_value, ',');
+    wxue::ViewVector mstr(m_value, ',');
     unsigned long rgb = 0;
     size_t shift_value = 0;
     for (const auto& color: mstr)
@@ -357,9 +357,9 @@ auto NodeProperty::as_animation(wxAnimation* p_animate) const -> void
     ProjectImages.GetPropertyAnimation(m_value, p_animate);
 }
 
-auto NodeProperty::as_escape_text() const -> tt_string
+auto NodeProperty::as_escape_text() const -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
 
     for (auto ch: m_value)
     {
@@ -390,20 +390,20 @@ auto NodeProperty::as_escape_text() const -> tt_string
     return result;
 }
 
-auto NodeProperty::as_vector() const -> std::vector<tt_string>
+auto NodeProperty::as_vector() const -> std::vector<wxue::string>
 {
-    std::vector<tt_string> array;
+    std::vector<wxue::string> array;
     if (m_value.empty())
     {
         return array;
     }
-    tt_string parse;
+    wxue::string parse;
     std::string_view value = m_value;
     auto pos = parse.ExtractSubString(value);
     array.emplace_back(parse);
 
-    for (value = tt::stepover(value.data() + pos); value.size();
-         value = tt::stepover(value.data() + pos))
+    for (value = wxue::stepover(std::string_view(value.data() + pos)); value.size();
+         value = wxue::stepover(std::string_view(value.data() + pos)))
     {
         pos = parse.ExtractSubString(value);
         array.emplace_back(parse);
@@ -412,17 +412,17 @@ auto NodeProperty::as_vector() const -> std::vector<tt_string>
     return array;
 }
 
-auto NodeProperty::as_ArrayString(char separator) const -> std::vector<tt_string>
+auto NodeProperty::as_ArrayString(char separator) const -> std::vector<wxue::string>
 {
     if (separator == 0)
     {
-        tt_string_vector result;
+        wxue::StringVector result;
 
         if (m_value.size())
         {
             if (type() == type_stringlist_semi)
             {
-                result.SetString(m_value, ";", tt::TRIM::both);
+                result.SetString(std::string_view(m_value), ";", wxue::TRIM::both);
             }
             else if (type() == type_stringlist_escapes || m_value[0] == '"')
             {
@@ -430,7 +430,7 @@ auto NodeProperty::as_ArrayString(char separator) const -> std::vector<tt_string
                 while (view.size() > 0)
                 {
                     result.emplace_back(view);
-                    view = tt::stepover(view.data() + view.size());
+                    view = wxue::stepover(std::string_view(view.data() + view.size()));
                     view = view.view_substr(0, '"', '"');
                 }
             }
@@ -440,7 +440,7 @@ auto NodeProperty::as_ArrayString(char separator) const -> std::vector<tt_string
     }
     else
     {
-        tt_string_vector result(m_value, separator, tt::TRIM::both);
+        wxue::StringVector result(std::string_view(m_value), separator, wxue::TRIM::both);
         return result;
     }
 }
@@ -454,21 +454,21 @@ auto NodeProperty::as_wxArrayString() const -> wxArrayString
         if (m_value[0] == '"' &&
             !(type() == type_stringlist_semi && Project.get_OriginalProjectVersion() >= 18))
         {
-            auto view = m_value.view_substr(0, '"', '"');
+            wxue::string_view view = m_value.view_substr(0, '"', '"');
             while (view.size() > 0)
             {
-                result.Add(view.make_wxString());
-                view = tt::stepover(view.data() + view.size());
-                view = view.view_substr(0, '"', '"');
+                result.Add(view.wx());
+                view = wxue::stepover(std::string_view(view.data() + view.size()));
+                view = wxue::string_view(view).view_substr(0, '"', '"');
             }
         }
         else
         {
-            tt_view_vector array;
-            array.SetString(m_value, ";", tt::TRIM::both);
+            wxue::ViewVector array;
+            array.SetString(std::string_view(m_value), ";", wxue::TRIM::both);
             for (const auto& str: array)
             {
-                result.Add(str.make_wxString());
+                result.Add(str.wx());
             }
         }
     }
@@ -522,10 +522,10 @@ auto NodeProperty::set_value(const wxString& value) -> void
 // All but one of the std::vector properties contain text which could have commas in it, so we need
 // to use a '|' character as the separator.
 
-tt_string
-    NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
+auto NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
+    -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
     for (const auto& field: fields)
     {
         if (result.size())
@@ -535,9 +535,10 @@ tt_string
     return result;
 }
 
-tt_string NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& items) const
+auto NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& items) const
+    -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
     for (auto& item: items)
     {
         if (result.size())
@@ -549,9 +550,10 @@ tt_string NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_I
     return result;
 }
 
-tt_string NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& items) const
+auto NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& items) const
+    -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
     for (auto& item: items)
     {
         if (result.size())
@@ -565,9 +567,10 @@ tt_string NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITE
     return result;
 }
 
-tt_string NodeProperty::convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) const
+auto NodeProperty::convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) const
+    -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
     for (auto& item: items)
     {
         if (result.size())
@@ -593,10 +596,10 @@ std::vector<NODEPROP_STATUSBAR_FIELD> NodeProperty::as_statusbar_fields() const
         return result;
     }
 
-    tt_string_vector fields(m_value, ';');
+    wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
-        tt_string_vector parts(field, '|');
+        wxue::StringVector parts(field, '|');
         auto& item = result.emplace_back();
         if (parts.size() == 2)
         {
@@ -634,11 +637,11 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
         return result;
     }
 
-    tt_string_vector fields(m_value, ';');
+    wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
         NODEPROP_CHECKLIST_ITEM item;
-        tt_string_vector parts(field, '|');
+        wxue::StringVector parts(field, '|');
         if (parts.size())
         {
             item.label = parts[0];
@@ -657,11 +660,11 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> NodeProperty::as_bmp_combo_items() const
 {
     std::vector<NODEPROP_BMP_COMBO_ITEM> result;
 
-    tt_string_vector fields(m_value, ';');
+    wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
         NODEPROP_BMP_COMBO_ITEM item;
-        tt_string_vector parts(field, '|');
+        wxue::StringVector parts(field, '|');
         if (parts.size())
         {
             item.label = parts[0];
@@ -680,10 +683,10 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
 {
     std::vector<NODEPROP_RADIOBOX_ITEM> result;
 
-    tt_string_vector fields(m_value, ';');
+    wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
-        tt_string_vector parts(field, '|');
+        wxue::StringVector parts(field, '|');
         NODEPROP_RADIOBOX_ITEM item;
         if (parts.size() > 0)
             item.label = parts[0];
@@ -717,14 +720,14 @@ auto NodeProperty::HasValue() const -> bool
             return (as_point() != wxDefaultPosition);
 
         case type_animation:
-            if (auto semicolonIndex = m_value.find_first_of(";"); ttwx::is_found(semicolonIndex))
+            if (auto semicolonIndex = m_value.find_first_of(";"); wxue::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0);
             }
             return m_value.size();
 
         case type_image:
-            if (auto semicolonIndex = m_value.find_first_of(";"); ttwx::is_found(semicolonIndex))
+            if (auto semicolonIndex = m_value.find_first_of(";"); wxue::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }

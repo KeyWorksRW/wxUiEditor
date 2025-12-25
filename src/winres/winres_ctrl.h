@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "node.h"  // Node class
+#include "node.h"                        // Node class
+#include "wxue_namespace/wxue_string.h"  // wxue::string and wxue::string_view
 
 class WinResource;
 
@@ -31,7 +32,7 @@ public:
     auto getNode() const { return m_node.get(); }
     auto GetNodePtr() const { return m_node; }
 
-    void ParseDirective(WinResource* pWinResource, tt_string_view line);
+    void ParseDirective(WinResource* pWinResource, wxue::string_view line);
 
     // left position in pixels
     auto GetLeft() const { return m_pixel_rect.GetLeft(); }
@@ -75,7 +76,7 @@ public:
         getNode()->set_value(name, value);
     }
 
-    [[nodiscard]] auto ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
+    [[nodiscard]] auto ParseDimensions(wxue::string_view line, wxRect& duRect, wxRect& pixelRect)
         -> bool;
     auto& GetOrginalLine() { return m_original_line; }
 
@@ -87,47 +88,47 @@ public:
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style
-    void ParseStyles(tt_string_view line);
+    void ParseStyles(wxue::string_view line);
 
-    void ParseListViewStyles(tt_string_view line);
-    void ParseButtonStyles(tt_string_view line);
+    void ParseListViewStyles(wxue::string_view line);
+    void ParseButtonStyles(wxue::string_view line);
 
-    void AddSpecialStyles(tt_string_view line);
-    auto AppendStyle(GenEnum::PropName prop_name, tt_string_view style) -> void;
+    void AddSpecialStyles(wxue::string_view line);
+    auto AppendStyle(GenEnum::PropName prop_name, wxue::string_view style) -> void;
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)
-    auto ParseCommonStyles(tt_string_view line) -> void;
+    auto ParseCommonStyles(wxue::string_view line) -> void;
 
     // This will set prop_id, and return a sview to the position past the id
-    auto GetID(tt_string_view line) -> tt_string_view;
+    auto GetID(wxue::string_view line) -> wxue::string_view;
 
     // This will set prop_label, and return a sview to the position past the id
-    auto GetLabel(tt_string_view line) -> tt_string_view;
+    auto GetLabel(wxue::string_view line) -> wxue::string_view;
 
     // Returns a view past the closing quote, or an empty view if there was no closing quote
-    auto StepOverQuote(tt_string_view line, tt_string& str) -> tt_string_view;
+    auto StepOverQuote(wxue::string_view line, wxue::string& str) -> wxue::string_view;
 
     // Retrieves any string between commas, returns view past the closing comma
-    auto StepOverComma(tt_string_view line, tt_string& str) -> tt_string_view;
+    auto StepOverComma(wxue::string_view line, wxue::string& str) -> wxue::string_view;
 
     // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
     // has already been created.
     //
     // Works with either SS_BITMAP or SS_ICON.
-    void ParseImageControl(tt_string_view line);
+    void ParseImageControl(wxue::string_view line);
 
     // Icon controls require too much special processing to be inside the ParseDirective()
     // function.
-    void ParseIconControl(tt_string_view line);
+    void ParseIconControl(wxue::string_view line);
 
 private:
     NodeSharedPtr m_node;
     WinResource* m_pWinResource;
 
     // Some styles like UDS_AUTOBUDDY have to be post-processed during actual layout.
-    tt_string m_non_processed_style;
+    wxue::string m_non_processed_style;
 
-    tt_string m_original_line;
+    wxue::string m_original_line;
 
     // Caution -- wxRect is *NOT* the same as a Windows RECT structure. wxRect stores width and
     // height, RECT stores right and bottom positions.

@@ -26,9 +26,12 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
@@ -108,14 +111,14 @@ auto PythonCodeGenerator::WriteImportList() -> void
 {
     if (m_form_node->HasValue(prop_python_import_list))
     {
-        tt_string_vector list;
-        list.SetString(m_form_node->as_string(prop_python_import_list));
+        wxue::StringVector list;
+        list.SetString(std::string_view(m_form_node->as_string(prop_python_import_list)), '\n');
         for (auto& iter: list)
         {
             if (!iter.starts_with("import "))
             {
                 iter.remove_extension();
-                m_source->writeLine(tt_string("import ") << iter);
+                m_source->writeLine(wxue::string("import ") << iter);
             }
             else
             {
@@ -141,14 +144,14 @@ auto PythonCodeGenerator::WriteIDConstants() -> void
     {
         if (!iter.starts_with("self."))
         {
-            m_source->writeLine(tt_string() << iter << " = wx.ID_HIGHEST + " << id_value++);
+            m_source->writeLine(wxue::string() << iter << " = wx.ID_HIGHEST + " << id_value++);
         }
     }
     for (const auto& iter: m_set_const_ids)
     {
         if (!iter.starts_with("self."))
         {
-            if (tt::contains(iter, " wx"))
+            if (iter.contains(" wx"))
             {
                 wxString wx_id = iter;
                 wx_id.Replace(" wx", " wx.", true);
@@ -170,23 +173,24 @@ auto PythonCodeGenerator::WriteInheritedClass() -> void
         return;
     }
 
-    m_header->writeLine(tt_string("# Sample inherited class from ")
+    m_header->writeLine(wxue::string("# Sample inherited class from ")
                         << m_form_node->as_string(prop_class_name));
     m_header->writeLine();
     m_header->writeLine("import wx");
 
     m_header->writeLine();
-    m_header->writeLine(tt_string("import ") << m_form_node->as_string(prop_python_file) << "\n");
+    m_header->writeLine(wxue::string("import ")
+                        << m_form_node->as_string(prop_python_file) << "\n");
     m_header->writeLine();
 
-    tt_string inherit_name = m_form_node->as_string(prop_python_inherit_name);
+    wxue::string inherit_name = m_form_node->as_string(prop_python_inherit_name);
     if (inherit_name.empty())
     {
         inherit_name += "inherit_" + m_form_node->as_string(prop_class_name);
     }
     if (inherit_name.size())
     {
-        tt_string inherit("class ");
+        wxue::string inherit("class ");
         inherit << inherit_name << "(";
         inherit << m_form_node->as_string(prop_python_file) << "."
                 << m_form_node->as_string(prop_class_name) << "):";
@@ -204,9 +208,9 @@ auto PythonCodeGenerator::WriteInsertCode() -> void
 {
     if (m_form_node->HasValue(prop_python_insert))
     {
-        tt_string convert(m_form_node->as_string(prop_python_insert));
-        convert.Replace("@@", "\n", tt::REPLACE::all);
-        tt_string_vector lines(convert, '\n', tt::TRIM::right);
+        wxue::string convert(m_form_node->as_string(prop_python_insert));
+        convert.Replace("@@", "\n", wxue::REPLACE::all);
+        wxue::StringVector lines(convert, '\n', wxue::TRIM::right);
         for (auto& line: lines)
         {
             m_source->doWrite(line);
@@ -232,7 +236,7 @@ auto PythonCodeGenerator::GenerateConstructionCode(Code& code) -> void
         {
             if (iter.starts_with("self."))
             {
-                m_source->writeLine(tt_string() << iter << " = wx.ID_HIGHEST + " << id_value++);
+                m_source->writeLine(wxue::string() << iter << " = wx.ID_HIGHEST + " << id_value++);
             }
         }
         if (id_value > 1)
@@ -482,7 +486,7 @@ auto PythonCodeGenerator::WriteImagesFormImport(Code& code, bool& images_file_im
         {
             if (!images_file_imported)
             {
-                tt_string import_name = iter->get_Form()->as_string(prop_python_file).filename();
+                wxue::string import_name = iter->get_Form()->as_string(prop_python_file).filename();
                 import_name.remove_extension();
                 code.Str("import ").Str(import_name);
                 m_source->writeLine(code);
@@ -522,7 +526,7 @@ auto PythonCodeGenerator::WriteExternalImageImports(Code& code) -> bool
             }
             if (iter->get_Form()->as_string(prop_python_file).filename().empty())
             {
-                code.AddComment(tt_string("No filename specified for ")
+                code.AddComment(wxue::string("No filename specified for ")
                                     << iter->get_Form()->get_FormName() << " which contains "
                                     << iter->base_image().array_name,
                                 true);
@@ -598,7 +602,7 @@ auto PythonCodeGenerator::CheckIfAllEventsImplemented(
             continue;
         }
 
-        tt_string set_code;
+        wxue::string set_code;
         // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
         // an unused parameter.
         set_code << "def " << python_handler << "(self, _):";
@@ -632,7 +636,7 @@ auto PythonCodeGenerator::GenerateUndefinedHandlers(EventVector& events,
             continue;
         }
 
-        tt_string set_code;
+        wxue::string set_code;
         // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
         // an unused parameter.
         set_code << "def " << python_handler << "(self, _):";
@@ -743,7 +747,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 {
     const auto& description = code.node()->as_string(prop);
     ASSERT_MSG(description.size(), "PythonBitmapList called with empty description");
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") ||
         parts[IndexType].contains("SVG"))
@@ -787,7 +791,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
         if (!is_embed_success)
         {
-            tt_string name(iter);
+            wxue::string name(iter);
             name.make_absolute();
             name.make_relative(path);
             name.backslashestoforward();
@@ -852,7 +856,7 @@ void PythonBtnBimapCode(Code& code, bool is_single)
     }
 }
 
-tt_string MakePythonPath(Node* node)
+auto MakePythonPath(Node* node) -> wxue::string
 {
     return ScriptCommon::MakeScriptPath(node, GEN_LANG_PYTHON);
 }

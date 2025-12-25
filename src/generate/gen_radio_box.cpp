@@ -7,12 +7,13 @@
 
 #include <wx/radiobox.h>  // wxRadioBox declaration
 
-#include "gen_common.h"            // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"         // Common XRC generating functions
-#include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
-#include "node.h"                  // Node class
-#include "pugixml.hpp"             // xml read/write/create/process
-#include "utils.h"                 // Utility functions that work with properties
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mockup/mockup_parent.h"        // MockupParent -- Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "pugixml.hpp"                   // xml read/write/create/process
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 #include "gen_radio_box.h"
 
@@ -67,7 +68,7 @@ void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
 bool RadioBoxGenerator::ConstructionCode(Code& code)
 {
     auto array = code.node()->as_ArrayString(prop_contents);
-    tt_string choice_name;
+    wxue::string choice_name;
     if (code.is_cpp() && array.size())
     {
         choice_name = (code.node()->get_NodeName());

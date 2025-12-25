@@ -28,8 +28,8 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.Frame"; }
-    tt_string GetPythonURL(Node*) override { return "wx.Frame.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.Frame"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.Frame.html"; }
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

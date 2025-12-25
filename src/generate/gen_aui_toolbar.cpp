@@ -224,7 +224,9 @@ void AuiToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would
     // normally create
-    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
+    wxString replace_str;
+    replace_str << event->getNode()->as_string(prop_var_name) << "->";
+    code.Replace(replace_str.ToStdString(), "");
 }
 
 bool AuiToolBarFormGenerator::SettingsCode(Code& code)

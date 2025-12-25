@@ -25,6 +25,8 @@
 #include <wx/font.h>      // wxFontBase class: the interface of wxFont
 #include <wx/settings.h>  // for wxSystemSettings
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
+
 class wxVariant;
 class NodeProperty;
 
@@ -36,7 +38,7 @@ class FontProperty
 public:
     FontProperty();
     FontProperty(const wxFont& font);
-    FontProperty(tt_string_view font);
+    FontProperty(wxue::string_view font);
     FontProperty(NodeProperty* prop);
     FontProperty(wxVariant font);
 
@@ -44,10 +46,10 @@ public:
 
     // If old_style is true, then assume:
     // face name, style, weight, point size, family, underlined
-    auto Convert(tt_string_view font, bool old_style = false) -> void;
+    auto Convert(wxue::string_view font, bool old_style = false) -> void;
 
     [[nodiscard]] auto as_wxString() const -> wxString;
-    [[nodiscard]] auto as_string() const -> tt_string;
+    [[nodiscard]] auto as_string() const -> wxue::string;
 
     [[nodiscard]] auto isDefGuiFont() const -> bool { return m_isDefGuiFont; }
     auto setDefGuiFont(bool use_default = true) -> void { m_isDefGuiFont = use_default; }
@@ -241,7 +243,7 @@ struct FontSymbolPairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(tt_string_view name) const -> wxFontSymbolicSize
+    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontSymbolicSize
     {
         if (name.empty())
         {
@@ -281,7 +283,7 @@ struct FontSymbolPairs
         }
     }
 
-    [[nodiscard]] auto HasName(tt_string_view name) const -> bool
+    [[nodiscard]] auto HasName(wxue::string_view name) const -> bool
     {
         if (name.empty())
         {
@@ -304,7 +306,7 @@ struct FontSymbolPairs
                 return key;
             }
         }
-        return tt_empty_cstr;
+        return wxue::emptystring;
     }
 };
 extern const FontSymbolPairs font_symbol_pairs;
@@ -326,7 +328,7 @@ struct FontFamilyPairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(tt_string_view name) const -> wxFontFamily
+    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontFamily
     {
         if (name.empty())
         {
@@ -366,7 +368,7 @@ struct FontFamilyPairs
         }
     }
 
-    [[nodiscard]] auto HasName(tt_string_view name) const -> bool
+    [[nodiscard]] auto HasName(wxue::string_view name) const -> bool
     {
         if (name.empty())
         {
@@ -389,7 +391,7 @@ struct FontFamilyPairs
                 return key;
             }
         }
-        return tt_empty_cstr;
+        return wxue::emptystring;
     }
 };
 extern const FontFamilyPairs font_family_pairs;
@@ -414,7 +416,7 @@ struct FontWeightPairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(tt_string_view name) const -> wxFontWeight
+    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontWeight
     {
         if (name.empty())
         {
@@ -469,7 +471,7 @@ struct FontWeightPairs
                 return key;
             }
         }
-        return tt_empty_cstr;
+        return wxue::emptystring;
     }
 };
 extern const FontWeightPairs font_weight_pairs;
@@ -487,7 +489,7 @@ struct FontStylePairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(tt_string_view name) const -> wxFontStyle
+    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontStyle
     {
         if (name.empty())
         {
@@ -529,7 +531,7 @@ struct FontStylePairs
                 return key;
             }
         }
-        return tt_empty_cstr;
+        return wxue::emptystring;
     }
 };
 extern const FontStylePairs font_style_pairs;

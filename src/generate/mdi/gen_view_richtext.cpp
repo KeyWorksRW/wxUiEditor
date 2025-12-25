@@ -7,8 +7,10 @@
 
 #include "gen_view_richtext.h"
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "project_handler.h"  // ProjectHandler class
+#include "code.h"                // Code -- Helper class for generating code
+#include "project_handler.h"     // ProjectHandler class
+#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_RichTextViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxView);
@@ -61,12 +63,13 @@ auto RichTextViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        tt_string_vector lines;
-        lines.ReadString(txt_RichTextViewBlock);
-        tt_string class_name = code.node()->as_string(prop_class_name);
-        for (auto& line: lines)
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_RichTextViewBlock));
+        auto class_name = code.node()->as_view(prop_class_name);
+        for (const auto& wxline: lines)
         {
-            line.Replace("%class%", class_name, true);
+            std::string line = wxline.ToStdString();
+            utils::replace_in_line(line, "%class%", class_name, true);
             code.Str(line).Eol();
         }
     }
@@ -91,11 +94,11 @@ auto RichTextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
         }
         if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
         {
-            tt_string hdr_file = iter->as_string(prop_base_file);
-            if (hdr_file.size())
+            wxString hdr_file = iter->as_string(prop_base_file).make_wxString();
+            if (!hdr_file.empty())
             {
-                hdr_file += Project.as_string(prop_header_ext);
-                set_src.insert(tt_string("#include ") << '"' << hdr_file << '"');
+                hdr_file += Project.as_string(prop_header_ext).make_wxString();
+                set_src.insert(std::string("#include \"") + hdr_file.ToStdString() + "\"");
             }
             else
             {
@@ -141,12 +144,13 @@ private:
 
 auto RichTextViewGenerator::HeaderCode(Code& code) -> bool
 {
-    tt_string_vector lines;
-    lines.ReadString(txt_RichTextCtrlViewHdrBlock);
-    tt_string class_name = code.node()->as_string(prop_class_name);
-    for (auto& line: lines)
+    ttwx::StringVector lines;
+    lines.ReadString(std::string_view(txt_RichTextCtrlViewHdrBlock));
+    auto class_name = code.node()->as_view(prop_class_name);
+    for (const auto& wxline: lines)
     {
-        line.Replace("%class%", class_name, true);
+        std::string line = wxline.ToStdString();
+        utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
     }
 

@@ -9,11 +9,12 @@
 
 #include "gen_file_picker.h"
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "node.h"                        // Node class
+#include "pugixml.hpp"                   // xml read/write/create/process
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -69,7 +70,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
         // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
         // wxFileSelectorPromptStr
         if (code.is_perl())
-            code.QuotedString(tt_string_view("Select a file"));
+            code.QuotedString(wxue::string_view("Select a file"));
         else
             code.AddType("wxFileSelectorPromptStr");
     }
@@ -116,11 +117,11 @@ bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-std::optional<tt_string> FilePickerGenerator::GetPropertyDescription(NodeProperty* prop)
+std::optional<wxue::string> FilePickerGenerator::GetPropertyDescription(NodeProperty* prop)
 {
     if (prop->isProp(prop_message))
     {
-        return (tt_string() << "Title bar text for the file picker dialog. If not specified, "
+        return (wxue::string() << "Title bar text for the file picker dialog. If not specified, "
                                "\"Select a file\" will be used.");
     }
     else

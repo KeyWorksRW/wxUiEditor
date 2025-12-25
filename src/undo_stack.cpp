@@ -51,7 +51,7 @@ auto UndoStack::GetUndoString() -> wxString
     wxString str;
     if (m_undo.size())
     {
-        str = m_undo.back()->GetUndoString().make_wxString();
+        str = m_undo.back()->GetUndoString().wx();
     }
     return str;
 }
@@ -61,15 +61,14 @@ auto UndoStack::GetRedoString() -> wxString
     wxString str;
     if (m_redo.size())
     {
-        str = m_redo.back()->GetUndoString().make_wxString();
+        str = m_redo.back()->GetUndoString().wx();
     }
     return str;
 }
 
 ///////////////////////////////// GroupUndoActions ////////////////////////////////////
 
-GroupUndoActions::GroupUndoActions(const tt_string& undo_str, Node* sel_node) :
-    UndoAction(undo_str.c_str())
+GroupUndoActions::GroupUndoActions(std::string_view undo_str, Node* sel_node) : UndoAction(undo_str)
 {
     if (sel_node)
     {

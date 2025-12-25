@@ -13,9 +13,11 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
+
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
 {
@@ -135,7 +137,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom
     // property formatted it
     auto value = m_prop_grid->GetPropertyValue(grid_prop).GetString();
-    tt_string_vector parts(value.utf8_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(value.utf8_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
     // If the image field is empty, then the entire property needs to be cleared
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
@@ -196,7 +198,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         for (const auto& embedded_image: parent->get_ChildNodePtrs())
         {
             const auto& description_a = embedded_image->as_wxString(prop_bitmap);
-            tt_view_vector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+            wxue::ViewVector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR,
+                                     wxue::TRIM::both);
             if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
             {
                 break;
@@ -241,8 +244,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             for (const auto& embedded_image: image_list_node->get_ChildNodePtrs())
             {
                 const auto& description_a = embedded_image->as_wxString(prop_bitmap);
-                tt_view_vector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR,
-                                       tt::TRIM::both);
+                wxue::ViewVector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR,
+                                         wxue::TRIM::both);
                 if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
                 {
                     break;
@@ -284,7 +287,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 {
     if (node_prop->isProp(prop_data_file))
     {
-        tt_string newValue =
+        wxue::string newValue =
             grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
         auto result = Project.GetOutputPath(node_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
         auto path = result.first;
@@ -296,7 +299,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         return;
     }
 
-    tt_string newValue = grid_prop->GetValueAsString().utf8_string();
+    wxue::string newValue = grid_prop->GetValueAsString().utf8_string();
 
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the
     // value if it's a different grid_prop
@@ -456,9 +459,11 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                     break;
 
                 default:
-                    FAIL_MSG(tt_string()
-                             << "Unsuppoerted language: "
-                             << (GenLangToString(Project.get_CodePreference(selected_node))));
+                    {
+                        auto lang_str = GenLangToString(Project.get_CodePreference(selected_node));
+                        FAIL_MSG(wxString("Unsupported language: ")
+                                 << wxString(lang_str.data(), lang_str.size()));
+                    }
                     return;  // Only C++, Python and Ruby have naming conventions for members
             }
 

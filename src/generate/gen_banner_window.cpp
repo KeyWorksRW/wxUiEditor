@@ -80,7 +80,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            tt_string tmp;
+            wxue::string tmp;
             GenBtnBimapCode(code.node(), tmp, true);
             code += tmp;
         }

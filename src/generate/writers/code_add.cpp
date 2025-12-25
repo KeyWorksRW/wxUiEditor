@@ -11,8 +11,9 @@
 #include "code.h"
 
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
+
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 // clang-format off
 
@@ -111,7 +112,7 @@ void Code::AddSubclassParams()
     }
 }
 
-void Code::AddFunctionNoOperatorWithWx(tt_string_view text)
+void Code::AddFunctionNoOperatorWithWx(wxue::string_view text)
 {
     if (is_ruby())
     {
@@ -123,7 +124,7 @@ void Code::AddFunctionNoOperatorWithWx(tt_string_view text)
     }
 }
 
-void Code::AddFunctionWithOperatorRuby(tt_string_view text)
+void Code::AddFunctionWithOperatorRuby(wxue::string_view text)
 {
     // Check for a preceeding empty "()" and remove it if found
     if (ends_with("())"))
@@ -142,7 +143,7 @@ void Code::AddFunctionWithOperatorRuby(tt_string_view text)
     }
 }
 
-void Code::AddFunctionWithOperatorPython(tt_string_view text)
+void Code::AddFunctionWithOperatorPython(wxue::string_view text)
 {
     *this << '.';
     if (text.is_sameprefix("wx"))
@@ -155,7 +156,7 @@ void Code::AddFunctionWithOperatorPython(tt_string_view text)
     }
 }
 
-auto Code::Add(tt_string_view text) -> Code&
+auto Code::Add(wxue::string_view text) -> Code&
 {
     bool old_linebreak = m_auto_break;
     // Ruby changes the prefix to "Wx::", and Python changes it to "wx."
@@ -200,7 +201,7 @@ auto Code::Add(tt_string_view text) -> Code&
     }
 
     // Handle combined values separated by pipes
-    if (text.find('|') != tt::npos)
+    if (text.find('|') != wxue::npos)
     {
         AddCombinedValues(text);
     }
@@ -222,7 +223,7 @@ auto Code::Add(tt_string_view text) -> Code&
 }
 
 // Helper method: Check if text matches a Ruby constant mapping
-[[nodiscard]] auto Code::AddRubyConstant(tt_string_view text) -> bool
+[[nodiscard]] auto Code::AddRubyConstant(wxue::string_view text) -> bool
 {
     // Handle Ruby-specific constant mappings
     static constexpr auto ruby_constant_map = frozen::make_map<std::string_view, std::string_view>(
@@ -242,10 +243,10 @@ auto Code::Add(tt_string_view text) -> Code&
 }
 
 // Helper method: Handle combined values separated by pipes (|)
-auto Code::AddCombinedValues(tt_string_view text) -> Code&
+auto Code::AddCombinedValues(wxue::string_view text) -> Code&
 {
     bool initial_combined_value_set = false;
-    tt_view_vector multistr(text, "|", tt::TRIM::both);
+    wxue::ViewVector multistr(text, "|", wxue::TRIM::both);
     for (auto& iter: multistr)
     {
         if (iter.empty())
@@ -284,7 +285,7 @@ auto Code::AddCombinedValues(tt_string_view text) -> Code&
 }
 
 // Helper method: Handle wx-prefixed constants with language transformations
-auto Code::AddWxPrefixedConstant(tt_string_view text) -> Code&
+auto Code::AddWxPrefixedConstant(wxue::string_view text) -> Code&
 {
     if (is_perl())
     {
@@ -409,7 +410,7 @@ auto Code::AddConditionalOr() -> Code&
     return *this;
 }
 
-auto Code::AddConstant(GenEnum::PropName prop_name, tt_string_view short_name) -> Code&
+auto Code::AddConstant(GenEnum::PropName prop_name, wxue::string_view short_name) -> Code&
 {
     return Add(m_node->as_constant(prop_name, short_name));
 }
@@ -431,7 +432,7 @@ constexpr auto show_effect_map = frozen::make_map<std::string_view, std::string_
 });
 // clang-format on
 
-auto Code::AddConstant(tt_string_view text) -> Code&
+auto Code::AddConstant(wxue::string_view text) -> Code&
 {
     if (is_cpp())
     {
@@ -445,14 +446,14 @@ auto Code::AddConstant(tt_string_view text) -> Code&
         // then it works fine.
         if (text.contains("wxBU_NOTEXT"))
         {
-            tt_string new_value(text);
+            wxue::string new_value(text);
             new_value.Replace("wxBU_NOTEXT", "2");
             CheckLineLength(new_value.size());
             *this += new_value;
         }
         else if (text.contains("wxSHOW_EFFECT"))
         {
-            tt_string new_value(text);
+            wxue::string new_value(text);
             for (const auto& iter: show_effect_map)
             {
                 if (new_value.Replace(iter.first, iter.second))
@@ -477,12 +478,12 @@ auto Code::AddConstant(tt_string_view text) -> Code&
 void Code::AddPublicRubyMembers()
 {
     ASSERT(is_ruby());
-    std::set<tt_string> public_members;
+    std::set<wxue::string> public_members;
     auto FindPublicMembers = [&](Node* node, auto&& FindPublicMembers) -> void
     {
         if (node->HasProp(prop_var_name) && node->as_string(prop_class_access) == "public:")
         {
-            public_members.insert(tt_string(":") << node->get_NodeName(get_language()));
+            public_members.insert(wxue::string(":") << node->get_NodeName(get_language()));
         }
         if (node->get_ChildCount())
         {
@@ -515,7 +516,7 @@ void Code::AddPublicRubyMembers()
     }
 }
 
-auto Code::AddType(tt_string_view text) -> Code&
+auto Code::AddType(wxue::string_view text) -> Code&
 {
     if (is_cpp() || is_perl() || text.size() < 3)
     {

@@ -8,11 +8,12 @@
 #include <wx/dataview.h>  // wxDataViewCtrl base classes
 #include <wx/event.h>     // Event classes
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mainapp.h"        // App -- Main application class
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mainapp.h"                     // App -- Main application class
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "dataview_widgets.h"
 
@@ -200,23 +201,23 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
     handlers.emplace("wxDataViewXmlHandler");
 }
 
-std::pair<bool, tt_string> DataViewCtrl::isLanguageVersionSupported(GenLang language)
+std::pair<bool, wxue::string> DataViewCtrl::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false,
-             tt_string() << "wxDataViewCtrl is not supported by " << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "wxDataViewCtrl is not supported by " << GenLangToString(language) };
 }
 
-std::optional<tt_string> DataViewCtrl::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> DataViewCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_RUBY:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -357,23 +358,23 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
     handlers.emplace("wxDataViewXmlHandler");
 }
 
-std::pair<bool, tt_string> DataViewListCtrl::isLanguageVersionSupported(GenLang language)
+std::pair<bool, wxue::string> DataViewListCtrl::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewListCtrl is not supported by "
-                                << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "wxDataViewListCtrl is not supported by " << GenLangToString(language) };
 }
 
-std::optional<tt_string> DataViewListCtrl::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> DataViewListCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_RUBY:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -415,23 +416,23 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-std::pair<bool, tt_string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang language)
+std::pair<bool, wxue::string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "wxDataViewTreeCtrl is not supported by "
-                                << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "wxDataViewTreeCtrl is not supported by " << GenLangToString(language) };
 }
 
-std::optional<tt_string> DataViewTreeCtrl::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> DataViewTreeCtrl::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_RUBY:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -508,24 +509,24 @@ bool DataViewColumn::ConstructionCode(Code& code)
     return true;
 }
 
-std::pair<bool, tt_string> DataViewColumn::isLanguageVersionSupported(GenLang language)
+std::pair<bool, wxue::string> DataViewColumn::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
     {
         return { true, {} };
     };
 
-    return { false,
-             tt_string() << "DataViewColumn is not supported by " << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "DataViewColumn is not supported by " << GenLangToString(language) };
 }
 
-std::optional<tt_string> DataViewColumn::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> DataViewColumn::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_RUBY:
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -567,22 +568,22 @@ bool DataViewListColumn::ConstructionCode(Code& code)
     return true;
 }
 
-std::pair<bool, tt_string> DataViewListColumn::isLanguageVersionSupported(GenLang language)
+std::pair<bool, wxue::string> DataViewListColumn::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false, tt_string() << "DataViewListColumn is not supported by "
-                                << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "DataViewListColumn is not supported by " << GenLangToString(language) };
 }
 
-std::optional<tt_string> DataViewListColumn::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> DataViewListColumn::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_RUBY:
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";

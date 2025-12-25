@@ -160,8 +160,9 @@ auto DocViewAppGenerator::ConstructionCode(Code& code) -> bool
         auto class_name = code.node()->as_string(prop_class_name);
 
         bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
-        for (auto& line: lines)
+        for (const auto& wxline: lines)
         {
+            std::string line = wxline.ToStdString();
             utils::replace_in_line(line, "%doc_templates%", code_templates, false);
             utils::replace_in_line(line, "%class%", class_name, true);
 
@@ -181,18 +182,20 @@ auto DocViewAppGenerator::AfterConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        tt_string_vector lines;
-        lines.ReadString(txt_DocViewAppAfterCtor);
-        tt_string class_name = code.node()->as_string(prop_class_name);
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_DocViewAppAfterCtor));
+        auto class_name = code.node()->as_view(prop_class_name);
         bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
-        for (auto& line: lines)
+        for (const auto& wxline: lines)
         {
-            line.Replace("%class%", class_name, true);
-            line.Replace("%document_menu%", code.node()->get_NodeName(GEN_LANG_CPLUSPLUS), true);
+            std::string line = wxline.ToStdString();
+            utils::replace_in_line(line, "%class%", class_name, true);
+            utils::replace_in_line(line, "%document_menu%",
+                                   code.node()->get_NodeName(GEN_LANG_CPLUSPLUS), true);
             if (is_mdi)
             {
-                line.Replace("wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
-                line.Replace("wxAuiMDIParentFrame", "wxMDIParentFrame", true);
+                utils::replace_in_line(line, "wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
+                utils::replace_in_line(line, "wxAuiMDIParentFrame", "wxMDIParentFrame", true);
             }
             code.Str(line).Eol();
         }
@@ -276,8 +279,9 @@ auto DocViewAppGenerator::HeaderCode(Code& code) -> bool
     ttwx::StringVector lines;
     lines.ReadString(std::string_view(txt_DocViewAppHeader));
     auto class_name = code.node()->as_string(prop_class_name);
-    for (auto& line: lines)
+    for (const auto& wxline: lines)
     {
+        std::string line = wxline.ToStdString();
         utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
     }

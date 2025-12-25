@@ -79,8 +79,8 @@ auto MockupContent::CreateAllGenerators() -> void
     }
     else if (form->is_Gen(gen_Images))
     {
-        ASSERT_MSG(form->get_Generator(), tt_string()
-                                              << "Missing component for " << form->get_DeclName());
+        ASSERT_MSG(form->get_Generator(),
+                   wxString() << "Missing component for " << wxString(form->get_DeclName()));
         auto generator = form->get_Generator();
         if (!generator)
             return;
@@ -90,8 +90,8 @@ auto MockupContent::CreateAllGenerators() -> void
     }
     else if (form->is_Gen(gen_Data))
     {
-        ASSERT_MSG(form->get_Generator(), tt_string()
-                                              << "Missing component for " << form->get_DeclName());
+        ASSERT_MSG(form->get_Generator(),
+                   wxString() << "Missing component for " << wxString(form->get_DeclName()));
         auto generator = form->get_Generator();
         if (!generator)
             return;
@@ -134,9 +134,9 @@ auto MockupContent::CreateAllGenerators() -> void
             // to be created in our Mockup window in a specific order to match what the real window
             // will look like.
 
-            size_t pos_menu { tt::npos };
-            size_t pos_toolbar { tt::npos };
-            size_t pos_statusbar { tt::npos };
+            size_t pos_menu { wxue::npos };
+            size_t pos_toolbar { wxue::npos };
+            size_t pos_statusbar { wxue::npos };
             for (size_t i = 0; i < form->get_ChildCount(); i++)
             {
                 if (form->get_Child(i)->is_Gen(gen_wxMenuBar))
@@ -149,9 +149,9 @@ auto MockupContent::CreateAllGenerators() -> void
 
             // First create the menu and toolbar if they exist
 
-            if (ttwx::is_found(pos_menu))
+            if (wxue::is_found(pos_menu))
                 CreateChildren(form->get_Child(pos_menu), this, this, m_parent_sizer);
-            if (ttwx::is_found(pos_toolbar))
+            if (wxue::is_found(pos_toolbar))
                 CreateChildren(form->get_Child(pos_toolbar), this, this, m_parent_sizer);
 
             for (size_t i = 0; i < form->get_ChildCount(); i++)
@@ -160,7 +160,7 @@ auto MockupContent::CreateAllGenerators() -> void
                     CreateChildren(form->get_Child(i), this, this, m_parent_sizer);
             }
 
-            if (ttwx::is_found(pos_statusbar))
+            if (wxue::is_found(pos_statusbar))
                 CreateChildren(form->get_Child(pos_statusbar), this, this, m_parent_sizer);
         }
 
@@ -184,8 +184,8 @@ auto MockupContent::CreateAllGenerators() -> void
 auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                                    wxBoxSizer* parent_sizer) -> void
 {
-    ASSERT_MSG(node->get_Generator(), tt_string()
-                                          << "Missing component for " << node->get_DeclName());
+    ASSERT_MSG(node->get_Generator(),
+               wxString() << "Missing component for " << wxString(node->get_DeclName()));
     auto generator = node->get_Generator();
     if (!generator)
         return;

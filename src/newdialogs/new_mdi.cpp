@@ -391,7 +391,7 @@ auto NewMdiForm::CreateNode() -> void
 
     wxGetFrame().SelectNode(parent_node);
 
-    tt_string undo_str("New MDI Form");
+    wxue::string undo_str("New MDI Form");
 
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(folder.get(), parent_node, undo_str, -1));

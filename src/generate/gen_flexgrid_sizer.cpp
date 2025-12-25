@@ -9,12 +9,12 @@
 
 #include "gen_flexgrid_sizer.h"
 
-#include "gen_common.h"      // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"   // Common XRC generating functions
-#include "mockup_parent.h"   // Top-level MockUp Parent window
-#include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "ttwx.h"            // ttwx helpers for numeric and whitespace parsing
+#include "gen_common.h"                       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"                    // Common XRC generating functions
+#include "mockup_parent.h"                    // Top-level MockUp Parent window
+#include "node.h"                             // Node class
+#include "wxue_namespace/wxue.h"              // wxue helpers for numeric and whitespace parsing
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -32,7 +32,7 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
-            tt_view_vector values(growable, ',');
+            wxue::ViewVector values(growable, ',');
             auto rows = node->as_int(prop_rows);
             auto cols = node->as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
@@ -42,9 +42,9 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (value <= row_or_col)
                 {
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); ttwx::is_found(pos))
+                    if (auto pos = iter.find(':'); wxue::is_found(pos))
                     {
-                        proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
+                        proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                     }
                     if (prop_name == prop_growablerows)
                         sizer->AddGrowableRow(value, proportion);
@@ -93,7 +93,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     {
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
-            tt_view_vector values(growable, ',');
+            wxue::ViewVector values(growable, ',');
             auto rows = node->as_int(prop_rows);
             auto cols = node->as_int(prop_cols);
             int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
@@ -108,11 +108,11 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
                         is_within_braces = true;
                     }
                     int proportion = 0;
-                    if (auto pos = iter.find(':'); ttwx::is_found(pos))
+                    if (auto pos = iter.find(':'); wxue::is_found(pos))
                     {
-                        proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
+                        proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                     }
-                    if (!ttwx::is_whitespace(code.GetCode().back()))
+                    if (!wxue::is_whitespace(code.GetCode().back()))
                         code.Eol();
 
                     // Note that iter may start with a space, so using itoa() ensures that we

@@ -9,7 +9,8 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #if defined(_DEBUG)
     #include <memory>  // std::unique_ptr
@@ -103,7 +104,7 @@ public:
 
     // Add warning or error messages to this if is_Generating() is true (which means code is
     // being generated from the command line).
-    auto get_CmdLineLog() -> tt_string_vector& { return m_cmdline_log; }
+    auto get_CmdLineLog() -> wxue::StringVector& { return m_cmdline_log; }
 
 protected:
     auto OnInit() -> bool override;
@@ -134,7 +135,7 @@ private:
 
     [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
 
-    static auto LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
+    static auto LoadProjectFile(const wxue::string& tt_filename, size_t generate_type,
                                 bool& is_project_loaded) -> bool;
 
     static auto LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
@@ -150,7 +151,7 @@ private:
     // If code is being generated from the command line, then error/warning messages should
     // be added to this vector -- they will be written to a log file when code generation is
     // complete.
-    tt_string_vector m_cmdline_log;
+    wxue::StringVector m_cmdline_log;
 
     // ProjectSettings* m_pjtSettings { nullptr };
 

@@ -27,7 +27,7 @@ using namespace wxue_img;
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "art_ids.cpp"  // wxART_ strings
 
@@ -194,8 +194,8 @@ auto PropertyGrid_Image::RefreshChildren() -> void
         SetAutoComplete();
     }
 
-    Item(IndexType)->SetValue(m_img_props.type.make_wxString());
-    Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
+    Item(IndexType)->SetValue(m_img_props.type.wx());
+    Item(IndexImage)->SetValue(m_img_props.image.wx());
 
     // CombineDefaultSize uses m_size
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
@@ -298,10 +298,10 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 if (img_props.type == "Art")
                 {
                     auto mstr = childValue.GetString().utf8_string();
-                    tt_view_vector art_str(mstr, '|', tt::TRIM::both);
-                    wxString art_id = art_str[0].make_wxString();
+                    wxue::ViewVector art_str(mstr, '|', wxue::TRIM::both);
+                    wxString art_id = art_str[0].wx();
                     auto bmp = wxArtProvider::GetBitmap(
-                        art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                        art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].wx()));
                     if (bmp.IsOk())
                     {
                         img_props.SetSize(bmp.GetSize());
@@ -314,7 +314,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 }
                 else
                 {
-                    tt_string name(childValue.GetString().utf8_string());
+                    wxue::string name(childValue.GetString().utf8_string());
                     if (name.size())
                     {
                         if (!name.file_exists())
@@ -333,13 +333,13 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
         case IndexSize:
             {
                 auto u8_value = childValue.GetString().utf8_string();
-                tt_view_vector mstr(u8_value, ',');
+                wxue::ViewVector mstr(u8_value, ',');
                 img_props.SetWidth(mstr[0].atoi());
                 img_props.SetHeight(mstr[1].atoi());
             }
             break;
     }
 
-    value = img_props.CombineValues().make_wxString();
+    value = img_props.CombineValues().wx();
     return value;
 }

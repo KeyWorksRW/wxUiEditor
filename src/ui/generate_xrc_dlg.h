@@ -66,8 +66,10 @@ private:
 // ***********************************************
     // ***********************************************
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 public:
-    tt_string GetCombinedFilename() { return m_filename.utf8_string(); }
+    wxue::string GetCombinedFilename() { return m_filename.utf8_string(); }
     bool CombineFiles() { return m_create_combined; }
 
 private:

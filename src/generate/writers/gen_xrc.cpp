@@ -457,7 +457,7 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
             {
                 // Compare the new document with the existing file, and only write it if it has
                 // changed
-                wxFile file_original(path.make_wxString(), wxFile::read_write);
+                wxFile file_original(path.wx(), wxFile::read_write);
                 if (file_original.IsOpened())
                 {
                     // Check to see if the file would be changed. If not, we don't need to update
@@ -490,11 +490,11 @@ void XrcGenerator::GenerateAllXrcForms(GenResults& results, std::vector<std::str
                     {
                         // The document differs from the file, so write the document to the file.
                         file_original.Close();
-                        if (!file_original.Create(path.make_wxString(), true))
+                        if (!file_original.Create(path.wx(), true))
                         {
                             std::string msg = static_cast<std::string>(path);
                             results.GetMsgs().emplace_back(
-                                    std::format("Cannot create the file {}\n", msg));
+                                std::format("Cannot create the file {}\n", msg));
                         }
                         else
                         {

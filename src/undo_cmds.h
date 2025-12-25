@@ -33,9 +33,9 @@ using NodeSharedPtr = std::shared_ptr<Node>;
 class InsertNodeAction : public UndoAction
 {
 public:
-    InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos = -1);
-    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str,
-                     int pos = -1);
+    InsertNodeAction(Node* node, Node* parent, std::string_view undo_str, int pos = -1);
+    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent,
+                     std::string_view undo_str, int pos = -1);
 
     // Called when pushed to the Undo stack and when Redo is called
     auto Change() -> void override;
@@ -49,7 +49,7 @@ public:
     [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
 
 protected:
-    auto Init(const NodeSharedPtr node, const NodeSharedPtr parent, tt_string_view undo_str,
+    auto Init(const NodeSharedPtr node, const NodeSharedPtr parent, std::string_view undo_str,
               int pos = -1) -> void;
 
 private:
@@ -64,8 +64,8 @@ private:
 class RemoveNodeAction : public UndoAction
 {
 public:
-    RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard = false);
-    RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str,
+    RemoveNodeAction(Node* node, std::string_view undo_str, bool AddToClipboard = false);
+    RemoveNodeAction(const NodeSharedPtr node, std::string_view undo_str,
                      bool AddToClipboard = false);
 
     // Called when pushed to the Undo stack and when Redo is called
@@ -77,7 +77,7 @@ public:
     [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
 
 protected:
-    auto Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard = false)
+    auto Init(const NodeSharedPtr node, std::string_view undo_str, bool AddToClipboard = false)
         -> void;
 
 private:
@@ -91,7 +91,7 @@ private:
 class ModifyPropertyAction : public UndoAction
 {
 public:
-    ModifyPropertyAction(NodeProperty* prop, tt_string_view value);
+    ModifyPropertyAction(NodeProperty* prop, std::string_view value);
     ModifyPropertyAction(NodeProperty* prop, int value);
     auto Change() -> void override;
     auto Revert() -> void override;
@@ -106,8 +106,8 @@ public:
 
 private:
     NodeProperty* m_property;
-    tt_string m_revert_value;
-    tt_string m_change_value;
+    wxue::string m_revert_value;
+    wxue::string m_change_value;
 };
 
 // Used to modify multiple properties as a single undo/redo command.
@@ -116,9 +116,9 @@ private:
 class ModifyProperties : public UndoAction
 {
 public:
-    ModifyProperties(tt_string_view undo_string, bool fire_events = true);
+    ModifyProperties(std::string_view undo_string, bool fire_events = true);
 
-    auto addProperty(NodeProperty* prop, tt_string_view value) -> void;
+    auto addProperty(NodeProperty* prop, std::string_view value) -> void;
     auto addProperty(NodeProperty* prop, int value) -> void;
 
     auto Change() -> void override;
@@ -128,8 +128,8 @@ public:
     {
         NodeProperty* property;
         // All properties are stored as a string, no matter what their original data type
-        tt_string revert_value;
-        tt_string change_value;
+        std::string revert_value;
+        wxue::string change_value;
     };
     [[nodiscard]] auto& GetVector() { return m_properties; }
 
@@ -144,7 +144,7 @@ private:
 class ModifyEventAction : public UndoAction
 {
 public:
-    ModifyEventAction(NodeEvent* event, tt_string_view value);
+    ModifyEventAction(NodeEvent* event, std::string_view value);
     auto Change() -> void override;
     auto Revert() -> void override;
 
@@ -155,8 +155,8 @@ public:
 
 private:
     NodeEvent* m_event;
-    tt_string m_revert_value;
-    tt_string m_change_value;
+    std::string m_revert_value;
+    std::string m_change_value;
 };
 
 // Specify node and position.
@@ -279,7 +279,7 @@ private:
 class GridBagAction : public UndoAction
 {
 public:
-    GridBagAction(Node* cur_gbsizer, const tt_string& undo_str);
+    GridBagAction(Node* cur_gbsizer, std::string_view undo_str);
     auto Change() -> void override;
     auto Revert() -> void override;
 

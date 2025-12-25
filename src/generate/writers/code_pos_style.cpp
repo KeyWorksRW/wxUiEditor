@@ -7,8 +7,9 @@
 
 #include "code.h"
 
-#include "mainframe.h"       // MainFrame class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "mainframe.h"  // MainFrame class
+
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
@@ -96,7 +97,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 }
 
 auto Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
-                        tt_string_view def_style) -> Code&
+                        wxue::string_view def_style) -> Code&
 {
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
     auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
@@ -175,7 +176,7 @@ auto Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
     return *this;
 }
 
-Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator)
+Code& Code::PosSizeForceStyle(wxue::string_view force_style, bool uses_def_validator)
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -200,7 +201,7 @@ Code& Code::PosSizeForceStyle(tt_string_view force_style, bool uses_def_validato
     return *this;
 }
 
-auto Code::Style(const char* prefix, tt_string_view force_style) -> Code&
+auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
 {
     auto add_separator = [this](bool& style_set)
     {
@@ -259,8 +260,8 @@ auto Code::Style(const char* prefix, tt_string_view force_style) -> Code&
             }
             else
             {
-                tt_view_vector multistr(m_node->as_constant(prop_style, prefix), "|",
-                                        tt::TRIM::both);
+                wxue::ViewVector multistr(m_node->as_constant(prop_style, prefix), "|",
+                                          wxue::TRIM::both);
                 for (auto& iter: multistr)
                 {
                     if (iter.empty())

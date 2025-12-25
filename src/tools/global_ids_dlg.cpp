@@ -233,6 +233,8 @@ auto GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string class
+
 auto MainFrame::OnEditCustomIds(wxCommandEvent& [[maybe_unused]] event) -> void
 {
     GlobalCustomIDS dlg(this);
@@ -258,7 +260,7 @@ auto GlobalCustomIDS::OnInit(wxInitDialogEvent& event) -> void
     {
         for (const auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_prefixes))
         {
-            m_combo_prefixes->Append(iter.make_wxString());
+            m_combo_prefixes->Append(iter.wx());
         }
     }
 
@@ -266,7 +268,7 @@ auto GlobalCustomIDS::OnInit(wxInitDialogEvent& event) -> void
     {
         for (const auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_suffixes))
         {
-            m_combo_suffixes->Append(iter.make_wxString());
+            m_combo_suffixes->Append(iter.wx());
         }
     }
     event.Skip();  // transfer all validator data to their windows and update UI
@@ -304,7 +306,7 @@ const int min_rows = 10;
 
 struct NODE_IDS
 {
-    tt_string id_portion;
+    wxue::string id_portion;
     Node* node;
 };
 
@@ -359,7 +361,7 @@ auto GlobalCustomIDS::OnSelectForms(wxCommandEvent& [[maybe_unused]] event) -> v
         int pos = 0;
         for (auto& iter: ids)
         {
-            tt_string modified_id = iter.id_portion;
+            wxue::string modified_id = iter.id_portion;
             if (m_text_old_prefix->GetValue().length())
             {
                 auto old_prefix = m_text_old_prefix->GetValue().utf8_string();
@@ -468,7 +470,7 @@ auto GlobalCustomIDS::OnCommit(wxCommandEvent& [[maybe_unused]] event) -> void
 
     for (auto& iter: ids)
     {
-        tt_string modified_id = iter.id_portion;
+        wxue::string modified_id = iter.id_portion;
         if (m_text_old_prefix->GetValue().length())
         {
             auto old_prefix = m_text_old_prefix->GetValue().utf8_string();
@@ -496,7 +498,7 @@ auto GlobalCustomIDS::OnCommit(wxCommandEvent& [[maybe_unused]] event) -> void
 
         if (modified_id != iter.id_portion)
         {
-            tt_string new_id = iter.node->as_string(prop_id);
+            wxue::string new_id = iter.node->as_string(prop_id);
             new_id.Replace(iter.id_portion, modified_id);
             undo_ids->addProperty(iter.node->get_PropPtr(prop_id), new_id);
         }

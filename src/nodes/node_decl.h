@@ -31,6 +31,7 @@
 #include "category.h"    // NodeCategory -- Node property categories
 #include "gen_enums.h"   // Enumerations for generators
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 class BaseGenerator;
 class NodeDeclaration;
@@ -50,7 +51,7 @@ namespace pugi
 class NodeDeclaration
 {
 public:
-    NodeDeclaration(tt_string_view class_name, NodeType* type);
+    NodeDeclaration(wxue::string_view class_name, NodeType* type);
 
     NodeDeclaration(const NodeDeclaration&) = delete;
     auto operator=(const NodeDeclaration&) -> NodeDeclaration& = delete;
@@ -67,7 +68,7 @@ public:
 
     [[nodiscard]] auto get_PropDeclaration(size_t idx) const -> PropDeclaration*;
 
-    [[nodiscard]] auto get_EventInfo(tt_string_view name) const -> const NodeEventInfo*;
+    [[nodiscard]] auto get_EventInfo(wxue::string_view name) const -> const NodeEventInfo*;
     [[nodiscard]] auto get_EventInfo(size_t idx) const -> const NodeEventInfo*;
 
     auto GetPropInfoMap() -> auto& { return m_properties; }
@@ -120,7 +121,7 @@ public:
     {
         m_override_def_values[prop_name] = new_value;
     }
-    auto GetOverRideDefValue(GenEnum::PropName prop_name) -> std::optional<tt_string>;
+    auto GetOverRideDefValue(GenEnum::PropName prop_name) -> std::optional<wxue::string>;
 
     void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
     auto IsPropHidden(GenEnum::PropName prop_name) -> bool

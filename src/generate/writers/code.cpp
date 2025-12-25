@@ -28,11 +28,12 @@
 
 #include "code.h"
 
-#include "image_gen.h"        // Functions for generating embedded images
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "ttwx.h"             // ttwx helpers for whitespace detection
-#include "utils.h"            // Miscellaneous utilities
+#include "image_gen.h"                          // Functions for generating embedded images
+#include "node.h"                               // Node class
+#include "project_handler.h"                    // ProjectHandler class
+#include "utils.h"                              // Miscellaneous utilities
+#include "wxue_namespace/wxue_string.h"         // wxue::string, wxue::is_whitespace
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 using namespace code;
 
@@ -535,7 +536,7 @@ auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
     }
 
     // Ensure there are no trailing tabs
-    while (size() && ttwx::is_whitespace(back()))
+    while (size() && wxue::is_whitespace(back()))
     {
         pop_back();
     }
@@ -572,7 +573,7 @@ void Code::CloseFontBrace()
 {
     if (is_cpp() || is_perl())
     {
-        while (size() && ttwx::is_whitespace(back()))
+        while (size() && wxue::is_whitespace(back()))
         {
             pop_back();
         }
@@ -617,7 +618,7 @@ auto Code::TrueFalseIf(GenEnum::PropName prop_name) -> Code&
     return False();
 }
 
-auto Code::Function(tt_string_view text, bool add_operator) -> Code&
+auto Code::Function(wxue::string_view text, bool add_operator) -> Code&
 {
     if (!add_operator)
     {
@@ -646,7 +647,7 @@ auto Code::Function(tt_string_view text, bool add_operator) -> Code&
     return *this;
 }
 
-auto Code::ClassMethod(tt_string_view function_name) -> Code&
+auto Code::ClassMethod(wxue::string_view function_name) -> Code&
 {
     if (is_cpp() || is_perl())
     {
@@ -668,7 +669,7 @@ auto Code::ClassMethod(tt_string_view function_name) -> Code&
     return *this;
 }
 
-auto Code::VariableMethod(tt_string_view function_name) -> Code&
+auto Code::VariableMethod(wxue::string_view function_name) -> Code&
 {
     if (is_perl())
     {
@@ -690,7 +691,7 @@ auto Code::VariableMethod(tt_string_view function_name) -> Code&
     return *this;
 }
 
-auto Code::FormFunction(tt_string_view text) -> Code&
+auto Code::FormFunction(wxue::string_view text) -> Code&
 {
     if (is_python())
     {
@@ -731,7 +732,7 @@ auto Code::FormParent() -> Code&
     return *this;
 }
 
-auto Code::Class(tt_string_view text) -> Code&
+auto Code::Class(wxue::string_view text) -> Code&
 {
     if (is_cpp())
     {
@@ -763,7 +764,7 @@ auto Code::Class(tt_string_view text) -> Code&
     return *this;
 }
 
-auto Code::Object(tt_string_view class_name) -> Code&
+auto Code::Object(wxue::string_view class_name) -> Code&
 {
     if (is_cpp())
     {
@@ -809,7 +810,7 @@ auto Code::Object(tt_string_view class_name) -> Code&
     return *this;
 }
 
-auto Code::CreateClass(bool use_generic, tt_string_view override_name, bool assign) -> Code&
+auto Code::CreateClass(bool use_generic, wxue::string_view override_name, bool assign) -> Code&
 {
     if (assign)
     {
@@ -847,9 +848,10 @@ auto Code::HandleCppSubclass() -> bool
     return false;
 }
 
-auto Code::DetermineClassName(bool use_generic, tt_string_view override_name) const -> std::string
+auto Code::DetermineClassName(bool use_generic, wxue::string_view override_name) const
+    -> std::string
 {
-    tt_string class_name;
+    wxue::string class_name;
     if (override_name.empty())
     {
         class_name = m_node->get_DeclName();
@@ -873,7 +875,7 @@ auto Code::DetermineClassName(bool use_generic, tt_string_view override_name) co
     return std::string(class_name);
 }
 
-auto Code::Assign(tt_string_view class_name) -> Code&
+auto Code::Assign(wxue::string_view class_name) -> Code&
 {
     *this += " = ";
     if (class_name.empty())
@@ -969,7 +971,7 @@ auto Code::NodeName(Node* node) -> Code&
     return *this;
 }
 
-auto Code::VarName(tt_string_view var_name, bool class_access) -> Code&
+auto Code::VarName(wxue::string_view var_name, bool class_access) -> Code&
 {
     if (is_cpp())
     {
@@ -1049,7 +1051,7 @@ auto Code::ParentName() -> Code&
     return m_node->as_int(prop_name);
 }
 
-[[nodiscard]] auto Code::PropContains(GenEnum::PropName prop_name, tt_string_view text) const
+[[nodiscard]] auto Code::PropContains(GenEnum::PropName prop_name, wxue::string_view text) const
     -> bool
 {
     return m_node->as_string(prop_name).contains(text);
@@ -1123,11 +1125,11 @@ auto Code::ValidParentName() -> Code&
         parent = parent->get_Parent();
     }
 
-    ASSERT_MSG(parent, tt_string() << m_node->get_NodeName() << " has no parent!");
+    ASSERT_MSG(parent, wxue::string() << m_node->get_NodeName() << " has no parent!");
     return *this;
 }
 
-[[nodiscard]] auto Code::IsDefaultPosSizeFlags(tt_string_view def_style) const -> bool
+[[nodiscard]] auto Code::IsDefaultPosSizeFlags(wxue::string_view def_style) const -> bool
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -1170,7 +1172,7 @@ auto Code::ValidParentName() -> Code&
     return true;
 }
 
-[[nodiscard]] auto Code::WhatParamsNeeded(tt_string_view default_style) const -> int
+[[nodiscard]] auto Code::WhatParamsNeeded(wxue::string_view default_style) const -> int
 {
     if (m_node->HasValue(prop_window_name))
     {
@@ -1214,7 +1216,7 @@ auto Code::ValidParentName() -> Code&
     return nothing_needed;
 }
 
-auto Code::SizerFlagsFunction(tt_string_view function_name) -> Code&
+auto Code::SizerFlagsFunction(wxue::string_view function_name) -> Code&
 {
     *this += '.';
     if (is_ruby())
@@ -1275,7 +1277,7 @@ auto Code::ColourCode(GenEnum::PropName prop_name) -> Code&
 auto Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling) const -> bool
 {
     if (enable_dpi_scaling == code::no_dpi_scaling ||
-        tt::contains(m_node->as_string(prop_name), 'n', tt::CASE::either))
+        wxue::contains(m_node->as_string(prop_name), 'n', wxue::CASE::either))
     {
         return false;
     }
@@ -1361,17 +1363,17 @@ auto Code::False() -> Code&
     return *this;
 }
 
-auto Code::ExpandEventLambda(tt_string lambda) -> Code&
+auto Code::ExpandEventLambda(wxue::string lambda) -> Code&
 {
     lambda.LeftTrim();
-    lambda.Replace("@@", "\n", tt::REPLACE::all);
+    lambda.Replace("@@", "\n", wxue::REPLACE::all);
     lambda.RightTrim();
 
     if (is_cpp())
     {
         Indent(1);
         Eol();
-        tt_string_vector lines(lambda, '\n');
+        wxue::StringVector lines(lambda, '\n');
 
         for (auto& line: lines)
         {

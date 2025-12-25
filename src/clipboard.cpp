@@ -91,19 +91,19 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
             auto new_node = fb.CreateFbpNode(root, nullptr);
             if (fb.GetErrors().size() && warn_if_problems)
             {
-                tt_string errMsg(
+                wxue::string errMsg(
                     "Not everything from the wxFormBuilder object could be converted:\n\n");
                 for (auto& iter: fb.GetErrors())
                 {
                     errMsg << iter << '\n';
-                    MSG_INFO(tt_string("Paste import problem: ") << iter);
+                    MSG_INFO(wxue::string("Paste import problem: ") << iter);
                 }
 
                 wxMessageBox(errMsg, "Paste wxFormBuilder object");
             }
             return new_node;
         }
-        else if (tt::is_sameas(root.name(), "resource", tt::CASE::either))
+        else if (wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
         {
             // wxSmith encloses the object with "<resource>"
             auto child = root.first_child();
@@ -111,11 +111,12 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
             auto new_node = smith.CreateXrcNode(child, nullptr);
             if (smith.GetErrors().size() && warn_if_problems)
             {
-                tt_string errMsg("Not everything from the wxSmith object could be converted:\n\n");
+                wxue::string errMsg(
+                    "Not everything from the wxSmith object could be converted:\n\n");
                 for (auto& iter: smith.GetErrors())
                 {
                     errMsg << iter << '\n';
-                    MSG_INFO(tt_string("Paste import problem: ") << iter);
+                    MSG_INFO(wxue::string("Paste import problem: ") << iter);
                 }
 
                 wxMessageBox(errMsg, "Paste wxSmith object");

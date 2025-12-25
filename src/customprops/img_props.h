@@ -11,6 +11,8 @@
 
 #include <wx/gdicmn.h>
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class NodeProperty;
 
 inline constexpr auto s_type_names = std::to_array<const char*>({ "Embed", "SVG", "Art", "XPM" });
@@ -18,13 +20,13 @@ inline constexpr auto s_type_names = std::to_array<const char*>({ "Embed", "SVG"
 struct ImageProperties
 {
 public:
-    tt_string type { s_type_names[0] };
-    tt_string image;
+    wxue::string type { s_type_names[0] };
+    wxue::string image;
 
     NodeProperty* node_property;
 
-    void InitValues(tt_string_view value);
-    tt_string CombineValues();
+    void InitValues(wxue::string_view value);
+    wxue::string CombineValues();
     wxString CombineDefaultSize();
 
     void SetWidth(int width) { m_size.x = width; }

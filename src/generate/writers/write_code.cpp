@@ -9,8 +9,9 @@
 
 #include "write_code.h"
 
-#include "code.h"            // Code -- Helper class for generating code
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "code.h"  // Code -- Helper class for generating code
+
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 void WriteCode::writeLine(const Code& code)
 {
@@ -20,10 +21,10 @@ void WriteCode::writeLine(const Code& code)
         return;
     }
 
-    // tt_view_vector only creates a vector of std::string_views, so it's cheap to create
+    // wxue::ViewVector only creates a vector of std::string_views, so it's cheap to create
     // even for a single line.
 
-    tt_view_vector lines(code.GetView(), '\n');
+    wxue::ViewVector lines(code.GetView(), '\n');
     for (auto& line: lines)
     {
         // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent
@@ -114,7 +115,7 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
     m_IsLastLineBlank = (lines.back().empty() ? true : false);
 }
 
-void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
+void WriteCode::WriteCodeLine(wxue::string_view code, size_t indentation)
 {
     if (indentation == indent::auto_no_whitespace)
     {
@@ -144,7 +145,7 @@ void WriteCode::WriteCodeLine(tt_string_view code, size_t indentation)
         m_isLineWriting = true;
     }
 
-    if (ttwx::is_found(code.find('\t')))
+    if (wxue::is_found(code.find('\t')))
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
@@ -179,9 +180,9 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
         writeLine();
         return;
     }
-    if (ttwx::is_found(code.find('\n')))
+    if (wxue::is_found(code.find('\n')))
     {
-        tt_view_vector lines(code, '\n');
+        wxue::ViewVector lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -193,16 +194,16 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
     }
 }
 
-void WriteCode::writeLine(tt_string_view code, size_t indentation)
+void WriteCode::writeLine(wxue::string_view code, size_t indentation)
 {
     if (code.empty())
     {
         writeLine();
         return;
     }
-    if (ttwx::is_found(code.find('\n')))
+    if (wxue::is_found(code.find('\n')))
     {
-        tt_view_vector lines(code, '\n');
+        wxue::ViewVector lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -223,7 +224,7 @@ void WriteCode::writeLine()
     m_IsLastLineBlank = true;
 }
 
-void WriteCode::write(tt_string_view code, bool auto_indent)
+void WriteCode::write(wxue::string_view code, bool auto_indent)
 {
     // Early abort to not produce lines with trailing whitespace
     if (code.empty())
@@ -243,7 +244,7 @@ void WriteCode::write(tt_string_view code, bool auto_indent)
         m_isLineWriting = true;
     }
 
-    if (ttwx::is_found(code.find('\t')))
+    if (wxue::is_found(code.find('\t')))
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);

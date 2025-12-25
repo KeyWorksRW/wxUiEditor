@@ -7,8 +7,9 @@
 
 #include <wx/sizer.h>
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "node.h"                        // Node class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -91,8 +92,8 @@ int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* 
     auto result = BaseGenerator::xrc_updated;
 
     item.append_attribute("class").set_value("spacer");
-    item.append_child("size").text().set(tt_string() << node->as_string(prop_width) << ','
-                                                     << node->as_string(prop_height));
+    item.append_child("size").text().set(wxue::string() << node->as_string(prop_width) << ','
+                                                        << node->as_string(prop_height));
     if (node->as_string(prop_proportion) != "0")
     {
         item.append_child("option").text().set(node->as_string(prop_proportion));

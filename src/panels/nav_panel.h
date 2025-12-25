@@ -15,7 +15,8 @@
 #include <wx/treectrl.h>  // wxTreeCtrl base header
 #include <wx/window.h>    // wxWindowBase class - the interface of wxWindow
 
-#include "gen_enums.h"  // Enumerations for generators
+#include "gen_enums.h"                   // Enumerations for generators
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 using namespace GenEnum;
 
@@ -53,7 +54,7 @@ protected:
     Node* getNode(wxTreeItemId item);
 
     int GetImageIndex(Node* node);
-    tt_string GetDisplayName(Node* node) const;
+    wxue::string GetDisplayName(Node* node) const;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
 
     // Event handlers without parameters are called by lamda's, which means the function can also be

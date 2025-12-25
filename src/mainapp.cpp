@@ -404,11 +404,11 @@ auto App::OnRun() -> int
             switch_result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
         {
             auto& file_history = m_frame->getFileHistory();
-            tt_string file = file_history.GetHistoryFile(0).utf8_string();
+            wxue::string file = file_history.GetHistoryFile(0).utf8_string();
             if (!file.file_exists())
             {
                 file_history.RemoveFileFromHistory(0);
-                wxMessageBox(tt_string("Last project file does not exist: ") << file,
+                wxMessageBox(wxue::string("Last project file does not exist: ") << file,
                              "Missing Project File", wxOK | wxICON_ERROR);
             }
             else
@@ -490,7 +490,7 @@ protected:
     {
         if (frame.HasSourceLocation())
         {
-            tt_string source;
+            wxue::string source;
             source << frame.GetFileName().utf8_string() << ':' << (to_int) frame.GetLine();
 
             wxString params;
@@ -529,7 +529,7 @@ protected:
     }
 
 private:
-    std::vector<tt_string> m_calls;
+    std::vector<wxue::string> m_calls;
 };
 
 #endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
@@ -671,11 +671,11 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
 }
 
 // Helper: Load or import the project file
-auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
+auto App::LoadProjectFile(const wxue::string& tt_filename, size_t generate_type,
                           bool& is_project_loaded) -> bool
 {
-    if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) &&
-        !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
+    if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
+        !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
     {
         is_project_loaded = Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
     }
@@ -798,15 +798,15 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
 
     // If we get here then we were asked to generate at least one language type
 
-    tt_string tt_filename = filename;
+    wxue::string tt_filename = filename;
     tt_filename.make_absolute();
-    tt_string log_file = filename;
+    wxue::string log_file = filename;
     log_file.replace_extension(".log");
 
     if (!tt_filename.file_exists())
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(tt_string("Unable to find project file: ")
+        m_cmdline_log.emplace_back(wxue::string("Unable to find project file: ")
                                    << filename.utf8_string());
         m_cmdline_log.WriteFile(log_file);
         return 1;
@@ -823,7 +823,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     if (!is_project_loaded)
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(tt_string("Unable to load project file: ")
+        m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ")
                                    << filename.utf8_string());
         m_cmdline_log.WriteFile(log_file);
         return cmd_gen_project_not_loaded;

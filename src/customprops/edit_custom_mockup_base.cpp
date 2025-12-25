@@ -128,22 +128,22 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID win_id, const wxS
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
 {
-    tt_string_vector parts(m_result.ToStdString(), ';');
+    wxue::StringVector parts(m_result.ToStdString(), ';');
     if (parts.size() == 3)
     {
         m_widget_type = parts[0];
-        m_width = parts[1].atoi();
+        m_width = wxue::atoi(parts[1]);
         m_height = parts[2];
 
         if (m_widget_type.starts_with("wxStaticText"))
         {
-            if (auto pos = m_widget_type.find('('); pos != tt::npos)
+            if (auto pos = m_widget_type.find('('); pos != std::string::npos)
             {
-                tt_string_vector options(m_widget_type.Mid(pos + 1).utf8_string(), ",");
+                wxue::StringVector options(m_widget_type.Mid(pos + 1).utf8_string(), ",");
                 m_text_static->SetValue(options[0]);
                 if (options.size() > 1)
                 {

@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "wxue_namespace/wxue_string.h"
+
 class Node;
 class NodeProperty;
 using NodeSharedPtr = std::shared_ptr<Node>;
@@ -23,7 +25,7 @@ using NodeSharedPtr = std::shared_ptr<Node>;
 class UndoAction
 {
 public:
-    UndoAction(tt_string_view undo_string = tt_empty_cstr)
+    UndoAction(std::string_view undo_string = {})
     {
         if (undo_string.size())
         {
@@ -43,8 +45,8 @@ public:
     [[nodiscard]] virtual auto GetMemorySize() -> size_t = 0;
     [[nodiscard]] virtual auto GetOldNode() -> NodeSharedPtr { return nullptr; }
 
-    [[nodiscard]] auto GetUndoString() -> tt_string { return m_undo_string; }
-    auto SetUndoString(tt_string_view str) -> void { m_undo_string = str; }
+    [[nodiscard]] auto GetUndoString() const -> const wxue::string& { return m_undo_string; }
+    auto SetUndoString(std::string_view str) -> void { m_undo_string = str; }
 
     [[nodiscard]] auto wasUndoEventGenerated() -> bool { return m_UndoEventGenerated; }
     [[nodiscard]] auto wasRedoEventGenerated() -> bool { return m_RedoEventGenerated; }
@@ -66,7 +68,7 @@ public:
 protected:
     NodeSharedPtr m_node;
 
-    tt_string m_undo_string;
+    wxue::string m_undo_string;
 
     bool m_UndoEventGenerated { false };
     bool m_RedoEventGenerated { false };
@@ -87,7 +89,7 @@ class GroupUndoActions : public UndoAction
 public:
     // Specify sel_node if you want the current selection changed after all the UndoActions
     // have been called by Change() or Revert()
-    GroupUndoActions(const tt_string& undo_str, Node* sel_node = nullptr);
+    GroupUndoActions(std::string_view undo_str, Node* sel_node = nullptr);
 
     // Called when pushed to the Undo stack and when Redo is called
     auto Change() -> void override;

@@ -30,7 +30,7 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    std::optional<tt_string> GetWarning(Node* node, GenLang language) override;
+    std::optional<wxue::string> GetWarning(Node* node, GenLang language) override;
 
 private:
     wxCheckBox* m_checkbox;

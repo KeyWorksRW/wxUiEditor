@@ -378,12 +378,12 @@ void MsgFrame::UpdateNodeInfo()
             {
                 gen_label << "wxWidgets";
             }
-            m_hyperlink->SetLabel(gen_label.make_wxString());
+            m_hyperlink->SetLabel(gen_label.wx());
             wxString url("https://docs.wxwidgets.org/latest/");
             auto file = generator->GetHelpURL(cur_sel);
             if (file.size())
             {
-                url << "class" << file.make_wxString();
+                url << "class" << file.wx();
             }
             m_hyperlink->SetURL(url);
         }

@@ -10,6 +10,8 @@
 
 #include "custom_colour_prop.h"
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "gen_enums.h"  // Enumerations for generators
 #include "node.h"       // Node class
 #include "node_prop.h"  // NodeProperty class
@@ -79,7 +81,7 @@ bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
 EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) :
     ColourPropBase(parent), m_node(prop->getNode()), m_prop_name(prop->get_name())
 {
-    SetTitle(tt_string() << prop->get_DeclName() << " property editor");
+    SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
     m_value = prop->as_color();
 
     if (m_node->HasValue(prop_foreground_colour))

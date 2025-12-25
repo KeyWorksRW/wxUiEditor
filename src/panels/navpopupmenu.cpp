@@ -1192,7 +1192,7 @@ void NavPopupMenu::MenuAddStandardCommands()
         MenuInsertWidget);
 }
 
-void NavPopupMenu::CreateSizerParent(tt_string_view widget)
+void NavPopupMenu::CreateSizerParent(std::string_view widget)
 {
     if (!m_parent)
     {
@@ -1233,7 +1233,7 @@ void NavPopupMenu::CreateSizerParent(tt_string_view widget)
     if (new_parent)
     {
         wxGetFrame().Freeze();
-        tt_string undo_string("Insert new ");
+        wxue::string undo_string("Insert new ");
         if (widget == "folder" || widget == "sub_folder")
             undo_string << "folder";
         else

@@ -22,16 +22,16 @@ bool PropertyGridCategoryGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-tt_string PropertyGridCategoryGenerator::GetHelpURL(Node* /* node */)
+wxue::string PropertyGridCategoryGenerator::GetHelpURL(Node* /* node */)
 {
-    tt_string url = "wx_";
+    wxue::string url = "wx_";
     url << "property_category.html";
 
     return url;
 }
 
-tt_string PropertyGridCategoryGenerator::GetHelpText(Node* /* node */)
+wxue::string PropertyGridCategoryGenerator::GetHelpText(Node* /* node */)
 {
-    tt_string help_text("wxPropertyCategory");
+    wxue::string help_text("wxPropertyCategory");
     return help_text;
 }

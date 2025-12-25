@@ -11,7 +11,7 @@
 #include "base_generator.h"  // IWYU pragma: keep
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
-NodeDeclaration::NodeDeclaration(tt_string_view class_name, NodeType* type) :
+NodeDeclaration::NodeDeclaration(wxue::string_view class_name, NodeType* type) :
     m_type(type), m_category(class_name), m_gen_name(rmap_GenNames[class_name]),
     m_gen_type(type->get_GenType()), m_name(GenEnum::map_GenNames.at(m_gen_name))
 {
@@ -42,7 +42,7 @@ auto NodeDeclaration::get_PropDeclaration(size_t idx) const -> PropDeclaration*
     return nullptr;
 }
 
-const NodeEventInfo* NodeDeclaration::get_EventInfo(tt_string_view name) const
+const NodeEventInfo* NodeDeclaration::get_EventInfo(wxue::string_view name) const
 {
     if (auto it = m_events.find(name); it != m_events.end())
     {
@@ -162,7 +162,7 @@ ptrdiff_t NodeDeclaration::get_AllowableChildren(GenType child_gen_type) const
     return m_type->get_AllowableChildren(child_gen_type);
 }
 
-std::optional<tt_string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)
+std::optional<wxue::string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)
 {
     if (auto result = m_override_def_values.find(prop_name); result != m_override_def_values.end())
     {

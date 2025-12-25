@@ -19,9 +19,11 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"       // wxue::string class
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector class
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
@@ -126,14 +128,14 @@ auto RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) -
     int id_value = wxID_HIGHEST;
     for (const auto& iter: m_set_enum_ids)
     {
-        m_source->writeLine(tt_string() << "local " << iter << " = " << id_value++);
+        m_source->writeLine(wxString() << "local " << iter << " = " << id_value++);
     }
     for (const auto& iter: m_set_const_ids)
     {
-        if (tt::contains(iter, " wx"))
+        if (wxue::contains(iter, " wx"))
         {
-            tt_string id = '$' + iter;
-            id.Replace(" wx", " wx.", true, tt::CASE::exact);
+            wxue::string id = '$' + iter;
+            id.Replace(" wx", " wx.", true, wxue::CASE::exact);
             m_source->writeLine(id);
         }
         else
@@ -162,7 +164,7 @@ auto RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) -
         id_value = wxID_HIGHEST;
         for (const auto& iter: m_set_enum_ids)
         {
-            m_source->writeLine(tt_string() << '@' << iter << id_value++);
+            m_source->writeLine(wxString() << '@' << iter << id_value++);
         }
 
         if (id_value > 1)
@@ -287,7 +289,7 @@ auto RustCodeGenerator::GenUnhandledEvents(EventVector& events) -> void
     bool found_user_handlers = false;
     if (m_panel_type == NOT_PANEL)
     {
-        tt_view_vector org_file;
+        wxue::ViewVector org_file;
         auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
 
         if (has_base_file && path.extension().empty())
@@ -331,7 +333,7 @@ auto RustCodeGenerator::GenUnhandledEvents(EventVector& events) -> void
                 continue;
             }
 
-            tt_string set_code;
+            wxue::string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "fn " << handler << " {";
@@ -380,7 +382,7 @@ auto RustCodeGenerator::GenUnhandledEvents(EventVector& events) -> void
                 continue;
             }
 
-            tt_string set_code;
+            wxue::string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "fn " << handler << " {";
@@ -441,7 +443,7 @@ auto RustCodeGenerator::GenUnhandledEvents(EventVector& events) -> void
     }
 }
 
-auto MakeRustPath(Node* node) -> tt_string
+auto MakeRustPath(Node* node) -> wxue::string
 {
     auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_RUST);
 

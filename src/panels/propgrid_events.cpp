@@ -38,7 +38,7 @@ void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
         NodeEvent* evt = iter->second;
         wxString handler = event.GetPropertyValue();
         auto value = ConvertEscapeSlashes(handler.utf8_string());
-        value.trim(tt::TRIM::both);
+        value.trim(wxue::TRIM::both);
         wxGetFrame().ChangeEventHandler(evt, value);
     }
 }
@@ -83,7 +83,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         case type_string_edit_escapes:
         case type_string_escapes:
         case type_stringlist_escapes:
-            grid_property->SetValueFromString(prop->as_escape_text().make_wxString());
+            grid_property->SetValueFromString(prop->as_escape_text().wx());
             break;
 
         case type_id:
@@ -386,7 +386,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             {
                 // REVIEW: [Randalphwa - 06-26-2023] This will only work if we use quotes to
                 // separate items.
-                tt_string newValue = property->GetValueAsString().utf8_string();
+                wxue::string newValue = property->GetValueAsString().utf8_string();
                 // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is
                 // partially clipped. Adding a trailing space prevents this clipping.
 
@@ -396,7 +396,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     for (size_t pos = 0; pos < newValue.size();)
                     {
                         result = newValue.find("\" \"", pos);
-                        if (ttwx::is_found(result))
+                        if (wxue::is_found(result))
                         {
                             if (newValue.at(result - 1) != ' ')
                             {
@@ -411,7 +411,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     }
 
                     result = newValue.find_last_of('"');
-                    if (ttwx::is_found(result))
+                    if (wxue::is_found(result))
                     {
                         if (newValue.at(result - 1) != ' ')
                         {
@@ -465,7 +465,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         default:
             {
-                tt_string newValue = property->GetValueAsString().utf8_string();
+                wxue::string newValue = property->GetValueAsString().utf8_string();
 
                 if (prop->isProp(prop_var_name))
                 {
@@ -478,7 +478,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         newValue = final_name.empty() ? std::string(new_name) : final_name;
 
                         auto* grid_property = m_prop_grid->GetPropertyByLabel("var_name");
-                        grid_property->SetValueFromString(newValue.make_wxString());
+                        grid_property->SetValueFromString(newValue.wx());
                     }
                 }
 
@@ -640,7 +640,7 @@ void PropGridPanel::AllowDirectoryChange(wxPropertyGridEvent& event, NodePropert
     newValue.MakeAbsolute();
     newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
 
-    tt_cwd cwd(true);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     if (!newValue.DirExists())
@@ -692,7 +692,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
         newValue.MakeAbsolute();
         newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
 
-        tt_string filename = newValue.GetFullPath().utf8_string();
+        wxue::string filename = newValue.GetFullPath().utf8_string();
         filename.backslashestoforward();
 
         std::vector<Node*> forms;
@@ -707,7 +707,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The base filename \"" << filename.make_wxString()
+                    wxMessageBox(wxString() << "The base filename \"" << filename.wx()
                                             << "\" is already in use by "
                                             << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to "
@@ -732,7 +732,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The python filename \"" << filename.make_wxString()
+                    wxMessageBox(wxString() << "The python filename \"" << filename.wx()
                                             << "\" is already in use by "
                                             << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to "
@@ -757,7 +757,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The ruby filename \"" << filename.make_wxString()
+                    wxMessageBox(wxString() << "The ruby filename \"" << filename.wx()
                                             << "\" is already in use by "
                                             << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to "
@@ -782,7 +782,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The perl filename \"" << filename.make_wxString()
+                    wxMessageBox(wxString() << "The perl filename \"" << filename.wx()
                                             << "\" is already in use by "
                                             << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to "
@@ -810,7 +810,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 {
                     auto focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The xrc filename \"" << filename.make_wxString()
+                    wxMessageBox(wxString() << "The xrc filename \"" << filename.wx()
                                             << "\" is already in use by "
                                             << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to "
@@ -855,15 +855,15 @@ void PropGridPanel::OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop
         newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
     }
 
-    tt_string dir = newValue.GetFullPath().utf8_string();
+    wxue::string dir = newValue.GetFullPath().utf8_string();
     dir.backslashestoforward();
 
     // Note that on Windows, even though we changed the property to a forward slash, it will still
     // be displayed with a backslash. However, ModifyProperty() will save our forward slash version,
     // so even thought the display isn't correct, it will be stored in the project file correctly.
 
-    event.GetProperty()->SetValueFromString(dir.make_wxString());
-    tt_string value(dir);
+    event.GetProperty()->SetValueFromString(dir.wx());
+    wxue::string value(dir);
     if (value != prop->as_string())
     {
         if (prop->isProp(prop_derived_directory))
@@ -881,7 +881,7 @@ void PropGridPanel::OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop
     }
 }
 
-void PropGridPanel::ChangeDerivedDirectory(tt_string& path)
+void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
 {
     auto& old_path = Project.as_string(prop_derived_directory);
     path.backslashestoforward();
@@ -900,7 +900,7 @@ void PropGridPanel::ChangeDerivedDirectory(tt_string& path)
     {
         if (form->as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
         {
-            tt_string cur_path = form->as_string(prop_derived_file);
+            wxue::string cur_path = form->as_string(prop_derived_file);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')
@@ -921,7 +921,7 @@ void PropGridPanel::ChangeDerivedDirectory(tt_string& path)
     wxGetFrame().PushUndoAction(undo_derived);
 }
 
-void PropGridPanel::ChangeBaseDirectory(tt_string& path)
+void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
 {
     auto& old_path = Project.as_string(prop_base_directory);
     path.backslashestoforward();
@@ -940,7 +940,7 @@ void PropGridPanel::ChangeBaseDirectory(tt_string& path)
     {
         if (form->HasValue(prop_base_file))
         {
-            tt_string cur_path = form->as_string(prop_base_directory);
+            wxue::string cur_path = form->as_string(prop_base_directory);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')

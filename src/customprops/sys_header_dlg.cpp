@@ -146,7 +146,8 @@ bool SysHeaderDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
 #include <filesystem>
 
-#include "project_handler.h"  // Project
+#include "project_handler.h"             // Project
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 void SysHeaderDlg::Initialize(NodeProperty* prop)
 {
@@ -206,19 +207,18 @@ void SysHeaderDlg::OnInit(wxInitDialogEvent& /* event unused */)
 void SysHeaderDlg::OnRootSelected(wxCommandEvent& /* event unused */)
 {
     m_check_list_files->Clear();
-    tt_string root_path = m_combo_root->GetStringSelection().utf8_string();
+    wxue::string root_path = m_combo_root->GetStringSelection().utf8_string();
     if (root_path.empty() || !root_path.dir_exists())
         return;
 
     try
     {
         // Fill wxCheckListBox with filenames containing .h, .hh, .hpp, or .hxx
-        for (const auto& entry:
-             std::filesystem::recursive_directory_iterator(root_path.make_path()))
+        for (const auto& entry: std::filesystem::recursive_directory_iterator(root_path.c_str()))
         {
             if (entry.is_regular_file())
             {
-                tt_string file = entry.path().string();
+                wxue::string file = entry.path().string();
                 auto hdr_ext = file.extension();
                 if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
                 {
@@ -264,14 +264,14 @@ void SysHeaderDlg::OnOK(wxCommandEvent& event)
     // that path to the compiler via /Ipath -- if there is a folder specified other than '.'
     // then prefix the filename with that folder.
 
-    tt_string root_path = m_combo_root->GetStringSelection().utf8_string();
+    wxue::string root_path = m_combo_root->GetStringSelection().utf8_string();
     m_value.clear();
     for (size_t idx = 0; idx < m_file_indexes.GetCount(); ++idx)
     {
         if (m_value.size())
             m_value << ";";
 #if defined(_WIN32)
-        tt_string file = m_check_list_files->GetString(m_file_indexes[idx]).utf8_string();
+        wxue::string file = m_check_list_files->GetString(m_file_indexes[idx]).utf8_string();
         file.backslashestoforward();
         m_value << file;
 #else

@@ -42,6 +42,6 @@ public:
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.CheckBox"; }
-    tt_string GetPythonURL(Node*) override { return "wx.CheckBox.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.CheckBox"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.CheckBox.html"; }
 };

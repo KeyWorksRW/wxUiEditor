@@ -117,8 +117,9 @@ bool ArtBrowserDialog::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
 #include <wx/artprov.h>  // wxArtProvider class
 
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
+#include "mainframe.h"                   // MainFrame -- Main window frame
+#include "node.h"                        // Node class
+#include "wxue_namespace/wxue_string.h"  // wxue::is_found
 
 extern std::set<std::string> set_art_ids;  // defined in pg_image.cpp
 
@@ -137,9 +138,9 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     m_choice_client->Append("wxART_MESSAGE_BOX");
     m_choice_client->Append("wxART_OTHER");
 
-    if (auto pos = img_props.image.find('|'); ttwx::is_found(pos))
+    if (auto pos = img_props.image.find('|'); wxue::is_found(pos))
     {
-        m_client = img_props.image.subview(pos + 1).make_wxString();
+        m_client = img_props.image.subview(pos + 1).wx();
         m_org_id = img_props.image.subview(0, pos);
     }
     else

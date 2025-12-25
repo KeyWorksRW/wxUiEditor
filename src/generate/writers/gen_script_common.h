@@ -16,7 +16,8 @@
 class Node;
 class NodeEvent;
 class Code;
-class tt_string;
+
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 enum GenLang : std::uint16_t;
 
@@ -66,6 +67,6 @@ namespace ScriptCommon
     // Parameters:
     //   node - The node to get the form and output path from
     //   language - The scripting language
-    [[nodiscard]] auto MakeScriptPath(Node* node, GenLang language) -> tt_string;
+    [[nodiscard]] auto MakeScriptPath(Node* node, GenLang language) -> wxue::string;
 
 }  // namespace ScriptCommon

@@ -13,6 +13,9 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+
 // clang-format off
 
 const char* g_xrc_keywords =
@@ -48,20 +51,20 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 {
     if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
-        tt_string platforms;
+        wxue::string platforms;
         if (node->as_string(prop_platforms).contains("Windows"))
-            platforms << "msw";
+            platforms += "msw";
         if (node->as_string(prop_platforms).contains("Unix"))
         {
             if (platforms.size())
-                platforms << "|";
-            platforms << "unix";
+                platforms += "|";
+            platforms += "unix";
         }
         if (node->as_string(prop_platforms).contains("Mac"))
         {
             if (platforms.size())
-                platforms << "|";
-            platforms << "mac";
+                platforms += "|";
+            platforms += "mac";
         }
         object.append_attribute("platform").set_value(platforms);
     }
@@ -70,33 +73,37 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 
     if (node->get_Parent()->is_Gen(gen_wxGridBagSizer))
     {
-        tt_string size;
-        size << node->as_string(prop_row) << ',' << node->as_string(prop_column);
+        wxue::string size;
+        size += node->as_string(prop_row);
+        size += ',';
+        size += node->as_string(prop_column);
         object.append_child("cellpos").text().set(size);
         size.clear();
-        size << node->as_string(prop_rowspan) << ',' << node->as_string(prop_colspan);
+        size += node->as_string(prop_rowspan);
+        size += ',';
+        size += node->as_string(prop_colspan);
         object.append_child("cellspan").text().set(size);
     }
 
-    tt_string flags;
-    flags << node->as_string(prop_borders);
+    wxue::string flags;
+    flags += node->as_string(prop_borders);
     if (node->HasValue(prop_flags))
     {
         if (flags.size())
         {
-            flags << '|';
+            flags += '|';
         }
-        flags << node->as_string(prop_flags);
+        flags += node->as_string(prop_flags);
     }
     if (node->HasValue(prop_alignment))
     {
         if (flags.size())
         {
-            flags << '|';
+            flags += '|';
         }
-        flags << node->as_string(prop_alignment);
+        flags += node->as_string(prop_alignment);
     }
-    object.append_child("flag").text().set(flags.c_str());
+    object.append_child("flag").text().set(flags);
     if (node->HasValue(prop_border_size))
     {
         object.append_child("border").text().set(node->as_string(prop_border_size));
@@ -122,23 +129,23 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
 
 void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style)
 {
-    tt_string combined_style(node->as_string(prop_style));
+    wxue::string combined_style(node->as_string(prop_style));
     if (other_style != prop_unknown && node->HasValue(other_style))
     {
         if (combined_style.size())
         {
-            combined_style << '|';
+            combined_style += '|';
         }
-        combined_style << node->as_string(other_style);
+        combined_style += node->as_string(other_style);
     }
 
     if (node->HasValue(prop_window_style))
     {
         if (combined_style.size())
         {
-            combined_style << '|';
+            combined_style += '|';
         }
-        combined_style << node->as_string(prop_window_style);
+        combined_style += node->as_string(prop_window_style);
     }
 
     if (combined_style.size())
@@ -158,15 +165,15 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
 
 void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view processed_style)
 {
-    tt_string combined_style(processed_style);
+    wxue::string combined_style(processed_style);
 
     if (node->HasValue(prop_window_style))
     {
         if (combined_style.size())
         {
-            combined_style << '|';
+            combined_style += '|';
         }
-        combined_style << node->as_string(prop_window_style);
+        combined_style += node->as_string(prop_window_style);
     }
 
     if (combined_style.size())
@@ -328,18 +335,18 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
     {
         if (node->HasValue(prop_pair.prop))
         {
-            tt_string xrc_dir;
+            wxue::string xrc_dir;
             if (xrc_flags & xrc::use_xrc_dir)
             {
                 xrc_dir = Project.as_string(prop_xrc_art_directory);
                 if (xrc_dir.size())
                     xrc_dir.addtrailingslash();
             }
-            tt_string_vector parts(node->as_string(prop_pair.prop), ';', tt::TRIM::both);
+            wxue::StringVector parts(node->as_string(prop_pair.prop), ';', wxue::TRIM::both);
             ASSERT(parts.size() > 1)
             if (parts[IndexType].is_sameas("Art"))
             {
-                tt_string_vector art_parts(parts[IndexArtID], '|');
+                wxue::StringVector art_parts(parts[IndexArtID], '|');
                 auto bmp =
                     object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
@@ -353,8 +360,8 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                 // Optionally replace the directory portion with the xrc art directory.
                 if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
                 {
-                    tt_string path(xrc_dir);
-                    path << parts[IndexImage].filename();
+                    wxue::string path(xrc_dir);
+                    path += parts[IndexImage].filename();
                     svg_object.text().set(path);
                 }
                 else
@@ -363,30 +370,30 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                 }
                 auto size = GetSizeInfo(parts[IndexSize]);
                 svg_object.append_attribute("default_size")
-                    .set_value(tt_string() << size.x << ',' << size.y);
+                    .set_value(std::format("{},{}", size.x, size.y));
             }
             else
             {
                 if (auto bundle = ProjectImages.GetPropertyImageBundle(&parts); bundle)
                 {
-                    tt_string names;
+                    wxue::string names;
                     for (auto& file: bundle->lst_filenames)
                     {
                         if (names.size())
                         {
-                            names << ';';
+                            names += ';';
                         }
 
                         // Optionally replace the directory portion with the xrc art directory.
                         if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
                         {
-                            tt_string path(xrc_dir);
-                            path << file.filename();
-                            names << path;
+                            wxue::string path(xrc_dir);
+                            path += file.filename();
+                            names += path;
                         }
                         else
                         {
-                            names << file;
+                            names += file;
                         }
                     }
                     object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name)

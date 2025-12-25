@@ -17,7 +17,8 @@
 #include "node.h"             // Node class
 #include "node_event.h"       // NodeEvent -- NodeEvent class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
+
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 namespace ScriptCommon
 {
@@ -53,7 +54,7 @@ namespace ScriptCommon
             return false;
         }
 
-        tt_view_vector org_file;
+        wxue::ViewVector org_file;
         auto [path, has_base_file] = Project.GetOutputPath(form_node, language);
 
         if (has_base_file && path.extension().empty())
@@ -77,7 +78,7 @@ namespace ScriptCommon
 
         // If the user has defined any event handlers, add them to the code_lines set so we
         // don't generate them again.
-        if (!has_base_file || !org_file.ReadFile(path))
+        if (!has_base_file || !org_file.ReadFile(std::string_view(path)))
         {
             return false;
         }
@@ -220,7 +221,7 @@ namespace ScriptCommon
         }
     }
 
-    auto MakeScriptPath(Node* node, GenLang language) -> tt_string
+    auto MakeScriptPath(Node* node, GenLang language) -> wxue::string
     {
         auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), language);
 

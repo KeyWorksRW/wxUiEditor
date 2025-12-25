@@ -35,8 +35,10 @@ auto HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject
     {
         // Just display a placeholder message instead of loading the actual page since we don't want
         // to spend a long time downloading the URL.
-        widget->SetPage(tt_string("Contents of<br>    ")
-                        << node->as_string(prop_html_url) << "<br>will be displayed here.");
+        wxString page_content;
+        page_content << "Contents of<br>    " << node->as_string(prop_html_url)
+                     << "<br>will be displayed here.";
+        widget->SetPage(page_content);
     }
     else
     {

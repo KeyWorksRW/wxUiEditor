@@ -9,11 +9,12 @@
 
 #include "gen_dir_picker.h"
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "node.h"                        // Node class
+#include "pugixml.hpp"                   // xml read/write/create/process
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -60,7 +61,7 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
         if (code.is_ruby())
             code.Str("Wx::DIR_SELECTOR_PROMPT_STR");
         else if (code.is_perl())
-            code.QuotedString(tt_string_view("Select a directory"));
+            code.QuotedString(wxue::string_view("Select a directory"));
         else
             code.Add("wxDirSelectorPromptStr");
     }

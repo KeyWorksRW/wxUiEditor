@@ -9,12 +9,13 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "mainapp.h"          // App -- Main application class
-#include "mockup_parent.h"    // Top-level MockUp Parent window
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mainapp.h"                     // App -- Main application class
+#include "mockup_parent.h"               // Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "project_handler.h"             // ProjectHandler class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -318,14 +319,14 @@ void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */,
     handlers.emplace("wxSizerXmlHandler");
 }
 
-std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_PYTHON:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";

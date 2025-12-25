@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string_view
+
 namespace indent
 {
     enum size_t
@@ -49,13 +51,13 @@ public:
     void writeLine(std::string& lines, size_t indentation = indent::auto_no_whitespace);
 
     // This will NOT right trim a single line
-    void writeLine(tt_string_view, size_t indentation = indent::auto_no_whitespace);
+    void writeLine(wxue::string_view, size_t indentation = indent::auto_no_whitespace);
 
     // Write an empty line (unless the previous line was also empty)
     void writeLine();
 
     // Write the code without adding a trailing \n.
-    void write(tt_string_view code, bool auto_indent = true);
+    void write(wxue::string_view code, bool auto_indent = true);
 
     // Call this to prevent any further blank lines from being written until the next non-blank line
     // is written
@@ -69,7 +71,7 @@ public:
     [[nodiscard]] auto get_Indentation() const { return m_indent; }
 
 protected:
-    void WriteCodeLine(tt_string_view code, size_t indentation);
+    void WriteCodeLine(wxue::string_view code, size_t indentation);
 
 private:
     std::string m_TabSpaces { "    " };

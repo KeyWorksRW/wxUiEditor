@@ -81,7 +81,7 @@ void PropGridPanel::Create()
         m_property_map.clear();
         m_event_map.clear();
 
-        tt_string lang_created;
+        wxue::string lang_created;
 
         if (auto* declaration = node->get_NodeDeclaration(); declaration)
         {
@@ -256,7 +256,7 @@ void PropGridPanel::Create()
     }
 }
 
-void PropGridPanel::CreateEventCategory(tt_string_view name, Node* node,
+void PropGridPanel::CreateEventCategory(wxue::string_view name, Node* node,
                                         NodeDeclaration* declaration, EventSet& event_set)
 {
     auto& category = declaration->GetCategory();
@@ -426,7 +426,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
-                                        prop->as_escape_text().make_wxString());
+                                        prop->as_escape_text().wx());
 
         case type_string:
             return new wxStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
@@ -436,7 +436,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             // This includes a button that triggers a small text editor dialog
             // This doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxLongStringProperty(wxString(prop->get_DeclName()), wxPG_LABEL,
-                                            prop->as_escape_text().make_wxString());
+                                            prop->as_escape_text().wx());
 
         case type_string_edit:
             // This includes a button that triggers a small text editor dialog
@@ -612,7 +612,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 new_pg_property->SetValueFromString(value);
 
-                tt_string description = GetPropHelp(prop);
+                wxue::string description = GetPropHelp(prop);
                 if (description.empty())
                 {
                     description << value;
@@ -630,7 +630,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     description << help_text;
                 }
 
-                new_pg_property->SetHelpString(description.make_wxString());
+                new_pg_property->SetHelpString(description.wx());
             }
             return new_pg_property;
 
@@ -695,7 +695,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                             // standard precompiled header filename in the parent directory, then
                             // use that as the starting directory.
 
-                            tt_string pch(Project.get_ProjectPath());
+                            wxue::string pch(Project.get_ProjectPath());
                             pch.append_filename("../");
                             pch.append_filename("pch.h");
                             if (pch.file_exists())
@@ -724,13 +724,14 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                                 return new_pg_property;
                             }
 
-                            new_pg_property->SetAttribute(
-                                wxPG_FILE_INITIAL_PATH, Project.get_ProjectPath().make_wxString());
+                            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH,
+                                                          Project.get_ProjectPath().wx());
                         }
                         return new_pg_property;
 
                     default:
-                        FAIL_MSG(tt_string("Unsupported file property: ") << prop->get_DeclName());
+                        FAIL_MSG(wxString("Unsupported file property: ") << wxString(
+                                     prop->get_DeclName().data(), prop->get_DeclName().size()));
                         return new_pg_property;
                 }
             }
@@ -788,8 +789,9 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     {
                         if (iter.second == type)
                         {
-                            MSG_ERROR(tt_string("NodeProperty type is unsupported: ")
-                                      << iter.first);
+                            MSG_ERROR((wxString("NodeProperty type is unsupported: ")
+                                       << wxString(iter.first.data(), iter.first.size()))
+                                          .ToStdString());
                             break;
                         }
                     }
@@ -799,7 +801,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     }  // end switch (type)
 }
 
-void PropGridPanel::CreatePropCategory(tt_string_view name, Node* node,
+void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
                                        NodeDeclaration* declaration, PropNameSet& prop_set)
 {
     auto& category = declaration->GetCategory();

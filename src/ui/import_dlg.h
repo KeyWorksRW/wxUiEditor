@@ -13,6 +13,8 @@
 
 #include "import_base.h"
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class ImportDlg : public ImportBase
 {
 public:
@@ -24,7 +26,7 @@ public:
     [[nodiscard]] auto isImportWinRes() -> bool { return m_radio_WindowsResource->GetValue(); }
     [[nodiscard]] auto isImportDialogBlocks() -> bool { return m_radio_DialogBlocks->GetValue(); }
 
-    auto GetFileList() -> std::vector<tt_string>& { return m_lstProjects; };
+    auto GetFileList() -> std::vector<wxue::string>& { return m_lstProjects; };
 
 protected:
     void CheckResourceFiles(wxArrayString& files);
@@ -49,6 +51,6 @@ protected:
     void OnRemove(wxCommandEvent& event) override;
 
 private:
-    std::vector<tt_string> m_lstProjects;
+    std::vector<wxue::string> m_lstProjects;
     wxFileHistory m_FileHistory;
 };

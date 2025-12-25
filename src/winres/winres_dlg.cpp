@@ -13,13 +13,13 @@
 
 resForm::resForm() {}
 
-auto resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
-    -> void
+auto resForm::ParseDialog(WinResource* pWinResource, wxue::StringVector& txtfile,
+                          size_t& curTxtLine) -> void
 {
     m_pWinResource = pWinResource;
-    tt_string_view line = txtfile[curTxtLine].subview();
+    wxue::string_view line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
-    if (end == tt::npos)
+    if (end == wxue::npos)
     {
         throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
     }
@@ -45,17 +45,17 @@ auto resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        tt_string fullpath;
+        wxue::string fullpath;
         fullpath.assignCwd();
-        fullpath.append_filename(txtfile.filename().filename());
+        fullpath.append_filename(wxFileName(txtfile.get_ReadFilename()).GetName().ToStdString());
 #ifdef _WIN32
         // VSCode File Open dialog can't handle forward slashes on Windows
         fullpath.forwardslashestoback();
 #endif  // _WIN32
-        m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << fullpath);
+        m_form_node->set_value(prop_base_src_includes, wxue::string() << "// " << fullpath);
     }
 
-    tt_string value;  // General purpose string we can use throughout this function
+    wxue::string value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
     m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
@@ -100,9 +100,9 @@ auto resForm::ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, 
     // derived filenames.
 }
 
-auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
+auto resForm::AddStyle(wxue::StringVector& txtfile, size_t& curTxtLine) -> void
 {
-    tt_string style(txtfile[curTxtLine]);
+    wxue::string style(txtfile[curTxtLine]);
 
     // A line ending with a , or | character means it is continued onto the next line.
 
@@ -111,7 +111,7 @@ auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
         std::string_view tmp("");
         for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
         {
-            tmp = tt::find_nonspace(txtfile[curTxtLine]);
+            tmp = txtfile[curTxtLine].view_nonspace();
             if (!tmp.empty() && tmp[0] != '/')  // ignore blank lines and comments
             {
                 break;
@@ -129,7 +129,7 @@ auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
         m_form_node->set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
     }
 
-    tt_string original_styles(tt::stepover(style));
+    wxue::string original_styles(style.view_stepover());
 
     if (original_styles.contains("DS_MODALFRAME"))
     {
@@ -161,8 +161,8 @@ auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
         AppendStyle(prop_style, "wxMINIMIZE_BOX");
     }
 
-    if (original_styles.find("WS_THICKFRAME") != tt::npos ||
-        original_styles.find("WS_SIZEBOX") != tt::npos)
+    if (original_styles.find("WS_THICKFRAME") != wxue::npos ||
+        original_styles.find("WS_SIZEBOX") != wxue::npos)
     {
         // In spite of what the documentation states (as of 3.1.6) there is no wxTHICK_FRAME. The
         // closest would be wxBORDER_THEME.
@@ -171,18 +171,18 @@ auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
         // AppendStyle(prop_style, "wxBORDER_THEME");
     }
 
-    if (original_styles.find("WS_CLIPCHILDREN") != tt::npos)
+    if (original_styles.find("WS_CLIPCHILDREN") != wxue::npos)
     {
         // wxDialog interface (forms.xml) doesn't support this
         // AppendStyle(prop_style, "wxCLIP_CHILDREN");
     }
 
-    if (original_styles.find("WS_CLIPSIBLINGS") != tt::npos)
+    if (original_styles.find("WS_CLIPSIBLINGS") != wxue::npos)
     {
         // This won't make sense for the dialog we create since we don't allow overlapping children.
     }
 
-    if (original_styles.find("WS_POPUP") != tt::npos)
+    if (original_styles.find("WS_POPUP") != wxue::npos)
     {
         // There is a wxPOPUP_WINDOW, but does it work with dialogs?
     }
@@ -190,13 +190,13 @@ auto resForm::AddStyle(tt_string_vector& txtfile, size_t& curTxtLine) -> void
     // REVIEW: [KeyWorks - 08-24-2019] Note that we do not convert WS_HSCROLL or WS_VSCROLL.
     // The assumption is that this would be better handled by a sizer parent.
 
-    if (original_styles.find("WS_EX_TOPMOST") != tt::npos)
+    if (original_styles.find("WS_EX_TOPMOST") != wxue::npos)
     {
         AppendStyle(prop_style, "WS_EX_TOPMOST");
     }
 }
 
-auto resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine) -> void
+auto resForm::ParseControls(wxue::StringVector& txtfile, size_t& curTxtLine) -> void
 {
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
@@ -236,9 +236,9 @@ auto resForm::ParseControls(tt_string_vector& txtfile, size_t& curTxtLine) -> vo
     }
 }
 
-auto resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style) -> void
+auto resForm::AppendStyle(GenEnum::PropName prop_name, wxue::string_view style) -> void
 {
-    tt_string updated_style = m_form_node->as_string(prop_name);
+    wxue::string updated_style = m_form_node->as_string(prop_name);
     if (updated_style.size())
     {
         updated_style << '|';
@@ -247,15 +247,15 @@ auto resForm::AppendStyle(GenEnum::PropName prop_name, tt_string_view style) -> 
     m_form_node->set_value(prop_name, updated_style);
 }
 
-[[nodiscard]] auto resForm::ConvertFormID(tt_string_view id) -> tt_string
+[[nodiscard]] auto resForm::ConvertFormID(wxue::string_view id) -> wxue::string
 {
     id.moveto_nonspace();
-    tt_string value;
+    wxue::string value;
     if (id.at(0) == '"')
     {
         value.AssignSubString(id);
     }
-    else if (tt::is_digit(value[0]))
+    else if (wxue::is_digit(value[0]))
     {
         value << "id_" << id;
     }

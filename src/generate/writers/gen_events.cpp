@@ -18,8 +18,10 @@
 #include "code.h"                             // Code -- Helper class for generating code
 #include "common_strings.h"                   // Common strings used in code generation
 #include "file_codewriter.h"                  // FileCodeWriter -- Classs to write code to disk
-#include "lambdas.h"         // Functions for formatting and storage of lamda events
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "lambdas.h"  // Functions for formatting and storage of lamda events
+
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 using namespace code;
 
@@ -43,7 +45,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
 
     Code handler(event->getNode(), code.get_language());
-    tt_string event_code;
+    wxue::string event_code;
     if (code.get_language() == GEN_LANG_CPLUSPLUS)
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
@@ -132,7 +134,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     }
     else
     {
-        tt_string event_name = event->get_name();
+        wxue::string event_name = event->get_name();
         if (const auto* result = prop_sheet_events.find(event_name);
             result != prop_sheet_events.end())
         {
@@ -370,7 +372,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
     auto* propName = node->get_PropPtr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(tt_string("Missing \"name\" property in ") << node->get_DeclName() << " class.");
+        FAIL_MSG(wxue::string("Missing \"name\" property in ")
+                 << node->get_DeclName() << " class.");
         return;
     }
 
@@ -431,9 +434,9 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                     }
                     else
                     {
-                        tt_string convert(code.GetCode());
-                        convert.Replace("@@", "\n", tt::REPLACE::all);
-                        tt_string_vector lines(convert, '\n');
+                        wxue::string convert(code.GetCode());
+                        convert.Replace("@@", "\n", wxue::REPLACE::all);
+                        wxue::StringVector lines(convert, '\n');
                         bool initial_bracket = false;
                         for (auto& line: lines)
                         {
@@ -496,9 +499,9 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                         }
                         else
                         {
-                            tt_string convert(code.GetCode());
-                            convert.Replace("@@", "\n", tt::REPLACE::all);
-                            tt_string_vector lines(convert, '\n');
+                            wxue::string convert(code.GetCode());
+                            convert.Replace("@@", "\n", wxue::REPLACE::all);
+                            wxue::StringVector lines(convert, '\n');
                             bool initial_bracket = false;
                             for (auto& line: lines)
                             {

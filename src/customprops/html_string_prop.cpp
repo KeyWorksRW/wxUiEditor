@@ -24,7 +24,7 @@ EditHtmlProperty::EditHtmlProperty(const wxString& label, NodeProperty* prop) :
 
 EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlDialogBase(parent)
 {
-    SetTitle(tt_string() << prop->get_DeclName() << " property editor");
+    SetTitle(wxString(prop->get_DeclName()) + " property editor");
     m_value = prop->as_wxString();
 
     SetStcColors(m_scintilla, GEN_LANG_XML, false, false);

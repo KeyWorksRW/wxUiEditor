@@ -9,9 +9,9 @@
 
 #include "sizer_grow_rows.h"
 
-#include "../nodes/node_prop.h"  // NodeProperty class
-#include "mainframe.h"           // MainFrame -- Main window frame
-#include "ttwx.h"                // ttwx helpers for numeric and character processing
+#include "../nodes/node_prop.h"                 // NodeProperty class
+#include "mainframe.h"                          // MainFrame -- Main window frame
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector, wxue::is_digit, wxue::atoi
 
 GrowRowsProperty::GrowRowsProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
@@ -34,16 +34,16 @@ auto GrowRowsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void
     std::vector<GrowRowsEntry> entries;
     if (m_prop->as_string().size())
     {
-        tt_string_vector fields(m_prop->as_string(), ",", tt::TRIM::both);
+        wxue::StringVector fields(m_prop->as_string(), ",", wxue::TRIM::both);
         for (auto& iter: fields)
         {
-            if (ttwx::is_digit(iter[0]))
+            if (wxue::is_digit(iter[0]))
             {
                 GrowRowsEntry entry;
-                entry.index = ttwx::atoi(iter);
+                entry.index = wxue::atoi(iter);
                 if (auto pos = iter.find(':'); pos != std::string::npos)
                 {
-                    entry.proportion = ttwx::atoi(iter.substr(pos + 1));
+                    entry.proportion = wxue::atoi(iter.substr(pos + 1));
                 }
                 else
                 {
@@ -106,8 +106,8 @@ auto GrowRowsDialog::OnOK(wxCommandEvent& event) -> void
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
     {
         GrowRowsEntry grow_entry;
-        grow_entry.index = ttwx::atoi(m_grid->GetCellValue(row, 0).ToStdString());
-        grow_entry.proportion = ttwx::atoi(m_grid->GetCellValue(row, 1).ToStdString());
+        grow_entry.index = wxue::atoi(m_grid->GetCellValue(row, 0).ToStdString());
+        grow_entry.proportion = wxue::atoi(m_grid->GetCellValue(row, 1).ToStdString());
         m_grow_entries.push_back(grow_entry);
     }
 

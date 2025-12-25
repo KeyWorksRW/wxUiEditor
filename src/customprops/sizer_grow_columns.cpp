@@ -9,9 +9,9 @@
 
 #include "sizer_grow_columns.h"
 
-#include "../nodes/node_prop.h"  // NodeProperty class
-#include "mainframe.h"           // MainFrame -- Main window frame
-#include "ttwx.h"                // ttwx helpers for numeric and character processing
+#include "../nodes/node_prop.h"                 // NodeProperty class
+#include "mainframe.h"                          // MainFrame -- Main window frame
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector, wxue::is_digit, wxue::atoi
 
 GrowColumnsProperty::GrowColumnsProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
@@ -33,16 +33,16 @@ auto GrowColumnsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> voi
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_NUMBER);
 
     std::vector<GrowColumnsEntry> entries;
-    tt_string_vector fields(m_prop->as_string(), ",", tt::TRIM::both);
+    wxue::StringVector fields(m_prop->as_string(), ",", wxue::TRIM::both);
     for (auto& iter: fields)
     {
-        if (ttwx::is_digit(iter[0]))
+        if (wxue::is_digit(iter[0]))
         {
             GrowColumnsEntry entry;
-            entry.column = ttwx::atoi(iter);
+            entry.column = wxue::atoi(iter);
             if (auto pos = iter.find(':'); pos != std::string::npos)
             {
-                entry.proportion = ttwx::atoi(iter.substr(pos + 1));
+                entry.proportion = wxue::atoi(iter.substr(pos + 1));
             }
             else
             {
@@ -97,8 +97,8 @@ auto GrowColumnsDialog::OnOK(wxCommandEvent& event) -> void
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
     {
         GrowColumnsEntry grow_entry;
-        grow_entry.column = ttwx::atoi(m_grid->GetCellValue(row, 0).ToStdString());
-        grow_entry.proportion = ttwx::atoi(m_grid->GetCellValue(row, 1).ToStdString());
+        grow_entry.column = wxue::atoi(m_grid->GetCellValue(row, 0).ToStdString());
+        grow_entry.proportion = wxue::atoi(m_grid->GetCellValue(row, 1).ToStdString());
         m_grow_columns.push_back(grow_entry);
     }
 

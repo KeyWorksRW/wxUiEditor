@@ -19,11 +19,11 @@ public:
                      GenLang /* language */) override;
 
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
-    bool ModifyProperty(NodeProperty* prop, tt_string_view value) override;
+    bool ModifyProperty(NodeProperty* prop, wxue::string_view value) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.Menu"; }
-    tt_string GetPythonURL(Node*) override { return "wx.Menu.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.Menu"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.Menu.html"; }
 };

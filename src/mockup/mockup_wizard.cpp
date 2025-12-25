@@ -228,7 +228,7 @@ void MockupWizard::AddPage(MockupWizardPage* page)
         m_window_sizer->SetMinSize(m_largest_page);
     }
 
-    if (m_cur_page_index == tt::npos)
+    if (m_cur_page_index == wxue::npos)
     {
         m_cur_page_index = 0;
     }

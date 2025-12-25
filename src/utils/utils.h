@@ -24,7 +24,8 @@
 
 #include <wx/settings.h>
 
-#include "gen_enums.h"  // Enumerations for generators
+#include "gen_enums.h"                   // Enumerations for generators
+#include "wxue_namespace/wxue_string.h"  // wxue::string -- std::string with utility methods
 
 // Default project file extension (also accepts ".wxue" for legacy reasons)
 inline constexpr std::string_view PROJECT_FILE_EXTENSION = ".wxui";
@@ -56,21 +57,22 @@ namespace utils
                          bool all) -> void;
 }  // namespace utils
 
-auto ClearPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string;
-auto ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue) -> tt_string;
-auto SetPropFlag(tt_string_view flag, tt_string_view currentValue) -> tt_string;
+auto ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string;
+auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentValue)
+    -> wxue::string;
+auto SetPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string;
 
 // Convert a double to a string without needing to switch locales
-auto DoubleToStr(double val) -> tt_string;
+auto DoubleToStr(double val) -> wxue::string;
 
-[[nodiscard]] auto isPropFlagSet(tt_string_view flag, tt_string_view currentValue) -> bool;
+[[nodiscard]] auto isPropFlagSet(wxue::string_view flag, wxue::string_view currentValue) -> bool;
 
-auto ConvertToSystemColour(tt_string_view value) -> wxSystemColour;
+auto ConvertToSystemColour(wxue::string_view value) -> wxSystemColour;
 
 auto ConvertFontFamilyToString(wxFontFamily family) -> const char*;
 
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
-auto ConvertEscapeSlashes(tt_string_view str) -> tt_string;
+auto ConvertEscapeSlashes(wxue::string_view str) -> wxue::string;
 
 // This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
 auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint;
@@ -85,16 +87,16 @@ auto DlgPoint(int width) -> int;
 // numbers, utf8 characters, and other characters that are not valid in a variable name.
 //
 // If max_length is exceeded, the name will be have ""_name_truncated" as a suffix
-auto FileNameToVarName(tt_string_view filename, size_t max_length = 256)
-    -> std::optional<tt_string>;
+auto FileNameToVarName(wxue::string_view filename, size_t max_length = 256)
+    -> std::optional<wxue::string>;
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-auto GetSizeInfo(tt_string_view size_description) -> wxSize;
+auto GetSizeInfo(wxue::string_view size_description) -> wxSize;
 
 // Friendly name/wxSTC_WRAP_ constant
 extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppcheck-suppress
 
-[[nodiscard]] auto isConvertibleMime(const tt_string& suffix) -> bool;
+[[nodiscard]] auto isConvertibleMime(const wxue::string& suffix) -> bool;
 
 // Checks whether a string is a valid C++ variable name.
 [[nodiscard]] auto isValidVarName(const std::string& str, GenLang language = GEN_LANG_CPLUSPLUS)
@@ -104,15 +106,15 @@ extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppc
 // ends with Base, the a "_base" suffix is added.
 //
 // This does *not* check to see if the file already exists.
-auto CreateBaseFilename(Node* form_node, const tt_string& class_name) -> tt_string;
+auto CreateBaseFilename(Node* form_node, const wxue::string& class_name) -> wxue::string;
 
-auto CreateDerivedFilename(Node* form_node, const tt_string& class_name) -> tt_string;
+auto CreateDerivedFilename(Node* form_node, const wxue::string& class_name) -> wxue::string;
 
 // Typically called to convert a string into a Ruby string which prefers snake_case
 auto ConvertToSnakeCase(std::string_view str) -> std::string;
 
 // Converts string to snake_case, then converts to upper case
-auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string;
+auto ConvertToUpperSnakeCase(wxue::string_view str) -> wxue::string;
 
 // Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
 // used.
@@ -122,7 +124,7 @@ auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string;
 // Convert the GEN_LANG enum to a string
 auto GenLangToString(GenLang language) -> std::string_view;
 
-auto ConvertToGenLang(tt_string_view language) -> GenLang;
+auto ConvertToGenLang(wxue::string_view language) -> GenLang;
 
 auto GetLanguageExtension(GenLang language) -> std::string;
 

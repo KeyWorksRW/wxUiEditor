@@ -167,7 +167,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
 
                 if (!file.starts_with("group"))
                     url += "/class";
-                url << file.make_wxString();
+                url << file.wx();
 
                 // Unfortunately, the wxWidgets documentation site now requires a captcha to verify
                 // that the user is not a bot before allowing access to the documentation.
@@ -208,7 +208,7 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
             if (auto file = gen->GetPythonURL(cur_sel); file.size())
             {
                 wxString url("https://docs.wxpython.org/");
-                url << file.make_wxString();
+                url << file.wx();
 
                 m_webview->LoadURL(url);
                 return;
@@ -234,7 +234,7 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
             if (auto file = gen->GetRubyURL(cur_sel); file.size())
             {
                 wxString url("https://mcorino.github.io/wxRuby3/");
-                url << file.make_wxString();
+                url << file.wx();
 
                 m_webview->LoadURL(url);
                 return;

@@ -7,14 +7,14 @@
 
 #include <wx/artprov.h>  // wxArtProvider class
 
-#include "image_handler.h"   // ImageHandler class
-#include "img_props.h"       // ImageProperties
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "utils.h"           // Utility functions that work with properties
+#include "image_handler.h"                    // ImageHandler class
+#include "img_props.h"                        // ImageProperties
+#include "utils.h"                            // Utility functions that work with properties
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
-auto ImageProperties::InitValues(tt_string_view value) -> void
+auto ImageProperties::InitValues(wxue::string_view value) -> void
 {
-    tt_view_vector mstr(value, ';', tt::TRIM::both);
+    wxue::ViewVector mstr(value, ';', wxue::TRIM::both);
 
     if (mstr.size() > IndexImage)
         image = mstr[IndexImage];
@@ -24,7 +24,7 @@ auto ImageProperties::InitValues(tt_string_view value) -> void
     if (mstr.size() > IndexType)
     {
         type = mstr[IndexType];
-        if (type == "Header" && image.extension().is_sameas(".xpm", tt::CASE::either))
+        if (type == "Header" && image.extension().is_sameas(".xpm", wxue::CASE::either))
             type = "XPM";
 
         if ((type == "SVG" || type == "Art") && mstr.size() > IndexImage + 1)
@@ -40,10 +40,10 @@ auto ImageProperties::InitValues(tt_string_view value) -> void
             }
             else if (type == "Art" && mstr.size() > IndexImage)
             {
-                tt_view_vector art_str(mstr[IndexArtID], '|', tt::TRIM::both);
-                wxString art_id = art_str[0].make_wxString();
-                auto bmp = wxArtProvider::GetBitmap(
-                    art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].make_wxString()));
+                wxue::ViewVector art_str(mstr[IndexArtID], '|', wxue::TRIM::both);
+                wxString art_id = art_str[0].wx();
+                auto bmp = wxArtProvider::GetBitmap(art_id,
+                                                    wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].wx()));
                 if (bmp.IsOk())
                 {
                     m_size = bmp.GetSize();
@@ -64,9 +64,9 @@ auto ImageProperties::InitValues(tt_string_view value) -> void
     }
 }
 
-auto ImageProperties::CombineValues() -> tt_string
+auto ImageProperties::CombineValues() -> wxue::string
 {
-    tt_string value;
+    wxue::string value;
     image.backslashestoforward();
     value << type << ';' << image;
     if (type == "SVG")

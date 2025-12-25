@@ -11,8 +11,9 @@
 
 #include "font_prop.h"
 
-#include "node_prop.h"       // NodeProperty class
-#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
+#include "node_prop.h"                        // NodeProperty class
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 namespace font
 {
@@ -82,7 +83,7 @@ FontProperty::FontProperty(wxVariant font)
     Convert(font.GetString().utf8_string());
 }
 
-FontProperty::FontProperty(tt_string_view font)
+FontProperty::FontProperty(wxue::string_view font)
 {
     Convert(font);
 }
@@ -106,7 +107,7 @@ FontProperty::FontProperty(NodeProperty* prop)
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-auto FontProperty::Convert(tt_string_view font, bool old_style) -> void
+auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
 {
     if (font.empty())
     {
@@ -121,7 +122,7 @@ auto FontProperty::Convert(tt_string_view font, bool old_style) -> void
         return;
     }
 
-    tt_view_vector mstr(font, ',');
+    wxue::ViewVector mstr(font, ',');
 
     // If font was empty, then we would have already returned, so we know that mstr[0] is valid.
 
@@ -187,7 +188,7 @@ auto FontProperty::Convert(tt_string_view font, bool old_style) -> void
     }
 
     m_isDefGuiFont = false;
-    FaceName(mstr[0].make_wxString());
+    FaceName(mstr[0].wx());
 
     // We have a facename, so now we need to determine if this is the new style that uses friendly
     // names, or the old wxFB-like style which used numbers. The second value for the wxFB-style is
@@ -281,7 +282,7 @@ auto FontProperty::as_wxString() const -> wxString
     {
         // symbol size, style, weight, underlined, strikethrough
 
-        tt_string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
+        wxue::string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
         prop_str << ","
                  << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
         prop_str << ","
@@ -309,7 +310,7 @@ auto FontProperty::as_wxString() const -> wxString
     }
     else if (GetFaceName().empty())
     {
-        tt_string prop_str(font_family_pairs.GetName(GetFamily()));
+        wxue::string prop_str(font_family_pairs.GetName(GetFamily()));
         {
             // std::to_chars will return the smallest number of digits needed to represent the
             // number. Point sizes are usually whole numbers, so most of the time this will return a
@@ -352,7 +353,7 @@ auto FontProperty::as_wxString() const -> wxString
     }
     else  // facename specified
     {
-        tt_string prop_str(GetFaceName());
+        wxue::string prop_str(GetFaceName());
         {
             std::array<char, 10> float_str;
             if (auto [ptr, ec] =
@@ -395,9 +396,9 @@ auto FontProperty::as_wxString() const -> wxString
     return str;
 }
 
-auto FontProperty::as_string() const -> tt_string
+auto FontProperty::as_string() const -> wxue::string
 {
-    tt_string str(as_wxString().utf8_string());
+    wxue::string str(as_wxString().utf8_string());
     return str;
 }
 

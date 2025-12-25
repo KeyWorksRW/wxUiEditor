@@ -9,6 +9,11 @@
 #include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>     // Miscellaneous utilities
 
+#include "wxue_namespace/wxue.h"
+#include "wxue_namespace/wxue_string.h"
+#include "wxue_namespace/wxue_string_vector.h"
+#include "wxue_namespace/wxue_view_vector.h"
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "gen_enums.h"        // Enumerations for generators
 #include "image_handler.h"    // ProjectImage class
@@ -38,19 +43,19 @@ using namespace GenEnum;
 
 using namespace GenEnum;
 
-bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
+auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> bool
 {
     pugi::xml_document doc;
     auto result = doc.load_file_string(file);
     if (!result)
     {
-        tt_string msg;
+        wxString msg;
         msg << "Parsing error in file: " << file;
         msg << "\nError description: " << result.description();
         msg << "\nError line: " << result.line;
         msg << "\nError column: " << result.column;
 #if defined(_DEBUG)
-        FAIL_MSG(msg);
+        FAIL_MSG(msg.ToStdString());
 #endif
         if (allow_ui)
         {
@@ -62,7 +67,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
     }
 
     auto root = doc.first_child();
-    if (!tt::is_sameas(root.name(), "wxUiEditorData", tt::CASE::either))
+    if (!wxue::is_sameas(root.name(), "wxUiEditorData", wxue::CASE::either))
     {
         if (allow_ui)
         {
@@ -115,7 +120,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
             if (allow_ui)
             {
                 if (wxMessageBox(
-                        tt_string()
+                        wxString()
                             << "Project version " << m_ProjectVersion / 10 << '.'
                             << m_ProjectVersion % 10
                             << " is not supported.\n\nDo you want to attempt to load it anyway?",
@@ -149,7 +154,7 @@ bool ProjectHandler::LoadProject(const tt_string& file, bool allow_ui)
 
     if (!project)
     {
-        ASSERT_MSG(project, tt_string() << "Failed trying to load " << file);
+        ASSERT_MSG(project, (wxString() << "Failed trying to load " << file).ToStdString());
 
         if (allow_ui)
         {
@@ -271,7 +276,8 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
     auto new_node = CreateNode(class_name, parent).first;
     if (!new_node)
     {
-        FAIL_MSG(tt_string() << "Invalid project file: could not create " << class_name);
+        FAIL_MSG(
+            (wxString() << "Invalid project file: could not create " << class_name).ToStdString());
         throw std::runtime_error("Invalid project file");
     }
 
@@ -300,16 +306,16 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 {
                     // Convert old style wxCheckListBox contents in quotes to new style separated by
                     // semicolons
-                    std::vector<tt_string> items;
+                    std::vector<wxue::string> items;
                     auto view = iter.as_sview().view_substr(0, '"', '"');
                     while (view.size() > 0)
                     {
                         items.emplace_back(view);
-                        view = tt::stepover(view.data() + view.size());
+                        view = wxue::stepover(std::string_view(view.data() + view.size()));
                         view = view.view_substr(0, '"', '"');
                     }
 
-                    tt_string value;
+                    wxue::string value;
                     for (auto& item: items)
                     {
                         if (value.size())
@@ -331,14 +337,14 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // automatically using FromDIP().
                 if (Project.get_OriginalProjectVersion() < 21 && allow_ui &&
                     (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
-                    tt::contains(iter.value(), 'd', tt::CASE::either))
+                    wxue::contains(iter.value(), 'd', wxue::CASE::either))
                 {
                     auto convertToWxSize = [](std::string_view value) -> wxSize
                     {
                         wxSize result { -1, -1 };
                         if (value.size())
                         {
-                            tt_view_vector tokens(value, ',');
+                            wxue::ViewVector tokens(value, ',');
                             if (tokens.size())
                             {
                                 if (tokens[0].size())
@@ -426,7 +432,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                 bool found = false;
                                 for (auto& friendly_pair: g_friend_constant)
                                 {
-                                    if (tt::is_sameas(friendly_pair.second, iter.value()))
+                                    if (wxue::is_sameas(friendly_pair.second, iter.value()))
                                     {
                                         prop->set_value(friendly_pair.first.substr(
                                             friendly_pair.first.find('_') + 1));
@@ -443,14 +449,14 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
                         case type_bitlist:
                             {
-                                tt_string_vector mstr(iter.value(), '|', tt::TRIM::both);
+                                wxue::StringVector mstr(iter.value(), '|', wxue::TRIM::both);
                                 bool found = false;
-                                tt_string new_value;
+                                wxue::string new_value;
                                 for (auto& bit_value: mstr)
                                 {
                                     for (auto& friendly_pair: g_friend_constant)
                                     {
-                                        if (tt::is_sameas(friendly_pair.second, bit_value))
+                                        if (wxue::is_sameas(friendly_pair.second, bit_value))
                                         {
                                             if (new_value.size())
                                             {
@@ -486,7 +492,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
                         case type_image:
                             {
-                                tt_string_vector parts(iter.value(), ';', tt::TRIM::both);
+                                wxue::StringVector parts(iter.value(), ';', wxue::TRIM::both);
                                 if (parts.size() < 3)
                                 {
                                     prop->set_value(iter.value());
@@ -494,7 +500,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                 else
                                 {
                                     parts[1].backslashestoforward();
-                                    tt_string description(parts[0]);
+                                    wxue::string description(parts[0]);
                                     description << ';' << parts[1];
                                     if (parts[0].starts_with("SVG"))
                                         description << ';' << parts[2];
@@ -553,7 +559,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
             bool is_event = false;
             for (auto& iterStdBtns: lstStdButtonEvents)
             {
-                if (tt::is_sameas(iter.name(), iterStdBtns))
+                if (wxue::is_sameas(iter.name(), iterStdBtns))
                 {
                     if (auto event = new_node->get_Event(iter.name()); event)
                     {
@@ -574,23 +580,23 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     // project format prior to it being released in beta. Once we make a full
                     // release, we should be able to safely remove all of this.
 
-                    if (tt::is_sameas(iter.name(), "converted_art"))
+                    if (wxue::is_sameas(iter.name(), "converted_art"))
                     {
                         // Just ignore it
                         continue;
                     }
-                    else if (tt::is_sameas(iter.name(), "original_art"))
+                    else if (wxue::is_sameas(iter.name(), "original_art"))
                     {
                         new_node->set_value(prop_art_directory, value);
                         continue;
                     }
-                    else if (tt::is_sameas(iter.name(), "virtual_events"))
+                    else if (wxue::is_sameas(iter.name(), "virtual_events"))
                     {
                         new_node->set_value(prop_use_derived_class, value);
                         continue;
                     }
-                    else if (tt::is_sameas(iter.name(), "choices") ||
-                             tt::is_sameas(iter.name(), "strings"))
+                    else if (wxue::is_sameas(iter.name(), "choices") ||
+                             wxue::is_sameas(iter.name(), "strings"))
                     {
                         new_node->set_value(prop_contents, value);
                         continue;
@@ -608,11 +614,11 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
                 if (allow_ui)
                 {
-                    MSG_WARNING(tt_string("Unrecognized property: ")
-                                << iter.name() << " in class: " << class_name);
+                    MSG_WARNING(std::format("Unrecognized property: {} in class: {}", iter.name(),
+                                            class_name));
 
-                    tt_string prop_name = iter.name();
-                    tt_string prop_value = iter.value();
+                    std::string prop_name(iter.name());
+                    std::string prop_value(iter.value());
                     wxMessageBox(wxString().Format(
                         "The property named \"%s\" of class \"%s\" is not supported by this "
                         "version of wxUiEditor.\n\n"
@@ -710,18 +716,18 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
                          Project.get_OriginalProjectVersion() < 18)
                 {
                     auto view = iter.as_sview();
-                    if (view.size() > 0 && view[0] == '"')
+                    if (view.size() > 0 && view[0] == '\"')
                     {
-                        std::vector<tt_string> items;
-                        view = view.view_substr(0, '"', '"');
+                        std::vector<wxue::string> items;
+                        view = view.view_substr(0, '\"', '\"');
                         while (view.size() > 0)
                         {
                             items.emplace_back(view);
-                            view = tt::stepover(view.data() + view.size());
-                            view = view.view_substr(0, '"', '"');
+                            view = wxue::stepover(std::string_view(view.data() + view.size()));
+                            view = view.view_substr(0, '\"', '\"');
                         }
 
-                        tt_string value;
+                        wxue::string value;
                         for (auto& item: items)
                         {
                             if (value.size())
@@ -817,7 +823,7 @@ namespace
     auto import_file = wxFileName(wxString(file));
     auto file_type = GetImportFileType(import_file.GetExt().ToStdString());
 
-    tt_string import_path(import_file.GetFullPath().ToStdString());
+    std::string import_path(import_file.GetFullPath().ToStdString());
     bool result = false;
 
     switch (file_type)
@@ -877,9 +883,9 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
     {
         if (allow_ui && wxGetApp().isTestingMenuEnabled())
         {
-            tt_string full_path(file);
+            wxue::string full_path(file);
             full_path.make_absolute();
-            wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path.make_wxString());
+            wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path.wx());
         }
 
         // By having the importer create an XML document, we can pass it through
@@ -891,8 +897,9 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         auto project = root.child("node");
         if (!project || project.attribute("class").as_view() != "Project")
         {
-            ASSERT_MSG(project, tt_string()
-                                    << "Failed trying to load converted xml document: " << file);
+            ASSERT_MSG(project,
+                       (wxString() << "Failed trying to load converted xml document: " << file)
+                           .ToStdString());
 
             // TODO: [KeyWorks - 10-23-2020] Need to let the user know
             return false;
@@ -1004,7 +1011,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project_node, allow_ui);
         wxString wx_file(file);
-        ttwx::replace_extension(wx_file, std::string(PROJECT_FILE_EXTENSION));
+        wxue::replace_extension(wx_file, std::string(PROJECT_FILE_EXTENSION));
         file = wx_file.ToStdString();
         Project.set_ProjectFile(file);
         ProjectImages.CollectBundles();
@@ -1067,7 +1074,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     {
         auto project = NodeCreation.CreateProjectNode(nullptr);
 
-        tt_string file;
+        wxue::string file;
         file.assignCwd();
         file.append_filename(txtEmptyProject);
 
@@ -1076,12 +1083,12 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)
             {
-                tt_string generate_languages = project->as_string(prop_generate_languages);
+                wxue::string generate_languages = project->as_string(prop_generate_languages);
                 bool generated_changed = false;
                 if (dlg.is_gen_python())
                 {
                     project->set_value(prop_code_preference, "Python");
-                    if (!generate_languages.contains("Python", tt::CASE::either))
+                    if (!generate_languages.contains("Python", wxue::CASE::either))
                     {
                         if (generate_languages.size())
                             generate_languages << '|';
@@ -1092,7 +1099,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 else if (dlg.is_gen_ruby())
                 {
                     project->set_value(prop_code_preference, "Ruby");
-                    if (!generate_languages.contains("Ruby", tt::CASE::either))
+                    if (!generate_languages.contains("Ruby", wxue::CASE::either))
                     {
                         if (generate_languages.size())
                             generate_languages << '|';
@@ -1103,7 +1110,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 else if (dlg.is_gen_perl())
                 {
                     project->set_value(prop_code_preference, "Perl");
-                    if (!generate_languages.contains("Perl", tt::CASE::either))
+                    if (!generate_languages.contains("Perl", wxue::CASE::either))
                     {
                         if (generate_languages.size())
                             generate_languages << '|';
@@ -1114,7 +1121,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 else if (dlg.is_gen_xrc())
                 {
                     project->set_value(prop_code_preference, "XRC");
-                    if (!generate_languages.contains("XRC", tt::CASE::either))
+                    if (!generate_languages.contains("XRC", wxue::CASE::either))
                     {
                         if (generate_languages.size())
                             generate_languages << '|';
@@ -1156,8 +1163,8 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     auto project = NodeCreation.CreateProjectNode(nullptr);
 
-    tt_string file;
-    tt_cwd starting_cwd;
+    wxue::string file;
+    wxue::SaveCwd starting_cwd(wxue::restore_cwd);
     file.assignCwd();
     file.append_filename("MyImportedProject");
 
@@ -1167,7 +1174,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     file.replace_extension(std::string(PROJECT_FILE_EXTENSION));
     Project.set_ProjectFile(file);
 
-    tt_string imported_from;
+    wxue::string imported_from;
 
     auto& file_list = dlg.GetFileList();
     if (file_list.size())
@@ -1177,7 +1184,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             try
             {
                 // Importers will change the file extension, so make a copy here
-                tt_string import_file = iter;
+                wxue::string import_file = iter;
 
                 if (iter.has_extension(".wxcp"))
                 {
@@ -1234,7 +1241,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
         if (imported_from.size())
         {
-            tt_string preamble = m_project_node->as_string(prop_src_preamble);
+            wxue::string preamble = m_project_node->as_string(prop_src_preamble);
             if (preamble.size())
                 preamble << "@@@@";
             preamble << imported_from;
@@ -1258,7 +1265,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     return true;
 }
 
-void ProjectHandler::AppendWinRes(const tt_string& rc_file, std::vector<tt_string>& dialogs)
+void ProjectHandler::AppendWinRes(const wxue::string& rc_file, std::vector<wxue::string>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
@@ -1609,7 +1616,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
     {
         if (auto parent = node->get_Parent(); parent && parent->is_Sizer())
         {
-            tt_string old_value = prop_ptr->as_string();
+            std::string old_value = prop_ptr->as_string();
             if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
             {
                 // You can't set vertical alignment flags if the parent sizer is vertical
@@ -1645,7 +1652,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
             {
                 if (old_value != prop_ptr->as_string())
                 {
-                    tt_string msg;
+                    std::string msg;
                     if (prop_ptr->as_string().empty())
                     {
                         msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
@@ -1677,8 +1684,9 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
             // the sizer figure this out. We could set it whenver we generate the code for it.
             node->set_value(prop_rows, 0);
             m_isProject_updated = true;
-            MSG_INFO(tt_string("Removed row setting from ")
-                     << node->as_string(prop_var_name) << " since cols is set");
+            MSG_INFO((wxString() << "Removed row setting from " << node->as_string(prop_var_name)
+                                 << " since cols is set")
+                         .ToStdString());
         }
     }
 

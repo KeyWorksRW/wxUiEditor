@@ -623,7 +623,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
         if (auto* prop = newobject->get_PropPtr(prop_subclass); prop)
         {
             prop->set_value(parts[0]);
-            if (parts.size() > 1 && parts[1].contains("forward_declare"))
+            if (parts.size() > 1 && parts[1].Contains("forward_declare"))
             {
                 prop = newobject->get_PropPtr(prop_subclass_header);
                 if (prop)

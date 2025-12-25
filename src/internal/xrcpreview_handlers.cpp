@@ -30,10 +30,11 @@
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "previews.h"         // Top level Preview functions
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_string_vector -- read/write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
-#include "xrccompare.h"       // C++/XRC UI Comparison dialog
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
+#include "xrccompare.h"                       // C++/XRC UI Comparison dialog
 
 #include "pugixml.hpp"
 
@@ -75,7 +76,7 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     if (wxGetApp().isTestingMenuEnabled())
     {
         const auto& import_file = wxGetFrame().getImportPanel()->GetImportFile();
-        if (tt_string(import_file.extension()).MakeLower() != ".xrc")
+        if (wxue::string(import_file.extension()).MakeLower() != ".xrc")
             m_btnCompare->Disable();
     }
 }
@@ -126,8 +127,8 @@ void XrcPreview::Generate(Node* form_node)
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
     m_scintilla->SetEmptySelection(0);
 
-    tt_view_vector m_view;
-    m_view.ReadString(doc_str);
+    wxue::ViewVector m_view;
+    m_view.ReadString(std::string_view(doc_str));
 
     std::string search("name=\"");
 
@@ -146,9 +147,14 @@ void XrcPreview::Generate(Node* form_node)
 
     m_contents->SetLabelText("Contents: " + search);
 
-    int line = (to_int) m_view.FindLineContaining(search);
+    auto it = std::ranges::find_if(m_view,
+                                   [&search](const wxue::string_view& line)
+                                   {
+                                       return line.contains(search);
+                                   });
+    int line = (it != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), it)) : -1;
 
-    if (!ttwx::is_found(line))
+    if (!wxue::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);
@@ -187,7 +193,7 @@ void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
     }
 
     auto root = doc.first_child();
-    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!wxue::string_view(root.name()).is_sameas("resource", wxue::CASE::either))
     {
         wxMessageBox("Invalid XML -- no resource object", "XML Verification Test",
                      wxOK | wxICON_ERROR);
@@ -199,13 +205,13 @@ void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
 
 void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
 {
-    tt_string path = Project.get_ProjectPath();
-    wxFileDialog dialog(this, "Export Project As XRC", path.make_wxString(), "preview_test.xrc",
+    wxue::string path = Project.get_ProjectPath();
+    wxFileDialog dialog(this, "Export Project As XRC", path.wx(), "preview_test.xrc",
                         "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        tt_string filename = dialog.GetPath().utf8_string();
+        wxue::string filename = dialog.GetPath().utf8_string();
 
         auto xrc_text = m_scintilla->GetText().utf8_string();
 
@@ -224,8 +230,7 @@ void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
 
         if (!doc.save_file(filename))
         {
-            wxMessageBox(wxString("An unexpected error occurred exporting ")
-                             << filename.make_wxString(),
+            wxMessageBox(wxString("An unexpected error occurred exporting ") << filename.wx(),
                          "Export XRC");
         }
     }
@@ -252,7 +257,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
     }
 
     auto root = doc.first_child();
-    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!wxue::string_view(root.name()).is_sameas("resource", wxue::CASE::either))
     {
         wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
         return;
@@ -265,7 +270,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
     if (new_node)
     {
         Project.FixupDuplicatedNode(new_node.get());
-        tt_string undo_str("duplicate ");
+        wxue::string undo_str("duplicate ");
         undo_str << new_node->get_DeclName();
         wxGetMainFrame()->PushUndoAction(std::make_shared<InsertNodeAction>(
             new_node.get(), Project.get_ProjectNode(), undo_str));
@@ -286,8 +291,8 @@ void XrcPreview::OnCompare(wxCommandEvent& /* event unused */)
         return;
     }
 
-    tt_cwd cwd(true);
-    wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
+    wxue::SaveCwd cwd(wxue::restore_cwd);
+    wxSetWorkingDirectory(Project.ArtDirectory().wx());
 
     XrcCompare dlg_compare;
     if (!dlg_compare.DoCreate(wxGetMainFrame(), m_form_node, true))

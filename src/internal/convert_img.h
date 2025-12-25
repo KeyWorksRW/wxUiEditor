@@ -9,6 +9,8 @@
 
 #include "internal/convert_img_base.h"  // ConvertImageBase
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class ConvertImageDlg : public ConvertImageBase
 {
 public:
@@ -54,14 +56,14 @@ protected:
     wxColor GetXpmTransparencyColor();
 
 private:
-    tt_string m_cwd;
-    tt_string m_lastInputFile;
-    tt_string m_lastOutputFile;
+    wxue::string m_cwd;
+    wxue::string m_lastInputFile;
+    wxue::string m_lastOutputFile;
     wxImage m_xpmImage;
     wxImage m_hdrImage;
     wxImage m_orgImage;
 
     size_t m_orginal_size;
 
-    tt_string m_mime_type;  // mime string specifying the original image type
+    wxue::string m_mime_type;  // mime string specifying the original image type
 };

@@ -71,7 +71,7 @@ int NotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     GenXrcObjectAttributes(node, item, "wxNotebook");
 
-    tt_string styles(node->as_string(prop_style));
+    wxue::string styles(node->as_string(prop_style));
     if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
         if (styles.size())

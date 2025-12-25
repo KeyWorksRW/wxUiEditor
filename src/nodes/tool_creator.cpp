@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm>
+#include <format>
 
 #include "gen_enums.h"
 #include "node.h"
@@ -97,15 +98,14 @@ auto SetUniqueRibbonToolID(Node* node) -> void
         rlambda(iter.get(), rlambda);
     }
 
-    tt_string new_name("tool1");
+    std::string new_name("tool1");
 
     if (auto it = name_set.find(new_name); it != name_set.end())
     {
         // Keep adding higher and higher numbers until we get a unique one.
         for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
         {
-            new_name.clear();
-            new_name << "tool" << i;
+            new_name = std::format("tool{}", i);
         }
     }
 
@@ -177,7 +177,6 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
                 new_node->set_value(prop_code_preference, Project.as_string(prop_code_preference));
             }
             wxGetFrame().Freeze();
-            tt_string undo_string("Insert new folder");
             auto childPos = is_Form() ? parent->get_ChildPosition(this) : 0;
             wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(
                 new_node.get(), parent, "Insert new folder", childPos));
@@ -556,8 +555,8 @@ auto MainFrame::CreateToolNode(GenName name) -> void
                 break;
 
             default:
-                wxMessageBox(tt_string() << "Unable to create " << map_GenNames.at(name)
-                                         << " as a child of " << m_selected_node->get_DeclName());
+                wxMessageBox(std::format("Unable to create {} as a child of {}",
+                                         map_GenNames.at(name), m_selected_node->get_DeclName()));
         }
     }
 }

@@ -18,14 +18,13 @@
 
 #include "project_handler.h"
 
-#include "data_handler.h"      // DataHandler class
-#include "image_handler.h"     // ProjectImage class
-#include "node.h"              // Node class
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+#include "data_handler.h"   // DataHandler class
+#include "image_handler.h"  // ProjectImage class
+#include "node.h"           // Node class
 #include "utils.h"
 
-#include "ttwx.h"              // ttwx namespace functions and declarations
-#include "ttwx_view_vector.h"  // ViewVector -- ttwx::ViewVector class
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 ProjectHandler& Project = ProjectHandler::getInstance();  // NOLINT (non-const reference) //
                                                           // cppcheck-suppress constReference
@@ -73,12 +72,12 @@ auto ProjectHandler::set_ProjectFile(std::string_view file) -> void
     m_art_path->Clear();
 }
 
-auto ProjectHandler::get_ProjectFile() const -> tt_string
+auto ProjectHandler::get_ProjectFile() const -> wxue::string
 {
     return m_project_path->GetFullPath().utf8_string();
 }
 
-auto ProjectHandler::get_ProjectPath() const -> tt_string
+auto ProjectHandler::get_ProjectPath() const -> wxue::string
 {
     return m_project_path->GetPath().utf8_string();
 }
@@ -249,12 +248,12 @@ auto ProjectHandler::get_ArtPath() -> const wxFileName*
     return m_art_path.get();
 }
 
-auto ProjectHandler::ArtDirectory() -> tt_string
+auto ProjectHandler::ArtDirectory() -> wxue::string
 {
     return get_ArtPath()->GetFullPath();
 }
 
-auto ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const -> tt_string
+auto ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const -> wxue::string
 {
     if (!node || node == m_project_node.get())
     {
@@ -281,9 +280,9 @@ auto ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const -> tt
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 auto ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& form) const
-    -> tt_string
+    -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
 
     if (language == GEN_LANG_CPLUSPLUS)
     {
@@ -319,7 +318,7 @@ auto ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& 
     return result;
 }
 
-auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> tt_string
+auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> wxue::string
 {
     static const std::map<GenLang, PropName> langProjectPropMap = {
         { GEN_LANG_CPLUSPLUS, prop_base_directory },
@@ -339,7 +338,7 @@ auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> tt_string
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> tt_string
+auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> wxue::string
 {
     if (language == GEN_LANG_CPLUSPLUS && form->is_Gen(gen_Data))
     {
@@ -360,12 +359,13 @@ auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> tt_s
         return form->as_string(iter->second);
     }
 
-    FAIL_MSG(tt_string() << "Unknown language: " << language);
+    FAIL_MSG(wxue::string() << "Unknown language: " << language);
     return "";
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-auto ProjectHandler::MergeBaseFilePath(tt_string& result, const tt_string& base_file) const -> void
+auto ProjectHandler::MergeBaseFilePath(wxue::string& result, const wxue::string& base_file) const
+    -> void
 {
     // TODO: [Randalphwa - 01-06-2024] It's possible that the user created the filename using a
     // folder prefix that is the same as the project's base directory. If that's the case, the
@@ -396,11 +396,12 @@ auto ProjectHandler::MergeBaseFilePath(tt_string& result, const tt_string& base_
     result.backslashestoforward();
 }
 
-auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::pair<tt_string, bool>
+auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const
+    -> std::pair<wxue::string, bool>
 {
     ASSERT(form->is_Form() || form->is_Folder());
 
-    tt_string result;
+    wxue::string result;
     Node* folder = form->is_Folder() ? form : form->get_Folder();
 
     if (folder)
@@ -413,7 +414,7 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const -> std::p
         result = GetProjectOutputPath(language);
     }
 
-    tt_string base_file = GetBaseFilename(form, language);
+    wxue::string base_file = GetBaseFilename(form, language);
 
     if (base_file.empty())
     {
@@ -525,7 +526,7 @@ auto ProjectHandler::get_FirstFormChild(Node* node) const -> Node*
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
 {
-    tt_string value = Project.as_string(prop_code_preference);
+    wxue::string value = Project.as_string(prop_code_preference);
     if (node)
     {
         if (node->is_Gen(gen_folder))
@@ -693,9 +694,9 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
     return result;
 }
 
-auto ProjectHandler::get_DerivedFilename(Node* form) const -> tt_string
+auto ProjectHandler::get_DerivedFilename(Node* form) const -> wxue::string
 {
-    tt_string path;
+    wxue::string path;
 
     ASSERT(form->is_Form());
 
@@ -708,7 +709,7 @@ auto ProjectHandler::get_DerivedFilename(Node* form) const -> tt_string
     path.append_filename(form->as_string(prop_derived_file).filename());
     path.make_absolute();
 
-    tt_string source_ext(".cpp");
+    wxue::string source_ext(".cpp");
     if (const auto& extProp = as_string(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
@@ -729,7 +730,7 @@ void ProjectHandler::ProcessImageProperty(const NodeProperty& prop, Node* child)
         return;
     }
 
-    tt_string_vector parts(prop.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(prop.as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts.size() < IndexImage + 1)
     {
         return;
@@ -803,7 +804,7 @@ void ProjectHandler::ProcessFormIcon(Node* form)
         return;
     }
 
-    tt_string_vector parts(form->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(form->as_string(prop_icon), BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts.size() < IndexImage + 1)
     {
         return;
@@ -911,18 +912,18 @@ namespace
         {
             if (version.find(sep) != std::string_view::npos)
             {
-                ttwx::ViewVector parts(version, sep);
+                wxue::ViewVector parts(version, sep);
                 if (!parts.empty())
                 {
-                    major = ttwx::atoi(parts[0]);
+                    major = wxue::atoi(parts[0]);
                 }
                 if (parts.size() > 1)
                 {
-                    minor = ttwx::atoi(parts[1]);
+                    minor = wxue::atoi(parts[1]);
                 }
                 if (parts.size() > 2)
                 {
-                    patch = ttwx::atoi(parts[2]);
+                    patch = wxue::atoi(parts[2]);
                 }
                 return true;
             }
@@ -940,7 +941,7 @@ namespace
         // Fallback: parse digits separated by non-digit characters
         auto skip_non_digits = [](std::string_view& str)
         {
-            while (!str.empty() && !ttwx::is_digit(str[0]))
+            while (!str.empty() && !wxue::is_digit(str[0]))
             {
                 str.remove_prefix(1);
             }
@@ -954,12 +955,12 @@ namespace
             }
 
             size_t digitEnd = 0;
-            while (digitEnd < str.size() && ttwx::is_digit(str[digitEnd]))
+            while (digitEnd < str.size() && wxue::is_digit(str[digitEnd]))
             {
                 ++digitEnd;
             }
 
-            int result = digitEnd > 0 ? ttwx::atoi(str.substr(0, digitEnd)) : 0;
+            int result = digitEnd > 0 ? wxue::atoi(str.substr(0, digitEnd)) : 0;
             str.remove_prefix(digitEnd);
             skip_non_digits(str);
             return result;
@@ -990,7 +991,7 @@ auto ProjectHandler::get_LangVersion(GenLang language) const -> int
     }
     else
     {
-        FAIL_MSG(tt_string() << "Unknown language: " << language);
+        FAIL_MSG(wxue::string() << "Unknown language: " << language);
     }
 
     auto [major, minor, patch] = parseVersionString(version);

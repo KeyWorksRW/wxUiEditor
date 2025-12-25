@@ -15,6 +15,7 @@
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_panel_form.h"
 
@@ -27,7 +28,7 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
         int ex_style = 0;
         // Can't use multiview because get_ConstantAsInt() searches an unordered_map which
         // requires a std::string to pass to it
-        tt_string_vector mstr(node->as_string(prop_extra_style), '|');
+        wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -542,26 +543,22 @@ bool PanelFormGenerator::GetImports(Node* node, std::set<std::string>& set_impor
     return false;
 }
 
-tt_string PanelFormGenerator::GetPythonHelpText(Node* /* node */)
+wxue::string PanelFormGenerator::GetPythonHelpText(Node* /* node */)
 {
-    tt_string help_text("wx.Panel");
-    return help_text;
+    return "wx.Panel";
 }
 
-tt_string PanelFormGenerator::GetRubyHelpText(Node* /* node */)
+wxue::string PanelFormGenerator::GetRubyHelpText(Node* /* node */)
 {
-    tt_string help_text("Wx::Panel");
-    return help_text;
+    return "Wx::Panel";
 }
 
-tt_string PanelFormGenerator::GetPythonURL(Node* /* node */)
+wxue::string PanelFormGenerator::GetPythonURL(Node* /* node */)
 {
-    tt_string help_text("wx.Panel.html");
-    return help_text;
+    return "wx.Panel.html";
 }
 
-tt_string PanelFormGenerator::GetRubyURL(Node* /* node */)
+wxue::string PanelFormGenerator::GetRubyURL(Node* /* node */)
 {
-    tt_string help_text("Wx/Panel.html");
-    return help_text;
+    return "Wx/Panel.html";
 }

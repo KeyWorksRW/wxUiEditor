@@ -11,6 +11,8 @@
 #include "preferences.h"   // Prefs -- Set/Get wxUiEditor preferences
 #include "utils.h"         // WXDLLIMPEXP_BASE -- Miscellaneous utilities
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
 #endif
@@ -113,7 +115,7 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
             // Add regular classes that have different generator class names
 
-            tt_string widget_keywords;
+            wxue::string widget_keywords;
             for (auto iter: lst_widgets_keywords)
             {
                 if (widget_keywords.size())
@@ -209,7 +211,7 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
             // stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
 
-            tt_string wxPerl_keywords(g_perl_keywords);
+            wxue::string wxPerl_keywords(g_perl_keywords);
             for (auto iter: lst_widgets_keywords)
             {
                 if (wxPerl_keywords.size())
@@ -284,7 +286,7 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
             stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
-            tt_string wxPython_keywords;
+            wxue::string wxPython_keywords;
             for (auto* iter: lst_widgets_keywords)
             {
                 if (wxPython_keywords.size())
@@ -357,7 +359,7 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             // We don't set ruby keywords because we can't colorize them differently from the
             // wxWidgets keywords.
 
-            tt_string wxRuby_keywords(
+            wxue::string wxRuby_keywords(
                 "ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL "
                 "ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
                 "TAB_TRAVERSAL FILTER_DIGITS Wx");

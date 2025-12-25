@@ -794,8 +794,8 @@ void resForm::AdoptChild(const NodeSharedPtr& node, resCtrl& child)
         ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
         if (child.isAdded())
         {
-            MSG_ERROR(tt_string() << "Control already added: " << m_form_id
-                                  << ":: " << child.GetOrginalLine());
+            MSG_ERROR(wxue::string()
+                      << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
         }
     }
     node->AdoptChild(child.GetNodePtr());
@@ -1075,7 +1075,7 @@ void resForm::CheckForFlexGrid(Node* parent)
             // If we get here, then the two box sizers can be converted into a single flex grid
             // sizer
             auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get()).first;
-            grid_sizer->set_value(prop_cols, tt_string() << first_sizer->get_ChildCount());
+            grid_sizer->set_value(prop_cols, wxue::string() << first_sizer->get_ChildCount());
             for (box_child = 0; box_child < first_sizer->get_ChildCount(); ++box_child)
             {
                 grid_sizer->AdoptChild(first_sizer->get_ChildPtr(box_child));

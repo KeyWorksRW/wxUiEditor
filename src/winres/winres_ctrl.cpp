@@ -7,10 +7,11 @@
 
 #include "winres_ctrl.h"
 
-#include "import_winres.h"  // WinResource -- Parse a Windows resource file
-#include "mainapp.h"        // App -- App class
-#include "node_creator.h"   // NodeCreator -- Class used to create nodes
-#include "utils.h"          // Utility functions that work with properties
+#include "import_winres.h"               // WinResource -- Parse a Windows resource file
+#include "mainapp.h"                     // App -- App class
+#include "node_creator.h"                // NodeCreator -- Class used to create nodes
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 resCtrl::resCtrl() :
     m_pWinResource(nullptr), m_add_min_width_property(false), m_add_wrap_property(false)
@@ -98,7 +99,7 @@ static constexpr auto lst_name_gen = std::to_array<ClassGenPair>({
 
 */
 
-void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
+void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -111,9 +112,9 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         // First copy the diretive name without the leading whitespace
         temp_view.moveto_nonspace();
         auto pos_space = temp_view.find_space();
-        if (!ttwx::is_found(pos_space))
+        if (!wxue::is_found(pos_space))
         {
-            MSG_ERROR(tt_string() << "Invalid directive: " << line);
+            MSG_ERROR(wxue::string() << "Invalid directive: " << line);
             return;
         }
 
@@ -142,10 +143,10 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         for (const auto& iter: lst_class_gen)
         {
-            if (line.contains(iter.class_name, tt::CASE::either))
+            if (line.contains(iter.class_name, wxue::CASE::either))
             {
                 m_node = NodeCreation.NewNode(iter.get_GenName);
-                if (tt::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
+                if (wxue::string_view(iter.class_name).is_sameprefix("\"Rich", wxue::CASE::either))
                 {
                     m_node->set_value(prop_style, "wxTE_RICH2");
                 }
@@ -161,7 +162,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         // Start by looking for one of the predefined system classes -- see
         // https://docs.microsoft.com/en-us/windows/win32/controls/individual-control-info
 
-        else if (line.contains("\"Button\"", tt::CASE::either))
+        else if (line.contains("\"Button\"", wxue::CASE::either))
         {
             if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
             {
@@ -202,7 +203,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
                 m_node = NodeCreation.NewNode(gen_wxButton);
             }
         }
-        else if (line.contains("\"Static\"", tt::CASE::either))
+        else if (line.contains("\"Static\"", wxue::CASE::either))
         {
             if (line.contains("SS_BITMAP") || line.contains("SS_ICON"))
             {
@@ -213,7 +214,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
                 m_node = NodeCreation.NewNode(gen_wxStaticText);
             }
         }
-        else if (line.contains("\"SysDateTimePick32\"", tt::CASE::either))
+        else if (line.contains("\"SysDateTimePick32\"", wxue::CASE::either))
         {
             // Visual Studio 16.09 formt:time simply displays "DTS_UPDOWN" to get the time picker.
             if (line.contains("DTS_UPDOWN") && !line.contains("DTS_SHORTDATECENTURYFORMAT") &&
@@ -228,11 +229,11 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
             m_node = NodeCreation.NewNode(gen_wxDatePickerCtrl);
         }
-        else if (line.contains("\"MfcButton\"", tt::CASE::either))
+        else if (line.contains("\"MfcButton\"", wxue::CASE::either))
         {
             m_node = NodeCreation.NewNode(gen_wxButton);
         }
-        else if (line.contains("\"SysTabControl32\"", tt::CASE::either))
+        else if (line.contains("\"SysTabControl32\"", wxue::CASE::either))
         {
             if (line.contains("TCS_BUTTONS"))
             {
@@ -248,7 +249,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         {
             if (wxGetApp().isTestingMenuEnabled())
             {
-                tt_string msg("Unrecognized CONTROL: ");
+                wxue::string msg("Unrecognized CONTROL: ");
                 auto pos = line.find_space();
                 msg << line.subview(0, pos);
                 line.moveto_nextword();
@@ -264,7 +265,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
         for (const auto& iter: lst_name_gen)
         {
-            if (line.is_sameprefix(iter.class_name, tt::CASE::either))
+            if (line.is_sameprefix(iter.class_name, wxue::CASE::either))
             {
                 m_node = NodeCreation.NewNode(iter.get_GenName);
                 break;
@@ -341,7 +342,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
             if (wxGetApp().isTestingMenuEnabled())
             {
-                tt_string msg("Unrecognized resource directive: ");
+                wxue::string msg("Unrecognized resource directive: ");
                 auto pos = line.find_space();
                 msg << line.subview(0, pos);
                 line.moveto_nextword();
@@ -355,7 +356,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
     if (line.empty())
     {
-        MSG_ERROR(tt_string() << "Unparsable control :" << m_original_line);
+        MSG_ERROR(wxue::string() << "Unparsable control :" << m_original_line);
         m_node.reset();
         return;
     }
@@ -383,14 +384,14 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         // This should be the class
         if (line.size() && line.at(0) == '"')
         {
-            tt_string value;
+            wxue::string value;
             line = StepOverQuote(line, value);
 
             // This could be a system control like "SysTabControl32"
         }
         else
         {
-            MSG_ERROR(tt_string() << "CONTROL missing class :" << m_original_line);
+            MSG_ERROR(wxue::string() << "CONTROL missing class :" << m_original_line);
             // Without a class, style and dimensions are probably wrong, so just ignore the entire
             // control.
             m_node.reset();
@@ -495,7 +496,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         AddSpecialStyles(line);
     }
 
-    tt_string value;
+    wxue::string value;
 
     if (is_control)
     {
@@ -505,16 +506,16 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
 
     if (line.empty())
     {
-        MSG_ERROR(tt_string() << "Missing dimensions :" << m_original_line);
+        MSG_ERROR(wxue::string() << "Missing dimensions :" << m_original_line);
         return;
     }
 
     // This should be the dimensions.
-    if (line.size() && (tt::is_digit(line.at(0)) || line.at(0) == ','))
+    if (line.size() && (wxue::is_digit(line.at(0)) || line.at(0) == ','))
     {
         if (!ParseDimensions(line, m_du_rect, m_pixel_rect))
         {
-            MSG_ERROR(tt_string() << "Missing dimensions :" << m_original_line);
+            MSG_ERROR(wxue::string() << "Missing dimensions :" << m_original_line);
             return;
         }
 
@@ -526,11 +527,11 @@ void resCtrl::ParseDirective(WinResource* pWinResource, tt_string_view line)
         if (m_add_min_width_property || m_node->is_Gen(gen_wxTextCtrl) ||
             m_node->is_Gen(gen_wxComboBox))
         {
-            m_node->set_value(prop_minimum_size, tt_string() << m_du_rect.GetWidth() << ",-1d");
+            m_node->set_value(prop_minimum_size, wxue::string() << m_du_rect.GetWidth() << ",-1d");
         }
     }
     else
     {
-        MSG_ERROR(tt_string() << "Missing dimensions :" << m_original_line);
+        MSG_ERROR(wxue::string() << "Missing dimensions :" << m_original_line);
     }
 }

@@ -60,7 +60,7 @@ private:
     wxButton* m_btnPrev { nullptr };
     wxButton* m_btnNext { nullptr };
 
-    size_t m_cur_page_index { tt::npos };
+    size_t m_cur_page_index { wxue::npos };
 
     Node* m_wizard_node;  // set in constructor
 

@@ -264,6 +264,19 @@ void ttwx::StringVector::ReadString(const wxString& str)
     }
 }
 
+void ttwx::StringVector::ReadString(std::string_view str)
+{
+    if (!str.empty())
+    {
+        m_buffer.assign(str.data(), str.size());
+        std::vector<std::string_view> lineSeparators = { "\r\n", "\r", "\n" };
+        SetString(m_buffer, lineSeparators);
+
+        m_buffer.clear();
+        m_buffer.shrink_to_fit();
+    }
+}
+
 auto ttwx::StringVector::is_sameas(const ttwx::StringVector& other) const -> bool
 {
     if (size() != other.size())

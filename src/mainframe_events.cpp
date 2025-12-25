@@ -15,6 +15,8 @@
 #include <wx/infobar.h>      // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/stc/stc.h>      // Scintilla
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "mainframe.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
@@ -51,7 +53,7 @@ auto MainFrame::OnAbout(wxCommandEvent&) -> void
     aboutInfo.SetName(txtVersion);
 
     // Use trailing spaces to make the dialog width a bit wider
-    tt_string description;
+    wxue::string description;
     description
         << "wxUiEditor is a designer for wxWidgets\ngenerating C++, Python, Ruby and XRC code.\n";
 
@@ -81,7 +83,7 @@ auto MainFrame::OnAbout(wxCommandEvent&) -> void
 
 auto MainFrame::OnAppendCrafter(wxCommandEvent& /* event unused */) -> void
 {
-    ttwx::SaveCwd cwd(ttwx::restore_cwd);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
                      "wxCrafter Project File (*.wxcp)|*.wxcp||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -95,7 +97,7 @@ auto MainFrame::OnAppendCrafter(wxCommandEvent& /* event unused */) -> void
 
 auto MainFrame::OnAppendDialogBlocks(wxCommandEvent& /* event unused */) -> void
 {
-    ttwx::SaveCwd cwd(ttwx::restore_cwd);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
                      "DialogBlocks Project File (*.pjd)|*.pjd||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -109,7 +111,7 @@ auto MainFrame::OnAppendDialogBlocks(wxCommandEvent& /* event unused */) -> void
 
 auto MainFrame::OnAppendFormBuilder(wxCommandEvent& /* event unused */) -> void
 {
-    ttwx::SaveCwd cwd(ttwx::restore_cwd);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
                      "wxFormBuilder Project File (*.fbp)|*.fbp||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -123,7 +125,7 @@ auto MainFrame::OnAppendFormBuilder(wxCommandEvent& /* event unused */) -> void
 
 auto MainFrame::OnAppendGlade(wxCommandEvent& /* event unused */) -> void
 {
-    ttwx::SaveCwd cwd(ttwx::restore_cwd);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
                      "wxGlade Project File (*.wxg)|*.wxg||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -137,7 +139,7 @@ auto MainFrame::OnAppendGlade(wxCommandEvent& /* event unused */) -> void
 
 auto MainFrame::OnAppendSmith(wxCommandEvent& /* event unused */) -> void
 {
-    ttwx::SaveCwd cwd(ttwx::restore_cwd);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
                      "wxSmith File (*.wxs)|*.wxs||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -151,7 +153,7 @@ auto MainFrame::OnAppendSmith(wxCommandEvent& /* event unused */) -> void
 
 auto MainFrame::OnAppendXRC(wxCommandEvent& /* event unused */) -> void
 {
-    ttwx::SaveCwd cwd(ttwx::restore_cwd);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     wxFileDialog dlg(this, "Open or Import Project", cwd.get_SavedCwd(), wxEmptyString,
                      "XRC File (*.xrc)|*.xrc||", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
@@ -466,7 +468,7 @@ auto MainFrame::OnImportProject(wxCommandEvent&) -> void
 
 auto MainFrame::OnImportRecent(wxCommandEvent& event) -> void
 {
-    tt_string file =
+    wxue::string file =
         m_ImportHistory.GetHistoryFile(event.GetId() - (START_IMPORT_FILE_IDS)).utf8_string();
 
     if (!SaveWarning())
@@ -543,11 +545,11 @@ auto MainFrame::OnOpenProject(wxCommandEvent&) -> void
     auto path = ShowOpenProjectDialog(this);
     if (!path.IsEmpty())
     {
-        tt_string filename = path.utf8_string();
+        wxue::string filename = path.utf8_string();
         // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui
         // extension
-        if (filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) ||
-            filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
+        if (filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) ||
+            filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
         {
             Project.LoadProject(filename);
         }
@@ -564,7 +566,7 @@ auto MainFrame::OnOpenRecentProject(wxCommandEvent& event) -> void
     {
         return;
     }
-    tt_string file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1).utf8_string();
+    wxue::string file = m_FileHistory.GetHistoryFile(event.GetId() - wxID_FILE1).utf8_string();
 
     if (file.file_exists())
     {

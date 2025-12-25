@@ -8,6 +8,8 @@
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "mainframe.h"
 
 #include "preferences.h"      // Preferences -- Stores user preferences
@@ -20,7 +22,7 @@
 
 auto MainFrame::UpdateFrame() -> void
 {
-    tt_string filename;
+    wxue::string filename;
     if (UserPrefs.is_FullPathTitle())
     {
         filename = Project.get_ProjectFile();
@@ -40,7 +42,7 @@ auto MainFrame::UpdateFrame() -> void
     {
         filename.insert(0, "*");
     }
-    SetTitle(filename.make_wxString());
+    SetTitle(filename.wx());
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())

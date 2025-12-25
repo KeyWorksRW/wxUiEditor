@@ -104,9 +104,10 @@ auto NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include <format>
 
-#include "mainframe.h"        // Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+#include "mainframe.h"                   // Main window frame
+#include "node.h"                        // Node class
+#include "project_handler.h"             // ProjectHandler class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 void NodeInfo::CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
@@ -121,7 +122,7 @@ void NodeInfo::CalcNodeMemory(Node* node, NodeMemory& node_memory)
 
 void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 {
-    tt_string label;
+    wxue::string label;
     NodeMemory node_memory;
 
     auto* cur_sel = m_node ? m_node : wxGetFrame().getSelectedNode();

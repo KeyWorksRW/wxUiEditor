@@ -14,17 +14,16 @@
 
 #include "gen_base.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base Generator class
-#include "code.h"             // Code -- Helper class for generating code
-#include "image_handler.h"    // ImageHandler class
-#include "mainframe.h"        // MainFrame class
-#include "node.h"             // Node class
-#include "node_decl.h"        // NodeDeclaration class
-#include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
-#include "ttwx.h"             // ttwx helpers for character classification
-#include "utils.h"            // Utility functions that work with properties
-#include "write_code.h"       // Write code to Scintilla or file
+#include "base_generator.h"                   // BaseGenerator -- Base Generator class
+#include "code.h"                             // Code -- Helper class for generating code
+#include "image_handler.h"                    // ImageHandler class
+#include "mainframe.h"                        // MainFrame class
+#include "node.h"                             // Node class
+#include "node_decl.h"                        // NodeDeclaration class
+#include "project_handler.h"                  // ProjectHandler class
+#include "utils.h"                            // Utility functions that work with properties
+#include "write_code.h"                       // Write code to Scintilla or file
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 using namespace GenEnum;
 
@@ -33,10 +32,10 @@ BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node) :
 {
 }
 
-auto BaseCodeGenerator::GetDeclaration(Node* node) -> tt_string
+auto BaseCodeGenerator::GetDeclaration(Node* node) -> wxue::string
 {
-    tt_string code;
-    tt_string class_name(node->get_DeclName());
+    wxue::string code;
+    wxue::string class_name(node->get_DeclName());
 
     if (class_name.starts_with("wx"))
     {
@@ -103,7 +102,7 @@ namespace
         { prop_Close, "Close" }, { prop_Help, "Help" }, { prop_ContextHelp, "ContextHelp" },
     };
 
-    auto AddStdDialogButtonDeclaration(Node* node, tt_string& code) -> void
+    auto AddStdDialogButtonDeclaration(Node* node, wxue::string& code) -> void
     {
         for (const auto& [prop, button_name]: button_map)
         {
@@ -115,8 +114,8 @@ namespace
     }
 }  // namespace
 
-auto BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, Node* node,
-                                                  tt_string& code) -> void
+auto BaseCodeGenerator::ProcessWxClassDeclaration(const wxue::string& class_name, Node* node,
+                                                  wxue::string& code) -> void
 {
     if (node->HasValue(prop_subclass))
     {
@@ -124,7 +123,7 @@ auto BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, N
     }
     else
     {
-        tt_string adjusted_class_name(class_name);
+        wxue::string adjusted_class_name(class_name);
         if (node->get_Generator()->IsGeneric(node))
         {
             adjusted_class_name.Replace("wx", "wxGeneric");
@@ -152,8 +151,8 @@ auto BaseCodeGenerator::ProcessWxClassDeclaration(const tt_string& class_name, N
     }
 }
 
-auto BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
-                                                         tt_string& code) -> void
+auto BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const wxue::string& class_name, Node* node,
+                                                         wxue::string& code) -> void
 {
     if (class_name == "StaticCheckboxBoxSizer")
     {
@@ -180,9 +179,9 @@ auto BaseCodeGenerator::ProcessStaticBoxSizerDeclaration(const tt_string& class_
     }
 }
 
-auto BaseCodeGenerator::ProcessToolDeclaration(Node* node, tt_string& code) -> void
+auto BaseCodeGenerator::ProcessToolDeclaration(Node* node, wxue::string& code) -> void
 {
-    tt_string parent_class_name(node->get_Parent()->get_DeclName());
+    wxue::string parent_class_name(node->get_Parent()->get_DeclName());
     if (parent_class_name == "wxAuiToolBar")
     {
         code << "wxAuiToolBarItem* " << node->get_NodeName() << ';';
@@ -196,7 +195,7 @@ auto BaseCodeGenerator::ProcessToolDeclaration(Node* node, tt_string& code) -> v
     FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.")
 }
 
-auto BaseCodeGenerator::ProcessCustomClassDeclaration(Node* node, tt_string& code) -> void
+auto BaseCodeGenerator::ProcessCustomClassDeclaration(Node* node, wxue::string& code) -> void
 {
     if (auto* node_namespace = node->get_Folder();
         node_namespace && node_namespace->HasValue(prop_folder_namespace))
@@ -331,7 +330,7 @@ auto BaseCodeGenerator::IsEmbeddedImageInCollection(const EmbeddedImage* embed) 
                                });
 }
 
-auto BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& filenames) -> void
+auto BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<wxue::string>& filenames) -> void
 {
     size_t processed_count = 0;
     for (const auto& idx_image: filenames)
@@ -363,8 +362,8 @@ auto BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& file
                 }
                 else
                 {
-                    MSG_INFO(tt_string()
-                             << "Unable to get file time for " << embed->base_image().filename);
+                    MSG_INFO(std::format("Unable to get file time for {}",
+                                         embed->base_image().filename));
                 }
             }
         }
@@ -378,12 +377,12 @@ auto BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<tt_string>& file
     }
 }
 
-auto BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
+auto BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<wxue::string>& filenames,
                                             std::set<std::string>& embedset) -> void
 {
     for (const auto& idx_image: filenames)
     {
-        tt_string path(idx_image);
+        wxue::string path(idx_image);
         auto art_dir = Project.ArtDirectory();
         if (art_dir.size())
         {
@@ -400,13 +399,13 @@ auto BaseCodeGenerator::ProcessHeaderImages(Node* node, const std::vector<tt_str
             }
         }
         path.backslashestoforward();
-        embedset.insert(tt_string() << "#include \"" << path << "\"");
+        embedset.insert(wxue::string() << "#include \"" << path << "\"");
     }
 }
 
 auto BaseCodeGenerator::ProcessAnimationEmbed(std::string_view value) -> void
 {
-    tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::ViewVector parts(value, BMP_PROP_SEPARATOR, wxue::TRIM::both);
 
     if (parts[IndexImage].size())
     {
@@ -438,12 +437,12 @@ auto BaseCodeGenerator::ProcessAnimationEmbed(std::string_view value) -> void
 auto BaseCodeGenerator::ProcessAnimationHeaders(std::string_view value, Node* node,
                                                 std::set<std::string>& embedset) -> void
 {
-    tt_view_vector parts(value);
-    if (ttwx::is_whitespace(parts[IndexImage].front()))
+    wxue::ViewVector parts(value, ';');
+    if (wxue::is_whitespace(parts[IndexImage].front()))
     {
         parts[IndexImage].remove_prefix(1);
     }
-    tt_string path = parts[IndexImage];
+    wxue::string path = parts[IndexImage];
     auto art_dir = Project.ArtDirectory();
     if (art_dir.size())
     {
@@ -460,7 +459,7 @@ auto BaseCodeGenerator::ProcessAnimationHeaders(std::string_view value, Node* no
         }
     }
     path.backslashestoforward();
-    embedset.insert(tt_string() << "#include \"" << path << "\"");
+    embedset.insert(wxue::string() << "#include \"" << path << "\"");
 }
 
 // This function is called by the thread thrd_collect_img_headers
@@ -514,12 +513,12 @@ auto BaseCodeGenerator::ProcessFormIcon(Node* node) -> void
 {
     if (node->is_Form() && node->HasValue(prop_icon))
     {
-        tt_view_vector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        wxue::ViewVector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, wxue::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
             if (parts[IndexType] == "Header" || parts[IndexType] == "XPM")
             {
-                if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+                if (!wxue::is_sameas(parts[IndexImage].extension(), ".xpm", wxue::CASE::either))
                 {
                     m_NeedHeaderFunction = true;
                 }
@@ -532,7 +531,7 @@ auto BaseCodeGenerator::ProcessFormIcon(Node* node) -> void
     }
 }
 
-auto BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation)
+auto BaseCodeGenerator::ProcessChildEmbedType(const wxue::StringVector& parts, bool is_animation)
     -> void
 {
     if (is_animation)
@@ -566,7 +565,7 @@ auto BaseCodeGenerator::ProcessChildEmbedType(const tt_string_vector& parts, boo
     }
 }
 
-auto BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
+auto BaseCodeGenerator::ProcessChildSVGType(const wxue::StringVector& parts,
                                             [[maybe_unused]] bool is_animation) -> void
 {
     if (!m_ImagesForm)
@@ -593,7 +592,7 @@ auto BaseCodeGenerator::ProcessChildSVGType(const tt_string_vector& parts,
     }
 }
 
-auto BaseCodeGenerator::ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation)
+auto BaseCodeGenerator::ProcessChildHeaderType(const wxue::StringVector& parts, bool is_animation)
     -> void
 {
     if (is_animation)
@@ -601,7 +600,7 @@ auto BaseCodeGenerator::ProcessChildHeaderType(const tt_string_vector& parts, bo
         m_NeedAnimationFunction = true;
         return;
     }
-    if (!tt::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
+    if (!wxue::is_sameas(parts[IndexImage].extension(), ".xpm", wxue::CASE::either))
     {
         m_NeedHeaderFunction = true;
     }
@@ -625,7 +624,7 @@ auto BaseCodeGenerator::ParseImageProperties(Node* node) -> void
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
-                tt_string_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                wxue::StringVector parts(iter.as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
                 if (parts.size() < IndexImage + 1)
                 {
                     continue;
@@ -658,7 +657,7 @@ auto BaseCodeGenerator::AddPersistCode(Node* node) -> void
 {
     if (node->HasValue(prop_persist_name))
     {
-        tt_string code("wxPersistentRegisterAndRestore(");
+        wxue::string code("wxPersistentRegisterAndRestore(");
         code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
         m_source->writeLine(code);
     }
@@ -693,9 +692,9 @@ auto BaseCodeGenerator::GenContextMenuHandler(Node* node_ctx_menu) -> void
 
 auto BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop) -> void
 {
-    tt_string convert(node->as_string(prop));
-    convert.Replace("@@", "\n", tt::REPLACE::all);
-    tt_string_vector lines(convert, '\n');
+    wxue::string convert(node->as_string(prop));
+    convert.Replace("@@", "\n", wxue::REPLACE::all);
+    wxue::ViewVector lines(convert, '\n');
     bool initial_bracket = false;
     for (const auto& code: lines)
     {

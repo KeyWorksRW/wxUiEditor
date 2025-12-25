@@ -186,7 +186,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         {
             if (code.is_cpp())
             {
-                tt_string bundle_code;
+                wxue::string bundle_code;
                 GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                 code.CheckLineLength(bundle_code.size());
                 code += bundle_code;
@@ -354,11 +354,11 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
     return panes;
 }
 
-std::optional<tt_string> WizardFormGenerator::GetHint(NodeProperty* prop)
+std::optional<wxue::string> WizardFormGenerator::GetHint(NodeProperty* prop)
 {
     if (prop->isProp(prop_title) && !prop->getNode()->HasValue(prop_title))
     {
-        return (tt_string() << "Title bar text");
+        return wxue::string("Title bar text");
     }
     else
     {
@@ -401,7 +401,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((tt_string(node->as_string(prop_center))
+                    .set_value((wxue::string(node->as_string(prop_center))
                                 << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
@@ -428,7 +428,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
         else
         {
-            tt_string all_styles = node->as_string(prop_style);
+            wxue::string all_styles = node->as_string(prop_style);
             all_styles << '|' << node->as_string(prop_extra_style);
             item.append_child("style").text().set(all_styles);
         }
@@ -537,7 +537,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                tt_string bundle_code;
+                wxue::string bundle_code;
                 GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                 code.CheckLineLength(bundle_code.size());
                 code += bundle_code;

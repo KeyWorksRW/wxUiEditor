@@ -13,7 +13,7 @@
 
 #include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
 #include "project_handler.h"  // ProjectHandler class
-#include "ttwx.h"             // ttwx helpers for wxString path normalization
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
 
 [[nodiscard]] auto ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                                     [[maybe_unused]] wxPGProperty* property) -> bool
@@ -30,12 +30,12 @@
     }
     if (m_img_props.type.contains("Embed"))
     {
-        tt_cwd cwd(true);
+        wxue::SaveCwd cwd(wxue::restore_cwd);
         if (Project.HasValue(prop_art_directory))
         {
             if (auto dir = Project.ArtDirectory(); dir.dir_exists())
             {
-                wxFileName::SetCwd(dir.make_wxString());
+                wxFileName::SetCwd(dir.wx());
             }
         }
 
@@ -83,9 +83,9 @@
         if (dlg.ShowModal() == wxID_OK)
         {
             wxFileName file(dlg.GetPath());
-            file.MakeRelativeTo(Project.get_ProjectPath().make_wxString());
+            file.MakeRelativeTo(Project.get_ProjectPath().wx());
             auto name = file.GetFullPath();
-            ttwx::back_slashesto_forward(name);
+            wxue::back_slashesto_forward(name);
             SetValue(name);
             return true;
         }
@@ -93,7 +93,7 @@
     }
     if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
-        tt_cwd cwd(true);
+        wxue::SaveCwd cwd(wxue::restore_cwd);
         if (Project.HasValue(prop_art_directory))
         {
             if (auto dir = Project.get_ArtPath(); dir->DirExists())
@@ -116,10 +116,10 @@
                          pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
-            tt_string name = dlg.GetPath().utf8_string();
+            wxue::string name = dlg.GetPath().utf8_string();
             name.make_relative(Project.get_ProjectPath());
             name.backslashestoforward();
-            SetValue(name.make_wxString());
+            SetValue(name.wx());
             return true;
         }
         return false;

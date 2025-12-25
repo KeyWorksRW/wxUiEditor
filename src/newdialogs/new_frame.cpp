@@ -259,7 +259,7 @@ auto NewFrame::CreateNode() -> void
 
     wxGetFrame().SelectNode(parent_node);
 
-    tt_string undo_str("New wxFrame");
+    wxue::string undo_str("New wxFrame");
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);

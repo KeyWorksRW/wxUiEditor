@@ -22,10 +22,11 @@
 #include <mutex>
 #include <set>
 
-#include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
-#include "gen_enums.h"             // Enumerations for generators
-#include "gen_results.h"           // Code generation file writing functions
-#include "tt_string_vector.h"      // tt_string_vector -- Read/Write line-oriented strings/files
+#include "../panels/base_panel.h"        // BasePanel -- Base class for all code generation panels
+#include "gen_enums.h"                   // Enumerations for generators
+#include "gen_results.h"                 // Code generation file writing functions
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class Code;
 class Node;
@@ -113,7 +114,7 @@ protected:
     // This method is in gen_images.cpp, and handles both source and header code generation
     void GenerateImagesForm();
 
-    [[nodiscard]] static auto GetDeclaration(Node* node) -> tt_string;
+    [[nodiscard]] static auto GetDeclaration(Node* node) -> wxue::string;
 
     auto CollectEventHandlers(Node* node, EventVector& events) -> void;
 
@@ -143,7 +144,7 @@ protected:
     // Call this to set m_ImagesForm
     auto SetImagesForm() -> void;
 
-    void BeginPlatformCode(Code& code, const tt_string& platforms);
+    void BeginPlatformCode(Code& code, const wxue::string& platforms);
     void EndPlatformCode();
     auto GenAfterChildren(Node* node, bool need_closing_brace) -> bool;
 
@@ -163,20 +164,20 @@ protected:
     WriteCode* m_header;
     WriteCode* m_source;
 
-    tt_string m_baseFullPath;
-    tt_string m_header_ext { ".h" };
+    wxue::string m_baseFullPath;
+    wxue::string m_header_ext { ".h" };
 
     std::vector<NodeEvent*> m_ctx_menu_events;
     std::vector<NodeEvent*> m_events;
 
     // Maps platorm string to vector of NodeEvent pointers
-    std::map<tt_string, std::vector<NodeEvent*>> m_map_conditional_events;
+    std::map<wxue::string, std::vector<NodeEvent*>> m_map_conditional_events;
 
     // Maps platorm string to set of public: member declarations
-    std::map<tt_string, std::set<tt_string>> m_map_public_members;
+    std::map<wxue::string, std::set<wxue::string>> m_map_public_members;
 
     // Maps platorm string to set of protected: member declarations
-    std::map<tt_string, std::set<tt_string>> m_map_protected;
+    std::map<wxue::string, std::set<wxue::string>> m_map_protected;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
@@ -184,11 +185,11 @@ protected:
     std::set<std::string> m_set_const_ids;
 
     // Warnings to be displayed to the user when generating code to a file
-    std::set<tt_string> m_warnings;
+    std::set<wxue::string> m_warnings;
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };
-    tt_string m_include_images_statement;
+    wxue::string m_include_images_statement;
 
     PANEL_PAGE m_panel_type { PANEL_PAGE::NOT_PANEL };
 
@@ -216,10 +217,10 @@ private:
 
     // Helper methods for CollectImageHeaders - reduce function complexity
     // Processes embedded or SVG images from a bundle
-    auto ProcessEmbeddedImages(const std::vector<tt_string>& filenames) -> void;
+    auto ProcessEmbeddedImages(const std::vector<wxue::string>& filenames) -> void;
 
     // Processes header or XPM images from a bundle
-    auto ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
+    auto ProcessHeaderImages(Node* node, const std::vector<wxue::string>& filenames,
                              std::set<std::string>& embedset) -> void;
 
     // Processes animation embed data
@@ -237,28 +238,28 @@ private:
     auto ProcessFormIcon(Node* node) -> void;
 
     // Processes embed type images/animations from child node
-    auto ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation) -> void;
+    auto ProcessChildEmbedType(const wxue::StringVector& parts, bool is_animation) -> void;
 
     // Processes SVG type images/animations from child node
-    auto ProcessChildSVGType(const tt_string_vector& parts, bool is_animation) -> void;
+    auto ProcessChildSVGType(const wxue::StringVector& parts, bool is_animation) -> void;
 
     // Processes header or XPM type images/animations from child node
-    auto ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation) -> void;
+    auto ProcessChildHeaderType(const wxue::StringVector& parts, bool is_animation) -> void;
 
     // Helper methods for GetDeclaration - reduce function complexity
     // Processes wx class declarations (wxStdDialogButtonSizer, wxStaticBitmap, etc)
-    static auto ProcessWxClassDeclaration(const tt_string& class_name, Node* node, tt_string& code)
-        -> void;
+    static auto ProcessWxClassDeclaration(const wxue::string& class_name, Node* node,
+                                          wxue::string& code) -> void;
 
     // Processes special custom class declarations
-    static auto ProcessCustomClassDeclaration(Node* node, tt_string& code) -> void;
+    static auto ProcessCustomClassDeclaration(Node* node, wxue::string& code) -> void;
 
     // Processes tool class declarations based on parent type
-    static auto ProcessToolDeclaration(Node* node, tt_string& code) -> void;
+    static auto ProcessToolDeclaration(Node* node, wxue::string& code) -> void;
 
     // Processes StaticCheckboxBoxSizer or StaticRadioBtnBoxSizer declarations
-    static auto ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
-                                                 tt_string& code) -> void;
+    static auto ProcessStaticBoxSizerDeclaration(const wxue::string& class_name, Node* node,
+                                                 wxue::string& code) -> void;
 
     std::mutex m_embedded_images_mutex;  // Protects m_embedded_images from concurrent access
 };

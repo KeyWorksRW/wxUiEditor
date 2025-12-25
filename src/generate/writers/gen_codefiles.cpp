@@ -19,16 +19,18 @@
 #include "pugixml.hpp"
 #include <memory>
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
+
 using namespace code;
 
 auto GenInhertedClass(GenResults& results) -> void
 {
-    tt_cwd cwd;
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();
-    tt_string path;
+    wxue::string path;
 
-    tt_string source_ext(".cpp");
-    tt_string header_ext(".h");
+    wxue::string source_ext(".cpp");
+    wxue::string header_ext(".h");
 
     if (const auto& extProp = Project.as_string(prop_source_ext); extProp.size())
     {

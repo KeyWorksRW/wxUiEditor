@@ -22,14 +22,14 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     if (Project.get_CodePreference() == GEN_LANG_RUBY ||
         Project.get_CodePreference() == GEN_LANG_XRC)
     {
-        tt_string msg = "wxRearrangeCtrl not available in ";
+        wxString msg = "wxRearrangeCtrl not available in ";
         if (Project.get_CodePreference() == GEN_LANG_RUBY)
             msg += "wxRuby3";
         else
             msg += "XRC";
-        auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                        msg.make_wxString(), wxDefaultPosition, wxDefaultSize,
-                                        wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
+        auto* widget =
+            new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg, wxDefaultPosition,
+                             wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
@@ -43,7 +43,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         for (auto& iter: items)
         {
-            auto pos = widget->GetList()->Append(iter.label.make_wxString());
+            auto pos = widget->GetList()->Append(iter.label.wx());
             if (iter.checked == "1")
                 widget->GetList()->Check(pos);
         }

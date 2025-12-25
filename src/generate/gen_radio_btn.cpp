@@ -9,12 +9,13 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 #include <wx/radiobut.h>          // wxRadioButton declaration
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"                        // Code -- Helper class for generating code
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mainframe.h"                   // MainFrame -- Main window frame
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 #include "gen_radio_btn.h"
 
@@ -118,7 +119,7 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
 
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
 
         if (newValue.contains("wxRB_GROUP"))
         {

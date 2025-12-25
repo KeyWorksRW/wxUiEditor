@@ -7,8 +7,8 @@
 
 #include "winres_form.h"
 
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "ttwx.h"          // ttwx helpers for numeric parsing
+#include "node_creator.h"                // NodeCreator -- Class used to create nodes
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 [[nodiscard]] auto resForm::is_same_top(const resCtrl* left, const resCtrl* right,
                                         bool loose_check) const -> bool
@@ -213,8 +213,8 @@ auto resForm::SortCtrls() -> void
 // access m_node in order to handle a wxComboBox which has a different height then specified in the
 // resource file.
 
-[[nodiscard]] auto resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
-    -> bool
+[[nodiscard]] auto resForm::ParseDimensions(wxue::string_view line, wxRect& duRect,
+                                            wxRect& pixelRect) -> bool
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
@@ -230,53 +230,53 @@ auto resForm::SortCtrls() -> void
         line.moveto_digit();
     }
 
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
     {
         return false;
     }
-    duRect.SetLeft(ttwx::atoi(line));
+    duRect.SetLeft(wxue::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
     {
         return false;
     }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
     {
         return false;
     }
-    duRect.SetTop(ttwx::atoi(line));
+    duRect.SetTop(wxue::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
     {
         return false;
     }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
     {
         return false;
     }
-    duRect.SetWidth(ttwx::atoi(line));
+    duRect.SetWidth(wxue::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
     {
         return false;
     }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
     {
         return false;
     }
-    duRect.SetHeight(ttwx::atoi(line));
+    duRect.SetHeight(wxue::atoi(line));
 
     /*
 

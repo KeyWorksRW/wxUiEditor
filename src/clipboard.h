@@ -32,10 +32,10 @@ public:
     [[nodiscard]] auto GetDataHere(void* buf) const -> bool override;
 
     // Note that this ia *not* a const return, so you can modify it if needed
-    [[nodiscard]] auto GetText() -> tt_string& { return m_text; }
+    [[nodiscard]] auto GetText() -> wxue::string& { return m_text; }
 
 private:
-    tt_string m_text;
+    wxue::string m_text;
 };
 
 // We only use this class to indicate what format wxDF_TEXT is in.

@@ -592,7 +592,7 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
     {
         auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
         {
             return true;

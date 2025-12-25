@@ -19,21 +19,21 @@ constexpr const int GenImageSize = 22;
 
 // This will first look for an associated PNG Header array, and if unavailable an XPM file.
 // If neither can be found, a 16x16 question mark image is returned.
-[[nodiscard]] auto GetInternalImage(tt_string_view name) -> wxImage;
+[[nodiscard]] auto GetInternalImage(wxue::string_view name) -> wxImage;
 
 // If this is a PNG Header file, the alpha channel will be converted to a mask
-[[nodiscard]] auto GetIconImage(tt_string_view name) -> wxIcon;
+[[nodiscard]] auto GetIconImage(wxue::string_view name) -> wxIcon;
 
 // Converts the ASCII header file into binary data and loads it as an image. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
-[[nodiscard]] auto GetHeaderImage(tt_string_view filename, size_t* p_original_size = nullptr,
-                                  tt_string* p_mime_type = nullptr) -> wxImage;
+[[nodiscard]] auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size = nullptr,
+                                  wxue::string* p_mime_type = nullptr) -> wxImage;
 
 // Converts the ASCII header file into binary data and loads it as an animation. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
-[[nodiscard]] auto GetAnimationImage(wxAnimation& animation, tt_string_view filename) -> bool;
+[[nodiscard]] auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bool;
 
 [[nodiscard]] auto LoadAnimationImage(wxAnimation& animation, const unsigned char* data,
                                       size_t size_data) -> wxAnimation;
@@ -54,7 +54,7 @@ constexpr const int GenImageSize = 22;
 extern const std::map<std::string_view, std::function<wxBitmapBundle(int width, int height)>>
     map_svg_functions;
 
-[[nodiscard]] inline auto GetSvgFunction(tt_string_view name)
+[[nodiscard]] inline auto GetSvgFunction(wxue::string_view name)
     -> std::function<wxBitmapBundle(int width, int height)>
 {
     auto it = map_svg_functions.find(name);
@@ -65,6 +65,6 @@ extern const std::map<std::string_view, std::function<wxBitmapBundle(int width, 
     return std::function<wxBitmapBundle(int width, int height)>();
 }
 
-[[nodiscard]] auto GetSvgImage(tt_string_view name, int width = 22, int height = 22)
+[[nodiscard]] auto GetSvgImage(wxue::string_view name, int width = 22, int height = 22)
     -> wxBitmapBundle;
-[[nodiscard]] auto GetSvgImage(tt_string_view name, const wxSize& size) -> wxBitmapBundle;
+[[nodiscard]] auto GetSvgImage(wxue::string_view name, const wxSize& size) -> wxBitmapBundle;

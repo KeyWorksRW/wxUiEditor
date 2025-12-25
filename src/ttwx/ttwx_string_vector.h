@@ -114,6 +114,10 @@ namespace ttwx
         // so you can delete the original if needed after calling this method.
         void ReadString(const wxString& str);
 
+        // Reads a string_view as if it was a file (see ReadFile). This will duplicate the string,
+        // so you can delete the original if needed after calling this method.
+        void ReadString(std::string_view str);
+
         [[nodiscard]] auto is_sameas(const ttwx::StringVector& other) const -> bool;
 
         // Insert a line at the specified position

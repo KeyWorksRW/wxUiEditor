@@ -9,6 +9,8 @@
 
 #include "code_single_prop.h"
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "../nodes/node.h"       // Node class
 #include "../nodes/node_prop.h"  // NodeProperty class
 
@@ -25,7 +27,7 @@ public:
     EditCodeSingleDialog(wxWindow* parent, NodeProperty* prop) :
         EditStringDialogBase(parent), m_node(prop->getNode()), m_prop(prop)
     {
-        SetTitle(tt_string() << prop->get_DeclName() << " property editor");
+        SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
         m_value = prop->as_wxString();
         m_static_hdr_text->Show();
 
@@ -35,7 +37,7 @@ public:
 
     void UpdateStaticText(wxCommandEvent& /* event */)
     {
-        tt_string static_text;
+        wxue::string static_text;
         if (m_prop->isProp(prop_cpp_conditional))
         {
             auto text = m_textCtrl->GetValue().utf8_string();
@@ -43,7 +45,7 @@ public:
             {
                 static_text << "#if ";
             }
-            static_text << m_textCtrl->GetValue().utf8_string();
+            static_text << m_textCtrl->GetValue().ToStdString();
         }
         else
         {
@@ -53,9 +55,9 @@ public:
             }
             static_text << m_node->as_string(prop_var_name) << " = new "
                         << m_node->as_string(prop_class_name);
-            static_text << m_textCtrl->GetValue().utf8_string() << ';';
+            static_text << m_textCtrl->GetValue().ToStdString() << ';';
         }
-        m_static_hdr_text->SetLabel(static_text.make_wxString());
+        m_static_hdr_text->SetLabel(static_text.wx());
     }
 
 private:

@@ -26,6 +26,8 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string class
+
 #include "pugixml.hpp"
 
 using namespace code;
@@ -126,14 +128,14 @@ auto FortranCodeGenerator::GenerateClass(PANEL_PAGE panel_type) -> void
     int id_value = wxID_HIGHEST;
     for (const auto& iter: m_set_enum_ids)
     {
-        m_source->writeLine(tt_string() << "local " << iter << " = " << id_value++);
+        m_source->writeLine(wxString() << "local " << iter << " = " << id_value++);
     }
     for (const auto& iter: m_set_const_ids)
     {
-        if (tt::contains(iter, " wx"))
+        if (wxue::contains(iter, " wx"))
         {
-            tt_string id = '$' + iter;
-            id.Replace(" wx", " wx.", true, tt::CASE::exact);
+            wxue::string id = '$' + iter;
+            id.Replace(" wx", " wx.", true, wxue::CASE::exact);
             m_source->writeLine(id);
         }
         else
@@ -162,7 +164,7 @@ auto FortranCodeGenerator::GenerateClass(PANEL_PAGE panel_type) -> void
         id_value = wxID_HIGHEST;
         for (const auto& iter: m_set_enum_ids)
         {
-            m_source->writeLine(tt_string() << '@' << iter << id_value++);
+            m_source->writeLine(wxString() << '@' << iter << id_value++);
         }
 
         if (id_value > 1)

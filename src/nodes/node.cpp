@@ -20,9 +20,11 @@
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
-#include "ttwx.h"             // ttwx helpers for character classification
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Miscellaneous utilities
+
+#include "wxue_namespace/wxue.h"         // wxue helpers for character classification
+#include "wxue_namespace/wxue_string.h"  // wxue::string class
 
 using namespace GenEnum;
 using enum Node::Validity;
@@ -112,7 +114,7 @@ auto Node::get_PropPtr(PropName name) -> NodeProperty*
     return nullptr;
 }
 
-auto Node::get_Event(tt_string_view name) -> NodeEvent*
+auto Node::get_Event(std::string_view name) -> NodeEvent*
 {
     if (auto iter = m_map_events.find(name); iter != m_map_events.end())
     {
@@ -427,13 +429,13 @@ auto Node::as_mockup(PropName name, std::string_view prefix) const -> int
     return 0;
 }
 
-auto Node::as_ArrayString(PropName name) const -> std::vector<tt_string>
+auto Node::as_ArrayString(PropName name) const -> std::vector<wxue::string>
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
         return m_properties[result->second].as_ArrayString();
     }
-    return std::vector<tt_string>();
+    return std::vector<wxue::string>();
 }
 
 auto Node::get_PropValuePtr(PropName name) -> tt_string*
@@ -445,9 +447,9 @@ auto Node::get_PropValuePtr(PropName name) -> tt_string*
     return nullptr;
 }
 
-auto Node::get_PropId() const -> tt_string
+auto Node::get_PropId() const -> wxue::string
 {
-    tt_string id_prop;
+    wxue::string id_prop;
     if (auto result = m_prop_indices.find(prop_id); result != m_prop_indices.end())
     {
         id_prop = m_properties[result->second].get_PropId();
@@ -820,7 +822,7 @@ auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
         return { nullptr, result.second };
     }
     auto new_node = result.first;
-    tt_string undo_str = "insert ribbon tool";
+    wxue::string undo_str = "insert ribbon tool";
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
     return { new_node, valid_node };
@@ -918,7 +920,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
         }
 #endif  // _WIN32
 
-        tt_string undo_str;
+        wxue::string undo_str;
         undo_str << "insert " << map_GenNames.at(name);
         frame.PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
@@ -1065,7 +1067,7 @@ auto Node::get_UniqueName(const std::string& proposed_name, PropName prop_name) 
         // We get here if the name has already been used.
 
         std::string org_name(proposed_name);
-        while (ttwx::is_digit(org_name.back()))
+        while (wxue::is_digit(org_name.back()))
         {
             // remove any trailing digits
             org_name.erase(org_name.size() - 1, 1);
@@ -1129,7 +1131,7 @@ auto Node::FixDuplicateName() -> bool
                 // We get here if the name has already been used.
 
                 std::string org_name(name);
-                while (ttwx::is_digit(org_name.back()))
+                while (wxue::is_digit(org_name.back()))
                 {
                     // remove any trailing digits
                     org_name.erase(org_name.size() - 1, 1);
@@ -1223,7 +1225,7 @@ auto Node::GenerateUniqueNameFromBase(const std::string& base_name,
     -> std::string
 {
     std::string org_name(base_name);
-    while (ttwx::is_digit(org_name.back()))
+    while (wxue::is_digit(org_name.back()))
     {
         // remove any trailing digits
         org_name.erase(org_name.size() - 1, 1);

@@ -300,14 +300,14 @@ void StaticRadioBtnBoxSizerGenerator::RequiredHandlers(Node* /* node */,
     handlers.emplace("wxSizerXmlHandler");
 }
 
-std::optional<tt_string> StaticRadioBtnBoxSizerGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> StaticRadioBtnBoxSizerGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_PYTHON:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";

@@ -14,10 +14,11 @@
 
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
 
-#include "mainframe.h"        // Main frame
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
-#include "version.h"          // Version numbers generated in ../CMakeLists.txt
+#include "mainframe.h"                   // Main frame
+#include "project_handler.h"             // ProjectHandler class
+#include "utils.h"                       // Utility functions that work with properties
+#include "version.h"                     // Version numbers generated in ../CMakeLists.txt
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 // wxGenericHyperlinkCtrl has a DoContextMenu() method that displays "Copy URL" which isn't useful
 // for StartDlg. What we need instead is an option to remove the project from the list.
@@ -278,11 +279,11 @@ auto DsisplayStartupDlg(wxWindow* parent) -> bool
                     auto path = ShowOpenProjectDialog(nullptr);
                     if (!path.IsEmpty())
                     {
-                        tt_string filename = path.utf8_string();
+                        wxue::string filename = path.utf8_string();
                         if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
-                                                            tt::CASE::either) &&
+                                                            wxue::CASE::either) &&
                             !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,
-                                                            tt::CASE::either))
+                                                            wxue::CASE::either))
                         {
                             return Project.ImportProject(filename);
                         }

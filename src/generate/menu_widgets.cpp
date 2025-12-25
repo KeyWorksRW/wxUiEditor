@@ -10,13 +10,14 @@
 #include <wx/statline.h>  // wxStaticLine class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mockup_parent.h"  // Top-level MockUp Parent window
-#include "node.h"           // Node class
-#include "node_creator.h"   // NodeCreator -- NodeCreator class
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // Write code to Scintilla or file
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mockup_parent.h"               // Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "node_creator.h"                // NodeCreator -- NodeCreator class
+#include "utils.h"                       // Utility functions that work with properties
+#include "write_code.h"                  // Write code to Scintilla or file
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "menu_widgets.h"
 
@@ -70,7 +71,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     // control, find the matching child, and create a popup menu based on that child.
 
     auto menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
-    tt_string text = menu_label->GetLabel().utf8_string();
+    wxue::string text = menu_label->GetLabel().utf8_string();
 
     Node* menu_node = nullptr;
 

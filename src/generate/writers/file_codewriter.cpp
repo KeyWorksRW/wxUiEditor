@@ -16,8 +16,8 @@
 #include "common_strings.h"  // Common strings used in code generation
 #include "gen_enums.h"
 #include "mainapp.h"             // App -- Main application class
-#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
-#include "ttwx_view_vector.h"    // ViewVector -- ttwx::ViewVector class
+#include "wxue_string_vector.h"  // wxue::StringVector class
+#include "wxue_view_vector.h"    // wxue::ViewVector class
 
 using namespace code;
 
@@ -342,7 +342,7 @@ void FileCodeWriter::AppendCppEndBlock()
 {
     if (m_flags & code::flag_add_closing_brace)
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(end_cpp_block));
         for (auto& iter: lines)
         {
@@ -459,7 +459,7 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     }
 
     // Check if there's any content to preserve from the original file
-    if (!ttwx::is_found(m_additional_content) ||
+    if (!wxue::is_found(m_additional_content) ||
         static_cast<size_t>(m_additional_content) >= m_org_file.size())
     {
         // No user content in original file - keep the fake content we already added

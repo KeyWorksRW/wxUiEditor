@@ -7,11 +7,12 @@
 
 #include <wx/checkbox.h>  // wxCheckBox class interface
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"                        // Code -- Helper class for generating code
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 #include "gen_checkbox.h"
 
@@ -223,7 +224,7 @@ int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
         item.append_child("checked").text().set("2");
     }
 
-    tt_string styles(node->as_string(prop_style));
+    wxue::string styles(node->as_string(prop_style));
     if (styles.size())
     {
         styles << '|';

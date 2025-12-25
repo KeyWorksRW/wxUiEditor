@@ -10,10 +10,10 @@
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // Common component functions
 #include "gen_enums.h"
-#include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "ui_images.h"       // Generated images header
+#include "node.h"       // Node class
+#include "ui_images.h"  // Generated images header
 #include "utils.h"
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "gen_book_utils.h"
 
@@ -106,7 +106,7 @@ void BookCtorAddImagelist(Code& code)
                         {
                             if (child_node->HasValue(prop_bitmap))
                             {
-                                tt_string bundle_code;
+                                wxue::string bundle_code;
                                 if (GenerateBundleCode(child_node->as_string(prop_bitmap),
                                                        bundle_code))
                                 {
@@ -138,7 +138,7 @@ void BookCtorAddImagelist(Code& code)
                 {
                     if (child_node->HasValue(prop_bitmap))
                     {
-                        tt_string bundle_code;
+                        wxue::string bundle_code;
                         if (GenerateBundleCode(child_node->as_string(prop_bitmap), bundle_code))
                         {
                             code.Eol() << bundle_code;
@@ -221,7 +221,7 @@ void BookCtorAddImagelist(Code& code)
                     auto& description = child_node->as_string(prop_bitmap);
                     if (description.empty())
                         continue;
-                    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                    wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
                     if (parts.size() <= 1 || parts[IndexImage].empty())
                         continue;
                     if (parts[IndexType].contains("Art"))
@@ -311,7 +311,7 @@ void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
     }
 }
 
-void AddTreebookImageCode(tt_string& code, Node* child_node, size_t& image_index)
+void AddTreebookImageCode(wxue::string& code, Node* child_node, size_t& image_index)
 {
     for (const auto& grand_child: child_node->get_ChildNodePtrs())
     {

@@ -217,7 +217,7 @@ auto NewPanel::CreateNode() -> void
 
         auto parent = wxGetFrame().getSelectedNode();
         auto pos = parent->FindInsertionPos(parent);
-        tt_string undo_str("New wxPanel");
+        wxue::string undo_str("New wxPanel");
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     }
@@ -241,7 +241,7 @@ auto NewPanel::CreateNode() -> void
 
         wxGetFrame().SelectNode(parent_node);
 
-        tt_string undo_str("New wxPanel");
+        wxue::string undo_str("New wxPanel");
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     }

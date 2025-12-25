@@ -15,6 +15,9 @@
 #include <wx/wizard.h>       // wxWizard class: a GUI control presenting the user with a
 #include <wx/xml/xml.h>      // wxXmlDocument - XML parser & data holder class
 
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+
 // The following handlers must be explicitly added
 
 #include <wx/xrc/xh_aui.h>             // XRC resource handler for wxAUI
@@ -187,8 +190,8 @@ auto Preview(Node* form_node) -> void
             return;
         }
 
-        tt_cwd cwd(true);
-        wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
+        wxue::SaveCwd cwd(wxue::restore_cwd);
+        wxSetWorkingDirectory(Project.ArtDirectory().wx());
 
         XrcCompare dlg_compare;
         if (!dlg_compare.DoCreate(wxGetMainFrame(), form_node))
@@ -215,15 +218,15 @@ auto Preview(Node* form_node) -> void
 auto PreviewXrc(Node* form_node) -> void
 {
     // Our directory is probably already set correctly, but this will make certain that it is.
-    tt_cwd save_cwd(true);
+    wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
-    tt_string style = form_node->as_string(prop_style);
+    wxue::string style = form_node->as_string(prop_style);
     if (form_node->is_Gen(gen_wxDialog) &&
         (style.empty() ||
          (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
-        tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
+        wxue::string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
         {
             modified_style << '|' << style;
@@ -303,8 +306,8 @@ auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
             return;
         }
 
-        tt_cwd cwd(true);
-        wxSetWorkingDirectory(Project.ArtDirectory().make_wxString());
+        wxue::SaveCwd cwd(wxue::restore_cwd);
+        wxSetWorkingDirectory(Project.ArtDirectory().wx());
 
         wxString form_class_name =
             form_node ? form_node->as_string(GenEnum::prop_class_name).c_str() : txt_dlg_name;
@@ -379,7 +382,7 @@ auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                 }
                 else
                 {
-                    wxMessageBox(tt_string("Could not load ")
+                    wxMessageBox(wxue::string("Could not load ")
                                      << form_node->as_string(prop_class_name) << " resource.",
                                  "XRC Preview");
                 }
@@ -410,12 +413,12 @@ void MainFrame::PreviewCpp(Node* form_node)
         }
     }
 
-    tt_string style = form_node->as_string(prop_style);
+    wxue::string style = form_node->as_string(prop_style);
     if (form_node->is_Gen(gen_wxDialog) &&
         (style.empty() ||
          (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
     {
-        tt_string modified_style("wxCLOSE_BOX|wxCAPTION");
+        wxue::string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
             modified_style << '|' << style;
         form_node->set_value(prop_style, modified_style);
@@ -466,7 +469,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         int ex_style = 0;
                         // Can't use multiview because get_ConstantAsInt() searches an unordered_map
                         // which requires a std::string to pass to it
-                        tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
+                        wxue::StringVector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup
@@ -553,7 +556,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         int ex_style = 0;
                         // Can't use multiview because get_ConstantAsInt() searches an unordered_map
                         // which requires a std::string to pass to it
-                        tt_string_vector mstr(form_node->as_string(prop_extra_style), '|');
+                        wxue::StringVector mstr(form_node->as_string(prop_extra_style), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup
@@ -570,7 +573,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                         int placement = 0;
                         // Can't use multiview because get_ConstantAsInt() searches an unordered_map
                         // which requires a std::string to pass to it
-                        tt_string_vector mstr(form_node->as_string(prop_bmp_placement), '|');
+                        wxue::StringVector mstr(form_node->as_string(prop_bmp_placement), '|');
                         for (auto& iter: mstr)
                         {
                             // Friendly names will have already been converted, so normal lookup

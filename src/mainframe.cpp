@@ -24,6 +24,8 @@
 #include <wx/utils.h>             // Miscellaneous utilities
 #include <wx/wupdlock.h>          // wxWindowUpdateLocker prevents window redrawing
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 // auto-generated: wxui/mainframe_base.h and wxui/mainframe_base.cpp
 
 #include "mainframe.h"
@@ -613,7 +615,7 @@ void MainFrame::ProjectLoaded()
 
 void MainFrame::ProjectSaved()
 {
-    setStatusText(tt_string(Project.get_ProjectFile().filename()) << " saved");
+    setStatusText(wxue::string(Project.get_ProjectFile().filename()) << " saved");
     UpdateFrame();
 }
 
@@ -736,7 +738,7 @@ void MainFrame::CreateSplitters()
     // SetMinSize(wxSize(700, 380));
 }
 
-void MainFrame::setStatusField(const std::string& text, int position)
+void MainFrame::setStatusField(const wxString& text, int position)
 {
     if (position == -1)
     {
@@ -807,7 +809,7 @@ void MainFrame::CopyNode(Node* node)
 
             // Skip over the XML header
             auto begin = strm.str().find("<node");
-            if (ttwx::is_found(begin))
+            if (wxue::is_found(begin))
             {
                 u8_data->GetText() = strm.str().c_str() + begin;
                 auto* hash_data = new wxUEDataObject();
@@ -870,7 +872,7 @@ void MainFrame::PasteNode(Node* parent)
     // duplication.
     auto create_undo_event = [&](const NodeSharedPtr& created_node) -> void
     {
-        tt_string undo_str("Paste ");
+        wxue::string undo_str("Paste ");
         undo_str << m_clipboard->get_DeclName();
 
         auto pos = parent->FindInsertionPos(m_selected_node);
@@ -1003,8 +1005,8 @@ void MainFrame::PasteNode(Node* parent)
 
         if (!grandparent || !grandparent->is_ChildAllowed(new_node))
         {
-            wxMessageBox(tt_string() << "You cannot paste " << new_node->get_DeclName() << " into "
-                                     << parent->get_DeclName());
+            wxMessageBox(wxue::string() << "You cannot paste " << new_node->get_DeclName()
+                                        << " into " << parent->get_DeclName());
             return;
         }
         parent = grandparent;
@@ -1039,7 +1041,7 @@ void MainFrame::DuplicateNode(Node* node)
     }
     else
     {
-        tt_string undo_str("duplicate ");
+        wxue::string undo_str("duplicate ");
         undo_str << node->get_DeclName();
         auto pos = parent->FindInsertionPos(m_selected_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
@@ -1146,7 +1148,7 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     ModifyProperty(propFlag, value);
 }
 
-void MainFrame::ModifyProperty(NodeProperty* prop, tt_string_view value)
+void MainFrame::ModifyProperty(NodeProperty* prop, std::string_view value)
 {
     if (prop && value != prop->as_string())
     {
@@ -1171,7 +1173,7 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
         return;
     }
 
-    tt_string value;
+    wxue::string value;
 
     // First we delete the flags from the previous configuration, in order to avoid alignment
     // conflicts.
@@ -1341,8 +1343,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                     auto* new_parent = parent->get_Child(pos);
                     if (new_parent->is_Form())
                     {
-                        ASSERT_MSG(check_only, tt_string() << "MoveDirection::Right called even "
-                                                              "though check would have failed.");
+                        ASSERT_MSG(check_only, wxue::string() << "MoveDirection::Right called even "
+                                                                 "though check would have failed.");
                         return false;
                     }
                     if (new_parent->is_Gen(gen_folder) || new_parent->is_Gen(gen_sub_folder))
@@ -1362,7 +1364,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
                     {
                         if (pos == 0)
                         {
-                            ASSERT_MSG(check_only, tt_string()
+                            ASSERT_MSG(check_only, wxue::string()
                                                        << "MoveDirection::Right called even though "
                                                           "check would have failed.");
                             return false;
@@ -1436,20 +1438,20 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
 
     if (isCutMode)
     {
-        tt_string undo_str;
+        wxue::string undo_str;
         undo_str << "cut " << node->get_DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, true));
     }
     else
     {
-        tt_string undo_str;
+        wxue::string undo_str;
         undo_str << "delete " << node->get_DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, false));
     }
     UpdateWakaTime();
 }
 
-void MainFrame::ChangeEventHandler(NodeEvent* event, const tt_string& value)
+void MainFrame::ChangeEventHandler(NodeEvent* event, std::string_view value)
 {
     if (event && value != event->get_value())
     {
@@ -1458,7 +1460,7 @@ void MainFrame::ChangeEventHandler(NodeEvent* event, const tt_string& value)
     }
 }
 
-void MainFrame::RemoveFileFromHistory(tt_string file)
+void MainFrame::RemoveFileFromHistory(std::string_view file)
 {
     if (file.empty())
     {
@@ -1488,9 +1490,9 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
     }
 }
 
-void MainFrame::ShowInfoBarMsg(const tt_string& msg, int icon)
+void MainFrame::ShowInfoBarMsg(std::string_view msg, int icon)
 {
-    m_info_bar->ShowMessage(msg, icon);
+    m_info_bar->ShowMessage(wxString(msg.data(), msg.size()), icon);
     m_info_bar_dismissed = false;
 }
 

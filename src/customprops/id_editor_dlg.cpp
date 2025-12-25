@@ -205,7 +205,8 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 #include <wx/stockitem.h>  // stock items helpers
 
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "id_lists.h"
 
@@ -249,7 +250,7 @@ auto IDEditorDlg::OnInit(wxInitDialogEvent& event) -> void
 
     // Make a copy of the id, because if it's a custom id, then we need to remove the prefix,
     // suffix and value.
-    tt_string cur_id = m_node->as_string(prop_id);
+    wxue::string cur_id = m_node->as_string(prop_id);
     if (cur_id.starts_with("wxID_"))
     {
         m_standard_ids->SetStringSelection(cur_id);
@@ -257,10 +258,10 @@ auto IDEditorDlg::OnInit(wxInitDialogEvent& event) -> void
     }
     else
     {
-        if (auto pos = cur_id.find_first_of('='); pos != tt::npos)
+        if (auto pos = cur_id.find_first_of('='); pos != wxue::npos)
         {
-            tt_string_view value = ttwx::find_nonspace(cur_id.subview(pos + 1));
-            m_textValue->SetValue(value.make_wxString());
+            wxue::string_view value = wxue::find_nonspace(cur_id.subview(pos + 1));
+            m_textValue->SetValue(value.wx());
             cur_id.erase(pos);
             cur_id.trim();
         }
@@ -411,9 +412,10 @@ auto IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event) -> void
         {
             if (!m_prefix_selected)
             {
-                tt_string_vector prefixes;
-                prefixes.SetString(Project.get_ProjectNode()->as_string(prop_id_prefixes), '"',
-                                   tt::TRIM::both);
+                wxue::StringVector prefixes;
+                prefixes.SetString(
+                    std::string_view { Project.get_ProjectNode()->as_string(prop_id_prefixes) },
+                    '"', wxue::TRIM::both);
                 for (auto& iter: prefixes)
                 {
                     if (id.starts_with(iter))
@@ -426,9 +428,10 @@ auto IDEditorDlg::OnAffirmative(wxUpdateUIEvent& event) -> void
             }
             if (!m_suffix_selected)
             {
-                tt_string_vector suffixes;
-                suffixes.SetString(Project.get_ProjectNode()->as_string(prop_id_prefixes), '"',
-                                   tt::TRIM::both);
+                wxue::StringVector suffixes;
+                suffixes.SetString(
+                    std::string_view { Project.get_ProjectNode()->as_string(prop_id_prefixes) },
+                    '"', wxue::TRIM::both);
                 for (auto& iter: suffixes)
                 {
                     if (id.ends_with(iter))

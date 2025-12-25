@@ -25,7 +25,7 @@ public:
         -> int override;
     void RequiredHandlers(Node* /*unused*/, std::set<std::string>& /* handlers */) override;
 
-    auto GetPythonURL(Node* /*node*/) -> tt_string override { return "wx.adv.CalendarCtrl.html"; }
+    auto GetPythonURL(Node* /*node*/) -> wxue::string override { return "wx.adv.CalendarCtrl.html"; }
 
     auto GetImports(Node* /*unused*/, std::set<std::string>& set_imports, GenLang language)
         -> bool override;

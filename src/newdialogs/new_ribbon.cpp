@@ -178,7 +178,7 @@ auto NewRibbon::CreateNode() -> void
     {
         auto ribbon_page = NodeCreation.CreateNode(gen_wxRibbonPage, bar_node.get()).first;
         bar_node->AdoptChild(ribbon_page);
-        tt_string label("Page ");
+        wxString label("Page ");
         label << count + 1;
         ribbon_page->set_value(prop_label, label);
 
@@ -217,7 +217,7 @@ auto NewRibbon::CreateNode() -> void
     {
         auto parent = wxGetFrame().getSelectedNode();
         auto pos = parent->FindInsertionPos(parent);
-        tt_string undo_str("New wxRibbonBar");
+        wxue::string undo_str("New wxRibbonBar");
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
     }
@@ -241,7 +241,7 @@ auto NewRibbon::CreateNode() -> void
 
         wxGetFrame().SelectNode(parent_node);
 
-        tt_string undo_str("New wxRibbonBar");
+        wxue::string undo_str("New wxRibbonBar");
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(bar_node.get(), parent_node, undo_str, -1));
     }

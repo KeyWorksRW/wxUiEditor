@@ -71,13 +71,13 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     SetSizerAndFit(parent_sizer);
 }
 
-void ImportPanel::SetImportFile(const tt_string& file, int lexer)
+void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
 {
     m_view.clear();
-    m_view.GetBuffer().clear();
-    if (!m_view.ReadFile(file) && !m_view.ReadFile(file.filename()))
+    if (!m_view.ReadFile(std::string_view(file)) &&
+        !m_view.ReadFile(std::string_view(file.filename())))
     {
-        FAIL_MSG(tt_string("Can't read ") << file);
+        FAIL_MSG(wxue::string("Can't read ") << file);
         return;
     }
 
@@ -96,7 +96,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
                 pugi::xml_document doc;
                 if (auto result = doc.load_file_string(file); result)
                 {
-                    std::set<tt_string> keywords;
+                    std::set<wxue::string> keywords;
                     auto root = doc.first_child();
                     keywords.insert(root.name());
                     for (auto& iter: root.attributes())
@@ -122,7 +122,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
                         add_keywords(child, add_keywords);
                     }
 
-                    tt_string keywords_str;
+                    wxue::string keywords_str;
                     for (auto& iter: keywords)
                     {
                         keywords_str << iter << " ";
@@ -163,7 +163,7 @@ void ImportPanel::SetImportFile(const tt_string& file, int lexer)
             break;
 
         default:
-            FAIL_MSG(tt_string("Unsupported lexer: ") << lexer);
+            FAIL_MSG(wxue::string("Unsupported lexer: ") << lexer);
             break;
     }
 
@@ -218,7 +218,6 @@ void ImportPanel::OnFind(wxFindDialogEvent& event)
 void ImportPanel::Clear()
 {
     m_view.clear();
-    m_view.GetBuffer().clear();
 
     m_scintilla->SetReadOnly(false);
     m_scintilla->ClearAll();
@@ -227,11 +226,11 @@ void ImportPanel::Clear()
 void ImportPanel::OnNodeSelected(Node* node)
 {
     // Find where the node is created.
-    tt_string name(" ");
+    wxue::string name(" ");
     name << node->as_string(prop_var_name);
     int line = 0;
 
-    tt_string search;
+    wxue::string search;
     if (m_lexer == wxSTC_LEX_JSON || m_import_file.has_extension(".pjd"))
     {
         search = "\"";
@@ -243,7 +242,7 @@ void ImportPanel::OnNodeSelected(Node* node)
     if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
-        if (auto pos = search.find('='); ttwx::is_found(pos))
+        if (auto pos = search.find('='); wxue::is_found(pos))
         {
             search.erase(pos - 1, search.size() - pos + 1);
         }
@@ -256,25 +255,37 @@ void ImportPanel::OnNodeSelected(Node* node)
     {
         search << node->as_string(prop_class_name);
     }
-    line = (to_int) m_view.FindLineContaining(search);
 
-    if (!ttwx::is_found(line) && m_import_file.has_extension(".pjd") &&
+    // Helper lambda to find line containing a string
+    auto find_line_containing = [this](const wxue::string& str) -> int
+    {
+        auto it = std::ranges::find_if(m_view,
+                                       [&str](const wxue::string_view& line)
+                                       {
+                                           return line.contains(str);
+                                       });
+        return (it != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), it)) : -1;
+    };
+
+    line = find_line_containing(search);
+
+    if (!wxue::is_found(line) && m_import_file.has_extension(".pjd") &&
         node->HasValue(prop_var_name))
     {
         search = "\"" + node->as_string(prop_var_name);
-        line = (to_int) m_view.FindLineContaining(search);
+        line = find_line_containing(search);
     }
 
-    if (!ttwx::is_found(line) && m_import_file.has_extension(".pjd"))
+    if (!wxue::is_found(line) && m_import_file.has_extension(".pjd"))
     {
         search = node->get_NodeDeclaration()->get_DeclName();
         // DialogBlocks uses wbClassName instead of the expected wxClassName
         if (search.size() > 1 && search[1] == 'x')
             search[1] = 'b';
-        line = (to_int) m_view.FindLineContaining(search);
+        line = find_line_containing(search);
     }
 
-    if (!ttwx::is_found(line))
+    if (!wxue::is_found(line))
     {
         return;
     }

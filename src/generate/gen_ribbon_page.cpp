@@ -7,12 +7,13 @@
 
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "image_gen.h"      // Functions for generating embedded images
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"                               // Code -- Helper class for generating code
+#include "gen_common.h"                         // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"                      // Common XRC generating functions
+#include "image_gen.h"                          // Functions for generating embedded images
+#include "node.h"                               // Node class
+#include "utils.h"                              // Utility functions that work with properties
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_ribbon_page.h"
 
@@ -39,8 +40,8 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
     {
         code.Comma();
 
-        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                               tt::TRIM::both);
+        wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                 wxue::TRIM::both);
         code.GenerateBundleParameter(parts, true);
     }
     code.EndFunction();
@@ -119,8 +120,8 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
     {
         code.Comma();
 
-        tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                               tt::TRIM::both);
+        wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                 wxue::TRIM::both);
         code.GenerateBundleParameter(parts, true);
     }
     code.EndFunction();

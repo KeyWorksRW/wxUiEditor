@@ -125,9 +125,9 @@ bool IncludeFilesDialog::Create(wxWindow* parent, wxWindowID id, const wxString&
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "sys_header_dlg.h"    // SysHeaderDlg class
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
-#include "tt_view_vector.h"    // tt_view_vector -- Read/Write line-oriented strings/files
+#include "sys_header_dlg.h"                     // SysHeaderDlg class
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 auto IncludeFilesDialog::Initialize(NodeProperty* prop) -> void
 {
@@ -171,11 +171,11 @@ auto IncludeFilesDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> vo
 
     if (m_prop->HasValue())
     {
-        tt_view_vector list;
-        list.SetString(m_prop->value());
+        wxue::ViewVector list;
+        list.SetString(std::string_view { m_prop->value() }, ';');
         for (auto& iter: list)
         {
-            m_listbox->Append(iter.make_wxString());
+            m_listbox->Append(iter.wx());
         }
         if (m_listbox->GetCount())
         {
@@ -194,10 +194,10 @@ auto IncludeFilesDialog::OnAdd([[maybe_unused]] wxCommandEvent& event) -> void
         dlg.Initialize(m_prop);
         if (dlg.ShowModal() == wxID_OK)
         {
-            tt_string_vector files(dlg.GetResults(), ';');
+            wxue::StringVector files(dlg.GetResults(), ';');
             for (auto& iter: files)
             {
-                auto item = iter.make_wxString();
+                auto item = iter.wx();
                 if (m_listbox->FindString(item) == wxNOT_FOUND)
                 {
                     m_listbox->Append(item);
@@ -208,8 +208,8 @@ auto IncludeFilesDialog::OnAdd([[maybe_unused]] wxCommandEvent& event) -> void
         return;
     }
 
-    tt_string path;
-    tt_string cur_file;
+    wxue::string path;
+    wxue::string cur_file;
     if (m_prop->isProp(prop_local_hdr_includes) || m_prop->isProp(prop_local_src_includes) ||
         m_prop->isProp(prop_project_src_includes) || m_prop->isProp(prop_relative_require_list) ||
         m_prop->isProp(prop_python_import_list))
@@ -232,8 +232,8 @@ auto IncludeFilesDialog::OnAdd([[maybe_unused]] wxCommandEvent& event) -> void
         }
     }
 
-    tt_string title;
-    tt_string filter;
+    wxue::string title;
+    wxue::string filter;
     if (m_prop->isProp(prop_python_import_list))
     {
         title = "Import Python File";
@@ -255,21 +255,20 @@ auto IncludeFilesDialog::OnAdd([[maybe_unused]] wxCommandEvent& event) -> void
         path.pop_back();
     }
 
-    tt_cwd cwd(true);
-    wxFileDialog dialog(this, title.make_wxString(), path.make_wxString(), wxEmptyString,
-                        filter.make_wxString(), wxFD_OPEN | wxFD_CHANGE_DIR);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
+    wxFileDialog dialog(this, title.wx(), path.wx(), wxEmptyString, filter.wx(),
+                        wxFD_OPEN | wxFD_CHANGE_DIR);
     if (dialog.ShowModal() == wxID_OK)
     {
-        tt_string filename = dialog.GetPath().utf8_string();
+        wxue::string filename = dialog.GetPath().utf8_string();
         filename.make_relative(path);
         filename.backslashestoforward();
         if (filename == cur_file)
         {
-            wxMessageBox("You cannot add the current file to the list.", title.make_wxString(),
-                         wxOK, this);
+            wxMessageBox("You cannot add the current file to the list.", title.wx(), wxOK, this);
             return;
         }
-        m_listbox->Append(filename.make_wxString());
+        m_listbox->Append(filename.wx());
         SetButtonsEnableState();
     }
 }

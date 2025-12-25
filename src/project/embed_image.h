@@ -29,16 +29,18 @@
 #include <wx/bmpbndl.h>  // wxBitmapBundle class interface
 #include <wx/gdicmn.h>   // wxSize class
 
+#include "wxue_namespace/wxue_string.h"
+
 class Node;
 class wxImage;
 
 struct ImageInfo
 {
-    tt_string filename;  // original filename with extension, but without any path information
+    wxue::string filename;  // original filename with extension, but without any path information
 
     // Valid C++ variable name derived from filename. This name is also compatible with Perl,
     // Python, and Ruby/
-    tt_string array_name;
+    wxue::string array_name;
 
     // SVG and XPM files are stored as zlib-compressed data. All other image types are stored
     // in their original format.
@@ -48,7 +50,7 @@ struct ImageInfo
     // original size of the image file before compression.
     uint64_t array_size;  // size of array_data in bytes
 
-    std::filesystem::file_time_type file_time;  // time the file was last modified
+    wxDateTime file_time;  // time the file was last modified
 
     // E.G. wxBITMAP_TYPE_SVG, wxBITMAP_TYPE_XPM, wxBITMAP_TYPE_PNG, etc.
     wxBitmapType type;
@@ -58,7 +60,7 @@ class EmbeddedImage
 {
 public:
     // Converts the filename in path to a valid string name and sets imgs[0].array_name
-    EmbeddedImage(tt_string_view path, Node* form);
+    EmbeddedImage(wxue::string_view path, Node* form);
     ~EmbeddedImage() = default;
 
     // Note that this will update any file within EmbeddedImage whose file_time has changed

@@ -25,8 +25,8 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.Frame"; }
-    tt_string GetPythonURL(Node*) override { return "wx.Frame.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.Frame"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.Frame.html"; }
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };
@@ -45,8 +45,8 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.Frame"; }
-    tt_string GetPythonURL(Node*) override { return "wx.Frame.html"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.Frame"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.Frame.html"; }
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

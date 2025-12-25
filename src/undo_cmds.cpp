@@ -20,19 +20,19 @@
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
-InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos)
+InsertNodeAction::InsertNodeAction(Node* node, Node* parent, std::string_view undo_str, int pos)
 {
     Init(node->get_SharedPtr(), parent->get_SharedPtr(), undo_str, pos);
 }
 
 InsertNodeAction::InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent,
-                                   tt_string_view undo_str, int pos)
+                                   std::string_view undo_str, int pos)
 {
     Init(node, parent, undo_str, pos);
 }
 
 auto InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent,
-                            tt_string_view undo_str, int pos) -> void
+                            std::string_view undo_str, int pos) -> void
 {
     m_old_selected = wxGetFrame().getSelectedNodePtr();
     m_node = node;
@@ -107,19 +107,19 @@ auto InsertNodeAction::Revert() -> void
 
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
 
-RemoveNodeAction::RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard)
+RemoveNodeAction::RemoveNodeAction(Node* node, std::string_view undo_str, bool AddToClipboard)
 {
     Init(node->get_SharedPtr(), undo_str, AddToClipboard);
 }
 
-RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str,
+RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, std::string_view undo_str,
                                    bool AddToClipboard)
 {
     Init(node, undo_str, AddToClipboard);
 }
 
-auto RemoveNodeAction::Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard)
-    -> void
+auto RemoveNodeAction::Init(const NodeSharedPtr node, std::string_view undo_str,
+                            bool AddToClipboard) -> void
 {
     m_AddToClipboard = AddToClipboard;
     m_node = node;
@@ -176,7 +176,7 @@ auto RemoveNodeAction::Revert() -> void
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, tt_string_view value) :
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view value) :
     m_property(prop)
 {
     m_undo_string << "change " << prop->get_DeclName();
@@ -211,7 +211,7 @@ auto ModifyPropertyAction::Revert() -> void
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
-ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events) :
+ModifyProperties::ModifyProperties(std::string_view undo_string, bool fire_events) :
     UndoAction(undo_string)
 {
     m_fire_events = fire_events;
@@ -219,7 +219,7 @@ ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events)
     m_UndoEventGenerated = true;
 }
 
-auto ModifyProperties::addProperty(NodeProperty* prop, tt_string_view value) -> void
+auto ModifyProperties::addProperty(NodeProperty* prop, std::string_view value) -> void
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -274,7 +274,7 @@ auto ModifyProperties::GetMemorySize() -> size_t
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) :
+ModifyEventAction::ModifyEventAction(NodeEvent* event, std::string_view value) :
     m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
@@ -317,7 +317,7 @@ auto ChangePositionAction::Init(const NodeSharedPtr node, size_t position) -> vo
     m_change_pos = position;
     m_revert_pos = m_parent->get_ChildPosition(node);
 
-    SetUndoString(tt_string() << "change " << node->get_DeclName() << " position");
+    SetUndoString(wxue::string() << "change " << node->get_DeclName() << " position");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -583,7 +583,7 @@ auto ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr pare
     m_revert_row = node->as_int(prop_row);
     m_revert_col = node->as_int(prop_column);
 
-    SetUndoString(tt_string() << "change " << node->get_DeclName() << " parent");
+    SetUndoString(wxue::string() << "change " << node->get_DeclName() << " parent");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -622,7 +622,7 @@ void ChangeParentAction::Change()
         {
             result = m_change_parent->AddChild(m_node);
         }
-        ASSERT_MSG(result, tt_string("Unable to change parent of ")
+        ASSERT_MSG(result, wxue::string("Unable to change parent of ")
                                << m_node->get_NodeName() << " to "
                                << m_change_parent->get_NodeName());
         if (result)
@@ -724,8 +724,7 @@ auto AppendGridBagAction::Revert() -> void
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
 
-GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) :
-    UndoAction(undo_str.c_str())
+GridBagAction::GridBagAction(Node* cur_gbsizer, std::string_view undo_str) : UndoAction(undo_str)
 {
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;

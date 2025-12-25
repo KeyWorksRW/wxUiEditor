@@ -14,6 +14,8 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 // clang-format off
 
 // These are the types that need to have generator->AdditionalCode() called after the type is constructed
@@ -154,7 +156,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     else if (parent->is_ToolBar() && !node->is_Type(type_tool) && !node->is_Type(type_aui_tool) &&
              !node->is_Type(type_tool_separator) && !node->is_Type(type_tool_dropdown))
     {
-        tt_string code;
+        wxue::string code;
         gen_code.clear();
         if (parent->is_Type(type_toolbar_form) || parent->is_Type(type_aui_toolbar_form))
             gen_code.Str("AddControl(").as_string(prop_var_name).EndFunction();
@@ -225,7 +227,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 
             gen_code.clear();
 
-            tt_string code;
+            wxue::string code;
             if (parent->is_Gen(gen_wxRibbonPanel))
             {
                 gen_code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -304,7 +306,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     }
 }
 
-auto BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms) -> void
+auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms) -> void
 {
     if (platforms.contains("Windows"))
     {
@@ -327,7 +329,7 @@ auto BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 break;
 
             default:
-                FAIL_MSG(tt_string() << "Unsupported language: " << m_language);
+                FAIL_MSG(wxue::string() << "Unsupported language: " << m_language);
                 break;
         }
     }
@@ -659,7 +661,7 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
             code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) << "), ";
             code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan)
                 << "), ";
-            tt_string flags(node->as_string(prop_borders));
+            wxue::string flags(node->as_string(prop_borders));
             if (node->as_string(prop_flags).size())
             {
                 if (flags.size())

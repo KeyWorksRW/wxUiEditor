@@ -630,9 +630,9 @@ auto MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */) -> void
     // extension
     wxFileDialog dialog(
         this, "Save Project As", wxFileName::GetCwd(), filename.GetFullName(),
-        wxString::FromUTF8(std::format("wxUiEditor Project File (*{})|{};{}",
-                                       PROJECT_FILE_EXTENSION, PROJECT_FILE_EXTENSION,
-                                       PROJECT_LEGACY_FILE_EXTENSION)
+        wxString(std::format("wxUiEditor Project File (*{})|{};{}",
+                     PROJECT_FILE_EXTENSION, PROJECT_FILE_EXTENSION,
+                     PROJECT_LEGACY_FILE_EXTENSION))
                                .c_str()),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 

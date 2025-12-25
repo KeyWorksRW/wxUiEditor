@@ -1495,7 +1495,7 @@ auto GenerateLanguageForm(Node* form, GenResults& results, std::vector<std::stri
     auto [path, has_base_file] = Project.GetOutputPath(form, language);
     if (!has_base_file)
     {
-#if !defined(_DEBUG)
+#if !wxGetApp().isTestingMenuEnabled()
         // For a lot of testing of projects with multiple dialogs, there may only be a
         // few forms where generation is being tested, so don't nag in Debug builds.
         // :-)

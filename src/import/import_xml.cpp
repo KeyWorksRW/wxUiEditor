@@ -1334,7 +1334,7 @@ auto ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node) -> voi
     }
 }
 
-[[nodiscard]] auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
+auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
     -> NodeSharedPtr
 {
     auto object_name = xml_obj.attribute("class").as_cstr();

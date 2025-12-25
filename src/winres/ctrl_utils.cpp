@@ -32,8 +32,7 @@ auto resCtrl::ParseCommonStyles(wxue::string_view line) -> void
     }
 }
 
-[[nodiscard]] auto resCtrl::ParseDimensions(wxue::string_view line, wxRect& duRect,
-                                            wxRect& pixelRect) -> bool
+auto resCtrl::ParseDimensions(wxue::string_view line, wxRect& duRect, wxRect& pixelRect) -> bool
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };

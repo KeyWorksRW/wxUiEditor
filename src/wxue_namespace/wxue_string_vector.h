@@ -107,10 +107,10 @@ namespace wxue
         [[nodiscard]] auto is_sameas(const wxue::StringVector& other) const -> bool;
 
         // Writes each line to the file adding a '\n' to the end of the line.
-        [[nodiscard]] auto WriteFile(const wxString& filename) const -> bool;
+        auto WriteFile(const wxString& filename) const -> bool;
 
         // Writes to the same file that was previously read
-        [[nodiscard]] auto WriteFile() const -> bool
+        auto WriteFile() const -> bool
         {
             return !m_filename.empty() ? WriteFile(m_filename) : false;
         }

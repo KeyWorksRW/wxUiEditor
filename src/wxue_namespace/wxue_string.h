@@ -130,15 +130,13 @@ namespace wxue
         // Returns true if current filename contains the specified case-insensitive extension.
         [[nodiscard]] auto has_extension(std::string_view ext) const -> bool
         {
-            string_view cur_extension(data(), size());
-            return cur_extension.has_extension(ext);
+            return extension().is_sameas(ext, CASE::either);
         }
 
         // Returns true if current filename contains the specified case-insensitive file name.
         [[nodiscard]] auto has_filename(std::string_view name) const -> bool
         {
-            string_view cur_filename(data(), size());
-            return cur_filename.has_filename(name);
+            return filename().is_sameas(name, CASE::either);
         }
 
         // Returns a string_view to the current extension. View is empty if there is no

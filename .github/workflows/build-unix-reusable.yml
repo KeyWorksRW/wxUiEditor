@@ -30,7 +30,7 @@ jobs:
         sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main'
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build libgtk-3-dev ccache clang-19
-        clang-19 --version
+        clang-20 --version
         cmake --version
         ccache --version
 

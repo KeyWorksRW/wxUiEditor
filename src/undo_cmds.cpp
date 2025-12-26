@@ -20,19 +20,19 @@
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
-InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const tt_string& undo_str, int pos)
+InsertNodeAction::InsertNodeAction(Node* node, Node* parent, std::string_view undo_str, int pos)
 {
     Init(node->get_SharedPtr(), parent->get_SharedPtr(), undo_str, pos);
 }
 
 InsertNodeAction::InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent,
-                                   tt_string_view undo_str, int pos)
+                                   std::string_view undo_str, int pos)
 {
     Init(node, parent, undo_str, pos);
 }
 
-void InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent,
-                            tt_string_view undo_str, int pos)
+auto InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent,
+                            std::string_view undo_str, int pos) -> void
 {
     m_old_selected = wxGetFrame().getSelectedNodePtr();
     m_node = node;
@@ -46,7 +46,7 @@ void InsertNodeAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent
     }
 }
 
-void InsertNodeAction::Change()
+auto InsertNodeAction::Change() -> void
 {
     m_node->set_Parent(m_parent);
 
@@ -64,7 +64,9 @@ void InsertNodeAction::Change()
     {
         m_parent->AddChild(m_node);
         if (m_pos >= 0)
+        {
             m_parent->ChangeChildPosition(m_node, m_pos);
+        }
     }
 
     if (m_fix_duplicate_names)
@@ -84,10 +86,12 @@ void InsertNodeAction::Change()
     // Probably not necessary, but with both parameters set to false, this simply ensures the
     // mainframe has it's selection node set correctly.
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node.get(), evt_flags::no_event);
+    }
 }
 
-void InsertNodeAction::Revert()
+auto InsertNodeAction::Revert() -> void
 {
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());  // Remove the parent pointer
@@ -96,23 +100,26 @@ void InsertNodeAction::Revert()
         wxGetFrame().FireDeletedEvent(m_node.get());
     }
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_old_selected.get());
+    }
 }
 
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
 
-RemoveNodeAction::RemoveNodeAction(Node* node, const tt_string& undo_str, bool AddToClipboard)
+RemoveNodeAction::RemoveNodeAction(Node* node, std::string_view undo_str, bool AddToClipboard)
 {
     Init(node->get_SharedPtr(), undo_str, AddToClipboard);
 }
 
-RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, const tt_string& undo_str,
+RemoveNodeAction::RemoveNodeAction(const NodeSharedPtr node, std::string_view undo_str,
                                    bool AddToClipboard)
 {
     Init(node, undo_str, AddToClipboard);
 }
 
-void RemoveNodeAction::Init(const NodeSharedPtr node, tt_string_view undo_str, bool AddToClipboard)
+auto RemoveNodeAction::Init(const NodeSharedPtr node, std::string_view undo_str,
+                            bool AddToClipboard) -> void
 {
     m_AddToClipboard = AddToClipboard;
     m_node = node;
@@ -125,10 +132,12 @@ void RemoveNodeAction::Init(const NodeSharedPtr node, tt_string_view undo_str, b
     m_RedoSelectEventGenerated = true;
 }
 
-void RemoveNodeAction::Change()
+auto RemoveNodeAction::Change() -> void
 {
     if (m_AddToClipboard)
+    {
         wxGetFrame().CopyNode(m_node.get());
+    }
 
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
@@ -137,31 +146,37 @@ void RemoveNodeAction::Change()
 
     if (m_parent->get_ChildCount())
     {
-        auto pos =
+        const auto pos =
             (m_old_pos < m_parent->get_ChildCount() ? m_old_pos : m_parent->get_ChildCount() - 1);
         if (isAllowedSelectEvent())
+        {
             wxGetFrame().SelectNode(m_parent->get_Child(pos));
+        }
     }
     else
     {
         if (isAllowedSelectEvent())
+        {
             wxGetFrame().SelectNode(m_parent.get());
+        }
     }
 }
 
-void RemoveNodeAction::Revert()
+auto RemoveNodeAction::Revert() -> void
 {
     m_parent->AddChild(m_node);
     m_node->set_Parent(m_parent);
     m_parent->ChangeChildPosition(m_node, m_old_pos);
 
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_old_selected.get(), evt_flags::force_selection);
+    }
 }
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, tt_string_view value) :
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view value) :
     m_property(prop)
 {
     m_undo_string << "change " << prop->get_DeclName();
@@ -180,14 +195,14 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_pr
     m_revert_value = prop->as_string();
 }
 
-void ModifyPropertyAction::Change()
+auto ModifyPropertyAction::Change() -> void
 {
     m_property->set_value(m_change_value);
 
     wxGetFrame().FirePropChangeEvent(m_property);
 }
 
-void ModifyPropertyAction::Revert()
+auto ModifyPropertyAction::Revert() -> void
 {
     m_property->set_value(m_revert_value);
 
@@ -196,7 +211,7 @@ void ModifyPropertyAction::Revert()
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
-ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events) :
+ModifyProperties::ModifyProperties(std::string_view undo_string, bool fire_events) :
     UndoAction(undo_string)
 {
     m_fire_events = fire_events;
@@ -204,7 +219,7 @@ ModifyProperties::ModifyProperties(tt_string_view undo_string, bool fire_events)
     m_UndoEventGenerated = true;
 }
 
-void ModifyProperties::addProperty(NodeProperty* prop, tt_string_view value)
+auto ModifyProperties::addProperty(NodeProperty* prop, std::string_view value) -> void
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -212,7 +227,7 @@ void ModifyProperties::addProperty(NodeProperty* prop, tt_string_view value)
     entry.revert_value = prop->as_string();
 }
 
-void ModifyProperties::addProperty(NodeProperty* prop, int value)
+auto ModifyProperties::addProperty(NodeProperty* prop, int value) -> void
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -220,7 +235,7 @@ void ModifyProperties::addProperty(NodeProperty* prop, int value)
     entry.revert_value = prop->as_string();
 }
 
-void ModifyProperties::Change()
+auto ModifyProperties::Change() -> void
 {
     for (auto& iter: m_properties)
     {
@@ -228,10 +243,12 @@ void ModifyProperties::Change()
     }
 
     if (m_fire_events)
+    {
         wxGetFrame().FireMultiPropEvent(this);
+    }
 }
 
-void ModifyProperties::Revert()
+auto ModifyProperties::Revert() -> void
 {
     for (auto& iter: m_properties)
     {
@@ -239,10 +256,12 @@ void ModifyProperties::Revert()
     }
 
     if (m_fire_events)
+    {
         wxGetFrame().FireMultiPropEvent(this);
+    }
 }
 
-size_t ModifyProperties::GetMemorySize()
+auto ModifyProperties::GetMemorySize() -> size_t
 {
     size_t total = sizeof(*this) + m_properties.size();
     for (auto& iter: m_properties)
@@ -255,7 +274,7 @@ size_t ModifyProperties::GetMemorySize()
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) :
+ModifyEventAction::ModifyEventAction(NodeEvent* event, std::string_view value) :
     m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
@@ -266,13 +285,13 @@ ModifyEventAction::ModifyEventAction(NodeEvent* event, tt_string_view value) :
     m_UndoEventGenerated = true;
 }
 
-void ModifyEventAction::Change()
+auto ModifyEventAction::Change() -> void
 {
     m_event->set_value(m_change_value);
     wxGetFrame().FireChangeEventHandler(m_event);
 }
 
-void ModifyEventAction::Revert()
+auto ModifyEventAction::Revert() -> void
 {
     m_event->set_value(m_revert_value);
     wxGetFrame().FireChangeEventHandler(m_event);
@@ -290,7 +309,7 @@ ChangePositionAction::ChangePositionAction(const NodeSharedPtr node, size_t posi
     Init(node, position);
 }
 
-void ChangePositionAction::Init(const NodeSharedPtr node, size_t position)
+auto ChangePositionAction::Init(const NodeSharedPtr node, size_t position) -> void
 {
     m_node = node;
     m_parent = node->get_ParentPtr();
@@ -298,7 +317,7 @@ void ChangePositionAction::Init(const NodeSharedPtr node, size_t position)
     m_change_pos = position;
     m_revert_pos = m_parent->get_ChildPosition(node);
 
-    SetUndoString(tt_string() << "change " << node->get_DeclName() << " position");
+    SetUndoString(wxue::string() << "change " << node->get_DeclName() << " position");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -306,20 +325,24 @@ void ChangePositionAction::Init(const NodeSharedPtr node, size_t position)
     m_RedoSelectEventGenerated = true;
 }
 
-void ChangePositionAction::Change()
+auto ChangePositionAction::Change() -> void
 {
     m_parent->ChangeChildPosition(m_node, m_change_pos);
     wxGetFrame().FirePositionChangedEvent(this);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node);
+    }
 }
 
-void ChangePositionAction::Revert()
+auto ChangePositionAction::Revert() -> void
 {
     m_parent->ChangeChildPosition(m_node, m_revert_pos);
     wxGetFrame().FirePositionChangedEvent(this);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node);
+    }
 }
 
 ///////////////////////////////// ChangeSizerType ////////////////////////////////////
@@ -359,9 +382,9 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
     }
 }
 
-void ChangeSizerType::Change()
+auto ChangeSizerType::Change() -> void
 {
-    auto pos = m_parent->get_ChildPosition(m_old_node.get());
+    const auto pos = m_parent->get_ChildPosition(m_old_node.get());
     m_parent->RemoveChild(m_old_node);
     m_old_node->set_Parent(NodeSharedPtr());
     m_parent->AdoptChild(m_node);
@@ -370,13 +393,15 @@ void ChangeSizerType::Change()
     wxGetFrame().FireDeletedEvent(m_old_node.get());
     wxGetFrame().FireCreatedEvent(m_node);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node.get());
+    }
     wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
-void ChangeSizerType::Revert()
+auto ChangeSizerType::Revert() -> void
 {
-    auto pos = m_parent->get_ChildPosition(m_node.get());
+    const auto pos = m_parent->get_ChildPosition(m_node.get());
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
     m_parent->AdoptChild(m_old_node);
@@ -385,7 +410,9 @@ void ChangeSizerType::Revert()
     wxGetFrame().FireDeletedEvent(m_node.get());
     wxGetFrame().FireCreatedEvent(m_old_node);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_old_node.get());
+    }
 }
 
 ///////////////////////////////// ChangeNodeType ////////////////////////////////////
@@ -429,7 +456,7 @@ static auto lst_common_properties = {
 
 };
 
-static void CopyCommonProperties(Node* old_node, Node* new_node)
+static auto CopyCommonProperties(Node* old_node, Node* new_node) -> void
 {
     for (auto prop: lst_common_properties)
     {
@@ -499,9 +526,9 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
     }
 }
 
-void ChangeNodeType::Change()
+auto ChangeNodeType::Change() -> void
 {
-    auto pos = m_parent->get_ChildPosition(m_old_node.get());
+    const auto pos = m_parent->get_ChildPosition(m_old_node.get());
     m_parent->RemoveChild(m_old_node);
     m_old_node->set_Parent(NodeSharedPtr());
     m_parent->AdoptChild(m_node);
@@ -510,13 +537,15 @@ void ChangeNodeType::Change()
     wxGetFrame().FireDeletedEvent(m_old_node.get());
     wxGetFrame().FireCreatedEvent(m_node);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node.get());
+    }
     wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
-void ChangeNodeType::Revert()
+auto ChangeNodeType::Revert() -> void
 {
-    auto pos = m_parent->get_ChildPosition(m_node.get());
+    const auto pos = m_parent->get_ChildPosition(m_node.get());
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
     m_parent->AdoptChild(m_old_node);
@@ -525,7 +554,9 @@ void ChangeNodeType::Revert()
     wxGetFrame().FireDeletedEvent(m_node.get());
     wxGetFrame().FireCreatedEvent(m_old_node);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_old_node.get());
+    }
 }
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
@@ -541,7 +572,7 @@ ChangeParentAction::ChangeParentAction(const NodeSharedPtr node, const NodeShare
     Init(node, parent, pos);
 }
 
-void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent, int pos)
+auto ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr parent, int pos) -> void
 {
     m_node = node;
     m_change_parent = parent;
@@ -552,7 +583,7 @@ void ChangeParentAction::Init(const NodeSharedPtr node, const NodeSharedPtr pare
     m_revert_row = node->as_int(prop_row);
     m_revert_col = node->as_int(prop_column);
 
-    SetUndoString(tt_string() << "change " << node->get_DeclName() << " parent");
+    SetUndoString(wxue::string() << "change " << node->get_DeclName() << " parent");
 
     m_UndoEventGenerated = true;
     m_RedoEventGenerated = true;
@@ -575,17 +606,23 @@ void ChangeParentAction::Change()
             // Since we deleted it from Navigation Panel, need to add it back
             wxGetFrame().FireParentChangedEvent(this);
             if (isAllowedSelectEvent())
+            {
                 wxGetFrame().SelectNode(m_node);
+            }
         }
     }
     else
     {
         bool result = false;
         if (m_pos >= 0)
+        {
             result = m_change_parent->AddChild(static_cast<size_t>(m_pos), m_node);
+        }
         else
+        {
             result = m_change_parent->AddChild(m_node);
-        ASSERT_MSG(result, tt_string("Unable to change parent of ")
+        }
+        ASSERT_MSG(result, wxue::string("Unable to change parent of ")
                                << m_node->get_NodeName() << " to "
                                << m_change_parent->get_NodeName());
         if (result)
@@ -594,12 +631,14 @@ void ChangeParentAction::Change()
 
             wxGetFrame().FireParentChangedEvent(this);
             if (isAllowedSelectEvent())
+            {
                 wxGetFrame().SelectNode(m_node);
+            }
         }
     }
 }
 
-void ChangeParentAction::Revert()
+auto ChangeParentAction::Revert() -> void
 {
     m_change_parent->RemoveChild(m_node);
 
@@ -613,7 +652,9 @@ void ChangeParentAction::Revert()
 
     wxGetFrame().FireParentChangedEvent(this);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node);
+    }
 }
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
@@ -635,7 +676,7 @@ AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) :
     m_UndoSelectEventGenerated = true;
 }
 
-void AppendGridBagAction::Change()
+auto AppendGridBagAction::Change() -> void
 {
     m_node->set_Parent(m_parent);
     if (m_pos == -1 && m_parent->get_ChildCount() > 0 &&
@@ -648,7 +689,9 @@ void AppendGridBagAction::Change()
     {
         m_parent->AddChild(m_node);
         if (m_pos >= 0)
+        {
             m_parent->ChangeChildPosition(m_node, m_pos);
+        }
     }
 
     if (m_fix_duplicate_names)
@@ -662,23 +705,26 @@ void AppendGridBagAction::Change()
 
     wxGetFrame().FireCreatedEvent(m_node);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_node, evt_flags::fire_event | evt_flags::force_selection);
+    }
 }
 
-void AppendGridBagAction::Revert()
+auto AppendGridBagAction::Revert() -> void
 {
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
 
     wxGetFrame().FireDeletedEvent(m_node.get());
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_old_selected.get());
+    }
 }
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
 
-GridBagAction::GridBagAction(Node* cur_gbsizer, const tt_string& undo_str) :
-    UndoAction(undo_str.c_str())
+GridBagAction::GridBagAction(Node* cur_gbsizer, std::string_view undo_str) : UndoAction(undo_str)
 {
     m_RedoEventGenerated = true;
     m_RedoSelectEventGenerated = true;
@@ -726,11 +772,13 @@ void GridBagAction::Change()
 
         wxGetFrame().FireGridBagActionEvent(this);
         if (isAllowedSelectEvent())
+        {
             wxGetFrame().SelectNode(m_cur_gbsizer);
+        }
     }
 }
 
-void GridBagAction::Revert()
+auto GridBagAction::Revert() -> void
 {
     auto nav_panel = wxGetFrame().getNavigationPanel();
     wxWindowUpdateLocker freeze(nav_panel);
@@ -754,10 +802,12 @@ void GridBagAction::Revert()
 
     wxGetFrame().FireGridBagActionEvent(this);
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(m_cur_gbsizer);
+    }
 }
 
-void GridBagAction::Update()
+auto GridBagAction::Update() -> void
 {
     auto nav_panel = wxGetFrame().getNavigationPanel();
 
@@ -773,17 +823,25 @@ void GridBagAction::Update()
 
 ///////////////////////////////// SortProjectAction ////////////////////////////////////
 
-static bool CompareClassNames(NodeSharedPtr a, NodeSharedPtr b)
+static auto CompareClassNames(NodeSharedPtr a, NodeSharedPtr b) -> bool
 {
     // Sort folders first, then forms
     if (a->is_Gen(gen_folder) && !b->is_Gen(gen_folder))
+    {
         return true;
-    else if (a->is_Gen(gen_folder) && b->is_Gen(gen_folder))
+    }
+    if (a->is_Gen(gen_folder) && b->is_Gen(gen_folder))
+    {
         return (a->as_string(prop_label).compare(b->as_string(prop_label)) < 0);
-    else if (a->is_Gen(gen_sub_folder) && !b->is_Gen(gen_sub_folder))
+    }
+    if (a->is_Gen(gen_sub_folder) && !b->is_Gen(gen_sub_folder))
+    {
         return true;
-    else if (a->is_Gen(gen_sub_folder) && b->is_Gen(gen_sub_folder))
+    }
+    if (a->is_Gen(gen_sub_folder) && b->is_Gen(gen_sub_folder))
+    {
         return (a->as_string(prop_label).compare(b->as_string(prop_label)) < 0);
+    }
     return (a->as_string(prop_class_name).compare(b->as_string(prop_class_name)) < 0);
 }
 
@@ -799,7 +857,7 @@ SortProjectAction::SortProjectAction()
     m_old_project = NodeCreation.MakeCopy(Project.get_ProjectNode());
 }
 
-void SortProjectAction::Change()
+auto SortProjectAction::Change() -> void
 {
     auto& children = Project.get_ChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
@@ -814,10 +872,12 @@ void SortProjectAction::Change()
 
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(Project.get_ProjectNode());
+    }
 }
 
-void SortProjectAction::SortFolder(Node* folder)
+auto SortProjectAction::SortFolder(Node* folder) -> void
 {
     auto& children = folder->get_ChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
@@ -831,7 +891,7 @@ void SortProjectAction::SortFolder(Node* folder)
     }
 }
 
-void SortProjectAction::Revert()
+auto SortProjectAction::Revert() -> void
 {
     Project.get_ProjectNode()->removeAllChildren();
     for (const auto& child: m_old_project->get_ChildNodePtrs())
@@ -841,5 +901,7 @@ void SortProjectAction::Revert()
 
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())
+    {
         wxGetFrame().SelectNode(Project.get_ProjectNode());
+    }
 }

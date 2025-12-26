@@ -21,10 +21,12 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 #include "write_code.h"       // Write code to Scintilla or file
+#include "wxue_namespace/wxue_string.h"         // wxue::SaveCwd
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 #include "ui_images.h"
 
@@ -50,13 +52,13 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     {
         auto bundle = ProjectImages.GetPropertyImageBundle(node->as_string(prop_bitmap));
 
-        tt_view_vector mstr(node->as_string(prop_bitmap), ';');
+        wxue::ViewVector mstr(std::string_view(node->as_string(prop_bitmap)), ';');
 
         if (mstr.size() > 1)
         {
             if (bundle && bundle->lst_filenames.size())
             {
-                tt_string list;
+                wxue::string list;
                 for (auto& iter: bundle->lst_filenames)
                 {
                     if (list.size())
@@ -65,11 +67,11 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
                     }
                     list << iter;
                 }
-                m_image_name->SetLabel(list.make_wxString());
+                m_image_name->SetLabel(list.wx());
             }
             else
             {
-                m_image_name->SetLabel(mstr[1].make_wxString());
+                m_image_name->SetLabel(mstr[1].wx());
             }
         }
         else
@@ -78,7 +80,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
         }
 
         auto bmp = node->as_wxBitmapBundle(prop_bitmap);
-        ASSERT_MSG(bmp.IsOk(), tt_string("as_wxBitmapBundle(\"")
+        ASSERT_MSG(bmp.IsOk(), wxue::string("as_wxBitmapBundle(\"")
                                    << node->as_string(prop_bitmap) << "\") failed");
         if (!bmp.IsOk())
         {
@@ -90,7 +92,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
             m_bitmap->SetBitmap(bmp);
             auto default_size = bmp.GetDefaultSize();
 
-            tt_string info("Default wxSize: ");
+            wxue::string info("Default wxSize: ");
             info << default_size.GetWidth() << " x " << default_size.GetHeight();
             m_text_info->SetLabel(info);
         }
@@ -109,14 +111,14 @@ bool EmbeddedImageGenerator::AllowPropertyChange(wxPropertyGridEvent* event, Nod
 {
     if (prop->isProp(prop_bitmap))
     {
-        tt_string value = event->GetValue().GetString().utf8_string();
+        wxue::string value = event->GetValue().GetString().utf8_string();
         if (value.empty() || value.starts_with("Art"))
             return true;
 
-        tt_string_vector parts_new(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        wxue::StringVector parts_new(value, BMP_PROP_SEPARATOR, wxue::TRIM::both);
         if (parts_new.size() <= IndexImage || parts_new[IndexImage].empty())
             return true;
-        tt_string_vector parts_old(prop->as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        wxue::StringVector parts_old(prop->as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
         if (parts_old.size() <= IndexImage || parts_old[IndexImage].empty())
             return true;
 
@@ -188,15 +190,15 @@ void BaseCodeGenerator::GenerateImagesForm()
         m_source->Indent();
         m_source->SetLastLineBlank();
         {
-            tt_string_vector function;
-            function.ReadString(txt_get_image_function);
+            wxue::StringVector function;
+            function.ReadString(std::string_view(txt_get_image_function));
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
             }
 
             function.clear();
-            function.ReadString(txt_get_bundle_svg_function);
+            function.ReadString(std::string_view(txt_get_bundle_svg_function));
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -211,7 +213,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 continue;
 
             m_source->writeLine();
-            tt_string code;
+            wxue::string code;
             code.reserve(Project.as_size_t(prop_cpp_line_length) + 16);
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->base_image().array_size & 0xFFFFFFFF);
@@ -260,7 +262,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 }
 
                 m_source->writeLine();
-                tt_string code("wxBitmapBundle bundle_");
+                wxue::string code("wxBitmapBundle bundle_");
 
                 if (embed->base_image().type == wxBITMAP_TYPE_SVG)
                 {
@@ -310,7 +312,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                             // name.remove_extension();
                             // name.Replace(".", "_", true);  // fix wxFormBuilder header files
                             embed = ProjectImages.GetEmbeddedImage(iter);
-                            ASSERT_MSG(embed, tt_string("Unable to locate embedded image for ")
+                            ASSERT_MSG(embed, wxue::string("Unable to locate embedded image for ")
                                                   << iter);
                             if (embed)
                             {
@@ -356,7 +358,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 continue;
 
             m_source->writeLine();
-            tt_string code("wxImage image_");
+            wxue::string code("wxImage image_");
             code << embed->base_image().array_name << "()";
             m_source->writeLine(code);
             m_source->writeLine("{");
@@ -403,7 +405,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                     continue;
                 }
 
-                tt_string code("wxBitmapBundle bundle_");
+                wxue::string code("wxBitmapBundle bundle_");
                 if (embed->base_image().type == wxBITMAP_TYPE_SVG)
                 {
                     code << embed->base_image().array_name << "(int width, int height);";
@@ -429,7 +431,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             if (embed->base_image().type == wxBITMAP_TYPE_SVG ||
                 embed->base_image().type == wxBITMAP_TYPE_ANI)
                 continue;
-            tt_string code("wxImage image_");
+            wxue::string code("wxImage image_");
             code << embed->base_image().array_name << "();";
             m_header->writeLine(code);
         }
@@ -442,7 +444,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 if (iter_array->get_Form() != m_form_node)
                     continue;
 
-                tt_string line("extern const unsigned char ");
+                wxue::string line("extern const unsigned char ");
                 line << iter_array->base_image().array_name << '['
                      << (iter_array->base_image().array_size & 0xFFFFFFFF) << "];";
                 if (iter_array->base_image().filename.size())
@@ -532,10 +534,10 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images,
 
 void img_list::FixPropBitmap(Node* parent)
 {
-    tt_cwd cwd(tt_cwd::restore);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
-    tt_string art_directory = Project.as_string(prop_art_directory);
+    wxue::string art_directory = Project.as_string(prop_art_directory);
 
     for (const auto& child: parent->get_ChildNodePtrs())
     {
@@ -548,15 +550,15 @@ void img_list::FixPropBitmap(Node* parent)
                 if (description.starts_with("Embed") || description.starts_with("SVG") ||
                     description.starts_with("XPM"))
                 {
-                    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                    wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
                     if (parts.size() > IndexImage && parts[IndexImage].size())
                     {
-                        tt_string check_path(art_directory);
-                        tt_string file_part = parts[IndexImage].filename();
+                        wxue::string check_path(art_directory);
+                        wxue::string file_part = parts[IndexImage].filename();
                         check_path.append_filename(file_part);
                         if (check_path.file_exists() && file_part != parts[IndexImage])
                         {
-                            tt_string new_description;
+                            wxue::string new_description;
                             new_description << parts[IndexType] << BMP_PROP_SEPARATOR << file_part;
                             for (size_t idx = IndexImage + 1; idx < parts.size(); idx++)
                             {
@@ -579,12 +581,12 @@ void img_list::FixPropBitmap(Node* parent)
 bool img_list::CompareImageNames(NodeSharedPtr a, NodeSharedPtr b)
 {
     auto& description_a = a->as_string(prop_bitmap);
-    tt_view_vector parts_a(description_a, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::ViewVector parts_a(description_a, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
         return true;
 
     auto& description_b = b->as_string(prop_bitmap);
-    tt_view_vector parts_b(description_b, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::ViewVector parts_b(description_b, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts_b.size() <= IndexImage || parts_b[IndexImage].empty())
         return false;
 

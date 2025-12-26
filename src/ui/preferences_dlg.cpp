@@ -486,6 +486,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 #include "mainframe.h"                     // CMainFrame -- Main window frame
 #include "preferences.h"                   // Set/Get wxUiEditor preferences
 #include "project_handler.h"               // ProjectHandler class
+#include "wxue_namespace/wxue_string.h"    // wxue::string, wxue::string_view
 
 void PreferencesDlg::OnInit(wxInitDialogEvent& event)
 {
@@ -736,7 +737,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
 
     if (UserPrefs.get_CodeDisplayFont() != m_btn_font->GetMainLabel().utf8_string())
     {
-        FontProperty font_prop(tt_string_view(m_btn_font->GetMainLabel().utf8_string()));
+        FontProperty font_prop(wxue::string_view(m_btn_font->GetMainLabel().utf8_string()));
         auto font = font_prop.GetFont();
         UserPrefs.set_CodeDisplayFont(font_prop.as_string());
         wxGetFrame().GetCppPanel()->SetCodeFont(font);
@@ -745,7 +746,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
         wxGetFrame().GetXrcPanel()->SetCodeFont(font);
     }
 
-    auto line_length = tt::atoi(m_cpp_line_length.ToStdString());
+    auto line_length = wxue::atoi(m_cpp_line_length.ToStdString());
 
     auto fix_line_length = [&]()
     {
@@ -758,16 +759,16 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
     fix_line_length();
     UserPrefs.set_CppLineLength(line_length);
 
-    line_length = tt::atoi(m_python_line_length.ToStdString());
+    line_length = wxue::atoi(m_python_line_length.ToStdString());
     fix_line_length();
     UserPrefs.set_PythonLineLength(line_length);
 
-    line_length = tt::atoi(m_ruby_line_length.ToStdString());
+    line_length = wxue::atoi(m_ruby_line_length.ToStdString());
     fix_line_length();
     UserPrefs.set_RubyLineLength(line_length);
 
     auto old_size = UserPrefs.get_IconSize();
-    UserPrefs.set_IconSize(tt::atoi(m_choice_icon_size->GetStringSelection().ToStdString()));
+    UserPrefs.set_IconSize(wxue::atoi(m_choice_icon_size->GetStringSelection().ToStdString()));
     bool is_icon_size_changed = old_size != UserPrefs.get_IconSize();
 
     // UserPrefs.set_CodeDisplayFont(m_code_font_picker->GetSelectedFontInfo());
@@ -776,7 +777,7 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
 
     if (is_prop_grid_changed || is_dark_changed || is_icon_size_changed)
     {
-        tt_string msg("You must close and reopen wxUiEditor for");
+        wxue::string msg("You must close and reopen wxUiEditor for");
         if (is_prop_grid_changed)
         {
             msg += " the Property Panel";

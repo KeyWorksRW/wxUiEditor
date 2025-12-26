@@ -23,8 +23,9 @@
 #include <optional>
 #include <vector>
 
-#include "base_generator.h"  // BaseGenerator -- Base Generator class
-#include "code.h"            // Code -- Helper class for generating code
+#include "base_generator.h"              // BaseGenerator -- Base Generator class
+#include "code.h"                        // Code -- Helper class for generating code
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 class Node;
 
@@ -39,12 +40,12 @@ class FontProperty;
 // prop_internationalize is true.
 //
 // Will return "wxEmptyString" if prop_name is empty.
-auto GenerateQuotedString(const tt_string& str) -> tt_string;
+auto GenerateQuotedString(const wxue::string& str) -> wxue::string;
 
-auto GenerateQuotedString(Node* node, GenEnum::PropName prop_name) -> tt_string;
+auto GenerateQuotedString(Node* node, GenEnum::PropName prop_name) -> wxue::string;
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
-auto ConvertToCodeString(const tt_string& text) -> tt_string;
+auto ConvertToCodeString(const wxue::string& text) -> wxue::string;
 
 // Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
@@ -52,25 +53,25 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 
 // This is *NOT* the same as get_NodeName() -- this will handle wxStaticBox and
 // wxCollapsiblePane parents as well as "normal" parents
-auto get_ParentName(Node* node, GenLang language) -> tt_string;
+auto get_ParentName(Node* node, GenLang language) -> wxue::string;
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
 // Set is_single to true for a non-button control.
-auto GenBtnBimapCode(Node* node, tt_string& code, bool is_single = false) -> bool;
+auto GenBtnBimapCode(Node* node, wxue::string& code, bool is_single = false) -> bool;
 
 // Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
 // returns wxueImage() (which is a wxImage). pDpiWindow is the name of the window
 // to use for wxBitmapBundle::GetBitmapFrom()
-auto GenerateBitmapCode(const tt_string& description) -> tt_string;
+auto GenerateBitmapCode(const wxue::string& description) -> wxue::string;
 
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
 // Returns true if the returned string contains a wxVector. For 3.1 code, this will start
 // with "#if wxCHECK_VERSION(3, 1, 6)" and caller must supply #else and #endif.
-auto GenerateBundleCode(const tt_string& description, tt_string& code) -> bool;
+auto GenerateBundleCode(const wxue::string& description, wxue::string& code) -> bool;
 
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.
@@ -85,13 +86,13 @@ auto GetBitlistInt(Node* node, GenEnum::PropName prop_name) -> int;
 
 // This generates code for the header file for Get() and Set() functions using function names
 // specified by the user in the project file.
-auto GenGetSetCode(Node* node) -> std::optional<tt_string>;
+auto GenGetSetCode(Node* node) -> std::optional<wxue::string>;
 
 void GenValidatorSettings(Code& code);
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.
-auto GenerateIconCode(const tt_string& description) -> tt_string;
+auto GenerateIconCode(const wxue::string& description) -> wxue::string;
 
 // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
 // Generates wxNullColour if the property is empty.
@@ -137,11 +138,11 @@ auto PerlBitmapList(Code& code, GenEnum::PropName prop) -> bool;
 
 // Deterimes where the perl code will be written to, and returns an absolute path to that
 // location.
-auto MakePerlPath(Node* node) -> tt_string;
+auto MakePerlPath(Node* node) -> wxue::string;
 
 // If returned string is non-empty, it will contain
 // use "Wx::Event qw(events);"
-auto GatherPerlNodeEvents(Node* node) -> tt_string;
+auto GatherPerlNodeEvents(Node* node) -> wxue::string;
 
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
@@ -153,7 +154,7 @@ auto PythonBundleCode(Code& code, GenEnum::PropName prop) -> bool;
 
 // Deterimes where the python code will be written to, and returns an absolute path to that
 // location.
-auto MakePythonPath(Node* node) -> tt_string;
+auto MakePythonPath(Node* node) -> wxue::string;
 
 // Python version of GenBtnBimapCode()
 void PythonBtnBimapCode(Code& code, bool is_single = false);
@@ -162,4 +163,4 @@ void PythonBtnBimapCode(Code& code, bool is_single = false);
 
 // Deterimes where the ruby code will be written to, and returns an absolute path to that
 // location.
-auto MakeRubyPath(Node* node) -> tt_string;
+auto MakeRubyPath(Node* node) -> wxue::string;

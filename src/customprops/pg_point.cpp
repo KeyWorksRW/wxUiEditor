@@ -10,11 +10,11 @@
 
 #include "pg_point.h"
 
-#include "image_handler.h"   // ImageHandler class
-#include "mainframe.h"       // MainFrame -- Main window frame
-#include "node.h"            // Node -- Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "utils.h"           // Utility functions that work with properties
+#include "image_handler.h"                    // ImageHandler class
+#include "mainframe.h"                        // MainFrame -- Main window frame
+#include "node.h"                             // Node -- Node class
+#include "utils.h"                            // Utility functions that work with properties
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
@@ -26,7 +26,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     if ((type == CustomPointProperty::type_SVG || type == CustomPointProperty::type_ART) &&
         prop->HasValue() && prop->as_string().contains("["))
     {
-        tt_string value(prop->as_string().substr(prop->as_string().find('[') + 1));
+        wxue::string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
             value.pop_back();
         m_value = value;
@@ -34,8 +34,8 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     }
     else if (type == CustomPointProperty::type_BITMAP && prop->HasValue())
     {
-        tt_view_vector parts;
-        parts.SetString(prop->as_string(), ';');
+        wxue::ViewVector parts;
+        parts.SetString(std::string_view { prop->as_string() }, ';');
         if (parts.size() > IndexImage)
         {
             auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
@@ -76,7 +76,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     }
 }
 
-void CustomPointProperty::RefreshChildren()
+auto CustomPointProperty::RefreshChildren() -> void
 {
     wxString value = m_value;
     if (value.size())
@@ -89,7 +89,7 @@ void CustomPointProperty::RefreshChildren()
     }
 }
 
-wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int childIndex,
+wxVariant CustomPointProperty::ChildChanged([[maybe_unused]] wxVariant& thisValue, int childIndex,
                                             wxVariant& childValue) const
 {
     wxString value = childValue;
@@ -123,7 +123,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
     return value;
 }
 
-void CustomPointProperty::InitValues(tt_string_view value)
+auto CustomPointProperty::InitValues(wxue::string_view value) -> void
 {
     if (value.empty())
     {
@@ -132,7 +132,7 @@ void CustomPointProperty::InitValues(tt_string_view value)
     }
     else
     {
-        tt_view_vector parts;
+        wxue::ViewVector parts;
         if (value.contains(";"))
             parts.SetString(value, ';');
         else
@@ -154,32 +154,32 @@ void CustomPointProperty::InitValues(tt_string_view value)
 
         if (m_prop_type == type_ART && parts.size() > 1)
         {
-            m_point.x = tt::atoi(parts[0]);
-            m_point.y = tt::atoi(parts[1]);
+            m_point.x = wxue::atoi(parts[0]);
+            m_point.y = wxue::atoi(parts[1]);
             return;
         }
 
-        // We don't need to trim, because tt::atoi() skips leading whitespace
-        m_point.x = tt::atoi(parts[0]);
-        m_point.y = tt::atoi(parts[1]);
+        // We don't need to trim, because wxue::atoi() skips leading whitespace
+        m_point.x = wxue::atoi(parts[0]);
+        m_point.y = wxue::atoi(parts[1]);
 
         // If mainframe window was created before the project was loaded, then any values with 'd'
         // should already have been converted to pixels. This just ensures it still works in case we
         // missed something.
-        ASSERT_MSG(!tt::contains(value, 'd', tt::CASE::either),
+        ASSERT_MSG(!wxue::contains(value, 'd', wxue::CASE::either),
                    "'d' in size/point not converted when project loaded.");
-        if (tt::contains(value, 'd', tt::CASE::either))
+        if (wxue::contains(value, 'd', wxue::CASE::either))
         {
             m_point = wxGetApp().getMainFrame()->ConvertDialogToPixels(m_point);
         }
 
-        m_dpi_scaling = (tt::contains(value, 'n', tt::CASE::either) == false);
+        m_dpi_scaling = (wxue::contains(value, 'n', wxue::CASE::either) == false);
     }
 }
 
-tt_string CustomPointProperty::CombineValues()
+auto CustomPointProperty::CombineValues() -> wxue::string
 {
-    tt_string value;
+    wxue::string value;
     value << m_point.x << ',' << m_point.y;
     if (!m_dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART &&
         m_prop_type != type_BITMAP)
@@ -198,13 +198,10 @@ wxString CustomBoolProperty::ValueToString(wxVariant& value, wxPGPropValFormatFl
         {
             return m_label;
         }
-        else
-        {
-            if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
-                return wxString();
+        if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
+            return wxString();
 
-            return (wxString("No ") + m_label);
-        }
+        return (wxString("No ") + m_label);
     }
 
     if (!(flags & wxPGPropValFormatFlags::FullValue))

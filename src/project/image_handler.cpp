@@ -20,15 +20,15 @@
 
 #include "image_handler.h"
 
-#include "bitmaps.h"           // Contains various images handling functions
-#include "mainframe.h"         // MainFrame -- Main window frame
-#include "node.h"              // Node class
-#include "project_handler.h"   // ProjectHandler -- Project class
-#include "pugixml.hpp"         // xml parser
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
-#include "tt_view_vector.h"    // tt_view_vector -- read/write line-oriented strings/files
-#include "ui_images.h"         // Contains various images handling functions
-#include "utils.h"             // Miscellaneous utility functions
+#include "bitmaps.h"                          // Contains various images handling functions
+#include "mainframe.h"                        // MainFrame -- Main window frame
+#include "node.h"                             // Node class
+#include "project_handler.h"                  // ProjectHandler -- Project class
+#include "pugixml.hpp"                        // xml parser
+#include "ui_images.h"                        // Contains various images handling functions
+#include "utils.h"                            // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string.h"       // wxue::string, wxue::string_view
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 ImageHandler& ProjectImages = ImageHandler::getInstance();  // NOLINT (cppcheck-suppress)
 
@@ -37,19 +37,19 @@ namespace wxue_img
     extern const unsigned char pulsing_unknown_gif[377];
 }
 
-auto ImageHandler::ConvertToLookup(const tt_string& description) -> tt_string
+auto ImageHandler::ConvertToLookup(const wxue::string& description) -> wxue::string
 {
-    tt_view_vector parts(description, ';', tt::TRIM::both);
+    wxue::ViewVector parts(description, ';', wxue::TRIM::both);
     ASSERT(parts.size() > 1)
 
-    tt_string lookup_str;
+    wxue::string lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
     return lookup_str;
 }
 
-auto ImageHandler::ConvertToLookup(const tt_string_vector* parts) -> tt_string
+auto ImageHandler::ConvertToLookup(const wxue::StringVector* parts) -> wxue::string
 {
-    tt_string lookup_str;
+    wxue::string lookup_str;
     lookup_str << (*parts)[0] << ';' << (*parts)[1].filename();
     return lookup_str;
 }
@@ -111,7 +111,7 @@ auto ImageHandler::CheckNode(Node* node) -> bool
     {
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
         {
-            tt_view_vector parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+            wxue::ViewVector parts(iter.as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
             if (parts[IndexType] != "Embed" || parts.size() <= IndexImage ||
                 parts[IndexImage].filename().empty() || parts[IndexImage] == art_directory)
             {
@@ -121,8 +121,8 @@ auto ImageHandler::CheckNode(Node* node) -> bool
             EmbeddedImage* embed = FindEmbedded(parts[IndexImage].filename());
             if (!embed)
             {
-                ASSERT_MSG(embed,
-                           std::format("Embedded image not found: {}", parts[IndexImage].as_str()));
+                ASSERT_MSG(embed, std::format("Embedded image not found: {}",
+                                              parts[IndexImage].ToStdString()));
                 continue;
             }
 
@@ -163,7 +163,7 @@ auto ImageHandler::CheckNode(Node* node) -> bool
     return is_changed;
 }
 
-wxImage ImageHandler::GetImage(const tt_string& description)
+wxImage ImageHandler::GetImage(const wxue::string& description)
 {
     if (description.starts_with("Embed;") || description.starts_with("XPM;") ||
         description.starts_with("Header;") || description.starts_with("Art;"))
@@ -173,7 +173,7 @@ wxImage ImageHandler::GetImage(const tt_string& description)
     return GetInternalImage("unknown");
 }
 
-wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description)
+wxBitmapBundle ImageHandler::GetBitmapBundle(const wxue::string& description)
 {
     if (description.starts_with("Embed;") || description.starts_with("XPM;") ||
         description.starts_with("Header;") || description.starts_with("Art;") ||
@@ -185,31 +185,33 @@ wxBitmapBundle ImageHandler::GetBitmapBundle(const tt_string& description)
     return wxue_img::bundle_unknown_svg(32, 32);
 }
 
-// Wrapper functions that convert string descriptions to tt_string_vector and call pointer versions
+// Wrapper functions that convert string descriptions to wxue::StringVector and call pointer
+// versions
 
-auto ImageHandler::GetPropertyBitmap(const tt_string& description, bool check_image) -> wxImage
+auto ImageHandler::GetPropertyBitmap(const wxue::string& description, bool check_image) -> wxImage
 {
-    tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     return GetPropertyBitmap(&parts, check_image);
 }
 
-auto ImageHandler::GetPropertyImageBundle(tt_string_view description, Node* node)
+auto ImageHandler::GetPropertyImageBundle(wxue::string_view description, Node* node)
     -> const ImageBundle*
 {
-    tt_string_vector parts(description, ';', tt::TRIM::both);
+    wxue::StringVector parts(description, ';', wxue::TRIM::both);
     return GetPropertyImageBundle(&parts, node);
 }
 
-auto ImageHandler::ProcessBundleProperty(const tt_string& description, Node* node) -> ImageBundle*
+auto ImageHandler::ProcessBundleProperty(const wxue::string& description, Node* node)
+    -> ImageBundle*
 {
-    tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     return ProcessBundleProperty(&parts, node);
 }
 
-auto ImageHandler::AddNewEmbeddedBundle(const tt_string& description, std::string_view org_path,
+auto ImageHandler::AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
                                         Node* form) -> bool
 {
-    tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     return AddNewEmbeddedBundle(&parts, org_path, form);
 }
 
@@ -217,7 +219,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const tt_string& description, std::strin
 // is encountered.
 //
 // Primary caller is ProcessBundleProperty() for retrieving all the images in a bundle.
-auto ImageHandler::GetPropertyBitmap(const tt_string_vector* parts, bool check_image) -> wxImage
+auto ImageHandler::GetPropertyBitmap(const wxue::StringVector* parts, bool check_image) -> wxImage
 {
     if (parts->size() <= IndexImage || (*parts)[IndexImage].empty())
     {
@@ -226,7 +228,7 @@ auto ImageHandler::GetPropertyBitmap(const tt_string_vector* parts, bool check_i
 
     wxImage image;
 
-    tt_string path = (*parts)[IndexImage];
+    wxue::string path = (*parts)[IndexImage];
 
     if (auto result = m_images.find(path.filename()); result != m_images.end())
     {
@@ -236,7 +238,7 @@ auto ImageHandler::GetPropertyBitmap(const tt_string_vector* parts, bool check_i
     {
         if ((*parts)[IndexArtID].contains("|"))
         {
-            tt_string_vector id_client((*parts)[IndexArtID], '|');
+            wxue::StringVector id_client((*parts)[IndexArtID], '|');
             ASSERT_MSG(m_allow_ui, "We should never get here if m_allow_ui is false");
             image = (wxArtProvider::GetBitmapBundle(id_client[0],
                                                     wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
@@ -245,7 +247,7 @@ auto ImageHandler::GetPropertyBitmap(const tt_string_vector* parts, bool check_i
         }
         else
         {
-            image = (wxArtProvider::GetBitmapBundle((*parts)[IndexArtID].make_wxString(),
+            image = (wxArtProvider::GetBitmapBundle((*parts)[IndexArtID].wx(),
                                                     wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
                          .GetBitmapFor(wxGetFrame().getWindow()))
                         .ConvertToImage();
@@ -317,7 +319,7 @@ auto ImageHandler::GetPropertyBitmap(const tt_string_vector* parts, bool check_i
     return image;
 }
 
-EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
+EmbeddedImage* ImageHandler::GetEmbeddedImage(wxue::string_view path)
 {
     if (auto result = m_map_embedded.find(path.filename()); result != m_map_embedded.end())
     {
@@ -329,13 +331,13 @@ EmbeddedImage* ImageHandler::GetEmbeddedImage(tt_string_view path)
 
 // This is called in BaseCodeGenerator::CollectImageHeaders (gen_base.cpp) when an animation file is
 // found that was not previously loaded.
-bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animation)
+bool ImageHandler::AddEmbeddedImage(wxue::string path, Node* form, bool is_animation)
 {
     if (!path.file_exists())
     {
         if (m_project_node->HasValue(prop_art_directory))
         {
-            tt_string art_path = m_project_node->as_string(prop_art_directory);
+            wxue::string art_path = m_project_node->as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
             {
@@ -362,7 +364,7 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
 
     // Note that path may now contain the prop_art_directory prefix
 
-    if (auto pos = path.find_last_of('.'); ttwx::is_found(pos))
+    if (auto pos = path.find_last_of('.'); wxue::is_found(pos))
     {
         if (path.contains("_16x16."))
         {
@@ -418,9 +420,9 @@ bool ImageHandler::AddEmbeddedImage(tt_string path, Node* form, bool is_animatio
     return final_result;
 }
 
-auto ImageHandler::AddNewEmbeddedImage(const tt_string& path, Node* form) -> bool
+auto ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form) -> bool
 {
-    wxFFileInputStream stream(path.make_wxString());
+    wxFFileInputStream stream(path.wx());
     if (!stream.IsOk())
     {
         return false;
@@ -507,7 +509,7 @@ void ImageHandler::CollectBundles()
         wxBusyCursor wait;
     }
 
-    tt_cwd save_cwd(true);
+    wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.get_ProjectPath().ChangeDir();
 
     std::vector<Node*> forms;
@@ -548,7 +550,7 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
             const auto& value = iter.as_string();
             if (value.starts_with("Embed"))
             {
-                tt_view_vector parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
+                wxue::ViewVector parts(value, BMP_PROP_SEPARATOR, wxue::TRIM::both);
                 if (parts[IndexImage].size())
                 {
                     if (!m_map_embedded.contains(parts[IndexImage].filename()))
@@ -568,14 +570,14 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
 
 // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
 // depending on the type of the image file.
-auto ImageHandler::AddNewEmbeddedBundle(const tt_string_vector* parts, std::string_view org_path,
+auto ImageHandler::AddNewEmbeddedBundle(const wxue::StringVector* parts, std::string_view org_path,
                                         Node* form) -> bool
 {
     ASSERT(parts->size() > 1)
 
     auto lookup_str = ConvertToLookup(parts);
     ImageBundle img_bundle;
-    tt_string path(org_path);
+    wxue::string path(org_path);
 
     if (!ResolveBundlePath(path))
     {
@@ -629,7 +631,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const tt_string_vector* parts, std::stri
             any, @1_5x, @1_75, x@2x
     */
 
-    if (tt_string extension = path.extension(); extension.size())
+    if (wxue::string extension = path.extension(); extension.size())
     {
         if (path.contains("_16x16.") || path.contains("_24x24."))
         {
@@ -645,7 +647,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const tt_string_vector* parts, std::stri
     return true;
 }
 
-auto ImageHandler::ResolveBundlePath(tt_string& path) -> bool
+auto ImageHandler::ResolveBundlePath(wxue::string& path) -> bool
 {
     if (path.file_exists())
     {
@@ -657,7 +659,7 @@ auto ImageHandler::ResolveBundlePath(tt_string& path) -> bool
         return false;
     }
 
-    tt_string art_path = m_project_node->as_string(prop_art_directory);
+    wxue::string art_path = m_project_node->as_string(prop_art_directory);
     art_path.append_filename(path);
     if (!art_path.file_exists())
     {
@@ -668,7 +670,7 @@ auto ImageHandler::ResolveBundlePath(tt_string& path) -> bool
     return true;
 }
 
-auto ImageHandler::AddFixedSizeBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+auto ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
                                               ImageBundle& img_bundle) -> void
 {
     if (path.contains("_16x16."))
@@ -711,10 +713,10 @@ auto ImageHandler::AddFixedSizeBundleVariants(tt_string& path, Node* form, Embed
     }
 }
 
-auto ImageHandler::AddScalableBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+auto ImageHandler::AddScalableBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
                                              ImageBundle& img_bundle) -> void
 {
-    tt_string additional_path = path;
+    wxue::string additional_path = path;
     auto map_pos = map_bundle_extensions.begin();
     for (; map_pos != map_bundle_extensions.end(); ++map_pos)
     {
@@ -727,7 +729,7 @@ auto ImageHandler::AddScalableBundleVariants(tt_string& path, Node* form, Embedd
     // This will be the most common case where the first filename contains no suffix.
     if (map_pos == map_bundle_extensions.end())
     {
-        tt_string file_extension = additional_path.extension();
+        wxue::string file_extension = additional_path.extension();
         additional_path.remove_extension();
         auto erase_pos = additional_path.size();
         for (map_pos = map_bundle_extensions.begin(); map_pos != map_bundle_extensions.end();
@@ -773,10 +775,10 @@ auto ImageHandler::AddScalableBundleVariants(tt_string& path, Node* form, Embedd
     }
 }
 
-EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string& path, Node* form,
+EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* form,
                                                     EmbeddedImage* embed)
 {
-    wxFFileInputStream stream(path.make_wxString());
+    wxFFileInputStream stream(path.wx());
     if (!stream.IsOk())
     {
         return nullptr;
@@ -886,7 +888,8 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(tt_string& path, Node* form,
     return nullptr;
 }
 
-auto ImageHandler::ProcessBundleProperty(const tt_string_vector* parts, Node* node) -> ImageBundle*
+auto ImageHandler::ProcessBundleProperty(const wxue::StringVector* parts, Node* node)
+    -> ImageBundle*
 {
     ASSERT(parts->size() > 1)
 
@@ -939,7 +942,7 @@ auto ImageHandler::ProcessBundleProperty(const tt_string_vector* parts, Node* no
 
     img_bundle.lst_filenames.emplace_back((*parts)[IndexImage]);
 
-    if (auto pos = (*parts)[IndexImage].find_last_of('.'); ttwx::is_found(pos))
+    if (auto pos = (*parts)[IndexImage].find_last_of('.'); wxue::is_found(pos))
     {
         if ((*parts)[IndexImage].contains("_16x16.") || (*parts)[IndexImage].contains("_24x24."))
         {
@@ -962,7 +965,7 @@ auto ImageHandler::ProcessBundleProperty(const tt_string_vector* parts, Node* no
     {
         wxVector<wxBitmap> bitmaps;
         bitmaps.emplace_back(image_first);
-        tt_string new_description;
+        wxue::string new_description;
         new_description << (*parts)[IndexType] << ';';
         new_description << img_bundle.lst_filenames[1];
         auto image_second = GetPropertyBitmap(new_description, false);
@@ -990,7 +993,7 @@ auto ImageHandler::ProcessBundleProperty(const tt_string_vector* parts, Node* no
     return &m_bundles[lookup_str];
 }
 
-auto ImageHandler::TryResolvePathWithArtDir(tt_string& path) -> bool
+auto ImageHandler::TryResolvePathWithArtDir(wxue::string& path) -> bool
 {
     if (path.file_exists())
     {
@@ -1002,7 +1005,7 @@ auto ImageHandler::TryResolvePathWithArtDir(tt_string& path) -> bool
         return false;
     }
 
-    tt_string art_path = m_project_node->as_string(prop_art_directory);
+    wxue::string art_path = m_project_node->as_string(prop_art_directory);
     art_path.append_filename(path);
     if (art_path.file_exists())
     {
@@ -1013,12 +1016,12 @@ auto ImageHandler::TryResolvePathWithArtDir(tt_string& path) -> bool
     return false;
 }
 
-auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const tt_string_vector* parts,
+auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* parts,
                                                    ImageBundle& img_bundle) -> void
 {
     if ((*parts)[IndexImage].contains("_16x16."))
     {
-        tt_string path((*parts)[IndexImage]);
+        wxue::string path((*parts)[IndexImage]);
         path.Replace("_16x16.", "_24x24.");
         if (TryResolvePathWithArtDir(path))
         {
@@ -1034,7 +1037,7 @@ auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const tt_string_vector* parts
     }
     else if ((*parts)[IndexImage].contains("_24x24."))
     {
-        tt_string path((*parts)[IndexImage]);
+        wxue::string path((*parts)[IndexImage]);
         path.Replace("_24x24.", "_36x36.");
         if (TryResolvePathWithArtDir(path))
         {
@@ -1050,10 +1053,10 @@ auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const tt_string_vector* parts
     }
 }
 
-auto ImageHandler::AddNonEmbeddedScalableVariants(const tt_string_vector* parts,
+auto ImageHandler::AddNonEmbeddedScalableVariants(const wxue::StringVector* parts,
                                                   ImageBundle& img_bundle) -> void
 {
-    tt_string path;
+    wxue::string path;
     auto pos = (*parts)[IndexImage].find_last_of('.');
     for (const auto& iter: suffixes)
     {
@@ -1066,7 +1069,7 @@ auto ImageHandler::AddNonEmbeddedScalableVariants(const tt_string_vector* parts,
     }
 }
 
-void ImageHandler::UpdateBundle(const tt_string_vector* parts, Node* node)
+void ImageHandler::UpdateBundle(const wxue::StringVector* parts, Node* node)
 {
     if (parts->size() < 2 || node->is_FormParent())
     {
@@ -1102,9 +1105,9 @@ void ImageHandler::UpdateBundle(const tt_string_vector* parts, Node* node)
     }
 }
 
-auto ImageHandler::GetPropertyBitmapBundle(tt_string_view description) -> wxBitmapBundle
+auto ImageHandler::GetPropertyBitmapBundle(wxue::string_view description) -> wxBitmapBundle
 {
-    tt_string_vector parts(description, ';', tt::TRIM::both);
+    wxue::StringVector parts(description, ';', wxue::TRIM::both);
     if (parts.size() < 2)
     {
         return wxue_img::bundle_unknown_svg(32, 32);
@@ -1119,12 +1122,12 @@ auto ImageHandler::GetPropertyBitmapBundle(tt_string_view description) -> wxBitm
     {
         if (parts[IndexArtID].contains("|"))
         {
-            tt_string_vector id_client(parts[IndexArtID], '|');
+            wxue::StringVector id_client(parts[IndexArtID], '|');
             return wxArtProvider::GetBitmapBundle(id_client[0],
                                                   wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
         }
 
-        return wxArtProvider::GetBitmapBundle(parts[IndexArtID].make_wxString(),
+        return wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx(),
                                               wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
     }
 
@@ -1136,7 +1139,7 @@ auto ImageHandler::GetPropertyBitmapBundle(tt_string_view description) -> wxBitm
     return wxue_img::bundle_unknown_svg(32, 32);
 }
 
-const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector* parts, Node* node)
+const ImageBundle* ImageHandler::GetPropertyImageBundle(const wxue::StringVector* parts, Node* node)
 {
     if (parts->size() < 2)
     {
@@ -1155,9 +1158,9 @@ const ImageBundle* ImageHandler::GetPropertyImageBundle(const tt_string_vector* 
     return nullptr;
 }
 
-void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimation* p_animation)
+void ImageHandler::GetPropertyAnimation(const wxue::string& description, wxAnimation* p_animation)
 {
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
 
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
@@ -1167,7 +1170,7 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
         return;
     }
 
-    tt_string path = parts[IndexImage];
+    wxue::string path = parts[IndexImage];
     if (!path.file_exists())
     {
         if (path == Project.as_string(prop_art_directory))
@@ -1201,7 +1204,7 @@ void ImageHandler::GetPropertyAnimation(const tt_string& description, wxAnimatio
     }
 }
 
-auto ImageHandler::AddSvgBundleImage(tt_string& path, Node* form) -> bool
+auto ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form) -> bool
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as
     // removing line breaks, leading spaces, etc.
@@ -1259,7 +1262,7 @@ auto ImageHandler::AddSvgBundleImage(tt_string& path, Node* form) -> bool
 
     if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
     {
-        FAIL_MSG(tt_string() << "Failed to copy stream data");
+        FAIL_MSG(wxue::string() << "Failed to copy stream data");
         return false;
     }
     save_strem.Close();
@@ -1283,7 +1286,7 @@ auto ImageHandler::AddSvgBundleImage(tt_string& path, Node* form) -> bool
     }
     else if (auto viewBox_attribute = root.attribute("viewBox"); viewBox_attribute)
     {
-        tt_string_vector parts(viewBox_attribute.as_sview(), ' ', tt::TRIM::left);
+        wxue::StringVector parts(viewBox_attribute.as_sview(), ' ', wxue::TRIM::left);
         if (parts.size() == 4)
         {
             size.x = parts[2].atoi();
@@ -1299,7 +1302,7 @@ auto ImageHandler::AddSvgBundleImage(tt_string& path, Node* form) -> bool
     embed->set_wxSize(size);
 
 #if defined(_DEBUG)
-    wxFile file_original(path.make_wxString(), wxFile::read);
+    wxFile file_original(path.wx(), wxFile::read);
     if (file_original.IsOpened())
     {
         auto file_size = file_original.Length();
@@ -1316,9 +1319,9 @@ auto ImageHandler::AddSvgBundleImage(tt_string& path, Node* form) -> bool
     return true;
 }
 
-auto ImageHandler::AddXpmBundleImage(const tt_string& path, Node* form) -> bool
+auto ImageHandler::AddXpmBundleImage(const wxue::string& path, Node* form) -> bool
 {
-    wxFFileInputStream stream(path.make_wxString());
+    wxFFileInputStream stream(path.wx());
     if (!stream.IsOk())
     {
         return false;
@@ -1356,15 +1359,15 @@ auto ImageHandler::AddXpmBundleImage(const tt_string& path, Node* form) -> bool
     return true;
 }
 
-tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
+wxue::string ImageHandler::GetBundleFuncName(const wxue::string& description)
 {
-    tt_string name;
+    wxue::string name;
 
     for (const auto& form: Project.get_ChildNodePtrs())
     {
         if (form->is_Gen(gen_Images))
         {
-            tt_string_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
             if (parts.size() < 2)
             {
                 // caller's description does not include a filename
@@ -1373,8 +1376,8 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
 
             for (const auto& child: form->get_ChildNodePtrs())
             {
-                tt_view_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                                                tt::TRIM::both);
+                wxue::ViewVector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                                  wxue::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;
@@ -1416,9 +1419,9 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string& description)
     return name;
 }
 
-tt_string ImageHandler::GetBundleFuncName(const tt_string_vector* parts)
+wxue::string ImageHandler::GetBundleFuncName(const wxue::StringVector* parts)
 {
-    tt_string name;
+    wxue::string name;
 
     for (const auto& form: Project.get_ChildNodePtrs())
     {
@@ -1426,8 +1429,8 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string_vector* parts)
         {
             for (const auto& child: form->get_ChildNodePtrs())
             {
-                tt_string_vector form_image_parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                                                  tt::TRIM::both);
+                wxue::StringVector form_image_parts(child->as_string(prop_bitmap),
+                                                    BMP_PROP_SEPARATOR, wxue::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;
@@ -1467,9 +1470,9 @@ tt_string ImageHandler::GetBundleFuncName(const tt_string_vector* parts)
 }
 
 auto ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size)
-    -> tt_string  // NOLINT (cppcheck-suppress)
+    -> wxue::string  // NOLINT (cppcheck-suppress)
 {
-    tt_string name;
+    wxue::string name;
     if (!embed || embed->get_Form() != Project.get_ImagesForm())
     {
         return name;

@@ -12,7 +12,9 @@
 #include "utils.h"           // Miscellaneous utilities
 #include "write_code.h"      // Write code to Scintilla or file
 
-void CppCodeGenerator::AdjustGenericClassName(Node* node, tt_string& code)
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
+void CppCodeGenerator::AdjustGenericClassName(Node* node, wxue::string& code)
 {
     auto ChangeClass = [&](const std::string& generic_class)
     {
@@ -24,8 +26,8 @@ void CppCodeGenerator::AdjustGenericClassName(Node* node, tt_string& code)
 
     if (node->is_Gen(gen_wxAnimationCtrl))
     {
-        if ((node->HasValue(prop_animation) &&
-             node->as_string(prop_animation).contains(".ani", tt::CASE::either)) ||
+        if ((node->HasValue(prop_animation) && wxue::string_view(node->as_string(prop_animation))
+                                                   .contains(".ani", wxue::CASE::either)) ||
             node->as_string(prop_subclass).starts_with("wxGeneric"))
         {
             // The generic version is required to display .ANI files on wxGTK.
@@ -82,19 +84,19 @@ void CppCodeGenerator::AdjustGenericClassName(Node* node, tt_string& code)
     }
 }
 
-void CppCodeGenerator::InsertPlatformSpecificVariable(const tt_string& platform,
-                                                      const tt_string& code, Permission perm)
+void CppCodeGenerator::InsertPlatformSpecificVariable(const wxue::string& platform,
+                                                      const wxue::string& code, Permission perm)
 {
     auto& target_map = (perm == Permission::Public) ? m_map_public_members : m_map_protected;
 
     if (!target_map.contains(platform))
     {
-        target_map[platform] = std::set<tt_string>();
+        target_map[platform] = std::set<wxue::string>();
     }
     target_map[platform].insert(code);
 }
 
-void CppCodeGenerator::InsertRegularMemberVariable(const tt_string& code,
+void CppCodeGenerator::InsertRegularMemberVariable(const wxue::string& code,
                                                    std::set<std::string>& code_lines)
 {
     code_lines.insert(code);
@@ -174,7 +176,7 @@ void CppCodeGenerator::ProcessClassAccessProperty(Node* node, Permission perm,
     }
 }
 
-void CppCodeGenerator::InsertMemberVariable(Node* node, const tt_string& code, Permission perm)
+void CppCodeGenerator::InsertMemberVariable(Node* node, const wxue::string& code, Permission perm)
 {
     if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
@@ -233,7 +235,7 @@ void CppCodeGenerator::GenCppValidatorFunctions(Node* node)
     }
 }
 
-void CppCodeGenerator::AppendBoolInitializer(tt_string& code, Node* node)
+void CppCodeGenerator::AppendBoolInitializer(wxue::string& code, Node* node)
 {
     auto* prop = node->get_PropPtr(prop_checked);
     bool bState = (prop && prop->as_bool());
@@ -248,7 +250,7 @@ void CppCodeGenerator::AppendBoolInitializer(tt_string& code, Node* node)
     code << " { " << (bState ? "true" : "false") << " };";
 }
 
-void CppCodeGenerator::AppendNumericInitializer(tt_string& code, Node* node)
+void CppCodeGenerator::AppendNumericInitializer(wxue::string& code, Node* node)
 {
     auto* prop = node->get_PropPtr(prop_value);
     if (!prop)
@@ -273,7 +275,7 @@ void CppCodeGenerator::AppendNumericInitializer(tt_string& code, Node* node)
     }
 }
 
-void CppCodeGenerator::AppendStringInitializer(tt_string& code, Node* node)
+void CppCodeGenerator::AppendStringInitializer(wxue::string& code, Node* node)
 {
     const auto& value = node->as_string(prop_value);
     if (value.size())
@@ -286,7 +288,7 @@ void CppCodeGenerator::AppendStringInitializer(tt_string& code, Node* node)
     }
 }
 
-void CppCodeGenerator::InsertValidatorVariable(Node* node, const tt_string& code,
+void CppCodeGenerator::InsertValidatorVariable(Node* node, const wxue::string& code,
                                                std::set<std::string>& code_lines)
 {
     // Validator variables are always written to the protected: section even if the
@@ -319,7 +321,7 @@ void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Nod
     {
         if (auto val_data_type = node->get_ValidatorDataType(); val_data_type.size())
         {
-            tt_string code;
+            wxue::string code;
             code << val_data_type << ' ' << var_name;
 
             if (val_data_type == "bool")

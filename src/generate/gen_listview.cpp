@@ -7,24 +7,26 @@
 
 #include <wx/listctrl.h>  // wxListCtrl class
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "gen_common.h"                         // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"                      // Common XRC generating functions
+#include "node.h"                               // Node class
+#include "utils.h"                              // Utility functions that work with properties
+#include "write_code.h"                         // WriteCode -- Write code to Scintilla or file
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_listview.h"
 
 wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget =
+        new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {
         auto headers = node->as_ArrayString(prop_column_labels);
         for (auto& label: headers)
-            widget->AppendColumn(label.make_wxString());
+            widget->AppendColumn(label.wx());
 
         if (node->HasValue(prop_contents))
         {
@@ -37,11 +39,11 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
             {
                 info.SetId(++row_id);
                 auto index = widget->InsertItem(info);
-                tt_string_vector columns(row, ';', tt::TRIM::both);
+                wxue::StringVector columns(row, ';', wxue::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size();
                      ++column)
                 {
-                    widget->SetItem(index, (to_int) column, columns[column].make_wxString());
+                    widget->SetItem(index, (to_int) column, columns[column].wx());
                 }
             }
         }
@@ -110,7 +112,7 @@ bool ListViewGenerator::SettingsCode(Code& code)
                 else
                     code.Eol().Str("idx = ");
                 code.NodeName().Function("InsertItem(info").EndFunction();
-                tt_string_vector columns(row, ';', tt::TRIM::both);
+                wxue::StringVector columns(row, ';', wxue::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size();
                      ++column)
                 {

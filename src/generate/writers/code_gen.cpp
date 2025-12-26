@@ -10,7 +10,9 @@
 
 #include "code.h"
 
-auto Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function) -> Code&
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+
+auto Code::GenFont(GenEnum::PropName prop_name, wxue::string_view font_function) -> Code&
 {
     FontProperty fontprop(m_node->get_PropPtr(prop_name));
     if (fontprop.isDefGuiFont())
@@ -43,7 +45,7 @@ auto Code::GenFont(GenEnum::PropName prop_name, tt_string_view font_function) ->
     return *this;
 }
 
-void Code::GenColourValue(tt_string_view colour_str, GenEnum::PropName prop_name)
+void Code::GenColourValue(wxue::string_view colour_str, GenEnum::PropName prop_name)
 {
     if (colour_str.contains("wx"))
     {
@@ -69,7 +71,7 @@ void Code::GenColourValue(tt_string_view colour_str, GenEnum::PropName prop_name
     }
 }
 
-void Code::GenSetColourFunction(tt_string_view function_name, bool for_property_sheet)
+void Code::GenSetColourFunction(wxue::string_view function_name, bool for_property_sheet)
 {
     if (m_node->is_Form())
     {
@@ -130,12 +132,12 @@ auto Code::GenSizerFlags() -> Code&
         // function.
         Add(m_node->as_string(prop_proportion)).Comma();
 
-        tt_string prop_combined_flags;
+        wxue::string prop_combined_flags;
         auto lambda = [&](GenEnum::PropName prop_name) -> void
         {
             if (const auto& prop = m_node->as_string(prop_name); prop.size())
             {
-                tt_string_vector vector(prop, "|", tt::TRIM::both);
+                wxue::StringVector vector(prop, "|", wxue::TRIM::both);
                 for (auto& iter: vector)
                 {
                     if (prop_combined_flags.size())
@@ -211,7 +213,7 @@ auto Code::GenSizerFlags() -> Code&
     return *this;
 }
 
-void Code::ProcessAlignmentFlags(const tt_string& prop)
+void Code::ProcessAlignmentFlags(const wxue::string& prop)
 {
     if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
         (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
@@ -261,7 +263,7 @@ void Code::ProcessAlignmentFlags(const tt_string& prop)
     }
 }
 
-void Code::ProcessSizerFlags(const tt_string& prop)
+void Code::ProcessSizerFlags(const wxue::string& prop)
 {
     if (prop.contains("wxEXPAND"))
     {
@@ -288,7 +290,7 @@ void Code::ProcessSizerFlags(const tt_string& prop)
     }
 }
 
-void Code::ProcessBorderFlags(const tt_string& prop, int border_size)
+void Code::ProcessBorderFlags(const wxue::string& prop, int border_size)
 {
     if (prop.contains("wxALL"))
     {
@@ -485,7 +487,7 @@ void Code::GenTooltipAndHelp()
     }
 }
 
-void Code::CallNodeOrFormFunction(tt_string_view function_name)
+void Code::CallNodeOrFormFunction(wxue::string_view function_name)
 {
     if (m_node->is_Form())
     {
@@ -497,7 +499,7 @@ void Code::CallNodeOrFormFunction(tt_string_view function_name)
     }
 }
 
-void Code::GenDefGuiFont(const FontProperty& fontprop, tt_string_view font_function)
+void Code::GenDefGuiFont(const FontProperty& fontprop, wxue::string_view font_function)
 {
     const auto* const font_var_name = is_perl() ? "$font" : "font";
 
@@ -542,13 +544,13 @@ void Code::GenDefGuiFont(const FontProperty& fontprop, tt_string_view font_funct
     SetFontOnControl(font_var_name, font_function);
 }
 
-void Code::ApplyFontProperty(const tt_string& font_var_name, tt_string_view method,
-                             tt_string_view value)
+void Code::ApplyFontProperty(const wxue::string& font_var_name, wxue::string_view method,
+                             wxue::string_view value)
 {
     Eol().Str(font_var_name).VariableMethod(method).Add(value).EndFunction();
 }
 
-void Code::SetFontOnControl(const tt_string& font_var_name, tt_string_view font_function)
+void Code::SetFontOnControl(const wxue::string& font_var_name, wxue::string_view font_function)
 {
     if (m_node->is_Form())
     {
@@ -673,7 +675,7 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
         if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
         {
             Eol().Str("$font_info->").Str("FaceName = ");
-            QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ";";
+            QuotedString(wxue::string() << fontprop.GetFaceName().utf8_string()) += ";";
         }
         if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
         {
@@ -692,7 +694,7 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
         if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
         {
             VariableMethod("FaceName(")
-                .QuotedString(tt_string() << fontprop.GetFaceName().utf8_string()) += ")";
+                .QuotedString(wxue::string() << fontprop.GetFaceName().utf8_string()) += ")";
         }
         if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
         {
@@ -717,7 +719,7 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
     }
 }
 
-void Code::ApplyFontToControl(tt_string_view font_function)
+void Code::ApplyFontToControl(wxue::string_view font_function)
 {
     const char* font_var = is_perl() ? "$font" : "font_info";
 

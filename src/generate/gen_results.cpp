@@ -10,14 +10,16 @@
 #include "gen_results.h"
 
 #include "../internal/compare/diff.h"  // Diff -- Compare for file diffs
-#include "file_codewriter.h"   // FileCodeWriter -- Write code to disk with test mode support
-#include "gen_common.h"        // GenerateCppFiles, GenerateXrcFiles, GenerateLanguageForm
-#include "lambdas.h"           // tt_cwd
-#include "mainapp.h"           // wxGetApp()
-#include "mainframe.h"         // MainFrame -- Main window frame
-#include "node.h"              // Node class
-#include "project_handler.h"   // Project
-#include "ttwx_view_vector.h"  // ttwx::ViewVector
+#include "file_codewriter.h"  // FileCodeWriter -- Write code to disk with test mode support
+#include "gen_common.h"       // GenerateCppFiles, GenerateXrcFiles, GenerateLanguageForm
+#include "mainapp.h"          // wxGetApp()
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // Project
+
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
+
+#include "ttwx/ttwx_view_vector.h"  // ttwx::ViewVector (for Diff::Compare)
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_cpp.h"
@@ -181,7 +183,7 @@ auto GenResults::Generate() -> bool
         StartClock();
     }
 
-    ttwx::SaveCwd cwd(ttwx::SaveCwd::restore);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     bool generate_result = false;
@@ -249,7 +251,7 @@ void GenResults::CollectFormsFromNodes()
     else if (m_scope == Scope::folder && m_start_node)
     {
         // Recursively collect forms from the folder
-        auto CollectFromFolder = [&](this auto&& self, Node* folder) -> void
+        auto CollectFromFolder = [&](auto&& self, Node* folder) -> void
         {
             for (const auto& child: folder->get_ChildNodePtrs())
             {
@@ -259,11 +261,11 @@ void GenResults::CollectFormsFromNodes()
                 }
                 else if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
                 {
-                    self(child.get());
+                    self(self, child.get());
                 }
             }
         };
-        CollectFromFolder(m_start_node);
+        CollectFromFolder(CollectFromFolder, m_start_node);
     }
 }
 
@@ -389,7 +391,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
         StartClock();
     }
 
-    tt_cwd cwd(true);
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     bool generate_result = false;
@@ -417,15 +419,8 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
         if (Project.as_bool(prop_combine_all_forms))
         {
             // Suppress deprecation warning - internal use of legacy function for combined mode
-#if defined(_MSC_VER)
-    #pragma warning(push)
-    #pragma warning(disable : 4996)  // deprecated
-#endif
             generate_result = GenerateXrcFiles(
                 *this, (comparison_only && !class_list.empty()) ? &class_list : nullptr);
-#if defined(_MSC_VER)
-    #pragma warning(pop)
-#endif
         }
         else
         {
@@ -527,8 +522,8 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             break;
 
         default:
-            FAIL_MSG(tt_string() << "GenerateLanguageForm called with unsupported language: "
-                                 << m_languages);
+            FAIL_MSG(wxString() << "GenerateLanguageForm called with unsupported language: "
+                                << m_languages);
             return false;
     }
 
@@ -549,15 +544,15 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             file_ext = ".xrc";
             break;
         default:
-            FAIL_MSG(tt_string() << "Unexpected m_languages value in extension switch: "
-                                 << m_languages);
+            FAIL_MSG(wxString() << "Unexpected m_languages value in extension switch: "
+                                << m_languages);
             return false;
     }
 
-    tt_string src_path(path);
+    wxue::string src_path(path);
     // Check extension on the filename only, not the full path
     // (path may contain dots in directory names like "C:/Users/user.name/...")
-    tt_string filename_only(src_path.filename());
+    wxue::string_view filename_only(src_path.filename());
     if (filename_only.extension().empty())
     {
         src_path += file_ext;
@@ -665,13 +660,13 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
     CppCodeGenerator codegen(form);
 
     // Set up header file path and writer
-    tt_string hdr_path(path);
+    wxue::string hdr_path(path);
     hdr_path.replace_extension(header_ext);
     auto hdr_cw = std::make_unique<FileCodeWriter>(hdr_path);
     codegen.SetHdrWriteCode(hdr_cw.get());
 
     // Set up source file path and writer
-    tt_string src_path(path);
+    wxue::string src_path(path);
     src_path.replace_extension(source_ext);
     auto src_cw = std::make_unique<FileCodeWriter>(src_path);
     codegen.SetSrcWriteCode(src_cw.get());

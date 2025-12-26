@@ -27,20 +27,20 @@ public:
 
     auto GetMaxColumn() { return m_max_column; }
     auto GetMaxRow() { return m_max_row; }
-    bool InsertNode(Node* gbsizer, Node* new_node);
+    [[nodiscard]] auto InsertNode(Node* gbsizer, Node* new_node) -> bool;
 
-    static bool MoveNode(Node* node, MoveDirection where, bool check_only);
-    static void GridBagSort(Node* gridbag);
+    [[nodiscard]] static auto MoveNode(Node* node, MoveDirection where, bool check_only) -> bool;
+    static auto GridBagSort(Node* gridbag) -> void;
 
 protected:
     size_t IncrementColumns(int row, int column, Node* gbsizer);
     size_t IncrementRows(int row, Node* gbsizer);
-    void Initialize();
+    auto Initialize() -> void;
 
-    static void MoveLeft(Node* node);
-    static void MoveRight(Node* node);
-    static void MoveUp(Node* node);
-    static void MoveDown(Node* node);
+    static auto MoveLeft(Node* node) -> void;
+    static auto MoveRight(Node* node) -> void;
+    static auto MoveUp(Node* node) -> void;
+    static auto MoveDown(Node* node) -> void;
 
 private:
     Node* m_gridbag;

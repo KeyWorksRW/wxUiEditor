@@ -13,15 +13,16 @@
 
 #include "import_xml.h"
 
-#include "base_generator.h"      // BaseGenerator -- Base Generator class
-#include "gen_enums.h"           // Enumerations for generators
-#include "mainframe.h"           // Main window frame
-#include "node.h"                // Node class
-#include "node_creator.h"        // NodeCreator class
-#include "ttwx.h"                // ttwx helpers for character and numeric conversions
-#include "ttwx_string_vector.h"  // ttwx::StringVector class
-#include "ttwx_view_vector.h"    // ttwx_view_vector class
-#include "utils.h"               // Utility functions that work with properties
+#include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "gen_enums.h"       // Enumerations for generators
+#include "mainframe.h"       // Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "utils.h"           // Utility functions that work with properties
+
+#include "wxue_namespace/wxue_string.h"         // wxue::string class
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector class
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector class
 
 using namespace GenEnum;
 
@@ -161,7 +162,8 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file
     return doc;
 }
 
-void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
+auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
+    -> void
 {
     auto flag_value = xml_prop.text().as_sview();
     std::string border_value = "";
@@ -298,7 +300,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
     }
 }
 
-void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop)
+auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop) -> void
 {
     if (node->is_Gen(gen_wxListBox) || node->is_Gen(gen_wxCheckListBox))
     {
@@ -438,7 +440,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->is_Gen(gen_wxFontPickerCtrl))
     {
-        tt_string style(xml_prop.text().as_view());
+        wxue::string style(xml_prop.text().as_view());
         if (style.contains("wxFNTP_DEFAULT_STYLE"))
         {
             node->set_value(prop_style, "wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL");
@@ -447,7 +449,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     else if (node->is_Gen(gen_wxListView))
     {
         std::string style = "";
-        ttwx::ViewVector mstr(xml_prop.text().as_view(), '|');
+        wxue::ViewVector mstr(xml_prop.text().as_view(), '|');
         for (auto& iter: mstr)
         {
             if (iter.starts_with("wxLC_ICON") || iter.starts_with("wxLC_SMALL_ICON") ||
@@ -545,7 +547,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
 }
 
-GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name, Node* parent)
+[[nodiscard]] auto ImportXML::ConvertToGenName(const std::string& object_name, Node* parent)
+    -> GenEnum::GenName
 {
     auto get_GenName = MapClassName(object_name);
 
@@ -565,7 +568,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name, Nod
             return gen_PanelForm;
         }
 
-        if (ttwx::is_found(parent->get_DeclName().find("book")))
+        if (wxue::is_found(parent->get_DeclName().find("book")))
         {
             return gen_BookPage;
         }
@@ -599,7 +602,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name, Nod
 }
 
 // Call this AFTER the node has been hooked up to it's parent to prevent duplicate var_names.
-void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
+auto ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node) -> void
 {
     for (auto& iter: xml_obj.attributes())
     {
@@ -642,7 +645,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
 
                 if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
                 {
-                    tt_string org_name(iter.value());
+                    wxue::string org_name(iter.value());
                     auto new_name = new_node->get_UniqueName(org_name);
                     prop->set_value(new_name);
                 }
@@ -652,7 +655,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
         {
             if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
             {
-                tt_string org_name(iter.value());
+                wxue::string org_name(iter.value());
                 auto new_name = new_node->get_UniqueName(org_name);
                 prop->set_value(new_name);
             }
@@ -664,7 +667,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
     }
 }
 
-void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent) -> void
 {
     for (auto& iter: xml_obj.children())
     {
@@ -739,7 +742,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     std::string label = ConvertEscapeSlashes(iter.text().as_view());
                     std::ranges::replace(label, '_', '&');
                     auto pos = label.find("\\t");
-                    if (ttwx::is_found(pos))
+                    if (wxue::is_found(pos))
                     {
                         label[pos] = 0;
                         node->set_value(prop_shortcut, std::string_view(label).substr(pos + 2));
@@ -874,7 +877,8 @@ namespace xrc_import
 
 };  // namespace xrc_import
 
-void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+    -> void
 {
     // Mapping the strings to an enum is purely for readability -- it's a lot easier to find
     // the unknown property in a switch statement than it is to find it in a long list of
@@ -889,7 +893,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_cellpos:
-                if (ttwx::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
+                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
                 {
                     if (mstr[0].size())
                     {
@@ -903,13 +907,13 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_cellspan:
-                if (ttwx::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
+                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
                 {
-                    if (mstr[0].size() && ttwx::atoi(mstr[0]) > 0)
+                    if (mstr[0].size() && wxue::atoi(mstr[0]) > 0)
                     {
                         node->set_value(prop_rowspan, mstr[0]);
                     }
-                    if (mstr.size() > 1 && mstr[1].size() && ttwx::atoi(mstr[1]) > 0)
+                    if (mstr.size() > 1 && mstr[1].size() && wxue::atoi(mstr[1]) > 0)
                     {
                         node->set_value(prop_colspan, mstr[1]);
                     }
@@ -1113,7 +1117,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_size:
                 if (node->is_Gen(gen_spacer))
                 {
-                    if (ttwx::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
+                    if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
                     {
                         if (mstr[0].size())
                         {
@@ -1137,7 +1141,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         // forward_declare. Or at least it is supposed to. In version 3.10, it
                         // doesn't properly handle an empty class name, so the header file can
                         // appear first.
-                        ttwx::StringVector parts { value, ';', ttwx::TRIM::both };
+                        wxue::StringVector parts { value, ';', wxue::TRIM::both };
                         if (parts.size() > 0)
                         {
                             if (parts[0].find(".h") != std::string::npos)
@@ -1199,7 +1203,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
     }
 }
 
-void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
+auto ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node) -> void
 {
     std::string choices = "";
     for (const auto& iter: xml_obj.children())
@@ -1224,7 +1228,7 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
     }
 }
 
-void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */)
+auto ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */) -> void
 {
     m_notebook_tabs.clear();
     for (const auto& iter: xml_obj.children())
@@ -1239,8 +1243,8 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     }
 }
 
-void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
-                              GenEnum::PropName node_prop)
+auto ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
+                              GenEnum::PropName node_prop) -> void
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
@@ -1297,7 +1301,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
             wxFileName fn(file);
             fn.MakeRelativeTo(wxString::FromUTF8(wxGetCwd()));
             wxString relative = fn.GetFullPath();
-            ttwx::back_slashesto_forward(relative);
+            wxue::back_slashesto_forward(relative);
             bitmap += relative.ToStdString();
             bitmap += ";[-1,-1]";
 
@@ -1313,7 +1317,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
     }
 }
 
-void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
+auto ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node) -> void
 {
     if (xml_obj.attribute("function").empty() || xml_obj.attribute("entry").empty())
     {
@@ -1330,7 +1334,8 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
     }
 }
 
-NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
+auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
+    -> NodeSharedPtr
 {
     auto object_name = xml_obj.attribute("class").as_cstr();
     if (object_name.empty())
@@ -1427,7 +1432,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         if (xml_obj.find_node(
                 [](const pugi::xml_node& node)
                 {
-                    return tt::is_sameas(node.name(), "dropdown", tt::CASE::either);
+                    return ttwx::is_sameas(node.name(), "dropdown", ttwx::CASE::either);
                 }))
         {
             get_GenName = gen_tool_dropdown;
@@ -1753,7 +1758,7 @@ auto ImportXML::GetCorrectEventName(std::string_view name) -> std::string_view
     return name;
 }
 
-void ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node)
+auto ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node) -> void
 {
     FontProperty font_info;
     if (auto size_child = xml_obj.child("size"); size_child)

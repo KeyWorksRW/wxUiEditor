@@ -9,8 +9,11 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "code.h"            // Code -- Helper class for generating code
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
 #include "write_code.h"      // Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
@@ -31,7 +34,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
 
     if (!m_form_node->HasValue(prop_class_name))
     {
-        FAIL_MSG(tt_string("Missing \"name\" property in ") << m_form_node->get_DeclName());
+        FAIL_MSG(wxue::string("Missing \"name\" property in ") << m_form_node->get_DeclName());
         return;
     }
 
@@ -81,7 +84,7 @@ void CppCodeGenerator::GenHdrEvents()
 
     if (m_events.size() || m_ctx_menu_events.size())
     {
-        std::set<tt_string> code_lines;
+        std::set<wxue::string> code_lines;
 
         for (auto& event: m_events)
         {
@@ -118,7 +121,7 @@ void CppCodeGenerator::GenHdrEvents()
     }
 }
 
-auto CppCodeGenerator::ShouldSkipEvent(const tt_string& event_code) -> bool
+auto CppCodeGenerator::ShouldSkipEvent(const wxue::string& event_code) -> bool
 {
     // Ignore lambda's and functions in another class
     return event_code.find('[') != std::string::npos || event_code.find("::") != std::string::npos;
@@ -138,7 +141,7 @@ auto CppCodeGenerator::HasContextMenuHandler(NodeEvent* event) -> bool
                                });
 }
 
-void CppCodeGenerator::ProcessSingleEvent(NodeEvent* event, std::set<tt_string>& code_lines)
+void CppCodeGenerator::ProcessSingleEvent(NodeEvent* event, std::set<wxue::string>& code_lines)
 {
     auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
     if (ShouldSkipEvent(event_code))
@@ -146,7 +149,7 @@ void CppCodeGenerator::ProcessSingleEvent(NodeEvent* event, std::set<tt_string>&
         return;
     }
 
-    tt_string code;
+    wxue::string code;
 
     // If the form has a wxContextMenuEvent node, then the handler for the form's
     // wxEVT_CONTEXT_MENU is a method of the base class and is not virtual.
@@ -163,8 +166,9 @@ void CppCodeGenerator::ProcessSingleEvent(NodeEvent* event, std::set<tt_string>&
     code_lines.insert(code);
 }
 
-void CppCodeGenerator::BuildEventHandlerDeclaration(tt_string& code, const tt_string& event_code,
-                                                    const tt_string& event_class) const
+void CppCodeGenerator::BuildEventHandlerDeclaration(wxue::string& code,
+                                                    const wxue::string& event_code,
+                                                    const wxue::string& event_class) const
 {
     if (m_form_node->as_bool(prop_use_derived_class))
     {
@@ -222,7 +226,7 @@ void CppCodeGenerator::ProcessConditionalEvents(Code& code)
                 continue;
             }
 
-            tt_string handler_code;
+            wxue::string handler_code;
             BuildEventHandlerDeclaration(handler_code, event_code,
                                          event->get_EventInfo()->get_event_class());
             code << handler_code;
@@ -235,20 +239,20 @@ void CppCodeGenerator::ProcessConditionalEvents(Code& code)
     }
 }
 
-void CppCodeGenerator::GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names,
+void CppCodeGenerator::GenHdrNameSpace(wxue::string& namespace_prop, wxue::StringVector& names,
                                        size_t& indent)
 {
     // namespace_prop can be a single or multiple namespaces separated by either :: or ;.
     // Replace both separator types with a single ':' character.
     namespace_prop.Replace("::", ":");
     namespace_prop.Replace(";", ":");
-    names.SetString(namespace_prop, ':');
+    names.SetString(std::string_view(namespace_prop), ':');
 
-    tt_string using_name;
+    wxue::string using_name;
     m_header->writeLine();  // start with a blank line
     for (auto& iter: names)
     {
-        m_header->writeLine(tt_string() << "namespace " << iter);
+        m_header->writeLine(wxue::string() << "namespace " << iter);
         m_header->writeLine("{");
         m_header->Indent();
         // This lets the caller know how much to indent the code inside the namespace
@@ -341,7 +345,7 @@ void CppCodeGenerator::WriteWxWidgetsHeaders(const std::set<std::string>& hdr_in
 {
     for (const auto& iter: hdr_includes)
     {
-        if (tt::contains(iter, "<wx"))
+        if (iter.contains("<wx"))
         {
             m_header->writeLine(iter);
         }
@@ -371,7 +375,7 @@ void CppCodeGenerator::WriteNonWxHeaders(const std::set<std::string>& hdr_includ
 {
     for (const auto& iter: hdr_includes)
     {
-        if (!tt::contains(iter, "<wx"))
+        if (!iter.contains("<wx"))
         {
             m_header->writeLine(iter);
         }
@@ -388,22 +392,22 @@ void CppCodeGenerator::WritePreambleAndCustomIncludes()
     if (m_form_node->HasValue(prop_system_hdr_includes))
     {
         m_header->writeLine();
-        tt_view_vector list;
-        list.SetString(m_form_node->as_view(prop_system_hdr_includes));
+        wxue::ViewVector list;
+        list.SetString(m_form_node->as_view(prop_system_hdr_includes), '\n');
         for (auto& iter: list)
         {
-            m_header->writeLine(tt_string("#include <") << iter << '>');
+            m_header->writeLine(wxue::string("#include <") << iter << '>');
         }
     }
 
     if (m_form_node->HasValue(prop_local_hdr_includes))
     {
         m_header->writeLine();
-        tt_view_vector list;
-        list.SetString(m_form_node->as_view(prop_local_hdr_includes));
+        wxue::ViewVector list;
+        list.SetString(m_form_node->as_view(prop_local_hdr_includes), '\n');
         for (auto& iter: list)
         {
-            m_header->writeLine(tt_string("#include \"") << iter << '"');
+            m_header->writeLine(wxue::string("#include \"") << iter << '"');
         }
     }
 }
@@ -415,7 +419,7 @@ void CppCodeGenerator::WriteNamespaceDeclarations(const std::vector<std::string>
         m_header->writeLine();
         for (const auto& iter: namespaces)
         {
-            tt_view_vector list(iter, '\n');
+            wxue::ViewVector list(iter, '\n');
 
             // See gen_custom_ctrl.cpp -- GetIncludes(). Format is namespace name\n{\nclass
             // name;\n}
@@ -439,9 +443,9 @@ void CppCodeGenerator::WriteNamespaceDeclarations(const std::vector<std::string>
 
 void CppCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
 {
-    tt_string convert(node->as_view(prop));
-    convert.Replace("@@", "\n", tt::REPLACE::all);
-    tt_string_vector lines(convert, '\n', tt::TRIM::right);
+    wxue::string convert(node->as_view(prop));
+    convert.Replace("@@", "\n", wxue::REPLACE::all);
+    wxue::StringVector lines(convert, '\n', wxue::TRIM::right);
     bool initial_bracket = false;
 
     for (auto& code: lines)
@@ -490,8 +494,8 @@ void CppCodeGenerator::WriteClassDeclaration(Code& code, BaseGenerator* generato
     {
         if (m_form_node->HasValue(prop_additional_inheritance))
         {
-            tt_string_vector class_list(m_form_node->as_view(prop_additional_inheritance), '"',
-                                        tt::TRIM::both);
+            wxue::StringVector class_list(m_form_node->as_view(prop_additional_inheritance), '"',
+                                          wxue::TRIM::both);
             for (auto& iter: class_list)
             {
                 code.Str(", public ").Str(iter);
@@ -509,7 +513,8 @@ void CppCodeGenerator::WriteClassDeclaration(Code& code, BaseGenerator* generato
         else
         {
             // The only way this would be valid is if the base class didn't derive from anything.
-            m_header->writeLine(tt_string() << "class " << m_form_node->as_view(prop_class_name));
+            m_header->writeLine(wxue::string()
+                                << "class " << m_form_node->as_view(prop_class_name));
         }
     }
 }
@@ -561,7 +566,8 @@ void CppCodeGenerator::WriteProtectedAndPrivateSections(Code& code, BaseGenerato
 
     if (m_form_node->HasValue(prop_class_members))
     {
-        tt_string_vector class_list(m_form_node->as_view(prop_class_members), '"', tt::TRIM::both);
+        wxue::StringVector class_list(m_form_node->as_view(prop_class_members), '"',
+                                      wxue::TRIM::both);
         m_header->writeLine();
         for (auto& iter: class_list)
         {
@@ -652,7 +658,8 @@ void CppCodeGenerator::WritePublicClassMethods()
 {
     if (m_form_node->HasValue(prop_class_methods))
     {
-        tt_string_vector class_list(m_form_node->as_view(prop_class_methods), '"', tt::TRIM::both);
+        wxue::StringVector class_list(m_form_node->as_view(prop_class_methods), '"',
+                                      wxue::TRIM::both);
         if (class_list.size())
         {
             m_header->writeLine();
@@ -669,8 +676,8 @@ void CppCodeGenerator::WriteProtectedClassMethods()
 {
     if (m_form_node->HasValue(prop_protected_class_methods))
     {
-        tt_string_vector class_list(m_form_node->as_view(prop_protected_class_methods), '"',
-                                    tt::TRIM::both);
+        wxue::StringVector class_list(m_form_node->as_view(prop_protected_class_methods), '"',
+                                      wxue::TRIM::both);
         if (class_list.size())
         {
             m_header->writeLine();
@@ -824,12 +831,12 @@ auto CppCodeGenerator::WriteFormTitleConst(Code& code, Node* node) -> void
     }
 }
 
-auto CppCodeGenerator::IsAccessSpecifier(const tt_string& code) -> bool
+auto CppCodeGenerator::IsAccessSpecifier(const wxue::string& code) -> bool
 {
     return code.is_sameas("public:") || code.is_sameas("protected:") || code.is_sameas("private:");
 }
 
-auto CppCodeGenerator::ShouldIndentAfter(const tt_string& code) -> bool
+auto CppCodeGenerator::ShouldIndentAfter(const wxue::string& code) -> bool
 {
     return code.contains("{") && !code.contains("}");
 }

@@ -20,6 +20,8 @@
 #include "node.h"           // Node class
 #include "utils.h"          // Utility functions that work with properties
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 // Call g_NodeCreator->get_ConstantAsInt("wx_define") to get the #defined integer value -- see
 // node_creator.h
 
@@ -443,7 +445,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     // Now that all settings have been called, add some sample text.
 
-    tt_string sample(txt_styled_sample);
+    wxue::string sample(txt_styled_sample);
     if (node->as_string(prop_stc_lexer) == "CPP")
     {
         scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
@@ -729,7 +731,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             .AddComment("Remove default margin");
     }
 
-    tt_string margin = node->as_string(prop_fold_margin);
+    wxue::string margin = node->as_string(prop_fold_margin);
     if (margin.is_sameas("none"))
         margin = "0";
 
@@ -737,7 +739,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         int width = node->as_string(prop_line_digits).atoi();
 
-        tt_string numbers("_");
+        wxue::string numbers("_");
         while (width > 0)
         {
             numbers << '9';
@@ -828,7 +830,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
             if (node->HasValue(prop_fold_marker_colour))
             {
-                auto lambda = [&](tt_string_view name, const std::string& symbol)
+                auto lambda = [&](std::string_view name, const std::string& symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
                     code.Add(symbol)
@@ -844,7 +846,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             }
             else
             {
-                auto lambda = [&](tt_string_view name, const std::string& symbol)
+                auto lambda = [&](std::string_view name, const std::string& symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
                     code.Add(symbol).EndFunction();
@@ -855,7 +857,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                 lambda("wxSTC_MARKNUM_FOLDEREND", symbol_folder);
             }
             {
-                auto lambda = [&](tt_string_view name)
+                auto lambda = [&](std::string_view name)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(name).Comma();
                     code.Add("wxSTC_MARK_BACKGROUND").EndFunction();
@@ -889,7 +891,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
                     .EndFunction();
             }
             {
-                auto lambda = [&](tt_string_view name)
+                auto lambda = [&](std::string_view name)
                 {
                     code.Eol().NodeName().Function("MarkerSetBackground(").Add(name).Comma();
                     code.Str(code.is_cpp() ? "clr_foreground" : "_clr_foreground_");
@@ -916,7 +918,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
             if (node->as_string(prop_fold_marker_style) == "circle tree")
             {
-                auto lambda = [&](tt_string_view mark_number, tt_string_view mark_symbol)
+                auto lambda = [&](std::string_view mark_number, std::string_view mark_symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(mark_number).Comma();
                     code.Add(mark_symbol).EndFunction();
@@ -931,7 +933,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             }
             else
             {
-                auto lambda = [&](tt_string_view mark_number, tt_string_view mark_symbol)
+                auto lambda = [&](std::string_view mark_number, std::string_view mark_symbol)
                 {
                     code.Eol().NodeName().Function("MarkerDefine(").Add(mark_number).Comma();
                     code.Add(mark_symbol).EndFunction();

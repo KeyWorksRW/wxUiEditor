@@ -9,12 +9,13 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "mainapp.h"          // App -- Main application class
-#include "mockup_parent.h"    // Top-level MockUp Parent window
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mainapp.h"                     // App -- Main application class
+#include "mockup_parent.h"               // Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "project_handler.h"             // ProjectHandler class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -37,7 +38,9 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
             new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                            wxDefaultPosition, wxDefaultSize, style_value);
         if (node->as_bool(prop_checked))
+        {
             m_checkbox->SetValue(true);
+        }
 
         if (node->HasValue(prop_tooltip))
             m_checkbox->SetToolTip(node->as_wxString(prop_tooltip));
@@ -59,7 +62,9 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     }
 
     if (node->HasValue(prop_minimum_size))
+    {
         sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
+    }
 
     return sizer;
 }
@@ -314,14 +319,15 @@ void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */,
     handlers.emplace("wxSizerXmlHandler");
 }
 
-std::optional<tt_string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node,
+                                                                        GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_PYTHON:
             if (!wxGetApp().isCoverageTesting())
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";

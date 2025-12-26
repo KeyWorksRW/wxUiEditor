@@ -11,19 +11,19 @@
 
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
-#include "base_panel.h"      // BasePanel -- Code generation panel
-#include "code.h"            // Code -- Helper class for generating code
-#include "font_prop.h"       // FontProp -- Font properties
-#include "image_handler.h"   // ImageHandler class
-#include "mainframe.h"       // MainFrame -- Main window frame
-#include "node.h"            // Node class
-#include "node_creator.h"    // NodeCreator -- Class used to create nodes
-#include "node_event.h"      // NodeEvent and NodeEventInfo classes
-#include "preferences.h"     // Prefs -- Set/Get wxUiEditor preferences
-#include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
-#include "to_casts.h"        // to_int, to_size_t, and to_char classes
-#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
-#include "utils.h"           // Miscellaneous utility functions
+#include "base_panel.h"        // BasePanel -- Code generation panel
+#include "code.h"              // Code -- Helper class for generating code
+#include "font_prop.h"         // FontProp -- Font properties
+#include "image_handler.h"     // ImageHandler class
+#include "mainframe.h"         // MainFrame -- Main window frame
+#include "node.h"              // Node class
+#include "node_creator.h"      // NodeCreator -- Class used to create nodes
+#include "node_event.h"        // NodeEvent and NodeEventInfo classes
+#include "preferences.h"       // Prefs -- Set/Get wxUiEditor preferences
+#include "propgrid_panel.h"    // PropGridPanel -- PropertyGrid class for node properties and events
+#include "to_casts.h"          // to_int, to_size_t, and to_char classes
+#include "utils.h"             // Miscellaneous utility functions
+#include "wxue_view_vector.h"  // wxue::ViewVector
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
@@ -134,7 +134,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         OnEmbedImageSelected(node);
         return;
     }
-    else if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonButton))
+    if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonButton))
     {
         OnRibbonToolSelected(node);
         return;
@@ -150,11 +150,13 @@ void CodeDisplay::OnNodeSelected(Node* node)
     PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
     if (m_panel_type != GEN_LANG_CPLUSPLUS && page != PANEL_PAGE::SOURCE_PANEL)
+    {
         return;  // Nothing to search for in secondary pages of non-C++ languages
+    }
 
     int line = -1;
 
-    tt_string name(" ");
+    wxue::string name(" ");
 
     Code code(node, m_panel_type);
 
@@ -170,7 +172,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         {
             name << "->Bind";
             line = (to_int) m_view.FindLineContaining(name);
-            if (!ttwx::is_found(line))
+            if (!wxue::is_found(line))
             {
                 name.Replace("->Bind", " = ");
                 line = (to_int) m_view.FindLineContaining(name);
@@ -186,14 +188,15 @@ void CodeDisplay::OnNodeSelected(Node* node)
                     continue;
 
                 line = (to_int) m_view.FindLineContaining(value);
-                if (ttwx::is_found(line))
+                if (wxue::is_found(line))
                     break;
             }
         }
     }
-    else if (m_panel_type == GEN_LANG_XRC)
+    if (m_panel_type == GEN_LANG_XRC)
     {
-        tt_string search("name=\"");
+        wxue::string search("name=\"");
+        ;
         if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         {
             search << node->get_PropId();
@@ -215,8 +218,8 @@ void CodeDisplay::OnNodeSelected(Node* node)
         {
             if (node->HasValue(prop_bitmap))
             {
-                tt_view_vector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                                     tt::TRIM::both);
+                wxue::ViewVector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                       wxue::TRIM::both);
                 if (parts.size() && parts[IndexImage].size())
                 {
                     if (auto result = FileNameToVarName(parts[IndexImage]); result)
@@ -224,7 +227,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
                         code.clear();
                         code.Function(node->is_Gen(gen_ribbonButton) ? "AddButton" : "AddTool");
                         line = (to_int) m_view.FindLineContaining(code.GetCode());
-                        if (ttwx::is_found(line))
+                        if (wxue::is_found(line))
                         {
                             line = (to_int) m_view.FindLineContaining(*result, line);
                         }
@@ -232,19 +235,19 @@ void CodeDisplay::OnNodeSelected(Node* node)
                 }
             }
 
-            if (!ttwx::is_found(line) && node->HasValue(prop_label))
+            if (!wxue::is_found(line) && node->HasValue(prop_label))
             {
                 code.clear();
                 code.Function("AddTool");
                 line = (to_int) m_view.FindLineContaining(code.GetCode());
-                if (ttwx::is_found(line))
+                if (wxue::is_found(line))
                 {
                     line = (to_int) m_view.FindLineContaining(node->as_string(prop_label), line);
                 }
             }
         }
 
-        if (!ttwx::is_found(line))
+        if (!wxue::is_found(line))
         {
             if (page == PANEL_PAGE::SOURCE_PANEL)
             {
@@ -259,7 +262,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         }
     }
 
-    if (!ttwx::is_found(line))
+    if (!wxue::is_found(line))
         return;
 
     m_scintilla->MarkerDeleteAll(node_marker);
@@ -280,21 +283,25 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
 void CodeDisplay::OnRibbonToolSelected(Node* node)
 {
-    tt_string search;
+    wxue::string search;
     if (auto parent = node->get_Parent(); parent)
     {
         if (parent->is_Gen(gen_wxRibbonButtonBar))
         {
             search << '"' << node->as_string(prop_label) << '"';
         }
-        else if (parent->is_Gen(gen_wxRibbonToolBar))
+        if (parent->is_Gen(gen_wxRibbonToolBar))
         {
             search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id)
                    << ",";
             if (m_panel_type == GEN_LANG_PYTHON)
+            {
                 search.Replace("->", ".");
-            else if (m_panel_type == GEN_LANG_RUBY)
+            }
+            if (m_panel_type == GEN_LANG_RUBY)
+            {
                 search.Replace("->AddTool(", ".add_tool($");
+            }
         }
     }
 
@@ -319,8 +326,8 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
         {
             if (func_name.starts_with("wxue_img::"))
                 func_name.erase(0, sizeof("wxue_img::") - 1);
-            if (auto pos = func_name.find("("); pos != tt::npos)
-                func_name.erase(pos, tt::npos);
+            if (auto pos = func_name.find("("); pos != wxue::npos)
+                func_name.erase(pos, wxue::npos);
 
             if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
             {

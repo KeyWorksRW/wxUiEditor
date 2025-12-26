@@ -142,12 +142,12 @@ bool NewWizard::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewWizard::OnInit(wxInitDialogEvent& event)
+auto NewWizard::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewWizard::CreateNode()
+auto NewWizard::CreateNode() -> void
 {
     auto new_node = NodeCreation.CreateNode(gen_wxWizard, nullptr).first;
     ASSERT(new_node);
@@ -161,15 +161,15 @@ void NewWizard::CreateNode()
     {
         if (auto page = NodeCreation.CreateNode(gen_wxWizardPageSimple, new_node.get()).first; page)
         {
-            page->set_value(prop_var_name, tt_string("wizard_page_") << count + 1);
+            page->set_value(prop_var_name, wxString("wizard_page_") << count + 1);
             auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, page.get()).first;
 
             auto static_text = NodeCreation.CreateNode(gen_wxStaticText, sizer.get()).first;
             static_text->set_value(prop_class_access, "none");
-            static_text->set_value(prop_var_name, tt_string("static_text_") << count + 1);
+            static_text->set_value(prop_var_name, wxString("static_text_") << count + 1);
             sizer->AdoptChild(static_text);
             static_text->set_value(
-                prop_label, tt_string("Page #")
+                prop_label, wxString("Page #")
                                 << count + 1
                                 << " -- TODO: replace this control with something more useful...");
             static_text->set_value(prop_wrap, "200");
@@ -198,7 +198,7 @@ void NewWizard::CreateNode()
 
     wxGetFrame().SelectNode(parent_node);
 
-    tt_string undo_str("New wxWizard");
+    wxue::string undo_str("New wxWizard");
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
@@ -207,7 +207,7 @@ void NewWizard::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewWizard::VerifyClassName()
+auto NewWizard::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -221,7 +221,7 @@ void NewWizard::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

@@ -23,8 +23,9 @@
 #include "node_decl.h"        // NodeDeclaration class
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "project_handler.h"  // ProjectHandler class
-#include "ttwx.h"             // ttwx helpers for character classification
 #include "utils.h"            // Utility functions that work with properties
+
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 MockupParent* BaseGenerator::getMockup()
 {
@@ -46,7 +47,7 @@ void BaseGenerator::OnLeftClick(wxMouseEvent& event)
 bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProperty* /* prop */,
                                           Node* node)
 {
-    tt_string newValue = event->GetPropertyValue().GetString().utf8_string();
+    wxue::string newValue = event->GetPropertyValue().GetString().utf8_string();
     if (newValue.empty())
     {
         return true;
@@ -111,7 +112,7 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
         }
     }
 
-    std::set<tt_string> ids;
+    std::set<wxue::string> ids;
 
     auto rlambda = [&](Node* child, auto&& rlambda) -> void
     {
@@ -134,10 +135,10 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
     rlambda(form, rlambda);
 
     // Same as NodeProperty::get_PropId() -- strip off any assginment
-    tt_string new_id;
-    if (auto pos = newValue.find('='); pos != tt::npos)
+    wxue::string new_id;
+    if (auto pos = newValue.find('='); pos != wxue::npos)
     {
-        while (pos > 0 && ttwx::is_whitespace(newValue[pos - 1]))
+        while (pos > 0 && wxue::is_whitespace(newValue[pos - 1]))
         {
             --pos;
         }
@@ -170,7 +171,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
         {
             return true;
@@ -220,7 +221,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
         {
             return true;
@@ -259,7 +260,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
         {
             return true;
@@ -370,7 +371,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
         {
             return true;
@@ -399,8 +400,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
-        const tt_string& final_name(newValue);
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
+        const wxue::string& final_name(newValue);
         auto result = node->get_UniqueName(final_name, prop_label);
         if (!newValue.is_sameas(result))
         {
@@ -414,7 +415,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     {
         auto* property = wxStaticCast(event->GetProperty(), wxStringProperty);
         auto variant = event->GetPropertyValue();
-        tt_string newValue = property->ValueToString(variant).utf8_string();
+        wxue::string newValue = property->ValueToString(variant).utf8_string();
 
         auto rlambda = [&](Node* check_node, auto&& rlambda) -> bool
         {
@@ -493,7 +494,7 @@ namespace
     }
 }  // namespace
 
-auto BaseGenerator::GetHelpText(Node* node) -> tt_string
+auto BaseGenerator::GetHelpText(Node* node) -> wxue::string
 {
     auto class_name = getClassHelpName(node);
 
@@ -507,9 +508,9 @@ auto BaseGenerator::GetHelpText(Node* node) -> tt_string
     return class_name;
 }
 
-tt_string BaseGenerator::GetPythonHelpText(Node* node)
+wxue::string BaseGenerator::GetPythonHelpText(Node* node)
 {
-    tt_string class_name = getClassHelpName(node);
+    wxue::string class_name = getClassHelpName(node);
     if (class_name.empty())
     {
         return class_name;
@@ -520,15 +521,15 @@ tt_string BaseGenerator::GetPythonHelpText(Node* node)
     {
         prefix = wx_iter->second;
     }
-    tt_string help_text;
+    wxue::string help_text;
     help_text << prefix << class_name.subview(2);
 
     return help_text;
 }
 
-tt_string BaseGenerator::GetPythonURL(Node* node)
+wxue::string BaseGenerator::GetPythonURL(Node* node)
 {
-    tt_string url = GetPythonHelpText(node);
+    wxue::string url = GetPythonHelpText(node);
     if (url.empty())
     {
         ASSERT(map_GenNames.contains(node->get_GenName()));
@@ -551,9 +552,9 @@ tt_string BaseGenerator::GetPythonURL(Node* node)
     return url;
 }
 
-tt_string BaseGenerator::GetRubyURL(Node* node)
+wxue::string BaseGenerator::GetRubyURL(Node* node)
 {
-    tt_string url = GetRubyHelpText(node);
+    wxue::string url = GetRubyHelpText(node);
     if (url.empty())
     {
         ASSERT(map_GenNames.contains(node->get_GenName()));
@@ -577,9 +578,9 @@ tt_string BaseGenerator::GetRubyURL(Node* node)
     return url;
 }
 
-tt_string BaseGenerator::GetRubyHelpText(Node* node)
+wxue::string BaseGenerator::GetRubyHelpText(Node* node)
 {
-    tt_string class_name = getClassHelpName(node);
+    wxue::string class_name = getClassHelpName(node);
     if (class_name.empty())
     {
         return class_name;
@@ -590,7 +591,7 @@ tt_string BaseGenerator::GetRubyHelpText(Node* node)
     {
         prefix = wx_iter->second;
     }
-    tt_string help_text;
+    wxue::string help_text;
     help_text << prefix << class_name.subview(2);
 
     return help_text;
@@ -608,7 +609,7 @@ bool BaseGenerator::GetPythonImports(Node* node, std::set<std::string>& set_impo
     if (auto wx_iter = g_map_python_prefix.find(class_name); wx_iter != g_map_python_prefix.end())
     {
         prefix = wx_iter->second;
-        tt_string import_lib("import ");
+        wxue::string import_lib("import ");
         import_lib << prefix;
         import_lib.pop_back();  // remove the trailing '.'
         set_imports.insert(import_lib);
@@ -746,27 +747,27 @@ static const std::set<GenEnum::PropName> set_output_files = {
     prop_xrc_file,
 };
 
-std::optional<tt_string> BaseGenerator::GetHint(NodeProperty* prop)
+std::optional<wxue::string> BaseGenerator::GetHint(NodeProperty* prop)
 {
     if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return tt_string(
+        return wxue::string(
             !prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
-        return tt_string(
+        return wxue::string(
             !prop->getNode()->as_bool(prop_use_derived_class) ? "requires use_derived_class" : "");
     }
     if (prop->isProp(prop_python_xrc_file) && !prop->HasValue())
     {
-        return tt_string(
+        return wxue::string(
             !prop->getNode()->as_bool(prop_use_derived_class) ? "requires python_use_xrc" : "");
     }
     if (set_output_files.contains(prop->get_PropDeclaration()->get_name()) && !prop->HasValue())
     {
-        return tt_string("change class_name to auto-fill");
+        return wxue::string("change class_name to auto-fill");
     }
 
     return {};
@@ -843,7 +844,7 @@ namespace
 
 }  // namespace
 
-auto BaseGenerator::GetHelpURL(Node* node) -> tt_string
+auto BaseGenerator::GetHelpURL(Node* node) -> wxue::string
 {
     std::string class_name = getClassHelpName(node);
 
@@ -870,7 +871,7 @@ auto BaseGenerator::GetHelpURL(Node* node) -> tt_string
             }
         }
 
-        tt_string url = "wx_";
+        wxue::string url = "wx_";
         url << class_name << ".html";
         return url;
     }
@@ -953,7 +954,7 @@ auto BaseGenerator::GetRequiredVersion(Node* node) -> int
 }
 
 auto BaseGenerator::isLanguagePropSupported(Node* node, GenLang language, GenEnum::PropName prop)
-    -> std::optional<tt_string>
+    -> std::optional<wxue::string>
 {
     if (prop == prop_persist && node->as_bool(prop))
     {
@@ -1038,7 +1039,7 @@ void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_valu
     DeclAddProp(declaration, prop_var_name, type_string, {}, def_value);
     DeclAddProp(declaration, prop_var_comment, type_string_edit_single);
 
-    tt_string access("protected:");
+    wxue::string access("protected:");
     if (set_no_class_access.contains(declaration->get_GenName()))
     {
         access = "none";

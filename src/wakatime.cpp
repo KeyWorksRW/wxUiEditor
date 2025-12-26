@@ -16,7 +16,7 @@
 
 WakaTime::WakaTime()
 {
-    auto result = time(nullptr);
+    const auto result = time(nullptr);
     if (result != -1)
     {
         m_last_heartbeat = static_cast<intmax_t>(result);
@@ -25,15 +25,15 @@ WakaTime::WakaTime()
     SetWakaExePath();
 }
 
-bool WakaTime::IsWakaTimeAvailable()
+auto WakaTime::IsWakaTimeAvailable() -> bool
 {
-    auto result = wxFileName::GetHomeDir();
+    const auto result = wxFileName::GetHomeDir();
     if (result.IsEmpty())
     {
         return false;
     }
 
-    tt_string waka_cli(result.utf8_string());
+    wxue::string waka_cli(result.utf8_string());
     waka_cli.append_filename(".wakatime");
     if (!waka_cli.dir_exists())
     {
@@ -68,9 +68,9 @@ bool WakaTime::IsWakaTimeAvailable()
     return false;
 }
 
-void WakaTime::SetWakaExePath()
+auto WakaTime::SetWakaExePath() -> void
 {
-    auto result = wxFileName::GetHomeDir();
+    const auto result = wxFileName::GetHomeDir();
     ASSERT_MSG(!result.IsEmpty(),
                "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
 
@@ -85,7 +85,7 @@ void WakaTime::SetWakaExePath()
     }
 
 #if defined(_WIN32)
-    tt_string win_cli(m_waka_cli);
+    wxue::string win_cli(m_waka_cli);
     win_cli.append_filename("wakatime-cli-windows-amd64.exe");
     if (win_cli.file_exists())
     {
@@ -121,7 +121,7 @@ void WakaTime::SetWakaExePath()
 
 constexpr const intmax_t waka_interval = 120;
 
-void WakaTime::SendHeartbeat(bool FileSavedEvent)
+auto WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent) -> void
 {
     if (!UserPrefs.is_WakaTimeEnabled())
     {
@@ -133,18 +133,18 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
         return;
     }
 
-    auto result = time(nullptr);
+    const auto result = time(nullptr);
     if (result != -1)
     {
         if (FileSavedEvent ||
             (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval)))
         {
             m_last_heartbeat = static_cast<intmax_t>(result);
-            tt_string cmd;
+            wxue::string cmd;
             cmd << m_waka_cli
                 << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing "
                    "--project ";
-            tt_string name = Project.get_ProjectFile().filename();
+            wxue::string name = Project.get_ProjectFile().filename();
             name.remove_extension();
             cmd << name;
             cmd << " --entity \"" << Project.get_ProjectFile() << "\"";
@@ -153,16 +153,16 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
                 cmd << " --write";
             }
 
-            wxExecute(cmd.make_wxString(), wxEXEC_HIDE_CONSOLE);
+            wxExecute(cmd.wx(), wxEXEC_HIDE_CONSOLE);
         }
     }
 }
 
-void WakaTime::ResetHeartbeat()
+auto WakaTime::ResetHeartbeat() -> void
 {
     if (UserPrefs.is_WakaTimeEnabled())
     {
-        auto result = time(nullptr);
+        const auto result = time(nullptr);
 
         if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
         {

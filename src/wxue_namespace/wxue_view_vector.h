@@ -101,7 +101,17 @@ namespace wxue
         [[nodiscard]] auto is_sameas(const wxue::ViewVector& other) const -> bool;
 
         // Returns the string storing the entire file.
-        [[nodiscard]] auto GetBuffer() const -> const string& { return m_buffer; }
+        [[nodiscard]] auto GetBuffer() -> string& { return m_buffer; }
+
+        // Call this if you change the buffer returned by GetBuffer() to turn the buffer
+        // into an array of string_views.
+        void ParseBuffer();
+
+        // Searches every line to see if it contains the sub-string.
+        //
+        // startline is the zero-based offset to the line to start searching.
+        auto FindLineContaining(std::string_view str, size_t startline = 0,
+                                CASE checkcase = CASE::exact) const -> size_t;
 
     private:
         // This will be the filename passed to ReadFile()

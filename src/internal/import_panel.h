@@ -9,7 +9,8 @@
 #include <wx/panel.h>
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
 
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 class MainFrame;
 class wxStyledTextCtrl;
@@ -23,8 +24,8 @@ public:
     // Clears scintilla and internal buffer, removes read-only flag in scintilla
     void Clear();
 
-    void SetImportFile(const tt_string& file, int lexer = 5 /* wxSTC_LEX_XML */);
-    const tt_string& GetImportFile() const { return m_import_file; }
+    void SetImportFile(const wxue::string& file, int lexer = 5 /* wxSTC_LEX_XML */);
+    const wxue::string& GetImportFile() const { return m_import_file; }
 
     void OnNodeSelected(Node* node);
 
@@ -34,8 +35,8 @@ protected:
     void OnFind(wxFindDialogEvent& event);
 
 private:
-    tt_view_vector m_view;
+    wxue::ViewVector m_view;
     wxStyledTextCtrl* m_scintilla;
-    tt_string m_import_file;
+    wxue::string m_import_file;
     int m_lexer;
 };

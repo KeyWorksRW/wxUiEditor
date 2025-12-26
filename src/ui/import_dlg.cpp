@@ -13,9 +13,9 @@
 
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
-#include "mainapp.h"         // App -- App class
-#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
-#include "ttwx.h"            // ttwx helpers for character classification
+#include "mainapp.h"                          // App -- App class
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
@@ -30,7 +30,7 @@ enum
     IMPORT_XRC,
 };
 
-void ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */)
+auto ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */) -> void
 {
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -83,7 +83,9 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */)
             }
 
             if (files.size())
+            {
                 m_checkListProjects->InsertItems(files, 0);
+            }
         }
     }
 
@@ -153,7 +155,7 @@ void ImportDlg::OnOK(wxCommandEvent& event)
     {
         if (m_checkListProjects->IsChecked(pos))
         {
-            tt_string path = m_checkListProjects->GetString(pos).utf8_string();
+            wxue::string path = m_checkListProjects->GetString(pos).utf8_string();
             path.make_absolute();
             m_lstProjects.emplace_back(path);
         }
@@ -199,11 +201,11 @@ void ImportDlg::OnDirectory(wxCommandEvent& /* event unused */)
         m_combo_recent_dirs->AppendString(dlg.GetPath());
     }
 
-    tt::ChangeDir(dlg.GetPath().utf8_string());
+    wxSetWorkingDirectory(dlg.GetPath());
 
-    tt_string cwd;
+    wxue::string cwd;
     cwd.assignCwd();
-    m_static_cwd->SetLabel(cwd.make_wxString());
+    m_static_cwd->SetLabel(cwd.wx());
 
     wxDir dir;
     wxArrayString files;
@@ -241,11 +243,11 @@ void ImportDlg::OnRecentDir(wxCommandEvent& /* event unused */)
     {
         auto result = m_combo_recent_dirs->GetValue();
         m_FileHistory.AddFileToHistory(result);
-        tt::ChangeDir(result.utf8_string());
+        wxSetWorkingDirectory(result);
 
-        tt_string cwd;
+        wxue::string cwd;
         cwd.assignCwd();
-        m_static_cwd->SetLabel(cwd.make_wxString());
+        m_static_cwd->SetLabel(cwd.wx());
 
         wxDir dir;
         wxArrayString files;
@@ -423,16 +425,16 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
 {
     wxBusyCursor busy;
 
-    tt_view_vector rc_file;
+    wxue::ViewVector rc_file;
 
     for (size_t idx = 0; idx < files.size(); ++idx)
     {
         bool found = false;
-        if (rc_file.ReadFile(files[idx].utf8_string()))
+        if (rc_file.ReadFile(std::string_view(files[idx].utf8_string())))
         {
             for (auto& line: rc_file)
             {
-                if (line.empty() || !ttwx::is_alpha(line[0]))
+                if (line.empty() || !wxue::is_alpha(line[0]))
                     continue;
 
                 auto type = line.view_stepover();

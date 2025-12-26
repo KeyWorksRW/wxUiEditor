@@ -25,9 +25,11 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
@@ -118,7 +120,7 @@ auto PerlCodeGenerator::WriteSourceHeader() -> void
 {
     m_source->SetLastLineBlank();
 
-#if !defined(_DEBUG)
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #else
     if (m_panel_type != PANEL_PAGE::NOT_PANEL)
@@ -154,11 +156,11 @@ auto PerlCodeGenerator::WriteIDConstants() -> void
     int id_value = wxID_HIGHEST;
     for (const auto& iter: m_set_enum_ids)
     {
-        m_source->writeLine(tt_string() << '$' << iter << " = " << id_value++);
+        m_source->writeLine(wxue::string() << '$' << iter << " = " << id_value++);
     }
     for (const auto& iter: m_set_const_ids)
     {
-        if (tt::contains(iter, " wx"))
+        if (iter.contains(" wx"))
         {
             wxString wx_id = '$' + iter;
             wx_id.Replace(" wx", " wx.", true);
@@ -184,7 +186,7 @@ auto PerlCodeGenerator::WriteSampleFrameApp(Code& code) -> void
         code += txt_perl_frame_app;
         if (m_form_node->HasValue(prop_class_name))
         {
-            tt_string class_name = m_form_node->as_string(prop_class_name);
+            wxue::string class_name = m_form_node->as_string(prop_class_name);
             if (class_name.ends_with("Base"))
             {
                 class_name.erase(class_name.size() - 4);
@@ -210,7 +212,7 @@ auto PerlCodeGenerator::GenerateConstructionCode(Code& code) -> void
         int id_value = wxID_HIGHEST;
         for (const auto& iter: m_set_enum_ids)
         {
-            m_source->writeLine(tt_string() << '@' << iter << id_value++);
+            m_source->writeLine(wxue::string() << '@' << iter << id_value++);
         }
 
         if (id_value > 1)
@@ -556,7 +558,7 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
                 continue;
             }
 
-            tt_string set_code;
+            wxue::string set_code;
             set_code << "sub " << handler << " {";
             if (!code_lines.contains(set_code))
             {
@@ -589,7 +591,7 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
             continue;
         }
 
-        tt_string set_code;
+        wxue::string set_code;
         set_code << "sub " << handler << " {";
 
         if (code_lines.contains(set_code))
@@ -600,7 +602,7 @@ void PerlCodeGenerator::GenUnhandledEvents(EventVector& events)
 
         undefined_handlers.Str(set_code).Eol();
         undefined_handlers.Tab().Str("my ($self, $event) = @_;").Eol();
-#if defined(_DEBUG)
+#ifdef _DEBUG
         const auto& dbg_event_name = event->get_name();
         wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
@@ -618,7 +620,7 @@ auto PerlCodeGenerator::ProcessImageFromImagesForm(Code& code, bool& images_file
 {
     if (!images_file_imported)
     {
-        tt_string import_name = iter->get_Form()->as_string(prop_perl_file).filename();
+        wxue::string import_name = iter->get_Form()->as_string(prop_perl_file).filename();
         import_name.remove_extension();
         code.Eol().Str("use ").Str(import_name) << "'";
         m_source->writeLine(code);
@@ -712,7 +714,7 @@ void PerlCodeGenerator::InitializeUsageStatements()
     if (m_art_ids.size())
     {
         constexpr auto art_provider_overhead = 15;  // Space needed for "use Wx::ArtProvider qw();"
-        tt_string art_ids;
+        wxue::string art_ids;
         for (const auto& iter: m_art_ids)
         {
             if (art_ids.empty())
@@ -815,10 +817,9 @@ auto PerlCodeGenerator::ProcessNodeImports(Node* node) -> void
     {
         if (node->HasProp(iter.first))
         {
-            tt_string constants("use Wx qw(");
+            wxue::string constants("use Wx qw(");
             constants += iter.second;
-            constants += ");";
-            m_use_constants.emplace(constants);
+            constants += ");", m_use_constants.emplace(constants);
         }
     }
 }
@@ -847,7 +848,7 @@ void PerlCodeGenerator::ParseNodesForUsage(Node* node)
     }
 }
 
-auto MakePerlPath(Node* node) -> tt_string
+auto MakePerlPath(Node* node) -> wxue::string
 {
     return ScriptCommon::MakeScriptPath(node, GEN_LANG_PERL);
 }
@@ -857,7 +858,7 @@ auto MakePerlPath(Node* node) -> tt_string
     return std::ranges::any_of(map_perl_constants,
                                [&](const auto& iter)
                                {
-                                   return tt::contains(iter.second, value);
+                                   return wxue::string_view(iter.second).contains(value);
                                });
 }
 
@@ -865,7 +866,7 @@ auto PerlBitmapList(Code& code, GenEnum::PropName prop) -> bool
 {
     const auto& description = code.node()->as_string(prop);
     ASSERT_MSG(description.size(), "PerlBitmapList called with empty description");
-    tt_view_vector parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") ||
         parts[IndexType].contains("SVG"))
@@ -907,7 +908,7 @@ auto PerlBitmapList(Code& code, GenEnum::PropName prop) -> bool
 
         if (!is_embed_success)
         {
-            tt_string name(iter);
+            wxue::string name(iter);
             name.make_absolute();
             name.make_relative(path);
             name.backslashestoforward();

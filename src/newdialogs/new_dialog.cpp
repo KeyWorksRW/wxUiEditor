@@ -158,12 +158,12 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-void NewDialog::OnInit(wxInitDialogEvent& event)
+auto NewDialog::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewDialog::CreateNode()
+auto NewDialog::CreateNode() -> void
 {
     auto form_node = NodeCreation.CreateNode(gen_wxDialog, nullptr).first;
     ASSERT(form_node);
@@ -189,11 +189,11 @@ void NewDialog::CreateNode()
             auto book_page = NodeCreation.CreateNode(gen_BookPage, notebook.get()).first;
             notebook->AdoptChild(book_page);
 
-            tt_string label("Tab ");
+            wxString label("Tab ");
             label << count + 1;
             book_page->set_value(prop_label, label);
             auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get()).first;
-            page_sizer->set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
+            page_sizer->set_value(prop_var_name, wxString() << "page_sizer_" << count + 1);
             book_page->AdoptChild(page_sizer);
             auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get()).first;
             page_sizer->AdoptChild(static_text);
@@ -234,7 +234,7 @@ void NewDialog::CreateNode()
 
     wxGetFrame().SelectNode(parent_node);
 
-    tt_string undo_str("New wxDialog");
+    wxue::string undo_str("New wxDialog");
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
@@ -243,7 +243,7 @@ void NewDialog::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewDialog::VerifyClassName()
+auto NewDialog::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -257,7 +257,7 @@ void NewDialog::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

@@ -25,6 +25,8 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string class
+
 #include "pugixml.hpp"
 
 using namespace code;
@@ -63,7 +65,7 @@ main()
 
 LuaCodeGenerator::LuaCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_LUA, form_node) {}
 
-void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
+auto LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type) -> void
 {
     Code code(m_form_node, GEN_LANG_LUA);
 
@@ -95,9 +97,11 @@ void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         code += txt_lua_frame_app;
         if (m_form_node->HasValue(prop_class_name))
         {
-            tt_string class_name = m_form_node->as_string(prop_class_name);
+            wxue::string class_name = m_form_node->as_string(prop_class_name);
             if (class_name.ends_with("Base"))
+            {
                 class_name.erase(class_name.size() - 4);
+            }
             code.Replace("MainFrame", class_name);
         }
         m_header->writeLine(code);
@@ -112,7 +116,7 @@ void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     if (m_panel_type != NOT_PANEL)
     {
         m_source->writeLine("-- The following comment block is only displayed in a _DEBUG build, "
-                            "or when written to a file.\n\n");
+                            "or when written to a file.\\n\\n");
     }
 #endif  // _DEBUG
     {
@@ -142,16 +146,16 @@ void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     int id_value = wxID_HIGHEST;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
-        m_source->writeLine(tt_string() << "local " << iter << " = " << id_value++);
+        m_source->writeLine(wxString() << "local " << iter << " = " << id_value++);
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
-        if (tt::contains(iter, " wx"))
+        if (wxue::contains(iter, " wx"))
         {
-            tt_string id = '$' + iter;
-            id.Replace(" wx", " wx.", true, tt::CASE::exact);
+            wxue::string id = '$' + iter;
+            id.Replace(" wx", " wx.", true, wxue::CASE::exact);
             m_source->writeLine(id);
         }
         else
@@ -168,7 +172,7 @@ void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
         // TODO: [Randalphwa - 07-13-2023] Need to figure out how to handle images in wxLua.
     }
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -178,9 +182,9 @@ void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
 
 #if 0
         id_value = wxID_HIGHEST;
-        for (auto& iter: m_set_enum_ids)
+        for (const auto& iter: m_set_enum_ids)
         {
-            m_source->writeLine(tt_string() << '@' << iter << id_value++);
+            m_source->writeLine(wxString() << '@' << iter << id_value++);
         }
 
         if (id_value > 1)
@@ -215,7 +219,9 @@ void LuaCodeGenerator::GenerateClass(PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 

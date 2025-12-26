@@ -25,8 +25,8 @@
 // This function is almost identical to MockupContent::CreateChildren. However, the Mockup version
 // assumes the top window is a wxPanel, whereas this version assumes the top version is a form.
 
-void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
-                          wxSizer* parent_sizer, wxWindow* form_window)
+auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
+                          wxSizer* parent_sizer, wxWindow* form_window) -> void
 {
 #if defined(__WINDOWS__)
     if (node->HasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Windows"))
@@ -40,7 +40,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 #endif
 
     auto generator = node->get_Generator();
-    ASSERT_MSG(generator, tt_string() << "Missing component for " << node->get_DeclName());
+    ASSERT_MSG(generator, wxString() << "Missing component for " << wxString(node->get_DeclName()));
     if (!generator)
         return;
 

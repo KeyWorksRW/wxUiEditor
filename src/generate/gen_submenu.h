@@ -20,6 +20,6 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.Menu.AppendSubMenu"; }
-    tt_string GetPythonURL(Node*) override { return "wx.Menu.html#wx.Menu.AppendSubMenu"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.Menu.AppendSubMenu"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.Menu.html#wx.Menu.AppendSubMenu"; }
 };

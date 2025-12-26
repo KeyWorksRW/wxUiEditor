@@ -7,10 +7,11 @@
 
 #include <wx/menu.h>  // wxMenu and wxMenuBar classes
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "image_handler.h"  // ImageHandler class
-#include "node.h"           // Node class
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "image_handler.h"               // ImageHandler class
+#include "node.h"                        // Node class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "gen_submenu.h"
 
@@ -25,7 +26,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
 {
     auto* node =
         code.node();  // This is just for code readability -- could just use code.node() everywhere
-    tt_string submenu_item_name;
+    wxue::string submenu_item_name;
 
     if (node->HasValue(prop_bitmap))
     {
@@ -73,7 +74,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
 
             else
             {
-                tt_string bundle_code;
+                wxue::string bundle_code;
                 bool is_vector_code = GenerateBundleCode(description, bundle_code);
                 code.UpdateBreakAt();
 

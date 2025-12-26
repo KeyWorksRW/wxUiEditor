@@ -13,9 +13,11 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
+
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
 {
@@ -98,14 +100,14 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
             }
         }
     }
-    else if (node_prop->isProp(prop_generate_languages))
+    if (node_prop->isProp(prop_generate_languages))
     {
         ModifyProperty(node_prop, value);
         wxGetFrame().FireProjectUpdatedEvent();
         wxGetFrame().UpdateLanguagePanels();
         return;
     }
-    else if (node_prop->isProp(prop_window_style) && value.empty())
+    if (node_prop->isProp(prop_window_style) && value.empty())
     {
         value = "0";
     }
@@ -135,13 +137,13 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
     // Do NOT call GetPropertyValueAsString() -- we need to return the value the way the custom
     // property formatted it
     auto value = m_prop_grid->GetPropertyValue(grid_prop).GetString();
-    tt_string_vector parts(value.utf8_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(value.utf8_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
     // If the image field is empty, then the entire property needs to be cleared
     if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
         value.clear();
     }
-    else if (!value.starts_with("Art"))
+    if (!value.starts_with("Art"))
     {
         const wxString& image_path(parts[IndexImage]);
         auto* embed = ProjectImages.GetEmbeddedImage(image_path.ToStdString());
@@ -155,14 +157,14 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             }
             // If there is an Images List node and it is set to auto add, then fall through
             // to the section below that adds the image to the Images List node.
-            else if ((Project.get_ImagesForm() == nullptr) ||
-                     !Project.get_ImagesForm()->as_bool(prop_auto_add))
+            if ((Project.get_ImagesForm() == nullptr) ||
+                !Project.get_ImagesForm()->as_bool(prop_auto_add))
             {
                 ModifyProperty(node_prop, value);
                 return;
             }
         }
-        else
+        if (embed == nullptr || image_path != embed->base_image().filename)
         {
             // This ensures that all images from a bitmap bundle get added
             ProjectImages.UpdateBundle(&parts, node_prop->getNode());
@@ -196,7 +198,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
         for (const auto& embedded_image: parent->get_ChildNodePtrs())
         {
             const auto& description_a = embedded_image->as_wxString(prop_bitmap);
-            tt_view_vector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+            wxue::ViewVector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR,
+                                     wxue::TRIM::both);
             if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
             {
                 break;
@@ -241,8 +244,8 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             for (const auto& embedded_image: image_list_node->get_ChildNodePtrs())
             {
                 const auto& description_a = embedded_image->as_wxString(prop_bitmap);
-                tt_view_vector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR,
-                                       tt::TRIM::both);
+                wxue::ViewVector parts_a(description_a.ToStdString(), BMP_PROP_SEPARATOR,
+                                         wxue::TRIM::both);
                 if (parts_a.size() <= IndexImage || parts_a[IndexImage].empty())
                 {
                     break;
@@ -284,7 +287,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 {
     if (node_prop->isProp(prop_data_file))
     {
-        tt_string newValue =
+        wxue::string newValue =
             grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
         auto result = Project.GetOutputPath(node_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
         auto path = result.first;
@@ -296,7 +299,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         return;
     }
 
-    tt_string newValue = grid_prop->GetValueAsString().utf8_string();
+    wxue::string newValue = grid_prop->GetValueAsString().utf8_string();
 
     // The base_file grid_prop was already processed in OnPropertyGridChanging so only modify the
     // value if it's a different grid_prop
@@ -351,7 +354,7 @@ namespace
             }
             is_name_changed = true;
         }
-        else if (!access && !name.starts_with("m_"))
+        if (!access && !name.starts_with("m_"))
         {
             name.insert(0, "m_");
             auto final_name = node->get_UniqueName(name.ToStdString());
@@ -376,7 +379,7 @@ namespace
             }
             is_name_changed = true;
         }
-        else if (access && name.starts_with("_"))
+        if (access && name.starts_with("_"))
         {
             name.erase(0, 1);
             auto final_name = node->get_UniqueName(name.ToStdString());
@@ -400,7 +403,7 @@ namespace
             }
             is_name_changed = true;
         }
-        else if (!access && !name.starts_with("@"))
+        if (!access && !name.starts_with("@"))
         {
             name.insert(0, "@");
             auto final_name = node->get_UniqueName(name.ToStdString());
@@ -456,9 +459,11 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                     break;
 
                 default:
-                    FAIL_MSG(tt_string()
-                             << "Unsuppoerted language: "
-                             << (GenLangToString(Project.get_CodePreference(selected_node))));
+                    {
+                        auto lang_str = GenLangToString(Project.get_CodePreference(selected_node));
+                        FAIL_MSG(wxString("Unsupported language: ")
+                                 << wxString(lang_str.data(), lang_str.size()));
+                    }
                     return;  // Only C++, Python and Ruby have naming conventions for members
             }
 

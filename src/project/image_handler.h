@@ -44,10 +44,11 @@
 
 #include <wx/bmpbndl.h>  // includes wx/bitmap.h, wxBitmapBundle class interface
 
-#include "embed_image.h"  // EmbeddedImage class
+#include "embed_image.h"                        // EmbeddedImage class
+#include "wxue_namespace/wxue_string.h"         // wxue::string, wxue::string_view
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class Node;
-class tt_string_vector;
 class wxAnimation;
 
 using NodeSharedPtr = std::shared_ptr<Node>;
@@ -55,7 +56,7 @@ using NodeSharedPtr = std::shared_ptr<Node>;
 // This simply contains a list of the filenames that would be used to create a bundle.
 struct ImageBundle
 {
-    std::vector<tt_string> lst_filenames;
+    std::vector<wxue::string> lst_filenames;
 };
 
 class ImageHandler
@@ -85,53 +86,53 @@ public:
     // Returns true if an associated node changed
     auto UpdateEmbedNodes() -> bool;
 
-    auto GetImage(const tt_string& description) -> wxImage;
+    auto GetImage(const wxue::string& description) -> wxImage;
 
-    auto GetBitmapBundle(const tt_string& description) -> wxBitmapBundle;
+    auto GetBitmapBundle(const wxue::string& description) -> wxBitmapBundle;
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
     //
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
-    auto GetPropertyBitmap(const tt_string_vector* parts, bool check_image = true) -> wxImage;
+    auto GetPropertyBitmap(const wxue::StringVector* parts, bool check_image = true) -> wxImage;
 
-    auto GetPropertyBitmap(const tt_string& description, bool check_image = true) -> wxImage;
+    auto GetPropertyBitmap(const wxue::string& description, bool check_image = true) -> wxImage;
 
-    wxBitmapBundle GetPropertyBitmapBundle(tt_string_view description);
+    wxBitmapBundle GetPropertyBitmapBundle(wxue::string_view description);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
     //
     // Returns nullptr if there is no ImageBundle
-    auto GetPropertyImageBundle(const tt_string_vector* parts, Node* node = nullptr)
+    auto GetPropertyImageBundle(const wxue::StringVector* parts, Node* node = nullptr)
         -> const ImageBundle*;
-    auto GetPropertyImageBundle(tt_string_view description, Node* node = nullptr)
+    auto GetPropertyImageBundle(wxue::string_view description, Node* node = nullptr)
         -> const ImageBundle*;
 
     // If there is an Image form containing this bundle, return it's function name
     // This can NOT be made static in spite of what Lint says
-    auto GetBundleFuncName(const tt_string& description) -> tt_string;
+    auto GetBundleFuncName(const wxue::string& description) -> wxue::string;
 
     // If there is an Images List containing this bundle, return it's function name
-    auto GetBundleFuncName(const tt_string_vector* parts) -> tt_string;
+    auto GetBundleFuncName(const wxue::StringVector* parts) -> wxue::string;
 
     // If there is an Images List containing this image, return it's function name
     auto GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size = wxDefaultSize)
-        -> tt_string;
+        -> wxue::string;
 
-    auto ProcessBundleProperty(const tt_string_vector* parts, Node* node) -> ImageBundle*;
+    auto ProcessBundleProperty(const wxue::StringVector* parts, Node* node) -> ImageBundle*;
 
-    auto ProcessBundleProperty(const tt_string& description, Node* node) -> ImageBundle*;
+    auto ProcessBundleProperty(const wxue::string& description, Node* node) -> ImageBundle*;
 
     // This adds the bundle if new, or updates the embed->form if the node has changed
-    void UpdateBundle(const tt_string_vector* parts, Node* node);
+    void UpdateBundle(const wxue::StringVector* parts, Node* node);
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
-    void GetPropertyAnimation(const tt_string& description, wxAnimation* p_animation);
+    void GetPropertyAnimation(const wxue::string& description, wxAnimation* p_animation);
 
-    auto AddEmbeddedImage(tt_string path, Node* form, bool is_animation = false) -> bool;
-    auto GetEmbeddedImage(tt_string_view path) -> EmbeddedImage*;
+    auto AddEmbeddedImage(wxue::string path, Node* form, bool is_animation = false) -> bool;
+    auto GetEmbeddedImage(wxue::string_view path) -> EmbeddedImage*;
 
     // This will collect bundles for the entire project -- it initializes m_bundles and
     // m_map_embedded for every image.
@@ -149,40 +150,40 @@ protected:
     void CollectNodeBundles(Node* node, Node* form);
 
     // This will update both m_bundles and m_map_embedded
-    auto AddNewEmbeddedImage(const tt_string& path, Node* form) -> bool;
+    auto AddNewEmbeddedImage(const wxue::string& path, Node* form) -> bool;
 
     // Reads the image and stores it in m_map_embedded
-    auto AddEmbeddedBundleImage(tt_string& path, Node* form, EmbeddedImage* embed = nullptr)
+    auto AddEmbeddedBundleImage(wxue::string& path, Node* form, EmbeddedImage* embed = nullptr)
         -> EmbeddedImage*;
     // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
     // depending on the type of the image file.
-    auto AddNewEmbeddedBundle(const tt_string_vector* parts, std::string_view org_path, Node* form)
-        -> bool;
+    auto AddNewEmbeddedBundle(const wxue::StringVector* parts, std::string_view org_path,
+                              Node* form) -> bool;
 
-    auto AddNewEmbeddedBundle(const tt_string& description, std::string_view org_path, Node* form)
-        -> bool;
+    auto AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
+                              Node* form) -> bool;
 
     // Reads the image, remove unused metadat, compresses it and stores it in m_map_embedded
-    auto AddSvgBundleImage(tt_string& path, Node* form) -> bool;
+    auto AddSvgBundleImage(wxue::string& path, Node* form) -> bool;
 
     // Read the image, compresses it and stores it in m_map_embedded
-    auto AddXpmBundleImage(const tt_string& path, Node* form) -> bool;
+    auto AddXpmBundleImage(const wxue::string& path, Node* form) -> bool;
 
 private:
     // Helper functions
-    static auto ConvertToLookup(const tt_string& description) -> tt_string;
-    static auto ConvertToLookup(const tt_string_vector* parts) -> tt_string;
+    static auto ConvertToLookup(const wxue::string& description) -> wxue::string;
+    static auto ConvertToLookup(const wxue::StringVector* parts) -> wxue::string;
 
-    auto ResolveBundlePath(tt_string& path) -> bool;
-    auto AddFixedSizeBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+    auto ResolveBundlePath(wxue::string& path) -> bool;
+    auto AddFixedSizeBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
                                     ImageBundle& img_bundle) -> void;
-    auto AddScalableBundleVariants(tt_string& path, Node* form, EmbeddedImage* embed,
+    auto AddScalableBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
                                    ImageBundle& img_bundle) -> void;
 
-    auto TryResolvePathWithArtDir(tt_string& path) -> bool;
-    auto AddNonEmbeddedFixedSizeVariants(const tt_string_vector* parts, ImageBundle& img_bundle)
+    auto TryResolvePathWithArtDir(wxue::string& path) -> bool;
+    auto AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* parts, ImageBundle& img_bundle)
         -> void;
-    auto AddNonEmbeddedScalableVariants(const tt_string_vector* parts, ImageBundle& img_bundle)
+    auto AddNonEmbeddedScalableVariants(const wxue::StringVector* parts, ImageBundle& img_bundle)
         -> void;
 
     // Members

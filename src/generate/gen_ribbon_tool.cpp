@@ -8,12 +8,13 @@
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 #include <wx/ribbon/toolbar.h>    // Ribbon-style tool bar
 
-#include "bitmaps.h"    // Contains various images handling functions
-#include "code.h"       // Code -- Helper class for generating code
-#include "image_gen.h"  // Functions for generating embedded images
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "utils.h"      // Utility functions that work with properties
+#include "bitmaps.h"                            // Contains various images handling functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "image_gen.h"                          // Functions for generating embedded images
+#include "mainframe.h"                          // MainFrame -- Main window frame
+#include "node.h"                               // Node class
+#include "utils.h"                              // Utility functions that work with properties
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_ribbon_tool.h"
 
@@ -101,13 +102,13 @@ int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* ob
     return BaseGenerator::xrc_not_supported;
 }
 
-std::optional<tt_string> RibbonToolBarGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> RibbonToolBarGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_XRC:
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -128,7 +129,8 @@ bool RibbonToolGenerator::ConstructionCode(Code& code)
     code.ParentName().Function("AddTool(").as_string(prop_id);
     code.Comma();
 
-    tt_string_vector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                             wxue::TRIM::both);
     code.GenerateBundleParameter(parts, true);
 
     code.Comma()

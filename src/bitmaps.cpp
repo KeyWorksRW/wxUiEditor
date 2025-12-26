@@ -170,9 +170,9 @@ static const ImageMap png_headers[] = {
 
 };
 
-wxImage GetInternalImage(tt_string_view name)
+auto GetInternalImage(wxue::string_view name) -> wxImage
 {
-    for (auto& iter: png_headers)
+    for (const auto& iter: png_headers)
     {
         if (name == iter.name)
         {
@@ -184,7 +184,7 @@ wxImage GetInternalImage(tt_string_view name)
     return LoadHeaderImage(default_png, sizeof(default_png));
 }
 
-wxBitmapBundle GetSvgImage(tt_string_view name, int width, int height)
+auto GetSvgImage(wxue::string_view name, int width, int height) -> wxBitmapBundle
 {
     if (auto bndl_function = GetSvgFunction(name); bndl_function)
     {
@@ -194,14 +194,14 @@ wxBitmapBundle GetSvgImage(tt_string_view name, int width, int height)
     return bundle_unknown_svg(width, height);
 }
 
-wxBitmapBundle GetSvgImage(tt_string_view name, const wxSize& size)
+auto GetSvgImage(wxue::string_view name, const wxSize& size) -> wxBitmapBundle
 {
     return GetSvgImage(name, size.GetWidth(), size.GetHeight());
 }
 
-wxIcon GetIconImage(tt_string_view name)
+auto GetIconImage(wxue::string_view name) -> wxIcon
 {
-    for (auto& iter: png_headers)
+    for (const auto& iter: png_headers)
     {
         if (name.is_sameas(iter.name))
         {
@@ -213,7 +213,7 @@ wxIcon GetIconImage(tt_string_view name)
         }
     }
 
-    auto image = GetInternalImage(name);
+    const auto image = GetInternalImage(name);
     wxIcon icon;
     icon.CopyFromBitmap(image);
     return icon;
@@ -222,26 +222,27 @@ wxIcon GetIconImage(tt_string_view name)
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will
 // be called during project loading, and there could be dozens of calls to the same problem file(s).
 
-wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_string* p_mime_type)
+auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::string* p_mime_type)
+    -> wxImage
 {
     wxImage image;
 
     if (!filename.file_exists())
     {
-        MSG_ERROR(tt_string() << filename << " passed to GetHeaderImage doesn't exist");
+        MSG_ERROR(wxue::string() << filename << " passed to GetHeaderImage doesn't exist");
         return image;
     }
 
     std::ifstream fileOriginal(filename.as_str(), std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
-        MSG_ERROR(tt_string() << filename << " passed to GetHeaderImage could not be read");
+        MSG_ERROR(wxue::string() << filename << " passed to GetHeaderImage could not be read");
         return image;
     }
     std::string in_buf(std::istreambuf_iterator<char>(fileOriginal), {});
     if (in_buf.size() < 1)
     {
-        MSG_ERROR(tt_string() << filename << " is empty!");
+        MSG_ERROR(wxue::string() << filename << " is empty!");
         return image;
     }
 
@@ -255,13 +256,13 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
     auto buf_ptr = strchr(in_buf.c_str(), '[');
     if (buf_ptr)
     {
-        image_buffer_size = tt::atoi(++buf_ptr);
+        image_buffer_size = wxue::atoi(++buf_ptr);
     }
 
     buf_ptr = strchr(buf_ptr, '{');
     if (!buf_ptr)
     {
-        MSG_ERROR(tt_string() << filename << " doesn't contain an opening brace");
+        MSG_ERROR(wxue::string() << filename << " doesn't contain an opening brace");
         return image;
     }
 
@@ -291,13 +292,13 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
                 do
                 {
                     ++buf_ptr;
-                } while (tt::is_digit(*buf_ptr));
+                } while (wxue::is_digit(*buf_ptr));
 
                 if (!*buf_ptr)
                 {
-                    FAIL_MSG(tt_string() << filename << " doesn't contain a closing brace");
-                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace")
-                                     .make_wxString());
+                    FAIL_MSG(wxue::string() << filename << " doesn't contain a closing brace");
+                    wxMessageBox(
+                        (wxue::string() << filename << " doesn't contain a closing brace").wx());
                     return image;
                 }
             }
@@ -314,7 +315,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
 
     if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
     {
-        MSG_ERROR(tt_string() << filename << " is not a valid graphics header file");
+        MSG_ERROR(wxue::string() << filename << " is not a valid graphics header file");
         return image;
     }
 
@@ -338,7 +339,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
                 if (++actual_size > image_buffer_size)
                 {
                     MSG_ERROR(
-                        tt_string()
+                        wxue::string()
                         << filename
                         << " actual image size is larger that the size specified in brackets");
                     return image;
@@ -388,7 +389,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
                 if (++actual_size > image_buffer_size)
                 {
                     MSG_ERROR(
-                        tt_string()
+                        wxue::string()
                         << filename
                         << " actual image size is larger that the size specified in brackets");
                     return image;
@@ -423,7 +424,7 @@ wxImage GetHeaderImage(tt_string_view filename, size_t* p_original_size, tt_stri
 
 // This is almost identical to GetImageFromArray() -- the only difference is that this one
 // first tries to load the image via the PNG handler.
-wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
+auto LoadHeaderImage(const unsigned char* data, size_t size_data) -> wxImage
 {
     wxMemoryInputStream stream(data, size_data);
     wxImage image;
@@ -439,26 +440,26 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
 
     image.LoadFile(stream);
     return image;
-};
+}
 
-bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
+auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bool
 {
     if (!filename.file_exists())
     {
-        MSG_ERROR(tt_string() << filename << " passed to GetAnimationanimation doesn't exist");
+        MSG_ERROR(wxue::string() << filename << " passed to GetAnimationanimation doesn't exist");
         return animation.IsOk();
     }
 
     std::ifstream fileOriginal(filename.as_str(), std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
-        MSG_ERROR(tt_string() << filename << " passed to GetAnimationImage could not be read");
+        MSG_ERROR(wxue::string() << filename << " passed to GetAnimationImage could not be read");
         return animation.IsOk();
     }
     std::string in_buf(std::istreambuf_iterator<char>(fileOriginal), {});
     if (in_buf.size() < 1)
     {
-        MSG_ERROR(tt_string() << filename << " is empty!");
+        MSG_ERROR(wxue::string() << filename << " is empty!");
         return animation.IsOk();
     }
 
@@ -472,13 +473,13 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
     auto buf_ptr = strchr(in_buf.c_str(), '[');
     if (buf_ptr)
     {
-        image_buffer_size = tt::atoi(++buf_ptr);
+        image_buffer_size = wxue::atoi(++buf_ptr);
     }
 
     buf_ptr = strchr(buf_ptr, '{');
     if (!buf_ptr)
     {
-        MSG_ERROR(tt_string() << filename << " doesn't contain an opening brace");
+        MSG_ERROR(wxue::string() << filename << " doesn't contain an opening brace");
         return animation.IsOk();
     }
 
@@ -508,13 +509,13 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
                 do
                 {
                     ++buf_ptr;
-                } while (tt::is_digit(*buf_ptr));
+                } while (wxue::is_digit(*buf_ptr));
 
                 if (!*buf_ptr)
                 {
-                    FAIL_MSG(tt_string() << filename << " doesn't contain a closing brace");
-                    wxMessageBox((tt_string() << filename << " doesn't contain a closing brace")
-                                     .make_wxString());
+                    FAIL_MSG(wxue::string() << filename << " doesn't contain a closing brace");
+                    wxMessageBox(
+                        (wxue::string() << filename << " doesn't contain a closing brace").wx());
                     return animation.IsOk();
                 }
             }
@@ -531,7 +532,7 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
 
     if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
     {
-        MSG_ERROR(tt_string() << filename << " is not a valid graphics header file");
+        MSG_ERROR(wxue::string() << filename << " is not a valid graphics header file");
         return animation.IsOk();
     }
 
@@ -555,7 +556,7 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
                 if (++actual_size > image_buffer_size)
                 {
                     MSG_ERROR(
-                        tt_string()
+                        wxue::string()
                         << filename
                         << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
@@ -605,7 +606,7 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
                 if (++actual_size > image_buffer_size)
                 {
                     MSG_ERROR(
-                        tt_string()
+                        wxue::string()
                         << filename
                         << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
@@ -619,10 +620,10 @@ bool GetAnimationImage(wxAnimation& animation, tt_string_view filename)
     return animation.IsOk();
 }
 
-wxAnimation LoadAnimationImage(const unsigned char* data, size_t size_data)
+auto LoadAnimationImage(const unsigned char* data, size_t size_data) -> wxAnimation
 {
     wxMemoryInputStream stream(data, size_data);
     wxAnimation animation;
     animation.Load(stream);
     return animation;
-};
+}

@@ -28,8 +28,8 @@ public:
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 
-    tt_string GetPythonHelpText(Node*) override;
-    tt_string GetRubyHelpText(Node*) override;
-    tt_string GetPythonURL(Node*) override;
-    tt_string GetRubyURL(Node*) override;
+    wxue::string GetPythonHelpText(Node*) override;
+    wxue::string GetRubyHelpText(Node*) override;
+    wxue::string GetPythonURL(Node*) override;
+    wxue::string GetRubyURL(Node*) override;
 };

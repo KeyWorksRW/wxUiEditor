@@ -9,14 +9,16 @@
 
 #include "gen_base.h"  // BaseCodeGenerator
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class CppCodeGenerator : public BaseCodeGenerator
 {
 public:
     CppCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
-                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
+    auto GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) -> void override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
     auto GenerateDerivedClass(Node* project, Node* form_node,
@@ -39,7 +41,7 @@ protected:
     // Convert one or more project/folder/form namespaces and store them in the names vector, and
     // update the indent to tell us how much to un-indent the code inside the namespace after
     // GenerateCppClassHeader()
-    void GenHdrNameSpace(tt_string& namespace_prop, tt_string_vector& names, size_t& indent);
+    void GenHdrNameSpace(wxue::string& namespace_prop, wxue::StringVector& names, size_t& indent);
     // Generate any headers and functions needed for images in m_source
     void GenCppImageFunctions();
     // Writes the #include files to m_header
@@ -97,8 +99,8 @@ private:
     // ============================================================================
 
     // Helper methods for WritePropHdrCode
-    static auto IsAccessSpecifier(const tt_string& code) -> bool;
-    static auto ShouldIndentAfter(const tt_string& code) -> bool;
+    static auto IsAccessSpecifier(const wxue::string& code) -> bool;
+    static auto ShouldIndentAfter(const wxue::string& code) -> bool;
 
     // Helper methods for GatherGeneratorIncludes
     static void ProcessFontProperty(const NodeProperty& prop, bool isAddToSrc,
@@ -134,15 +136,15 @@ private:
     void InitializeGenerationState();
     void StartThreadedCollections(std::set<std::string>& img_include_set);
     void ProcessEmbeddedImagesAndIncludes(const std::set<std::string>& img_include_set);
-    void DetermineNamespace(tt_string& namespace_prop);
-    void FinalizeNamespace(const tt_string_vector& names, size_t indent, Code& code);
+    void DetermineNamespace(wxue::string& namespace_prop);
+    void FinalizeNamespace(const wxue::StringVector& names, size_t indent, Code& code);
 
     // Helper methods for GenHdrEvents
-    [[nodiscard]] static auto ShouldSkipEvent(const tt_string& event_code) -> bool;
+    [[nodiscard]] static auto ShouldSkipEvent(const wxue::string& event_code) -> bool;
     [[nodiscard]] static auto HasContextMenuHandler(NodeEvent* event) -> bool;
-    void ProcessSingleEvent(NodeEvent* event, std::set<tt_string>& code_lines);
-    void BuildEventHandlerDeclaration(tt_string& code, const tt_string& event_code,
-                                      const tt_string& event_class) const;
+    void ProcessSingleEvent(NodeEvent* event, std::set<wxue::string>& code_lines);
+    void BuildEventHandlerDeclaration(wxue::string& code, const wxue::string& event_code,
+                                      const wxue::string& event_class) const;
     void WriteEventHandlerHeader() const;
     void ProcessConditionalEvents(Code& code);
 
@@ -180,44 +182,47 @@ private:
                                        std::set<std::string>& code_lines);
 
     // Helper methods for CollectMemberVariables
-    static void AdjustGenericClassName(Node* node, tt_string& code);
-    void InsertMemberVariable(Node* node, const tt_string& code, Permission perm);
-    void InsertPlatformSpecificVariable(const tt_string& platform, const tt_string& code,
+    static void AdjustGenericClassName(Node* node, wxue::string& code);
+    void InsertMemberVariable(Node* node, const wxue::string& code, Permission perm);
+    void InsertPlatformSpecificVariable(const wxue::string& platform, const wxue::string& code,
                                         Permission perm);
-    static void InsertRegularMemberVariable(const tt_string& code,
+    static void InsertRegularMemberVariable(const wxue::string& code,
                                             std::set<std::string>& code_lines);
     void ProcessProtectedMemberVariables(Node* node, std::set<std::string>& code_lines);
     void ProcessCheckboxRadioVariables(Node* node, std::set<std::string>& code_lines);
     void ProcessClassAccessProperty(Node* node, Permission perm, std::set<std::string>& code_lines);
 
     // Helper methods for GenCppValVarsBase
-    static void AppendBoolInitializer(tt_string& code, Node* node);
-    static void AppendNumericInitializer(tt_string& code, Node* node);
-    static void AppendStringInitializer(tt_string& code, Node* node);
-    void InsertValidatorVariable(Node* node, const tt_string& code,
+    static void AppendBoolInitializer(wxue::string& code, Node* node);
+    static void AppendNumericInitializer(wxue::string& code, Node* node);
+    static void AppendStringInitializer(wxue::string& code, Node* node);
+    void InsertValidatorVariable(Node* node, const wxue::string& code,
                                  std::set<std::string>& code_lines);
 
     // Helper methods for GenerateDerivedClass
-    static void GetFileExtensions(Node* project, tt_string& source_ext, tt_string& header_ext);
+    static void GetFileExtensions(Node* project, wxue::string& source_ext,
+                                  wxue::string& header_ext);
     [[nodiscard]] auto DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_type,
-                                                const tt_string& source_ext) -> tt_string;
-    void DetermineBaseFilePath(Node* form, tt_string& baseFile);
-    static void ProcessNamespace(Node* form, tt_string& namespace_using_name);
-    void GenerateDerivedClassName(tt_string& derived_name);
-    void GenerateDerivedHeader(const tt_string& derived_name, const tt_string& baseFile,
-                               const tt_string& namespace_using_name, const tt_string& header_ext,
+                                                const wxue::string& source_ext) -> wxue::string;
+    void DetermineBaseFilePath(Node* form, wxue::string& baseFile);
+    static void ProcessNamespace(Node* form, wxue::string& namespace_using_name);
+    void GenerateDerivedClassName(wxue::string& derived_name);
+    void GenerateDerivedHeader(const wxue::string& derived_name, const wxue::string& baseFile,
+                               const wxue::string& namespace_using_name,
+                               const wxue::string& header_ext, PANEL_PAGE panel_type);
+    void GenerateDerivedSource(Node* project, const wxue::string& derived_name,
+                               const wxue::string& baseFile, const wxue::string& derived_file,
+                               const wxue::string& namespace_using_name,
+                               const wxue::string& header_ext, const wxue::string& source_ext,
                                PANEL_PAGE panel_type);
-    void GenerateDerivedSource(Node* project, const tt_string& derived_name,
-                               const tt_string& baseFile, const tt_string& derived_file,
-                               const tt_string& namespace_using_name, const tt_string& header_ext,
-                               const tt_string& source_ext, PANEL_PAGE panel_type);
-    void GenerateDerivedEventHandlers(const EventVector& events, const tt_string& derived_name,
+    void GenerateDerivedEventHandlers(const EventVector& events, const wxue::string& derived_name,
                                       PANEL_PAGE panel_type);
     static auto IsCloseTypeButton(NodeEvent* event) -> bool;
     static auto ShouldSkipContextMenuEvent(NodeEvent* event) -> bool;
-    void WriteEventHandlerDeclaration(const tt_string& event_code, const tt_string& event_class);
-    void WriteEventHandlerImplementation(NodeEvent* event, const tt_string& derived_name,
-                                         const tt_string& event_code, bool close_type_button);
+    void WriteEventHandlerDeclaration(const wxue::string& event_code,
+                                      const wxue::string& event_class);
+    void WriteEventHandlerImplementation(NodeEvent* event, const wxue::string& derived_name,
+                                         const wxue::string& event_code, bool close_type_button);
 
     // Thread member variables for GenerateClass
     std::thread m_thrd_get_events;
@@ -233,7 +238,7 @@ public:
     {
     }
 
-    void AddUpdateFilename(tt_string& path) const
+    void AddUpdateFilename(const std::string& path) const
     {
         m_results->GetUpdatedFiles().emplace_back(path);
     };

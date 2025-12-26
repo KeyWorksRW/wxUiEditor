@@ -35,7 +35,7 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 }
 
-void PropertyGrid_Animation::RefreshChildren()
+auto PropertyGrid_Animation::RefreshChildren() -> void
 {
     wxString value = m_value;
     if (value.size())
@@ -78,8 +78,8 @@ void PropertyGrid_Animation::RefreshChildren()
         m_old_type = m_img_props.type;
     }
 
-    Item(IndexType)->SetValue(m_img_props.type.make_wxString());
-    Item(IndexImage)->SetValue(m_img_props.image.make_wxString());
+    Item(IndexType)->SetValue(m_img_props.type.wx());
+    Item(IndexImage)->SetValue(m_img_props.image.wx());
 }
 
 wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIndex,
@@ -111,7 +111,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
 
         case IndexImage:
             {
-                tt_string name(childValue.GetString().utf8_string());
+                wxue::string name(childValue.GetString().utf8_string());
                 if (!name.file_exists())
                 {
                     name = Project.ArtDirectory();
@@ -124,6 +124,6 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
             break;
     }
 
-    value = img_props.CombineValues().make_wxString();
+    value = img_props.CombineValues().wx();
     return value;
 }

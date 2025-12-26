@@ -14,13 +14,14 @@
 
 #include "gen_std_dlgbtn_sizer.h"
 
-#include "code.h"              // Code -- Helper class for generating code
-#include "eventhandler_dlg.h"  // EventHandlerDlg static functions
-#include "gen_common.h"        // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"     // Common XRC generating functions
-#include "lambdas.h"           // Functions for formatting and storage of lamda events
-#include "node.h"              // Node class
-#include "utils.h"             // Utility functions that work with properties
+#include "code.h"                        // Code -- Helper class for generating code
+#include "eventhandler_dlg.h"            // EventHandlerDlg static functions
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "lambdas.h"                     // Functions for formatting and storage of lamda events
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -35,9 +36,9 @@ namespace
                (!node->as_bool(prop_Save) && !node->as_bool(prop_ContextHelp));
     }
 
-    void BuildDialogButtonFlags(Node* node, tt_string& flags, std::string_view def_btn_name)
+    void BuildDialogButtonFlags(Node* node, wxue::string& flags, std::string_view def_btn_name)
     {
-        auto AddBitFlag = [&](tt_string_view flag)
+        auto AddBitFlag = [&](std::string_view flag)
         {
             if (flags.size())
             {
@@ -105,9 +106,9 @@ namespace
         }
     }
 
-    auto GenerateButtonName(const Code& code, std::string_view var_name) -> tt_string
+    auto GenerateButtonName(const Code& code, std::string_view var_name) -> wxue::string
     {
-        tt_string btn_name;
+        wxue::string btn_name;
         if (code.is_cpp())
         {
             btn_name = var_name;
@@ -270,7 +271,7 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
     {
         code.NodeName().Assign().FormFunction("CreateStdDialogButtonSizer(");
 
-        tt_string flags;
+        wxue::string flags;
         BuildDialogButtonFlags(node, flags, def_btn_name);
 
         code.Add(flags).EndFunction();
@@ -510,8 +511,8 @@ namespace
             case GEN_LANG_PERL:
                 return EventHandlerDlg::GetPerlValue(value);
             default:
-                FAIL_MSG(tt_string() << "No event handlers for " << GenLangToString(language)
-                                     << " (" << language << ")");
+                FAIL_MSG(wxue::string() << "No event handlers for " << GenLangToString(language)
+                                        << " (" << language << ")");
                 return EventHandlerDlg::GetCppValue(value);
         }
     }

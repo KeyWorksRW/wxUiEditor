@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include "gen_enums.h"         // Enumerations for generators
-#include "node.h"              // Node class
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
-#include "winres_ctrl.h"       // resCtrl -- Process Windows Resource control data
+#include "gen_enums.h"                          // Enumerations for generators
+#include "node.h"                               // Node class
+#include "winres_ctrl.h"                        // resCtrl -- Process Windows Resource control data
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class WinResource;
 
@@ -42,12 +42,12 @@ public:
         form_menu,
     };
 
-    void ParseDialog(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine);
-    void ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine);
+    void ParseDialog(WinResource* pWinResource, wxue::StringVector& txtfile, size_t& curTxtLine);
+    void ParseMenu(WinResource* pWinResource, wxue::StringVector& txtfile, size_t& curTxtLine);
 
     // Remove outer quotes, prefix a digit with id_ -- this is how the id gets stored in the
     // dialog.
-    tt_string ConvertFormID(tt_string_view id);
+    wxue::string ConvertFormID(wxue::string_view id);
 
     // Call this after
     void CreateDialogLayout();
@@ -105,11 +105,11 @@ protected:
                              size_t idx_start) const;
 
     void AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box);
-    void AddStyle(tt_string_vector& txtfile, size_t& curTxtLine);
-    void AppendStyle(GenEnum::PropName prop_name, tt_string_view style);
-    void ParseControls(tt_string_vector& txtfile, size_t& curTxtLine);
-    void ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine);
-    void ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& curTxtLine);
+    void AddStyle(wxue::StringVector& txtfile, size_t& curTxtLine);
+    void AppendStyle(GenEnum::PropName prop_name, wxue::string_view style);
+    void ParseControls(wxue::StringVector& txtfile, size_t& curTxtLine);
+    void ParseMenus(wxue::StringVector& txtfile, size_t& curTxtLine);
+    void ParseMenuItem(Node* parent, wxue::StringVector& txtfile, size_t& curTxtLine);
 
     // Handle static text that needs to be centered
     void CheckForCenteredText(Node* node_parent);
@@ -170,7 +170,7 @@ protected:
 
     void CreateStdButton();
 
-    bool ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect);
+    bool ParseDimensions(wxue::string_view line, wxRect& duRect, wxRect& pixelRect);
 
     // This will search through m_ctrls and find the index of the control matching the node
     // parameter. Returns -1 if not found.
@@ -208,5 +208,5 @@ private:
     bool m_is_popup_menu { false };
 
     // Makes it easier to know exactly which form we're looking at in the debugger
-    tt_string m_form_id;
+    wxue::string m_form_id;
 };

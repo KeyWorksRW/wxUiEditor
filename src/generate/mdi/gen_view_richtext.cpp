@@ -7,8 +7,10 @@
 
 #include "gen_view_richtext.h"
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "project_handler.h"  // ProjectHandler class
+#include "code.h"                // Code -- Helper class for generating code
+#include "project_handler.h"     // ProjectHandler class
+#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_RichTextViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxView);
@@ -57,16 +59,17 @@ bool TextE%class%ditView::OnClose(bool delete_window)
 }
 )===";
 
-bool RichTextViewGenerator::ConstructionCode(Code& code)
+auto RichTextViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        tt_string_vector lines;
-        lines.ReadString(txt_RichTextViewBlock);
-        tt_string class_name = code.node()->as_string(prop_class_name);
-        for (auto& line: lines)
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_RichTextViewBlock));
+        auto class_name = code.node()->as_view(prop_class_name);
+        for (const auto& wxline: lines)
         {
-            line.Replace("%class%", class_name, true);
+            std::string line = wxline.ToStdString();
+            utils::replace_in_line(line, "%class%", class_name, true);
             code.Str(line).Eol();
         }
     }
@@ -74,26 +77,28 @@ bool RichTextViewGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool RichTextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                        std::set<std::string>& /* set_hdr */,
-                                        GenLang /* language */)
+auto RichTextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                        [[maybe_unused]] std::set<std::string>& set_hdr,
+                                        [[maybe_unused]] GenLang language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");
     set_src.insert("#include <wx/docview.h>");
     set_src.insert("#include <wx/textctrl.h>");
 
-    auto parent = node->get_Parent();
-    for (auto& iter: parent->get_ChildNodePtrs())
+    auto* parent = node->get_Parent();
+    for (const auto& iter: parent->get_ChildNodePtrs())
     {
         if (iter.get() == node)
+        {
             continue;
+        }
         if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
         {
-            tt_string hdr_file = iter->as_string(prop_base_file);
-            if (hdr_file.size())
+            wxString hdr_file = iter->as_string(prop_base_file).make_wxString();
+            if (!hdr_file.empty())
             {
-                hdr_file += Project.as_string(prop_header_ext);
-                set_src.insert(tt_string("#include ") << '"' << hdr_file << '"');
+                hdr_file += Project.as_string(prop_header_ext).make_wxString();
+                set_src.insert(std::string("#include \"") + hdr_file.ToStdString() + "\"");
             }
             else
             {
@@ -137,14 +142,15 @@ private:
 };
 )===";
 
-bool RichTextViewGenerator::HeaderCode(Code& code)
+auto RichTextViewGenerator::HeaderCode(Code& code) -> bool
 {
-    tt_string_vector lines;
-    lines.ReadString(txt_RichTextCtrlViewHdrBlock);
-    tt_string class_name = code.node()->as_string(prop_class_name);
-    for (auto& line: lines)
+    ttwx::StringVector lines;
+    lines.ReadString(std::string_view(txt_RichTextCtrlViewHdrBlock));
+    auto class_name = code.node()->as_view(prop_class_name);
+    for (const auto& wxline: lines)
     {
-        line.Replace("%class%", class_name, true);
+        std::string line = wxline.ToStdString();
+        utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
     }
 

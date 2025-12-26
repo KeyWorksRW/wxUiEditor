@@ -8,8 +8,9 @@
 #include <wx/filedlg.h>
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "node_prop.h"        // for wxNodeProperty
-#include "project_handler.h"  // ProjectHandler class
+#include "node_prop.h"                   // for wxNodeProperty
+#include "project_handler.h"             // ProjectHandler class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "tt_file_property.h"
 
@@ -164,7 +165,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
             break;
 
         default:
-            FAIL_MSG(tt_string() << "Unknown property type: " << m_prop->get_DeclName().substr());
+            FAIL_MSG(wxue::string()
+                     << "Unknown property type: " << m_prop->get_DeclName().substr());
             break;
 
     }  // switch (m_prop->get_name())
@@ -183,11 +185,11 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
     {
         full_path.Assign(dlg.GetPath());
         full_path.MakeRelativeTo(Project.get_wxFileName()->GetPath());
-        tt_string final_path = full_path.GetFullPath().utf8_string();
+        wxue::string final_path = full_path.GetFullPath().utf8_string();
         final_path.backslashestoforward();
         if (!final_path.contains("/"))
             final_path = "./" + full_path.GetFullPath().utf8_string();
-        value = final_path.make_wxString();
+        value = final_path.wx();
         return true;
     }
     return false;

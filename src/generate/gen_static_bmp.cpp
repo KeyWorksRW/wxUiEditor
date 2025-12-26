@@ -15,6 +15,8 @@
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "gen_static_bmp.h"
 
 wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -141,7 +143,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
     if (node->HasValue(prop_bitmap))
     {
         auto& description = node->as_string(prop_bitmap);
-        tt_string bundle_code;
+        wxue::string bundle_code;
         bool is_vector_code = GenerateBundleCode(description, bundle_code);
         code.UpdateBreakAt();
 
@@ -243,8 +245,7 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
         }
         else if (code.is_ruby())
         {
-            tt_string mode = code.node()->as_string(prop_scale_mode);
-            tt_string comment("  # ");
+            wxue::string mode = code.node()->as_string(prop_scale_mode);
             if (mode == "Fill")
             {
                 mode = "::ScaleMode::Scale_Fill";

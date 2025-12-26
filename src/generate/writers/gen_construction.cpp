@@ -14,6 +14,8 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 // clang-format off
 
 // These are the types that need to have generator->AdditionalCode() called after the type is constructed
@@ -31,25 +33,35 @@ GenType aftercode_types[] = {
 };
 // clang-format on
 
-void BaseCodeGenerator::GenConstruction(Node* node)
+auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 {
     if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
     {
         if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+        {
             return;
-        else if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+        }
+        if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+        {
             return;
-        else if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        }
+        if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        {
             return;
-        else if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        }
+        if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        {
             return;
+        }
     }
 
     auto type = node->get_GenType();
     auto declaration = node->get_NodeDeclaration();
     auto generator = declaration->get_Generator();
     if (!generator)
+    {
         return;
+    }
 
     if (auto warning_msg = generator->GetWarning(node, m_language); warning_msg)
     {
@@ -118,7 +130,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         m_source->writeLine(gen_code);
         return;
     }
-    else if (type == type_tool_dropdown)
+    if (type == type_tool_dropdown)
     {
         return;
     }
@@ -144,7 +156,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else if (parent->is_ToolBar() && !node->is_Type(type_tool) && !node->is_Type(type_aui_tool) &&
              !node->is_Type(type_tool_separator) && !node->is_Type(type_tool_dropdown))
     {
-        tt_string code;
+        wxue::string code;
         gen_code.clear();
         if (parent->is_Type(type_toolbar_form) || parent->is_Type(type_aui_toolbar_form))
             gen_code.Str("AddControl(").as_string(prop_var_name).EndFunction();
@@ -215,7 +227,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             gen_code.clear();
 
-            tt_string code;
+            wxue::string code;
             if (parent->is_Gen(gen_wxRibbonPanel))
             {
                 gen_code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -294,7 +306,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
 }
 
-void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms)
+auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms) -> void
 {
     if (platforms.contains("Windows"))
     {
@@ -317,7 +329,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
                 break;
 
             default:
-                FAIL_MSG(tt_string() << "Unsupported language: " << m_language);
+                FAIL_MSG(wxue::string() << "Unsupported language: " << m_language);
                 break;
         }
     }
@@ -407,7 +419,7 @@ void BaseCodeGenerator::BeginPlatformCode(Code& code, const tt_string& platforms
     }
 }
 
-void BaseCodeGenerator::EndPlatformCode()
+auto BaseCodeGenerator::EndPlatformCode() -> void
 {
     switch (m_language)
     {
@@ -432,7 +444,7 @@ void BaseCodeGenerator::EndPlatformCode()
     }
 }
 
-void BaseCodeGenerator::BeginBrace()
+auto BaseCodeGenerator::BeginBrace() -> void
 {
     if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
     {
@@ -441,7 +453,7 @@ void BaseCodeGenerator::BeginBrace()
     }
 }
 
-void BaseCodeGenerator::EndBrace()
+auto BaseCodeGenerator::EndBrace() -> void
 {
     if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
     {
@@ -450,7 +462,7 @@ void BaseCodeGenerator::EndBrace()
     }
 }
 
-void BaseCodeGenerator::GenSettings(Node* node, bool within_brace)
+auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
 {
     auto generator = node->get_Generator();
 
@@ -577,7 +589,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
     }
 }
 
-void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
+auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> void
 {
     auto declaration = node->get_NodeDeclaration();
     auto generator = declaration->get_Generator();
@@ -649,7 +661,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             code.Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) << "), ";
             code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan)
                 << "), ";
-            tt_string flags(node->as_string(prop_borders));
+            wxue::string flags(node->as_string(prop_borders));
             if (node->as_string(prop_flags).size())
             {
                 if (flags.size())

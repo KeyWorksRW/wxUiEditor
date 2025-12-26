@@ -14,12 +14,12 @@
 
 #include "edit_custom_mockup_base.h"
 
-bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID win_id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+    if (!wxDialog::Create(parent, win_id, title, pos, size, style, name))
     {
         return false;
     }
@@ -128,25 +128,27 @@ bool EditCustomMockupBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 void EditCustomMockupBase::OnInit(wxInitDialogEvent& event)
 {
-    tt_string_vector parts(m_result.ToStdString(), ';');
+    wxue::StringVector parts(m_result.ToStdString(), ';');
     if (parts.size() == 3)
     {
         m_widget_type = parts[0];
-        m_width = parts[1].atoi();
+        m_width = wxue::atoi(parts[1]);
         m_height = parts[2];
 
         if (m_widget_type.starts_with("wxStaticText"))
         {
-            if (auto pos = m_widget_type.find('('); pos != tt::npos)
+            if (auto pos = m_widget_type.find('('); pos != std::string::npos)
             {
-                tt_string_vector options(m_widget_type.Mid(pos + 1).utf8_string(), ",");
+                wxue::StringVector options(m_widget_type.Mid(pos + 1).utf8_string(), ",");
                 m_text_static->SetValue(options[0]);
                 if (options.size() > 1)
+                {
                     m_check_centered->SetValue(options[1].contains("1"));
+                }
             }
 
             m_widget_types->SetStringSelection("wxStaticText");
@@ -176,7 +178,9 @@ void EditCustomMockupBase::OnSelect(wxCommandEvent& /* event unused */)
 void EditCustomMockupBase::OnOK(wxCommandEvent& event)
 {
     if (!Validate() || !TransferDataFromWindow())
+    {
         return;
+    }
 
     m_result.clear();
     m_result << m_widget_type;

@@ -113,6 +113,12 @@ namespace ttwx
         // Returns the string storing the entire file.
         [[nodiscard]] auto GetBuffer() const -> const std::string& { return m_buffer; }
 
+        // Find the first line containing the specified string. Returns the index of the line
+        // or std::string::npos if not found.
+        // case_sensitive: true for exact match, false for case-insensitive match
+        [[nodiscard]] auto FindLineContaining(std::string_view str, size_t start = 0,
+                                              bool case_sensitive = true) const -> size_t;
+
     private:
         // This will be the filename passed to ReadFile()
         wxString m_filename;

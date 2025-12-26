@@ -19,8 +19,8 @@
 #include "node.h"
 #include "project_handler.h"
 
-bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+auto UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name) -> bool
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
@@ -93,7 +93,7 @@ bool UnusedGenerators::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
 #include <wx/filedlg.h>
 
-#include "tt_string_vector.h"  // Legacy code: tt_string_vector
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 void FindGenerators(Node* node,
                     std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
@@ -224,7 +224,7 @@ void UnusedGenerators::OnSave(wxCommandEvent& /* event unused */)
         return;
     }
 
-    tt_string_vector file;
+    wxue::StringVector file;
     for (unsigned int idx = 0; idx < m_listbox->GetCount(); ++idx)
     {
         file.emplace_back(m_listbox->GetString(idx).ToStdString());

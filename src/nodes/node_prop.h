@@ -21,36 +21,38 @@
 
 #include "font_prop.h"  // FontProperty class
 #include "prop_decl.h"  // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class wxAnimation;
 class Node;
 
 struct NODEPROP_STATUSBAR_FIELD
 {
-    tt_string style;
-    tt_string width;
+    wxue::string style;
+    wxue::string width;
 };
 
 struct NODEPROP_CHECKLIST_ITEM
 {
-    tt_string label;
-    tt_string checked;  // 1 is true, 0 or empty is false
+    wxue::string label;
+    wxue::string checked;  // 1 is true, 0 or empty is false
 };
 
 struct NODEPROP_RADIOBOX_ITEM
 {
-    tt_string label;
-    tt_string enabled;  // 1 is enabled, empty or 0 is disabled
-    tt_string show;     // 1 is shown, empty or 0 is hidden
-    tt_string tooltip;
-    tt_string helptext;
+    wxue::string label;
+    wxue::string enabled;  // 1 is enabled, empty or 0 is disabled
+    wxue::string show;     // 1 is shown, empty or 0 is hidden
+    wxue::string tooltip;
+    wxue::string helptext;
 };
 
 struct NODEPROP_BMP_COMBO_ITEM
 {
-    tt_string label;
+    wxue::string label;
     // assumes embedded, svg only if .svg file extension, and svg will default to 16x16
-    tt_string bitmap;
+    wxue::string bitmap;
 };
 
 class NodeProperty
@@ -58,35 +60,38 @@ class NodeProperty
 public:
     NodeProperty(PropDeclaration* declaration, Node* node);
 
-    void set_value(int integer) { m_value = tt::itoa(integer); };
-    void set_value(double val);
-    void set_value(const wxColour& colour);
-    void set_value(const wxString& str);
-    void set_value(const wxPoint& point);
-    void set_value(const wxSize& size);
-    void set_value(const char* val) { m_value.assign(val); }
-    void set_value(std::string_view val) { m_value.assign(val); }
-    void set_value(const tt_string& val) { m_value.assign(val); }
-    void set_value(const std::string& val) { m_value.assign(val); }
+    auto set_value(int integer) -> void { m_value = wxue::itoa(integer); };
+    auto set_value(double val) -> void;
+    auto set_value(const wxColour& colour) -> void;
+    auto set_value(const wxString& str) -> void;
+    auto set_value(const wxPoint& point) -> void;
+    auto set_value(const wxSize& size) -> void;
+    auto set_value(const char* val) -> void { m_value.assign(val); }
+    auto set_value(std::string_view val) -> void { m_value.assign(val); }
+    auto set_value(const tt_string& val) -> void { m_value.assign(val); }
+    auto set_value(const std::string& val) -> void { m_value.assign(val); }
 
-    tt_string convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const;
-    tt_string convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& fields) const;
-    tt_string convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& fields) const;
-    tt_string convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& fields) const;
+    auto convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
+        -> wxue::string;
+    auto convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& fields) const
+        -> wxue::string;
+    auto convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& fields) const -> wxue::string;
+    auto convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& fields) const
+        -> wxue::string;
 
-    void set_value(std::vector<NODEPROP_STATUSBAR_FIELD>& fields)
+    auto set_value(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) -> void
     {
         m_value = convert_statusbar_fields(fields);
     }
-    void set_value(std::vector<NODEPROP_CHECKLIST_ITEM>& items)
+    auto set_value(std::vector<NODEPROP_CHECKLIST_ITEM>& items) -> void
     {
         m_value = convert_checklist_items(items);
     }
-    void set_value(std::vector<NODEPROP_RADIOBOX_ITEM>& items)
+    auto set_value(std::vector<NODEPROP_RADIOBOX_ITEM>& items) -> void
     {
         m_value = convert_radiobox_items(items);
     }
-    void set_value(std::vector<NODEPROP_BMP_COMBO_ITEM>& items)
+    auto set_value(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) -> void
     {
         m_value = convert_bmp_combo_items(items);
     }
@@ -103,31 +108,31 @@ public:
     // Returns a non-const reference allowing you to modify the value. Do *NOT* use this for
     // the vector functions, as the formatting of the property string is entirely up to
     // NodeProperty.
-    tt_string& get_value() { return m_value; }
+    auto get_value() -> tt_string& { return m_value; }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
-    tt_string get_PropId() const;
+    auto get_PropId() const -> wxue::string;
 
     // Returns a string containing the ID without any assignment if it is a custom id.
-    static tt_string get_PropId(const tt_string& complete_id);
+    static auto get_PropId(const tt_string& complete_id) -> wxue::string;
 
     const tt_string& value() const { return m_value; }
 
-    int as_int() const;
-    bool as_bool() const { return (as_int() != 0); };
-    double as_float() const;
+    [[nodiscard]] auto as_int() const -> int;
+    [[nodiscard]] auto as_bool() const -> bool { return (as_int() != 0); };
+    [[nodiscard]] auto as_float() const -> double;
 
     // Looks up wx constant, returns it's numerical value.
     //
     // Returns wxID_ANY if constant is not found
-    int as_id() const;
+    [[nodiscard]] auto as_id() const -> int;
 
     // tt_string_view as_sview() const { return m_value; }
 
     // Use with caution! This allows you to modify the property string directly.
     auto as_raw_ptr() { return &m_value; }
 
-    void as_animation(wxAnimation* p_animation) const;
+    auto as_animation(wxAnimation* p_animation) const -> void;
     [[nodiscard]] auto as_bitmap() const -> wxBitmap;
     [[nodiscard]] auto as_color() const -> wxColour;
     [[nodiscard]] auto as_font() const -> wxFont;
@@ -140,10 +145,10 @@ public:
     // or separated by semi-colons.
     //
     // Specify separator to use a specific character as the separator
-    [[nodiscard]] auto as_ArrayString(char separator = 0) const -> std::vector<tt_string>;
+    [[nodiscard]] auto as_ArrayString(char separator = 0) const -> std::vector<wxue::string>;
 
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
-    [[nodiscard]] auto as_wxString() const -> wxString { return m_value.make_wxString(); }
+    [[nodiscard]] auto as_wxString() const -> wxString { return wxue::string(m_value).wx(); }
 
     [[nodiscard]] auto as_bitmap_bundle() const -> wxBitmapBundle;
 
@@ -157,10 +162,10 @@ public:
     // that constant.
     [[nodiscard]] auto as_mockup(std::string_view prefix) const -> int;
 
-    [[nodiscard]] auto as_vector() const -> std::vector<tt_string>;
+    [[nodiscard]] auto as_vector() const -> std::vector<wxue::string>;
 
     // This first doubles the backslash in escaped characters (\\n, \\t, \\r, and \\)
-    [[nodiscard]] auto as_escape_text() const -> tt_string;
+    [[nodiscard]] auto as_escape_text() const -> wxue::string;
 
     operator bool() const { return (as_int() != 0); }
     operator int() const { return as_int(); }

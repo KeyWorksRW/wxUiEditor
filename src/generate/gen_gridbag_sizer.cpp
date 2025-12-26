@@ -9,18 +9,18 @@
 
 #include "gen_gridbag_sizer.h"
 
-#include "gen_common.h"      // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"   // Common XRC generating functions
-#include "mockup_parent.h"   // Top-level MockUp Parent window
-#include "node.h"            // Node class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "ttwx.h"            // ttwx helpers for numeric and whitespace parsing
+#include "gen_common.h"                       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"                    // Common XRC generating functions
+#include "mockup_parent.h"                    // Top-level MockUp Parent window
+#include "node.h"                             // Node class
+#include "wxue_namespace/wxue.h"              // wxue helpers for numeric and whitespace parsing
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
 wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxGridBagSizer(node->as_int(prop_vgap), node->as_int(prop_hgap));
+    auto* sizer = new wxGridBagSizer(node->as_int(prop_vgap), node->as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
@@ -52,7 +52,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
     std::vector<std::pair<wxObject*, wxGBSizerItem*>> newNodes;
     wxGBPosition lastPosition(0, 0);
 
-    auto sizer = wxStaticCast(wxobject, wxGridBagSizer);
+    auto* sizer = wxStaticCast(wxobject, wxGridBagSizer);
     if (!sizer)
     {
         FAIL_MSG("This should be a wxGridBagSizer!");
@@ -105,31 +105,31 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         }
     }
 
-    for (auto& iter: newNodes)
+    for (auto& [obj, item]: newNodes)
     {
-        wxGBPosition position = iter.second->GetPos();
-        wxGBSpan span = iter.second->GetSpan();
+        wxGBPosition position = item->GetPos();
+        wxGBSpan span = item->GetSpan();
         int column = position.GetCol();
         while (sizer->CheckForIntersection(position, span))
         {
-            column++;
+            ++column;
             position.SetCol(column);
         }
-        iter.second->SetPos(position);
-        sizer->Add(iter.second);
+        item->SetPos(position);
+        sizer->Add(item);
     }
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
-            tt_view_vector values(growable, ',');
-            for (auto& iter: values)
+            wxue::ViewVector values(growable, ',');
+            for (const auto& iter: values)
             {
                 int proportion = 0;
-                if (auto pos = iter.find(':'); ttwx::is_found(pos))
+                if (auto pos = iter.find(':'); wxue::is_found(pos))
                 {
-                    proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
+                    proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                 }
 
                 // REVIEW: [Randalphwa - 03-14-2025] Forcing the column/row count to be at least one
@@ -138,16 +138,20 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
                 // is greater than the number of rows/columns.
                 if (prop_name == prop_growablecols)
                 {
-                    auto new_column = iter.atoi();
+                    const auto new_column = iter.atoi();
                     if (new_column >= sizer->GetCols())
+                    {
                         sizer->SetCols(new_column + 1);
+                    }
                     sizer->AddGrowableCol(iter.atoi(), proportion);
                 }
                 else
                 {
-                    auto new__row = iter.atoi();
+                    const auto new__row = iter.atoi();
                     if (new__row >= sizer->GetRows())
+                    {
                         sizer->SetRows(new__row + 1);
+                    }
                     sizer->AddGrowableRow(iter.atoi(), proportion);
                 }
             }
@@ -203,21 +207,21 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
     {
         if (auto& growable = node->as_string(prop_name); growable.size())
         {
-            tt_view_vector values(growable, ',');
-            for (auto& iter: values)
+            wxue::ViewVector values(growable, ',');
+            for (const auto& iter: values)
             {
-                auto val = iter.atoi();
+                const auto val = iter.atoi();
                 if (!is_within_braces)
                 {
                     code.OpenBrace();
                     is_within_braces = true;
                 }
                 int proportion = 0;
-                if (auto pos = iter.find(':'); ttwx::is_found(pos))
+                if (auto pos = iter.find(':'); wxue::is_found(pos))
                 {
-                    proportion = ttwx::atoi(ttwx::find_nonspace(iter.subview(pos + 1)));
+                    proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                 }
-                if (!code.size() || !ttwx::is_whitespace(code.GetCode().back()))
+                if (!code.size() || !wxue::is_whitespace(code.GetCode().back()))
                     code.Eol();
 
                 // Note that iter may start with a space, so using itoa() ensures that we

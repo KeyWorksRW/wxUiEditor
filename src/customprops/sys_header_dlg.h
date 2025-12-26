@@ -19,6 +19,8 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
+#include "wxue_namespace/wxue_string.h"
+
 class NodeProperty;
 
 #include <wx/filehistory.h>
@@ -38,7 +40,7 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
     void Initialize(NodeProperty* prop);
-    const tt_string& GetResults() const { return m_value; }
+    const wxue::string& GetResults() const { return m_value; }
     void SetButtonsEnableState(bool set_ok_btn = true);
 
 protected:
@@ -64,7 +66,7 @@ private:
     wxStaticText* m_static_text;
     wxTextCtrl* m_text_ctrl;
 
-    tt_string m_value;
+    wxue::string m_value;
     NodeProperty* m_prop { nullptr };
     int m_language = GEN_LANG_CPLUSPLUS;
     wxFileHistory m_FileHistory;

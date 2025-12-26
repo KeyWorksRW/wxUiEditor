@@ -71,14 +71,16 @@ private:
 // ***********************************************
     // clang-format on
 
+#include "wxue_namespace/wxue_string.h"
+
 public:
-    const tt_string& GetRcFilename() { return m_rcFilename; }
-    std::vector<tt_string>& GetDlgNames() { return m_dialogs; }
+    const wxue::string& GetRcFilename() { return m_rcFilename; }
+    std::vector<wxue::string>& GetDlgNames() { return m_dialogs; }
 
 protected:
     void ReadRcFile();
 
 private:
-    tt_string m_rcFilename;
-    std::vector<tt_string> m_dialogs;
+    wxue::string m_rcFilename;
+    std::vector<wxue::string> m_dialogs;
 };

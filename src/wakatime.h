@@ -15,15 +15,15 @@ public:
     // Call this to reset the heartbeat timer so that the next heartbeat won't get sent for
     // two minutes. This is used to prevent app switching from generating heartbeats even
     // though wxUiEditor wasn't being used.
-    void ResetHeartbeat();
+    auto ResetHeartbeat() -> void;
 
-    void SendHeartbeat(bool FileSavedEvent = false);
+    auto SendHeartbeat(bool FileSavedEvent = false) -> void;
 
-    static bool IsWakaTimeAvailable();
+    [[nodiscard]] static auto IsWakaTimeAvailable() -> bool;
 
 protected:
     // Caution: It's possible that this function will fail and m_waka_cli will be empty.
-    void SetWakaExePath();
+    auto SetWakaExePath() -> void;
 
 private:
     tt_string m_waka_cli;

@@ -7,68 +7,94 @@
 
 #include "winres_ctrl.h"
 
-#include "import_winres.h"  // WinResource -- Parse a Windows resource file
-#include "ttwx.h"           // ttwx helpers for numeric parsing
-#include "utils.h"          // Utility functions that work with properties
+#include "import_winres.h"               // WinResource -- Parse a Windows resource file
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
-void resCtrl::ParseCommonStyles(tt_string_view line)
+auto resCtrl::ParseCommonStyles(wxue::string_view line) -> void
 {
     if (line.contains("WS_DISABLED"))
+    {
         m_node->set_value(prop_disabled, true);
+    }
     if (line.contains("NOT WS_VISIBLE"))
+    {
         m_node->set_value(prop_hidden, true);
+    }
 
     if (line.contains("WS_HSCROLL"))
+    {
         AppendStyle(prop_window_style, "wxHSCROLL");
+    }
     if (line.contains("WS_VSCROLL"))
+    {
         AppendStyle(prop_window_style, "wxVSCROLL");
+    }
 }
 
-bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
+auto resCtrl::ParseDimensions(wxue::string_view line, wxRect& duRect, wxRect& pixelRect) -> bool
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
     line.moveto_nonspace();
 
     if (line.empty())
+    {
         return false;
+    }
 
     if (line.at(0) == ',')
+    {
         line.moveto_digit();
+    }
 
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetLeft(ttwx::atoi(line));
+    }
+    duRect.SetLeft(wxue::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
+    {
         return false;
+    }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetTop(ttwx::atoi(line));
+    }
+    duRect.SetTop(wxue::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
+    {
         return false;
+    }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetWidth(ttwx::atoi(line));
+    }
+    duRect.SetWidth(wxue::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
+    {
         return false;
+    }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetHeight(ttwx::atoi(line));
+    }
+    duRect.SetHeight(wxue::atoi(line));
 
     if (m_node->is_Gen(gen_wxComboBox) && !m_node->as_string(prop_style).contains("wxCB_SIMPLE"))
     {
@@ -82,7 +108,7 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     if (m_node->is_Gen(gen_wxListBox))
     {
         m_node->set_value(prop_minimum_size,
-                          tt_string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
+                          wxue::string() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
     }
 
     /*
@@ -109,17 +135,17 @@ bool resCtrl::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     return true;
 }
 
-tt_string_view resCtrl::GetID(tt_string_view line)
+auto resCtrl::GetID(wxue::string_view line) -> wxue::string_view
 {
     line.moveto_nonspace();
 
     if (line.empty())
     {
-        MSG_ERROR(tt_string() << "Missing ID :" << m_original_line);
+        MSG_ERROR(wxue::string() << "Missing ID :" << m_original_line);
         return line;
     }
 
-    tt_string id;
+    wxue::string id;
     if (line.at(0) == ',')
     {
         line = StepOverComma(line, id);
@@ -128,7 +154,7 @@ tt_string_view resCtrl::GetID(tt_string_view line)
         {
             id = "wxID_ANY";
         }
-        else if (ttwx::is_digit(id[0]))
+        else if (wxue::is_digit(id[0]))
         {
             id.insert(0, "id_");
         }
@@ -136,9 +162,9 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     else
     {
         auto end = line.find_first_of(',');
-        if (!ttwx::is_found(end))
+        if (!wxue::is_found(end))
         {
-            MSG_WARNING(tt_string() << "Missing comma after ID :" << m_original_line);
+            MSG_WARNING(wxue::string() << "Missing comma after ID :" << m_original_line);
             end = line.size();
         }
         id = line.substr(0, end);
@@ -146,23 +172,41 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     }
 
     if (id == "IDOK" || id == "1" || id == "IDC_OK")
+    {
         m_node->set_value(prop_id, "wxID_OK");
+    }
     else if (id == "IDCANCEL" || id == "2" || id == "IDC_CANCEL")
+    {
         m_node->set_value(prop_id, "wxID_CANCEL");
+    }
     else if (id == "IDYES" || id == "6" || id == "IDC_YES")
+    {
         m_node->set_value(prop_id, "wxID_YES");
+    }
     else if (id == "IDNO" || id == "7" || id == "IDC_NO")
+    {
         m_node->set_value(prop_id, "wxID_NO");
+    }
     else if (id == "IDABORT" || id == "3")
+    {
         m_node->set_value(prop_id, "wxID_ABORT ");
+    }
     else if (id == "IDCLOSE" || id == "8" || id == "IDC_CLOSE")
+    {
         m_node->set_value(prop_id, "wxID_CLOSE");
+    }
     else if (id == "IDHELP" || id == "9" || id == "IDD_HELP" || id == "IDC_HELP" || id == "ID_HELP")
+    {
         m_node->set_value(prop_id, "wxID_HELP");
+    }
     else if (id == "IDC_APPLY")
+    {
         m_node->set_value(prop_id, "wxID_APPLY");
+    }
     else
+    {
         m_node->set_value(prop_id, "wxID_ANY");
+    }
 
     if (m_node->as_string(prop_id) != "wxID_ANY" || !id.starts_with("IDC_STATIC"))
     {
@@ -173,17 +217,17 @@ tt_string_view resCtrl::GetID(tt_string_view line)
     return line;
 }
 
-tt_string_view resCtrl::GetLabel(tt_string_view line)
+auto resCtrl::GetLabel(wxue::string_view line) -> wxue::string_view
 {
     line.moveto_nonspace();
 
     if (line.empty())
     {
-        MSG_ERROR(tt_string() << "Missing label :" << m_original_line);
+        MSG_ERROR(wxue::string() << "Missing label :" << m_original_line);
         return line;
     }
 
-    tt_string label;
+    wxue::string label;
 
     if (line.at(0) == '"')
     {
@@ -192,7 +236,7 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
     else
     {
         auto pos = line.find(',');
-        if (!ttwx::is_found(pos))
+        if (!wxue::is_found(pos))
         {
             throw std::invalid_argument("Expected a quoted label.");
         }
@@ -205,61 +249,57 @@ tt_string_view resCtrl::GetLabel(tt_string_view line)
 
     if (m_node->is_Gen(gen_wxHyperlinkCtrl))
     {
-        auto begin_anchor = label.locate("<a", 0, tt::CASE::either);
-        if (!ttwx::is_found(begin_anchor))
+        auto begin_anchor = label.locate("<a", 0, wxue::CASE::either);
+        if (!wxue::is_found(begin_anchor))
         {
             // Without an anchor, there is no URL
             m_node->set_value(prop_label, ConvertEscapeSlashes(label));
         }
         else
         {
-            tt_string_view view_url = label.view_nonspace(begin_anchor);
-            if (view_url.is_sameprefix("<a>", tt::CASE::either))
+            wxue::string_view view_url = label.view_nonspace(begin_anchor);
+            if (view_url.is_sameprefix("<a>", wxue::CASE::either))
             {
                 view_url.remove_prefix(3);
-                view_url.erase_from("</a", tt::CASE::either);
+                view_url.erase_from("</a", wxue::CASE::either);
                 m_node->set_value(prop_url, view_url);
                 m_node->set_value(prop_label, label.substr(0, begin_anchor));
             }
-            else if (view_url.is_sameprefix("<a href=\"", tt::CASE::either))
+            else if (view_url.is_sameprefix("<a href=\"", wxue::CASE::either))
             {
                 view_url.remove_prefix(9);
-                view_url.erase_from("\">", tt::CASE::either);
+                view_url.erase_from("\">", wxue::CASE::either);
                 m_node->set_value(prop_url, view_url);
-                tt_string actual_label;
+                wxue::string actual_label;
                 view_url = label.view_nonspace(label.find("\">"));
                 view_url.remove_prefix(2);
-                view_url.erase_from("</a", tt::CASE::either);
+                view_url.erase_from("</a", wxue::CASE::either);
                 actual_label << label.substr(0, begin_anchor) << view_url;
                 m_node->set_value(prop_label, actual_label);
             }
             // Also valid just as the above <a href= -- only difference is how many prefix chars to
             // remove
-            else if (view_url.is_sameprefix("<a ref=\"", tt::CASE::either))
+            else if (view_url.is_sameprefix("<a ref=\"", wxue::CASE::either))
             {
                 view_url.remove_prefix(8);
-                view_url.erase_from("\">", tt::CASE::either);
+                view_url.erase_from("\">", wxue::CASE::either);
                 m_node->set_value(prop_url, view_url);
-                tt_string actual_label;
+                wxue::string actual_label;
                 view_url = label.view_nonspace(label.find("\">"));
                 view_url.remove_prefix(2);
-                view_url.erase_from("</a", tt::CASE::either);
+                view_url.erase_from("</a", wxue::CASE::either);
                 actual_label << label.substr(0, begin_anchor) << view_url;
                 m_node->set_value(prop_label, actual_label);
             }
         }
     }
-
-    else
-    {
-        m_node->set_value(prop_label, ConvertEscapeSlashes(label));
-    }
+    m_node->set_value(prop_label, ConvertEscapeSlashes(label));
 
     line.moveto_nonspace();
     return line;
 }
 
-tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
+auto resCtrl::StepOverQuote(wxue::string_view line, wxue::string& str) -> wxue::string_view
 {
     ASSERT(line.at(0) == '"');
 
@@ -275,12 +315,9 @@ tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
             {
                 return line.subview(idx + 1);
             }
-            else
-            {
-                // Doubled quote is an escape, so add the quote char and step over it
-                str += line[idx];
-                ++idx;
-            }
+            // Doubled quote is an escape, so add the quote char and step over it
+            str += line[idx];
+            ++idx;
         }
         else
         {
@@ -290,11 +327,13 @@ tt_string_view resCtrl::StepOverQuote(tt_string_view line, tt_string& str)
     return line.subview(idx);
 }
 
-tt_string_view resCtrl::StepOverComma(tt_string_view line, tt_string& str)
+auto resCtrl::StepOverComma(wxue::string_view line, wxue::string& str) -> wxue::string_view
 {
     auto pos = str.AssignSubString(line, ',', ',');
-    if (!ttwx::is_found(pos))
-        return tt::emptystring;
+    if (!wxue::is_found(pos))
+    {
+        return wxue::emptystring;
+    }
 
     if (pos + 1 >= line.size())
     {
@@ -308,11 +347,13 @@ tt_string_view resCtrl::StepOverComma(tt_string_view line, tt_string& str)
     return line;
 }
 
-void resCtrl::AppendStyle(GenEnum::PropName prop_name, tt_string_view style)
+auto resCtrl::AppendStyle(GenEnum::PropName prop_name, wxue::string_view style) -> void
 {
-    tt_string updated_style = m_node->as_string(prop_name);
+    wxue::string updated_style = m_node->as_string(prop_name);
     if (updated_style.size())
+    {
         updated_style << '|';
+    }
     updated_style << style;
     m_node->set_value(prop_name, updated_style);
 }

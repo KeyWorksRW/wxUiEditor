@@ -17,6 +17,8 @@
 #include "node_creator.h"   // Class used to create nodes
 #include "utils.h"          // Utility functions that work with properties
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 ///////////////////////////////////  ToolDropDownGenerator //////////////////////////////////////
 
 bool ToolDropDownGenerator::ConstructionCode(Code& code)
@@ -27,7 +29,7 @@ bool ToolDropDownGenerator::ConstructionCode(Code& code)
 
 bool ToolDropDownGenerator::SettingsCode(Code& code)
 {
-    tt_string menu_name = code.node()->as_string(prop_var_name);
+    wxue::string menu_name = code.node()->as_string(prop_var_name);
     menu_name += "_menu";
     code.AddIfCpp("auto* ").Str(menu_name).Assign("wxMenu");
     code.AddIfPython("()");
@@ -223,32 +225,32 @@ int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& objec
     return BaseGenerator::xrc_updated;
 }
 
-tt_string ToolSeparatorGenerator::GetHelpURL(Node*)
+wxue::string ToolSeparatorGenerator::GetHelpURL(Node*)
 {
     return "wx_tool_bar.html";
 }
 
-tt_string ToolSeparatorGenerator::GetHelpText(Node*)
+wxue::string ToolSeparatorGenerator::GetHelpText(Node*)
 {
     return "wxToolBar";
 }
 
-tt_string ToolSeparatorGenerator::GetPythonURL(Node*)
+wxue::string ToolSeparatorGenerator::GetPythonURL(Node*)
 {
     return "wx.ToolBar.html?highlight=addseparator#wx.ToolBar.AddSeparator";
 }
 
-tt_string ToolSeparatorGenerator::GetPythonHelpText(Node*)
+wxue::string ToolSeparatorGenerator::GetPythonHelpText(Node*)
 {
     return "wx.ToolBar";
 }
 
-tt_string ToolSeparatorGenerator::GetRubyURL(Node*)
+wxue::string ToolSeparatorGenerator::GetRubyURL(Node*)
 {
     return "Wx/ToolBar.html#add_separator-instance_method";
 }
 
-tt_string ToolSeparatorGenerator::GetRubyHelpText(Node*)
+wxue::string ToolSeparatorGenerator::GetRubyHelpText(Node*)
 {
     return "Wx/ToolBar.html";
 }
@@ -287,32 +289,32 @@ int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& obj
     return BaseGenerator::xrc_updated;
 }
 
-tt_string ToolStretchableGenerator::GetHelpURL(Node*)
+wxue::string ToolStretchableGenerator::GetHelpURL(Node*)
 {
     return "wx_tool_bar.html";
 }
 
-tt_string ToolStretchableGenerator::GetHelpText(Node*)
+wxue::string ToolStretchableGenerator::GetHelpText(Node*)
 {
     return "wxToolBar";
 }
 
-tt_string ToolStretchableGenerator::GetPythonURL(Node*)
+wxue::string ToolStretchableGenerator::GetPythonURL(Node*)
 {
     return "wx.ToolBar.html?highlight=addstretchablespace#wx.ToolBar.AddStretchableSpace";
 }
 
-tt_string ToolStretchableGenerator::GetPythonHelpText(Node*)
+wxue::string ToolStretchableGenerator::GetPythonHelpText(Node*)
 {
     return "wx.ToolBar";
 }
 
-tt_string ToolStretchableGenerator::GetRubyURL(Node*)
+wxue::string ToolStretchableGenerator::GetRubyURL(Node*)
 {
     return "Wx/ToolBar.html#add_stretchable_space-instance_method";
 }
 
-tt_string ToolStretchableGenerator::GetRubyHelpText(Node*)
+wxue::string ToolStretchableGenerator::GetRubyHelpText(Node*)
 {
     return "Wx/ToolBar.html";
 }

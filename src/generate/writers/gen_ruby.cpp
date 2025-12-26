@@ -28,6 +28,9 @@
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
 
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
 using namespace code;
@@ -75,9 +78,9 @@ end
 
 // clang-format on
 
-#if defined(_DEBUG)
+#ifdef _DEBUG
 // clang-format off
-static const std::vector<tt_string> disable_list = {
+static const std::vector<wxue::string> disable_list = {
     "Metrics/MethodLength",
     "Metrics/ParameterLists",
     "Style/Documentation",
@@ -107,7 +110,7 @@ auto RubyCodeGenerator::InitializeThreads(std::set<std::string>& img_include_set
 
 auto RubyCodeGenerator::WriteSourceHeader() -> void
 {
-#if !defined(_DEBUG)
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #else
     if (m_panel_type != PANEL_PAGE::NOT_PANEL)
@@ -163,12 +166,12 @@ auto RubyCodeGenerator::WriteRelativeRequires(const std::vector<Node*>& forms) -
 {
     if (m_form_node->HasValue(prop_relative_require_list))
     {
-        tt_string_vector list;
-        list.SetString(m_form_node->as_string(prop_relative_require_list));
+        wxue::StringVector list;
+        list.SetString(std::string_view(m_form_node->as_string(prop_relative_require_list)), '\n');
         for (auto& iter: list)
         {
             iter.remove_extension();
-            m_source->writeLine(tt_string("require_relative '") << iter << '\'');
+            m_source->writeLine(wxue::string("require_relative '") << iter << '\'');
         }
         if (list.size())
         {
@@ -183,9 +186,9 @@ auto RubyCodeGenerator::WriteRelativeRequires(const std::vector<Node*>& forms) -
             if ((form->is_Gen(gen_wxDialog) || form->is_Gen(gen_wxWizard)) &&
                 form->HasValue(prop_ruby_file))
             {
-                tt_string import_name(form->as_string(prop_ruby_file).filename());
+                wxue::string import_name(form->as_string(prop_ruby_file).filename());
                 import_name.remove_extension();
-                m_source->writeLine(tt_string("require_relative '") << import_name << "'");
+                m_source->writeLine(wxue::string("require_relative '") << import_name << "'");
             }
         }
     }
@@ -196,11 +199,11 @@ auto RubyCodeGenerator::WriteIDConstants() -> void
     int id_value = wxID_HIGHEST;
     for (const auto& iter: m_set_enum_ids)
     {
-        m_source->writeLine(tt_string() << '$' << iter << " = " << id_value++);
+        m_source->writeLine(wxue::string() << '$' << iter << " = " << id_value++);
     }
     for (const auto& iter: m_set_const_ids)
     {
-        if (tt::contains(iter, " wx"))
+        if (iter.contains(" wx"))
         {
             wxString wx_id = '$' + iter;
             wx_id.Replace(" wx", " Wx::", true);
@@ -221,14 +224,14 @@ auto RubyCodeGenerator::WriteInheritedClass() -> void
         return;
     }
 
-    tt_string inherit_name = m_form_node->as_string(prop_ruby_inherit_name);
+    wxue::string inherit_name = m_form_node->as_string(prop_ruby_inherit_name);
     if (inherit_name.empty())
     {
         inherit_name += "Sample < " + m_form_node->as_string(prop_class_name);
     }
     if (inherit_name.size())
     {
-        tt_string inherit("class ");
+        wxue::string inherit("class ");
         inherit << inherit_name;
         inherit << m_form_node->as_string(prop_ruby_file) << "."
                 << m_form_node->as_string(prop_class_name) << "):";
@@ -297,7 +300,7 @@ auto RubyCodeGenerator::GenerateConstructionCode(Code& code) -> void
     if (m_form_node->as_bool(prop_persist))
     {
         m_source->writeLine();
-        tt_string tmp("Wx.persistent_register_and_restore(self, \"");
+        wxue::string tmp("Wx.persistent_register_and_restore(self, \"");
         tmp << m_form_node->get_NodeName() << "\");";
         m_source->writeLine(tmp);
     }
@@ -306,7 +309,7 @@ auto RubyCodeGenerator::GenerateConstructionCode(Code& code) -> void
     {
         if (node->HasValue(prop_persist_name))
         {
-            tt_string code("Wx.persistent_register_and_restore(");
+            wxue::string code("Wx.persistent_register_and_restore(");
             code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
             m_source->writeLine(code);
         }
@@ -395,14 +398,14 @@ auto RubyCodeGenerator::WriteEmbeddedImages(Code& code) -> void
 
 auto RubyCodeGenerator::WriteRuboCopFooter() -> void
 {
-#if !defined(_DEBUG)
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #endif  // _DEBUG
     {
         if (Project.as_bool(prop_disable_rubo_cop))
         {
             m_source->writeLine();
-#if defined(_DEBUG)
+#ifdef _DEBUG
             for (const auto& iter: disable_list)
             {
                 m_source->writeLine("# rubocop:enable " + iter);
@@ -478,7 +481,7 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     {
         m_header->writeLine(
             "WX_GLOBAL_CONSTANTS = true unless defined? WX_GLOBAL_CONSTANTS\n\nrequire 'wx/core'");
-        m_header->writeLine(tt_string("# Sample inherited class from ")
+        m_header->writeLine(wxue::string("# Sample inherited class from ")
                             << m_form_node->as_string(prop_class_name));
         m_header->writeLine();
     }
@@ -500,16 +503,16 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     if (m_header)
     {
         m_header->writeLine();
-        m_header->writeLine(tt_string("requires '")
+        m_header->writeLine(wxue::string("requires '")
                             << m_form_node->as_string(prop_ruby_file) << "'\n");
         m_header->writeLine();
     }
 
     if (m_form_node->HasValue(prop_ruby_insert))
     {
-        tt_string convert(m_form_node->as_string(prop_ruby_insert));
-        convert.Replace("@@", "\n", tt::REPLACE::all);
-        tt_string_vector lines(convert, '\n', tt::TRIM::right);
+        wxue::string convert(m_form_node->as_string(prop_ruby_insert));
+        convert.Replace("@@", "\n", wxue::REPLACE::all);
+        wxue::StringVector lines(convert, '\n', wxue::TRIM::right);
         for (auto& line: lines)
         {
             m_source->doWrite(line);
@@ -566,7 +569,7 @@ auto RubyCodeGenerator::WriteSVGRequirements() -> void
 
 auto RubyCodeGenerator::WriteImagesFileImport(Code& code, Node* form) -> void
 {
-    tt_string import_name = form->as_string(prop_ruby_file).filename();
+    wxue::string import_name = form->as_string(prop_ruby_file).filename();
     import_name.remove_extension();
     code.Str("require_relative '").Str(import_name) << "'";
     m_source->writeLine(code);
@@ -807,7 +810,7 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     }
 }
 
-auto MakeRubyPath(Node* node) -> tt_string
+auto MakeRubyPath(Node* node) -> wxue::string
 {
     return ScriptCommon::MakeScriptPath(node, GEN_LANG_RUBY);
 }

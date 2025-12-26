@@ -9,16 +9,18 @@
 #include <wx/generic/animate.h>  // wxGenericAnimationCtrl
 #include <wx/scopedptr.h>        // wxScopedPtr: scoped smart pointer class
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "image_gen.h"        // Functions for generating embedded images
-#include "image_handler.h"    // ImageHandler class
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "pugixml.hpp"        // xml read/write/create/process
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
-#include "utils.h"            // Utility functions that work with properties
+#include "code.h"                               // Code -- Helper class for generating code
+#include "gen_common.h"                         // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"                      // Common XRC generating functions
+#include "image_gen.h"                          // Functions for generating embedded images
+#include "image_handler.h"                      // ImageHandler class
+#include "node.h"                               // Node class
+#include "project_handler.h"                    // ProjectHandler class
+#include "pugixml.hpp"                          // xml read/write/create/process
+#include "utils.h"                              // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"         // wxue::string, wxue::string_view
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 #include "gen_animation.h"
 
@@ -26,9 +28,9 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (tt::contains(node->as_string(prop_animation), ".ani", tt::CASE::either))
     {
-        auto widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                                 wxNullAnimation, DlgPoint(node, prop_pos),
-                                                 DlgSize(node, prop_size), GetStyleInt(node));
+        auto* widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                                  wxNullAnimation, DlgPoint(node, prop_pos),
+                                                  DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
         if (auto prop = node->get_PropPtr(prop_animation); prop)
             prop->as_animation(&animation);
@@ -43,9 +45,9 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
-                                          DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                          GetStyleInt(node));
+        auto* widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                           wxNullAnimation, DlgPoint(node, prop_pos),
+                                           DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
         if (auto prop = node->get_PropPtr(prop_animation); prop)
             prop->as_animation(&animation);
@@ -70,7 +72,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         if (code.HasValue(prop_animation))
         {
             bool found_embedded = false;
-            tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+            wxue::ViewVector parts(code.node()->as_string(prop_animation), ';');
             if (parts.size() > IndexImage)
             {
                 if (const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
@@ -108,7 +110,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
         code.Eol(eol_if_needed).NodeName().Function("SetInactiveBitmap(");
         if (code.is_cpp())
         {
-            tt_string bundle_code;
+            wxue::string bundle_code;
             GenerateBundleCode(code.node()->as_string(prop_inactive_bitmap), bundle_code);
             code.CheckLineLength(bundle_code.size());
             code += bundle_code;
@@ -140,11 +142,11 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             code += "auto ";
         }
 
-        tt_view_vector parts(code.node()->as_string(prop_animation), ';');
+        wxue::ViewVector parts(code.node()->as_string(prop_animation), ';');
         if (code.is_cpp())
         {
             code.Str("animate = ").NodeName().Function("CreateAnimation(").EndFunction();
-            tt_string name(parts[IndexImage].filename());
+            wxue::string name(parts[IndexImage].filename());
             name.remove_extension();
             name.LeftTrim();
             if (parts[IndexType].starts_with("Embed"))
@@ -179,7 +181,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             }
             if (!found_embedded)
             {
-                tt_string name(parts[IndexImage]);
+                wxue::string name(parts[IndexImage]);
                 name.make_absolute();
                 if (!name.file_exists())
                 {
@@ -227,17 +229,17 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     if (node->HasValue(prop_animation))
     {
-        tt_string_vector parts(node->as_string(prop_animation), ';', tt::TRIM::both);
+        wxue::StringVector parts(node->as_string(prop_animation), ';', wxue::TRIM::both);
         ASSERT(parts.size() > 1)
         item.append_child("animation").text().set(parts[IndexImage]);
     }
     if (node->HasValue(prop_inactive_bitmap))
     {
-        tt_string_vector parts(node->as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
+        wxue::StringVector parts(node->as_string(prop_inactive_bitmap), ';', wxue::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            tt_string_vector art_parts(parts[IndexArtID], '|');
+            wxue::StringVector art_parts(parts[IndexArtID], '|');
             auto bmp = item.append_child("inactive-bitmap");
             bmp.append_attribute("stock_id").set_value(art_parts[0]);
             bmp.append_attribute("stock_client").set_value(art_parts[1]);

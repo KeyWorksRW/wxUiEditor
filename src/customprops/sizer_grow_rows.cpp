@@ -9,9 +9,9 @@
 
 #include "sizer_grow_rows.h"
 
-#include "../nodes/node_prop.h"  // NodeProperty class
-#include "mainframe.h"           // MainFrame -- Main window frame
-#include "ttwx.h"                // ttwx helpers for numeric and character processing
+#include "../nodes/node_prop.h"                 // NodeProperty class
+#include "mainframe.h"                          // MainFrame -- Main window frame
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector, wxue::is_digit, wxue::atoi
 
 GrowRowsProperty::GrowRowsProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
@@ -23,7 +23,7 @@ GrowRowsDialog::GrowRowsDialog(wxWindow* parent, NodeProperty* prop) : GridPrope
     m_prop = prop;
 };
 
-void GrowRowsDialog::OnInit(wxInitDialogEvent& /* event unused */)
+auto GrowRowsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void
 {
     m_prop_label->SetLabel("Growable Rows");
     m_grid->SetColLabelValue(0, "Row");
@@ -34,16 +34,16 @@ void GrowRowsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     std::vector<GrowRowsEntry> entries;
     if (m_prop->as_string().size())
     {
-        tt_string_vector fields(m_prop->as_string(), ",", tt::TRIM::both);
+        wxue::StringVector fields(m_prop->as_string(), ",", wxue::TRIM::both);
         for (auto& iter: fields)
         {
-            if (ttwx::is_digit(iter[0]))
+            if (wxue::is_digit(iter[0]))
             {
                 GrowRowsEntry entry;
-                entry.index = ttwx::atoi(iter);
+                entry.index = wxue::atoi(iter);
                 if (auto pos = iter.find(':'); pos != std::string::npos)
                 {
-                    entry.proportion = ttwx::atoi(iter.substr(pos + 1));
+                    entry.proportion = wxue::atoi(iter.substr(pos + 1));
                 }
                 else
                 {
@@ -100,14 +100,14 @@ void GrowRowsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     Fit();
 }
 
-void GrowRowsDialog::OnOK(wxCommandEvent& event)
+auto GrowRowsDialog::OnOK(wxCommandEvent& event) -> void
 {
     m_grow_entries.clear();
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
     {
         GrowRowsEntry grow_entry;
-        grow_entry.index = ttwx::atoi(m_grid->GetCellValue(row, 0).ToStdString());
-        grow_entry.proportion = ttwx::atoi(m_grid->GetCellValue(row, 1).ToStdString());
+        grow_entry.index = wxue::atoi(m_grid->GetCellValue(row, 0).ToStdString());
+        grow_entry.proportion = wxue::atoi(m_grid->GetCellValue(row, 1).ToStdString());
         m_grow_entries.push_back(grow_entry);
     }
 
@@ -130,13 +130,13 @@ void GrowRowsDialog::OnOK(wxCommandEvent& event)
     event.Skip();
 }
 
-void GrowRowsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
+auto GrowRowsDialog::OnUpdateUI([[maybe_unused]] wxUpdateUIEvent& event) -> void
 {
     auto array = m_grid->GetSelectedRows();
     m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
 }
 
-void GrowRowsDialog::OnNewRow(wxCommandEvent& /* event unused */)
+auto GrowRowsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_grid->AppendRows(1);
     auto new_row = m_grid->GetNumberRows() - 1;
@@ -156,7 +156,7 @@ void GrowRowsDialog::OnNewRow(wxCommandEvent& /* event unused */)
     Fit();
 }
 
-void GrowRowsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
+auto GrowRowsDialog::OnDeleteRow([[maybe_unused]] wxCommandEvent& event) -> void
 {
     auto array = m_grid->GetSelectedRows();
     if (array.empty())
@@ -173,8 +173,9 @@ void GrowRowsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
     Fit();
 }
 
-bool GrowRowsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
-                                         wxPGProperty* /* property unused */)
+[[nodiscard]] auto GrowRowsDialogAdapter::DoShowDialog([[maybe_unused]] wxPropertyGrid* propGrid,
+                                                       [[maybe_unused]] wxPGProperty* property)
+    -> bool
 {
     GrowRowsDialog dlg(wxGetFrame().getWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)

@@ -167,7 +167,7 @@ auto PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_fla
     return value;
 }
 
-void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory& category,
+void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCategory& category,
                                   PropNameSet& prop_set, bool is_child_cat)
 {
     size_t propCount = category.get_PropNameCount();
@@ -195,8 +195,7 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                 {
                     if (auto result = gen->GetHint(prop); result)
                     {
-                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT,
-                                                          result->make_wxString());
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->wx());
                     }
                 }
                 m_prop_grid->SetPropertyHelpString(pg, GetPropHelp(prop));
@@ -209,18 +208,22 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
                                                           m_astr_wx_ids);
                     }
                 }
-                else if (propType == type_image || propType == type_animation)
+                if (propType == type_image || propType == type_animation)
                 {
                     m_prop_grid->Expand(pg);
                     if (UserPrefs.is_DarkMode())
+                    {
                         m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#996900"));
+                    }
                     else
+                    {
                         m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
+                    }
 
                     // This causes it to display the bitmap in the image/id property
                     pg->RefreshChildren();
                 }
-                else if (propType == type_string)
+                if (propType == type_string)
                 {
                     if (prop->isProp(prop_class_decoration))
                     {
@@ -241,7 +244,9 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
 
             // Automatically collapse properties that are rarely used
             if (prop_name == prop_unchecked_bitmap)
+            {
                 m_prop_grid->Collapse(pg);
+            }
 
             auto prop_name_iter = map_PropNames.find(prop_name);
             if (prop_name_iter != map_PropNames.end())
@@ -265,9 +270,12 @@ void PropGridPanel::AddProperties(tt_string_view name, Node* node, NodeCategory&
         }
         else
         {
-            MSG_WARNING(tt_string("The property ")
-                        << map_PropNames.at(prop_name) << " appears more than once in "
-                        << node->get_DeclName());
+            auto decl_name = node->get_DeclName();
+            auto prop_sv = map_PropNames.at(prop_name);
+            MSG_WARNING((wxString("The property ") << wxString(prop_sv.data(), prop_sv.size())
+                                                   << " appears more than once in "
+                                                   << wxString(decl_name.data(), decl_name.size()))
+                            .ToStdString());
         }
     }
 
@@ -352,7 +360,7 @@ inline constexpr const char* lst_mouse_events[] = {
 };
 // clang-format on
 
-void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& category,
+void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& category,
                               EventSet& event_set)
 {
     auto& eventList = category.get_Events();
@@ -365,8 +373,12 @@ void PropGridPanel::AddEvents(tt_string_view name, Node* node, NodeCategory& cat
 
         auto eventInfo = event->get_EventInfo();
 
-        ASSERT_MSG(event_set.find(eventName) == event_set.end(),
-                   tt_string("Encountered a duplicate event in ") << node->get_DeclName());
+        {
+            auto decl_name = node->get_DeclName();
+            ASSERT_MSG(event_set.find(eventName) == event_set.end(),
+                       wxString("Encountered a duplicate event in ")
+                           << wxString(decl_name.data(), decl_name.size()));
+        }
         if (event_set.find(eventName) == event_set.end())
         {
             auto grid_property = new EventStringProperty(event->get_name(), event);
@@ -540,7 +552,7 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
     return category_name;
 }
 
-void PropGridPanel::ReplaceDerivedName(const tt_string& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceDerivedName(const wxue::string& newValue, NodeProperty* propType)
 {
     auto drvName = newValue;
     if (drvName.ends_with("Base"))
@@ -553,11 +565,11 @@ void PropGridPanel::ReplaceDerivedName(const tt_string& newValue, NodeProperty* 
     }
 
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
-    grid_property->SetValueFromString(drvName.make_wxString());
+    grid_property->SetValueFromString(drvName.wx());
     ModifyProperty(propType, drvName);
 }
 
-void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
+void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
 {
     auto form_node = node->get_Form();
 
@@ -569,7 +581,7 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
         {
             auto output_filename = CreateBaseFilename(form_node, newValue);
             auto grid_property = m_prop_grid->GetPropertyByLabel(label->make_wxString());
-            grid_property->SetValueFromString(output_filename.make_wxString());
+            grid_property->SetValueFromString(output_filename.wx());
             ModifyProperty(form_node->get_PropPtr(prop_name), output_filename);
         }
     };
@@ -601,11 +613,11 @@ void PropGridPanel::CheckOutputFile(const tt_string& newValue, Node* node)
     }
 }
 
-void PropGridPanel::ReplaceDerivedFile(const tt_string& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceDerivedFile(const wxue::string& newValue, NodeProperty* propType)
 {
     auto derived_filename = CreateDerivedFilename(propType->getNode()->get_Form(), newValue);
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
-    grid_property->SetValueFromString(derived_filename.make_wxString());
+    grid_property->SetValueFromString(derived_filename.wx());
     ModifyProperty(propType, derived_filename);
 }
 
@@ -626,9 +638,9 @@ bool PropGridPanel::IsEventPageShowing()
     return false;
 }
 
-tt_string PropGridPanel::GetPropHelp(NodeProperty* prop) const
+wxue::string PropGridPanel::GetPropHelp(NodeProperty* prop) const
 {
-    tt_string description;
+    wxue::string description;
     if (auto gen = prop->getNode()->get_Generator(); gen)
     {
         // First let the generator specify the description

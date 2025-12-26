@@ -38,7 +38,7 @@ public:
         return new EditColourDialogAdapter(m_prop);
     }
 
-    void OnCustomPaint(wxDC& dc, const wxRect& rect, wxPGPaintData& paintdata) override;
+    void OnCustomPaint(wxDC& device_context, const wxRect& rect, wxPGPaintData& paintdata) override;
     wxSize OnMeasureImage(int /* item */) const override { return wxPG_DEFAULT_IMAGE_SIZE; }
 
 private:

@@ -30,7 +30,7 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->Wrap(DlgPoint(150));
         return widget;
     }
-    auto widget = new wxBannerWindow(
+    auto* widget = new wxBannerWindow(
         wxStaticCast(parent, wxWindow),
         (wxDirection) NodeCreation.get_ConstantAsInt(node->as_string(prop_direction)));
 
@@ -80,7 +80,7 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
     {
         if (code.is_cpp())
         {
-            tt_string tmp;
+            wxue::string tmp;
             GenBtnBimapCode(code.node(), tmp, true);
             code += tmp;
         }

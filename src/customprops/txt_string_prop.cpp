@@ -9,9 +9,10 @@
 
 #include "txt_string_prop.h"
 
-#include "node_prop.h"       // NodeProperty class
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
-#include "utils.h"           // Miscellaneous utility functions
+#include "node_prop.h"                        // NodeProperty class
+#include "utils.h"                            // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.cpp
 
@@ -25,16 +26,16 @@ class EditStringDialog : public EditStringDialogBase
 public:
     EditStringDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
     {
-        SetTitle(tt_string() << prop->get_DeclName() << " property editor");
+        SetTitle(wxue::string() << prop->get_DeclName() << " property editor");
         if (prop->isProp(prop_bitmap))
         {
-            tt_view_vector mstr(prop->as_string(), ';', tt::TRIM::both);
+            wxue::ViewVector mstr(prop->as_string(), ';', wxue::TRIM::both);
             m_value.clear();
             if (mstr.size() > IndexImage)
             {
                 if (auto result = FileNameToVarName(mstr[IndexImage].filename()); result)
                 {
-                    m_textCtrl->SetHint(result->make_wxString());
+                    m_textCtrl->SetHint(result->wx());
                 }
             }
             // With wxWidgets 3.2.0, calling m_textCtrl->SetFocus(); in

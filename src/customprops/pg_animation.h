@@ -11,6 +11,8 @@
 
 #include "img_props.h"  // ImageProperties -- Handles property grid image properties
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class NodeProperty;
 
 class PropertyGrid_Animation : public wxPGProperty
@@ -22,15 +24,15 @@ public:
 
     wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
                            wxVariant& childValue) const override;
-    void RefreshChildren() override;
+    auto RefreshChildren() -> void override;
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
-    ImageProperties& GetImageProperties() { return m_img_props; }
+    [[nodiscard]] auto GetImageProperties() -> ImageProperties& { return m_img_props; }
 
 private:
     ImageProperties m_img_props;
 
-    tt_string m_old_type;
-    tt_string m_old_image;
+    wxue::string m_old_type;
+    wxue::string m_old_image;
 };

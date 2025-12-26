@@ -144,7 +144,7 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewPanel::OnInit(wxInitDialogEvent& event)
+auto NewPanel::OnInit(wxInitDialogEvent& event) -> void
 {
     if (!m_is_form)
     {
@@ -157,7 +157,7 @@ void NewPanel::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewPanel::CreateNode()
+auto NewPanel::CreateNode() -> void
 {
     NodeSharedPtr new_node;
     if (m_is_form)
@@ -217,7 +217,7 @@ void NewPanel::CreateNode()
 
         auto parent = wxGetFrame().getSelectedNode();
         auto pos = parent->FindInsertionPos(parent);
-        tt_string undo_str("New wxPanel");
+        wxue::string undo_str("New wxPanel");
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     }
@@ -241,7 +241,7 @@ void NewPanel::CreateNode()
 
         wxGetFrame().SelectNode(parent_node);
 
-        tt_string undo_str("New wxPanel");
+        wxue::string undo_str("New wxPanel");
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     }
@@ -252,7 +252,7 @@ void NewPanel::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewPanel::VerifyClassName()
+auto NewPanel::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -266,7 +266,7 @@ void NewPanel::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

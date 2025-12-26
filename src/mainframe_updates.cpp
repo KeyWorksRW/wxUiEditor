@@ -8,6 +8,8 @@
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "mainframe.h"
 
 #include "preferences.h"      // Preferences -- Stores user preferences
@@ -18,13 +20,17 @@
 
 #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 
-void MainFrame::UpdateFrame()
+auto MainFrame::UpdateFrame() -> void
 {
-    tt_string filename;
+    wxue::string filename;
     if (UserPrefs.is_FullPathTitle())
+    {
         filename = Project.get_ProjectFile();
+    }
     else
+    {
         filename = Project.get_ProjectFile().filename();
+    }
 
     if (filename.empty())
     {
@@ -36,7 +42,7 @@ void MainFrame::UpdateFrame()
     {
         filename.insert(0, "*");
     }
-    SetTitle(filename.make_wxString());
+    SetTitle(filename.wx());
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())
@@ -68,7 +74,7 @@ void MainFrame::UpdateFrame()
     UpdateWakaTime();
 }
 
-void MainFrame::UpdateLanguagePanels()
+auto MainFrame::UpdateLanguagePanels() -> void
 {
     wxWindowUpdateLocker freeze(this);
 
@@ -83,9 +89,11 @@ void MainFrame::UpdateLanguagePanels()
 
     m_notebook->RemovePage(m_notebook->GetPageIndex(m_xrcPanel));
     if (m_docviewPanel)
+    {
         m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
+    }
 
-    auto languages = Project.get_GenerateLanguages();
+    const auto languages = Project.get_GenerateLanguages();
     if (languages & GEN_LANG_CPLUSPLUS && !m_cppPanel)
     {
         m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
@@ -222,21 +230,25 @@ void MainFrame::UpdateLanguagePanels()
     }
 
     if (Project.get_CodePreference() != GEN_LANG_XRC)
+    {
         m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+    }
     if (m_docviewPanel)
+    {
         m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+    }
 }
 
-void MainFrame::UpdateLayoutTools()
+auto MainFrame::UpdateLayoutTools() -> void
 {
     int option = -1;
     int border = 0;
     int flag = 0;
     int orient = 0;
 
-    bool gotLayoutSettings = GetLayoutSettings(&flag, &option, &border, &orient);
+    const bool gotLayoutSettings = GetLayoutSettings(&flag, &option, &border, &orient);
 
-    bool enableHorizontalTools = (orient != wxHORIZONTAL) && gotLayoutSettings;
+    const bool enableHorizontalTools = (orient != wxHORIZONTAL) && gotLayoutSettings;
     m_menuEdit->Enable(id_AlignLeft, enableHorizontalTools);
     m_toolbar->EnableTool(id_AlignLeft, enableHorizontalTools);
     m_menuEdit->Check(id_AlignLeft, ((flag & (wxALIGN_RIGHT | wxALIGN_CENTER_HORIZONTAL)) == 0) &&
@@ -257,7 +269,7 @@ void MainFrame::UpdateLayoutTools()
     m_menuEdit->Check(id_AlignRight, (flag & wxALIGN_RIGHT) && enableHorizontalTools);
     m_toolbar->ToggleTool(id_AlignRight, (flag & wxALIGN_RIGHT) && enableHorizontalTools);
 
-    bool enableVerticalTools = (orient != wxVERTICAL) && gotLayoutSettings;
+    const bool enableVerticalTools = (orient != wxVERTICAL) && gotLayoutSettings;
     m_menuEdit->Enable(id_AlignTop, enableVerticalTools);
     m_toolbar->EnableTool(id_AlignTop, enableVerticalTools);
     m_menuEdit->Check(id_AlignTop, ((flag & (wxALIGN_BOTTOM | wxALIGN_CENTER_VERTICAL)) == 0) &&
@@ -303,12 +315,14 @@ void MainFrame::UpdateLayoutTools()
     m_toolbar->ToggleTool(id_Expand, ((flag & wxEXPAND) != 0) && gotLayoutSettings);
 }
 
-void MainFrame::UpdateMoveMenu()
+auto MainFrame::UpdateMoveMenu() -> void
 {
-    auto node = m_selected_node.get();
+    auto* node = m_selected_node.get();
     Node* parent = nullptr;
     if (node)
+    {
         parent = node->get_Parent();
+    }
     if (!node || !parent)
     {
         m_menuEdit->Enable(id_MoveUp, false);
@@ -324,7 +338,7 @@ void MainFrame::UpdateMoveMenu()
     m_menuEdit->Enable(id_MoveRight, MoveNode(node, MoveDirection::Right, true));
 }
 
-void MainFrame::UpdateStatusWidths()
+auto MainFrame::UpdateStatusWidths() -> void
 {
     if (m_MainSplitter)
     {
@@ -335,11 +349,13 @@ void MainFrame::UpdateStatusWidths()
         m_SecondarySashPosition = m_SecondarySplitter->GetSashPosition();
     }
 
-    int widths[STATUS_PANELS] = { 1, (m_MainSashPosition + m_SecondarySashPosition - 16), -1 };
-    SetStatusWidths(sizeof(widths) / sizeof(int), widths);
+    const std::array<int, STATUS_PANELS> widths = {
+        1, (m_MainSashPosition + m_SecondarySashPosition - 16), -1
+    };
+    SetStatusWidths(static_cast<int>(widths.size()), widths.data());
 }
 
-void MainFrame::UpdateWakaTime(bool FileSavedEvent)
+auto MainFrame::UpdateWakaTime([[maybe_unused]] bool FileSavedEvent) -> void
 {
     if (m_wakatime && UserPrefs.is_WakaTimeEnabled())
     {

@@ -7,12 +7,13 @@
 
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mockup_parent.h"  // Top-level MockUp Parent window
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"                        // Code -- Helper class for generating code
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mockup_parent.h"               // Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "gen_ribbon_bar.h"
 
@@ -23,14 +24,17 @@ wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
                         DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
+    {
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
+    }
     else if (node->as_string(prop_theme) == "Generic")
+    {
         widget->SetArtProvider(new wxRibbonAUIArtProvider);
+    }
     else if (node->as_string(prop_theme) == "MSW")
+    {
         widget->SetArtProvider(new wxRibbonMSWArtProvider);
-
-    widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarFormGenerator::OnPageChanged, this);
-
+    }
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -99,22 +103,32 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     auto& style = node->as_string(prop_style);
     auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();
@@ -190,7 +204,7 @@ void RibbonBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::s
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would
     // normally create
-    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
+    code.Replace(wxue::string() << event->getNode()->as_string(prop_var_name) << "->", "");
 }
 
 bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
@@ -321,7 +335,7 @@ int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     GenXrcObjectAttributes(node, item, "wxRibbonBar");
 
-    tt_string art(node->as_string(prop_theme));
+    wxue::string art(node->as_string(prop_theme));
     if (art == "Generic")
         art = "aui";
     else if (art == "MSW")

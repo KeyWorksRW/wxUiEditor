@@ -90,7 +90,7 @@ public:
     auto GetRubyPanel() -> BasePanel* { return m_rubyPanel; }
     auto GetXrcPanel() -> BasePanel* { return m_xrcPanel; }
 
-    void UpdateLanguagePanels();
+    auto UpdateLanguagePanels() -> void;
 
     auto getTopNotebook() -> wxAuiNotebook* { return m_notebook; }
     auto getDocViewPanel() -> DocViewPanel* { return m_docviewPanel; }
@@ -125,7 +125,7 @@ public:
         FireSelectedEvent(node.get(), flags);
     }
 
-    void ChangeEventHandler(NodeEvent* event, const tt_string& value);
+    void ChangeEventHandler(NodeEvent* event, std::string_view value);
 
     // This will first call cmd->Change() and then push cmd onto the undo stack.
     void PushUndoAction(UndoActionPtr cmd, bool add_to_stack = true);
@@ -174,7 +174,7 @@ public:
     void RemoveNode(Node* node, bool isCutMode);
 
     // Call this MainFrame version if you don't have access to a node.
-    void ModifyProperty(NodeProperty* prop, tt_string_view value);
+    void ModifyProperty(NodeProperty* prop, std::string_view value);
 
     void ChangeAlignment(Node* node, int align, bool vertical);
 
@@ -182,24 +182,24 @@ public:
 
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
-    void CreateToolNode(GenEnum::GenName name);
+    auto CreateToolNode(GenEnum::GenName name) -> void;
 
     auto getFileHistory() -> wxFileHistory& { return m_FileHistory; }
 
     // This does an exact comparison, so file needs to be identical to what was added to the
     // history.
-    void RemoveFileFromHistory(tt_string file);
+    void RemoveFileFromHistory(std::string_view file);
 
     // Display the text in a specific field of the status bar -- the default is the field
     // that aligns with the PropertyGrid panel.
-    void setStatusField(const std::string& text, int position = -1);
+    void setStatusField(const wxString& text, int position = -1);
 
     auto GetMenuDpiSize() -> const wxSize& { return m_dpi_menu_size; }
     auto GetRibbonDpiSize() -> const wxSize& { return m_dpi_ribbon_size; }
     auto GetToolbarDpiSize() -> const wxSize& { return m_dpi_toolbar_size; }
 
     // This is the only variable length field, and therefore can hold the most text
-    void setRightStatusField(const tt_string& text) { setStatusField(text, m_posRightStatusField); }
+    void setRightStatusField(const wxString& text) { setStatusField(text, m_posRightStatusField); }
 
     [[nodiscard]] auto getDebugStatusField() const -> int { return m_posRightStatusField; }
     void UpdateStatusWidths();
@@ -219,13 +219,13 @@ public:
     // This does not use the internal clipboard
     void DuplicateNode(Node* node);
 
-    void setStatusText(const tt_string& txt, int pane = 1);
+    auto setStatusText(const wxString& txt, int pane = 1) -> void;
     auto OnCreateStatusBar(int number, long style, wxWindowID win_id, const wxString& name)
         -> wxStatusBar* override;
 
-    bool SaveWarning();
-    void UpdateFrame();
-    void OnProjectLoaded();
+    [[nodiscard]] auto SaveWarning() -> bool;
+    auto UpdateFrame() -> void;
+    auto OnProjectLoaded() -> void;
 
     [[nodiscard]] auto isModified() const -> bool { return m_isProject_modified; }
 
@@ -242,7 +242,7 @@ public:
 
     // Shows info bar message above code display panels
     // icon is one of wxICON_INFORMATION, wxICON_WARNING, wxICON_ERROR, or wxICON_QUESTION
-    void ShowInfoBarMsg(const tt_string& msg, int icon = wxICON_WARNING);
+    void ShowInfoBarMsg(std::string_view msg, int icon = wxICON_WARNING);
     void DismissInfoBar();
 
     auto GetAppendImportHistory() -> wxFileHistory* { return &m_ImportHistory; }
@@ -252,16 +252,16 @@ public:
 
     void ToggleBorderFlag(Node* node, int border);
 
-    void PreviewCpp(Node* form_node);
+    auto PreviewCpp(Node* form_node) -> void;
 
     // The following event handlers are used when previewing an XRC form
 
-    void OnXrcKeyUp(wxKeyEvent& event);
-    void OnPreviewWinClose(wxCloseEvent& event);
+    auto OnXrcKeyUp(wxKeyEvent& event) -> void;
+    auto OnPreviewWinClose(wxCloseEvent& event) -> void;
 
     // If the Window is deactivated (switching to another window will do this), this will
     // destroy the preview window.
-    void OnPreviewWinActivate(wxActivateEvent& event);
+    auto OnPreviewWinActivate(wxActivateEvent& event) -> void;
 
     void setPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
     void setPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
@@ -337,10 +337,10 @@ protected:
 
     wxWindow* CreateNoteBook(wxWindow* parent);
 
-    void CreateSplitters();
+    auto CreateSplitters() -> void;
 
-    void UpdateLayoutTools();
-    void UpdateMoveMenu();
+    auto UpdateLayoutTools() -> void;
+    auto UpdateMoveMenu() -> void;
 
     /*
 
@@ -358,7 +358,7 @@ protected:
 
     */
 
-    void UpdateWakaTime(bool FileSavedEvent = false);
+    auto UpdateWakaTime(bool FileSavedEvent = false) -> void;
 
 private:
     // Helper methods for OnGenerateCode

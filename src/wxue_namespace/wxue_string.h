@@ -130,15 +130,13 @@ namespace wxue
         // Returns true if current filename contains the specified case-insensitive extension.
         [[nodiscard]] auto has_extension(std::string_view ext) const -> bool
         {
-            string_view cur_extension(data(), size());
-            return cur_extension.has_extension(ext);
+            return extension().is_sameas(ext, CASE::either);
         }
 
         // Returns true if current filename contains the specified case-insensitive file name.
         [[nodiscard]] auto has_filename(std::string_view name) const -> bool
         {
-            string_view cur_filename(data(), size());
-            return cur_filename.has_filename(name);
+            return filename().is_sameas(name, CASE::either);
         }
 
         // Returns a string_view to the current extension. View is empty if there is no
@@ -489,8 +487,7 @@ namespace wxue
         //
         // Unless chBegin is a whitespace character, all whitespace characters starting with
         // offset will be ignored.
-        [[nodiscard]] auto AssignSubString(std::string_view src, char chBegin = '"',
-                                           char chEnd = '"') -> size_t;
+        auto AssignSubString(std::string_view src, char chBegin = '"', char chEnd = '"') -> size_t;
 
         // Extracts a string from another string using start and end characters deduced from
         // the first non-whitespace character after offset. Supports double and single quotes,
@@ -498,7 +495,7 @@ namespace wxue
         //
         // The return position is to the character in src that ended the string, or **npos** if no
         // ending character was found.
-        [[nodiscard]] auto ExtractSubString(std::string_view src, size_t offset = 0) -> size_t;
+        auto ExtractSubString(std::string_view src, size_t offset = 0) -> size_t;
 
         // Identical to ExtractSubString only it returns string& instead of a size_t
         auto CreateSubString(std::string_view src, size_t offset = 0) -> string&
@@ -508,9 +505,8 @@ namespace wxue
         }
 
         // Replace first (or all) occurrences of substring with another one
-        [[nodiscard]] size_t Replace(std::string_view oldtext, std::string_view newtext,
-                                     bool replace_all = REPLACE::once,
-                                     CASE checkcase = CASE::exact);
+        size_t Replace(std::string_view oldtext, std::string_view newtext,
+                       bool replace_all = REPLACE::once, CASE checkcase = CASE::exact);
 
         // Replace everything from pos to the end of the current string with str
         auto replace_all(size_t pos, std::string_view str) -> string&
@@ -630,7 +626,7 @@ namespace wxue
         //
         // If is_dir is false, current string is assumed to contain a filename in the path to
         // change to.
-        [[nodiscard]] auto ChangeDir(bool is_dir = true) const -> bool;
+        auto ChangeDir(bool is_dir = true) const -> bool;
 
         auto operator<<(std::string_view str) -> string&
         {

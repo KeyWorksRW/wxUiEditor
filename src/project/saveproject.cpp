@@ -10,6 +10,8 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "prop_decl.h"        // PropChildDeclaration and PropDeclaration classes
+#include "wxue_namespace/wxue_string.h"
+#include "wxue_namespace/wxue_string_vector.h"
 
 #include "pugixml.hpp"
 
@@ -64,11 +66,11 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
                     // Normalize using forward slashes, no spaces after ';' and no size info unless
                     // it is an SVG file
 
-                    tt_string_vector parts(value, ';', tt::TRIM::both);
+                    wxue::StringVector parts(value, ';', wxue::TRIM::both);
                     if (parts.size() < 2)
                         continue;
 
-                    tt_string description(parts[0]);
+                    wxue::string description(parts[0]);
                     parts[1].backslashestoforward();
                     description << ';' << parts[1];
 

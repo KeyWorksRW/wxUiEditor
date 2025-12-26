@@ -20,7 +20,7 @@
 
 wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER);
 
@@ -43,7 +43,7 @@ wxObject* AuiToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 void AuiToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                             bool is_preview)
 {
-    auto toolbar = wxStaticCast(wxobject, wxAuiToolBar);
+    auto* toolbar = wxStaticCast(wxobject, wxAuiToolBar);
     ASSERT(toolbar);
     if (!toolbar)
     {
@@ -224,7 +224,9 @@ void AuiToolBarFormGenerator::GenEvent(Code& code, NodeEvent* event, const std::
 
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would
     // normally create
-    code.Replace(tt_string() << event->getNode()->as_string(prop_var_name) << "->", "");
+    wxString replace_str;
+    replace_str << event->getNode()->as_string(prop_var_name) << "->";
+    code.Replace(replace_str.ToStdString(), "");
 }
 
 bool AuiToolBarFormGenerator::SettingsCode(Code& code)

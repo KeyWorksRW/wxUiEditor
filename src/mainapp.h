@@ -9,7 +9,8 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #if defined(_DEBUG)
     #include <memory>  // std::unique_ptr
@@ -39,7 +40,7 @@ class App : public wxApp
 public:
     App();
 
-    MainFrame* getMainFrame() { return m_frame; }
+    [[nodiscard]] auto getMainFrame() -> MainFrame* { return m_frame; }
 
     auto static isFireCreationMsgs() -> bool;
 
@@ -51,62 +52,65 @@ public:
     // type).
     auto isCoverageTesting() const noexcept -> bool { return m_is_coverage_testing; }
 
-    void static ShowMsgWindow();
-    auto static AutoMsgWindow() -> bool;
+    auto static ShowMsgWindow() -> void;
+    [[nodiscard]] auto static AutoMsgWindow() -> bool;
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Don't make this static or Bind() will not work
-    void DbgCurrentTest(wxCommandEvent& event);
+    auto DbgCurrentTest(wxCommandEvent& event) -> void;
 #endif
 
 #if defined(_DEBUG)
     // Writes to stderr even when running as a GUI application
-    void DebugOutput(const wxString& str);
+    auto DebugOutput(const wxString& str) -> void;
 #endif
 
-    void setMainFrameClosing() { m_isMainFrameClosing = true; }
-    auto isMainFrameClosing() const -> bool { return m_isMainFrameClosing; }
+    auto setMainFrameClosing() -> void { m_isMainFrameClosing = true; }
+    [[nodiscard]] auto isMainFrameClosing() const -> bool { return m_isMainFrameClosing; }
 
-    auto get_ProjectVersion() const { return m_ProjectVersion; }
+    [[nodiscard]] auto get_ProjectVersion() const { return m_ProjectVersion; }
 
     auto AskedAboutMissingDir(const wxString& path) -> bool
     {
         return (m_missing_dirs.contains(path));
     }
-    void AddMissingDir(const wxString& path) { m_missing_dirs.insert(path); }
+    auto AddMissingDir(const wxString& path) -> void { m_missing_dirs.insert(path); }
 
     auto isDarkMode() const noexcept -> bool { return m_isDarkMode; }
     auto isDarkHighContrast() const noexcept -> bool { return m_isDarkHighContrast; }
 
     // Determines whether the testing menu is enabled
-    auto isTestingMenuEnabled() const noexcept -> bool { return m_TestingMenuEnabled; }
-    void set_TestingMenuEnabled(bool value) noexcept { m_TestingMenuEnabled = value; }
+    [[nodiscard]] auto isTestingMenuEnabled() const noexcept -> bool
+    {
+        return m_TestingMenuEnabled;
+    }
+    auto set_TestingMenuEnabled(bool value) noexcept -> void { m_TestingMenuEnabled = value; }
 
     // Determines whether the testing switch is enabled
-    bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
-    void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
+    [[nodiscard]] auto isTestingSwitch() const noexcept -> bool { return m_is_testing_switch; }
+    auto setTestingSwitch(bool value) noexcept -> void { m_is_testing_switch = value; }
 
     // TODO: [Randalphwa - 12-09-2025] Verify() sets this, but no code generation functions check
     // it. This might be a good candidate for using wxMessageOutputDebug(), or just expanded
     // messages for the log file if we are creating oen.
 
     // Returns true if --verbose is specified on the command line.
-    auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }
-    void set_VerboseCodeGen(bool value) noexcept { m_is_verbose_codegen = value; }
+    [[nodiscard]] auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }
+    auto set_VerboseCodeGen(bool value) noexcept -> void { m_is_verbose_codegen = value; }
 
     // Returns true if code is being generated from the command line.
-    auto is_Generating() const noexcept -> bool { return m_is_generating; }
-    void set_Generating(bool value) noexcept { m_is_generating = value; }
+    [[nodiscard]] auto is_Generating() const noexcept -> bool { return m_is_generating; }
+    auto set_Generating(bool value) noexcept -> void { m_is_generating = value; }
 
     // Add warning or error messages to this if is_Generating() is true (which means code is
     // being generated from the command line).
-    auto get_CmdLineLog() -> tt_string_vector& { return m_cmdline_log; }
+    auto get_CmdLineLog() -> wxue::StringVector& { return m_cmdline_log; }
 
 protected:
-    bool OnInit() override;
+    auto OnInit() -> bool override;
 
 #if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
-    void OnFatalException() override;
+    auto OnFatalException() -> void override;
 #endif
 
     auto OnRun() -> int override;
@@ -131,14 +135,14 @@ private:
 
     [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
 
-    static auto LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
+    static auto LoadProjectFile(const wxue::string& tt_filename, size_t generate_type,
                                 bool& is_project_loaded) -> bool;
 
-    static void LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
-                                     bool test_only, std::string_view language_type);
+    static auto LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
+                                     bool test_only, std::string_view language_type) -> void;
 
-    static void GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                                     std::vector<std::string>& class_list);
+    static auto GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                                     std::vector<std::string>& class_list) -> void;
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
     // want to create it. If they choose No then we store the path here and never ask again
     // for the current session.
@@ -147,7 +151,7 @@ private:
     // If code is being generated from the command line, then error/warning messages should
     // be added to this vector -- they will be written to a log file when code generation is
     // complete.
-    tt_string_vector m_cmdline_log;
+    wxue::StringVector m_cmdline_log;
 
     // ProjectSettings* m_pjtSettings { nullptr };
 

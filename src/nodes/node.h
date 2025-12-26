@@ -38,6 +38,8 @@ namespace pugi
 
 #include "hash_map.h"  // Find std::string_view key in std::unordered_map
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string class
+
 class wxSizerFlags;
 class wxAnimation;
 struct ImageBundle;
@@ -96,7 +98,7 @@ public:
 
     auto get_PropPtr(PropName name) -> NodeProperty*;
 
-    auto get_Event(tt_string_view name) -> NodeEvent*;
+    auto get_Event(std::string_view name) -> NodeEvent*;
     auto get_MapEvents() -> NodeMapEvents& { return m_map_events; }
 
     // Walk up the node tree looking for a container with a limited set of platforms. If
@@ -302,7 +304,7 @@ public:
     }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
-    auto get_PropId() const -> tt_string;
+    auto get_PropId() const -> wxue::string;
 
     auto view(PropName name) const -> tt_string_view { return as_string(name); }
 
@@ -469,7 +471,7 @@ public:
     }
 
     // Assumes all values are within quotes
-    auto as_ArrayString(PropName name) const -> std::vector<tt_string>;
+    auto as_ArrayString(PropName name) const -> std::vector<wxue::string>;
 
     // If the following vector properties don't exist, they will return an empty vector
 

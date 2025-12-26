@@ -16,22 +16,30 @@
 
 #include "pugixml.hpp"
 
-bool isClipboardDataAvailable()
+auto isClipboardDataAvailable() -> bool
 {
     if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
+    {
         return true;
-    else if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
+    }
+    if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
+    {
         return true;
-    else if (wxTheClipboard->IsSupported(wxDataFormat("wxSmith XML")))
+    }
+    if (wxTheClipboard->IsSupported(wxDataFormat("wxSmith XML")))
+    {
         return true;
-    else if (wxTheClipboard->IsSupported(wxDataFormat("DataObject")) &&
-             wxTheClipboard->IsSupported(wxDF_TEXT))
+    }
+    if (wxTheClipboard->IsSupported(wxDataFormat("DataObject")) &&
+        wxTheClipboard->IsSupported(wxDF_TEXT))
+    {
         return true;
+    }
 
     return false;
 }
 
-NodeSharedPtr GetClipboardNode(bool warn_if_problems)
+auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
 {
     SmartClipboard clip;
     if (clip.IsOpened())
@@ -45,7 +53,9 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
             wxUEDataObject data;
             wxTheClipboard->GetData(data);
             if (wxGetFrame().getClipHash() == data.GetHash())
+            {
                 return {};
+            }
         }
 
         pugi::xml_document doc;
@@ -81,19 +91,19 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
             auto new_node = fb.CreateFbpNode(root, nullptr);
             if (fb.GetErrors().size() && warn_if_problems)
             {
-                tt_string errMsg(
+                wxue::string errMsg(
                     "Not everything from the wxFormBuilder object could be converted:\n\n");
                 for (auto& iter: fb.GetErrors())
                 {
                     errMsg << iter << '\n';
-                    MSG_INFO(tt_string("Paste import problem: ") << iter);
+                    MSG_INFO(wxue::string("Paste import problem: ") << iter);
                 }
 
                 wxMessageBox(errMsg, "Paste wxFormBuilder object");
             }
             return new_node;
         }
-        else if (tt::is_sameas(root.name(), "resource", tt::CASE::either))
+        else if (wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
         {
             // wxSmith encloses the object with "<resource>"
             auto child = root.first_child();
@@ -101,11 +111,12 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
             auto new_node = smith.CreateXrcNode(child, nullptr);
             if (smith.GetErrors().size() && warn_if_problems)
             {
-                tt_string errMsg("Not everything from the wxSmith object could be converted:\n\n");
+                wxue::string errMsg(
+                    "Not everything from the wxSmith object could be converted:\n\n");
                 for (auto& iter: smith.GetErrors())
                 {
                     errMsg << iter << '\n';
-                    MSG_INFO(tt_string("Paste import problem: ") << iter);
+                    MSG_INFO(wxue::string("Paste import problem: ") << iter);
                 }
 
                 wxMessageBox(errMsg, "Paste wxSmith object");
@@ -117,12 +128,14 @@ NodeSharedPtr GetClipboardNode(bool warn_if_problems)
     return {};
 }
 
-bool wxUtf8DataObject::SetData(size_t len, const void* buf)
+auto wxUtf8DataObject::SetData(size_t len, const void* buf) -> bool
 {
     // We should never even come close to this amount. It's much more likely that a length this size
     // is an attempt by malware to crash any program attempting to paste clipboard data.
     if (len > (1024 * 1024 * 1024))
+    {
         return false;
+    }
 
     m_text.reserve(len + 1);
     memcpy(m_text.data(), buf, len);
@@ -130,7 +143,7 @@ bool wxUtf8DataObject::SetData(size_t len, const void* buf)
     return true;
 }
 
-bool wxUtf8DataObject::GetDataHere(void* buf) const
+auto wxUtf8DataObject::GetDataHere(void* buf) const -> bool
 {
     memcpy(buf, m_text.data(), m_text.size() + 1);
     return true;

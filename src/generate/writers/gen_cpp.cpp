@@ -19,17 +19,19 @@
 #include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_enums.h"
-#include "gen_results.h"         // Code generation file writing functions
-#include "gen_timer.h"           // TimerGenerator class
-#include "image_gen.h"           // Functions for generating embedded images
-#include "image_handler.h"       // ImageHandler class
-#include "mainframe.h"           // MainFrame -- Main window frame
-#include "node.h"                // Node class
-#include "project_handler.h"     // ProjectHandler class
-#include "ttwx_string_vector.h"  // ttwx::StringVector
-#include "ttwx_view_vector.h"    // ttwx::ViewVector
-#include "utils.h"               // Miscellaneous utilities
-#include "write_code.h"          // Write code to Scintilla or file
+#include "gen_results.h"      // Code generation file writing functions
+#include "gen_timer.h"        // TimerGenerator class
+#include "image_gen.h"        // Functions for generating embedded images
+#include "image_handler.h"    // ImageHandler class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Miscellaneous utilities
+#include "write_code.h"       // Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
@@ -413,22 +415,22 @@ void CppCodeGenerator::GenCppImageFunctions()
 
     if (m_NeedImageFunction || m_NeedHeaderFunction)
     {
-        ttwx::StringVector function;
+        wxue::StringVector function;
         function.ReadString(std::string_view(txt_wxueImageFunction));
-        for (auto& iter: function)
+        for (const auto& iter: function)
         {
-            m_source->writeLine(iter, indent::none);
+            m_source->writeLine(wxue::string_view(iter.ToStdString()), indent::none);
         }
         m_source->writeLine();
     }
 
     if (m_NeedSVGFunction)
     {
-        ttwx::StringVector function;
+        wxue::StringVector function;
         function.ReadString(std::string_view(txt_GetBundleFromSVG));
-        for (auto& iter: function)
+        for (const auto& iter: function)
         {
-            m_source->writeLine(iter, indent::none);
+            m_source->writeLine(wxue::string_view(iter.ToStdString()), indent::none);
         }
         m_source->writeLine();
     }
@@ -439,11 +441,11 @@ void CppCodeGenerator::GenCppImageFunctions()
         // function. It won't matter for C++17, and for C++14 the animation isn't likely to
         // appear in a lot of forms, so any duplication of the function won't matter very
         // much.
-        ttwx::StringVector function;
+        wxue::StringVector function;
         function.ReadString(std::string_view(txt_GetAnimFromHdrFunction));
-        for (auto& iter: function)
+        for (const auto& iter: function)
         {
-            m_source->writeLine(iter, indent::none);
+            m_source->writeLine(wxue::string_view(iter.ToStdString()), indent::none);
         }
         m_source->writeLine();
     }
@@ -502,7 +504,7 @@ void CppCodeGenerator::InitializeGenerationState()
     m_NeedSVGFunction = false;
 }
 
-void CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) -> void
 {
     m_language = language;
     m_panel_type = panel_type;
@@ -562,7 +564,7 @@ void CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 
     ProcessEmbeddedImagesAndIncludes(img_include_set);
 
-    tt_string namespace_prop;
+    wxue::string namespace_prop;
     DetermineNamespace(namespace_prop);
 
     if (m_form_node->is_Gen(gen_Images))
@@ -583,7 +585,7 @@ void CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     // we provide. The indent will be updated to tell us how much the generated code should be
     // indented to account for the namespace(s).
     size_t indent = 0;
-    tt_string_vector names;
+    wxue::StringVector names;
     if (namespace_prop.size())
     {
         if (m_embedded_images.size())
@@ -645,7 +647,7 @@ void CppCodeGenerator::ProcessEmbeddedImagesAndIncludes(
     }
 }
 
-void CppCodeGenerator::DetermineNamespace(tt_string& namespace_prop)
+void CppCodeGenerator::DetermineNamespace(wxue::string& namespace_prop)
 {
     // Make a copy of the string so that we can tweak it
     namespace_prop = m_form_node->HasValue(prop_name_space) ?
@@ -658,7 +660,7 @@ void CppCodeGenerator::DetermineNamespace(tt_string& namespace_prop)
     }
 }
 
-void CppCodeGenerator::FinalizeNamespace(const tt_string_vector& names, size_t indent, Code& code)
+void CppCodeGenerator::FinalizeNamespace(const wxue::StringVector& names, size_t indent, Code& code)
 {
     // If there was a namespace, then GenHdrNameSpace() will have increased the indent level.
     if (indent > 0)
@@ -1563,11 +1565,11 @@ void CppCodeGenerator::GenerateDataForm()
         m_source->Indent();
         m_source->SetLastLineBlank();
 
-        ttwx::StringVector function;
+        wxue::StringVector function;
         function.ReadString(std::string_view(txt_get_data_function));
-        for (auto& iter: function)
+        for (const auto& iter: function)
         {
-            m_source->writeLine(iter, indent::none);
+            m_source->writeLine(wxue::string_view(iter.ToStdString()), indent::none);
         }
 
         Code code(m_form_node, m_language);

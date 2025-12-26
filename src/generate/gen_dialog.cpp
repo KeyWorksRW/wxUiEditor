@@ -16,6 +16,7 @@
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_dialog.h"
 
@@ -30,7 +31,7 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
         int ex_style = 0;
         // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires
         // a std::string to pass to it
-        tt_string_vector mstr(node->as_string(prop_extra_style), '|');
+        wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -41,11 +42,17 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->is_PropValue(prop_variant, "small"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+    }
     else if (node->is_PropValue(prop_variant, "mini"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+    }
     else if (node->is_PropValue(prop_variant, "large"))
+    {
         widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
 
     return widget;
 }
@@ -246,7 +253,9 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     Node* child_node = form;
     ASSERT_MSG(form->get_ChildCount(), "Trying to generate code for a dialog with no children.")
     if (!form->get_ChildCount())
+    {
         return {};  // empty dialog, so nothing to do
+    }
     ASSERT_MSG(form->get_Child(0)->is_Sizer(), "Expected first child of a dialog to be a sizer.");
     if (form->get_Child(0)->is_Sizer())
     {
@@ -260,8 +269,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
     const auto max_size = form->as_wxSize(prop_maximum_size);
 
     bool is_scaling_enabled =
-        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size) ? true :
-                                                                                              false;
+        isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize &&
         form->as_wxSize(prop_size) == wxDefaultSize && !is_scaling_enabled)
@@ -516,7 +524,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
         else
         {
-            tt_string all_styles = node->as_string(prop_style);
+            wxue::string all_styles = node->as_string(prop_style);
             all_styles << '|' << node->as_string(prop_extra_style);
             item.append_child("style").text().set(all_styles);
         }
@@ -535,7 +543,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
             if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
-                    .set_value((tt_string(node->as_string(prop_center))
+                    .set_value((wxue::string(node->as_string(prop_center))
                                 << " cannot be be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
@@ -550,11 +558,11 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     if (node->HasValue(prop_icon))
     {
-        tt_string_vector parts(node->as_string(prop_icon), ';', tt::TRIM::both);
+        wxue::StringVector parts(node->as_string(prop_icon), ';', wxue::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            tt_string_vector art_parts(parts[IndexArtID], '|');
+            wxue::StringVector art_parts(parts[IndexArtID], '|');
             auto icon = item.append_child("icon");
             icon.append_attribute("stock_id").set_value(art_parts[0]);
             icon.append_attribute("stock_client").set_value(art_parts[1]);

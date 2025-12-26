@@ -13,7 +13,7 @@
 */
 
 // AI Context: This file implements the Code class, a language-agnostic string builder for
-// generating wxWidgets UI code in C++, Python, Perl, and Ruby. Code inherits from tt_string and
+// generating wxWidgets UI code in C++, Python, Perl, and Ruby. Code inherits from wxue::string and
 // provides fluent API methods (Add, Function, Class, etc.) that automatically handle
 // language-specific syntax differences (wx vs wx. vs Wx::, self. vs @, true vs True vs 1). The
 // class manages automatic line breaking at m_break_length characters, indentation tracking via
@@ -26,8 +26,9 @@
 
 #include "gen_enums.h"  // Enumerations for generators
 
-#include "node.h"              // Node class
-#include "tt_string_vector.h"  // tt_string_vector -- Read/Write line-oriented strings/files
+#include "node.h"                               // Node class
+#include "wxue_namespace/wxue_string.h"         // wxue::string and wxue::string_view
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class EmbeddedImage;
 struct ImageBundle;
@@ -79,7 +80,7 @@ namespace code
 // Assume anyone including this header file needs access to the code namespace
 using namespace code;
 
-// Maps tt_string_view to std::string_view, allowing std::string_view comparisons
+// Maps std::string_view to std::string_view, allowing std::string_view comparisons
 using view_map = std::map<std::string_view, std::string_view, std::less<>>;
 
 extern const view_map g_map_python_prefix;
@@ -89,7 +90,7 @@ extern const view_map g_map_ruby_prefix;
 // If true, then the constant is available without modification.
 [[nodiscard]] auto HasPerlMapConstant(std::string_view value) -> bool;
 
-class Code : public tt_string
+class Code : public wxue::string
 {
 public:
     static constexpr int DEFAULT_BREAK_LENGTH = 80;
@@ -98,12 +99,12 @@ public:
     Code(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
     void Init(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
 
-    auto GetCode() -> tt_string& { return *this; }
-    [[nodiscard]] auto GetView() const -> tt_string_view { return *this; }
+    auto GetCode() -> wxue::string& { return *this; }
+    [[nodiscard]] auto GetView() const -> wxue::string_view { return *this; }
 
     void clear()
     {
-        tt_string::clear();
+        wxue::string::clear();
         if (m_auto_break)
         {
             m_break_at = m_break_length;
@@ -134,8 +135,8 @@ public:
 
     [[nodiscard]] auto HasValue(GenEnum::PropName prop_name) const -> bool;
 
-    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler will
-    // assume value is a bool if you call  is_PropValue(propm, "string")
+    // Avoid the temptation to use wxue::string_view instead of const char* -- the MSVC compiler
+    // will assume value is a bool if you call  is_PropValue(propm, "string")
 
     [[nodiscard]] auto is_PropValue(PropName name, const char* value) const noexcept -> bool
     {
@@ -150,7 +151,7 @@ public:
         return m_node->is_PropValue(name, value);
     }
 
-    [[nodiscard]] auto view(PropName name) const -> tt_string_view { return m_node->view(name); }
+    [[nodiscard]] auto view(PropName name) const -> wxue::string_view { return m_node->view(name); }
 
     // Returns m_node->as_bool(prop_name);
     [[nodiscard]] auto IsTrue(GenEnum::PropName prop_name) const -> bool
@@ -165,13 +166,14 @@ public:
     }
 
     // Equivalent to calling (node->as_string(prop_name) == text)
-    [[nodiscard]] auto IsEqualTo(GenEnum::PropName prop_name, tt_string_view text) const -> bool
+    [[nodiscard]] auto IsEqualTo(GenEnum::PropName prop_name, wxue::string_view text) const -> bool
     {
         return (m_node->as_string(prop_name) == text);
     }
 
     // Equivalent to calling (node->as_string(prop_name) != text)
-    [[nodiscard]] auto IsNotEqualTo(GenEnum::PropName prop_name, tt_string_view text) const -> bool
+    [[nodiscard]] auto IsNotEqualTo(GenEnum::PropName prop_name, wxue::string_view text) const
+        -> bool
     {
         return (m_node->as_string(prop_name) != text);
     }
@@ -194,17 +196,19 @@ public:
     }
 
     // Checks for prop_pos, prop_size, prop_style, prop_window_style, and prop_window_name
-    [[nodiscard]] auto IsDefaultPosSizeFlags(tt_string_view def_style = tt_empty_cstr) const
+    [[nodiscard]] auto IsDefaultPosSizeFlags(wxue::string_view def_style = wxue::emptystring) const
         -> bool;
 
     // Equivalent to calling node->as_string(prop_name).contains(text)
-    [[nodiscard]] auto PropContains(GenEnum::PropName prop_name, tt_string_view text) const -> bool;
+    [[nodiscard]] auto PropContains(GenEnum::PropName prop_name, wxue::string_view text) const
+        -> bool;
 
     // Returns flags indicating what parameters are needed for the current node.
     // Code::nothing_needed is returned if no parameters are needed.
     //
     // If prop_style == default style, then style_needed is not set.
-    [[nodiscard]] auto WhatParamsNeeded(tt_string_view default_style = tt_empty_cstr) const -> int;
+    [[nodiscard]] auto WhatParamsNeeded(wxue::string_view default_style = wxue::emptystring) const
+        -> int;
 
     // Adds comma and optional trailing space: ", "
     auto Comma(bool trailing_space = true) -> Code&
@@ -257,18 +261,18 @@ public:
     // separated by |.
     //
     // If needed, the line will be broken *before* the string is added.
-    auto Add(tt_string_view text) -> Code&;
+    auto Add(wxue::string_view text) -> Code&;
 
     // Same as Add() except that Perl won't use a Wx:: prefix, instead it assumes the
     // constant was defined in the "use Wx qw(...);" statement.
-    auto AddConstant(tt_string_view text) -> Code&;
+    auto AddConstant(wxue::string_view text) -> Code&;
 
     auto Add(const Code& text) -> Code& { return Add(text.GetView()); }
 
     // Equivalent to calling as_string(prop_name). Correctly modifies the string for Python.
     auto Add(GenEnum::PropName prop_name) -> Code& { return as_string(prop_name); }
 
-    auto AddIfLang(GenLang lang, tt_string_view text) -> Code&
+    auto AddIfLang(GenLang lang, wxue::string_view text) -> Code&
     {
         if (m_language == lang)
         {
@@ -277,7 +281,7 @@ public:
         return *this;
     }
 
-    auto AddIfCpp(tt_string_view text) -> Code&
+    auto AddIfCpp(wxue::string_view text) -> Code&
     {
         if (is_cpp())
         {
@@ -286,7 +290,7 @@ public:
         return *this;
     }
 
-    auto AddIfPerl(tt_string_view text) -> Code&
+    auto AddIfPerl(wxue::string_view text) -> Code&
     {
         if (is_perl())
         {
@@ -295,7 +299,7 @@ public:
         return *this;
     }
 
-    auto AddIfPython(tt_string_view text) -> Code&
+    auto AddIfPython(wxue::string_view text) -> Code&
     {
         if (is_python())
         {
@@ -304,7 +308,7 @@ public:
         return *this;
     }
 
-    auto AddIfRuby(tt_string_view text) -> Code&
+    auto AddIfRuby(wxue::string_view text) -> Code&
     {
         if (is_ruby())
         {
@@ -316,10 +320,10 @@ public:
     // Use this for wxWidgets types such as wxDefaultPosition, wxNullBitmap, etc.
     // Python will replace the "wx" with "wx."
     // Ruby will replace the "wx" with "Wx::" and change the name up uppercase snake_case.
-    auto AddType(tt_string_view text) -> Code&;
+    auto AddType(wxue::string_view text) -> Code&;
 
     // Equibalent to Add(node->as_constant(prop_name, "...")
-    auto AddConstant(GenEnum::PropName prop_name, tt_string_view short_name) -> Code&;
+    auto AddConstant(GenEnum::PropName prop_name, wxue::string_view short_name) -> Code&;
 
     // If Project.AddOptionalComments() is true, then add the comment on it's own line.
     // Set force to true to always add the comment.
@@ -358,45 +362,45 @@ public:
     // if needed)
     //
     // Use add_operator = false to convert a wxFunction to snake_case for Ruby.
-    auto Function(tt_string_view text, bool add_operator = true) -> Code&;
+    auto Function(wxue::string_view text, bool add_operator = true) -> Code&;
 
     // C++ will add "::" and the function name. Python will add "." and the function name.
     // Ruby changes the function to snake_case.
-    auto ClassMethod(tt_string_view function_name) -> Code&;
+    auto ClassMethod(wxue::string_view function_name) -> Code&;
 
     // Like ClassMethod(), but assumes a variable not a class. C++ and Python add "." and the
     // name.
     //
     // Ruby adds "." and changes the function to snake_case.
-    auto VariableMethod(tt_string_view function_name) -> Code&;
+    auto VariableMethod(wxue::string_view function_name) -> Code&;
 
     // For C++, this simply calls the function. For Python it prefixes "self." to the
     // function name. Ruby changes the function to snake_case.
-    auto FormFunction(tt_string_view text) -> Code&;
+    auto FormFunction(wxue::string_view text) -> Code&;
 
     // Adds ");" or ")"
     auto EndFunction() -> Code&;
 
     // Adds wxClass, Wx::Class, wx.Class, or any other language-required class name variant.
-    auto Class(tt_string_view text) -> Code&;
+    auto Class(wxue::string_view text) -> Code&;
 
     // Adds " = "
     // If class_name is specified, adds the " = new wxClass;" for C++ or normal
     // class assignment for other languages.
-    auto Assign(tt_string_view class_name = tt_empty_cstr) -> Code&;
+    auto Assign(wxue::string_view class_name = wxue::emptystring) -> Code&;
 
     // Adds " = new wxClass(" or " = wx.Class('. Set assign to false to not add the '='
     // Adds wxGeneric prefix if use_generic is true.
     // Creates wxPanel if node is a book page.
     // Specify override_name to override node->get_DeclName()
-    auto CreateClass(bool use_generic = false, tt_string_view override_name = tt_empty_cstr,
+    auto CreateClass(bool use_generic = false, wxue::string_view override_name = wxue::emptystring,
                      bool assign = true) -> Code&;
 
     // Adds the object's class name and a open parenthesis: class(
     //
     // For Perl, the class name will be followed by "->new("
     // For Ruby, the class name will be followed by ".new("
-    auto Object(tt_string_view class_name) -> Code&;
+    auto Object(wxue::string_view class_name) -> Code&;
 
     // For non-C++ languages, this will remove any "m_" prefix from the node name
     // (node->get_NodeName()).
@@ -409,7 +413,7 @@ public:
     // If class_access is true, then "self." is prefixed for Python, or "@" for Ruby.
     //
     // Use this when NodeName() is not appropriate, e.g., checkbox in wxStaticBoxSizer
-    auto VarName(tt_string_view var_name, bool class_access = true) -> Code&;
+    auto VarName(wxue::string_view var_name, bool class_access = true) -> Code&;
 
     // For Python code, a non-local, non-form name will be prefixed with "self."
     //
@@ -474,7 +478,7 @@ public:
     // wxGetTranslation().
     //
     // Empty strings generate wxEmptyString for C++, '' for Ruby and "" for other languages.
-    auto QuotedString(tt_string_view text) -> Code&;
+    auto QuotedString(wxue::string_view text) -> Code&;
 
     // If scale_border_size is true, will add the language-specific code for
     // "FromDIP(wxSize(prop_border_size,-1)).x". Otherwise, it will just add
@@ -507,19 +511,20 @@ public:
     //
     // If the only style specified is def_style, then it will not be added.
     auto PosSizeFlags(ScalingType enable_dpi_scaling = conditional_scaling,
-                      bool uses_def_validator = false, tt_string_view def_style = tt_empty_cstr)
-        -> Code&;
+                      bool uses_def_validator = false,
+                      wxue::string_view def_style = wxue::emptystring) -> Code&;
 
     // Call this when you need to force a specific style such as "wxCHK_3STATE"
-    auto PosSizeForceStyle(tt_string_view force_style, bool uses_def_validator = true) -> Code&;
+    auto PosSizeForceStyle(wxue::string_view force_style, bool uses_def_validator = true) -> Code&;
 
     // This will output "0" if there are no styles (style, window_style, tab_position etc.)
     //
     // If style is a friendly name, add the prefix parameter to prefix lookups.
-    auto Style(const char* prefix = nullptr, tt_string_view force_style = tt_empty_cstr) -> Code&;
-
-    auto GenFont(GenEnum::PropName prop_name = prop_font, tt_string_view font_function = "SetFont(")
+    auto Style(const char* prefix = nullptr, wxue::string_view force_style = wxue::emptystring)
         -> Code&;
+
+    auto GenFont(GenEnum::PropName prop_name = prop_font,
+                 wxue::string_view font_function = "SetFont(") -> Code&;
 
     // Generates code for prop_window_extra_style, prop_background_colour,
     // prop_foreground_colour, prop_disabled, prop_hidden, prop_maximum_size, prop_variant,
@@ -532,18 +537,18 @@ public:
     // property
     auto Bundle(GenEnum::PropName prop) -> Code&;
 
-    void BundlePerl(const tt_string_vector& parts);
-    void BundlePython(const tt_string_vector& parts);
-    void BundleRuby(const tt_string_vector& parts);
+    void BundlePerl(const wxue::StringVector& parts);
+    void BundlePython(const wxue::StringVector& parts);
+    void BundleRuby(const wxue::StringVector& parts);
 
     void AddPythonImageName(const EmbeddedImage* embed);
     void AddPerlImageName(const EmbeddedImage* embed);
 
-    void AddPythonSingleBitmapBundle(const tt_string_vector& parts, const ImageBundle* bundle,
-                                     const tt_string& name);
-    void AddPythonTwoBitmapBundle(const tt_string_vector& parts, const ImageBundle* bundle,
-                                  const tt_string& name, const tt_string& path);
-    void AddPythonMultiBitmapBundle(const tt_string_vector& parts, const ImageBundle* bundle);
+    void AddPythonSingleBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle,
+                                     const wxue::string& name);
+    void AddPythonTwoBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle,
+                                  const wxue::string& name, const wxue::string& path);
+    void AddPythonMultiBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle);
 
     // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
     // Generates wxNullColour if the property is empty.
@@ -603,25 +608,25 @@ public:
 
     // This will expand a lamda function according to the current language.
     // Note that it takes a copy of the lambda string since it needs to modify it.
-    auto ExpandEventLambda(tt_string lambda) -> Code&;
+    auto ExpandEventLambda(wxue::string lambda) -> Code&;
 
     [[nodiscard]] auto get_Indentation() const { return m_indent; }
 
     // Generates the code to load a wxBitmapBundle.
     // If get_bitmap is true, a bitmap will be returned. The bitmap will be scaled to the current
     // DPI using Rescale for a single bitmap, and wxBitmapBundle::GetBitmap() otherwise.
-    void GenerateBundleParameter(const tt_string_vector& parts, bool get_bitmap = false);
+    void GenerateBundleParameter(const wxue::StringVector& parts, bool get_bitmap = false);
 
     // Generate specific bundle types
-    void GenerateSVGBundle(const tt_string_vector& parts, bool get_bitmap);
-    void GenerateARTBundle(const tt_string_vector& parts, bool get_bitmap);
-    void GenerateEmbedBundle(const tt_string_vector& parts, bool get_bitmap);
-    void GenerateXpmBitmap(const tt_string_vector& parts, bool get_bitmap);
+    void GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap);
+    void GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap);
+    void GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap);
+    void GenerateXpmBitmap(const wxue::StringVector& parts, bool get_bitmap);
 
 protected:
     void InsertLineBreak(size_t cur_pos);
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis
-    auto SizerFlagsFunction(tt_string_view function_name) -> Code&;
+    auto SizerFlagsFunction(wxue::string_view function_name) -> Code&;
 
     static auto GetLanguagePrefix(std::string_view candidate, GenLang language) -> std::string_view;
 
@@ -629,23 +634,23 @@ protected:
     void CloseFontBrace();
 
     // Helper methods to reduce complexity in GenFont
-    void GenDefGuiFont(const FontProperty& fontprop, tt_string_view font_function);
+    void GenDefGuiFont(const FontProperty& fontprop, wxue::string_view font_function);
     void GenFontInfoCode(const FontProperty& fontprop);
     void GenFontInfoInit(const FontProperty& fontprop, double point_size, bool more_than_pointsize);
     void GenFontInfoProperties(const FontProperty& fontprop);
-    void ApplyFontToControl(tt_string_view font_function);
-    void ApplyFontProperty(const tt_string& font_var_name, tt_string_view method,
-                           tt_string_view value);
-    void SetFontOnControl(const tt_string& font_var_name, tt_string_view font_function);
+    void ApplyFontToControl(wxue::string_view font_function);
+    void ApplyFontProperty(const wxue::string& font_var_name, wxue::string_view method,
+                           wxue::string_view value);
+    void SetFontOnControl(const wxue::string& font_var_name, wxue::string_view font_function);
 
     // Helper functions for GenFontColourSettings()
-    void GenColourValue(tt_string_view colour_str, GenEnum::PropName prop_name);
-    void GenSetColourFunction(tt_string_view function_name, bool for_property_sheet);
+    void GenColourValue(wxue::string_view colour_str, GenEnum::PropName prop_name);
+    void GenSetColourFunction(wxue::string_view function_name, bool for_property_sheet);
 
     // Helper functions for GenSizerFlags()
-    void ProcessAlignmentFlags(const tt_string& prop);
-    void ProcessSizerFlags(const tt_string& prop);
-    void ProcessBorderFlags(const tt_string& prop, int border_size);
+    void ProcessAlignmentFlags(const wxue::string& prop);
+    void ProcessSizerFlags(const wxue::string& prop);
+    void ProcessBorderFlags(const wxue::string& prop, int border_size);
 
     // Helper methods for GenWindowSettings() - called internally to reduce complexity
     void GenExtraStyle();
@@ -654,11 +659,11 @@ protected:
     void GenMinMaxSize();
     void GenWindowVariant();
     void GenTooltipAndHelp();
-    void CallNodeOrFormFunction(tt_string_view function_name);
+    void CallNodeOrFormFunction(wxue::string_view function_name);
 
     // Helper methods for CreateClass() - called internally to reduce complexity
     auto HandleCppSubclass() -> bool;
-    [[nodiscard]] auto DetermineClassName(bool use_generic, tt_string_view override_name) const
+    [[nodiscard]] auto DetermineClassName(bool use_generic, wxue::string_view override_name) const
         -> std::string;
     void AddClassNameForLanguage(const std::string& class_name);
     void AddSubclassParams();
@@ -676,16 +681,16 @@ private:
     [[nodiscard]] static auto GetLineOffset(GenLang language) -> size_t;
 
     // Helper methods for Function()
-    void AddFunctionNoOperatorWithWx(tt_string_view text);
-    void AddFunctionWithOperatorRuby(tt_string_view text);
-    void AddFunctionWithOperatorPython(tt_string_view text);
+    void AddFunctionNoOperatorWithWx(wxue::string_view text);
+    void AddFunctionWithOperatorRuby(wxue::string_view text);
+    void AddFunctionWithOperatorPython(wxue::string_view text);
 
     // Helper methods for ValidParentName()
     void AddFormParentName();
 
     // Helper methods for QuotedString()
     void ProcessEscapedChar(char chr, bool& has_escape);
-    [[nodiscard]] static auto HasUtf8Char(tt_string_view text) -> bool;
+    [[nodiscard]] static auto HasUtf8Char(wxue::string_view text) -> bool;
     void AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_char);
 
     // Helper methods for WxSize()
@@ -695,15 +700,15 @@ private:
     void AddUnscaledSizePerl(wxSize size);
 
     // Helper methods for Add()
-    [[nodiscard]] auto AddRubyConstant(tt_string_view text) -> bool;
-    auto AddCombinedValues(tt_string_view text) -> Code&;
-    auto AddWxPrefixedConstant(tt_string_view text) -> Code&;
+    [[nodiscard]] auto AddRubyConstant(wxue::string_view text) -> bool;
+    auto AddCombinedValues(wxue::string_view text) -> Code&;
+    auto AddWxPrefixedConstant(wxue::string_view text) -> Code&;
 
     Node* m_node;
     GenLang m_language;
 
     // This is changed on a per-language basis in Code::Init()
-    tt_string m_language_wxPrefix { "wx" };
+    wxue::string m_language_wxPrefix { "wx" };
 
     size_t m_break_length { DEFAULT_BREAK_LENGTH };
     size_t m_break_at { DEFAULT_BREAK_LENGTH };  // this should be the same as m_break_length

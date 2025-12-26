@@ -14,6 +14,8 @@
 #include "utils.h"            // Utility functions that work with properties
 #include "utils_prop_grid.h"  // PropertyGrid utilities
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "../mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
 #include "gen_prop_grid_mgr.h"
@@ -164,7 +166,7 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
         {
             if (code.is_cpp())
             {
-                tt_string bundle_code;
+                wxue::string bundle_code;
                 GenerateBundleCode(code.node()->as_string(prop_bitmap), bundle_code);
                 code.CheckLineLength(bundle_code.size());
                 code += bundle_code;

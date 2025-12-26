@@ -98,7 +98,7 @@ void Code::ProcessEscapedChar(char chr, bool& has_escape)
     }
 }
 
-[[nodiscard]] auto Code::HasUtf8Char(tt_string_view text) -> bool
+[[nodiscard]] auto Code::HasUtf8Char(wxue::string_view text) -> bool
 {
     return std::ranges::any_of(text,
                                [](auto iter)
@@ -136,7 +136,7 @@ void Code::AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_cha
     }
 }
 
-auto Code::QuotedString(tt_string_view text) -> Code&
+auto Code::QuotedString(wxue::string_view text) -> Code&
 {
     auto cur_pos = this->size();
 

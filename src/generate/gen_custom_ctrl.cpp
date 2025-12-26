@@ -8,26 +8,28 @@
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
 #include <wx/stattext.h>          // wxStaticText base header
 
-#include "bitmaps.h"        // Contains various images handling functions
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "bitmaps.h"                            // Contains various images handling functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "gen_xrc_utils.h"                      // Common XRC generating functions
+#include "node.h"                               // Node class
+#include "pugixml.hpp"                          // xml read/write/create/process
+#include "utils.h"                              // Utility functions that work with properties
+#include "write_code.h"                         // WriteCode -- Write code to Scintilla or file
+#include "wxue_namespace/wxue_string.h"         // wxue::string, wxue::string_view
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_custom_ctrl.h"
 
 wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 {
-    tt_string_vector parts(node->as_string(prop_custom_mockup), ";");
+    const wxue::StringVector parts(node->as_string(prop_custom_mockup), ";");
     wxWindow* widget = nullptr;
 
     if (parts.size() && parts[0].starts_with("wxStaticText"))
     {
-        if (auto pos = parts[0].find('('); pos != tt::npos)
+        if (auto pos = parts[0].find('('); pos != wxue::npos)
         {
-            tt_string_vector options(parts[0].subview(pos + 1), ",");
+            wxue::StringVector options(parts[0].subview(pos + 1), ",");
             widget =
                 new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, options[0],
                                  wxDefaultPosition, wxDefaultSize,
@@ -88,9 +90,9 @@ bool CustomControl::ConstructionCode(Code& code)
 {
     if (code.HasValue(prop_construction))
     {
-        tt_string construction = code.view(prop_construction);
+        wxue::string construction = code.view(prop_construction);
         construction.BothTrim();
-        construction.Replace("@@", "\n", tt::REPLACE::all);
+        construction.Replace("@@", "\n", wxue::REPLACE::all);
         code += construction;
         return true;
     }
@@ -100,25 +102,25 @@ bool CustomControl::ConstructionCode(Code& code)
     if (code.HasValue(prop_namespace) && code.is_cpp())
         code.as_string(prop_namespace) += "::";
 
-    tt_string parameters(code.view(prop_parameters));
+    wxue::string parameters(code.view(prop_parameters));
     if (parameters.starts_with('('))
         parameters.erase(0, 1);
     parameters.Replace("${parent}", code.node()->get_ParentName(code.get_language(), true),
-                       tt::REPLACE::all);
+                       wxue::REPLACE::all);
     if (code.is_cpp())
     {
-        parameters.Replace("self", "this", tt::REPLACE::all);
-        parameters.Replace("wx.ID_ANY", "wxID_ANY", tt::REPLACE::all);
+        parameters.Replace("self", "this", wxue::REPLACE::all);
+        parameters.Replace("wx.ID_ANY", "wxID_ANY", wxue::REPLACE::all);
     }
     else
     {
-        parameters.Replace("this", "self", tt::REPLACE::all);
-        parameters.Replace("wxID_ANY", "wx.ID_ANY", tt::REPLACE::all);
+        parameters.Replace("this", "self", wxue::REPLACE::all);
+        parameters.Replace("wxID_ANY", "wx.ID_ANY", wxue::REPLACE::all);
     }
 
     for (auto& iter: map_MacroProps)
     {
-        if (parameters.find(iter.first) != tt::npos)
+        if (parameters.find(iter.first) != wxue::npos)
         {
             Code code_temp(code.node(), code.get_language());
             if (iter.second == prop_window_style && code.node()->as_string(iter.second).empty())
@@ -179,16 +181,16 @@ bool CustomControl::SettingsCode(Code& code)
         // section that works for both C++ and Python. We do, however, make some basic
         // conversions.
 
-        tt_string settings = code.view(prop_settings_code);
-        settings.Replace("@@", "\n", tt::REPLACE::all);
+        wxue::string settings = code.view(prop_settings_code);
+        settings.Replace("@@", "\n", wxue::REPLACE::all);
         if (code.is_python())
         {
-            settings.Replace("->", ".", tt::REPLACE::all);
-            settings.Replace("wxID_ANY", "wx.ID_ANY", tt::REPLACE::all);
+            settings.Replace("->", ".", wxue::REPLACE::all);
+            settings.Replace("wxID_ANY", "wx.ID_ANY", wxue::REPLACE::all);
         }
         else
         {
-            settings.Replace("wx.", "wx", tt::REPLACE::all);
+            settings.Replace("wx.", "wx", wxue::REPLACE::all);
         }
 
         code.Str(settings);
@@ -215,30 +217,34 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     if (node->HasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
     {
-        tt_string_view cur_value = node->as_string(prop_header);
+        wxue::string_view cur_value = node->as_string(prop_header);
         if (cur_value.starts_with("#"))
         {
             cur_value.remove_prefix(1);
             cur_value = cur_value.view_nonspace();
             if (cur_value.starts_with("include"))
             {
-                tt_string convert(node->as_string(prop_header));
-                convert.Replace("@@", "\n", tt::REPLACE::all);
+                wxue::string convert(node->as_string(prop_header));
+                convert.Replace("@@", "\n", wxue::REPLACE::all);
                 set_src.insert(convert);
             }
             else
             {
-                set_src.insert(tt_string() << "#include \"" << node->as_string(prop_header) << '"');
+                wxString include_str;
+                include_str << "#include \"" << node->as_string(prop_header) << '"';
+                set_src.insert(include_str.ToStdString());
             }
         }
         else
         {
             // Because the header is now a multi-line editor, it's easy for it to have a
             // trailing @@ -- we remove that here.
-            tt_string convert(node->as_string(prop_header));
-            convert.Replace("@@", "", tt::REPLACE::all);
+            wxue::string convert(node->as_string(prop_header));
+            convert.Replace("@@", "", wxue::REPLACE::all);
 
-            set_src.insert(tt_string() << "#include \"" << convert << '"');
+            wxString include_str;
+            include_str << "#include \"" << convert << '"';
+            set_src.insert(include_str.ToStdString());
         }
     }
 
@@ -246,12 +252,17 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
     {
         if (node->HasValue(prop_namespace))
         {
-            set_hdr.insert(tt_string("namespace ")
-                           << node->as_string(prop_namespace) << "\n{\n"
-                           << "class " << node->as_string(prop_class_name) << ";\n}");
+            wxString hdr_str;
+            hdr_str << "namespace " << node->as_string(prop_namespace) << "\n{\n"
+                    << "class " << node->as_string(prop_class_name) << ";\n}";
+            set_hdr.insert(hdr_str.ToStdString());
         }
         else
-            set_hdr.insert(tt_string() << "class " << node->as_string(prop_class_name) << ';');
+        {
+            wxString hdr_str;
+            hdr_str << "class " << node->as_string(prop_class_name) << ';';
+            set_hdr.insert(hdr_str.ToStdString());
+        }
     }
     return true;
 }

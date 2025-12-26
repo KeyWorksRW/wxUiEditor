@@ -22,10 +22,11 @@
 #include <mutex>
 #include <set>
 
-#include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
-#include "gen_enums.h"             // Enumerations for generators
-#include "gen_results.h"           // Code generation file writing functions
-#include "tt_string_vector.h"      // tt_string_vector -- Read/Write line-oriented strings/files
+#include "../panels/base_panel.h"        // BasePanel -- Base class for all code generation panels
+#include "gen_enums.h"                   // Enumerations for generators
+#include "gen_results.h"                 // Code generation file writing functions
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class Code;
 class Node;
@@ -102,8 +103,8 @@ protected:
     // This will call code.clear() before writing any code.
     void WriteImageConstruction(Code& code);  // declared in image_gen.cpp
 
-    void WritePropSourceCode(Node* node, GenEnum::PropName prop);
-    void AddPersistCode(Node* node);
+    auto WritePropSourceCode(Node* node, GenEnum::PropName prop) -> void;
+    auto AddPersistCode(Node* node) -> void;
     enum class Permission : std::uint8_t
     {
         Protected,
@@ -113,12 +114,12 @@ protected:
     // This method is in gen_images.cpp, and handles both source and header code generation
     void GenerateImagesForm();
 
-    static auto GetDeclaration(Node* node) -> tt_string;
+    [[nodiscard]] static auto GetDeclaration(Node* node) -> wxue::string;
 
-    void CollectEventHandlers(Node* node, EventVector& events);
+    auto CollectEventHandlers(Node* node, EventVector& events) -> void;
 
     // m_language and m_form_node must be set first. This will add to m_embedded_images
-    void CollectImageHeaders(Node* node, std::set<std::string>& embedset);
+    auto CollectImageHeaders(Node* node, std::set<std::string>& embedset) -> void;
 
     void GenSrcEventBinding(Node* class_node, EventVector& events);
 
@@ -126,7 +127,7 @@ protected:
     // wx/artprov.h is needed.
     //
     // Requires m_ImagesForm to be set before calling
-    void ParseImageProperties(Node* class_node);
+    auto ParseImageProperties(Node* class_node) -> void;
 
     // implemented in gen_construction.cpp
     void GenConstruction(Node* node);
@@ -135,15 +136,15 @@ protected:
     void GenSettings(Node* node, bool within_brace = false);
 
     // Write everything in the set and then clear it
-    void static WriteSetLines(WriteCode* write_code, std::set<std::string>& set_lines);
+    static auto WriteSetLines(WriteCode* write_code, std::set<std::string>& set_lines) -> void;
 
     // Called after base class is fully constructed
-    void GenContextMenuHandler(Node* node_ctx_menu);
+    auto GenContextMenuHandler(Node* node_ctx_menu) -> void;
 
     // Call this to set m_ImagesForm
-    void SetImagesForm();
+    auto SetImagesForm() -> void;
 
-    void BeginPlatformCode(Code& code, const tt_string& platforms);
+    void BeginPlatformCode(Code& code, const wxue::string& platforms);
     void EndPlatformCode();
     auto GenAfterChildren(Node* node, bool need_closing_brace) -> bool;
 
@@ -163,20 +164,20 @@ protected:
     WriteCode* m_header;
     WriteCode* m_source;
 
-    tt_string m_baseFullPath;
-    tt_string m_header_ext { ".h" };
+    wxue::string m_baseFullPath;
+    wxue::string m_header_ext { ".h" };
 
     std::vector<NodeEvent*> m_ctx_menu_events;
     std::vector<NodeEvent*> m_events;
 
     // Maps platorm string to vector of NodeEvent pointers
-    std::map<tt_string, std::vector<NodeEvent*>> m_map_conditional_events;
+    std::map<wxue::string, std::vector<NodeEvent*>> m_map_conditional_events;
 
     // Maps platorm string to set of public: member declarations
-    std::map<tt_string, std::set<tt_string>> m_map_public_members;
+    std::map<wxue::string, std::set<wxue::string>> m_map_public_members;
 
     // Maps platorm string to set of protected: member declarations
-    std::map<tt_string, std::set<tt_string>> m_map_protected;
+    std::map<wxue::string, std::set<wxue::string>> m_map_protected;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
@@ -184,11 +185,11 @@ protected:
     std::set<std::string> m_set_const_ids;
 
     // Warnings to be displayed to the user when generating code to a file
-    std::set<tt_string> m_warnings;
+    std::set<wxue::string> m_warnings;
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };
-    tt_string m_include_images_statement;
+    wxue::string m_include_images_statement;
 
     PANEL_PAGE m_panel_type { PANEL_PAGE::NOT_PANEL };
 
@@ -206,58 +207,59 @@ protected:
 private:
     // Helper methods for CollectEventHandlers - reduce function complexity
     // Adds event to conditional events map, checking for duplicates
-    void AddConditionalEvent(std::string_view platform, NodeEvent* event);
+    auto AddConditionalEvent(std::string_view platform, NodeEvent* event) -> void;
 
     // Adds event to context menu events or regular events based on parent type
-    void AddEventToProperContainer(Node* node, NodeEvent* event, EventVector& events);
+    auto AddEventToProperContainer(Node* node, NodeEvent* event, EventVector& events) -> void;
 
     // Processes a single event, determining where it should be stored
-    void ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events);
+    auto ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events) -> void;
 
     // Helper methods for CollectImageHeaders - reduce function complexity
     // Processes embedded or SVG images from a bundle
-    void ProcessEmbeddedImages(const std::vector<tt_string>& filenames);
+    auto ProcessEmbeddedImages(const std::vector<wxue::string>& filenames) -> void;
 
     // Processes header or XPM images from a bundle
-    void ProcessHeaderImages(Node* node, const std::vector<tt_string>& filenames,
-                             std::set<std::string>& embedset);
+    auto ProcessHeaderImages(Node* node, const std::vector<wxue::string>& filenames,
+                             std::set<std::string>& embedset) -> void;
 
     // Processes animation embed data
-    void ProcessAnimationEmbed(std::string_view value);
+    auto ProcessAnimationEmbed(std::string_view value) -> void;
 
     // Processes animation header or XPM data
-    void ProcessAnimationHeaders(std::string_view value, Node* node,
-                                 std::set<std::string>& embedset);
+    auto ProcessAnimationHeaders(std::string_view value, Node* node,
+                                 std::set<std::string>& embedset) -> void;
 
     // Helper to check if embedded image already exists in collection
     [[nodiscard]] auto IsEmbeddedImageInCollection(const EmbeddedImage* embed) -> bool;
 
     // Helper methods for ParseImageProperties - reduce function complexity
     // Processes icon property for form nodes
-    void ProcessFormIcon(Node* node);
+    auto ProcessFormIcon(Node* node) -> void;
 
     // Processes embed type images/animations from child node
-    void ProcessChildEmbedType(const tt_string_vector& parts, bool is_animation);
+    auto ProcessChildEmbedType(const wxue::StringVector& parts, bool is_animation) -> void;
 
     // Processes SVG type images/animations from child node
-    void ProcessChildSVGType(const tt_string_vector& parts, bool is_animation);
+    auto ProcessChildSVGType(const wxue::StringVector& parts, bool is_animation) -> void;
 
     // Processes header or XPM type images/animations from child node
-    void ProcessChildHeaderType(const tt_string_vector& parts, bool is_animation);
+    auto ProcessChildHeaderType(const wxue::StringVector& parts, bool is_animation) -> void;
 
     // Helper methods for GetDeclaration - reduce function complexity
     // Processes wx class declarations (wxStdDialogButtonSizer, wxStaticBitmap, etc)
-    static void ProcessWxClassDeclaration(const tt_string& class_name, Node* node, tt_string& code);
+    static auto ProcessWxClassDeclaration(const wxue::string& class_name, Node* node,
+                                          wxue::string& code) -> void;
 
     // Processes special custom class declarations
-    static void ProcessCustomClassDeclaration(Node* node, tt_string& code);
+    static auto ProcessCustomClassDeclaration(Node* node, wxue::string& code) -> void;
 
     // Processes tool class declarations based on parent type
-    static void ProcessToolDeclaration(Node* node, tt_string& code);
+    static auto ProcessToolDeclaration(Node* node, wxue::string& code) -> void;
 
     // Processes StaticCheckboxBoxSizer or StaticRadioBtnBoxSizer declarations
-    static void ProcessStaticBoxSizerDeclaration(const tt_string& class_name, Node* node,
-                                                 tt_string& code);
+    static auto ProcessStaticBoxSizerDeclaration(const wxue::string& class_name, Node* node,
+                                                 wxue::string& code) -> void;
 
     std::mutex m_embedded_images_mutex;  // Protects m_embedded_images from concurrent access
 };

@@ -19,9 +19,11 @@
 #include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
-#include "tt_view_vector.h"   // tt_view_vector -- Read/Write line-oriented strings/files
 #include "utils.h"            // Miscellaneous utilities
 #include "write_code.h"       // Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"       // wxue::string class
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector class
 
 #include "../customprops/eventhandler_dlg.h"  // EventHandlerDlg static functions
 
@@ -48,7 +50,7 @@ RustCodeGenerator::RustCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LA
 {
 }
 
-void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+auto RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) -> void
 {
     m_language = language;
     ASSERT(m_language == GEN_LANG_RUST);
@@ -84,7 +86,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     if (m_panel_type != NOT_PANEL)
     {
         m_source->writeLine("// The following comment block is only displayed in a _DEBUG build, "
-                            "or when written to a file.\n\n");
+                            "or when written to a file.\\n\\n");
     }
 #endif  // _DEBUG
     {
@@ -104,7 +106,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         {
             // gen->GetImports(node, imports);
         }
-        for (auto& child: node->get_ChildNodePtrs())
+        for (const auto& child: node->get_ChildNodePtrs())
         {
             GatherImportModules(child.get(), GatherImportModules);
         }
@@ -124,16 +126,16 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     BaseCodeGenerator::CollectIDs(m_form_node, m_set_enum_ids, m_set_const_ids);
 
     int id_value = wxID_HIGHEST;
-    for (auto& iter: m_set_enum_ids)
+    for (const auto& iter: m_set_enum_ids)
     {
-        m_source->writeLine(tt_string() << "local " << iter << " = " << id_value++);
+        m_source->writeLine(wxString() << "local " << iter << " = " << id_value++);
     }
-    for (auto& iter: m_set_const_ids)
+    for (const auto& iter: m_set_const_ids)
     {
-        if (tt::contains(iter, " wx"))
+        if (wxue::contains(iter, " wx"))
         {
-            tt_string id = '$' + iter;
-            id.Replace(" wx", " wx.", true, tt::CASE::exact);
+            wxue::string id = '$' + iter;
+            id.Replace(" wx", " wx.", true, wxue::CASE::exact);
             m_source->writeLine(id);
         }
         else
@@ -150,7 +152,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         // TODO: [Randalphwa - 07-13-2023] Need to figure out how to handle images in wxLua.
     }
 
-    auto generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();
     if (generator->ConstructionCode(code))
     {
@@ -160,9 +162,9 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         m_source->Indent();
 
         id_value = wxID_HIGHEST;
-        for (auto& iter: m_set_enum_ids)
+        for (const auto& iter: m_set_enum_ids)
         {
-            m_source->writeLine(tt_string() << '@' << iter << id_value++);
+            m_source->writeLine(wxString() << '@' << iter << id_value++);
         }
 
         if (id_value > 1)
@@ -196,7 +198,9 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     for (const auto& child: m_form_node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_wxContextMenuEvent))
+        {
             continue;
+        }
         GenConstruction(child.get());
     }
 
@@ -231,7 +235,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     else
     {
         m_source->ResetIndent();
-        m_source->writeLine("\t}", indent::none);
+        m_source->writeLine("\\t}", indent::none);
     }
 
     if (m_form_node->is_Gen(gen_wxWizard))
@@ -246,7 +250,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
     m_source->ResetIndent();
 
     //
-    // m_source->writeLine("}\n\n", indent::none);
+    // m_source->writeLine("}\\n\\n", indent::none);
 
     m_header->ResetIndent();
 
@@ -260,7 +264,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
 #endif
 }
 
-void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
+auto RustCodeGenerator::GenUnhandledEvents(EventVector& events) -> void
 {
     ASSERT_MSG(events.size(), "GenUnhandledEvents() shouldn't be called if there are no events");
     if (events.empty())
@@ -285,7 +289,7 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
     bool found_user_handlers = false;
     if (m_panel_type == NOT_PANEL)
     {
-        tt_view_vector org_file;
+        wxue::ViewVector org_file;
         auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_PERL);
 
         if (has_base_file && path.extension().empty())
@@ -320,24 +324,28 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
     bool is_all_events_implemented = true;
     if (found_user_handlers)
     {
-        for (auto& event: events)
+        for (const auto& event: events)
         {
             auto handler = EventHandlerDlg::GetRustValue(event->get_value());
             // Ignore lambda's
             if (handler.starts_with("[rust:lambda]"))
+            {
                 continue;
+            }
 
-            tt_string set_code;
+            wxue::string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "fn " << handler << " {";
             if (code_lines.find(set_code) != code_lines.end())
+            {
                 continue;
+            }
 
             // At least one event wasn't implemented, so stop looking for more
             is_all_events_implemented = false;
 
-            code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them "
+            code.Str("// Unimplemented Event handler functions\\n// Copy any listed and paste them "
                      "below the comment block, or "
                      "to your inherited class.");
             code.Eol().Str("/*").Eol();
@@ -355,7 +363,7 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
         // The user hasn't defined their own event handlers in this module
         is_all_events_implemented = false;
 
-        code.Str("// Unimplemented Event handler functions\n// Copy any listed and paste them "
+        code.Str("// Unimplemented Event handler functions\\n// Copy any listed and paste them "
                  "below the comment block, or "
                  "to your inherited class.");
         code.Eol().Str("/*").Eol();
@@ -365,21 +373,27 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
     code.clear();
     if (!is_all_events_implemented)
     {
-        for (auto& event: events)
+        for (const auto& event: events)
         {
             auto handler = EventHandlerDlg::GetRustValue(event->get_value());
             // Ignore lambda's
             if (handler.empty() || handler.starts_with("[rust:lambda]"))
+            {
                 continue;
+            }
 
-            tt_string set_code;
+            wxue::string set_code;
             // If the user doesn't use the `event` parameter, they may use '_' instead to indicate
             // an unused parameter.
             set_code << "fn " << handler << " {";
             if (code_lines.find(set_code) != code_lines.end())
+            {
                 continue;
+            }
             if (code_lines.find(set_code) != code_lines.end())
+            {
                 continue;
+            }
             code_lines.emplace(set_code);
 
             code.Str(set_code).Eol();
@@ -429,13 +443,17 @@ void RustCodeGenerator::GenUnhandledEvents(EventVector& events)
     }
 }
 
-tt_string MakeRustPath(Node* node)
+auto MakeRustPath(Node* node) -> wxue::string
 {
     auto [path, has_base_file] = Project.GetOutputPath(node->get_Form(), GEN_LANG_RUST);
 
     if (path.empty())
+    {
         path = "./";
+    }
     else if (has_base_file)
+    {
         path.remove_filename();
+    }
     return path;
 }

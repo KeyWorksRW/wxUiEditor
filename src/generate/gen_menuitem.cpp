@@ -19,6 +19,7 @@
 #include "node.h"           // Node class
 #include "node_creator.h"   // NodeCreator -- NodeCreator class
 #include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_menuitem.h"
 
@@ -83,7 +84,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     {
         if (node->HasValue(prop_shortcut))
         {
-            code.QuotedString(tt_string() << label << '\t' << node->as_string(prop_shortcut));
+            code.QuotedString(wxue::string() << label << '\t' << node->as_string(prop_shortcut));
         }
         else
         {
@@ -109,8 +110,9 @@ bool MenuItemGenerator::SettingsCode(Code& code)
     Node* node = code.node();
     if (code.HasValue(prop_extra_accels))
     {
-        tt_string_vector accel_list;
-        accel_list.SetString(node->as_string(prop_extra_accels), '"', tt::TRIM::both);
+        wxue::StringVector accel_list;
+        accel_list.SetString(std::string_view(node->as_string(prop_extra_accels)), '"',
+                             wxue::TRIM::both);
 
         if (code.is_cpp())
         {
@@ -167,7 +169,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
 
             else
             {
-                tt_string bundle_code;
+                wxue::string bundle_code;
                 bool is_vector_code = GenerateBundleCode(description, bundle_code);
 
                 if (!is_vector_code)
@@ -232,7 +234,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             }
             else
             {
-                tt_string bundle_code;
+                wxue::string bundle_code;
                 bool is_vector_code = GenerateBundleCode(description, bundle_code);
                 code.UpdateBreakAt();
 
@@ -331,8 +333,9 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->HasValue(prop_extra_accels))
     {
         auto child = item.append_child("extra-accels");
-        tt_string_vector accel_list;
-        accel_list.SetString(node->as_string(prop_extra_accels), '"', tt::TRIM::both);
+        wxue::StringVector accel_list;
+        accel_list.SetString(std::string_view(node->as_string(prop_extra_accels)), '"',
+                             wxue::TRIM::both);
         for (auto& accel: accel_list)
         {
             if (accel.size())
@@ -384,7 +387,7 @@ void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
 }
 
-bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
+bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, wxue::string_view value)
 {
     if (prop->isProp(prop_stock_id))
     {
@@ -403,7 +406,7 @@ bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, tt_string_view value)
             if (auto result = map_id_artid.find(value.as_str()); result != map_id_artid.end())
             {
                 undo_stock_id->addProperty(prop->getNode()->get_PropPtr(prop_bitmap),
-                                           tt_string("Art;") << result->second << "|wxART_MENU");
+                                           wxue::string("Art;") << result->second << "|wxART_MENU");
             }
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;

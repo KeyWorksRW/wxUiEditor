@@ -17,7 +17,7 @@ public:
     bool ConstructionCode(Code& code) override;
     bool SettingsCode(Code&) override;
 
-    std::optional<tt_string> GetPropertyDescription(NodeProperty*) override;
+    std::optional<wxue::string> GetPropertyDescription(NodeProperty*) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;

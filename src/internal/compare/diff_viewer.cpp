@@ -12,7 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-#include "../../tt/tt_string.h"
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 DiffViewer::DiffViewer(wxWindow* parent, const std::vector<FileDiff>& diffs) :
     wxDialog(parent, wxID_ANY, "Code Differences", wxDefaultPosition, wxSize(1200, 800),
@@ -196,16 +196,16 @@ void DiffViewer::DisplayDiff(size_t index)
             }
         }
 
-        tt_string info;
+        wxue::string info;
         info << "File " << (index + 1) << " of " << m_diffs.size() << " - " << added
              << " lines added, " << deleted << " lines deleted";
-        m_diff_info->SetLabel(info.make_wxString());
+        m_diff_info->SetLabel(info.wx());
     }
     else
     {
-        tt_string info;
+        wxue::string info;
         info << "File " << (index + 1) << " of " << m_diffs.size() << " - No differences";
-        m_diff_info->SetLabel(info.make_wxString());
+        m_diff_info->SetLabel(info.wx());
     }
 
     // Clear and populate text controls

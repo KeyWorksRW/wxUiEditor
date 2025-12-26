@@ -10,6 +10,8 @@
 #include "node.h"           // Node class
 #include "utils.h"          // Utility functions that work with properties
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "gen_prop_item.h"
 
 bool PropertyGridItemGenerator::ConstructionCode(Code& code)
@@ -34,7 +36,7 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        tt_string name("wx");
+        wxue::string name("wx");
         name << code.node()->as_string(prop_type) << "Property";
         code.Function("Append(").AddIfCpp("new ").Add(name).AddIfRuby(".new").Str("(");
         code.QuotedString(prop_label).Comma().QuotedString(prop_help).Str(")").EndFunction();
@@ -43,11 +45,11 @@ bool PropertyGridItemGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-tt_string PropertyGridItemGenerator::GetHelpURL(Node* node)
+wxue::string PropertyGridItemGenerator::GetHelpURL(Node* node)
 {
-    tt_string type = node->as_string(prop_type);
+    wxue::string type = node->as_string(prop_type);
     type.MakeLower();
-    tt_string url = "wx_";
+    wxue::string url = "wx_";
 
     if (type == "category")
     {
@@ -75,9 +77,9 @@ tt_string PropertyGridItemGenerator::GetHelpURL(Node* node)
     return url;
 }
 
-tt_string PropertyGridItemGenerator::GetHelpText(Node* node)
+wxue::string PropertyGridItemGenerator::GetHelpText(Node* node)
 {
-    tt_string help_text("wx");
+    wxue::string help_text("wx");
     if (node->as_string(prop_type) == "Category")
         help_text << "PropertyCategory";
     else

@@ -22,10 +22,12 @@
 
 #include "convert_img.h"  // auto-generated: convert_img_base.h and convert_img_base.cpp
 
-#include "bitmaps.h"          // Map of bitmaps accessed by name
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "bitmaps.h"                            // Map of bitmaps accessed by name
+#include "mainframe.h"                          // MainFrame -- Main window frame
+#include "project_handler.h"                    // ProjectHandler class
+#include "utils.h"                              // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"         // wxue::string
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "ui_images.h"
 
@@ -43,15 +45,15 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 {
     m_cwd.assignCwd();
 
-    tt_string dir;
+    wxue::string dir;
     auto dir_property = Project.ArtDirectory();
     if (dir_property.size())
         dir = dir_property;
     else
         dir = "./";
     dir.make_absolute();
-    m_fileOriginal->SetInitialDirectory(dir.make_wxString());
-    m_fileOutput->SetInitialDirectory(dir.make_wxString());
+    m_fileOriginal->SetInitialDirectory(dir.wx());
+    m_fileOutput->SetInitialDirectory(dir.wx());
 
     #if defined(_WIN32)
 
@@ -62,7 +64,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 
     // By setting the path, the user can start typing and immediately get a drop-down list of
     // matchning filenames.
-    m_fileOriginal->SetPath(dir.make_wxString());
+    m_fileOriginal->SetPath(dir.wx());
     #endif  // _WIN32
 
     m_btnClose->SetLabel("Close");
@@ -107,7 +109,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 
 void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
 {
-    tt_string file = m_fileOriginal->GetTextCtrlValue();
+    wxue::string file = m_fileOriginal->GetTextCtrlValue();
 
     if (!file.file_exists())
         return;
@@ -137,7 +139,9 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
     {
         {
             wxBusyCursor wait;
-            m_orgImage = GetHeaderImage(file, &m_orginal_size, &m_mime_type);
+            wxue::string mime_type;
+            m_orgImage = GetHeaderImage(file, &m_orginal_size, &mime_type);
+            m_mime_type = mime_type;
         }
 
         if (m_orgImage.IsOk())
@@ -306,7 +310,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
         m_staticDimensions->Show();
 
         // Now that we have a loaded image, set the output file.
-        tt_string outFilename;
+        wxue::string outFilename;
         auto dir_property = Project.ArtDirectory();
         if (dir_property.size())
         {
@@ -320,13 +324,13 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
 
         if (IsHeaderPage())
         {
-            m_fileOutput->SetPath(outFilename.make_wxString());
+            m_fileOutput->SetPath(outFilename.wx());
             AdjustOutputFilename();
         }
         else
         {
             outFilename.replace_extension(".xpm");
-            m_fileOutput->SetPath(outFilename.make_wxString());
+            m_fileOutput->SetPath(outFilename.wx());
         }
         m_btnConvert->Enable();
         SetOutputBitmap();
@@ -415,7 +419,7 @@ void ConvertImageDlg::OnConvert(wxCommandEvent& /* event unused */)
 
 void ConvertImageDlg::ImgageInHeaderOut()
 {
-    tt_string in_filename = m_fileOriginal->GetTextCtrlValue();
+    wxue::string in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
     {
         wxMessageBox("You need to specify a file to convert.");
@@ -429,7 +433,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     if (!m_orgImage.IsOk())
     {
-        wxMessageBox(wxString("Cannot open ") << in_filename.make_wxString());
+        wxMessageBox(wxString("Cannot open ") << in_filename.wx());
         return;
     }
 
@@ -460,15 +464,16 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     auto read_stream = save_stream.GetOutputStreamBuffer();
 
-    tt_string out_name = m_fileOutput->GetPath().utf8_string();
-    tt_string string_name = out_name;
+    wxue::string out_name = m_fileOutput->GetPath().utf8_string();
+    wxue::string string_name = out_name;
 
     string_name.remove_extension();
     string_name.Replace(".", "_", true);
 
-    tt_string_vector file;
+    wxue::StringVector file;
     {
-        auto& line = file.addEmptyLine();
+        file.emplace_back();
+        auto& line = file.back();
         line << "static const unsigned char " << string_name.filename() << '['
              << std::to_string(read_stream->GetBufferSize()) << "] = {";
     }
@@ -482,7 +487,8 @@ void ConvertImageDlg::ImgageInHeaderOut()
     while (pos < buf_size)
     {
         {
-            auto& line = file.addEmptyLine();
+            file.emplace_back();
+            auto& line = file.back();
             for (; pos < buf_size && line.size() < 116; ++pos)
             {
                 line << buf[pos] << ',';
@@ -493,11 +499,10 @@ void ConvertImageDlg::ImgageInHeaderOut()
     if (file[file.size() - 1].back() == ',')
         file[file.size() - 1].pop_back();
 
-    file.addEmptyLine() << "};";
-
+    file.emplace_back("};");
     if (out_name.empty())
     {
-        m_staticSize->SetLabelText(tt_string()
+        m_staticSize->SetLabelText(wxue::string()
                                    << "Original size: " << std::to_string(m_orginal_size)
                                    << " -- Output size if saved: " << std::to_string(buf_size));
         m_staticSize->Show();
@@ -506,9 +511,9 @@ void ConvertImageDlg::ImgageInHeaderOut()
     {
         if (file.WriteFile(out_name))
         {
-            m_staticSave->SetLabelText(out_name.make_wxString() << " saved.");
+            m_staticSave->SetLabelText(out_name.wx() << " saved.");
             m_staticSave->Show();
-            m_staticSize->SetLabelText(tt_string()
+            m_staticSize->SetLabelText(wxue::string()
                                        << "Original size: " << std::to_string(m_orginal_size)
                                        << " -- Output size: " << std::to_string(buf_size));
             m_staticSize->Show();
@@ -517,7 +522,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
         }
         else
         {
-            m_staticSave->SetLabelText(wxString() << "Cannot open " << out_name.make_wxString());
+            m_staticSave->SetLabelText(wxString() << "Cannot open " << out_name.wx());
             m_staticSave->Show();
         }
     }
@@ -525,7 +530,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
 void ConvertImageDlg::ImageInXpmOut()
 {
-    tt_string in_filename = m_fileOriginal->GetTextCtrlValue();
+    wxue::string in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
     {
         wxMessageBox("You need to specify a file to convert.");
@@ -539,11 +544,11 @@ void ConvertImageDlg::ImageInXpmOut()
 
     if (!m_xpmImage.IsOk())
     {
-        wxMessageBox(wxString("Cannot open ") << in_filename.make_wxString());
+        wxMessageBox(wxString("Cannot open ") << in_filename.wx());
         return;
     }
 
-    tt_string out_name = m_fileOutput->GetPath();
+    wxue::string out_name = m_fileOutput->GetPath();
     if (out_name.size())
     {
         out_name.replace_extension(".xpm");
@@ -567,7 +572,7 @@ void ConvertImageDlg::ImageInXpmOut()
 wxColor ConvertImageDlg::GetXpmTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
-    tt_string transparency = m_comboXpmMask->GetStringSelection();
+    wxue::string transparency = m_comboXpmMask->GetStringSelection();
     if (transparency == "none" || transparency == "custom")
     {
         rgb = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
@@ -603,7 +608,7 @@ wxColor ConvertImageDlg::GetXpmTransparencyColor()
     }
     else
     {
-        rgb = transparency.make_wxString();
+        rgb = transparency.wx();
         m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     return rgb;
@@ -612,7 +617,7 @@ wxColor ConvertImageDlg::GetXpmTransparencyColor()
 wxColor ConvertImageDlg::GetHdrTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
-    tt_string transparency = m_comboHdrMask->GetStringSelection();
+    wxue::string transparency = m_comboHdrMask->GetStringSelection();
     if (transparency == "none" || transparency == "custom")
     {
         rgb = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(), m_hdrImage.GetMaskBlue() };
@@ -648,7 +653,7 @@ wxColor ConvertImageDlg::GetHdrTransparencyColor()
     }
     else
     {
-        rgb = transparency.make_wxString();
+        rgb = transparency.wx();
         m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     return rgb;
@@ -666,13 +671,13 @@ void ConvertImageDlg::OnPageChanged(wxBookCtrlEvent& /* event unused */)
     }
     else
     {
-        tt_string filename = m_fileOutput->GetPath().utf8_string();
+        wxue::string filename = m_fileOutput->GetPath().utf8_string();
         if (filename.size())
         {
             filename.Replace("_png", "");
             filename.Replace("_xpm", "");
             filename.replace_extension("xpm");
-            m_fileOutput->SetPath(filename.make_wxString());
+            m_fileOutput->SetPath(filename.wx());
         }
         m_bmpOriginal->SetBitmap(m_xpmImage);
     }
@@ -755,7 +760,7 @@ void ConvertImageDlg::OnForceXpmMask(wxCommandEvent& event)
 
     if (m_ForceXpmMask->GetValue())
     {
-        tt_string transparency = m_comboXpmMask->GetStringSelection();
+        wxue::string transparency = m_comboXpmMask->GetStringSelection();
         if (transparency == "none")
         {
             // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is
@@ -822,7 +827,7 @@ void ConvertImageDlg::OnForceHdrMask(wxCommandEvent& event)
             m_hdrImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
         }
 
-        tt_string transparency = m_comboHdrMask->GetStringSelection();
+        wxue::string transparency = m_comboHdrMask->GetStringSelection();
         if (transparency == "none")
         {
             // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is
@@ -898,7 +903,7 @@ void ConvertImageDlg::SetOutputBitmap()
         return;
     }
 
-    tt_string out_file = m_fileOutput->GetPath();
+    wxue::string out_file = m_fileOutput->GetPath();
     if (out_file.empty() || !out_file.file_exists())
     {
         m_bmpOutput->Hide();
@@ -917,7 +922,7 @@ void ConvertImageDlg::SetOutputBitmap()
     }
     else
     {
-        image.LoadFile(out_file.make_wxString());
+        image.LoadFile(out_file.wx());
 
     #if defined(_DEBUG)
         auto has_mask = m_xpmImage.HasMask();
@@ -956,10 +961,10 @@ void ConvertImageDlg::OnCheckPngConversion(wxCommandEvent& /* event unused */)
 
 void ConvertImageDlg::AdjustOutputFilename()
 {
-    tt_string filename = m_fileOutput->GetPath();
+    wxue::string filename = m_fileOutput->GetPath();
     if (filename.size())
     {
-        tt_string suffix(m_mime_type);
+        wxue::string suffix(m_mime_type);
         suffix.Replace("image/", "_");
         suffix.Replace("x-", "");  // if something like x-bmp, just use bmp
 
@@ -984,7 +989,7 @@ void ConvertImageDlg::AdjustOutputFilename()
         {
             filename.replace_extension(".h_img");
         }
-        m_fileOutput->SetPath(filename.make_wxString());
+        m_fileOutput->SetPath(filename.wx());
     }
 }
 

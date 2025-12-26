@@ -66,7 +66,7 @@ int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     GenXrcObjectAttributes(node, item, "wxChoicebook");
 
-    tt_string styles(node->as_string(prop_style));
+    wxue::string styles(node->as_string(prop_style));
     if (node->as_string(prop_tab_position) != "wxCHB_DEFAULT")
     {
         if (styles.size())

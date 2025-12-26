@@ -80,7 +80,7 @@ namespace
     wxString s_filename;  // NOLINT (cppcheck-suppress)
 
     // Helper to process and normalize a filename (add extension, handle wildcards)
-    void ProcessFilename(wxString& filename)
+    auto ProcessFilename(wxString& filename) -> void
     {
         if (filename.empty())
         {
@@ -149,14 +149,17 @@ namespace
 class DarkSettings : public wxDarkModeSettings
 {
 public:
-    wxColour GetColour(wxSystemColour index) { return UserPrefs.GetColour(index); }
+    [[nodiscard]] auto GetColour(wxSystemColour index) -> wxColour
+    {
+        return UserPrefs.GetColour(index);
+    }
 };
 
 #endif
 
-App::App() {}
+App::App() = default;
 
-bool App::OnInit()
+auto App::OnInit() -> bool
 {
 #if defined(_WIN32) && defined(_DEBUG)
     #if !defined(USE_CRT_MEMORY_DUMP)
@@ -216,9 +219,10 @@ bool App::OnInit()
     return true;
 }
 
-int App::OnRun()
+auto App::OnRun() -> int
 {
 #if defined(_DEBUG)
+    #if defined(_WIN32)
     // Attach to parent console for command-line output
     // This must be done early, before any output attempts
     if (AttachConsole(ATTACH_PARENT_PROCESS))
@@ -227,6 +231,9 @@ int App::OnRun()
         freopen_s(&file_ptr, "CONOUT$", "w", stdout);
         freopen_s(&file_ptr, "CONOUT$", "w", stderr);
     }
+    #else
+    // On Unix/Mac, stdout/stderr are automatically connected when run from terminal
+    #endif
 #endif
 
     NodeCreation.Initialize();
@@ -401,11 +408,11 @@ int App::OnRun()
             switch_result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
         {
             auto& file_history = m_frame->getFileHistory();
-            tt_string file = file_history.GetHistoryFile(0).utf8_string();
+            wxue::string file = file_history.GetHistoryFile(0).utf8_string();
             if (!file.file_exists())
             {
                 file_history.RemoveFileFromHistory(0);
-                wxMessageBox(tt_string("Last project file does not exist: ") << file,
+                wxMessageBox(wxue::string("Last project file does not exist: ") << file,
                              "Missing Project File", wxOK | wxICON_ERROR);
             }
             else
@@ -447,7 +454,7 @@ auto App::OnExit() -> int
 }
 
 #if defined(_DEBUG)
-void App::DebugOutput(const wxString& str)
+auto App::DebugOutput(const wxString& str) -> void
 {
     if (m_stderr_output)
     {
@@ -480,14 +487,14 @@ auto App::AutoMsgWindow() -> bool
 class StackLogger : public wxStackWalker
 {
 public:
-    auto GetCalls() -> auto& { return m_calls; }
+    [[nodiscard]] auto GetCalls() -> auto& { return m_calls; }
 
 protected:
-    void OnStackFrame(const wxStackFrame& frame) override
+    auto OnStackFrame(const wxStackFrame& frame) -> void override
     {
         if (frame.HasSourceLocation())
         {
-            tt_string source;
+            wxue::string source;
             source << frame.GetFileName().utf8_string() << ':' << (to_int) frame.GetLine();
 
             wxString params;
@@ -526,14 +533,14 @@ protected:
     }
 
 private:
-    std::vector<tt_string> m_calls;
+    std::vector<wxue::string> m_calls;
 };
 
 #endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
 #if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-void App::OnFatalException()
+auto App::OnFatalException() -> void
 {
     #if defined(_DEBUG) && defined(wxUSE_STACKWALKER)
 
@@ -561,7 +568,7 @@ void App::OnFatalException()
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-void App::ShowMsgWindow()
+auto App::ShowMsgWindow() -> void
 {
     g_pMsgLogging->ShowLogger();
 }
@@ -571,7 +578,7 @@ void App::ShowMsgWindow()
     #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
 // Don't make this static or Bind() will not work
-void App::DbgCurrentTest(wxCommandEvent& /* event unused */)  // NOLINT (cppcheck-suppress)
+auto App::DbgCurrentTest(wxCommandEvent& /* event unused */) -> void  // NOLINT (cppcheck-suppress)
 {
     wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
 
@@ -668,11 +675,11 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
 }
 
 // Helper: Load or import the project file
-auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
+auto App::LoadProjectFile(const wxue::string& tt_filename, size_t generate_type,
                           bool& is_project_loaded) -> bool
 {
-    if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, tt::CASE::either) &&
-        !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, tt::CASE::either))
+    if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
+        !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
     {
         is_project_loaded = Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
     }
@@ -684,8 +691,8 @@ auto App::LoadProjectFile(const tt_string& tt_filename, size_t generate_type,
 }
 
 // Helper: Log results for each language generation
-void App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
-                               bool test_only, std::string_view language_type)
+auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
+                               bool test_only, std::string_view language_type) -> void
 {
     if (results.GetUpdatedFiles().size() || class_list.size())
     {
@@ -725,8 +732,8 @@ void App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
 }
 
 // Helper: Generate code for all requested languages
-void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                               std::vector<std::string>& class_list)
+auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                               std::vector<std::string>& class_list) -> void
 {
     auto GenCode = [&](GenLang language)
     {
@@ -795,15 +802,15 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
 
     // If we get here then we were asked to generate at least one language type
 
-    tt_string tt_filename = filename;
+    wxue::string tt_filename = filename;
     tt_filename.make_absolute();
-    tt_string log_file = filename;
+    wxue::string log_file = filename;
     log_file.replace_extension(".log");
 
     if (!tt_filename.file_exists())
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(tt_string("Unable to find project file: ")
+        m_cmdline_log.emplace_back(wxue::string("Unable to find project file: ")
                                    << filename.utf8_string());
         m_cmdline_log.WriteFile(log_file);
         return 1;
@@ -820,7 +827,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     if (!is_project_loaded)
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(tt_string("Unable to load project file: ")
+        m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ")
                                    << filename.utf8_string());
         m_cmdline_log.WriteFile(log_file);
         return cmd_gen_project_not_loaded;

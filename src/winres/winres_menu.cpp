@@ -11,12 +11,12 @@
 #include "mainapp.h"        // App -- App class
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 
-void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, size_t& curTxtLine)
+void resForm::ParseMenu(WinResource* pWinResource, wxue::StringVector& txtfile, size_t& curTxtLine)
 {
     m_pWinResource = pWinResource;
     auto line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
-    if (end == tt::npos)
+    if (end == wxue::npos)
         throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
     m_is_popup_menu = false;
@@ -67,9 +67,12 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        m_form_node->set_value(prop_base_src_includes, tt_string() << "// " << txtfile.filename());
+        m_form_node->set_value(
+            prop_base_src_includes,
+            wxue::string() << "// "
+                           << wxFileName(txtfile.get_ReadFilename()).GetName().ToStdString());
     }
-    tt_string value;  // General purpose string we can use throughout this function
+    wxue::string value;  // General purpose string we can use throughout this function
 
     value = line.substr(0, end);
     m_form_node->set_value(prop_class_name, ConvertFormID(value));
@@ -90,7 +93,7 @@ void resForm::ParseMenu(WinResource* pWinResource, tt_string_vector& txtfile, si
     }
 }
 
-void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
+void resForm::ParseMenus(wxue::StringVector& txtfile, size_t& curTxtLine)
 {
     NodeSharedPtr parent = m_is_popup_menu ? m_form_node : nullptr;
 
@@ -128,7 +131,7 @@ void resForm::ParseMenus(tt_string_vector& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& curTxtLine)
+void resForm::ParseMenuItem(Node* parent, wxue::StringVector& txtfile, size_t& curTxtLine)
 {
     NodeSharedPtr sub_parent { nullptr };
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
@@ -176,9 +179,9 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                 auto& control = m_ctrls.emplace_back();
                 auto item = control.SetNodePtr(NodeCreation.NewNode(gen_wxMenuItem));
                 parent->AdoptChild(item);
-                tt_string_view label = line.view_substr(0);
+                wxue::string_view label = line.view_substr(0);
                 auto end = label.find("\\t");
-                if (ttwx::is_found(end))
+                if (wxue::is_found(end))
                 {
                     item->set_value(prop_label,
                                     m_pWinResource->ConvertCodePageString(label.substr(0, end)));
@@ -191,16 +194,16 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                 }
 
                 auto pos = line.find("\",");
-                if (ttwx::is_found(pos))
+                if (wxue::is_found(pos))
                 {
-                    tt_string_view id = line.subview(pos + 3);
+                    wxue::string_view id = line.subview(pos + 3);
                     id.moveto_nonspace();
                     end = id.find_first_of(',');
-                    if (!ttwx::is_found(end))
+                    if (!wxue::is_found(end))
                     {
-                        id.trim(tt::TRIM::right);
+                        id.trim(wxue::TRIM::right);
                         item->set_value(prop_id, id);
-                        auto help = m_pWinResource->FindStringID(tt_string() << id);
+                        auto help = m_pWinResource->FindStringID(wxue::string() << id);
                         if (help)
                         {
                             item->set_value(prop_help, help.value());
@@ -208,8 +211,8 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                     }
                     else
                     {
-                        tt_string_view item_id = id.substr(0, end);
-                        item_id.trim(tt::TRIM::right);
+                        wxue::string_view item_id = id.substr(0, end);
+                        item_id.trim(wxue::TRIM::right);
                         item->set_value(prop_id, item_id);
                         id.remove_prefix(end < id.size() ? end + 1 : end);
                         id.moveto_nonspace();
@@ -221,7 +224,7 @@ void resForm::ParseMenuItem(Node* parent, tt_string_vector& txtfile, size_t& cur
                         {
                             item->set_value(prop_disabled, true);
                         }
-                        auto help = m_pWinResource->FindStringID(tt_string() << item_id);
+                        auto help = m_pWinResource->FindStringID(wxue::string() << item_id);
                         if (help)
                         {
                             item->set_value(prop_help, help.value());

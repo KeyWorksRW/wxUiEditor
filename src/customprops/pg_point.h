@@ -10,6 +10,8 @@
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/props.h>
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
+
 class NodeProperty;
 
 class CustomPointProperty : public wxPGProperty
@@ -31,12 +33,12 @@ public:
 
     wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
                            wxVariant& childValue) const override;
-    void RefreshChildren() override;
+    auto RefreshChildren() -> void override;
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
-    void InitValues(tt_string_view value);
-    tt_string CombineValues();
+    auto InitValues(wxue::string_view value) -> void;
+    [[nodiscard]] auto CombineValues() -> wxue::string;
 
 private:
     wxPoint m_point { wxDefaultPosition };

@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <cstddef>
+#include <ranges>
 
 #include <wx/file.h>      // wxFile - encapsulates a file handle
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -201,6 +202,18 @@ void wxue::ViewVector::SetString(std::string_view str,
     }
 }
 
+auto wxue::ViewVector::FindLineContaining(std::string_view str, size_t startline,
+                                          CASE checkcase) const -> size_t
+{
+    auto subrange = std::ranges::subrange(begin() + static_cast<std::ptrdiff_t>(startline), end());
+    auto it = std::ranges::find_if(subrange,
+                                   [&](const auto& line)
+                                   {
+                                       return line.contains(str, checkcase);
+                                   });
+    return it != end() ? static_cast<size_t>(std::distance(begin(), it)) : wxue::npos;
+}
+
 namespace
 {
     constexpr char BOM_UTF8_0 = static_cast<char>(0xEF);
@@ -244,6 +257,20 @@ auto wxue::ViewVector::ReadFile(std::string_view filename) -> bool
     SetString(string_buffer, lineSeparators);
 
     return true;
+}
+
+void wxue::ViewVector::ParseBuffer()
+{
+    std::vector<std::string_view> lineSeparators = { "\r\n", "\r", "\n" };
+    std::string_view string_buffer(m_buffer);
+
+    if (m_buffer.size() > 2 && m_buffer[0] == BOM_UTF8_0 && m_buffer[1] == BOM_UTF8_1 &&
+        m_buffer[2] == BOM_UTF8_2)
+    {
+        // BOM utf-8 string, so skip over the BOM and process normally
+        string_buffer.remove_prefix(3);
+    }
+    SetString(string_buffer, lineSeparators);
 }
 
 void wxue::ViewVector::ReadString(std::string_view str)

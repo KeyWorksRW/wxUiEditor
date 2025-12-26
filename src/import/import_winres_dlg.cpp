@@ -114,10 +114,13 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
 #include <wx/dir.h>
 
+#include "wxue_namespace/wxue_string.h"
+#include "wxue_namespace/wxue_view_vector.h"
+
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 
-void MainFrame::OnImportWindowsResource(wxCommandEvent&)
+auto MainFrame::OnImportWindowsResource(wxCommandEvent&) -> void
 {
     ImportWinRes dlg(this);
     if (dlg.ShowModal() == wxID_OK)
@@ -126,7 +129,7 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
     }
 }
 
-void ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */)
+auto ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */) -> void
 {
     if (m_rcFilename.empty())
     {
@@ -140,16 +143,16 @@ void ImportWinRes::OnInit(wxInitDialogEvent& /* event unused */)
     }
     else
     {
-        m_fileResource->SetPath(m_rcFilename.make_wxString());
+        m_fileResource->SetPath(m_rcFilename.wx());
         ReadRcFile();
     }
 }
 
-void ImportWinRes::ReadRcFile()
+auto ImportWinRes::ReadRcFile() -> void
 {
     m_rcFilename = m_fileResource->GetPath().utf8_string();
-    tt_string_vector rc_file;
-    if (!rc_file.ReadFile(m_rcFilename))
+    wxue::ViewVector rc_file;
+    if (!rc_file.ReadFile(std::string_view(m_rcFilename)))
     {
         wxMessageBox(wxString("Unable to read the file ") << m_fileResource->GetPath());
         return;
@@ -157,7 +160,7 @@ void ImportWinRes::ReadRcFile()
 
     for (auto& iter: rc_file)
     {
-        if (iter.empty() || !ttwx::is_alpha(iter[0]))
+        if (iter.empty() || !wxue::is_alpha(iter[0]))
             continue;
 
         auto type = iter.view_stepover();
@@ -171,21 +174,21 @@ void ImportWinRes::ReadRcFile()
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);
-            if (ttwx::is_alnum(name[0]) || name[0] == '"')
+            if (wxue::is_alnum(name[0]) || name[0] == '"')
             {
-                auto sel = m_checkListResUI->Append(name);
+                auto sel = m_checkListResUI->Append(wxString::FromUTF8(name.data(), name.size()));
                 m_checkListResUI->Check(sel);
             }
         }
     }
 }
 
-void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& /* event unused */)
+auto ImportWinRes::OnResourceFile(wxFileDirPickerEvent& /* event unused */) -> void
 {
     ReadRcFile();
 }
 
-void ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */)
+auto ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */) -> void
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -194,7 +197,7 @@ void ImportWinRes::OnSelectAll(wxCommandEvent& /* event unused */)
     }
 }
 
-void ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */)
+auto ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */) -> void
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -203,7 +206,7 @@ void ImportWinRes::OnClearAll(wxCommandEvent& /* event unused */)
     }
 }
 
-void ImportWinRes::OnOk(wxCommandEvent& event)
+auto ImportWinRes::OnOk(wxCommandEvent& event) -> void
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)

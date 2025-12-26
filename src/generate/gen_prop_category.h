@@ -14,6 +14,6 @@ class PropertyGridCategoryGenerator : public BaseGenerator
 public:
     bool ConstructionCode(Code&) override;
 
-    tt_string GetHelpText(Node*) override;
-    tt_string GetHelpURL(Node*) override;
+    wxue::string GetHelpText(Node*) override;
+    wxue::string GetHelpURL(Node*) override;
 };

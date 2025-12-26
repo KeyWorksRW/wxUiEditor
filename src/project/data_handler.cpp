@@ -27,7 +27,7 @@
 
 DataHandler& ProjectData = DataHandler::getInstance();
 
-void DataHandler::Initialize()
+auto DataHandler::Initialize() -> void
 {
     auto* node_data_list = data_list::FindDataList();
     if (!node_data_list)
@@ -40,7 +40,7 @@ void DataHandler::Initialize()
         // Ideally, this shouldn't be necessary, but just in case this removes any entry that
         // doesn't have a matching node.
 
-        std::set<tt_string> var_names;
+        std::set<wxue::string> var_names;
         for (const auto& node: node_data_list->get_ChildNodePtrs())
         {
             var_names.insert(node->as_string(prop_var_name));
@@ -58,10 +58,7 @@ void DataHandler::Initialize()
             {
                 break;
             }
-            else
-            {
-                iter = m_embedded_data.begin();
-            }
+            iter = m_embedded_data.begin();
         }
     }
 
@@ -78,16 +75,20 @@ void DataHandler::Initialize()
             {
                 // If the filename is empty, there's nothing to load.
                 if (node->as_string(prop_data_file).empty())
+                {
                     continue;
+                }
 
                 auto& embed = m_embedded_data[node->as_string(prop_var_name)];
 
-                if (embed.filename == node->as_string(prop_data_file) && embed.type != tt::npos)
+                if (embed.filename == node->as_string(prop_data_file) && embed.type != wxue::npos)
                 {
                     // If it's an XML file, then don't continue if xml_condensed has changed
                     if (!node->is_Gen(gen_data_xml) ||
                         node->as_bool(prop_xml_condensed_format) == embed.xml_condensed)
+                    {
                         continue;
+                    }
                 }
 
                 // If we get here, the variable name and filename was specified, but either the
@@ -101,14 +102,14 @@ void DataHandler::Initialize()
     rlambda(node_data_list, rlambda);
 }
 
-bool DataHandler::LoadAndCompress(Node* node)
+auto DataHandler::LoadAndCompress(Node* node) -> bool
 {
     ASSERT(node->is_Gen(gen_data_string) || node->is_Gen(gen_data_xml));
     m_embedded_data[node->as_string(prop_var_name)] = {};
     auto& embed = m_embedded_data[node->as_string(prop_var_name)];
     embed.array_size = 0;
     embed.array_data.clear();
-    embed.type = tt::npos;
+    embed.type = wxue::npos;
 
     auto filename = node->as_string(prop_data_file);
     if (!filename.size())
@@ -138,15 +139,9 @@ bool DataHandler::LoadAndCompress(Node* node)
         {
             return false;
         }
-        else
-        {
-            embed.filename = project_path;
-        }
+        embed.filename = project_path;
     }
-    else
-    {
-        embed.filename = filename;
-    }
+    embed.filename = filename;
     embed.filename.backslashestoforward();
 
     if (node->is_Gen(gen_data_xml) && node->as_bool(prop_xml_condensed_format))
@@ -181,7 +176,7 @@ bool DataHandler::LoadAndCompress(Node* node)
         save_strem.Close();
         size_t org_size = (str.size() & 0xFFFFFFFF);
         size_t compressed_size = memory_stream.TellO();
-        auto read_stream = memory_stream.GetOutputStreamBuffer();
+        auto* read_stream = memory_stream.GetOutputStreamBuffer();
 
         embed.type = 1;
         embed.xml_condensed = true;
@@ -218,7 +213,7 @@ bool DataHandler::LoadAndCompress(Node* node)
             save_strem.Close();
             size_t org_size = (buffer.size() & 0xFFFFFFFF);
             size_t compressed_size = memory_stream.TellO();
-            auto read_stream = memory_stream.GetOutputStreamBuffer();
+            auto* read_stream = memory_stream.GetOutputStreamBuffer();
 
             embed.type = node->is_Gen(gen_data_xml) ? 1 : 0;
             embed.xml_condensed = false;
@@ -247,7 +242,7 @@ bool DataHandler::LoadAndCompress(Node* node)
     return false;
 }
 
-void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
+auto DataHandler::WriteDataConstruction(Code& code, WriteCode* source) -> void
 {
     // Make certain all files have been loaded
     Initialize();
@@ -260,14 +255,18 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
             auto& embed = m_embedded_data[node->as_string(prop_var_name)];
 
             // Since we've already called Initialize(), all valid files should have been
-            // loaded, so if type is tt::npos then there's no file to load, or it can't be
+            // loaded, so if type is wxue::npos then there's no file to load, or it can't be
             // loaded correctly.
-            if (embed.type == tt::npos)
+            if (embed.type == wxue::npos)
+            {
                 continue;
+            }
 
             auto file_time = embed.filename.last_write_time();
             if (file_time == embed.file_time)
+            {
                 continue;
+            }
             ++processed_count;
             if (auto* frame = wxGetMainFrame(); frame)
             {
@@ -296,7 +295,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
     {
         auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
-        if (embed.type == tt::npos)
+        if (embed.type == wxue::npos)
         {
             continue;
         }
@@ -366,7 +365,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
     {
         auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
-        if (embed.type == tt::npos)
+        if (embed.type == wxue::npos)
         {
             continue;
         }
@@ -399,7 +398,7 @@ void DataHandler::WriteDataConstruction(Code& code, WriteCode* source)
     }
 }
 
-void DataHandler::WriteImagePostHeader(WriteCode* header)
+auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
 {
     bool is_namespace_written = false;
 
@@ -412,7 +411,7 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
     {
         auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
-        if (embed.type == tt::npos)
+        if (embed.type == wxue::npos)
         {
             // filename was not found
             continue;
@@ -427,13 +426,13 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         }
         if (embed.array_size >> 32 > 0)
         {
-            xml_function_list.emplace_back(tt_string("std::string get_") << var_name << "();");
+            xml_function_list.emplace_back(wxString() << "std::string get_" << var_name << "();");
             xml_function_filename_list.emplace_back(embed.filename);
         }
         else
         {
             data_function_list.emplace_back(
-                tt_string("std::pair<const unsigned char*, size_t> get_") << var_name << "();");
+                wxString() << "std::pair<const unsigned char*, size_t> get_" << var_name << "();");
             data_function_filename_list.emplace_back(embed.filename);
         }
     }
@@ -443,13 +442,17 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
                                    const std::vector<std::string>& filename_list)
     {
         if (func_list.empty())
+        {
             return;
+        }
 
         size_t max_func_len = 0;
         for (const auto& func: func_list)
         {
             if (func.size() > max_func_len)
+            {
                 max_func_len = func.size();
+            }
         }
         max_func_len += 2;  // Add two spaces before the comment
 
@@ -473,7 +476,7 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
     {
         auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
-        if (embed.type == tt::npos)
+        if (embed.type == wxue::npos)
         {
             // filename was not found
             continue;
@@ -488,19 +491,18 @@ void DataHandler::WriteImagePostHeader(WriteCode* header)
         }
         if (embed.filename.size())
         {
-            header->writeLine(tt_string("// ") << embed.filename);
+            header->writeLine(std::format("// {}", embed.filename.ToStdString()));
         }
         if (embed.array_size >> 32 > 0 && Project.AddOptionalComments())
         {
             header->writeLine(
-                tt_string("extern const unsigned char ")
-                << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "]; // Original size: "
-                << std::format(std::locale(""), "{:L} bytes", (embed.array_size >> 32)));
+                std::format("extern const unsigned char {}[{}]; // Original size: {:L} bytes",
+                            var_name, (embed.array_size & 0xFFFFFFFF), (embed.array_size >> 32)));
         }
         else
         {
-            header->writeLine(tt_string("extern const unsigned char ")
-                              << var_name << '[' << (embed.array_size & 0xFFFFFFFF) << "];");
+            header->writeLine(std::format("extern const unsigned char {}[{}];", var_name,
+                                          (embed.array_size & 0xFFFFFFFF)));
         }
     }
 

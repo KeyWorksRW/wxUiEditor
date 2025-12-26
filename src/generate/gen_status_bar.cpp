@@ -13,9 +13,10 @@
 #include "node.h"           // Node class
 #include "node_creator.h"   // Class used to create nodes
 #include "pugixml.hpp"      // xml read/write/create/process
-#include "ttwx.h"           // ttwx helpers for character classification
 #include "utils.h"          // Utility functions that work with properties
 #include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+
+#include "wxue_namespace/wxue_string.h"  // wxue:: helpers
 
 #include "gen_status_bar.h"
 
@@ -141,15 +142,15 @@ bool StatusBarGenerator::SettingsCode(Code& code)
         return true;
 
     auto fields = code.node()->as_statusbar_fields(prop_fields);
-    tt_string widths, styles;
+    wxue::string widths, styles;
     for (auto& iter: fields)
     {
         if (widths.size())
-            widths << ", ";
-        widths << iter.width;
+            widths += ", ";
+        widths += iter.width;
         if (styles.size())
-            styles << ", ";
-        styles << iter.style;
+            styles += ", ";
+        styles += iter.style;
     }
 
     if (code.is_cpp())
@@ -237,7 +238,7 @@ int StatusBarGenerator::GetRequiredVersion(Node* node)
     {
         return BaseGenerator::GetRequiredVersion(node);
     }
-    if (ttwx::is_digit(node->as_string(prop_fields)[0]))
+    if (wxue::is_digit(node->as_string(prop_fields)[0]))
     {
         return BaseGenerator::GetRequiredVersion(node);
     }
@@ -264,17 +265,17 @@ int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
         auto fields = node->as_statusbar_fields(prop_fields);
         if (fields.size())
         {
-            tt_string widths, styles;
+            wxue::string widths, styles;
             for (auto& iter: fields)
             {
                 if (widths.size())
-                    widths << ",";
-                widths << iter.width;
+                    widths += ",";
+                widths += iter.width;
                 if (styles.size())
-                    styles << ",";
-                styles << iter.style;
+                    styles += ",";
+                styles += iter.style;
             }
-            item.append_child("fields").text().set(tt_string() << fields.size());
+            item.append_child("fields").text().set(std::to_string(fields.size()));
             item.append_child("widths").text().set(widths);
             item.append_child("styles").text().set(styles);
         }

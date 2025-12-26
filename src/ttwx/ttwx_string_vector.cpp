@@ -9,9 +9,10 @@
 
 #include <cstddef>
 #include <filesystem>
-
 #include <fstream>
 #include <string_view>
+
+#include <wx/file.h>
 
 namespace
 {
@@ -80,7 +81,7 @@ void ttwx::StringVector::SetString(std::string_view str, std::string_view separa
         }
         if (!str.empty())
         {
-            emplace_back(str);
+            emplace_back(wxString::FromUTF8(str.data(), str.size()));
         }
         return;
     }
@@ -152,7 +153,7 @@ void ttwx::StringVector::SetString(std::string_view str,
         }
         if (!str.empty())
         {
-            emplace_back(str);
+            emplace_back(wxString::FromUTF8(str.data(), str.size()));
         }
         return;
     }
@@ -179,14 +180,15 @@ void ttwx::StringVector::SetString(std::string_view str,
             trimmed_end = trim_right(str, segment_start, segment_end);
         }
 
-        // Add the segment to the vector (empty string_view if no text)
+        // Add the segment to the vector
         if (trimmed_end > segment_start)
         {
-            emplace_back(str.substr(segment_start, trimmed_end - segment_start));
+            auto segment = str.substr(segment_start, trimmed_end - segment_start);
+            emplace_back(wxString::FromUTF8(segment.data(), segment.size()));
         }
         else
         {
-            emplace_back(std::string_view(""));
+            emplace_back(wxString());
         }
 
         // If no more separators found, we're done
@@ -205,12 +207,13 @@ namespace
     constexpr char BOM_UTF8_0 = static_cast<char>(0xEF);
     constexpr char BOM_UTF8_1 = static_cast<char>(0xBB);
     constexpr char BOM_UTF8_2 = static_cast<char>(0xBF);
+    constexpr size_t BOM_UTF8_SIZE = 3;
 
     constexpr uintmax_t MAX_FILE_SIZE = static_cast<const uintmax_t>(100 * 1024 * 1024);
 
 }  // namespace
 
-auto ttwx::StringVector::ReadFile(std::string_view filename) -> bool
+auto ttwx::StringVector::ReadFile(const wxString& filename) -> bool
 {
     m_filename = filename;
 
@@ -238,7 +241,7 @@ auto ttwx::StringVector::ReadFile(std::string_view filename) -> bool
         m_buffer[2] == BOM_UTF8_2)
     {
         // BOM utf-8 string, so skip over the BOM and process normally
-        string_buffer.remove_prefix(3);
+        string_buffer.remove_prefix(BOM_UTF8_SIZE);
     }
     SetString(string_buffer, lineSeparators);
     m_buffer.clear();
@@ -247,15 +250,28 @@ auto ttwx::StringVector::ReadFile(std::string_view filename) -> bool
     return true;
 }
 
-void ttwx::StringVector::ReadString(std::string_view str)
+void ttwx::StringVector::ReadString(const wxString& str)
 {
-    if (!str.empty())
+    if (!str.IsEmpty())
     {
-        m_buffer.assign(str);
+        m_buffer = str.ToStdString();
         std::vector<std::string_view> lineSeparators = { "\r\n", "\r", "\n" };
         SetString(m_buffer, lineSeparators);
 
         // WARNING! str probably points to m_buffer, so it will be invalid after the clear().
+        m_buffer.clear();
+        m_buffer.shrink_to_fit();
+    }
+}
+
+void ttwx::StringVector::ReadString(std::string_view str)
+{
+    if (!str.empty())
+    {
+        m_buffer.assign(str.data(), str.size());
+        std::vector<std::string_view> lineSeparators = { "\r\n", "\r", "\n" };
+        SetString(m_buffer, lineSeparators);
+
         m_buffer.clear();
         m_buffer.shrink_to_fit();
     }
@@ -278,6 +294,37 @@ auto ttwx::StringVector::is_sameas(const ttwx::StringVector& other) const -> boo
     return true;
 }
 
+auto ttwx::StringVector::FindLineContaining(std::string_view str, size_t start,
+                                            bool case_sensitive) const -> size_t
+{
+    wxString search_str = wxString::FromUTF8(str.data(), str.size());
+
+    if (case_sensitive)
+    {
+        for (; start < size(); ++start)
+        {
+            if (at(start).Find(search_str) != wxNOT_FOUND)
+            {
+                return start;
+            }
+        }
+    }
+    else
+    {
+        search_str.MakeLower();
+        for (; start < size(); ++start)
+        {
+            wxString line = at(start);
+            line.MakeLower();
+            if (line.Find(search_str) != wxNOT_FOUND)
+            {
+                return start;
+            }
+        }
+    }
+    return std::string::npos;
+}
+
 auto ttwx::StringVector::WriteFile(const wxString& filename) const -> bool
 {
     wxFile file(filename, wxFile::write);
@@ -286,10 +333,9 @@ auto ttwx::StringVector::WriteFile(const wxString& filename) const -> bool
         return false;
     }
 
-    for (const auto& iter: *this)
+    for (const auto& line: *this)
     {
-        wxString line = wxString::FromUTF8(iter) + "\n";
-        if (!file.Write(line))
+        if (!file.Write(line + "\n"))
         {
             return false;
         }

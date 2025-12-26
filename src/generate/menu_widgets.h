@@ -18,8 +18,8 @@ class MenuBarBase : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    tt_string GetHelpText(Node*) override { return tt_string("wxMenuBar"); }
-    tt_string GetHelpURL(Node*) override { return tt_string("wx_menu_bar.html"); }
+    wxue::string GetHelpText(Node*) override { return "wxMenuBar"; }
+    wxue::string GetHelpURL(Node*) override { return "wx_menu_bar.html"; }
 
 protected:
     wxMenu* MakeSubMenu(Node* node);
@@ -79,6 +79,6 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 
-    tt_string GetPythonHelpText(Node*) override { return "wx.Menu.AppendSeparator"; }
-    tt_string GetPythonURL(Node*) override { return "wx.Menu.html#wx.Menu.AppendSeparator"; }
+    wxue::string GetPythonHelpText(Node*) override { return "wx.Menu.AppendSeparator"; }
+    wxue::string GetPythonURL(Node*) override { return "wx.Menu.html#wx.Menu.AppendSeparator"; }
 };

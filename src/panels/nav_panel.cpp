@@ -26,9 +26,9 @@
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
-#include "tt_view_vector.h"   // tt_view_vector -- read/write line-oriented strings/files
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 constexpr size_t MaxLabelLength = 24;
 
@@ -385,17 +385,21 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (dst_parent->is_Sizer())
         {
-            wxMessageBox(tt_string()
-                         << "You can't drop a " << node_src->get_DeclName() << " onto a sizer.");
+            auto decl_name = node_src->get_DeclName();
+            wxMessageBox(wxString("You can't drop a ")
+                         << wxString(decl_name.data(), decl_name.size()) << " onto a sizer.");
             return;
         }
-        else if (dst_parent->is_Container())
+        if (dst_parent->is_Container())
         {
-            wxMessageBox(tt_string() << "You can't drop a " << node_src->get_DeclName()
-                                     << " onto a " << dst_parent->get_DeclName() << '.');
+            auto src_name = node_src->get_DeclName();
+            auto dst_name = dst_parent->get_DeclName();
+            wxMessageBox(wxString("You can't drop a ")
+                         << wxString(src_name.data(), src_name.size()) << " onto a "
+                         << wxString(dst_name.data(), dst_name.size()) << '.');
             return;
         }
-        else if (dst_parent->is_Gen(gen_Project))
+        if (dst_parent->is_Gen(gen_Project))
         {
             wxMessageBox("Only forms can be dropped onto your project.");
             return;
@@ -403,16 +407,17 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         dst_parent = dst_parent->get_Parent();
         if (!dst_parent)
         {
-            wxMessageBox(tt_string()
-                         << node_src->get_DeclName() << " can't be dropped onto this target.");
+            wxMessageBox(wxString(node_src->get_DeclName().data(), node_src->get_DeclName().size())
+                         << " can't be dropped onto this target.");
             return;
         }
     }
 
     if (dst_parent->is_Gen(gen_wxStdDialogButtonSizer))
     {
-        wxMessageBox(tt_string() << "You can't drop a " << node_src->get_DeclName()
-                                 << " onto a wxStdDialogBtnSizer.");
+        wxMessageBox(wxString("You can't drop a ")
+                     << wxString(node_src->get_DeclName().data(), node_src->get_DeclName().size())
+                     << " onto a wxStdDialogBtnSizer.");
         return;
     }
 
@@ -426,7 +431,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
             return;
         }
     }
-    else if (src_parent == dst_parent)
+    if (src_parent == dst_parent)
     {
         m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(
             node_src, dst_parent->get_ChildPosition(node_dst)));
@@ -459,9 +464,8 @@ void NavigationPanel::InsertNode(Node* node)
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent);
-    auto new_item =
-        m_tree_ctrl->InsertItem(tree_parent, node_parent->get_ChildPosition(node),
-                                GetDisplayName(node).make_wxString(), GetImageIndex(node), -1);
+    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->get_ChildPosition(node),
+                                            GetDisplayName(node).wx(), GetImageIndex(node), -1);
     m_node_tree_map[node] = new_item;
     m_tree_node_map[new_item] = node;
 
@@ -486,7 +490,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     for (const auto& iter_child: node_parent->get_ChildNodePtrs())
     {
         auto node = iter_child.get();
-        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).make_wxString(),
+        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx(),
                                                 GetImageIndex(node), -1);
 
         m_node_tree_map[node] = new_item;
@@ -525,12 +529,12 @@ int NavigationPanel::GetImageIndex(Node* node)
 
 void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 {
-    m_tree_ctrl->SetItemText(id, GetDisplayName(node).make_wxString());
+    m_tree_ctrl->SetItemText(id, GetDisplayName(node).wx());
 }
 
-tt_string NavigationPanel::GetDisplayName(Node* node) const
+wxue::string NavigationPanel::GetDisplayName(Node* node) const
 {
-    tt_string display_name;
+    wxue::string display_name;
     if (node->HasValue(prop_label))
         display_name = node->as_string(prop_label);
     else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
@@ -543,7 +547,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
         display_name = node->as_string(prop_id);
     else if (node->is_Gen(gen_embedded_image))
     {
-        tt_view_vector mstr(node->as_string(prop_bitmap), ';');
+        wxue::ViewVector mstr(node->as_string(prop_bitmap), ';');
 
         if (mstr.size() > IndexImage)
         {
@@ -559,7 +563,7 @@ tt_string NavigationPanel::GetDisplayName(Node* node) const
         }
         else
         {
-            tt_view_vector mstr(node->as_string(prop_bitmap), ';');
+            wxue::ViewVector mstr(node->as_string(prop_bitmap), ';');
             if (mstr.size() > IndexImage)
             {
                 display_name = mstr[IndexImage].filename();
@@ -653,8 +657,8 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     auto node = event.getNode();
     if (node->get_Parent() && node->get_Parent()->is_Gen(gen_wxGridBagSizer))
     {
-        wxGetFrame().setStatusText(tt_string() << "Row: " << node->as_int(prop_row)
-                                               << ", Column: " << node->as_int(prop_column));
+        wxGetFrame().setStatusText(wxString() << "Row: " << node->as_int(prop_row)
+                                              << ", Column: " << node->as_int(prop_column));
     }
     else
     {
@@ -675,8 +679,9 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     }
     else
     {
-        FAIL_MSG(tt_string("There is no tree item associated with this object.\n\tClass: ")
-                 << node->get_DeclName() << "\n\tName: " << node->as_string(prop_var_name));
+        FAIL_MSG(wxString("There is no tree item associated with this object.\n\tClass: ")
+                 << wxString(node->get_DeclName().data(), node->get_DeclName().size())
+                 << "\n\tName: " << node->as_string(prop_var_name));
     }
 }
 

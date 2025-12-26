@@ -7,125 +7,148 @@
 
 #include "winres_form.h"
 
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "ttwx.h"          // ttwx helpers for numeric parsing
+#include "node_creator.h"                // NodeCreator -- Class used to create nodes
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
-bool resForm::is_same_top(const resCtrl* left, const resCtrl* right, bool loose_check) const
+[[nodiscard]] auto resForm::is_same_top(const resCtrl* left, const resCtrl* right,
+                                        bool loose_check) const -> bool
 {
     if (left->du_top() == right->du_top())
+    {
         return true;
+    }
 
     if (loose_check)
     {
         if (left->du_top() - 1 == right->du_top() || left->du_top() - 2 == right->du_top())
+        {
             return true;
-        else if (left->du_top() == right->du_top() - 1 || left->du_top() == right->du_top() - 2)
+        }
+        if (left->du_top() == right->du_top() - 1 || left->du_top() == right->du_top() - 2)
+        {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
     if (left->getNode()->is_Gen(gen_wxStaticText))
     {
         if (left->du_top() - 1 == right->du_top() || left->du_top() - 2 == right->du_top())
+        {
             return true;
+        }
     }
     return false;
 }
 
-bool resForm::is_same_right(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const
+[[nodiscard]] auto resForm::is_same_right(const std::vector<resCtrl>& ctrls, size_t child_a,
+                                          size_t child_b) const -> bool
 {
     if (ctrls[child_a].du_left() != ctrls[child_b].du_left())
+    {
         return false;
+    }
     if (ctrls[child_a].du_left() + ctrls[child_a].du_width() !=
         ctrls[child_b].du_left() + ctrls[child_b].du_width())
+    {
         return false;
+    }
     return true;
 }
 
-bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b,
-                          bool loose_check) const
+[[nodiscard]] auto resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a,
+                                        size_t child_b, bool loose_check) const -> bool
 {
     if (ctrls[child_a].du_top() == ctrls[child_b].du_top())
+    {
         return true;
+    }
 
     if (loose_check)
     {
         if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() ||
             ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
+        {
             return true;
-        else if (ctrls[child_a].du_top() == ctrls[child_b].du_top() - 1 ||
-                 ctrls[child_a].du_top() == ctrls[child_b].du_top() - 2)
+        }
+        if (ctrls[child_a].du_top() == ctrls[child_b].du_top() - 1 ||
+            ctrls[child_a].du_top() == ctrls[child_b].du_top() - 2)
+        {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
     if (ctrls[child_a].getNode()->is_Gen(gen_wxStaticText))
     {
         if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() ||
             ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
+        {
             return true;
+        }
     }
     return false;
 }
 
-bool resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ctrls, size_t child_a,
-                          size_t child_b, bool loose_check) const
+[[nodiscard]] auto resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ctrls,
+                                        size_t child_a, size_t child_b, bool loose_check) const
+    -> bool
 {
     if (ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top())
+    {
         return true;
+    }
 
     if (loose_check)
     {
         if (ctrls[child_a].get().du_top() - 1 == ctrls[child_b].get().du_top() ||
             ctrls[child_a].get().du_top() - 2 == ctrls[child_b].get().du_top())
+        {
             return true;
-        else if (ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top() - 1 ||
-                 ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top() - 2)
+        }
+        if (ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top() - 1 ||
+            ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top() - 2)
+        {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
     if (ctrls[child_a].get().getNode()->is_Gen(gen_wxStaticText))
     {
         if (ctrls[child_a].get().du_top() - 1 == ctrls[child_b].get().du_top() ||
             ctrls[child_a].get().du_top() - 2 == ctrls[child_b].get().du_top())
+        {
             return true;
+        }
     }
     return false;
 }
 
-bool resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a,
-                                 size_t child_b) const
+[[nodiscard]] auto resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a,
+                                               size_t child_b) const -> bool
 {
     if (ctrls[child_a].du_top() >= ctrls[child_b].du_top() &&
         ctrls[child_a].du_bottom() <= ctrls[child_b].du_bottom())
     {
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
-bool resForm::is_within_vertical(const std::vector<std::reference_wrapper<resCtrl>>& ctrls,
-                                 size_t child_a, size_t child_b) const
+[[nodiscard]] auto
+    resForm::is_within_vertical(const std::vector<std::reference_wrapper<resCtrl>>& ctrls,
+                                size_t child_a, size_t child_b) const -> bool
 {
     if (ctrls[child_a].get().du_top() >= ctrls[child_b].get().du_top() &&
         ctrls[child_a].get().du_bottom() <= ctrls[child_b].get().du_bottom())
     {
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
-void resForm::SortCtrls()
+auto resForm::SortCtrls() -> void
 {
     // Sort controls vertically. For each group of controls that have the same vertical position,
     // sort them horizontally.
@@ -134,9 +157,10 @@ void resForm::SortCtrls()
               [](resCtrl a, resCtrl b)
               {
                   if (a.du_top() == b.du_top())
+                  {
                       return (a.du_left() < b.du_left());
-                  else
-                      return (a.du_top() < b.du_top());
+                  }
+                  return (a.du_top() < b.du_top());
               });
 
     // Sometimes a static text control will be placed to the left of another control such as an edit
@@ -169,7 +193,9 @@ void resForm::SortCtrls()
         {
             ++end;
             if (end >= m_ctrls.size())
+            {
                 break;
+            }
         }
 
         if (end > begin + 1)
@@ -187,51 +213,70 @@ void resForm::SortCtrls()
 // access m_node in order to handle a wxComboBox which has a different height then specified in the
 // resource file.
 
-bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixelRect)
+[[nodiscard]] auto resForm::ParseDimensions(wxue::string_view line, wxRect& duRect,
+                                            wxRect& pixelRect) -> bool
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
     line.moveto_nonspace();
 
     if (line.empty())
+    {
         return false;
+    }
 
     if (line.at(0) == ',')
+    {
         line.moveto_digit();
+    }
 
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetLeft(ttwx::atoi(line));
+    }
+    duRect.SetLeft(wxue::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
+    {
         return false;
+    }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetTop(ttwx::atoi(line));
+    }
+    duRect.SetTop(wxue::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
+    {
         return false;
+    }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetWidth(ttwx::atoi(line));
+    }
+    duRect.SetWidth(wxue::atoi(line));
 
     pos = line.find_first_of(',');
-    if (!ttwx::is_found(pos))
+    if (!wxue::is_found(pos))
+    {
         return false;
+    }
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttwx::is_digit(line.at(0)))
+    if (line.empty() || !wxue::is_digit(line.at(0)))
+    {
         return false;
-    duRect.SetHeight(ttwx::atoi(line));
+    }
+    duRect.SetHeight(wxue::atoi(line));
 
     /*
 
@@ -257,12 +302,14 @@ bool resForm::ParseDimensions(tt_string_view line, wxRect& duRect, wxRect& pixel
     return true;
 }
 
-size_t resForm::FindChildPosition(const Node* node)
+[[nodiscard]] auto resForm::FindChildPosition(const Node* node) -> size_t
 {
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
         if (m_ctrls[idx_child].getNode() == node)
+        {
             return idx_child;
+        }
     }
 
     return (to_size_t) -1;

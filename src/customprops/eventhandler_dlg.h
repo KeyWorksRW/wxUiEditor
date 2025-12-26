@@ -7,6 +7,8 @@
 
 #pragma once  // NOLINT(#pragma once in main file)
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
+
 #include "wxui/eventhandler_dlg_base.h"  // EventHandlerDlgBase
 
 class NodeEvent;
@@ -58,17 +60,17 @@ public:
     // This will return a string as if Perl was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Perl is not enabled and another language specified a value.
-    static tt_string GetPerlValue(tt_string_view value);
+    static auto GetPerlValue(wxue::string_view value) -> wxue::string;
 
     // This will return a string as if Python was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Python is not enabled and another language specified a value.
-    static tt_string GetPythonValue(tt_string_view value);
+    static auto GetPythonValue(wxue::string_view value) -> wxue::string;
 
     // This will return a string as if Ruby was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Ruby is not enabled and another language specified a value.
-    static tt_string GetRubyValue(tt_string_view value);
+    static auto GetRubyValue(wxue::string_view value) -> wxue::string;
 
 protected:
     // This is used to colorize member variables in the C++ lambda

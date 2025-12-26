@@ -7,7 +7,9 @@
 
 #include "gen_doc_scintilla.h"
 
-#include "code.h"  // Code -- Helper class for generating code
+#include "code.h"                // Code -- Helper class for generating code
+#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_ScintillaDocViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
@@ -76,16 +78,17 @@ void %class%::OnTextChange(wxCommandEvent& event)
 }
 )===";
 
-bool ScintillaDocGenerator::ConstructionCode(Code& code)
+auto ScintillaDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        tt_string_vector lines;
-        lines.ReadString(txt_ScintillaDocViewBlock);
-        tt_string class_name = code.node()->get_Parent()->as_string(prop_class_name);
-        for (auto& line: lines)
+        ttwx::StringVector lines;
+        lines.ReadString(std::string_view(txt_ScintillaDocViewBlock));
+        auto class_name = code.node()->get_Parent()->as_view(prop_class_name);
+        for (const auto& wxline: lines)
         {
-            line.Replace("%class%", class_name, true);
+            std::string line = wxline.ToStdString();
+            utils::replace_in_line(line, "%class%", class_name, true);
             code.Str(line).Eol();
         }
     }
@@ -93,9 +96,9 @@ bool ScintillaDocGenerator::ConstructionCode(Code& code)
     return true;
 }
 
-bool ScintillaDocGenerator::GetIncludes(Node* /* node unused */, std::set<std::string>& set_src,
-                                        std::set<std::string>& /* set_hdr unused */,
-                                        GenLang /* language unused */)
+auto ScintillaDocGenerator::GetIncludes([[maybe_unused]] Node* node, std::set<std::string>& set_src,
+                                        [[maybe_unused]] std::set<std::string>& set_hdr,
+                                        [[maybe_unused]] GenLang language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");
     set_src.insert("#include <wx/docview.h>");

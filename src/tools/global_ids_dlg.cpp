@@ -13,8 +13,8 @@
 
 #include "global_ids_dlg.h"
 
-bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+auto GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name) -> bool
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
@@ -233,13 +233,15 @@ bool GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
-void MainFrame::OnEditCustomIds(wxCommandEvent& /* event unused */)
+#include "wxue_namespace/wxue_string.h"  // wxue::string class
+
+auto MainFrame::OnEditCustomIds([[maybe_unused]] wxCommandEvent& event) -> void
 {
     GlobalCustomIDS dlg(this);
     dlg.ShowModal();
 }
 
-void GlobalCustomIDS::OnInit(wxInitDialogEvent& event)
+auto GlobalCustomIDS::OnInit(wxInitDialogEvent& event) -> void
 {
     m_lb_folders->Append("Project", Project.get_ProjectNode());
     for (const auto& iter: Project.get_ProjectNode()->get_ChildNodePtrs())
@@ -256,30 +258,30 @@ void GlobalCustomIDS::OnInit(wxInitDialogEvent& event)
 
     if (Project.get_ProjectNode()->HasValue(prop_id_prefixes))
     {
-        for (auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_prefixes))
+        for (const auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_prefixes))
         {
-            m_combo_prefixes->Append(iter.make_wxString());
+            m_combo_prefixes->Append(iter.wx());
         }
     }
 
     if (Project.get_ProjectNode()->HasValue(prop_id_suffixes))
     {
-        for (auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_suffixes))
+        for (const auto& iter: Project.get_ProjectNode()->as_ArrayString(prop_id_suffixes))
         {
-            m_combo_suffixes->Append(iter.make_wxString());
+            m_combo_suffixes->Append(iter.wx());
         }
     }
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void GlobalCustomIDS::OnSelectFolders(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnSelectFolders([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_lb_forms->Clear();
     wxArrayInt selections;
 
     if (auto count = m_lb_folders->GetSelections(selections); count > 0)
     {
-        for (auto& iter: selections)
+        for (const auto& iter: selections)
         {
             auto* node = static_cast<Node*>(m_lb_folders->GetClientData(iter));
             if (node)
@@ -304,11 +306,11 @@ const int min_rows = 10;
 
 struct NODE_IDS
 {
-    tt_string id_portion;
+    wxue::string id_portion;
     Node* node;
 };
 
-void GlobalCustomIDS::OnSelectForms(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnSelectForms([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_grid->ClearGrid();
     if (m_grid->GetNumberRows() > min_rows)
@@ -338,7 +340,7 @@ void GlobalCustomIDS::OnSelectForms(wxCommandEvent& /* event unused */)
             }
         };
 
-        for (auto& iter: selections)
+        for (const auto& iter: selections)
         {
             auto* node = static_cast<Node*>(m_lb_forms->GetClientData(iter));
             CollectIDs(node, CollectIDs);
@@ -359,7 +361,7 @@ void GlobalCustomIDS::OnSelectForms(wxCommandEvent& /* event unused */)
         int pos = 0;
         for (auto& iter: ids)
         {
-            tt_string modified_id = iter.id_portion;
+            wxue::string modified_id = iter.id_portion;
             if (m_text_old_prefix->GetValue().length())
             {
                 auto old_prefix = m_text_old_prefix->GetValue().utf8_string();
@@ -396,7 +398,7 @@ void GlobalCustomIDS::OnSelectForms(wxCommandEvent& /* event unused */)
     }
 }
 
-void GlobalCustomIDS::OnSelectAllFolders(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnSelectAllFolders([[maybe_unused]] wxCommandEvent& event) -> void
 {
     for (unsigned int idx = 0; idx < m_lb_folders->GetCount(); ++idx)
     {
@@ -404,12 +406,12 @@ void GlobalCustomIDS::OnSelectAllFolders(wxCommandEvent& /* event unused */)
     }
 }
 
-void GlobalCustomIDS::OnSelectNoFolders(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnSelectNoFolders([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_lb_folders->DeselectAll();
 }
 
-void GlobalCustomIDS::OnSelectAllForms(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnSelectAllForms([[maybe_unused]] wxCommandEvent& event) -> void
 {
     for (unsigned int idx = 0; idx < m_lb_folders->GetCount(); ++idx)
     {
@@ -417,17 +419,17 @@ void GlobalCustomIDS::OnSelectAllForms(wxCommandEvent& /* event unused */)
     }
 }
 
-void GlobalCustomIDS::OnSelectNoForms(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnSelectNoForms([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_lb_forms->DeselectAll();
 }
 
-void GlobalCustomIDS::OnUpdate(wxCommandEvent& event)
+auto GlobalCustomIDS::OnUpdate(wxCommandEvent& event) -> void
 {
     OnSelectForms(event);
 }
 
-void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
+auto GlobalCustomIDS::OnCommit([[maybe_unused]] wxCommandEvent& event) -> void
 {
     wxArrayInt selections;
     std::vector<NODE_IDS> ids;
@@ -451,7 +453,7 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
             }
         };
 
-        for (auto& iter: selections)
+        for (const auto& iter: selections)
         {
             auto* node = static_cast<Node*>(m_lb_forms->GetClientData(iter));
             CollectIDs(node, CollectIDs);
@@ -468,7 +470,7 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
 
     for (auto& iter: ids)
     {
-        tt_string modified_id = iter.id_portion;
+        wxue::string modified_id = iter.id_portion;
         if (m_text_old_prefix->GetValue().length())
         {
             auto old_prefix = m_text_old_prefix->GetValue().utf8_string();
@@ -496,7 +498,7 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
 
         if (modified_id != iter.id_portion)
         {
-            tt_string new_id = iter.node->as_string(prop_id);
+            wxue::string new_id = iter.node->as_string(prop_id);
             new_id.Replace(iter.id_portion, modified_id);
             undo_ids->addProperty(iter.node->get_PropPtr(prop_id), new_id);
         }
@@ -515,7 +517,7 @@ void GlobalCustomIDS::OnCommit(wxCommandEvent& /* event unused */)
     OnUpdate(dummy);
 }
 
-void GlobalCustomIDS::OnClose(wxCommandEvent& event)
+auto GlobalCustomIDS::OnClose(wxCommandEvent& event) -> void
 {
     if (!m_committed)
     {

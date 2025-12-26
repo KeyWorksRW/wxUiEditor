@@ -13,18 +13,20 @@
 
 #include "import_base.h"
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class ImportDlg : public ImportBase
 {
 public:
     ImportDlg(wxWindow* parent = nullptr);
 
-    bool isImportFormBuilder() { return m_radio_wxFormBuilder->GetValue(); }
-    bool isImportSmith() { return m_radio_wxSmith->GetValue(); }
-    bool isImportXRC() { return m_radio_XRC->GetValue(); }
-    bool isImportWinRes() { return m_radio_WindowsResource->GetValue(); }
-    bool isImportDialogBlocks() { return m_radio_DialogBlocks->GetValue(); }
+    [[nodiscard]] auto isImportFormBuilder() -> bool { return m_radio_wxFormBuilder->GetValue(); }
+    [[nodiscard]] auto isImportSmith() -> bool { return m_radio_wxSmith->GetValue(); }
+    [[nodiscard]] auto isImportXRC() -> bool { return m_radio_XRC->GetValue(); }
+    [[nodiscard]] auto isImportWinRes() -> bool { return m_radio_WindowsResource->GetValue(); }
+    [[nodiscard]] auto isImportDialogBlocks() -> bool { return m_radio_DialogBlocks->GetValue(); }
 
-    std::vector<tt_string>& GetFileList() { return m_lstProjects; };
+    auto GetFileList() -> std::vector<wxue::string>& { return m_lstProjects; };
 
 protected:
     void CheckResourceFiles(wxArrayString& files);
@@ -49,6 +51,6 @@ protected:
     void OnRemove(wxCommandEvent& event) override;
 
 private:
-    std::vector<tt_string> m_lstProjects;
+    std::vector<wxue::string> m_lstProjects;
     wxFileHistory m_FileHistory;
 };

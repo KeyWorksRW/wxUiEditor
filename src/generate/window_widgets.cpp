@@ -7,10 +7,11 @@
 
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "node.h"                        // Node class
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "window_widgets.h"
 
@@ -70,13 +71,13 @@ int ScrolledCanvasGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* o
     return xrc_not_supported;
 }
 
-std::optional<tt_string> ScrolledCanvasGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> ScrolledCanvasGenerator::GetWarning(Node* node, GenLang language)
 {
     switch (language)
     {
         case GEN_LANG_XRC:
             {
-                tt_string msg;
+                wxue::string msg;
                 if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
@@ -155,7 +156,7 @@ int ScrolledWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 
     if (node->as_int(prop_scroll_rate_x) >= 0 || node->as_int(prop_scroll_rate_y) >= 0)
     {
-        tt_string scroll_rate;
+        wxue::string scroll_rate;
         scroll_rate << node->as_int(prop_scroll_rate_x) << ',' << node->as_int(prop_scroll_rate_y);
         item.append_child("scrollrate").text().set(scroll_rate);
     }

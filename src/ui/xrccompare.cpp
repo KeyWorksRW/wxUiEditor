@@ -11,8 +11,8 @@
 
 #include "xrccompare.h"
 
-bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+auto XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+    const wxPoint& pos, const wxSize& size, long style, const wxString &name) -> bool
 {
     // Scaling of pos and size are handled after the dialog
     // has been created and controls added.
@@ -111,9 +111,10 @@ bool XrcCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
-#include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
-#include "mainframe.h"                 // MainFrame -- Main window frame
-#include "node.h"                      // Node class
+#include "../internal/import_panel.h"    // ImportPanel -- Panel to display original imported file
+#include "mainframe.h"                   // MainFrame -- Main window frame
+#include "node.h"                        // Node class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 // Defined in mockup_preview.cpp
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxSizer* parent_sizer,
@@ -247,7 +248,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                 if (m_compare_import)
                 {
                     if (auto object = xrc_resource->LoadObject(
-                            this, tt_string(form_node->as_string(prop_class_name)) << "_import",
+                            this, wxue::string(form_node->as_string(prop_class_name)) << "_import",
                             "wxPanel");
                         object)
                     {
@@ -310,7 +311,7 @@ bool XrcCompare::InitXrc(Node* form_node)
 
 bool XrcCompare::InitImport(Node* form_node)
 {
-    tt_string xrc_text = wxGetFrame().getImportPanel()->GetTextCtrl()->GetText().utf8_string();
+    wxue::string xrc_text = wxGetFrame().getImportPanel()->GetTextCtrl()->GetText().utf8_string();
     if (form_node->get_GenName() == gen_wxDialog)
     {
         // Because we need to place this within sizer, we switch the class to a wxPanel. We assume
@@ -319,9 +320,9 @@ bool XrcCompare::InitImport(Node* form_node)
     }
 
     // We need to the change the name since it will be identical to the generated name
-    tt_string org_name("\"");
+    wxue::string org_name("\"");
     org_name << form_node->as_string(prop_class_name);
-    xrc_text.Replace(org_name, tt_string(org_name) << "_import");
+    xrc_text.Replace(org_name, wxue::string(org_name) << "_import");
 
     wxMemoryInputStream stream(xrc_text.c_str(), xrc_text.size());
     auto xmlDoc = std::make_unique<wxXmlDocument>(stream);

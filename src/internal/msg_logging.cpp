@@ -95,7 +95,7 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
     auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
-        frame->setRightStatusField(msg);
+        frame->setRightStatusField(wxString(msg.data(), msg.size()));
     }
 }
 

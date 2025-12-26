@@ -10,16 +10,17 @@
 
 #include "gen_staticbox_sizer.h"
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mockup_parent.h"  // Top-level MockUp Parent window
-#include "node.h"           // Node class
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mockup_parent.h"               // Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
 wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer =
+    auto* sizer =
         new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow),
                              node->as_wxString(prop_label));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
@@ -30,7 +31,9 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
+    {
         sizer->SetMinSize(min_size);
+    }
 
     if (node->as_bool(prop_hidden))
     {
@@ -44,7 +47,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
 
-    tt_string parent_name(code.is_cpp() ? "this" : code.is_perl() ? "$self" : "self");
+    wxue::string parent_name(code.is_cpp() ? "this" : code.is_perl() ? "$self" : "self");
     if (!node->get_Parent()->is_Form())
     {
         auto parent = node->get_Parent();

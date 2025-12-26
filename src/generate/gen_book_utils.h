@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 class Node;
 class Code;
 
@@ -26,6 +28,6 @@ void BookCtorAddImagelist(Code& code);
 
 void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list);
 
-void AddTreebookImageCode(tt_string& code, Node* child_node, size_t& image_index);
+void AddTreebookImageCode(wxue::string& code, Node* child_node, size_t& image_index);
 
 int GetTreebookImageIndex(Node* node);

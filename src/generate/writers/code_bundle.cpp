@@ -9,15 +9,16 @@
 
 #include "code.h"
 
-#include "gen_common.h"       // Common component functions
-#include "image_gen.h"        // Functions for generating embedded images
-#include "image_handler.h"    // ImageHandler class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Miscellaneous utilities
+#include "gen_common.h"                         // Common component functions
+#include "image_gen.h"                          // Functions for generating embedded images
+#include "image_handler.h"                      // ImageHandler class
+#include "project_handler.h"                    // ProjectHandler class
+#include "utils.h"                              // Miscellaneous utilities
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 Code& Code::Bundle(GenEnum::PropName prop_name)
 {
-    tt_string_vector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, tt::TRIM::both);
+    wxue::StringVector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts[IndexType].contains("SVG"))
     {
         GenerateBundleParameter(parts);
@@ -47,7 +48,7 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
     return *this;
 }
 
-void Code::BundlePerl(const tt_string_vector& parts)
+void Code::BundlePerl(const wxue::StringVector& parts)
 {
     if (parts[IndexType].contains("Art"))
     {
@@ -134,13 +135,13 @@ void Code::BundlePerl(const tt_string_vector& parts)
     }
 }
 
-void Code::BundlePython(const tt_string_vector& parts)
+void Code::BundlePython(const wxue::StringVector& parts)
 {
     if (parts[IndexType].contains("Art"))
     {
-        tt_string art_id(parts[IndexArtID]);
-        tt_string art_client;
-        if (auto pos = art_id.find('|'); ttwx::is_found(pos))
+        wxue::string art_id(parts[IndexArtID]);
+        wxue::string art_client;
+        if (auto pos = art_id.find('|'); wxue::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -192,7 +193,7 @@ void Code::BundlePython(const tt_string_vector& parts)
         {
             auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             ASSERT(embed);
-            tt_string svg_name;
+            wxue::string svg_name;
             if (embed->get_Form() != node()->get_Form())
             {
                 svg_name = embed->get_Form()->as_string(prop_python_file).filename();
@@ -203,7 +204,7 @@ void Code::BundlePython(const tt_string_vector& parts)
             {
                 svg_name = embed->base_image().array_name;
             }
-            insert(0, tt_string("_svg_string_ = zlib.decompress(base64.b64decode(")
+            insert(0, wxue::string("_svg_string_ = zlib.decompress(base64.b64decode(")
                           << svg_name << "))\n");
             *this += "wx.BitmapBundle.FromSVG(_svg_string_";
             wxSize svg_size { -1, -1 };
@@ -244,7 +245,7 @@ void Code::AddPythonImageName(const EmbeddedImage* embed)
 {
     if (embed->get_Form()->is_Gen(gen_Images))
     {
-        tt_string import_name = embed->get_Form()->as_string(prop_python_file).filename();
+        wxue::string import_name = embed->get_Form()->as_string(prop_python_file).filename();
         import_name.remove_extension();
 
         Str(import_name).Str(".");
@@ -252,8 +253,8 @@ void Code::AddPythonImageName(const EmbeddedImage* embed)
     Str(embed->base_image().array_name);
 }
 
-void Code::AddPythonSingleBitmapBundle(const tt_string_vector& parts, const ImageBundle* bundle,
-                                       const tt_string& name)
+void Code::AddPythonSingleBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle,
+                                       const wxue::string& name)
 {
     *this += "wx.BitmapBundle.FromBitmap(";
 
@@ -272,8 +273,8 @@ void Code::AddPythonSingleBitmapBundle(const tt_string_vector& parts, const Imag
     Str("wx.Bitmap(").QuotedString(name) += "))";
 }
 
-void Code::AddPythonTwoBitmapBundle(const tt_string_vector& parts, const ImageBundle* bundle,
-                                    const tt_string& name, const tt_string& path)
+void Code::AddPythonTwoBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle,
+                                    const wxue::string& name, const wxue::string& path)
 {
     *this += "wx.BitmapBundle.FromBitmaps(";
 
@@ -300,7 +301,7 @@ void Code::AddPythonTwoBitmapBundle(const tt_string_vector& parts, const ImageBu
         }
     }
 
-    tt_string name2(bundle->lst_filenames[1]);
+    wxue::string name2(bundle->lst_filenames[1]);
     name2.make_absolute();
     name2.make_relative(path);
     name2.backslashestoforward();
@@ -309,15 +310,16 @@ void Code::AddPythonTwoBitmapBundle(const tt_string_vector& parts, const ImageBu
     Str("wx.Bitmap(").QuotedString(name).Str(", wx.Bitmap(").QuotedString(name2).Str("))");
 }
 
-void Code::AddPythonMultiBitmapBundle(const tt_string_vector& parts, const ImageBundle* bundle)
+void Code::AddPythonMultiBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle)
 {
     *this += "wx.BitmapBundle.FromBitmaps([";
 
-    for (size_t idx = 0; idx < bundle->lst_filenames.size(); ++idx)
+    size_t idx = 0;
+    for (const auto& filename: bundle->lst_filenames)
     {
         if (parts[IndexType].starts_with("Embed"))
         {
-            if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[idx]); embed)
+            if (auto* embed = ProjectImages.GetEmbeddedImage(filename); embed)
             {
                 CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap"));
                 AddPythonImageName(embed);
@@ -338,7 +340,7 @@ void Code::AddPerlImageName(const EmbeddedImage* embed)
 {
     if (embed->get_Form()->is_Gen(gen_Images))
     {
-        tt_string import_name = embed->get_Form()->as_string(prop_perl_file).filename();
+        wxue::string import_name = embed->get_Form()->as_string(prop_perl_file).filename();
         import_name.remove_extension();
 
         Str(import_name).Str(".");
@@ -346,13 +348,13 @@ void Code::AddPerlImageName(const EmbeddedImage* embed)
     Str(embed->base_image().array_name);
 }
 
-void Code::BundleRuby(const tt_string_vector& parts)
+void Code::BundleRuby(const wxue::StringVector& parts)
 {
     if (parts[IndexType].contains("Art"))
     {
-        tt_string art_id(parts[IndexArtID]);
-        tt_string art_client;
-        if (auto pos = art_id.find('|'); ttwx::is_found(pos))
+        wxue::string art_id(parts[IndexArtID]);
+        wxue::string art_client;
+        if (auto pos = art_id.find('|'); wxue::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
             art_id.erase(pos);
@@ -395,7 +397,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
                 Add("wxNullBitmap");
                 return;
             }
-            tt_string svg_name;
+            wxue::string svg_name;
             if (embed->get_Form() != node()->get_Form())
             {
                 svg_name = embed->get_Form()->as_string(prop_ruby_file).filename();
@@ -406,7 +408,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
             {
                 svg_name = "$" + embed->base_image().array_name;
             }
-            insert(0, tt_string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
+            insert(0, wxue::string("_svg_string_ = Zlib::Inflate.inflate(Base64.decode64(")
                           << svg_name << "))\n");
             *this += "Wx::BitmapBundle.from_svg(_svg_string_";
             wxSize svg_size { -1, -1 };
@@ -420,7 +422,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
         else if (parts[IndexType].contains("XPM"))
         {
             auto path = MakeRubyPath(node());
-            tt_string name(bundle->lst_filenames[0]);
+            wxue::string name(bundle->lst_filenames[0]);
             name.make_absolute();
             if (!name.file_exists())
             {
@@ -473,7 +475,7 @@ void Code::BundleRuby(const tt_string_vector& parts)
         {
             auto path = Project.get_BaseDirectory(node(), GEN_LANG_RUBY);
 
-            tt_string name(bundle->lst_filenames[0]);
+            wxue::string name(bundle->lst_filenames[0]);
             name.make_absolute();
             name.make_relative(path);
             name.backslashestoforward();
@@ -485,12 +487,12 @@ void Code::BundleRuby(const tt_string_vector& parts)
         {
             auto path = Project.get_BaseDirectory(node(), GEN_LANG_RUBY);
 
-            tt_string name(bundle->lst_filenames[0]);
+            wxue::string name(bundle->lst_filenames[0]);
             name.make_absolute();
             name.make_relative(path);
             name.backslashestoforward();
 
-            tt_string name2(bundle->lst_filenames[1]);
+            wxue::string name2(bundle->lst_filenames[1]);
             name2.make_absolute();
             name2.make_relative(path);
             name2.backslashestoforward();

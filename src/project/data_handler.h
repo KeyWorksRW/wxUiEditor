@@ -23,6 +23,8 @@
 #include <filesystem>
 #include <map>
 
+#include "wxue_namespace/wxue_string.h"
+
 class Code;
 class WriteCode;
 
@@ -35,12 +37,12 @@ enum xml_flags : uint32_t
 
 struct EmbeddedData
 {
-    tt_string filename;
+    wxue::string filename;
     size_t array_size;
     std::vector<unsigned char> array_data;
-    size_t type;                                // 0 = string, 1 = xml, tt::npos = not_found
-    std::filesystem::file_time_type file_time;  // time the file was last modified
-    bool xml_condensed;  // true if node->as_bool(prop_xml_condensed_format) is true
+    size_t type;           // 0 = string, 1 = xml, wxue::npos = not_found
+    wxDateTime file_time;  // time the file was last modified
+    bool xml_condensed;    // true if node->as_bool(prop_xml_condensed_format) is true
 };
 
 class DataHandler
@@ -60,23 +62,23 @@ public:
     }
 
     // Call this whenever a project is loaded
-    void Clear() { m_embedded_data.clear(); }
+    auto Clear() -> void { m_embedded_data.clear(); }
 
     // Only call this when the datalist code needs to be generated.
-    void Initialize();
+    auto Initialize() -> void;
 
     // Generate data list construction code in source
     //
     // This will call code.clear() before writing any code.
-    void WriteDataConstruction(Code& code, WriteCode* source);
+    auto WriteDataConstruction(Code& code, WriteCode* source) -> void;
 
     // Write extern statements to the header file
-    void WriteImagePostHeader(WriteCode* header);
+    auto WriteImagePostHeader(WriteCode* header) -> void;
 
-    bool NeedsUtilityHeader() const;
+    [[nodiscard]] auto NeedsUtilityHeader() const -> bool;
 
 protected:
-    bool LoadAndCompress(Node* node);
+    auto LoadAndCompress(Node* node) -> bool;
 
 private:
     std::map<std::string, EmbeddedData, std::less<>> m_embedded_data;
@@ -86,6 +88,6 @@ extern DataHandler& ProjectData;
 
 namespace data_list
 {
-    Node* FindDataList();
+    auto FindDataList() -> Node*;
 
 };  // namespace data_list

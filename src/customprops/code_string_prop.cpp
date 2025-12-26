@@ -9,6 +9,8 @@
 
 #include "code_string_prop.h"
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string
+
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "lambdas.h"             // Functions for formatting and storage of lamda events
 #include "mainframe.h"           // MainFrame -- Main window frame
@@ -30,14 +32,14 @@ EditCodeProperty::EditCodeProperty(const wxString& label, NodeProperty* prop) :
 
 EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeDialogBase(parent)
 {
-    SetTitle(tt_string() << prop->get_DeclName() << " property editor");
+    SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
     m_value = prop->as_wxString();
     SetStcColors(m_stc, GEN_LANG_CPLUSPLUS);
 };
 
 void EditCodeDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
-    tt_string lamda = m_value.substr();
+    wxue::string lamda = m_value.ToStdString();
     ExpandLambda(lamda);
 
     m_stc->AddTextRaw(lamda.c_str());

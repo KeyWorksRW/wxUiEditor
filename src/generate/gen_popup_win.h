@@ -18,7 +18,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
-    std::pair<bool, tt_string> isLanguageVersionSupported(GenLang language) override;
+    std::pair<bool, wxue::string> isLanguageVersionSupported(GenLang language) override;
 };
 
 class PopupWinGenerator : public PopupWinBaseGenerator
@@ -27,8 +27,8 @@ public:
     bool ConstructionCode(Code&) override;
     bool BaseClassNameCode(Code&) override;
 
-    tt_string GetHelpText(Node*) override { return tt_string("wxPopupWindow"); }
-    tt_string GetHelpURL(Node*) override { return tt_string("wx_popup_window.html"); }
+    wxue::string GetHelpText(Node*) override { return wxue::string("wxPopupWindow"); }
+    wxue::string GetHelpURL(Node*) override { return wxue::string("wx_popup_window.html"); }
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
@@ -39,8 +39,11 @@ public:
     bool ConstructionCode(Code&) override;
     bool BaseClassNameCode(Code&) override;
 
-    tt_string GetHelpText(Node*) override { return tt_string("wxPopupTransientWindow"); }
-    tt_string GetHelpURL(Node*) override { return tt_string("wx_popup_transient_window.html"); }
+    wxue::string GetHelpText(Node*) override { return wxue::string("wxPopupTransientWindow"); }
+    wxue::string GetHelpURL(Node*) override
+    {
+        return wxue::string("wx_popup_transient_window.html");
+    }
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };

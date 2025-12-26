@@ -7,12 +7,13 @@
 
 #include <wx/radiobox.h>  // wxRadioBox declaration
 
-#include "gen_common.h"            // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"         // Common XRC generating functions
-#include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
-#include "node.h"                  // Node class
-#include "pugixml.hpp"             // xml read/write/create/process
-#include "utils.h"                 // Utility functions that work with properties
+#include "gen_common.h"                  // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"               // Common XRC generating functions
+#include "mockup/mockup_parent.h"        // MockupParent -- Top-level MockUp Parent window
+#include "node.h"                        // Node class
+#include "pugixml.hpp"                   // xml read/write/create/process
+#include "utils.h"                       // Utility functions that work with properties
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 #include "gen_radio_box.h"
 
@@ -24,7 +25,7 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         choices.Add("at least one choice required");
     }
 
-    auto widget =
+    auto* widget =
         new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), choices,
                        node->as_int(prop_majorDimension), GetStyleInt(node, "rb_"));
@@ -58,14 +59,16 @@ bool RadioBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 
 void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
 {
-    if (auto window = wxStaticCast(event.GetEventObject(), wxRadioBox); window)
+    if (auto* window = wxStaticCast(event.GetEventObject(), wxRadioBox); window)
+    {
         getMockup()->SelectNode(window);
+    }
 }
 
 bool RadioBoxGenerator::ConstructionCode(Code& code)
 {
     auto array = code.node()->as_ArrayString(prop_contents);
-    tt_string choice_name;
+    wxue::string choice_name;
     if (code.is_cpp() && array.size())
     {
         choice_name = (code.node()->get_NodeName());

@@ -142,12 +142,12 @@ bool NewPropSheet::Create(wxWindow* parent, wxWindowID id, const wxString& title
 #include "project_handler.h"      // ProjectHandler class
 #include "undo_cmds.h"            // Undoable command classes derived from UndoAction
 
-void NewPropSheet::OnInit(wxInitDialogEvent& event)
+auto NewPropSheet::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void NewPropSheet::CreateNode()
+auto NewPropSheet::CreateNode() -> void
 {
     auto form_node = NodeCreation.CreateNode(gen_wxPropertySheetDialog, nullptr).first;
     ASSERT(form_node);
@@ -162,11 +162,11 @@ void NewPropSheet::CreateNode()
         auto book_page = NodeCreation.CreateNode(gen_BookPage, form_node.get()).first;
         form_node->AdoptChild(book_page);
 
-        tt_string label("Page ");
+        wxString label("Page ");
         label << count + 1;
         book_page->set_value(prop_label, label);
         auto page_sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, book_page.get()).first;
-        page_sizer->set_value(prop_var_name, tt_string() << "page_sizer_" << count + 1);
+        page_sizer->set_value(prop_var_name, wxString() << "page_sizer_" << count + 1);
         book_page->AdoptChild(page_sizer);
         auto static_text = NodeCreation.CreateNode(gen_wxStaticText, page_sizer.get()).first;
         page_sizer->AdoptChild(static_text);
@@ -193,7 +193,7 @@ void NewPropSheet::CreateNode()
 
     wxGetFrame().SelectNode(parent_node);
 
-    tt_string undo_str("New wxPropertySheetDialog");
+    wxue::string undo_str("New wxPropertySheetDialog");
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
@@ -202,7 +202,7 @@ void NewPropSheet::CreateNode()
 }
 
 // Called whenever m_classname changes
-void NewPropSheet::VerifyClassName()
+auto NewPropSheet::VerifyClassName() -> void
 {
     if (!IsClassNameUnique(m_classname->GetValue()))
     {
@@ -216,7 +216,7 @@ void NewPropSheet::VerifyClassName()
         return;
     }
 
-    else if (m_is_info_shown)
+    if (m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();

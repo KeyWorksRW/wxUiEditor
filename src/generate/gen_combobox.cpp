@@ -30,7 +30,7 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
-            widget->Append(iter.make_wxString());
+            widget->Append(iter.wx());
 
         if (node->HasValue(prop_selection_string))
         {

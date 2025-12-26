@@ -16,12 +16,14 @@
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "mainframe.h"       // MainFrame -- Main window frame
-#include "node.h"            // Node class
-#include "node_creator.h"    // NodeCreator class
-#include "tt_view_vector.h"  // tt_view_vector -- read/write line-oriented strings/files
-#include "ttwx.h"            // ttwx namespace helpers for wxString-aware utilities
-#include "utils.h"           // Utility functions that work with properties
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator class
+#include "utils.h"         // Utility functions that work with properties
+
+#include "wxue_namespace/wxue_string.h"         // wxue::string -- std::string with utility methods
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+#include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 // Look for search string in line, and if found, replace with replace_with string. If all
 // is true, replace all instances, otherwise only the first instance is replaced.
@@ -39,10 +41,9 @@ auto utils::replace_in_line(std::string& line, std::string_view search,
     }
 }
 
-tt_string DoubleToStr(double val)
+auto DoubleToStr(double val) -> wxue::string
 {
-    tt_string result;
-
+    wxue::string result;
     std::array<char, 20> str {};
     if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), val); ec == std::errc())
     {
@@ -51,17 +52,16 @@ tt_string DoubleToStr(double val)
     return result;
 }
 
-tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue)
+auto ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string
 {
-    tt_string result;
     if (flag.empty() || currentValue.empty())
     {
-        result = currentValue;
-        return result;
+        return wxue::string(currentValue);
     }
 
-    tt_view_vector mstr(currentValue, '|');
-    for (auto& iter: mstr)
+    wxue::string result;
+    wxue::ViewVector mstr(currentValue, '|');
+    for (const auto& iter: mstr)
     {
         if (iter != flag)
         {
@@ -75,22 +75,22 @@ tt_string ClearPropFlag(tt_string_view flag, tt_string_view currentValue)
     return result;
 }
 
-tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentValue)
+auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentValue) -> wxue::string
 {
-    tt_string result;
     if (flags.empty() || currentValue.empty())
     {
-        result = currentValue;
-        return result;
+        return wxue::string(currentValue);
     }
 
-    tt_string_vector mflags(flags, '|');
+    wxue::string result;
 
-    tt_string_vector mstr(currentValue, '|');
-    for (auto& iter: mstr)
+    wxue::StringVector mflags(flags, '|');
+
+    wxue::StringVector mstr(currentValue, '|');
+    for (const auto& iter: mstr)
     {
         bool isFlagged = false;
-        for (auto& itFlags: mflags)
+        for (const auto& itFlags: mflags)
         {
             if (iter == itFlags)
             {
@@ -111,15 +111,15 @@ tt_string ClearMultiplePropFlags(tt_string_view flags, tt_string_view currentVal
     return result;
 }
 
-tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue)
+auto SetPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string
 {
-    tt_string result(currentValue);
+    wxue::string result(currentValue);
     if (flag.empty())
     {
         return result;
     }
 
-    tt_view_vector mstr(currentValue, '|');
+    wxue::ViewVector mstr(currentValue, '|');
     if (std::ranges::any_of(mstr,
                             [&](const auto& iter)
                             {
@@ -136,14 +136,14 @@ tt_string SetPropFlag(tt_string_view flag, tt_string_view currentValue)
     return result;
 }
 
-bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue)
+bool isPropFlagSet(wxue::string_view flag, wxue::string_view currentValue)
 {
     if (flag.empty() || currentValue.empty())
     {
         return false;
     }
 
-    tt_view_vector mstr(currentValue, '|');
+    wxue::ViewVector mstr(currentValue, '|');
     return std::ranges::any_of(mstr,
                                [&](const auto& iter)
                                {
@@ -151,7 +151,7 @@ bool isPropFlagSet(tt_string_view flag, tt_string_view currentValue)
                                });
 }
 
-wxSystemColour ConvertToSystemColour(tt_string_view value)
+wxSystemColour ConvertToSystemColour(wxue::string_view value)
 {
     // clang-format off
 
@@ -199,39 +199,28 @@ wxSystemColour ConvertToSystemColour(tt_string_view value)
 
 auto ConvertFontFamilyToString(wxFontFamily family) -> const char*
 {
-    const char* result;
-
     switch (family)
     {
         case wxFONTFAMILY_DECORATIVE:
-            result = "wxFONTFAMILY_DECORATIVE";
-            break;
+            return "wxFONTFAMILY_DECORATIVE";
         case wxFONTFAMILY_ROMAN:
-            result = "wxFONTFAMILY_ROMAN";
-            break;
+            return "wxFONTFAMILY_ROMAN";
         case wxFONTFAMILY_SCRIPT:
-            result = "wxFONTFAMILY_SCRIPT";
-            break;
+            return "wxFONTFAMILY_SCRIPT";
         case wxFONTFAMILY_SWISS:
-            result = "wxFONTFAMILY_SWISS";
-            break;
+            return "wxFONTFAMILY_SWISS";
         case wxFONTFAMILY_MODERN:
-            result = "wxFONTFAMILY_MODERN";
-            break;
+            return "wxFONTFAMILY_MODERN";
         case wxFONTFAMILY_TELETYPE:
-            result = "wxFONTFAMILY_TELETYPE";
-            break;
+            return "wxFONTFAMILY_TELETYPE";
         default:
-            result = "wxFONTFAMILY_DEFAULT";
-            break;
+            return "wxFONTFAMILY_DEFAULT";
     }
-
-    return result;
 }
 
-auto ConvertEscapeSlashes(tt_string_view str) -> tt_string
+auto ConvertEscapeSlashes(wxue::string_view str) -> wxue::string
 {
-    tt_string result;
+    wxue::string result;
 
     for (size_t pos = 0; pos < str.size(); ++pos)
     {
@@ -277,10 +266,7 @@ auto ConvertEscapeSlashes(tt_string_view str) -> tt_string
                 }
             }
         }
-        else
-        {
-            result += current_char;
-        }
+        result += current_char;
     }
 
     return result;
@@ -295,7 +281,7 @@ auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxPoint(prop));
 }
 
-wxSize DlgSize(Node* node, GenEnum::PropName prop)
+auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize
 {
     if (!isScalingEnabled(node, prop))
     {
@@ -311,14 +297,14 @@ auto DlgPoint(int width) -> int
     return dlg_point.x;
 }
 
-auto GetSizeInfo(tt_string_view description) -> wxSize
+auto GetSizeInfo(wxue::string_view description) -> wxSize
 {
     wxSize size;
 
-    tt_view_vector size_description;
+    wxue::ViewVector size_description;
     if (description.contains(";"))
     {
-        size_description.SetString(description, ';', tt::TRIM::left);
+        size_description.SetString(description, ';', wxue::TRIM::left);
     }
     else
     {
@@ -364,7 +350,7 @@ inline constexpr auto lst_no_png_conversion = std::to_array<const char*>({
 });
 // clang-format on
 
-bool isConvertibleMime(const tt_string& suffix)
+auto isConvertibleMime(const wxue::string& suffix) -> bool
 {
     return std::ranges::all_of(lst_no_png_conversion,
                                [&](const char* iter)
@@ -406,7 +392,7 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     {
         if (set_keywords.empty())
         {
-            tt_string_vector keywords(language_keywords, ' ');
+            wxue::StringVector keywords(language_keywords, ' ');
             for (auto& iter: keywords)
             {
                 set_keywords.emplace(iter);
@@ -442,9 +428,9 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     return true;
 }
 
-auto CreateBaseFilename(Node* form_node, const tt_string& class_name) -> tt_string
+auto CreateBaseFilename(Node* form_node, const wxue::string& class_name) -> wxue::string
 {
-    tt_string filename;
+    wxue::string filename;
     if (class_name.size())
     {
         filename = class_name;
@@ -465,9 +451,9 @@ auto CreateBaseFilename(Node* form_node, const tt_string& class_name) -> tt_stri
     return filename;
 }
 
-auto CreateDerivedFilename(Node* form_node, const tt_string& class_name) -> tt_string
+auto CreateDerivedFilename(Node* form_node, const wxue::string& class_name) -> wxue::string
 {
-    tt_string filename;
+    wxue::string filename;
     if (class_name.size())
     {
         filename = class_name;
@@ -521,9 +507,9 @@ auto ConvertToSnakeCase(std::string_view str) -> std::string
     return result;
 }
 
-auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string
+auto ConvertToUpperSnakeCase(wxue::string_view str) -> wxue::string
 {
-    tt_string result(str);
+    wxue::string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
     {
         if (result[pos] >= 'A' && result[pos] <= 'Z')
@@ -548,7 +534,7 @@ auto ConvertToUpperSnakeCase(tt_string_view str) -> tt_string
     return result;
 }
 
-auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optional<tt_string>
+auto FileNameToVarName(wxue::string_view filename, size_t max_length) -> std::optional<wxue::string>
 {
     ASSERT(max_length > sizeof("_name_truncated"))
 
@@ -558,23 +544,23 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
         return {};
     }
 
-    tt_string var_name;
+    wxue::string var_name;
 
-    if (ttwx::is_digit(filename[0]))
+    if (wxue::is_digit(filename[0]))
     {
         var_name += "img_";
     }
 
-    for (size_t pos = 0; pos < filename.size(); pos++)
+    for (size_t pos = 0; pos < filename.size(); ++pos)
     {
-        auto iter = static_cast<char>(filename[pos]);
-        if (ttwx::is_alnum(iter) || iter == '_')
+        auto current_ch = static_cast<char>(filename[pos]);
+        if (wxue::is_alnum(current_ch) || current_ch == '_')
         {
-            var_name += iter;
+            var_name += current_ch;
         }
         else
         {
-            if (iter == '.')
+            if (current_ch == '.')
             {
                 // Always convert a period to an underscore in case it is preceeding the extension
                 var_name += '_';
@@ -585,9 +571,9 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
                 var_name += '_';
             }
             // Ignore the first byte of a UTF-8 character sequence
-            else if (static_cast<unsigned char>(iter) != 0xFF)
+            else if (static_cast<unsigned char>(current_ch) != 0xFF)
             {
-                var_name += std::format("{:02x}", static_cast<unsigned char>(iter));
+                var_name += std::format("{:02x}", static_cast<unsigned char>(current_ch));
             }
         }
 
@@ -602,9 +588,9 @@ auto FileNameToVarName(tt_string_view filename, size_t max_length) -> std::optio
     return var_name;
 }
 
-bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language)
+auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language) -> bool
 {
-    if (tt::contains(node->as_string(prop_name), 'n', tt::CASE::either))
+    if (wxue::contains(node->as_string(prop_name), 'n', wxue::CASE::either))
     {
         return false;
     }
@@ -627,27 +613,20 @@ auto GenLangToString(GenLang language) -> std::string_view
     {
         case GEN_LANG_CPLUSPLUS:
             return "C++";
-            break;
         case GEN_LANG_PERL:
             return "Perl";
-            break;
         case GEN_LANG_PYTHON:
             return "Python";
-            break;
         case GEN_LANG_RUBY:
             return "Ruby";
-            break;
         case GEN_LANG_XRC:
             return "XRC";
-            break;
-
         default:
             return "an unknown language";
-            break;
     }
 }
 
-auto ConvertToGenLang(tt_string_view language) -> GenLang
+auto ConvertToGenLang(wxue::string_view language) -> GenLang
 {
     if (language.starts_with("C++") || language.starts_with("Folder C++"))
     {
@@ -671,9 +650,8 @@ auto ConvertToGenLang(tt_string_view language) -> GenLang
     if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
     {
         return GEN_LANG_XRC;
-
-        // If this wasn't an actual language setting, then return all languages
     }
+    // If this wasn't an actual language setting, then return all languages
     return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
                                 GEN_LANG_PERL | GEN_LANG_XRC);
 }
@@ -731,7 +709,7 @@ auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
     size_t copied_data = 0;
     for (;;)
     {
-        if (size != tt::npos && copied_data + read_size > size)
+        if (size != wxue::npos && copied_data + read_size > size)
         {
             read_size = size - copied_data;
         }
@@ -744,7 +722,7 @@ auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
             return false;
         }
 
-        if (size == tt::npos)
+        if (size == wxue::npos)
         {
             if (inputStream->Eof())
             {

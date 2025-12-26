@@ -205,6 +205,12 @@ namespace wxue
     auto contains(std::string_view haystack, char character, CASE checkcase) -> bool;
 
     // Returns true if strings are identical
+    auto is_sameas(std::string_view str1, std::string_view str2, CASE checkcase = CASE::exact)
+        -> bool;
+
+    // Returns true if the sub-string is identical to the first part of main
+    auto is_sameprefix(std::string_view main, std::string_view sub, CASE checkcase = CASE::exact)
+        -> bool;
 
     // **************** File/path related functions ****************
 

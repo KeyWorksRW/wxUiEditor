@@ -19,23 +19,25 @@
 #include "pugixml.hpp"
 #include <memory>
 
+#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
+
 using namespace code;
 
-void GenInhertedClass(GenResults& results)
+auto GenInhertedClass(GenResults& results) -> void
 {
-    tt_cwd cwd;
+    wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();
-    tt_string path;
+    wxue::string path;
 
-    tt_string source_ext(".cpp");
-    tt_string header_ext(".h");
+    wxue::string source_ext(".cpp");
+    wxue::string header_ext(".h");
 
-    if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_source_ext); extProp.size())
     {
         source_ext = extProp;
     }
 
-    if (auto extProp = Project.as_string(prop_header_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
     }
@@ -45,29 +47,26 @@ void GenInhertedClass(GenResults& results)
 
     for (const auto& form: forms)
     {
-        if (auto& file = form->as_string(prop_derived_file); file.size())
-        {
-            path = Project.get_DerivedFilename(form);
-            if (path.empty())
-                continue;
-            if (path.file_exists())
-            {
-                // Count both source and header file
-                path.replace_extension(header_ext);
-                if (path.file_exists())
-                {
-                    results.SetFileCount(results.GetFileCount() + 2);
-                    continue;
-                }
-                else
-                {
-                    results.IncrementFileCount();
-                }
-            }
-        }
-        else
+        if (const auto& file = form->as_string(prop_derived_file); !file.size())
         {
             continue;
+        }
+
+        path = Project.get_DerivedFilename(form);
+        if (path.empty())
+        {
+            continue;
+        }
+        if (path.file_exists())
+        {
+            // Count both source and header file
+            path.replace_extension(header_ext);
+            if (path.file_exists())
+            {
+                results.SetFileCount(results.GetFileCount() + 2);
+                continue;
+            }
+            results.IncrementFileCount();
         }
 
         CppCodeGenerator codegen(form);
@@ -83,8 +82,8 @@ void GenInhertedClass(GenResults& results)
         auto retval = codegen.GenerateDerivedClass(Project.get_ProjectNode(), form);
         if (retval == result::fail)
         {
-            results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
-                                                       static_cast<std::string>(path)));
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path.c_str()));
             continue;
         }
         else if (retval == result::exists)
@@ -99,24 +98,26 @@ void GenInhertedClass(GenResults& results)
             // If we get here, the source file exists, but the header file does not.
             int flags = flag_no_ui;
             if (form->as_bool(prop_no_closing_brace))
+            {
                 flags |= flag_add_closing_brace;
+            }
             retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
             if (retval == result::fail)
             {
-                results.GetMsgs().emplace_back(std::format(
-                    "Cannot create or write to the file {}\n", static_cast<std::string>(path)));
+                results.GetMsgs().emplace_back(
+                    std::format("Cannot create or write to the file {}\n", path.c_str()));
             }
-            else if (retval == result::exists)
+            if (retval == result::exists)
             {
                 results.IncrementFileCount();
             }
-            else
+            if (retval != result::fail && retval != result::exists)
             {
                 results.GetUpdatedFiles().emplace_back(path);
             }
             continue;
         }
-        else if (retval == result::ignored)
+        if (retval == result::ignored)
         {
             // Completely ignore this file
             continue;
@@ -131,7 +132,9 @@ void GenInhertedClass(GenResults& results)
         {
             int flags = flag_no_ui;
             if (form->as_bool(prop_no_closing_brace))
+            {
                 flags |= flag_add_closing_brace;
+            }
 
             retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
         }
@@ -141,11 +144,11 @@ void GenInhertedClass(GenResults& results)
             results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
                                                        static_cast<std::string>(path)));
         }
-        else if (retval == result::exists)
+        if (retval == result::exists)
         {
             results.IncrementFileCount();
         }
-        else
+        if (retval != result::fail && retval != result::exists)
         {
             results.GetUpdatedFiles().emplace_back(path);
         }
@@ -154,14 +157,14 @@ void GenInhertedClass(GenResults& results)
         retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
         if (retval == result::fail)
         {
-            results.GetMsgs().emplace_back(std::format("Cannot create or write to the file {}\n",
-                                                       static_cast<std::string>(path)));
+            results.GetMsgs().emplace_back(
+                std::format("Cannot create or write to the file {}\n", path.c_str()));
         }
-        else if (retval == result::exists)
+        if (retval == result::exists)
         {
             results.IncrementFileCount();
         }
-        else
+        if (retval != result::fail && retval != result::exists)
         {
             results.GetUpdatedFiles().emplace_back(path);
         }

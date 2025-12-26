@@ -23,6 +23,8 @@
 #include <set>
 #include <string>
 
+#include "wxue_namespace/wxue_string.h"
+
 class Node;
 class NodeEvent;
 class NodeProperty;
@@ -184,40 +186,40 @@ public:
     void OnLeftClick(wxMouseEvent& event);
 
     // Get the Help menu item text
-    virtual auto GetHelpText(Node*) -> tt_string;
+    virtual auto GetHelpText(Node*) -> wxue::string;
 
     // Get the HTML filename to browse to. Caller needs to supply the prefix.
-    virtual auto GetHelpURL(Node*) -> tt_string;
+    virtual auto GetHelpURL(Node*) -> wxue::string;
 
     // Get the wxPython Help menu item text
-    virtual auto GetPythonHelpText(Node*) -> tt_string;
+    virtual auto GetPythonHelpText(Node*) -> wxue::string;
 
     // Get the wxPython Help menu item text
-    virtual auto GetRubyHelpText(Node*) -> tt_string;
+    virtual auto GetRubyHelpText(Node*) -> wxue::string;
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
-    virtual auto GetPythonURL(Node* node) -> tt_string;
+    virtual auto GetPythonURL(Node* node) -> wxue::string;
 
     // Get the HTML filename to browse to. E.g., "wx.Button.html"
-    virtual auto GetRubyURL(Node* node) -> tt_string;
+    virtual auto GetRubyURL(Node* node) -> wxue::string;
 
     // Change the enable/disable states in the Property Grid Panel based on the current
     // property.
     virtual void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);
 
     // Call this to retrieve hint text for the property
-    virtual auto GetHint(NodeProperty*) -> std::optional<tt_string>;
+    virtual auto GetHint(NodeProperty*) -> std::optional<wxue::string>;
 
     // Called by MainFrame when the user modifies a property. Return false to let MainFrame
     // call PushUndoAction() to push a single prop change to the undo stack. Return true if
     // the generator handles pushing to the undo stack.
-    virtual auto ModifyProperty(NodeProperty* /* prop */, tt_string_view /* value */) -> bool
+    virtual auto ModifyProperty(NodeProperty* /* prop */, wxue::string_view /* value */) -> bool
     {
         return false;
     }
 
     // Call this to use different help text then get_PropDeclaration()->getDescription()
-    virtual auto GetPropertyDescription(NodeProperty* /*unused*/) -> std::optional<tt_string>
+    virtual auto GetPropertyDescription(NodeProperty* /*unused*/) -> std::optional<wxue::string>
     {
         return {};
     }
@@ -240,14 +242,14 @@ public:
     }
 
     // Call this to retrieve any warning text when generating code for the specific language.
-    virtual auto GetWarning(Node* /*unused*/, GenLang /* language */) -> std::optional<tt_string>
+    virtual auto GetWarning(Node* /*unused*/, GenLang /* language */) -> std::optional<wxue::string>
     {
         return {};
     }
 
     // result.first == false indicates that the generator cannot construct the object using
     // the current language and version. result.second contains the error message.
-    virtual auto isLanguageVersionSupported(GenLang /* language */) -> std::pair<bool, tt_string>
+    virtual auto isLanguageVersionSupported(GenLang /* language */) -> std::pair<bool, wxue::string>
     {
         return { true, {} };
     }
@@ -257,7 +259,7 @@ public:
     // be called *after* the property is set, so the generator can query the property's
     // current value.
     virtual auto isLanguagePropSupported(Node* /*unused*/, GenLang, GenEnum::PropName)
-        -> std::optional<tt_string>;
+        -> std::optional<wxue::string>;
 
     // Allows a generator, such as the MDI forms to specify additional member variables that should
     // be collected and added to the class declaration. These will either be protected: or private:

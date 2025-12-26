@@ -76,8 +76,9 @@ auto TextViewGenerator::ConstructionCode(Code& code) -> bool
         ttwx::StringVector lines;
         lines.ReadString(std::string_view(txt_TextCtrlViewBlock));
         auto class_name = code.node()->as_view(prop_class_name);
-        for (auto& line: lines)
+        for (const auto& wxline: lines)
         {
+            std::string line = wxline.ToStdString();
             utils::replace_in_line(line, "%class%", class_name, true);
             code.Str(line).Eol();
         }
@@ -86,8 +87,8 @@ auto TextViewGenerator::ConstructionCode(Code& code) -> bool
     return true;
 }
 
-bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                    std::set<std::string>& set_hdr, GenLang language)
+auto TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                    std::set<std::string>& set_hdr, GenLang language) -> bool
 {
     if (language == GEN_LANG_CPLUSPLUS)
     {
@@ -96,7 +97,7 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
         set_hdr.insert("#include <wx/textctrl.h>");
 
         auto* parent = node->get_Parent();
-        for (auto& iter: parent->get_ChildNodePtrs())
+        for (const auto& iter: parent->get_ChildNodePtrs())
         {
             if (iter.get() == node)
             {
@@ -104,11 +105,11 @@ bool TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
             }
             if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
             {
-                tt_string hdr_file = iter->as_string(prop_base_file);
-                if (hdr_file.size())
+                wxString hdr_file = iter->as_string(prop_base_file).make_wxString();
+                if (!hdr_file.empty())
                 {
-                    hdr_file += Project.as_string(prop_header_ext);
-                    set_src.insert(tt_string("#include ") << '"' << hdr_file << '"');
+                    hdr_file += Project.as_string(prop_header_ext).make_wxString();
+                    set_src.insert(std::string("#include \"") + hdr_file.ToStdString() + "\"");
                 }
                 else
                 {
@@ -147,8 +148,9 @@ auto TextViewGenerator::HeaderCode(Code& code) -> bool
     ttwx::StringVector lines;
     lines.ReadString(std::string_view(txt_TextCtrlViewHdrBlock));
     auto class_name = code.node()->as_view(prop_class_name);
-    for (auto& line: lines)
+    for (const auto& wxline: lines)
     {
+        std::string line = wxline.ToStdString();
         utils::replace_in_line(line, "%class%", class_name, true);
         code.Str(line).Eol();
     }

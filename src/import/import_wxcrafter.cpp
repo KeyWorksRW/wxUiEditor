@@ -20,17 +20,17 @@
 
 #include "import_wxcrafter.h"  // This will include rapidjson/document.h
 
-#include "base_generator.h"      // BaseGenerator -- Base widget generator class
-#include "dlg_msgs.h"            // wxMessageDialog dialogs
-#include "font_prop.h"           // FontProperty class
-#include "gen_enums.h"           // Enumerations for generators
-#include "mainapp.h"             // MainApp class
-#include "node.h"                // Node class
-#include "node_creator.h"        // NodeCreator class
-#include "ttwx.h"                // ttwx helpers for character classification
-#include "ttwx_string_vector.h"  // ttwx::StringVector
-#include "ttwx_view_vector.h"    // ttwx::ViewVector
-#include "utils.h"               // Utility functions that work with properties
+#include "base_generator.h"                   // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"                         // wxMessageDialog dialogs
+#include "font_prop.h"                        // FontProperty class
+#include "gen_enums.h"                        // Enumerations for generators
+#include "mainapp.h"                          // MainApp class
+#include "node.h"                             // Node class
+#include "node_creator.h"                     // NodeCreator class
+#include "ttwx.h"                             // ttwx helpers for character classification
+#include "ttwx_string_vector.h"               // wxue::StringVector
+#include "utils.h"                            // Utility functions that work with properties
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "import_crafter_maps.cpp"  // Map of wxCrafter properties to wxUiEditor properties
 
@@ -1029,7 +1029,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         {
             if (auto& choices = FindValue(value, "m_value"); choices.IsString())
             {
-                ttwx::ViewVector mview(choices.GetString(), "\\n");
+                wxue::ViewVector mview(choices.GetString(), "\\n");
                 std::string contents;
                 for (auto& choice: mview)
                 {
@@ -1241,7 +1241,7 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     }
     if (prop_name == prop_size && node->is_Gen(gen_spacer))
     {
-        ttwx::ViewVector mview(FindValue(value, "m_value").GetString(), ',');
+        wxue::ViewVector mview(FindValue(value, "m_value").GetString(), ',');
         if (mview.size() > 1)
         {
             node->set_value(prop_width, ttwx::atoi(mview[0]));
@@ -1259,7 +1259,7 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         {
             if (node->HasProp(prop_contents))
             {
-                ttwx::StringVector contents(std::string_view(setting.GetString()), ';');
+                wxue::StringVector contents(std::string_view(setting.GetString()), ';');
                 auto str_ptr = node->get_PropPtr(prop_contents)->as_raw_ptr();
                 str_ptr->clear();  // remove any default string
                 for (const auto& item: contents)
@@ -1452,7 +1452,7 @@ auto WxCrafter::ProcessBitmapPropety(Node* node, const Value& object) -> void
         std::string bitmap;
         if (path.starts_with("wxART"))
         {
-            ttwx::ViewVector parts(path, ',');
+            wxue::ViewVector parts(path, ',');
             if (parts.size() > 1)
             {
                 bitmap = std::format("Art;{}|{};[-1,-1]", parts[0], parts[1]);
@@ -1509,7 +1509,7 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
         {
             font_info.setDefGuiFont(false);
             font_info.FaceName("");
-            ttwx::ViewVector mstr(crafter_str, ',', ttwx::TRIM::left);
+            wxue::ViewVector mstr(crafter_str, ',', wxue::TRIM::left);
 
             if (mstr[0] == "wxSYS_OEM_FIXED_FONT" || mstr[0] == "wxSYS_ANSI_FIXED_FONT")
                 font_info.Family(wxFONTFAMILY_TELETYPE);

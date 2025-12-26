@@ -18,16 +18,16 @@
 
 #include "import_formblder.h"
 
-#include "base_generator.h"           // BaseGenerator -- Base widget generator class
-#include "dlg_msgs.h"                 // wxMessageDialog dialogs
-#include "font_prop.h"                // FontProperty class
-#include "mainframe.h"                // Main window frame
-#include "node.h"                     // Node class
-#include "node_creator.h"             // NodeCreator class
-#include "ttwx/ttwx.h"                // Project utilities
-#include "ttwx/ttwx_string_vector.h"  // ttwx::StringVector
-#include "ttwx/ttwx_view_vector.h"    // ttwx::ViewVector
-#include "utils.h"                    // Utility functions that work with properties
+#include "base_generator.h"                   // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"                         // wxMessageDialog dialogs
+#include "font_prop.h"                        // FontProperty class
+#include "mainframe.h"                        // Main window frame
+#include "node.h"                             // Node class
+#include "node_creator.h"                     // NodeCreator class
+#include "ttwx/ttwx.h"                        // Project utilities
+#include "ttwx/ttwx_string_vector.h"          // wxue::StringVector
+#include "utils.h"                            // Utility functions that work with properties
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "import_frmbldr_maps.cpp"  // set_ignore_flags and map_evt_pair
 
@@ -567,7 +567,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
     else if (prop_name == "style" && class_name == "wxCheckBox")
     {
         // wxCHK_2STATE and wxCHK_3STATE are part of the type property instead of style
-        ttwx::ViewVector styles(xml_prop.text().as_view(), "|", ttwx::TRIM::both);
+        wxue::ViewVector styles(xml_prop.text().as_view(), "|", wxue::TRIM::both);
         std::string new_style;
         for (auto& iter: styles)
         {
@@ -615,7 +615,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
     }
     else if (prop_name == "subclass")
     {
-        ttwx::StringVector parts(xml_prop.text().as_view(), ';', ttwx::TRIM::both);
+        wxue::StringVector parts(xml_prop.text().as_view(), ';', wxue::TRIM::both);
         if (parts[0].empty())
         {
             return;
@@ -623,7 +623,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
         if (auto* prop = newobject->get_PropPtr(prop_subclass); prop)
         {
             prop->set_value(parts[0]);
-            if (parts.size() > 1 && parts[1].Contains("forward_declare"))
+            if (parts.size() > 1 && parts[1].contains("forward_declare"))
             {
                 prop = newobject->get_PropPtr(prop_subclass_header);
                 if (prop)

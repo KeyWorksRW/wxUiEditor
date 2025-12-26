@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#include "../../ttwx/ttwx_view_vector.h"
+#include "wxue_namespace/wxue_view_vector.h"
 
 auto Diff::SplitLines(std::string_view text) -> std::vector<std::string>
 {
@@ -176,7 +176,7 @@ auto Diff::Compare(std::string_view original, std::string_view modified, size_t 
     return result;
 }
 
-auto Diff::Compare(const ttwx::ViewVector& original, const ttwx::ViewVector& modified,
+auto Diff::Compare(const wxue::ViewVector& original, const wxue::ViewVector& modified,
                    size_t context_lines) -> DiffResult
 {
     DiffResult result;

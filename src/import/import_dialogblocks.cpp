@@ -32,13 +32,12 @@
 
 #include "import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 
-#include "dlg_msgs.h"            // wxMessageDialog dialogs
-#include "mainapp.h"             // App -- Main application class
-#include "node.h"                // Node class
-#include "node_creator.h"        // NodeCreator class
-#include "ttwx.h"                // ttwx namespace functions and declarations
-#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
-#include "ttwx_view_vector.h"    // ViewVector -- ttwx::ViewVector class
+#include "dlg_msgs.h"                         // wxMessageDialog dialogs
+#include "mainapp.h"                          // App -- Main application class
+#include "node.h"                             // Node class
+#include "node_creator.h"                     // NodeCreator class
+#include "ttwx.h"                             // ttwx namespace functions and declarations
+#include "wxue_namespace/wxue_view_vector.h"  // ViewVector -- wxue::ViewVector class
 
 DialogBlocks::DialogBlocks() = default;
 
@@ -906,7 +905,7 @@ void DialogBlocks::ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& 
             value)
         {
             auto event_text = ExtractQuotedString(value);
-            ttwx::ViewVector event_parts(event_text.ToStdString(), '|');
+            wxue::ViewVector event_parts(event_text.ToStdString(), '|');
             ASSERT(event_parts.size() > 1);
             if (event_parts.size() > 1)
             {
@@ -1693,7 +1692,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
             {
                 case prop_contents:
                     {
-                        ttwx::ViewVector multi(str.ToStdString(), '|');
+                        wxue::ViewVector multi(str.ToStdString(), '|');
                         str.clear();
                         for (auto& iter: multi)
                         {
@@ -1802,8 +1801,8 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
         else if (name == "Field widths")
         {
             auto width_value = ExtractQuotedString(string_xml);
-            ttwx::StringVector widths(std::string_view(width_value.ToStdString()), ',');
-            ttwx::StringVector fields(std::string_view(node->as_string(prop_fields)), ';');
+            wxue::StringVector widths(std::string_view(width_value.ToStdString()), ',');
+            wxue::StringVector fields(std::string_view(node->as_string(prop_fields)), ';');
             size_t pos = 0;
             for (auto& iter: widths)
             {

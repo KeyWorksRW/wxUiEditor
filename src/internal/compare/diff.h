@@ -11,7 +11,7 @@
 #include <string_view>
 #include <vector>
 
-namespace ttwx
+namespace wxue
 {
     class ViewVector;
 }
@@ -60,8 +60,8 @@ public:
                                       size_t context_lines = 3) -> DiffResult;
 
     // Compare two ViewVectors (already split into lines, line endings normalized)
-    [[nodiscard]] static auto Compare(const ttwx::ViewVector& original,
-                                      const ttwx::ViewVector& modified, size_t context_lines = 3)
+    [[nodiscard]] static auto Compare(const wxue::ViewVector& original,
+                                      const wxue::ViewVector& modified, size_t context_lines = 3)
         -> DiffResult;
 
 private:

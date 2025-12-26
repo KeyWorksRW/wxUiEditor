@@ -792,7 +792,7 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     if (Project.get_ProjectNode()->HasValue(prop_project_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(Project.get_ProjectNode()->as_string(prop_project_src_includes)));
         for (auto& iter: list)
         {
@@ -826,7 +826,7 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     if (m_form_node->HasValue(prop_system_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(m_form_node->as_string(prop_system_src_includes)));
         for (auto& iter: list)
         {
@@ -854,7 +854,7 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     if (m_form_node->HasValue(prop_local_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(m_form_node->as_string(prop_local_src_includes)));
         for (auto& iter: list)
         {
@@ -1146,7 +1146,7 @@ auto CppCodeGenerator::CollectUserEventHandlers(std::unordered_set<std::string>&
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #endif  // _DEBUG
     {
-        ttwx::ViewVector org_file;
+        wxue::ViewVector org_file;
         auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
 
         if (has_base_file && path.extension().empty())
@@ -1476,7 +1476,7 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     if (Project.get_ProjectNode()->HasValue(prop_project_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(Project.get_ProjectNode()->as_string(prop_project_src_includes)));
         for (auto& iter: list)
         {
@@ -1516,7 +1516,7 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     if (m_form_node->HasValue(prop_local_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(m_form_node->as_string(prop_local_src_includes)));
         for (auto& iter: list)
         {

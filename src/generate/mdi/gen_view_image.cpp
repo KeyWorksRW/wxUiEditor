@@ -9,7 +9,7 @@
 
 #include "code.h"                // Code -- Helper class for generating code
 #include "project_handler.h"     // ProjectHandler class
-#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "ttwx_string_vector.h"  // wxue::StringVector class
 #include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr const auto txt_ImageViewBlock =
@@ -63,7 +63,7 @@ auto ImageViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_ImageViewBlock));
         auto class_name = code.node()->as_view(prop_class_name);
         for (const auto& wxline: lines)
@@ -135,7 +135,7 @@ private:
 
 auto ImageViewGenerator::HeaderCode(Code& code) -> bool
 {
-    ttwx::StringVector lines;
+    wxue::StringVector lines;
     lines.ReadString(std::string_view(txt_ImageViewHdrBlock));
     auto class_name = code.node()->as_view(prop_class_name);
     for (const auto& wxline: lines)

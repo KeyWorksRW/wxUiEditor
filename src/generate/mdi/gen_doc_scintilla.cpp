@@ -8,7 +8,7 @@
 #include "gen_doc_scintilla.h"
 
 #include "code.h"                // Code -- Helper class for generating code
-#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "ttwx_string_vector.h"  // wxue::StringVector class
 #include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_ScintillaDocViewBlock =
@@ -82,7 +82,7 @@ auto ScintillaDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_ScintillaDocViewBlock));
         auto class_name = code.node()->get_Parent()->as_view(prop_class_name);
         for (const auto& wxline: lines)

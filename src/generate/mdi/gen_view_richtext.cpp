@@ -9,7 +9,7 @@
 
 #include "code.h"                // Code -- Helper class for generating code
 #include "project_handler.h"     // ProjectHandler class
-#include "ttwx_string_vector.h"  // ttwx::StringVector class
+#include "ttwx_string_vector.h"  // wxue::StringVector class
 #include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_RichTextViewBlock =
@@ -63,7 +63,7 @@ auto RichTextViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_RichTextViewBlock));
         auto class_name = code.node()->as_view(prop_class_name);
         for (const auto& wxline: lines)
@@ -144,7 +144,7 @@ private:
 
 auto RichTextViewGenerator::HeaderCode(Code& code) -> bool
 {
-    ttwx::StringVector lines;
+    wxue::StringVector lines;
     lines.ReadString(std::string_view(txt_RichTextCtrlViewHdrBlock));
     auto class_name = code.node()->as_view(prop_class_name);
     for (const auto& wxline: lines)

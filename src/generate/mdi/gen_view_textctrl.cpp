@@ -9,7 +9,7 @@
 
 #include "code.h"                // Code -- Helper class for generating code
 #include "project_handler.h"     // ProjectHandler class
-#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
+#include "ttwx_string_vector.h"  // StringVector -- wxue::StringVector class
 #include "utils.h"               // Miscellaneous utility functions
 
 inline constexpr auto txt_TextCtrlViewBlock =
@@ -73,7 +73,7 @@ auto TextViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_TextCtrlViewBlock));
         auto class_name = code.node()->as_view(prop_class_name);
         for (const auto& wxline: lines)
@@ -145,7 +145,7 @@ private:
 
 auto TextViewGenerator::HeaderCode(Code& code) -> bool
 {
-    ttwx::StringVector lines;
+    wxue::StringVector lines;
     lines.ReadString(std::string_view(txt_TextCtrlViewHdrBlock));
     auto class_name = code.node()->as_view(prop_class_name);
     for (const auto& wxline: lines)

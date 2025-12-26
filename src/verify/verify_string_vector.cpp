@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Verify ttwx::StringVector class
+// Purpose:   Verify wxue::StringVector class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ttwx_string_vector.h"
+#include "wxue_namespace/wxue_string_vector.h"
 
 #include <algorithm>
 #include <filesystem>
@@ -18,7 +18,7 @@
 
 #include "assertion_dlg.h"  // Assertion Dialog
 
-// Function to verify all capabilities of ttwx::StringVector
+// Function to verify all capabilities of wxue::StringVector
 
 // NOLINTNEXTLINE (clang-analyzer-core.cognitive-complexity) // cppcheck-suppress
 // highCognitiveComplexity
@@ -26,7 +26,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 {
     // Test 1: String parsing with character separator
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
         string_vector.SetString(std::string_view("apple;banana;cherry"), ";");
 
         VERIFY_EQUAL(string_vector.size(), 3U, "Basic semicolon parsing should create 3 elements");
@@ -44,7 +44,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 2: String parsing with string separator
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
         string_vector.SetString(std::string_view("first||second||third"), std::string_view("||"));
 
         VERIFY_EQUAL(string_vector.size(), 3U, "Double pipe parsing should create 3 elements");
@@ -63,11 +63,11 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 3: TRIM functionality
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Test TRIM::none
         string_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                                ttwx::TRIM::none);
+                                wxue::TRIM::none);
         VERIFY_EQUAL(string_vector.size(), 3U, "No trim should create 3 elements");
         ASSERT_MSG(string_vector[0] == "  apple  ", "First element should preserve spaces");
         ASSERT_MSG(string_vector[1] == " banana ", "Second element should preserve spaces");
@@ -75,7 +75,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
         // Test TRIM::both
         string_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                                ttwx::TRIM::both);
+                                wxue::TRIM::both);
         VERIFY_EQUAL(string_vector.size(), 3U, "Trim both should create 3 elements");
         ASSERT_MSG(string_vector[0] == "apple", "First element should be trimmed");
         ASSERT_MSG(string_vector[1] == "banana", "Second element should be trimmed");
@@ -83,7 +83,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
         // Test TRIM::left
         string_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                                ttwx::TRIM::left);
+                                wxue::TRIM::left);
         VERIFY_EQUAL(string_vector.size(), 3U, "Trim left should create 3 elements");
         ASSERT_MSG(string_vector[0] == "apple  ", "First element should be left-trimmed");
         ASSERT_MSG(string_vector[1] == "banana ", "Second element should be left-trimmed");
@@ -91,7 +91,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
         // Test TRIM::right
         string_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                                ttwx::TRIM::right);
+                                wxue::TRIM::right);
         VERIFY_EQUAL(string_vector.size(), 3U, "Trim right should create 3 elements");
         ASSERT_MSG(string_vector[0] == "  apple", "First element should be right-trimmed");
         ASSERT_MSG(string_vector[1] == " banana", "Second element should be right-trimmed");
@@ -100,7 +100,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 4: Edge cases for string parsing
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Empty string
         string_vector.SetString(std::string_view(""), ";");
@@ -132,18 +132,18 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
     // Test 5: Constructor variants
     {
         // Default constructor
-        ttwx::StringVector sv1;
+        wxue::StringVector sv1;
         VERIFY_EQUAL(sv1.size(), 0U, "Default constructor should create empty vector");
 
         // Parameterized constructor with character separator
-        ttwx::StringVector sv2(std::string_view("a;b;c"), ";");
+        wxue::StringVector sv2(std::string_view("a;b;c"), ";");
         VERIFY_EQUAL(sv2.size(), 3U, "Constructor with char separator should create 3 elements");
         ASSERT_MSG(sv2[0] == "a", "First element should be 'a'");
         ASSERT_MSG(sv2[1] == "b", "Second element should be 'b'");
         ASSERT_MSG(sv2[2] == "c", "Third element should be 'c'");
 
         // Parameterized constructor with TRIM
-        ttwx::StringVector sv3(std::string_view(" x ; y ; z "), ';', ttwx::TRIM::both);
+        wxue::StringVector sv3(std::string_view(" x ; y ; z "), ';', wxue::TRIM::both);
         VERIFY_EQUAL(sv3.size(), 3U, "Constructor with trim should create 3 elements");
         ASSERT_MSG(sv3[0] == "x", "First element should be trimmed to 'x'");
         ASSERT_MSG(sv3[1] == "y", "Second element should be trimmed to 'y'");
@@ -152,7 +152,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 6: ReadString capabilities
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Test with different line endings
         string_vector.ReadString(std::string_view("line1\nline2\nline3"));
@@ -194,8 +194,8 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 7: Comparison and utility methods
     {
-        ttwx::StringVector string_vector1;
-        ttwx::StringVector string_vector2;
+        wxue::StringVector string_vector1;
+        wxue::StringVector string_vector2;
 
         // Test is_sameas() with identical vectors
         string_vector1.ReadString(std::string_view("same\nlines\nhere"));
@@ -214,7 +214,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 8: wxString integration
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Test SetString with wxString and character separator
         wxString wxStr1 = wxT("wx;string;test");
@@ -235,7 +235,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
         // Test SetString with wxString and TRIM
         wxString wxStr3 = wxT("  trim  ;  test  ");
-        string_vector.SetString(wxStr3, ';', ttwx::TRIM::both);
+        string_vector.SetString(wxStr3, ';', wxue::TRIM::both);
         VERIFY_EQUAL(string_vector.size(), 2U,
                      "SetString with wxString and trim should create 2 elements");
         ASSERT_MSG(string_vector[0] == "trim", "First element should be trimmed to 'trim'");
@@ -244,7 +244,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 9: Edge cases and error handling
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Empty ReadString
         string_vector.ReadString(std::string_view(""));
@@ -284,7 +284,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 10: std::vector separators functionality
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Test with multiple single-character separators
         std::vector<std::string_view> separators = { ";", "," };
@@ -319,7 +319,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
         // Test with TRIM functionality and multiple separators
         std::vector<std::string_view> trimSeparators = { ";", "," };
         string_vector.SetString(std::string_view("  first  ;  second  ,  third  "), trimSeparators,
-                                ttwx::TRIM::both);
+                                wxue::TRIM::both);
         VERIFY_EQUAL(string_vector.size(), 3U,
                      "Vector separators with trim should create 3 elements");
         ASSERT_MSG(string_vector[0] == "first", "First element should be trimmed");
@@ -339,7 +339,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
             file.write(testContent.c_str(), static_cast<std::streamsize>(testContent.size()));
         }
 
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Test ReadFile with std::string_view
         bool readResult = string_vector.ReadFile(std::string_view(tempFilename));
@@ -376,7 +376,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 12: Vector modification operations (unique to StringVector)
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
 
         // Setup initial vector
         string_vector.SetString(std::string_view("one;two;three"), ";");
@@ -432,7 +432,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 13: Advanced vector modification and manipulation
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
         string_vector.SetString(std::string_view("apple;banana;cherry;date"), ";");
 
         // Test element modification through direct access
@@ -473,7 +473,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 14: Iterators and range-based operations
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
         string_vector.SetString(std::string_view("one;two;three;four;five"), ";");
 
         // Test range-based for loop
@@ -498,18 +498,18 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
         ASSERT_MSG(*riter == "four", "After increment should point to 'four'");
 
         // Test const iterators
-        const ttwx::StringVector& const_ref = string_vector;
+        const wxue::StringVector& const_ref = string_vector;
         auto citer = const_ref.cbegin();
         ASSERT_MSG(*citer == "one", "Const iterator should point to first element");
     }
 
     // Test 15: Copy and assignment operations
     {
-        ttwx::StringVector sv1;
+        wxue::StringVector sv1;
         sv1.SetString(std::string_view("original;data"), ";");
 
         // Test copy constructor (using std::vector's copy constructor)
-        ttwx::StringVector sv2 = sv1;
+        wxue::StringVector sv2 = sv1;
         VERIFY_EQUAL(sv2.size(), 2U, "Copied vector should have 2 elements");
         ASSERT_MSG(sv2[0] == "original", "Copied vector should have same content");
         ASSERT_MSG(sv2[1] == "data", "Copied vector should have same content");
@@ -519,7 +519,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
         ASSERT_MSG(sv2[0] == "original", "Copied vector should be independent");
 
         // Test assignment operator
-        ttwx::StringVector sv3;
+        wxue::StringVector sv3;
         sv3 = sv1;
         VERIFY_EQUAL(sv3.size(), 2U, "Assigned vector should have 2 elements");
         ASSERT_MSG(sv3[0] == "modified", "Assigned vector should have updated content");
@@ -531,7 +531,7 @@ auto VerifyStringVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-compl
 
     // Test 16: std::vector algorithm compatibility
     {
-        ttwx::StringVector string_vector;
+        wxue::StringVector string_vector;
         string_vector.SetString(std::string_view("zebra;apple;mango;banana"), ";");
 
         // Test std::sort

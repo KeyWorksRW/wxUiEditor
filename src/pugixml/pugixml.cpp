@@ -54,6 +54,7 @@ using namespace pugi;
 #include <fstream>
 #include <istream>
 #include <ostream>
+#include <sstream>
 #include <string>
 
 #include <wx/file.h>    // For wxFile

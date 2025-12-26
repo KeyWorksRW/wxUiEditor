@@ -308,7 +308,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                         code = "wxVector<wxBitmap> bitmaps;\n";
                         for (auto& iter: bundle->lst_filenames)
                         {
-                            // tt_string name(iter.filename());
+                            // wxue::string name(iter.filename());
                             // name.remove_extension();
                             // name.Replace(".", "_", true);  // fix wxFormBuilder header files
                             embed = ProjectImages.GetEmbeddedImage(iter);
@@ -509,7 +509,7 @@ void img_list::GatherImages(Node* parent, std::set<std::string>& images,
                 // added to gen_Images, so we simply force it to be 16x16 to avoid duplication.
                 if (description.starts_with("SVG;"))
                 {
-                    tt_string new_description(description);
+                    wxue::string new_description(description);
                     new_description.erase(new_description.find_last_of(';'));
                     new_description << ";[16,16]";
                     if (!images.contains(new_description))

@@ -13,8 +13,6 @@
 
 #include "msgframe_base.h"
 
-#include "ttwx/ttwx.h"  // ttwx functions
-
 class MsgFrame : public MsgFrameBase
 {
 public:

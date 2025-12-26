@@ -171,14 +171,14 @@ public:
     // E.g., wxWidgets 3.1.6 returns 30106, 3.2.0 returns 30200
     [[nodiscard]] auto get_LangVersion(GenLang language) const -> int;
 
-    // const tt_string& value(GenEnum::PropName name) const { return
+    // const wxue::string& value(GenEnum::PropName name) const { return
     // m_project_node->as_string(name); }
-    [[nodiscard]] auto view(PropName name) const -> tt_string_view
+    [[nodiscard]] auto view(PropName name) const -> wxue::string_view
     {
-        return m_project_node->as_string(name);
+        return m_project_node->as_view(name);
     }
 
-    [[nodiscard]] auto as_string(PropName name) const -> const tt_string&
+    [[nodiscard]] auto as_string(PropName name) const -> const wxue::string&
     {
         return m_project_node->as_string(name);
     }

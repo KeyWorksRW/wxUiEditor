@@ -24,7 +24,6 @@
 
 namespace wxue
 {
-    // An empty string for returning as a reference when no string is available.
     // AI Context: This file defines the wxue namespace with core utilities shared across
     // wxue::string and wxue::string_view classes. Provides TRIM/CASE/REPLACE enums for method
     // parameters, safe character classification wrappers (is_alnum, is_digit, etc.) that cast to
@@ -34,7 +33,8 @@ namespace wxue
     // pattern with optional restore on destruction. Requires both wxUSE_UNICODE_UTF8 and
     // wxUSE_UTF8_LOCALE_ONLY enabled.
 
-    inline const std::string emptystring;
+    // An empty string for returning as a reference when no string is available.
+    const std::string emptystring;
 
     // Used for returns from find, contains, locate, etc. when not found.
     inline constexpr size_t npos = std::string::npos;
@@ -115,7 +115,7 @@ namespace wxue
     // Only use for non-UTF-8 strings -- otherwise use wxString::MakeLower()
     auto MakeLower(std::string& str) -> std::string&;
 
-    // Unlike std::stoi, ttwx::atoi accepts a std::string_view, returns 0 instead of throwing
+    // Unlike std::stoi, wxue::atoi accepts a std::string_view, returns 0 instead of throwing
     // exceptions, and handles hexadecimal numbers beginning with 0x or 0X.
 
     // Converts a string into an integer.

@@ -6,9 +6,9 @@
 
 #include "gen_doc_view_app.h"
 
-#include "code.h"                // Code -- Helper class for generating code
-#include "ttwx_string_vector.h"  // StringVector -- wxue::StringVector class
-#include "utils.h"               // Miscellaneous utility functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "utils.h"                              // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string_vector.h"  // StringVector -- wxue::StringVector class
 
 inline constexpr const auto txt_DocViewAppCppSrc =
     R"===(%class%::%class%() : m_docManager(nullptr), m_frame(nullptr), m_menuBar(nullptr)

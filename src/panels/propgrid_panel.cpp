@@ -580,7 +580,7 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
         if (auto label = GetPropStringName(prop_name); label)
         {
             auto output_filename = CreateBaseFilename(form_node, newValue);
-            auto grid_property = m_prop_grid->GetPropertyByLabel(label->make_wxString());
+            auto grid_property = m_prop_grid->GetPropertyByLabel(label->wx());
             grid_property->SetValueFromString(output_filename.wx());
             ModifyProperty(form_node->get_PropPtr(prop_name), output_filename);
         }

@@ -35,7 +35,7 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    tt_string GetWidget() { return m_widget; }
+    wxue::string GetWidget() { return m_widget; }
 
 protected:
 
@@ -57,7 +57,7 @@ private:
     wxStdDialogButtonSizer* m_stdBtn;
     wxTextCtrl* m_text_name;
 
-    tt_string m_widget;
+    wxue::string m_widget;
 };
 
 // ************* End of generated code ***********

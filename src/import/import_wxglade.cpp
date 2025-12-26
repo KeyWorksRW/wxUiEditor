@@ -11,9 +11,8 @@
 #include "dlg_msgs.h"                         // wxMessageDialog dialogs
 #include "node.h"                             // Node class
 #include "node_creator.h"                     // NodeCreator class
-#include "ttwx/ttwx.h"                        // ttwx utility functions
 #include "utils.h"                            // Utility functions that work with properties
-#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector class
+#include "wxue_view_vector.h"  // wxue::ViewVector class
 
 WxGlade::WxGlade() {}
 
@@ -26,7 +25,7 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
     }
     auto root = result.value().first_child();
 
-    if (!ttwx::is_sameas(root.name(), "application", ttwx::CASE::either))
+    if (!wxue::is_sameas(root.name(), "application", wxue::CASE::either))
     {
         dlgInvalidProject(filename, "wxGlade", "Import wxGlade project");
         return false;

@@ -873,7 +873,7 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     std::string file;
     if (const auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
     {
-        ttwx::SaveCwd cwd(ttwx::restore_cwd);
+        wxue::SaveCwd cwd(wxue::restore_cwd);
         Project.ChangeDir();
         wxFileName file_path(base_file);
         file_path.MakeRelativeTo(Project.get_ProjectPath());
@@ -1021,9 +1021,9 @@ void CppCodeGenerator::GenerateChildrenAndEvents(Code& code, BaseGenerator* gene
         if (m_form_node->as_bool(prop_persist))
         {
             m_source->writeLine();
-            wxString tmp("wxPersistentRegisterAndRestore(this, \"");
+            wxue::string tmp("wxPersistentRegisterAndRestore(this, \"");
             tmp << m_form_node->get_NodeName() << "\");";
-            m_source->writeLine(tmp.ToStdString());
+            m_source->writeLine(tmp);
         }
 
         AddPersistCode(m_form_node);
@@ -1205,7 +1205,7 @@ auto CppCodeGenerator::CheckIfAllEventsImplemented(
             continue;
         }
 
-        wxString set_code;
+        wxue::string set_code;
         set_code << "void " << m_form_node->get_NodeName() << "::" << handler;
         bool is_implemented = false;
         for (const auto& iter: code_lines)
@@ -1316,7 +1316,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
             }
 
             // The user's declaration will typically include the event parameter
-            wxString set_code;
+            wxue::string set_code;
             set_code << "void " << m_form_node->get_NodeName() << "::" << handler << '(';
             bool already_handled = false;
             for (const auto& iter: code_lines)

@@ -168,7 +168,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
 
         code.EndFunction();
         code.Unindent();
-        if (auto indent_pos = code.GetCode().find("parent"); ttwx::is_found(indent_pos))
+        if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
         {
             indent_pos -= code.GetCode().find("\n");
             std::string spaces(indent_pos, ' ');

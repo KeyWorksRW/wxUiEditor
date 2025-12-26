@@ -69,7 +69,7 @@ protected:
     void OnUpdateUI(wxUpdateUIEvent& /* event unused */) override;
 
 private:
-    std::vector<tt_string> m_fields;
+    std::vector<wxue::string> m_fields;
     NodeProperty* m_prop { nullptr };
 
     wxString m_value;

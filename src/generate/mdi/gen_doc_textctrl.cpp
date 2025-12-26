@@ -7,9 +7,9 @@
 
 #include "gen_doc_textctrl.h"
 
-#include "code.h"                // Code -- Helper class for generating code
-#include "ttwx_string_vector.h"  // wxue::StringVector class
-#include "utils.h"               // Miscellaneous utility functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "utils.h"                              // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector class
 
 inline constexpr auto txt_TextCtrlDocBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);

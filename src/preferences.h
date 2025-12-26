@@ -82,17 +82,17 @@ public:
     void set_IconSize(int size) { m_icon_size = size; }
 
     // Use this string to construct a FontProperty() to get the values
-    const tt_string& get_CodeDisplayFont() const { return m_code_display_font; }
+    const wxue::string& get_CodeDisplayFont() const { return m_code_display_font; }
 
     // This should be the string returned from FontProperty::as_string()
-    void set_CodeDisplayFont(const tt_string& font) { m_code_display_font = font; }
+    void set_CodeDisplayFont(const wxue::string& font) { m_code_display_font = font; }
 
-    const tt_string& get_CppWidgetsVersion() const { return m_cpp_widgets_version; }
-    void set_CppWidgetsVersion(const tt_string& version) { m_cpp_widgets_version = version; }
-    const tt_string& get_PythonVersion() const { return m_python_version; }
-    void set_PythonVersion(const tt_string& version) { m_python_version = version; }
-    const tt_string& get_RubyVersion() const { return m_ruby_version; }
-    void set_RubyVersion(const tt_string& version) { m_ruby_version = version; }
+    const wxue::string& get_CppWidgetsVersion() const { return m_cpp_widgets_version; }
+    void set_CppWidgetsVersion(const wxue::string& version) { m_cpp_widgets_version = version; }
+    const wxue::string& get_PythonVersion() const { return m_python_version; }
+    void set_PythonVersion(const wxue::string& version) { m_python_version = version; }
+    const wxue::string& get_RubyVersion() const { return m_ruby_version; }
+    void set_RubyVersion(const wxue::string& version) { m_ruby_version = version; }
 
     const wxColour& get_CppColour() const { return m_colour_cpp; }  // wxWidgets keywords
     void set_CppColour(const wxColour& colour) { m_colour_cpp = colour; }
@@ -201,12 +201,12 @@ private:
     long m_project_flags { 0 };
     PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };
 
-    tt_string m_cpp_widgets_version { "3.2" };
-    tt_string m_python_version { "4.2" };
-    tt_string m_ruby_version { "1.2" };
-    tt_string m_perl_version { "3.2" };
+    wxue::string m_cpp_widgets_version { "3.2" };
+    wxue::string m_python_version { "4.2" };
+    wxue::string m_ruby_version { "1.2" };
+    wxue::string m_perl_version { "3.2" };
 
-    tt_string m_code_display_font;
+    wxue::string m_code_display_font;
 
     wxColour m_colour_cpp { wxColour("#FF00FF") };
     wxColour m_colour_cpp_comment { wxColour("#008000") };

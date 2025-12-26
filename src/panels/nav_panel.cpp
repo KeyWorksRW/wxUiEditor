@@ -666,7 +666,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
             !node->as_string(prop_class_access).starts_with("none"))
             wxGetFrame().setStatusText(node->as_string(prop_var_name));
         else
-            wxGetFrame().setStatusText(tt_empty_cstr);
+            wxGetFrame().setStatusText(wxue::wxue_empty_string);
     }
 
     if (m_isSelChangeSuspended)

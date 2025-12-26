@@ -11,7 +11,6 @@
 
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "mainframe.h"           // MainFrame -- Main window frame
-#include "ttwx.h"                // ttwx helpers for numeric conversions
 
 EditParamProperty::EditParamProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
@@ -61,7 +60,7 @@ void EditParamsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     {
         m_grid->SetCellEditor(row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices, true));
         m_grid->SetCellValue(row, 0, iter);
-        m_grid->SetRowLabelValue(row, ttwx::itoa(row));
+        m_grid->SetRowLabelValue(row, wxue::itoa(row));
         ++row;
     }
 
@@ -110,7 +109,7 @@ void EditParamsDialog::OnNewRow(wxCommandEvent& /* event unused */)
     };
     // clang-format on
     m_grid->SetCellEditor(new_row, 0, new wxGridCellChoiceEditor(WXSIZEOF(choices), choices, true));
-    m_grid->SetRowLabelValue(new_row, ttwx::itoa(new_row));
+    m_grid->SetRowLabelValue(new_row, wxue::itoa(new_row));
     m_grid->SelectRow(new_row);
     m_grid->SetCellValue(new_row, 0, wxEmptyString);
 

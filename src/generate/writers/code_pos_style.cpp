@@ -17,7 +17,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     auto point = m_node->as_wxPoint(prop_name);
     auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
 
-    if (m_node->as_string(prop_name).contains("d", tt::CASE::either))
+    if (m_node->as_string(prop_name).contains("d", wxue::CASE::either))
     {
         FAIL_MSG("Pos() should not be used with a string that contains 'd'");
         point = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(point);

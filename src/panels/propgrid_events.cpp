@@ -907,7 +907,7 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
                 cur_path.pop_back();
 
             // if the current directory and the old directory aren't the same, then leave it alone
-            if (!old_path.is_sameas(cur_path, tt::CASE::either))
+            if (!old_path.is_sameas(cur_path, wxue::CASE::either))
             {
                 continue;
             }
@@ -947,7 +947,7 @@ void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
                 cur_path.pop_back();
 
             // if the current directory and the old directory aren't the same, then leave it alone
-            if (!old_path.is_sameas(cur_path, tt::CASE::either))
+            if (!old_path.is_sameas(cur_path, wxue::CASE::either))
             {
                 continue;
             }

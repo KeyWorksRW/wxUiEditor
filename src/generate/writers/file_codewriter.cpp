@@ -378,7 +378,7 @@ void FileCodeWriter::AppendPerlEndBlock()
     // file has content after the comment block that should be preserved instead.
     if (m_node)
     {
-        m_buffer += "\n1;  # " + m_node->get_NodeName();
+        m_buffer << "\n1;  # " << m_node->get_NodeName();
     }
 }
 

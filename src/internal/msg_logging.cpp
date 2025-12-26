@@ -176,7 +176,7 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
         {
             // Only add the message if the window was already displayed. Otherwise, it will have
             // already added the message from g_log_msgs.
-            m_msgFrame->AddWarningMsg(ttwx::stepover(str));
+            m_msgFrame->AddWarningMsg(wxue::stepover(str));
         }
     }
 
@@ -223,7 +223,7 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
 
     else if (!m_bDestroyed)
     {
-        m_msgFrame->AddErrorMsg(ttwx::stepover(str));
+        m_msgFrame->AddErrorMsg(wxue::stepover(str));
     }
 
     auto* frame = wxGetMainFrame();
@@ -263,7 +263,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxErrorMsg(ttwx::stepover(str));
+                    m_msgFrame->Add_wxErrorMsg(wxue::stepover(str));
                 }
 
                 auto* frame = wxGetMainFrame();
@@ -295,7 +295,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxWarningMsg(ttwx::stepover(str));
+                    m_msgFrame->Add_wxWarningMsg(wxue::stepover(str));
                 }
 
                 auto* frame = wxGetMainFrame();
@@ -328,7 +328,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxInfoMsg(ttwx::stepover(str));
+                    m_msgFrame->Add_wxInfoMsg(wxue::stepover(str));
                 }
 
                 auto* frame = wxGetMainFrame();

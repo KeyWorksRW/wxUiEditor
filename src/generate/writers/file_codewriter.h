@@ -103,7 +103,7 @@ private:
     [[nodiscard]] auto WriteToFile() -> int;
 
     // Member variables
-    std::string m_buffer;
+    wxue::string m_buffer;
     wxFileName m_filename;
     Node* m_node { nullptr };
 

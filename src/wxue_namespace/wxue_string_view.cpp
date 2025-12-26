@@ -359,7 +359,7 @@ namespace wxue
     bool string_view::moveto_substr(std::string_view substr, bool StepOverIfFound) noexcept
     {
         auto pos = find(substr);
-        if (!ttwx::is_found(pos))
+        if (!wxue::is_found(pos))
         {
             return false;
         }
@@ -367,7 +367,7 @@ namespace wxue
         if (StepOverIfFound)
         {
             auto stepover_pos = find_nonspace(pos + substr.size());
-            if (ttwx::is_found(pos))
+            if (wxue::is_found(pos))
             {
                 pos = stepover_pos;
             }

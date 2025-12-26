@@ -32,12 +32,11 @@
 
 #include "import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 
-#include "dlg_msgs.h"                         // wxMessageDialog dialogs
-#include "mainapp.h"                          // App -- Main application class
-#include "node.h"                             // Node class
-#include "node_creator.h"                     // NodeCreator class
-#include "ttwx.h"                             // ttwx namespace functions and declarations
-#include "wxue_namespace/wxue_view_vector.h"  // ViewVector -- wxue::ViewVector class
+#include "dlg_msgs.h"          // wxMessageDialog dialogs
+#include "mainapp.h"           // App -- Main application class
+#include "node.h"              // Node class
+#include "node_creator.h"      // NodeCreator class
+#include "wxue_view_vector.h"  // ViewVector -- wxue::ViewVector class
 
 DialogBlocks::DialogBlocks() = default;
 
@@ -340,7 +339,7 @@ void DialogBlocks::SetFormCommonProperties(pugi::xml_node& form_xml, const NodeS
             value)
         {
             auto file = ExtractQuotedString(value);
-            ttwx::replace_extension(file, {});
+            wxue::replace_extension(file, {});
             prop->set_value(file);
         }
     }
@@ -490,7 +489,7 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
             auto msg = GatherErrorDetails(child_xml, get_GenName);
             msg << ", Type: " << ExtractQuotedString(type);
             FAIL_MSG(wxString() << "Unrecognized class in \"proxy-type\" property: "
-                                << ttwx::create_substring(type.as_sview()) << "\n"
+                                << wxue::create_substring(type.as_sview()) << "\n"
                                 << msg)
 #endif  // _DEBUG
         }
@@ -558,7 +557,7 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
                 }
             }
         }
-        else if (tt::contains(map_GenTypes.at(parent->get_GenType()), "book"))
+        else if (map_GenTypes.at(parent->get_GenType()).find("book") != std::string_view::npos)
         {
             if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
             {
@@ -928,7 +927,7 @@ auto DialogBlocks::ExtractQuotedString(pugi::xml_node& str_xml) -> wxString
     auto view = str_xml.text().as_sview();
     if (view.starts_with("\""))
     {
-        return ttwx::create_substring(view);
+        return wxue::create_substring(view);
     }
     wxString str(view);
     return str;

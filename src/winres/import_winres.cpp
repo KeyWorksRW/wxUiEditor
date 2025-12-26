@@ -9,7 +9,6 @@
 
 #include "node.h"                        // Node class
 #include "node_creator.h"                // NodeCreator class
-#include "tt/tt.h"                       // tt::stepover_pos, tt::utf16to8
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 WinResource::WinResource() : m_curline(0), m_codepage(1252) {}
@@ -376,7 +375,7 @@ void WinResource::ParseDialog(wxue::StringVector& file)
             throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
         }
 
-        auto pos = tt::stepover_pos(settings);
+        auto pos = settings.stepover();
         if (pos == wxue::npos)
         {
             throw std::invalid_argument("Expected dimensions following DIALOG or DIALOGEX.");
@@ -557,7 +556,8 @@ wxue::string WinResource::ConvertCodePageString(std::string_view str)
     result.reserve(out_size);
     auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), (to_int) str.size(),
                                            result.data(), (to_int) out_size);
-    return tt::utf16to8(std::wstring_view(result.c_str(), count_chars));
+    // Convert UTF16 wstring to UTF8 string via wxString
+    return wxue::string(wxString(result.c_str(), count_chars));
 #else
     return wxue::string(str);
 #endif  // _WIN32

@@ -41,9 +41,10 @@
 
 #pragma once
 
-// Define version macro; evaluates to major * 1000 + minor * 10 + patch so that it's safe to use in less-than comparisons
-// Note: pugixml used major * 100 + minor * 10 + patch format up until 1.9 (which had version identifier 190); starting from
-// pugixml 1.10, the minor version number is two digits
+// Define version macro; evaluates to major * 1000 + minor * 10 + patch so that it's safe to use in
+// less-than comparisons Note: pugixml used major * 100 + minor * 10 + patch format up until 1.9
+// (which had version identifier 190); starting from pugixml 1.10, the minor version number is two
+// digits
 #ifndef PUGIXML_VERSION
     #define PUGIXML_VERSION 1130  // 1.13
 #endif
@@ -102,76 +103,90 @@ namespace pugi
     // Parsing options
 
     // Minimal parsing mode (equivalent to turning all other flags off).
-    // Only elements and PCDATA sections are added to the DOM tree, no text conversions are performed.
+    // Only elements and PCDATA sections are added to the DOM tree, no text conversions are
+    // performed.
     const unsigned int parse_minimal = 0x0000;
 
-    // This flag determines if processing instructions (node_pi) are added to the DOM tree. This flag is off by default.
+    // This flag determines if processing instructions (node_pi) are added to the DOM tree. This
+    // flag is off by default.
     const unsigned int parse_pi = 0x0001;
 
-    // This flag determines if comments (node_comment) are added to the DOM tree. This flag is off by default.
+    // This flag determines if comments (node_comment) are added to the DOM tree. This flag is off
+    // by default.
     const unsigned int parse_comments = 0x0002;
 
-    // This flag determines if CDATA sections (node_cdata) are added to the DOM tree. This flag is on by default.
+    // This flag determines if CDATA sections (node_cdata) are added to the DOM tree. This flag is
+    // on by default.
     const unsigned int parse_cdata = 0x0004;
 
-    // This flag determines if plain character data (node_pcdata) that consist only of whitespace are added to the DOM tree.
-    // This flag is off by default; turning it on usually results in slower parsing and more memory consumption.
+    // This flag determines if plain character data (node_pcdata) that consist only of whitespace
+    // are added to the DOM tree. This flag is off by default; turning it on usually results in
+    // slower parsing and more memory consumption.
     const unsigned int parse_ws_pcdata = 0x0008;
 
-    // This flag determines if character and entity references are expanded during parsing. This flag is on by default.
+    // This flag determines if character and entity references are expanded during parsing. This
+    // flag is on by default.
     const unsigned int parse_escapes = 0x0010;
 
-    // This flag determines if EOL characters are normalized (converted to #xA) during parsing. This flag is on by default.
+    // This flag determines if EOL characters are normalized (converted to #xA) during parsing. This
+    // flag is on by default.
     const unsigned int parse_eol = 0x0020;
 
-    // This flag determines if attribute values are normalized using CDATA normalization rules during parsing. This flag is
-    // on by default.
+    // This flag determines if attribute values are normalized using CDATA normalization rules
+    // during parsing. This flag is on by default.
     const unsigned int parse_wconv_attribute = 0x0040;
 
-    // This flag determines if attribute values are normalized using NMTOKENS normalization rules during parsing. This flag
-    // is off by default.
+    // This flag determines if attribute values are normalized using NMTOKENS normalization rules
+    // during parsing. This flag is off by default.
     const unsigned int parse_wnorm_attribute = 0x0080;
 
-    // This flag determines if document declaration (node_declaration) is added to the DOM tree. This flag is off by default.
+    // This flag determines if document declaration (node_declaration) is added to the DOM tree.
+    // This flag is off by default.
     const unsigned int parse_declaration = 0x0100;
 
-    // This flag determines if document type declaration (node_doctype) is added to the DOM tree. This flag is off by
-    // default.
+    // This flag determines if document type declaration (node_doctype) is added to the DOM tree.
+    // This flag is off by default.
     const unsigned int parse_doctype = 0x0200;
 
-    // This flag determines if plain character data (node_pcdata) that is the only child of the parent node and that consists
-    // only of whitespace is added to the DOM tree. This flag is off by default; turning it on may result in slower parsing
-    // and more memory consumption.
+    // This flag determines if plain character data (node_pcdata) that is the only child of the
+    // parent node and that consists only of whitespace is added to the DOM tree. This flag is off
+    // by default; turning it on may result in slower parsing and more memory consumption.
     const unsigned int parse_ws_pcdata_single = 0x0400;
 
-    // This flag determines if leading and trailing whitespace is to be removed from plain character data. This flag is off
-    // by default.
+    // This flag determines if leading and trailing whitespace is to be removed from plain character
+    // data. This flag is off by default.
     const unsigned int parse_trim_pcdata = 0x0800;
 
-    // This flag determines if plain character data that does not have a parent node is added to the DOM tree, and if an
-    // empty document is a valid document. This flag is off by default.
+    // This flag determines if plain character data that does not have a parent node is added to the
+    // DOM tree, and if an empty document is a valid document. This flag is off by default.
     const unsigned int parse_fragment = 0x1000;
 
-    // This flag determines if plain character data is be stored in the parent element's value. This significantly changes
-    // the structure of the document; this flag is only recommended for parsing documents with many PCDATA nodes in
-    // memory-constrained environments. This flag is off by default.
+    // This flag determines if plain character data is be stored in the parent element's value. This
+    // significantly changes the structure of the document; this flag is only recommended for
+    // parsing documents with many PCDATA nodes in memory-constrained environments. This flag is off
+    // by default.
     const unsigned int parse_embed_pcdata = 0x2000;
 
     // The default parsing mode.
-    // Elements, PCDATA and CDATA sections are added to the DOM tree, character/reference entities are expanded,
-    // End-of-Line characters are normalized, attribute values are normalized using CDATA normalization rules.
-    const unsigned int parse_default = parse_cdata | parse_escapes | parse_wconv_attribute | parse_eol;
+    // Elements, PCDATA and CDATA sections are added to the DOM tree, character/reference entities
+    // are expanded, End-of-Line characters are normalized, attribute values are normalized using
+    // CDATA normalization rules.
+    const unsigned int parse_default =
+        parse_cdata | parse_escapes | parse_wconv_attribute | parse_eol;
 
     // The full parsing mode.
     // Nodes of all types are added to the DOM tree, character/reference entities are expanded,
-    // End-of-Line characters are normalized, attribute values are normalized using CDATA normalization rules.
-    const unsigned int parse_full = parse_default | parse_pi | parse_comments | parse_declaration | parse_doctype;
+    // End-of-Line characters are normalized, attribute values are normalized using CDATA
+    // normalization rules.
+    const unsigned int parse_full =
+        parse_default | parse_pi | parse_comments | parse_declaration | parse_doctype;
 
     // These flags determine the encoding of input data for XML document
     enum xml_encoding
     {
-        encoding_auto,      // Auto-detect input encoding using BOM or < / <? detection; use UTF8 if BOM is not found
-        encoding_utf8,      // UTF8 encoding
+        encoding_auto,  // Auto-detect input encoding using BOM or < / <? detection; use UTF8 if BOM
+                        // is not found
+        encoding_utf8,  // UTF8 encoding
         encoding_utf16_le,  // Little-endian UTF16
         encoding_utf16_be,  // Big-endian UTF16
         encoding_utf16,     // UTF16 with native endianness
@@ -184,41 +199,47 @@ namespace pugi
 
     // Formatting flags
 
-    // Indent the nodes that are written to output stream with as many indentation strings as deep the node is in DOM tree.
-    // This flag is on by default.
+    // Indent the nodes that are written to output stream with as many indentation strings as deep
+    // the node is in DOM tree. This flag is on by default.
     const unsigned int format_indent = 0x01;
 
     // Write encoding-specific BOM to the output stream. This flag is off by default.
     const unsigned int format_write_bom = 0x02;
 
-    // Use raw output mode (no indentation and no line breaks are written). This flag is off by default.
+    // Use raw output mode (no indentation and no line breaks are written). This flag is off by
+    // default.
     const unsigned int format_raw = 0x04;
 
-    // Omit default XML declaration even if there is no declaration in the document. This flag is off by default.
+    // Omit default XML declaration even if there is no declaration in the document. This flag is
+    // off by default.
     const unsigned int format_no_declaration = 0x08;
 
     // Don't escape attribute values and PCDATA contents. This flag is off by default.
     const unsigned int format_no_escapes = 0x10;
 
-    // Open file using text mode in xml_document::save_file. This enables special character (i.e. new-line) conversions on
-    // some systems. This flag is off by default.
+    // Open file using text mode in xml_document::save_file. This enables special character (i.e.
+    // new-line) conversions on some systems. This flag is off by default.
     const unsigned int format_save_file_text = 0x20;
 
-    // Write every attribute on a new line with appropriate indentation. This flag is off by default.
+    // Write every attribute on a new line with appropriate indentation. This flag is off by
+    // default.
     const unsigned int format_indent_attributes = 0x40;
 
-    // Don't output empty element tags, instead writing an explicit start and end tag even if there are no children. This
-    // flag is off by default.
+    // Don't output empty element tags, instead writing an explicit start and end tag even if there
+    // are no children. This flag is off by default.
     const unsigned int format_no_empty_element_tags = 0x80;
 
-    // Skip characters belonging to range [0; 32) instead of "&#xNN;" encoding. This flag is off by default.
+    // Skip characters belonging to range [0; 32) instead of "&#xNN;" encoding. This flag is off by
+    // default.
     const unsigned int format_skip_control_chars = 0x100;
 
-    // Use single quotes ' instead of double quotes " for enclosing attribute values. This flag is off by default.
+    // Use single quotes ' instead of double quotes " for enclosing attribute values. This flag is
+    // off by default.
     const unsigned int format_attribute_single_quote = 0x200;
 
     // The default set of formatting flags.
-    // Nodes are indented depending on their depth in DOM tree, a default declaration is output if document has none.
+    // Nodes are indented depending on their depth in DOM tree, a default declaration is output if
+    // document has none.
     const unsigned int format_default = format_indent;
 
     const int default_double_precision = 17;
@@ -343,10 +364,19 @@ namespace pugi
 
         // Get attribute value, or the default value if attribute is empty
         std::string_view as_view(std::string_view def = std::string_view {}) const;
-        std::string as_str(std::string_view def = std::string_view {}) const { return std::string(as_view(def)); }
+        std::string as_str(std::string_view def = std::string_view {}) const
+        {
+            return std::string(as_view(def));
+        }
 
-        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_view(def); }
-        tt_string as_cstr(std::string_view def = std::string_view {}) const { return as_str(def); }
+        wxue::string_view as_sview(std::string_view def = std::string_view {}) const
+        {
+            return as_view(def);
+        }
+        wxue::string as_cstr(std::string_view def = std::string_view {}) const
+        {
+            return as_str(def);
+        }
 
         // Get attribute value as a number, or the default value if conversion did not succeed
         // or attribute is empty
@@ -362,7 +392,8 @@ namespace pugi
         // the default value if attribute is empty
         bool as_bool(bool def = false) const;
 
-        // Set attribute name/value (returns false if attribute is empty or there is not enough memory)
+        // Set attribute name/value (returns false if attribute is empty or there is not enough
+        // memory)
         bool set_name(std::string_view rhs, boolean shallow_copy = pugi::false_value);
         bool set_value(std::string_view rhs, boolean shallow_copy = pugi::false_value);
         bool set_value(const char*, size_t sz);  // 1.13 ABI compatible
@@ -449,23 +480,26 @@ namespace pugi
         std::string_view name() const;
 
         // Get node value, or "" if node is empty or it has no value
-        // Note: For <node>text</node> node.value() does not return "text"! Use child_value() or text() methods to access
-        // text inside nodes.
+        // Note: For <node>text</node> node.value() does not return "text"! Use child_value() or
+        // text() methods to access text inside nodes.
         std::string_view value() const;
 
         std::string as_str() const { return std::string(value()); }
         std::string child_as_str() const { return std::string(child_value()); }
-        std::string child_as_str(std::string_view name) const { return std::string(child_value(name)); }
+        std::string child_as_str(std::string_view name) const
+        {
+            return std::string(child_value(name));
+        }
 
-        tt_string_view as_sview() const { return value(); }
-        tt_string as_cstr() const { return as_str(); }
+        wxue::string_view as_sview() const { return value(); }
+        wxue::string as_cstr() const { return as_str(); }
 
-        tt_string_view child_as_sview() const { return child_value(); }
-        tt_string child_as_cstr() const { return child_as_str(); }
+        wxue::string_view child_as_sview() const { return child_value(); }
+        wxue::string child_as_cstr() const { return child_as_str(); }
 
         // Get child value of child with specified name. Equivalent to child(name).child_as_cstr().
-        tt_string_view child_as_sview(std::string_view name) const { return child_value(name); }
-        tt_string child_as_cstr(std::string_view name) const { return child_as_str(name); }
+        wxue::string_view child_as_sview(std::string_view name) const { return child_value(name); }
+        wxue::string child_as_cstr(std::string_view name) const { return child_as_str(name); }
 
         // Get attribute list
         xml_attribute first_attribute() const;
@@ -494,30 +528,35 @@ namespace pugi
         xml_node next_sibling(std::string_view name) const;
         xml_node previous_sibling(std::string_view name) const;
 
-        // Get attribute, starting the search from a hint (and updating hint so that searching for a sequence of attributes
-        // is fast)
+        // Get attribute, starting the search from a hint (and updating hint so that searching for a
+        // sequence of attributes is fast)
         xml_attribute attribute(std::string_view name, xml_attribute& hint) const;
 
-        // Get child value of current node; that is, value of the first child node of type PCDATA/CDATA
+        // Get child value of current node; that is, value of the first child node of type
+        // PCDATA/CDATA
         std::string_view child_value() const;
 
         // Get child value of child with specified name. Equivalent to child(name).child_value().
         std::string_view child_value(std::string_view name) const;
 
-        // Set node name/value (returns false if node is empty, there is not enough memory, or node can not have name/value)
+        // Set node name/value (returns false if node is empty, there is not enough memory, or node
+        // can not have name/value)
         bool set_name(std::string_view rhs, boolean shallow_copy = pugi::false_value);
         bool set_value(std::string_view rhs, boolean shallow_copy = pugi::false_value);
         bool set_value(const char* rhs, size_t sz);  // 1.13 ABI compatible
 
         // Add attribute with specified name. Returns added attribute, or empty attribute on errors.
-        xml_attribute append_attribute(std::string_view name, boolean shallow_copy = pugi::false_value);
-        xml_attribute prepend_attribute(std::string_view name, boolean shallow_copy = pugi::false_value);
+        xml_attribute append_attribute(std::string_view name,
+                                       boolean shallow_copy = pugi::false_value);
+        xml_attribute prepend_attribute(std::string_view name,
+                                        boolean shallow_copy = pugi::false_value);
         xml_attribute insert_attribute_after(std::string_view name, const xml_attribute& attr,
                                              boolean shallow_copy = pugi::false_value);
         xml_attribute insert_attribute_before(std::string_view name, const xml_attribute& attr,
                                               boolean shallow_copy = pugi::false_value);
 
-        // Add a copy of the specified attribute. Returns added attribute, or empty attribute on errors.
+        // Add a copy of the specified attribute. Returns added attribute, or empty attribute on
+        // errors.
         xml_attribute append_copy(const xml_attribute& proto);
         xml_attribute prepend_copy(const xml_attribute& proto);
         xml_attribute insert_copy_after(const xml_attribute& proto, const xml_attribute& attr);
@@ -532,8 +571,10 @@ namespace pugi
         // Add child element with specified name. Returns added node, or empty node on errors.
         xml_node append_child(std::string_view name, boolean shallow_copy = pugi::false_value);
         xml_node prepend_child(std::string_view name, boolean shallow_copy = pugi::false_value);
-        xml_node insert_child_after(std::string_view name, const xml_node& node, boolean shallow_copy = pugi::false_value);
-        xml_node insert_child_before(std::string_view name, const xml_node& node, boolean shallow_copy = pugi::false_value);
+        xml_node insert_child_after(std::string_view name, const xml_node& node,
+                                    boolean shallow_copy = pugi::false_value);
+        xml_node insert_child_before(std::string_view name, const xml_node& node,
+                                     boolean shallow_copy = pugi::false_value);
 
         // Add a copy of the specified node as a child. Returns added node, or empty node on errors.
         xml_node append_copy(const xml_node& proto);
@@ -541,7 +582,8 @@ namespace pugi
         xml_node insert_copy_after(const xml_node& proto, const xml_node& node);
         xml_node insert_copy_before(const xml_node& proto, const xml_node& node);
 
-        // Move the specified node to become a child of this node. Returns moved node, or empty node on errors.
+        // Move the specified node to become a child of this node. Returns moved node, or empty node
+        // on errors.
         xml_node append_move(const xml_node& moved);
         xml_node prepend_move(const xml_node& moved);
         xml_node insert_move_after(const xml_node& moved, const xml_node& node);
@@ -561,14 +603,16 @@ namespace pugi
         // Remove all children
         bool remove_children();
 
-        // Parses buffer as an XML document fragment and appends all nodes as children of the current node.
-        // Copies/converts the buffer, so it may be deleted or changed after the function returns.
-        // Note: append_buffer allocates memory that has the lifetime of the owning document; removing the appended nodes
-        // does not immediately reclaim that memory.
-        xml_parse_result append_buffer(const void* contents, size_t size, unsigned int options = parse_default,
+        // Parses buffer as an XML document fragment and appends all nodes as children of the
+        // current node. Copies/converts the buffer, so it may be deleted or changed after the
+        // function returns. Note: append_buffer allocates memory that has the lifetime of the
+        // owning document; removing the appended nodes does not immediately reclaim that memory.
+        xml_parse_result append_buffer(const void* contents, size_t size,
+                                       unsigned int options = parse_default,
                                        xml_encoding encoding = encoding_auto);
 
-        // Find attribute using predicate. Returns first attribute for which predicate returned true.
+        // Find attribute using predicate. Returns first attribute for which predicate returned
+        // true.
         template <typename Predicate>
         xml_attribute find_attribute(Predicate pred) const
         {
@@ -596,8 +640,8 @@ namespace pugi
             return xml_node();
         }
 
-        // Find node from subtree using predicate. Returns first node from subtree (depth-first), for which predicate
-        // returned true.
+        // Find node from subtree using predicate. Returns first node from subtree (depth-first),
+        // for which predicate returned true.
         template <typename Predicate>
         xml_node find_node(Predicate pred) const
         {
@@ -631,7 +675,8 @@ namespace pugi
         // Find child node by attribute name/value
         xml_node find_child_by_attribute(std::string_view name, std::string_view attr_name,
                                          std::string_view attr_value) const;
-        xml_node find_child_by_attribute(std::string_view attr_name, std::string_view attr_value) const;
+        xml_node find_child_by_attribute(std::string_view attr_name,
+                                         std::string_view attr_value) const;
 
         // Get the absolute node path from root as a text string.
         std::string path(char delimiter = '/') const;
@@ -642,22 +687,27 @@ namespace pugi
         // Recursively traverse subtree with xml_tree_walker
         bool traverse(xml_tree_walker& walker);
 
-        // Select single node by evaluating XPath query. Returns first node from the resulting node set.
+        // Select single node by evaluating XPath query. Returns first node from the resulting node
+        // set.
         xpath_node select_node(const char* query, xpath_variable_set* variables = nullptr) const;
         xpath_node select_node(const xpath_query& query) const;
 
         // Select node set by evaluating XPath query
-        xpath_node_set select_nodes(const char* query, xpath_variable_set* variables = nullptr) const;
+        xpath_node_set select_nodes(const char* query,
+                                    xpath_variable_set* variables = nullptr) const;
         xpath_node_set select_nodes(const xpath_query& query) const;
         // Print subtree using a writer object
-        void print(xml_writer& writer, const char* indent = "\t", unsigned int flags = format_default,
-                   xml_encoding encoding = encoding_auto, unsigned int depth = 0) const;
+        void print(xml_writer& writer, const char* indent = "\t",
+                   unsigned int flags = format_default, xml_encoding encoding = encoding_auto,
+                   unsigned int depth = 0) const;
 
         // Print subtree to stream
         void print(std::basic_ostream<char, std::char_traits<char>>& os, const char* indent = "\t",
-                   unsigned int flags = format_default, xml_encoding encoding = encoding_auto, unsigned int depth = 0) const;
-        void print(std::basic_ostream<wchar_t, std::char_traits<wchar_t>>& os, const char* indent = "\t",
-                   unsigned int flags = format_default, unsigned int depth = 0) const;
+                   unsigned int flags = format_default, xml_encoding encoding = encoding_auto,
+                   unsigned int depth = 0) const;
+        void print(std::basic_ostream<wchar_t, std::char_traits<wchar_t>>& os,
+                   const char* indent = "\t", unsigned int flags = format_default,
+                   unsigned int depth = 0) const;
 
         // Child nodes iterators
         typedef xml_node_iterator iterator;
@@ -676,7 +726,8 @@ namespace pugi
         xml_object_range<xml_attribute_iterator> attributes() const;
 
         // Range-based for support for all children with the specified name
-        // Note: name pointer must have a longer lifetime than the returned object; be careful with passing temporaries!
+        // Note: name pointer must have a longer lifetime than the returned object; be careful with
+        // passing temporaries!
         xml_object_range<xml_named_node_iterator> children(std::string_view name) const;
 
         // Get node offset in parsed file/string (in char units) for debugging purposes
@@ -721,12 +772,22 @@ namespace pugi
 
         // Get text, or the default value if object is empty
         std::string_view as_view(std::string_view def = std::string_view {}) const;
-        std::string as_str(std::string_view def = std::string_view {}) const { return std::string(as_view(def)); }
+        std::string as_str(std::string_view def = std::string_view {}) const
+        {
+            return std::string(as_view(def));
+        }
 
-        tt_string_view as_sview(std::string_view def = std::string_view {}) const { return as_view(def); }
-        tt_string as_cstr(std::string_view def = std::string_view {}) const { return as_str(def); }
+        wxue::string_view as_sview(std::string_view def = std::string_view {}) const
+        {
+            return as_view(def);
+        }
+        wxue::string as_cstr(std::string_view def = std::string_view {}) const
+        {
+            return as_str(def);
+        }
 
-        // Get text as a number, or the default value if conversion did not succeed or object is empty
+        // Get text as a number, or the default value if conversion did not succeed or object is
+        // empty
         int as_int(int def = 0) const;
         unsigned int as_uint(unsigned int def = 0) const;
         double as_double(double def = 0) const;
@@ -735,14 +796,16 @@ namespace pugi
         long long as_llong(long long def = 0) const;
         unsigned long long as_ullong(unsigned long long def = 0) const;
 
-        // Get text as bool (returns true if first character is in '1tTyY' set), or the default value if object is empty
+        // Get text as bool (returns true if first character is in '1tTyY' set), or the default
+        // value if object is empty
         bool as_bool(bool def = false) const;
 
         // Set text (returns false if object is empty or there is not enough memory)
         bool set(std::string_view rhs, boolean shallow_copy = pugi::false_value);
         bool set(const char* rhs, size_t sz);  // 1.13 ABI compatible
 
-        // Set text with type conversion (numbers are converted to strings, boolean is converted to "true"/"false")
+        // Set text with type conversion (numbers are converted to strings, boolean is converted to
+        // "true"/"false")
         bool set(int rhs);
         bool set(unsigned int rhs);
         bool set(long rhs);
@@ -871,7 +934,8 @@ namespace pugi
         xml_named_node_iterator();
 
         // Construct an iterator which points to the specified node
-        // Note: name pointer is stored in the iterator and must have a longer lifetime than iterator itself
+        // Note: name pointer is stored in the iterator and must have a longer lifetime than
+        // iterator itself
         xml_named_node_iterator(const xml_node& node, std::string_view name);
 
         // Iterator operators
@@ -893,7 +957,8 @@ namespace pugi
         const char* _name;
         int _name_len;
 
-        xml_named_node_iterator(xml_node_struct* ref, xml_node_struct* parent, std::string_view name);
+        xml_named_node_iterator(xml_node_struct* ref, xml_node_struct* parent,
+                                std::string_view name);
     };
 
     // Abstract tree walker class (see xml_node::traverse)
@@ -934,19 +999,21 @@ namespace pugi
 
         status_unrecognized_tag,  // Parser could not determine tag type
 
-        status_bad_pi,                // Parsing error occurred while parsing document declaration/processing instruction
-        status_bad_comment,           // Parsing error occurred while parsing comment
-        status_bad_cdata,             // Parsing error occurred while parsing CDATA section
-        status_bad_doctype,           // Parsing error occurred while parsing document type declaration
-        status_bad_pcdata,            // Parsing error occurred while parsing PCDATA section
+        status_bad_pi,       // Parsing error occurred while parsing document declaration/processing
+                             // instruction
+        status_bad_comment,  // Parsing error occurred while parsing comment
+        status_bad_cdata,    // Parsing error occurred while parsing CDATA section
+        status_bad_doctype,  // Parsing error occurred while parsing document type declaration
+        status_bad_pcdata,   // Parsing error occurred while parsing PCDATA section
         status_bad_start_element,     // Parsing error occurred while parsing start element tag
         status_bad_attribute,         // Parsing error occurred while parsing element attribute
         status_bad_end_element,       // Parsing error occurred while parsing end element tag
-        status_end_element_mismatch,  // There was a mismatch of start-end tags (closing tag had incorrect name, some tag was
-                                      // not closed or there was an excessive closing tag)
+        status_end_element_mismatch,  // There was a mismatch of start-end tags (closing tag had
+                                      // incorrect name, some tag was not closed or there was an
+                                      // excessive closing tag)
 
-        status_append_invalid_root,  // Unable to append nodes since root type is not node_element or node_document
-                                     // (exclusive to xml_node::append_buffer)
+        status_append_invalid_root,  // Unable to append nodes since root type is not node_element
+                                     // or node_document (exclusive to xml_node::append_buffer)
 
         status_no_document_element  // Parsing resulted in a document without element nodes
     };
@@ -1014,13 +1081,15 @@ namespace pugi
         void reset(const xml_document& proto);
 
         // Load document from stream.
-        xml_parse_result load(std::basic_istream<char, std::char_traits<char>>& stream, unsigned int options = parse_default,
+        xml_parse_result load(std::basic_istream<char, std::char_traits<char>>& stream,
+                              unsigned int options = parse_default,
                               xml_encoding encoding = encoding_auto);
         xml_parse_result load(std::basic_istream<wchar_t, std::char_traits<wchar_t>>& stream,
                               unsigned int options = parse_default);
 
         // Load document from zero-terminated string. No encoding conversions are applied.
-        xml_parse_result load_string(const std::string& contents, unsigned int options = parse_default);
+        xml_parse_result load_string(const std::string& contents,
+                                     unsigned int options = parse_default);
 
         xml_parse_result load_file(const std::string& path, unsigned int options = parse_default,
                                    xml_encoding encoding = encoding_auto);
@@ -1028,47 +1097,56 @@ namespace pugi
         // Load the file into a std::unique_ptr<char> and parse it as a string. If an error
         // occurs, xml_parse_result.line_number and xml_parse_result.column will be set to
         // the line number/column of the error.
-        xml_parse_result load_file_string(const std::string& path, unsigned int options = parse_default);
+        xml_parse_result load_file_string(const std::string& path,
+                                          unsigned int options = parse_default);
 
         // Load document from buffer. Copies/converts the buffer, so it may be deleted or
         // changed after the function returns.
-        xml_parse_result load_buffer(const void* contents, size_t size, unsigned int options = parse_default,
+        xml_parse_result load_buffer(const void* contents, size_t size,
+                                     unsigned int options = parse_default,
                                      xml_encoding encoding = encoding_auto);
 
         // Load document from buffer, using the buffer for in-place parsing (the buffer is
         // modified and used for storage of document data). You should ensure that buffer
         // data will persist throughout the document's lifetime, and free the buffer memory
         // manually once document is destroyed.
-        xml_parse_result load_buffer_inplace(void* contents, size_t size, unsigned int options = parse_default,
+        xml_parse_result load_buffer_inplace(void* contents, size_t size,
+                                             unsigned int options = parse_default,
                                              xml_encoding encoding = encoding_auto);
 
         // Load document from buffer, using the buffer for in-place parsing (the buffer is
         // modified and used for storage of document data). You should allocate the buffer
         // with pugixml allocation function; document will free the buffer when it is no
         // longer needed (you can't use it anymore).
-        xml_parse_result load_buffer_inplace_own(void* contents, size_t size, unsigned int options = parse_default,
+        xml_parse_result load_buffer_inplace_own(void* contents, size_t size,
+                                                 unsigned int options = parse_default,
                                                  xml_encoding encoding = encoding_auto);
 
         // Save XML document to writer (semantics is slightly different from xml_node::print,
         // see documentation for details).
-        void save(xml_writer& writer, const char* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default,
-                  xml_encoding encoding = encoding_auto) const;
+        void save(xml_writer& writer, const char* indent = PUGIXML_TEXT("\t"),
+                  unsigned int flags = format_default, xml_encoding encoding = encoding_auto) const;
 
         // Save XML document to stream (semantics is slightly different from xml_node::print,
         // see documentation for details).
-        void save(std::basic_ostream<char, std::char_traits<char>>& stream, const char* indent = PUGIXML_TEXT("\t"),
-                  unsigned int flags = format_default, xml_encoding encoding = encoding_auto) const;
-        void save(std::basic_ostream<wchar_t, std::char_traits<wchar_t>>& stream, const char* indent = PUGIXML_TEXT("\t"),
+        void save(std::basic_ostream<char, std::char_traits<char>>& stream,
+                  const char* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default,
+                  xml_encoding encoding = encoding_auto) const;
+        void save(std::basic_ostream<wchar_t, std::char_traits<wchar_t>>& stream,
+                  const char* indent = PUGIXML_TEXT("\t"),
                   unsigned int flags = format_default) const;
 
         // Creates std::ostringstream, writes utf8 encoded XML to it, and then saves it to
         // the specified file
-        bool save_file_stream(const std::string& path, const char* indent = "\t", unsigned int flags = format_default) const;
+        bool save_file_stream(const std::string& path, const char* indent = "\t",
+                              unsigned int flags = format_default) const;
 
         // Save XML to file
-        bool save_file(const std::string& path, const char* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default,
+        bool save_file(const std::string& path, const char* indent = PUGIXML_TEXT("\t"),
+                       unsigned int flags = format_default,
                        xml_encoding encoding = encoding_auto) const;
-        bool save_file(const wchar_t* path, const char* indent = PUGIXML_TEXT("\t"), unsigned int flags = format_default,
+        bool save_file(const wchar_t* path, const char* indent = PUGIXML_TEXT("\t"),
+                       unsigned int flags = format_default,
                        xml_encoding encoding = encoding_auto) const;
 
         // Get document element
@@ -1125,14 +1203,15 @@ namespace pugi
         // Get variable type
         xpath_value_type type() const;
 
-        // Get variable value; no type conversion is performed, default value (false, NaN, empty string, empty node set) is
-        // returned on type mismatch error
+        // Get variable value; no type conversion is performed, default value (false, NaN, empty
+        // string, empty node set) is returned on type mismatch error
         bool get_boolean() const;
         double get_number() const;
         const char* get_string() const;
         const xpath_node_set& get_node_set() const;
 
-        // Set variable value; no type conversion is performed, false is returned on type mismatch error
+        // Set variable value; no type conversion is performed, false is returned on type mismatch
+        // error
         bool set(bool value);
         bool set(double value);
         bool set(const char* value);
@@ -1169,8 +1248,8 @@ namespace pugi
         // Add a new variable or get the existing one, if the types match
         xpath_variable* add(const char* name, xpath_value_type type);
 
-        // Set value of an existing variable; no type conversion is performed, false is returned if there is no such variable
-        // or if types mismatch
+        // Set value of an existing variable; no type conversion is performed, false is returned if
+        // there is no such variable or if types mismatch
         bool set(const char* name, bool value);
         bool set(const char* name, double value);
         bool set(const char* name, const char* value);
@@ -1212,33 +1291,39 @@ namespace pugi
         // Get query expression return type
         xpath_value_type return_type() const;
 
-        // Evaluate expression as boolean value in the specified context; performs type conversion if necessary.
-        // If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of memory errors.
+        // Evaluate expression as boolean value in the specified context; performs type conversion
+        // if necessary. If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of
+        // memory errors.
         bool evaluate_boolean(const xpath_node& n) const;
 
-        // Evaluate expression as double value in the specified context; performs type conversion if necessary.
-        // If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of memory errors.
+        // Evaluate expression as double value in the specified context; performs type conversion if
+        // necessary. If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of
+        // memory errors.
         double evaluate_number(const xpath_node& n) const;
 
-        // Evaluate expression as string value in the specified context; performs type conversion if necessary.
-        // If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of memory errors.
+        // Evaluate expression as string value in the specified context; performs type conversion if
+        // necessary. If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of
+        // memory errors.
         std::string evaluate_string(const xpath_node& n) const;
 
-        // Evaluate expression as string value in the specified context; performs type conversion if necessary.
-        // At most capacity characters are written to the destination buffer, full result size is returned (includes
-        // terminating zero). If PUGIXML_NO_EXCEPTIONS is not defined, throws std::bad_alloc on out of memory errors. If
-        // PUGIXML_NO_EXCEPTIONS is defined, returns empty  set instead.
+        // Evaluate expression as string value in the specified context; performs type conversion if
+        // necessary. At most capacity characters are written to the destination buffer, full result
+        // size is returned (includes terminating zero). If PUGIXML_NO_EXCEPTIONS is not defined,
+        // throws std::bad_alloc on out of memory errors. If PUGIXML_NO_EXCEPTIONS is defined,
+        // returns empty  set instead.
         size_t evaluate_string(char* buffer, size_t capacity, const xpath_node& n) const;
 
         // Evaluate expression as node set in the specified context.
-        // If PUGIXML_NO_EXCEPTIONS is not defined, throws xpath_exception on type mismatch and std::bad_alloc on out of
-        // memory errors. If PUGIXML_NO_EXCEPTIONS is defined, returns empty node set instead.
+        // If PUGIXML_NO_EXCEPTIONS is not defined, throws xpath_exception on type mismatch and
+        // std::bad_alloc on out of memory errors. If PUGIXML_NO_EXCEPTIONS is defined, returns
+        // empty node set instead.
         xpath_node_set evaluate_node_set(const xpath_node& n) const;
 
         // Evaluate expression as node set in the specified context.
         // Return first node in document order, or empty node if node set is empty.
-        // If PUGIXML_NO_EXCEPTIONS is not defined, throws xpath_exception on type mismatch and std::bad_alloc on out of
-        // memory errors. If PUGIXML_NO_EXCEPTIONS is defined, returns empty node instead.
+        // If PUGIXML_NO_EXCEPTIONS is not defined, throws xpath_exception on type mismatch and
+        // std::bad_alloc on out of memory errors. If PUGIXML_NO_EXCEPTIONS is defined, returns
+        // empty node instead.
         xpath_node evaluate_node(const xpath_node& n) const;
 
         // Get parsing result (used to get compilation errors in PUGIXML_NO_EXCEPTIONS mode)
@@ -1329,15 +1414,15 @@ namespace pugi
         // Constant iterator type
         typedef const xpath_node* const_iterator;
 
-        // We define non-constant iterator to be the same as constant iterator so that various generic algorithms (i.e. boost
-        // foreach) work
+        // We define non-constant iterator to be the same as constant iterator so that various
+        // generic algorithms (i.e. boost foreach) work
         typedef const xpath_node* iterator;
 
         // Default constructor. Constructs empty set.
         xpath_node_set();
 
-        // Constructs a set from iterator range; data is not checked for duplicates and is not sorted according to provided
-        // type, so be careful
+        // Constructs a set from iterator range; data is not checked for duplicates and is not
+        // sorted according to provided type, so be careful
         xpath_node_set(const_iterator begin, const_iterator end, type_t type = type_unsorted);
 
         // Destructor
@@ -1397,9 +1482,10 @@ namespace pugi
     // Memory deallocation function interface
     typedef void (*deallocation_function)(void* ptr);
 
-    // Override default memory management functions. All subsequent allocations/deallocations will be performed via supplied
-    // functions.
-    void set_memory_management_functions(allocation_function allocate, deallocation_function deallocate);
+    // Override default memory management functions. All subsequent allocations/deallocations will
+    // be performed via supplied functions.
+    void set_memory_management_functions(allocation_function allocate,
+                                         deallocation_function deallocate);
 
     // Get current memory management functions
     allocation_function get_memory_allocation_function();
@@ -1409,7 +1495,8 @@ namespace pugi
 #if (defined(_MSC_VER) || defined(__ICC))
 namespace std
 {
-    // Workarounds for (non-standard) iterator category detection for older versions (MSVC7/IC8 and earlier)
+    // Workarounds for (non-standard) iterator category detection for older versions (MSVC7/IC8 and
+    // earlier)
     std::bidirectional_iterator_tag _Iter_cat(const pugi::xml_node_iterator&);
     std::bidirectional_iterator_tag _Iter_cat(const pugi::xml_attribute_iterator&);
     std::bidirectional_iterator_tag _Iter_cat(const pugi::xml_named_node_iterator&);

@@ -223,14 +223,14 @@ public:
     auto get_Generator() const { return m_declaration->get_Generator(); }
 
     // Returns the value of the property "var_name" or "class_name"
-    auto get_NodeName() const -> const tt_string&;
+    auto get_NodeName() const -> std::string_view;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
     auto get_NodeName(GenLang lang) const -> std::string_view;
 
     // Returns the value of the parent property "var_name" or "class_name"
-    auto get_ParentName() const -> const tt_string&;
+    auto get_ParentName() const -> std::string_view;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
@@ -240,7 +240,7 @@ public:
     auto get_Form() noexcept -> Node*;
 
     // Finds the parent form and returns the value of the it's property "class_name"
-    auto get_FormName() -> const tt_string&;
+    auto get_FormName() -> std::string_view;
 
     // Returns the folder node if there is one, nullptr otherwise.
     auto get_Folder() noexcept -> Node*;
@@ -266,7 +266,7 @@ public:
     // Returns true if the property exists
     auto HasProp(PropName name) const -> bool { return (m_prop_indices.contains(name)); }
 
-    // Avoid the temptation to use tt_string_view instead of const char* -- the MSVC compiler
+    // Avoid the temptation to use wxue::string_view instead of const char* -- the MSVC compiler
     // will assume value is a bool if you call  is_PropValue(propm, "string")
 
     // Returns true only if the property exists and it's value is equal to the parameter
@@ -286,7 +286,7 @@ public:
     // Use with caution! This allows you to modify the property string directly.
     //
     // Returns nullptr if the property doesn't exist.
-    auto get_PropValuePtr(PropName name) -> tt_string*;
+    auto get_PropValuePtr(PropName name) -> wxue::string*;
 
     auto get_PropDefaultValue(PropName name) -> std::string_view;
 
@@ -306,7 +306,7 @@ public:
     // Returns string containing the property ID without any assignment if it is a custom id.
     auto get_PropId() const -> wxue::string;
 
-    auto view(PropName name) const -> tt_string_view { return as_string(name); }
+    auto view(PropName name) const -> wxue::string_view { return as_view(name); }
 
     auto as_bool(PropName name) const -> bool
     {
@@ -328,13 +328,13 @@ public:
         return 0;
     }
 
-    auto as_constant(PropName name, std::string_view prefix) -> const tt_string&
+    auto as_constant(PropName name, std::string_view prefix) -> const wxue::string&
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
             return m_properties[result->second].as_constant(prefix);
         }
-        return tt_empty_cstr;
+        return wxue::wxue_empty_string;
     }
 
     // Looks up wx constant, returns it's numerical value.
@@ -359,13 +359,13 @@ public:
         return 0;
     }
 
-    auto as_string(PropName name) const -> const tt_string&
+    auto as_string(PropName name) const -> const wxue::string&
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
             return m_properties[result->second].as_string();
         }
-        return tt_empty_cstr;
+        return wxue::wxue_empty_string;
     }
 
     auto as_view(PropName name) const -> std::string_view
@@ -383,7 +383,7 @@ public:
         {
             return m_properties[result->second].as_string();
         }
-        return tt_empty_cstr;
+        return wxue::wxue_empty_string;
     }
 
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
@@ -506,16 +506,16 @@ public:
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed
-    void ModifyProperty(PropName name, tt_string_view value);
+    void ModifyProperty(PropName name, wxue::string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(tt_string_view name, tt_string_view value);
+    void ModifyProperty(wxue::string_view name, wxue::string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(tt_string_view name, int value);
+    void ModifyProperty(wxue::string_view name, int value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    static void ModifyProperty(NodeProperty* prop, tt_string_view value);
+    static void ModifyProperty(NodeProperty* prop, wxue::string_view value);
 
     // This will modify the property and fire a EVT_NodePropChange event
     static void ModifyProperty(NodeProperty* prop, int value);
@@ -570,8 +570,8 @@ protected:
 
 private:
     static auto GetBorderDirection(std::string_view border_settings) -> int;
-    static auto ApplyAlignment(wxSizerFlags& flags, const tt_string& alignment) -> void;
-    static auto ApplyAdditionalFlags(wxSizerFlags& flags, const tt_string& prop) -> void;
+    static auto ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment) -> void;
+    static auto ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop) -> void;
 
     // Helper methods for CreateChildNode to reduce complexity
     auto TryCreateInSizerChild(GenName name, bool verify_language_support, Node*& parent,
@@ -611,7 +611,7 @@ private:
     NodeDeclaration* m_declaration;
 
     wxObject* m_mockup_object { nullptr };
-    std::unique_ptr<std::vector<tt_string>> m_internal_data;
+    std::unique_ptr<std::vector<wxue::string>> m_internal_data;
 };
 
 using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;

@@ -20,7 +20,7 @@ ttFileProperty::ttFileProperty(NodeProperty* prop) :
     wxEditorDialogProperty(wxString(prop->get_DeclName()), wxPG_LABEL)
 {
     m_prop = prop;
-    SetValue(prop->value().make_wxString());
+    SetValue(prop->value().wx());
 }
 
 ttFileProperty::ttFileProperty(const wxString& label, const wxString& name, const wxString& value) :

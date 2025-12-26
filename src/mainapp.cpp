@@ -71,8 +71,6 @@ wxIMPLEMENT_APP(App);  // NOLINT (cppcheck-suppress)
 
 #endif  // _WIN32 && defined(_DEBUG)
 
-tt_string tt_empty_cstr;
-
 namespace
 {
     // Static storage for command-line filename (populated by ParseGenerationType or
@@ -675,17 +673,17 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
 }
 
 // Helper: Load or import the project file
-auto App::LoadProjectFile(const wxue::string& tt_filename, size_t generate_type,
+auto App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
                           bool& is_project_loaded) -> bool
 {
-    if (!tt_filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
-        !tt_filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
+    if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
+        !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
     {
-        is_project_loaded = Project.ImportProject(tt_filename, generate_type == GEN_LANG_NONE);
+        is_project_loaded = Project.ImportProject(filename, generate_type == GEN_LANG_NONE);
     }
     else
     {
-        is_project_loaded = Project.LoadProject(tt_filename, generate_type == GEN_LANG_NONE);
+        is_project_loaded = Project.LoadProject(filename, generate_type == GEN_LANG_NONE);
     }
     return is_project_loaded;
 }
@@ -802,12 +800,12 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
 
     // If we get here then we were asked to generate at least one language type
 
-    wxue::string tt_filename = filename;
-    tt_filename.make_absolute();
+    wxue::string filename = filename;
+    filename.make_absolute();
     wxue::string log_file = filename;
     log_file.replace_extension(".log");
 
-    if (!tt_filename.file_exists())
+    if (!filename.file_exists())
     {
         m_cmdline_log.clear();
         m_cmdline_log.emplace_back(wxue::string("Unable to find project file: ")
@@ -823,7 +821,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
         results.StartClock();
     }
 
-    LoadProjectFile(tt_filename, generate_type, is_project_loaded);
+    LoadProjectFile(filename, generate_type, is_project_loaded);
     if (!is_project_loaded)
     {
         m_cmdline_log.clear();

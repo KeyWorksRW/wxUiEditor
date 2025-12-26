@@ -568,7 +568,7 @@ namespace GenEnum
     }
 
     // Given a prop_ name, this will return the actual string used in the XRC file.
-    inline std::optional<tt_string_view> GetPropStringName(PropName prop_name)
+    inline std::optional<wxue::string_view> GetPropStringName(PropName prop_name)
     {
         if (auto result = map_PropNames.find(prop_name); result != map_PropNames.end())
         {

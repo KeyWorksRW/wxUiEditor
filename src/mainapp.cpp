@@ -222,6 +222,7 @@ auto App::OnInit() -> bool
 auto App::OnRun() -> int
 {
 #if defined(_DEBUG)
+    #if defined(_WIN32)
     // Attach to parent console for command-line output
     // This must be done early, before any output attempts
     if (AttachConsole(ATTACH_PARENT_PROCESS))
@@ -230,6 +231,9 @@ auto App::OnRun() -> int
         freopen_s(&file_ptr, "CONOUT$", "w", stdout);
         freopen_s(&file_ptr, "CONOUT$", "w", stderr);
     }
+    #else
+    // On Unix/Mac, stdout/stderr are automatically connected when run from terminal
+    #endif
 #endif
 
     NodeCreation.Initialize();

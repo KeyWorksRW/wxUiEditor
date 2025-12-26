@@ -251,7 +251,7 @@ void GenResults::CollectFormsFromNodes()
     else if (m_scope == Scope::folder && m_start_node)
     {
         // Recursively collect forms from the folder
-        auto CollectFromFolder = [&](this auto&& self, Node* folder) -> void
+        auto CollectFromFolder = [&](auto&& self, Node* folder) -> void
         {
             for (const auto& child: folder->get_ChildNodePtrs())
             {
@@ -261,11 +261,11 @@ void GenResults::CollectFormsFromNodes()
                 }
                 else if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
                 {
-                    self(child.get());
+                    self(self, child.get());
                 }
             }
         };
-        CollectFromFolder(m_start_node);
+        CollectFromFolder(CollectFromFolder, m_start_node);
     }
 }
 
@@ -419,15 +419,8 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
         if (Project.as_bool(prop_combine_all_forms))
         {
             // Suppress deprecation warning - internal use of legacy function for combined mode
-#if defined(_MSC_VER)
-    #pragma warning(push)
-    #pragma warning(disable : 4996)  // deprecated
-#endif
             generate_result = GenerateXrcFiles(
                 *this, (comparison_only && !class_list.empty()) ? &class_list : nullptr);
-#if defined(_MSC_VER)
-    #pragma warning(pop)
-#endif
         }
         else
         {

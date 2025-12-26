@@ -235,7 +235,7 @@ auto GlobalCustomIDS::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string class
 
-auto MainFrame::OnEditCustomIds(wxCommandEvent& [[maybe_unused]] event) -> void
+auto MainFrame::OnEditCustomIds([[maybe_unused]] wxCommandEvent& event) -> void
 {
     GlobalCustomIDS dlg(this);
     dlg.ShowModal();
@@ -274,7 +274,7 @@ auto GlobalCustomIDS::OnInit(wxInitDialogEvent& event) -> void
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-auto GlobalCustomIDS::OnSelectFolders(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnSelectFolders([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_lb_forms->Clear();
     wxArrayInt selections;
@@ -310,7 +310,7 @@ struct NODE_IDS
     Node* node;
 };
 
-auto GlobalCustomIDS::OnSelectForms(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnSelectForms([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_grid->ClearGrid();
     if (m_grid->GetNumberRows() > min_rows)
@@ -398,7 +398,7 @@ auto GlobalCustomIDS::OnSelectForms(wxCommandEvent& [[maybe_unused]] event) -> v
     }
 }
 
-auto GlobalCustomIDS::OnSelectAllFolders(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnSelectAllFolders([[maybe_unused]] wxCommandEvent& event) -> void
 {
     for (unsigned int idx = 0; idx < m_lb_folders->GetCount(); ++idx)
     {
@@ -406,12 +406,12 @@ auto GlobalCustomIDS::OnSelectAllFolders(wxCommandEvent& [[maybe_unused]] event)
     }
 }
 
-auto GlobalCustomIDS::OnSelectNoFolders(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnSelectNoFolders([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_lb_folders->DeselectAll();
 }
 
-auto GlobalCustomIDS::OnSelectAllForms(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnSelectAllForms([[maybe_unused]] wxCommandEvent& event) -> void
 {
     for (unsigned int idx = 0; idx < m_lb_folders->GetCount(); ++idx)
     {
@@ -419,7 +419,7 @@ auto GlobalCustomIDS::OnSelectAllForms(wxCommandEvent& [[maybe_unused]] event) -
     }
 }
 
-auto GlobalCustomIDS::OnSelectNoForms(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnSelectNoForms([[maybe_unused]] wxCommandEvent& event) -> void
 {
     m_lb_forms->DeselectAll();
 }
@@ -429,7 +429,7 @@ auto GlobalCustomIDS::OnUpdate(wxCommandEvent& event) -> void
     OnSelectForms(event);
 }
 
-auto GlobalCustomIDS::OnCommit(wxCommandEvent& [[maybe_unused]] event) -> void
+auto GlobalCustomIDS::OnCommit([[maybe_unused]] wxCommandEvent& event) -> void
 {
     wxArrayInt selections;
     std::vector<NODE_IDS> ids;

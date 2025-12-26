@@ -195,8 +195,7 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
                 {
                     if (auto result = gen->GetHint(prop); result)
                     {
-                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT,
-                                                          result->wx());
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->wx());
                     }
                 }
                 m_prop_grid->SetPropertyHelpString(pg, GetPropHelp(prop));

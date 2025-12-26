@@ -40,7 +40,10 @@ public:
     bool BaseClassNameCode(Code&) override;
 
     wxue::string GetHelpText(Node*) override { return wxue::string("wxPopupTransientWindow"); }
-    wxue::string GetHelpURL(Node*) override { return wxue::string("wx_popup_transient_window.html"); }
+    wxue::string GetHelpURL(Node*) override
+    {
+        return wxue::string("wx_popup_transient_window.html");
+    }
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };

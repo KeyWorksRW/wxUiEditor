@@ -319,7 +319,8 @@ void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */,
     handlers.emplace("wxSizerXmlHandler");
 }
 
-std::optional<wxue::string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node, GenLang language)
+std::optional<wxue::string> StaticCheckboxBoxSizerGenerator::GetWarning(Node* node,
+                                                                        GenLang language)
 {
     switch (language)
     {

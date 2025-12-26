@@ -363,7 +363,7 @@ auto BaseCodeGenerator::ProcessEmbeddedImages(const std::vector<wxue::string>& f
                 else
                 {
                     MSG_INFO(std::format("Unable to get file time for {}",
-                                         embed->base_image().filename));
+                                         embed->base_image().filename.ToStdString()));
                 }
             }
         }

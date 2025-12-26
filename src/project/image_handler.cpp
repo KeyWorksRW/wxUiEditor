@@ -121,8 +121,8 @@ auto ImageHandler::CheckNode(Node* node) -> bool
             EmbeddedImage* embed = FindEmbedded(parts[IndexImage].filename());
             if (!embed)
             {
-                ASSERT_MSG(embed,
-                           std::format("Embedded image not found: {}", parts[IndexImage].as_str()));
+                ASSERT_MSG(embed, std::format("Embedded image not found: {}",
+                                              parts[IndexImage].ToStdString()));
                 continue;
             }
 

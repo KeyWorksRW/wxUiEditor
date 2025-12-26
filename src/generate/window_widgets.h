@@ -21,7 +21,10 @@ public:
                      GenLang /* language */) override;
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 
-    wxue::string GetHelpURL(Node*) override { return wxue::string("group__group__class__miscwnd.html"); };
+    wxue::string GetHelpURL(Node*) override
+    {
+        return wxue::string("group__group__class__miscwnd.html");
+    };
     std::optional<wxue::string> GetWarning(Node* node, GenLang language) override;
 };
 
@@ -39,5 +42,8 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    wxue::string GetHelpURL(Node*) override { return wxue::string("group__group__class__miscwnd.html"); };
+    wxue::string GetHelpURL(Node*) override
+    {
+        return wxue::string("group__group__class__miscwnd.html");
+    };
 };

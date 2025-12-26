@@ -122,7 +122,7 @@ std::optional<wxue::string> FilePickerGenerator::GetPropertyDescription(NodeProp
     if (prop->isProp(prop_message))
     {
         return (wxue::string() << "Title bar text for the file picker dialog. If not specified, "
-                               "\"Select a file\" will be used.");
+                                  "\"Select a file\" will be used.");
     }
     else
     {

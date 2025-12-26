@@ -91,8 +91,8 @@ std::pair<bool, wxue::string> TreeListCtrlGenerator::isLanguageVersionSupported(
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
         return { true, {} };
 
-    return { false,
-             wxue::string() << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
 }
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator

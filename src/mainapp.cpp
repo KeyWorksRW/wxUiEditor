@@ -157,7 +157,7 @@ public:
 
 #endif
 
-App::App() {}
+App::App() = default;
 
 auto App::OnInit() -> bool
 {

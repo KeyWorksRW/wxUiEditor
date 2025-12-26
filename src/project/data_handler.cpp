@@ -491,7 +491,7 @@ auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
         }
         if (embed.filename.size())
         {
-            header->writeLine(std::format("// {}", embed.filename));
+            header->writeLine(std::format("// {}", embed.filename.ToStdString()));
         }
         if (embed.array_size >> 32 > 0 && Project.AddOptionalComments())
         {

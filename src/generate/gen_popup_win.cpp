@@ -331,6 +331,7 @@ std::pair<bool, wxue::string> PopupWinBaseGenerator::isLanguageVersionSupported(
     // TODO: [Randalphwa - 10-01-2024] At some point, other languages may have versions that support
     // these, in which case call Project.get_LangVersion()
 
-    return { false, wxue::string() << "wxPopupWindow and wxPopupTransientWindow are not supported by "
-                                << GenLangToString(language) };
+    return { false, wxue::string()
+                        << "wxPopupWindow and wxPopupTransientWindow are not supported by "
+                        << GenLangToString(language) };
 }

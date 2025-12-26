@@ -42,9 +42,6 @@ set( file_list
 
     tt/tt.cpp                   # tt namespace functions
     tt/tt_string.cpp            # std::string with additional methods
-    tt/tt_string_view.cpp       # std::string_view with additional methods
-    tt/tt_string_vector.cpp     # Read/Write line-oriented strings/files
-    tt/tt_view_vector.cpp       # Read/Write line-oriented strings/files
 
     # Custom property handling for Property Grid panel
     customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code

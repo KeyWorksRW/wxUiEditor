@@ -59,7 +59,7 @@ using namespace pugi;
 #include <wx/file.h>    // For wxFile
 #include <wx/string.h>  // For wxString
 
-#include "tt_view_vector.h"  // tt_view_vector -- Read/Write line-oriented strings/files
+#include "wxue_view_vector.h"  // wxue::ViewVector
 
 // For placement new
 // #include <new>
@@ -6986,8 +6986,8 @@ namespace pugi
         {
             // Find the line number where the error occurred. This is only accurate if the
             // file was encoded with LF line endings.
-            tt_view_vector lines_view;
-            lines_view.ReadString(contents);
+            wxue::ViewVector lines_view;
+            lines_view.ReadString(std::string_view(contents));
             ptrdiff_t line_offset = 0;
             for (result.line = 0; result.line < lines_view.size(); ++result.line)
             {
@@ -7046,8 +7046,8 @@ namespace pugi
             {
                 // Find the line number where the error occurred. This is only accurate if the
                 // file was encoded with LF line endings.
-                tt_view_vector lines_view;
-                lines_view.ReadString(buffer.get());
+                wxue::ViewVector lines_view;
+                lines_view.ReadString(std::string_view(buffer.get(), size));
                 ptrdiff_t line_offset = 0;
                 for (result.line = 0; result.line < lines_view.size(); ++result.line)
                 {

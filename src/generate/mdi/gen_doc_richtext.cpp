@@ -96,8 +96,8 @@ auto RichTextDocGenerator::ConstructionCode(Code& code) -> bool
     return true;
 }
 
-auto RichTextDocGenerator::GetIncludes(Node* [[maybe_unused]] node, std::set<std::string>& set_src,
-                                       std::set<std::string>& [[maybe_unused]] set_hdr,
+auto RichTextDocGenerator::GetIncludes([[maybe_unused]] Node* node, std::set<std::string>& set_src,
+                                       [[maybe_unused]] std::set<std::string>& set_hdr,
                                        [[maybe_unused]] GenLang language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");

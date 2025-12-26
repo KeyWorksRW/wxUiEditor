@@ -78,7 +78,7 @@ auto RichTextViewGenerator::ConstructionCode(Code& code) -> bool
 }
 
 auto RichTextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                        std::set<std::string>& [[maybe_unused]] set_hdr,
+                                        [[maybe_unused]] std::set<std::string>& set_hdr,
                                         [[maybe_unused]] GenLang language) -> bool
 {
     set_src.insert("#include <wx/docmdi.h>");

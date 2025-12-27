@@ -786,11 +786,11 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
 
     auto [generate_type, test_only] = ParseGenerationType(parser);
 
-    const auto& filename = GetCommandLineFilename(parser);
+    const auto& filename_str = GetCommandLineFilename(parser);
 
     if (generate_type == GEN_LANG_NONE)
     {
-        if (filename.empty())
+        if (filename_str.empty())
         {
             return cmd_no_params;
         }
@@ -800,7 +800,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
 
     // If we get here then we were asked to generate at least one language type
 
-    wxue::string filename = filename;
+    wxue::string filename = filename_str;
     filename.make_absolute();
     wxue::string log_file = filename;
     log_file.replace_extension(".log");
@@ -808,8 +808,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     if (!filename.file_exists())
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(wxue::string("Unable to find project file: ")
-                                   << filename.utf8_string());
+        m_cmdline_log.emplace_back(wxue::string("Unable to find project file: ") += filename);
         m_cmdline_log.WriteFile(log_file);
         return 1;
     }
@@ -825,8 +824,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     if (!is_project_loaded)
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ")
-                                   << filename.utf8_string());
+        m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ") += filename);
         m_cmdline_log.WriteFile(log_file);
         return cmd_gen_project_not_loaded;
     }

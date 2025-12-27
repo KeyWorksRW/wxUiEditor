@@ -1453,7 +1453,8 @@ auto WxCrafter::ProcessBitmapPropety(Node* node, const Value& object) -> void
             wxue::ViewVector parts(path, ',');
             if (parts.size() > 1)
             {
-                bitmap = std::format("Art;{}|{};[-1,-1]", parts[0], parts[1]);
+                bitmap = std::format("Art;{}|{};[-1,-1]", static_cast<std::string_view>(parts[0]),
+                                     static_cast<std::string_view>(parts[1]));
             }
         }
         else

@@ -227,7 +227,7 @@ namespace
         GEN_LANG_RUBY,
     });
 
-    // Testing menu is disabled here so that GenerateLanguageFiles() does not start/end a timer.
+    // Testing menu is disabled here so that VerifyLanguageGeneration() does not start/end a timer.
     DisableTestingMenuScope scope;
 
     for (auto lang: languages)

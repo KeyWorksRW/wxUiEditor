@@ -105,7 +105,7 @@
 #include <frozen/set.h>  // IWYU pragma: keep
 
 #include "wxue.h"
-#include "wxue_string.h"  // wxue::string -- std::string with additional methods
+#include "wxue_string.h"  // wxue::string/string_view -- std::string/string_view  with additional methods
 
 #ifndef wxBITMAP_TYPE_SVG
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)

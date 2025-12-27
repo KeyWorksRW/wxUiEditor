@@ -7,7 +7,9 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
+#include <cctype>
 #include <cstring>
+#include <locale>
 
 #include "wxue_string.h"
 

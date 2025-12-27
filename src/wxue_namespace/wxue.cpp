@@ -9,7 +9,9 @@
 #include <wx/string.h>
 
 #include <algorithm>
+// #include <cctype>
 #include <charconv>
+// #include <locale>
 
 #include "wxue_string.h"
 
@@ -405,28 +407,50 @@ auto wxue::contains(std::string_view haystack, char character, CASE checkcase) -
 auto wxue::is_sameas(std::string_view str1, std::string_view str2, CASE checkcase) -> bool
 {
     if (str1.size() != str2.size())
-        return false;
-
-    if (str1.empty())
-        return str2.empty();
-
-    if (checkcase == CASE::exact)
-        return (str1.compare(str2) == 0);
-
-    auto main = str1.begin();
-    auto sub = str2.begin();
-    while (sub != str2.end())
     {
-        auto diff = std::tolower(main[0]) - std::tolower(sub[0]);
-        if (diff != 0)
-            return false;
-        ++main;
-        ++sub;
-        if (main == str1.end())
-            return (sub != str2.end() ? false : true);
+        return false;
     }
 
-    return (main != str1.end() ? false : true);
+    if (str1.empty())
+    {
+        return str2.empty();
+    }
+
+    if (checkcase == CASE::exact)
+    {
+        return (str1.compare(str2) == 0);
+    }
+    else if (checkcase == CASE::either)
+    {
+        auto main = str1.begin();
+        auto sub = str2.begin();
+        while (sub != str2.end())
+        {
+            auto diff = std::tolower(main[0]) - std::tolower(sub[0]);
+            if (diff != 0)
+            {
+                return false;
+            }
+            ++main;
+            ++sub;
+            if (main == str1.end())
+            {
+                return (sub != str2.end() ? false : true);
+            }
+        }
+        return (main != str1.end() ? false : true);
+    }
+    else if (checkcase == CASE::utf8)
+    {
+        // For UTF-8, use wxString which properly handles multi-byte sequences
+        wxString wxStr1 = wxString::FromUTF8(str1);
+        wxString wxStr2 = wxString::FromUTF8(str2);
+        wxStr1.MakeLower();
+        wxStr2.MakeLower();
+        return (wxStr1 == wxStr2);
+    }
+    ASSERT_MSG(false, "Unknown CASE value");
+    return false;
 }
 
 auto wxue::is_sameprefix(std::string_view strMain, std::string_view strSub, CASE checkcase) -> bool
@@ -443,7 +467,9 @@ auto wxue::is_sameprefix(std::string_view strMain, std::string_view strSub, CASE
         for (auto iterSub: strSub)
         {
             if (*iterMain++ != iterSub)
+            {
                 return false;
+            }
         }
         return true;
     }
@@ -459,14 +485,13 @@ auto wxue::is_sameprefix(std::string_view strMain, std::string_view strSub, CASE
     }
     else if (checkcase == CASE::utf8)
     {
-        auto utf8locale = std::locale("en_US.utf8");
-        auto iterMain = strMain.begin();
-        for (auto iterSub: strSub)
-        {
-            if (std::tolower(*iterMain++, utf8locale) != std::tolower(iterSub, utf8locale))
-                return false;
-        }
-        return true;
+        // For UTF-8, use wxString which properly handles multi-byte sequences
+        wxString wxMain = wxString::FromUTF8(strMain);
+        wxString wxSub = wxString::FromUTF8(strSub);
+        wxMain.MakeLower();
+        wxSub.MakeLower();
+
+        return wxMain.StartsWith(wxSub);
     }
     ASSERT_MSG(false, "Unknown CASE value");
     return false;

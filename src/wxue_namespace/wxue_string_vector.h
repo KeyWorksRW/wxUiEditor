@@ -115,6 +115,12 @@ namespace wxue
             return !m_filename.empty() ? WriteFile(m_filename) : false;
         }
 
+        // Searches every line to see if it contains the sub-string.
+        //
+        // startline is the zero-based offset to the line to start searching.
+        auto FindLineContaining(std::string_view str, size_t startline = 0,
+                                CASE checkcase = CASE::exact) const -> size_t;
+
     private:
         // This will be the filename passed to ReadFile()
         wxString m_filename;

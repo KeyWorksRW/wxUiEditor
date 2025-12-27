@@ -201,6 +201,18 @@ void wxue::StringVector::SetString(std::string_view str,
     }
 }
 
+auto wxue::StringVector::FindLineContaining(std::string_view str, size_t startline,
+                                            CASE checkcase) const -> size_t
+{
+    auto subrange = std::ranges::subrange(begin() + static_cast<std::ptrdiff_t>(startline), end());
+    auto it = std::ranges::find_if(subrange,
+                                   [&](const auto& line)
+                                   {
+                                       return line.contains(str, checkcase);
+                                   });
+    return it != end() ? static_cast<size_t>(std::distance(begin(), it)) : wxue::npos;
+}
+
 namespace
 {
     constexpr char BOM_UTF8_0 = static_cast<char>(0xEF);

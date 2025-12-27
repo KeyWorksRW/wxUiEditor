@@ -5,13 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <cstring>  // for std::memcmp
 #include <format>
+
+#include <wx/file.h>  // wxFile - raw file I/O
 
 #include "gen_results.h"
 
 #include "../internal/compare/diff.h"  // Diff -- Compare for file diffs
 #include "file_codewriter.h"  // FileCodeWriter -- Write code to disk with test mode support
-#include "gen_common.h"       // GenerateCppFiles, GenerateXrcFiles, GenerateLanguageForm
+#include "gen_common.h"       // GeneratorLibrary
 #include "mainapp.h"          // wxGetApp()
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -370,6 +373,7 @@ void GenResults::Clear()
     m_display_src = nullptr;
     m_display_hdr = nullptr;
     m_panel_page = PANEL_PAGE::NOT_PANEL;
+    m_combined_output_path.clear();
 }
 
 auto GenResults::GenerateLanguageFiles(GenLang language,
@@ -407,7 +411,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
     }
 
     // C++ uses GenerateCppFiles which handles CMake + loops through forms via GenerateCppForm
-    // XRC combined mode still uses legacy GenerateXrcFiles
+    // XRC combined mode uses GenerateCombinedXrcFile
 
     if (language == GEN_LANG_CPLUSPLUS)
     {
@@ -418,9 +422,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
         // Handle XRC combined forms mode separately - it requires special handling
         if (Project.as_bool(prop_combine_all_forms))
         {
-            // Suppress deprecation warning - internal use of legacy function for combined mode
-            generate_result = GenerateXrcFiles(
-                *this, (comparison_only && !class_list.empty()) ? &class_list : nullptr);
+            generate_result = GenerateCombinedXrcFile(comparison_only);
         }
         else
         {
@@ -883,4 +885,228 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
         frame->setStatusText("Code generation completed");
     }
     return generate_result;
+}
+
+auto GenResults::GenerateCombinedFile(GenLang language) -> bool
+{
+    // Validate: must be exactly one language (not multiple bits set)
+    auto lang_bits = static_cast<std::uint16_t>(language);
+    if (lang_bits == 0 || (lang_bits & (lang_bits - 1)) != 0)
+    {
+        FAIL_MSG("GenerateCombinedFile called with no language or multiple languages specified");
+        return false;
+    }
+
+    // Currently only XRC is supported for combined file generation
+    if (language != GEN_LANG_XRC)
+    {
+        // Future: Add support for Python, Ruby, Perl
+        FAIL_MSG("GenerateCombinedFile currently only supports GEN_LANG_XRC");
+        return false;
+    }
+
+    bool comparison_only = (m_mode == Mode::compare_only);
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        StartClock();
+    }
+
+    wxue::SaveCwd cwd(wxue::restore_cwd);
+    Project.ChangeDir();
+
+    bool generate_result = GenerateCombinedXrcFile(comparison_only);
+
+    if (wxGetApp().isTestingMenuEnabled())
+    {
+        EndClock();
+    }
+
+    return generate_result;
+}
+
+auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
+{
+    // Determine output path: use override if set, otherwise use project settings
+    wxue::string output_path;
+
+    if (!m_combined_output_path.empty())
+    {
+        output_path = m_combined_output_path;
+    }
+    else
+    {
+        // Use project settings for combined XRC file
+        auto xrc_dir = Project.as_string(prop_xrc_directory);
+        auto combined_file = Project.as_string(prop_combined_xrc_file);
+
+        if (combined_file.empty())
+        {
+            m_msgs.emplace_back("No combined XRC filename specified for the project.");
+            return false;
+        }
+
+        if (xrc_dir.empty())
+        {
+            output_path = combined_file;
+        }
+        else
+        {
+            output_path = xrc_dir;
+            combined_file.backslashestoforward();
+            if (combined_file.contains("/"))
+            {
+                output_path.backslashestoforward();
+                if (output_path.back() == '/')
+                {
+                    output_path.pop_back();
+                }
+
+                // If the first part of the combined_file is a folder and it matches the last
+                // folder in output_path, then assume the folder name is duplicated in
+                // combined_file. Remove the folder from output_path before adding the path.
+                if (auto end_folder = combined_file.find('/'); end_folder != std::string::npos)
+                {
+                    if (output_path.ends_with(combined_file.substr(0, end_folder)))
+                    {
+                        output_path.erase(output_path.size() - end_folder, end_folder);
+                    }
+                }
+            }
+            output_path.append_filename(combined_file);
+            output_path.make_absolute();
+            output_path.backslashestoforward();
+        }
+    }
+
+    if (output_path.extension().empty())
+    {
+        output_path.replace_extension(".xrc");
+    }
+
+    // Create the XRC generator and configure it
+    XrcGenerator xrc_gen;
+    xrc_gen.AddProjectFlags();
+    xrc_gen.AddGeneratedComments();
+
+    // Collect all forms and add them to the XRC document
+    std::vector<Node*> forms;
+    Project.CollectForms(forms);
+
+    for (auto* form: forms)
+    {
+        // Skip unsupported form types
+        if (form->is_Gen(gen_Images) || form->is_Gen(gen_Data) ||
+            form->is_Gen(gen_wxPopupTransientWindow))
+        {
+            continue;
+        }
+
+        xrc_gen.AddNode(form);
+    }
+
+    // Get the generated XML string
+    auto xml_content = xrc_gen.getXmlString();
+
+    bool file_existed = output_path.file_exists();
+
+    if (comparison_only)
+    {
+        // In compare mode, check if file differs or needs creation
+        if (!file_existed)
+        {
+            m_updated_files.emplace_back(output_path);
+            return true;
+        }
+
+        // Compare with existing file
+        wxFile file_original(output_path.wx(), wxFile::read);
+        if (!file_original.IsOpened())
+        {
+            m_msgs.emplace_back(std::format("Cannot read existing file: {}",
+                                            static_cast<std::string>(output_path)));
+            m_updated_files.emplace_back(output_path);
+            return true;
+        }
+
+        auto in_size = file_original.Length();
+        if (xml_content.size() != static_cast<size_t>(in_size))
+        {
+            // Size differs, file needs updating
+            m_updated_files.emplace_back(output_path);
+
+            // Capture diff for display
+            wxue::ViewVector disk_content;
+            disk_content.ReadFile(std::string_view(output_path));
+
+            wxue::ViewVector gen_content;
+            gen_content.ReadString(std::string_view(xml_content));
+
+            auto diff_result = Diff::Compare(disk_content, gen_content);
+            if (diff_result.has_differences)
+            {
+                FileDiff file_diff;
+                file_diff.filename = output_path.filename();
+                file_diff.original_content = disk_content.GetBuffer();
+                file_diff.new_content = xml_content;
+                file_diff.diff_result = std::move(diff_result);
+                file_diff.form = nullptr;  // Combined file has no single form
+                m_file_diffs.push_back(std::move(file_diff));
+            }
+            return true;
+        }
+
+        // Same size, compare content byte-by-byte
+        auto buffer = std::make_unique<unsigned char[]>(in_size);
+        if (file_original.Read(buffer.get(), in_size) == in_size)
+        {
+            if (std::memcmp(buffer.get(), xml_content.data(), in_size) == 0)
+            {
+                // Files are identical
+                return false;
+            }
+        }
+
+        // Content differs
+        m_updated_files.emplace_back(output_path);
+
+        wxue::ViewVector disk_content;
+        disk_content.ReadFile(std::string_view(output_path));
+
+        wxue::ViewVector gen_content;
+        gen_content.ReadString(std::string_view(xml_content));
+
+        auto diff_result = Diff::Compare(disk_content, gen_content);
+        if (diff_result.has_differences)
+        {
+            FileDiff file_diff;
+            file_diff.filename = output_path.filename();
+            file_diff.original_content = disk_content.GetBuffer();
+            file_diff.new_content = xml_content;
+            file_diff.diff_result = std::move(diff_result);
+            file_diff.form = nullptr;
+            m_file_diffs.push_back(std::move(file_diff));
+        }
+        return true;
+    }
+
+    // Write mode: save the file
+    if (!xrc_gen.getDocument().save_file(output_path))
+    {
+        m_msgs.emplace_back(std::format("Cannot create or write to the file: {}",
+                                        static_cast<std::string>(output_path)));
+        return false;
+    }
+
+    IncrementFileCount();
+    if (file_existed)
+    {
+        m_updated_files.emplace_back(output_path);
+    }
+    else
+    {
+        m_created_files.emplace_back(output_path);
+    }
+
+    return true;
 }

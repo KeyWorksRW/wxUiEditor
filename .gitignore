@@ -4,6 +4,7 @@ bld/
 __pycache__/
 tests/quick_test/
 Affinity/
+src/archived/
 
 # Ignore clangd cache
 .cache/

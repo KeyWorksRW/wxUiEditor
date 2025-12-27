@@ -263,7 +263,7 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
             auto new_embedded = NodeCreation.CreateNode(gen_embedded_image, image_list_node).first;
             new_embedded->set_value(prop_bitmap, value);
             auto insert_action = std::make_shared<InsertNodeAction>(
-                new_embedded.get(), image_list_node, tt_empty_cstr, pos);
+                new_embedded.get(), image_list_node, wxue::wxue_empty_string, pos);
             insert_action->AllowSelectEvent(false);
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);

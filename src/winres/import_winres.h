@@ -7,7 +7,7 @@
 
 // AI Context: This file implements WinResource, an importer for Windows .rc resource files. The
 // class extends ImportXML and parses text-based .rc format (not XML despite base class) using
-// tt_string_vector line processing. Import/ImportRc load .rc files, InsertDialogs filters dialog
+// wxue::StringVector line processing. Import/ImportRc load .rc files, InsertDialogs filters dialog
 // selection, ParseDialog/ParseMenu/ParseStringTable extract resources, and FormToNode converts
 // resForm structures to Nodes. Resource lookup methods (FindBitmap, FindIcon, FindStringID) access
 // m_map_bitmaps, m_map_icons, m_map_stringtable populated during parsing. The class handles Windows

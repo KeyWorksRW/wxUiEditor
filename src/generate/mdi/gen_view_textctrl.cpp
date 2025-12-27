@@ -7,10 +7,10 @@
 
 #include "gen_view_textctrl.h"
 
-#include "code.h"                // Code -- Helper class for generating code
-#include "project_handler.h"     // ProjectHandler class
-#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
-#include "utils.h"               // Miscellaneous utility functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "project_handler.h"                    // ProjectHandler class
+#include "utils.h"                              // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string_vector.h"  // StringVector -- wxue::StringVector class
 
 inline constexpr auto txt_TextCtrlViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxView);
@@ -73,7 +73,7 @@ auto TextViewGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_TextCtrlViewBlock));
         auto class_name = code.node()->as_view(prop_class_name);
         for (const auto& wxline: lines)
@@ -105,10 +105,10 @@ auto TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
             }
             if (iter->as_string(prop_class_name) == node->as_string(prop_mdi_doc_name))
             {
-                wxString hdr_file = iter->as_string(prop_base_file).make_wxString();
+                wxString hdr_file = iter->as_string(prop_base_file).wx();
                 if (!hdr_file.empty())
                 {
-                    hdr_file += Project.as_string(prop_header_ext).make_wxString();
+                    hdr_file += Project.as_string(prop_header_ext).wx();
                     set_src.insert(std::string("#include \"") + hdr_file.ToStdString() + "\"");
                 }
                 else
@@ -145,7 +145,7 @@ private:
 
 auto TextViewGenerator::HeaderCode(Code& code) -> bool
 {
-    ttwx::StringVector lines;
+    wxue::StringVector lines;
     lines.ReadString(std::string_view(txt_TextCtrlViewHdrBlock));
     auto class_name = code.node()->as_view(prop_class_name);
     for (const auto& wxline: lines)

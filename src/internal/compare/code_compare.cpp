@@ -27,7 +27,9 @@ CodeCompare::~CodeCompare()
     // check to see if the parent directory is named "src" and if so, we change to the parent
     // directory. This allows us to find the generated files no matter where they are located,
     // or at least as long as they were generated under the src/ directory.
-    tt_cwd cwd(tt_cwd::restore);
+    wxue::SaveCwd save_cwd(wxue::restore_cwd);
+    wxue::string cwd;
+    cwd.assignCwd();
     cwd.remove_filename();
     if (cwd.size() && (cwd.back() == '\\' || cwd.back() == '/'))
     {
@@ -52,8 +54,7 @@ CodeCompare::~CodeCompare()
 
     if (Project.HasValue(prop_base_directory))
     {
-        wxDir::GetAllFiles(Project.as_string(prop_base_directory).make_wxString(), &files,
-                           "~wxue_**.*");
+        wxDir::GetAllFiles(Project.as_string(prop_base_directory).wx(), &files, "~wxue_**.*");
 
         for (auto& iter: files)
         {

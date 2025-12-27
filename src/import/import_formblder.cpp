@@ -18,16 +18,14 @@
 
 #include "import_formblder.h"
 
-#include "base_generator.h"           // BaseGenerator -- Base widget generator class
-#include "dlg_msgs.h"                 // wxMessageDialog dialogs
-#include "font_prop.h"                // FontProperty class
-#include "mainframe.h"                // Main window frame
-#include "node.h"                     // Node class
-#include "node_creator.h"             // NodeCreator class
-#include "ttwx/ttwx.h"                // Project utilities
-#include "ttwx/ttwx_string_vector.h"  // ttwx::StringVector
-#include "ttwx/ttwx_view_vector.h"    // ttwx::ViewVector
-#include "utils.h"                    // Utility functions that work with properties
+#include "base_generator.h"    // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"          // wxMessageDialog dialogs
+#include "font_prop.h"         // FontProperty class
+#include "mainframe.h"         // Main window frame
+#include "node.h"              // Node class
+#include "node_creator.h"      // NodeCreator class
+#include "utils.h"             // Utility functions that work with properties
+#include "wxue_view_vector.h"  // wxue::ViewVector
 
 #include "import_frmbldr_maps.cpp"  // set_ignore_flags and map_evt_pair
 
@@ -40,7 +38,7 @@ auto FormBuilder::Import(const std::string& filename, bool write_doc) -> bool
     }
     auto root = result.value().first_child();
 
-    if (!ttwx::is_sameas(root.name(), "wxFormBuilder_Project", ttwx::CASE::either))
+    if (!wxue::is_sameas(root.name(), "wxFormBuilder_Project", wxue::CASE::either))
     {
         dlgInvalidProject(filename, "wxFormBuilder", "Import wxFormBuilder project");
         return false;
@@ -567,15 +565,15 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
     else if (prop_name == "style" && class_name == "wxCheckBox")
     {
         // wxCHK_2STATE and wxCHK_3STATE are part of the type property instead of style
-        ttwx::ViewVector styles(xml_prop.text().as_view(), "|", ttwx::TRIM::both);
+        wxue::ViewVector styles(xml_prop.text().as_view(), "|", wxue::TRIM::both);
         std::string new_style;
         for (auto& iter: styles)
         {
-            if (ttwx::is_sameas(iter, "wxCHK_2STATE"))
+            if (wxue::is_sameas(iter, "wxCHK_2STATE"))
             {
                 return;  // this is default, so ignore it
             }
-            if (ttwx::is_sameas(iter, "wxCHK_3STATE"))
+            if (wxue::is_sameas(iter, "wxCHK_3STATE"))
             {
                 newobject->get_PropPtr(prop_type)->set_value("wxCHK_3STATE");
             }
@@ -615,7 +613,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
     }
     else if (prop_name == "subclass")
     {
-        ttwx::StringVector parts(xml_prop.text().as_view(), ';', ttwx::TRIM::both);
+        wxue::StringVector parts(xml_prop.text().as_view(), ';', wxue::TRIM::both);
         if (parts[0].empty())
         {
             return;
@@ -623,7 +621,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
         if (auto* prop = newobject->get_PropPtr(prop_subclass); prop)
         {
             prop->set_value(parts[0]);
-            if (parts.size() > 1 && parts[1].Contains("forward_declare"))
+            if (parts.size() > 1 && parts[1].contains("forward_declare"))
             {
                 prop = newobject->get_PropPtr(prop_subclass_header);
                 if (prop)
@@ -715,7 +713,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     if (org_value.contains("Load From File") || org_value.contains("Load From Embedded File"))
     {
         auto pos_semi = org_value.find(';');
-        if (!ttwx::is_found(pos_semi))
+        if (!wxue::is_found(pos_semi))
         {
             return;
         }
@@ -744,7 +742,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
             return;
         }
 
-        if (ttwx::find_extension(filename) == ".xpm")
+        if (wxue::find_extension(filename) == ".xpm")
         {
             std::string value("XPM; ");
             value += filename;
@@ -757,7 +755,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
             wxFileName relative(wxString::FromUTF8(filename));
             relative.MakeRelativeTo(wxFileName::GetCwd());
             wxString rel_path_wx = relative.GetFullPath();
-            ttwx::back_slashesto_forward(rel_path_wx);
+            wxue::back_slashesto_forward(rel_path_wx);
             bitmap += rel_path_wx.ToStdString();
             bitmap += ";[-1,-1]";
             prop->set_value(bitmap);
@@ -790,8 +788,8 @@ void FormBuilder::ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_
     while (offset < org_names.size())
     {
         wxString temp;
-        offset = ttwx::extract_substring(org_names, temp, offset);
-        if (temp.empty() || !ttwx::is_found(offset))
+        offset = wxue::extract_substring(org_names, temp, offset);
+        if (temp.empty() || !wxue::is_found(offset))
         {
             break;
         }
@@ -896,7 +894,7 @@ auto FormBuilder::HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobjec
     }
 
     wxString header;
-    ttwx::extract_substring(xml_prop.text().as_view(), header, 0);
+    wxue::extract_substring(xml_prop.text().as_view(), header, 0);
     if (header.size())
     {
         newobject->set_value(prop_header, header.ToStdString());
@@ -1017,11 +1015,11 @@ void FormBuilder::ProcessXmlProperties(pugi::xml_node& xml_obj, Node* newobject,
             if (prop_name == "construction")
             {
                 std::string copy(xml_prop.text().as_view());
-                if (auto pos = copy.find('('); ttwx::is_found(pos))
+                if (auto pos = copy.find('('); wxue::is_found(pos))
                 {
                     copy.erase(0, pos);
                 }
-                if (auto pos = copy.find(';'); ttwx::is_found(pos))
+                if (auto pos = copy.find(';'); wxue::is_found(pos))
                 {
                     copy.erase(pos);
                 }

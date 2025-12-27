@@ -13,7 +13,7 @@
 #include <string_view>
 #include <unordered_map>
 
-#include "ttwx/ttwx_string_vector.h"  // ttwx::StringVector class
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector class
 
 #include "msgframe.h"  // auto-generated: msgframe_base.h and msgframe_base.cpp
 
@@ -96,7 +96,7 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
         {
             if (iter.starts_with(wxString(prefix)))
             {
-                const auto remaining = ttwx::stepover(iter);
+                const auto remaining = wxue::stepover(iter);
                 append_message(prefix, color, remaining);
                 handled = true;
                 break;
@@ -236,7 +236,7 @@ void MsgFrame::OnSaveAs(wxCommandEvent& /* event unused */)
         return;
     }
 
-    ttwx::StringVector file;
+    wxue::StringVector file;
 
     auto totalLines = m_textCtrl->GetNumberOfLines();
     for (int curLine = 0; curLine < totalLines; ++curLine)

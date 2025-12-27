@@ -7,7 +7,7 @@
 
 // AI Context: This file implements NodeProperty, storing user-configured property values for Node
 // instances. Each property holds m_declaration (PropDeclaration* for metadata), m_node (parent
-// Node*), m_value (tt_string storage), and m_constant (cached friendly-name-to-wx-constant
+// Node*), m_value (wxue::string storage), and m_constant (cached friendly-name-to-wx-constant
 // conversion). The class provides type-safe setters (set_value overloads for
 // int/wxColour/wxPoint/etc.) and getters (as_int/as_bool/as_color/as_font/etc.) with lazy parsing.
 // Complex properties use custom structs (NODEPROP_STATUSBAR_FIELD, NODEPROP_CHECKLIST_ITEM, etc.)
@@ -68,7 +68,7 @@ public:
     auto set_value(const wxSize& size) -> void;
     auto set_value(const char* val) -> void { m_value.assign(val); }
     auto set_value(std::string_view val) -> void { m_value.assign(val); }
-    auto set_value(const tt_string& val) -> void { m_value.assign(val); }
+    auto set_value(const wxue::string& val) -> void { m_value.assign(val); }
     auto set_value(const std::string& val) -> void { m_value.assign(val); }
 
     auto convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
@@ -108,15 +108,15 @@ public:
     // Returns a non-const reference allowing you to modify the value. Do *NOT* use this for
     // the vector functions, as the formatting of the property string is entirely up to
     // NodeProperty.
-    auto get_value() -> tt_string& { return m_value; }
+    auto get_value() -> wxue::string& { return m_value; }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
     auto get_PropId() const -> wxue::string;
 
     // Returns a string containing the ID without any assignment if it is a custom id.
-    static auto get_PropId(const tt_string& complete_id) -> wxue::string;
+    static auto get_PropId(const wxue::string& complete_id) -> wxue::string;
 
-    const tt_string& value() const { return m_value; }
+    const wxue::string& value() const { return m_value; }
 
     [[nodiscard]] auto as_int() const -> int;
     [[nodiscard]] auto as_bool() const -> bool { return (as_int() != 0); };
@@ -126,8 +126,6 @@ public:
     //
     // Returns wxID_ANY if constant is not found
     [[nodiscard]] auto as_id() const -> int;
-
-    // tt_string_view as_sview() const { return m_value; }
 
     // Use with caution! This allows you to modify the property string directly.
     auto as_raw_ptr() { return &m_value; }
@@ -152,11 +150,11 @@ public:
 
     [[nodiscard]] auto as_bitmap_bundle() const -> wxBitmapBundle;
 
-    [[nodiscard]] auto as_string() const -> const tt_string& { return m_value; }
-    [[nodiscard]] auto as_view() const -> std::string_view { return m_value; }
+    [[nodiscard]] auto as_string() const -> const wxue::string& { return m_value; }
+    [[nodiscard]] auto as_view() const -> wxue::string_view { return m_value; }
 
     // Converts friendly name to wxWidgets constant
-    auto as_constant(std::string_view prefix) -> const tt_string&;
+    auto as_constant(std::string_view prefix) -> const wxue::string&;
 
     // Converts friendly name to wxWidgets constant, and then returns the integer value of
     // that constant.
@@ -224,6 +222,6 @@ public:
 private:
     PropDeclaration* m_declaration;
     Node* m_node;  // node this property is a child of
-    tt_string m_value;
-    tt_string m_constant;  // filled in by as_constant() if m_value is a friendly name
+    wxue::string m_value;
+    wxue::string m_constant;  // filled in by as_constant() if m_value is a friendly name
 };

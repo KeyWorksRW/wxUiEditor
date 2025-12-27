@@ -18,6 +18,7 @@
  */
 
 #include <array>
+#include <filesystem>
 #include <format>
 
 #include <wx/dir.h>

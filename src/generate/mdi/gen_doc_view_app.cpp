@@ -6,9 +6,9 @@
 
 #include "gen_doc_view_app.h"
 
-#include "code.h"                // Code -- Helper class for generating code
-#include "ttwx_string_vector.h"  // StringVector -- ttwx::StringVector class
-#include "utils.h"               // Miscellaneous utility functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "utils.h"                              // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string_vector.h"  // StringVector -- wxue::StringVector class
 
 inline constexpr const auto txt_DocViewAppCppSrc =
     R"===(%class%::%class%() : m_docManager(nullptr), m_frame(nullptr), m_menuBar(nullptr)
@@ -155,7 +155,7 @@ auto DocViewAppGenerator::ConstructionCode(Code& code) -> bool
         }
         code_templates.Unindent();
 
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_DocViewAppCppSrc));
         auto class_name = code.node()->as_string(prop_class_name);
 
@@ -182,7 +182,7 @@ auto DocViewAppGenerator::AfterConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_DocViewAppAfterCtor));
         auto class_name = code.node()->as_view(prop_class_name);
         bool is_mdi = code.node()->as_string(prop_kind) == "MDI";
@@ -276,7 +276,7 @@ bool Show(bool show = true) { return m_frame->Show(show); }
 
 auto DocViewAppGenerator::HeaderCode(Code& code) -> bool
 {
-    ttwx::StringVector lines;
+    wxue::StringVector lines;
     lines.ReadString(std::string_view(txt_DocViewAppHeader));
     auto class_name = code.node()->as_string(prop_class_name);
     for (const auto& wxline: lines)

@@ -792,7 +792,7 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     if (Project.get_ProjectNode()->HasValue(prop_project_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(Project.get_ProjectNode()->as_string(prop_project_src_includes)));
         for (auto& iter: list)
         {
@@ -826,7 +826,7 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     if (m_form_node->HasValue(prop_system_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(m_form_node->as_string(prop_system_src_includes)));
         for (auto& iter: list)
         {
@@ -854,7 +854,7 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     if (m_form_node->HasValue(prop_local_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(m_form_node->as_string(prop_local_src_includes)));
         for (auto& iter: list)
         {
@@ -873,7 +873,7 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
     std::string file;
     if (const auto& base_file = m_form_node->as_string(prop_base_file); base_file.size())
     {
-        ttwx::SaveCwd cwd(ttwx::restore_cwd);
+        wxue::SaveCwd cwd(wxue::restore_cwd);
         Project.ChangeDir();
         wxFileName file_path(base_file);
         file_path.MakeRelativeTo(Project.get_ProjectPath());
@@ -1021,9 +1021,9 @@ void CppCodeGenerator::GenerateChildrenAndEvents(Code& code, BaseGenerator* gene
         if (m_form_node->as_bool(prop_persist))
         {
             m_source->writeLine();
-            wxString tmp("wxPersistentRegisterAndRestore(this, \"");
+            wxue::string tmp("wxPersistentRegisterAndRestore(this, \"");
             tmp << m_form_node->get_NodeName() << "\");";
-            m_source->writeLine(tmp.ToStdString());
+            m_source->writeLine(tmp);
         }
 
         AddPersistCode(m_form_node);
@@ -1146,7 +1146,7 @@ auto CppCodeGenerator::CollectUserEventHandlers(std::unordered_set<std::string>&
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
 #endif  // _DEBUG
     {
-        ttwx::ViewVector org_file;
+        wxue::ViewVector org_file;
         auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
 
         if (has_base_file && path.extension().empty())
@@ -1205,7 +1205,7 @@ auto CppCodeGenerator::CheckIfAllEventsImplemented(
             continue;
         }
 
-        wxString set_code;
+        wxue::string set_code;
         set_code << "void " << m_form_node->get_NodeName() << "::" << handler;
         bool is_implemented = false;
         for (const auto& iter: code_lines)
@@ -1316,7 +1316,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
             }
 
             // The user's declaration will typically include the event parameter
-            wxString set_code;
+            wxue::string set_code;
             set_code << "void " << m_form_node->get_NodeName() << "::" << handler << '(';
             bool already_handled = false;
             for (const auto& iter: code_lines)
@@ -1476,7 +1476,7 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     if (Project.get_ProjectNode()->HasValue(prop_project_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(Project.get_ProjectNode()->as_string(prop_project_src_includes)));
         for (auto& iter: list)
         {
@@ -1516,7 +1516,7 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     if (m_form_node->HasValue(prop_local_src_includes))
     {
         m_source->writeLine();
-        ttwx::ViewVector list;
+        wxue::ViewVector list;
         list.SetString(wxString(m_form_node->as_string(prop_local_src_includes)));
         for (auto& iter: list)
         {

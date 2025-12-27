@@ -19,7 +19,7 @@
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
 
-#include "ttwx/ttwx_view_vector.h"  // ttwx::ViewVector (for Diff::Compare)
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector (for Diff::Compare)
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_cpp.h"
@@ -585,10 +585,10 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             // Capture detailed diff information if file exists on disk
             if (result == code::write_needed && src_path.file_exists())
             {
-                ttwx::ViewVector disk_content;
+                wxue::ViewVector disk_content;
                 disk_content.ReadFile(std::string_view(src_path));
 
-                ttwx::ViewVector gen_content;
+                wxue::ViewVector gen_content;
                 gen_content.ReadString(std::string_view(src_cw->GetString()));
 
                 auto diff_result = Diff::Compare(disk_content, gen_content);
@@ -703,10 +703,10 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
             // Capture detailed diff information if file exists on disk
             if (hdr_result == code::write_needed && hdr_path.file_exists())
             {
-                ttwx::ViewVector disk_content;
+                wxue::ViewVector disk_content;
                 disk_content.ReadFile(std::string_view(hdr_path));
 
-                ttwx::ViewVector gen_content;
+                wxue::ViewVector gen_content;
                 gen_content.ReadString(std::string_view(hdr_cw->GetString()));
 
                 auto diff_result = Diff::Compare(disk_content, gen_content);
@@ -765,10 +765,10 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
             // Capture detailed diff information if file exists on disk
             if (src_result == code::write_needed && src_path.file_exists())
             {
-                ttwx::ViewVector disk_content;
+                wxue::ViewVector disk_content;
                 disk_content.ReadFile(std::string_view(src_path));
 
-                ttwx::ViewVector gen_content;
+                wxue::ViewVector gen_content;
                 gen_content.ReadString(std::string_view(src_cw->GetString()));
 
                 auto diff_result = Diff::Compare(disk_content, gen_content);

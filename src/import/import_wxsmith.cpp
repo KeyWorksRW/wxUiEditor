@@ -27,8 +27,8 @@ auto WxSmith::Import(const std::string& filename, bool write_doc) -> bool
     }
     auto root = result.value().first_child();
 
-    if (!ttwx::is_sameas(root.name(), "wxsmith", ttwx::CASE::either) &&
-        !ttwx::is_sameas(root.name(), "resource", ttwx::CASE::either))
+    if (!wxue::is_sameas(root.name(), "wxsmith", wxue::CASE::either) &&
+        !wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
     {
         dlgInvalidProject(filename, "wxSmith or XRC", "Import project");
         return false;

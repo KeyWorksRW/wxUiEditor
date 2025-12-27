@@ -29,14 +29,14 @@ public:
     {
     }
 
-    const tt_string& get_name() const noexcept { return m_name; }
-    const tt_string& get_event_class() const noexcept { return m_event_class; }
-    const tt_string& get_help() const noexcept { return m_help; }
+    const wxue::string& get_name() const noexcept { return m_name; }
+    const wxue::string& get_event_class() const noexcept { return m_event_class; }
+    const wxue::string& get_help() const noexcept { return m_help; }
 
 private:
-    tt_string m_name;
-    tt_string m_event_class;
-    tt_string m_help;
+    wxue::string m_name;
+    wxue::string m_event_class;
+    wxue::string m_help;
 };
 
 // This class is used to store event information specific to what the user has requsted (node
@@ -48,8 +48,8 @@ public:
     NodeEvent(const NodeEventInfo* info, Node* node) : m_info(info), m_node(node) {}
 
     void set_value(std::string_view value) { m_value = value; }
-    const tt_string& get_value() const noexcept { return m_value; }
-    const tt_string& get_name() const noexcept { return m_info->get_name(); }
+    const wxue::string& get_value() const noexcept { return m_value; }
+    const wxue::string& get_name() const noexcept { return m_info->get_name(); }
 
     Node* getNode() const noexcept { return m_node; }
     const NodeEventInfo* get_EventInfo() const noexcept { return m_info; }
@@ -61,5 +61,5 @@ private:
     const NodeEventInfo* m_info;
     Node* m_node;
 
-    tt_string m_value;  // handler function name
+    wxue::string m_value;  // handler function name
 };

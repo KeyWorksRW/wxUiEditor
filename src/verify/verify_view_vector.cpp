@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Verify ttwx::ViewVector class
+// Purpose:   Verify wxue::ViewVector class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
@@ -18,7 +18,7 @@
 
 #include "assertion_dlg.h"  // Assertion Dialog
 
-// Function to verify all capabilities of ttwx::ViewVector
+// Function to verify all capabilities of wxue::ViewVector
 
 // NOLINTNEXTLINE (clang-analyzer-core.cognitive-complexity) // cppcheck-suppress
 // highCognitiveComplexity
@@ -26,7 +26,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 {
     // Test 1: String parsing with character separator
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
         view_vector.SetString(std::string_view("apple;banana;cherry"), ";");
 
         VERIFY_EQUAL(view_vector.size(), 3U, "Basic semicolon parsing should create 3 elements");
@@ -44,7 +44,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 2: String parsing with string separator
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
         view_vector.SetString(std::string_view("first||second||third"), std::string_view("||"));
 
         VERIFY_EQUAL(view_vector.size(), 3U, "Double pipe parsing should create 3 elements");
@@ -63,11 +63,11 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 3: TRIM functionality
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Test TRIM::none
         view_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                              ttwx::TRIM::none);
+                              wxue::TRIM::none);
         VERIFY_EQUAL(view_vector.size(), 3U, "No trim should create 3 elements");
         ASSERT_MSG(view_vector[0] == "  apple  ", "First element should preserve spaces");
         ASSERT_MSG(view_vector[1] == " banana ", "Second element should preserve spaces");
@@ -75,7 +75,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
         // Test TRIM::both
         view_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                              ttwx::TRIM::both);
+                              wxue::TRIM::both);
         VERIFY_EQUAL(view_vector.size(), 3U, "Trim both should create 3 elements");
         ASSERT_MSG(view_vector[0] == "apple", "First element should be trimmed");
         ASSERT_MSG(view_vector[1] == "banana", "Second element should be trimmed");
@@ -83,7 +83,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
         // Test TRIM::left
         view_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                              ttwx::TRIM::left);
+                              wxue::TRIM::left);
         VERIFY_EQUAL(view_vector.size(), 3U, "Trim left should create 3 elements");
         ASSERT_MSG(view_vector[0] == "apple  ", "First element should be left-trimmed");
         ASSERT_MSG(view_vector[1] == "banana ", "Second element should be left-trimmed");
@@ -91,7 +91,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
         // Test TRIM::right
         view_vector.SetString(std::string_view("  apple  ; banana ;  cherry  "), ';',
-                              ttwx::TRIM::right);
+                              wxue::TRIM::right);
         VERIFY_EQUAL(view_vector.size(), 3U, "Trim right should create 3 elements");
         ASSERT_MSG(view_vector[0] == "  apple", "First element should be right-trimmed");
         ASSERT_MSG(view_vector[1] == " banana", "Second element should be right-trimmed");
@@ -105,7 +105,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
         // stepping through the code with a debugger a bit more difficult, so ";" is preferable
         // for most testing. The above code tests the char version.
 
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Empty string
         view_vector.SetString(std::string_view(""), ";");
@@ -137,18 +137,18 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
     // Test 5: Constructor variants
     {
         // Default constructor
-        ttwx::ViewVector vv1;
+        wxue::ViewVector vv1;
         VERIFY_EQUAL(vv1.size(), 0U, "Default constructor should create empty vector");
 
         // Parameterized constructor with character separator
-        ttwx::ViewVector vv2(std::string_view("a;b;c"), ";");
+        wxue::ViewVector vv2(std::string_view("a;b;c"), ";");
         VERIFY_EQUAL(vv2.size(), 3U, "Constructor with char separator should create 3 elements");
         ASSERT_MSG(vv2[0] == "a", "First element should be 'a'");
         ASSERT_MSG(vv2[1] == "b", "Second element should be 'b'");
         ASSERT_MSG(vv2[2] == "c", "Third element should be 'c'");
 
         // Parameterized constructor with TRIM
-        ttwx::ViewVector vv3(std::string_view(" x ; y ; z "), ';', ttwx::TRIM::both);
+        wxue::ViewVector vv3(std::string_view(" x ; y ; z "), ';', wxue::TRIM::both);
         VERIFY_EQUAL(vv3.size(), 3U, "Constructor with trim should create 3 elements");
         ASSERT_MSG(vv3[0] == "x", "First element should be trimmed to 'x'");
         ASSERT_MSG(vv3[1] == "y", "Second element should be trimmed to 'y'");
@@ -157,7 +157,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 6: ReadString capabilities
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Test with different line endings
         view_vector.ReadString(std::string_view("line1\nline2\nline3"));
@@ -198,8 +198,8 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 7: Comparison and utility methods
     {
-        ttwx::ViewVector view_vector1;
-        ttwx::ViewVector view_vector2;
+        wxue::ViewVector view_vector1;
+        wxue::ViewVector view_vector2;
 
         // Test is_sameas() with identical vectors
         view_vector1.ReadString(std::string_view("same\nlines\nhere"));
@@ -225,7 +225,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 8: wxString integration
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Test SetString with wxString and character separator
         wxString wxStr1 = wxT("wx;string;test");
@@ -246,7 +246,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
         // Test SetString with wxString and TRIM
         wxString wxStr3 = wxT("  trim  ;  test  ");
-        view_vector.SetString(wxStr3, ';', ttwx::TRIM::both);
+        view_vector.SetString(wxStr3, ';', wxue::TRIM::both);
         VERIFY_EQUAL(view_vector.size(), 2U,
                      "SetString with wxString and trim should create 2 elements");
         ASSERT_MSG(view_vector[0] == "trim", "First element should be trimmed to 'trim'");
@@ -255,7 +255,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 9: Edge cases and error handling
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Empty ReadString
         view_vector.ReadString(std::string_view(""));
@@ -295,7 +295,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
     // Test 10: std::vector separators functionality
     {
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Test with multiple single-character separators
         std::vector<std::string_view> separators = { ";", "," };
@@ -340,7 +340,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
         // Test with TRIM functionality and multiple separators
         std::vector<std::string_view> trimSeparators = { ";", "," };
         view_vector.SetString(std::string_view("  first  ;  second  ,  third  "), trimSeparators,
-                              ttwx::TRIM::both);
+                              wxue::TRIM::both);
         VERIFY_EQUAL(view_vector.size(), 3U,
                      "Vector separators with trim should create 3 elements");
         ASSERT_MSG(view_vector[0] == "first", "First element should be trimmed");
@@ -349,7 +349,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
         // Test with TRIM::left
         view_vector.SetString(std::string_view("  left  ;  trim  ,  test  "), trimSeparators,
-                              ttwx::TRIM::left);
+                              wxue::TRIM::left);
         VERIFY_EQUAL(view_vector.size(), 3U,
                      "Vector separators with left trim should create 3 elements");
         ASSERT_MSG(view_vector[0] == "left  ", "First element should be left-trimmed only");
@@ -358,7 +358,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
 
         // Test with TRIM::right
         view_vector.SetString(std::string_view("  right  ;  trim  ,  test  "), trimSeparators,
-                              ttwx::TRIM::right);
+                              wxue::TRIM::right);
         VERIFY_EQUAL(view_vector.size(), 3U,
                      "Vector separators with right trim should create 3 elements");
         ASSERT_MSG(view_vector[0] == "  right", "First element should be right-trimmed only");
@@ -462,7 +462,7 @@ auto VerifyViewVector() -> bool  // NOLINT(clang-analyzer-core.cognitive-complex
             file.write(testContent.c_str(), static_cast<std::streamsize>(testContent.size()));
         }
 
-        ttwx::ViewVector view_vector;
+        wxue::ViewVector view_vector;
 
         // Test ReadFile with std::string_view
         bool readResult = view_vector.ReadFile(std::string_view(tempFilename));

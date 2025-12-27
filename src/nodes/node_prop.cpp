@@ -68,7 +68,7 @@ auto NodeProperty::as_id() const -> int
 }
 
 // Static class function
-auto NodeProperty::get_PropId(const tt_string& complete_id) -> wxue::string
+auto NodeProperty::get_PropId(const wxue::string& complete_id) -> wxue::string
 {
     wxue::string id;
     if (auto pos = complete_id.find('='); pos != wxue::npos)
@@ -148,7 +148,7 @@ auto NodeProperty::as_mockup(std::string_view prefix) const -> int
     }
 }
 
-const tt_string& NodeProperty::as_constant(std::string_view prefix)
+auto NodeProperty::as_constant(std::string_view prefix) -> const wxue::string&
 {
     switch (type())
     {

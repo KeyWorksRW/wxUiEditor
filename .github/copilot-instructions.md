@@ -95,6 +95,7 @@ When the user types "fix" and has selected a comment line:
 - `wxString::ToStdString()` → `std::string`/`std::string_view` (returns `const std::string&`)
 - `wxString::utf8_string()` → Use only for explicit UTF-8 encoding (e.g., filenames)
 - `std::format` → Requires `#include <format>`
+- `std::format` with `wxue::string`/`wxue::string_view` → Cast to base type: `static_cast<std::string>(str)` or `static_cast<std::string_view>(view)`
 
 **String building preference:**
 - `wxString` with `<<` operator → Preferred for multi-part string building (cleaner than `+=`)

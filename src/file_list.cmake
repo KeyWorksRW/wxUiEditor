@@ -30,21 +30,11 @@ set( file_list
 
     ui/startup_dlg.cpp      # Dialog to display if wxUiEditor is launched with no arguments
 
-    ttwx/ttwx.cpp               # ttwx namespace functions and declarations
-    ttwx/ttwx_view_vector.cpp   # ttwx::ViewVector class
-    ttwx/ttwx_string_vector.cpp # ttwx::StringVector class
-
     wxue_namespace/wxue.cpp
-    wxue_namespace/wxue_string.cpp          # wxue::tt_string class
-    wxue_namespace/wxue_string_view.cpp     # wxue::tt_string_view class
-    wxue_namespace/wxue_string_vector.cpp   # wxue::tt_string_vector class
-    wxue_namespace/wxue_view_vector.cpp     # wxue::tt_view_vector class
-
-    tt/tt.cpp                   # tt namespace functions
-    tt/tt_string.cpp            # std::string with additional methods
-    tt/tt_string_view.cpp       # std::string_view with additional methods
-    tt/tt_string_vector.cpp     # Read/Write line-oriented strings/files
-    tt/tt_view_vector.cpp       # Read/Write line-oriented strings/files
+    wxue_namespace/wxue_string.cpp          # wxue::wxue::string class
+    wxue_namespace/wxue_string_view.cpp     # wxue::string_view class
+    wxue_namespace/wxue_string_vector.cpp   # wxue::string_vector class
+    wxue_namespace/wxue_view_vector.cpp     # wxue::view_vector class
 
     # Custom property handling for Property Grid panel
     customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code

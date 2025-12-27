@@ -7,13 +7,12 @@
 
 #include "import_wxglade.h"
 
-#include "base_generator.h"    // BaseGenerator -- Base Generator class
-#include "dlg_msgs.h"          // wxMessageDialog dialogs
-#include "node.h"              // Node class
-#include "node_creator.h"      // NodeCreator class
-#include "ttwx/ttwx.h"         // ttwx utility functions
-#include "ttwx_view_vector.h"  // ttwx::ViewVector class
-#include "utils.h"             // Utility functions that work with properties
+#include "base_generator.h"                   // BaseGenerator -- Base Generator class
+#include "dlg_msgs.h"                         // wxMessageDialog dialogs
+#include "node.h"                             // Node class
+#include "node_creator.h"                     // NodeCreator class
+#include "utils.h"                            // Utility functions that work with properties
+#include "wxue_view_vector.h"  // wxue::ViewVector class
 
 WxGlade::WxGlade() {}
 
@@ -26,7 +25,7 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
     }
     auto root = result.value().first_child();
 
-    if (!ttwx::is_sameas(root.name(), "application", ttwx::CASE::either))
+    if (!wxue::is_sameas(root.name(), "application", wxue::CASE::either))
     {
         dlgInvalidProject(filename, "wxGlade", "Import wxGlade project");
         return false;
@@ -617,7 +616,7 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     else if (node_name == "scroll_rate")
     {
         wxString param = xml_obj.text().as_cstr();
-        ttwx::ViewVector params(param.ToStdString(), ',');
+        wxue::ViewVector params(param.ToStdString(), ',');
         node->set_value(prop_scroll_rate_x, params[0]);
         node->set_value(prop_scroll_rate_y, params[1]);
         return true;

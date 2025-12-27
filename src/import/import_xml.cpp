@@ -1432,7 +1432,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         if (xml_obj.find_node(
                 [](const pugi::xml_node& node)
                 {
-                    return ttwx::is_sameas(node.name(), "dropdown", ttwx::CASE::either);
+                    return wxue::is_sameas(node.name(), "dropdown", wxue::CASE::either);
                 }))
         {
             get_GenName = gen_tool_dropdown;
@@ -1789,7 +1789,7 @@ auto ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node) -> void
     }
     if (auto face_child = xml_obj.child("face"); face_child)
     {
-        font_info.FaceName(face_child.text().as_cstr().make_wxString());
+        font_info.FaceName(face_child.text().as_cstr().wx());
     }
 
     node->set_value(prop_font, font_info.as_string());

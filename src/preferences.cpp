@@ -103,9 +103,9 @@ void Prefs::WriteConfig()
 
     config->Write("cpp_snake_case", m_is_cpp_snake_case);
 
-    config->Write("cpp_widgets_version", m_cpp_widgets_version.make_wxString());
-    config->Write("python_version", m_python_version.make_wxString());
-    config->Write("ruby_version", m_ruby_version.make_wxString());
+    config->Write("cpp_widgets_version", m_cpp_widgets_version.wx());
+    config->Write("python_version", m_python_version.wx());
+    config->Write("ruby_version", m_ruby_version.wx());
 
     config->Write("cpp_colour", m_colour_cpp.GetAsString(wxC2S_HTML_SYNTAX));
     config->Write("cpp_comment_colour", m_colour_cpp_comment.GetAsString(wxC2S_HTML_SYNTAX));
@@ -139,7 +139,7 @@ void Prefs::WriteConfig()
         config->Write("dark_mode", m_dark_mode_pending & PENDING_DARK_MODE_ON ? true : false);
     }
 
-    config->Write("code_display_font", m_code_display_font.make_wxString());
+    config->Write("code_display_font", m_code_display_font.wx());
 
     config->SetPath("/");
 }

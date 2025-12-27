@@ -615,7 +615,7 @@ void NodeSearchDlg::OnSelectLocated(wxCommandEvent& /* event unused */)
         m_listbox_forms->Clear();
         for (auto& iter: list)
         {
-            m_listbox_forms->Append(iter->as_string(prop_class_name).make_wxString());
+            m_listbox_forms->Append(iter->as_string(prop_class_name).wx());
         }
         if (m_listbox_forms->GetCount() > 0)
         {

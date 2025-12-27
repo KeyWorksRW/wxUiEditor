@@ -48,13 +48,13 @@ public:
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
 
-    NavToolbar* GetToolbar() { return m_toolbar; }
+    [[nodiscard]] auto GetToolbar() -> NavToolbar* { return m_toolbar; }
 
 protected:
-    Node* getNode(wxTreeItemId item);
+    [[nodiscard]] auto getNode(wxTreeItemId item) -> Node*;
 
-    int GetImageIndex(Node* node);
-    wxue::string GetDisplayName(Node* node) const;
+    [[nodiscard]] auto GetImageIndex(Node* node) -> int;
+    [[nodiscard]] auto GetDisplayName(Node* node) const -> wxue::string;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
 
     // Event handlers without parameters are called by lamda's, which means the function can also be

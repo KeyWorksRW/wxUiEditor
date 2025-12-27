@@ -7,9 +7,9 @@
 
 #include "gen_doc_image.h"
 
-#include "code.h"                // Code -- Helper class for generating code
-#include "ttwx_string_vector.h"  // ttwx::StringVector class
-#include "utils.h"               // Miscellaneous utility functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "utils.h"                              // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector class
 
 inline constexpr auto txt_ImageViewBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
@@ -82,7 +82,7 @@ auto ImageDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_ImageViewBlock));
         auto class_name = code.node()->get_Parent()->as_view(prop_class_name);
         for (const auto& wxline: lines)

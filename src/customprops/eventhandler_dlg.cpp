@@ -70,7 +70,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     {
         m_notebook->RemovePage(m_ruby_page);
     }
-    m_value = event->get_value().make_wxString();
+    m_value = event->get_value().wx();
 
     if (m_is_cpp_enabled)
     {

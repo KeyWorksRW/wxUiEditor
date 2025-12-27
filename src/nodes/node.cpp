@@ -438,7 +438,7 @@ auto Node::as_ArrayString(PropName name) const -> std::vector<wxue::string>
     return std::vector<wxue::string>();
 }
 
-auto Node::get_PropValuePtr(PropName name) -> tt_string*
+auto Node::get_PropValuePtr(PropName name) -> wxue::string*
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -497,28 +497,28 @@ auto Node::get_PropDefaultValue(PropName name) -> std::string_view
 {
     auto* prop = get_PropPtr(name);
 
-    ASSERT_MSG(prop, tt_string(get_NodeName())
+    ASSERT_MSG(prop, wxue::string(get_NodeName())
                          << " doesn't have the property " << map_PropNames.at(name));
 
     if (prop)
     {
         return prop->getDefaultValue();
     }
-    return tt_empty_cstr;
+    return {};
 }
 
-auto Node::get_NodeName() const -> const tt_string&
+auto Node::get_NodeName() const -> std::string_view
 {
     auto iter = m_prop_indices.find(prop_var_name);
     if (iter != m_prop_indices.end())
     {
-        return m_properties[iter->second].as_string();
+        return m_properties[iter->second].as_view();
     }
     if (iter = m_prop_indices.find(prop_class_name); iter != m_prop_indices.end())
     {
-        return m_properties[iter->second].as_string();
+        return m_properties[iter->second].as_view();
     }
-    return tt_empty_cstr;
+    return {};
 }
 
 auto Node::get_NodeName(GenLang lang) const -> std::string_view
@@ -564,14 +564,14 @@ auto Node::get_NodeName(GenLang lang) const -> std::string_view
     return name;
 }
 
-auto Node::get_ParentName() const -> const tt_string&
+auto Node::get_ParentName() const -> std::string_view
 {
     if (m_parent)
     {
         return m_parent->get_NodeName();
     }
 
-    return tt_empty_cstr;
+    return std::string_view("");
 }
 
 auto Node::get_ParentName(GenLang lang, bool ignore_sizers) const -> std::string_view
@@ -595,16 +595,16 @@ auto Node::get_ParentName(GenLang lang, bool ignore_sizers) const -> std::string
             return m_parent->get_NodeName(lang);
         }
     }
-    return tt_empty_cstr;
+    return wxue::wxue_empty_string;
 }
 
-auto Node::get_FormName() -> const tt_string&
+auto Node::get_FormName() -> std::string_view
 {
     if (auto* form = get_Form(); form)
     {
         return form->get_NodeName();
     }
-    return tt_empty_cstr;
+    return std::string_view("");
 }
 
 auto Node::GetBorderDirection(std::string_view border_settings) -> int
@@ -634,7 +634,7 @@ auto Node::GetBorderDirection(std::string_view border_settings) -> int
     return direction;
 }
 
-auto Node::ApplyAlignment(wxSizerFlags& flags, const tt_string& alignment) -> void
+auto Node::ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment) -> void
 {
     if (alignment.empty())
     {
@@ -682,7 +682,7 @@ auto Node::ApplyAlignment(wxSizerFlags& flags, const tt_string& alignment) -> vo
     }
 }
 
-auto Node::ApplyAdditionalFlags(wxSizerFlags& flags, const tt_string& prop) -> void
+auto Node::ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop) -> void
 {
     if (prop.empty())
     {
@@ -834,8 +834,8 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
     auto* parent = get_Parent();
     if (!parent)
     {
-        wxMessageBox(tt_string() << "You cannot add " << map_GenNames.at(name) << " as a child of "
-                                 << get_DeclName());
+        wxMessageBox(wxue::string() << "You cannot add " << map_GenNames.at(name)
+                                    << " as a child of " << get_DeclName());
         return { nullptr, invalid_child };
     }
 
@@ -851,7 +851,7 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
         }
         else
         {
-            wxMessageBox(tt_string()
+            wxMessageBox(wxue::string()
                          << "You can only add " << (to_size_t) max_children << ' '
                          << map_GenNames.at(name) << " as a child of " << get_DeclName());
         }
@@ -867,7 +867,7 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
         }
 
         auto insert_pos = parent->FindInsertionPos(this);
-        tt_string undo_str;
+        wxue::string undo_str;
         undo_str << "insert " << map_GenNames.at(name);
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, insert_pos));
@@ -964,16 +964,16 @@ auto Node::CreateNode(GenName name) -> Node*
     return cur_selection->CreateChildNode(name).first.get();
 }
 
-auto Node::ModifyProperty(PropName name, tt_string_view value) -> void
+auto Node::ModifyProperty(PropName name, wxue::string_view value) -> void
 {
     auto* prop = get_PropPtr(name);
-    if (prop && value != prop->as_string())
+    if (prop && value != prop->as_view())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
 }
 
-auto Node::ModifyProperty(tt_string_view name, int value) -> void
+auto Node::ModifyProperty(wxue::string_view name, int value) -> void
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -987,7 +987,7 @@ auto Node::ModifyProperty(tt_string_view name, int value) -> void
     }
 }
 
-auto Node::ModifyProperty(tt_string_view name, tt_string_view value) -> void
+auto Node::ModifyProperty(wxue::string_view name, wxue::string_view value) -> void
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -1009,9 +1009,9 @@ auto Node::ModifyProperty(NodeProperty* prop, int value) -> void
     }
 }
 
-auto Node::ModifyProperty(NodeProperty* prop, tt_string_view value) -> void
+auto Node::ModifyProperty(NodeProperty* prop, wxue::string_view value) -> void
 {
-    if (prop && value != prop->as_string())
+    if (prop && value != prop->as_view())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }

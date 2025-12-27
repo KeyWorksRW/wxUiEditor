@@ -14,8 +14,6 @@
 
 #include <wx/generic/logg.h>  // wxLogGui class
 
-#include "ttwx/ttwx.h"  // ttwx functions
-
 class MsgFrame;
 
 class MsgLogging : public wxLogGui

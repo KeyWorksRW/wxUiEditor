@@ -11,7 +11,7 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "ttwx_view_vector.h"  // ViewVector -- ttwx::ViewVector class
+#include "wxue_namespace/wxue_view_vector.h"  // ViewVector -- wxue::ViewVector class
 
 #include "write_code.h"
 
@@ -103,7 +103,7 @@ private:
     [[nodiscard]] auto WriteToFile() -> int;
 
     // Member variables
-    std::string m_buffer;
+    wxue::string m_buffer;
     wxFileName m_filename;
     Node* m_node { nullptr };
 
@@ -124,7 +124,7 @@ private:
     size_t m_fake_content_pos { 0 };
 
     std::string m_org_buffer;
-    ttwx::ViewVector m_org_file;
+    wxue::ViewVector m_org_file;
     std::string_view m_comment_line_to_find;
 
 #if defined(_DEBUG)

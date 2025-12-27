@@ -29,8 +29,8 @@ namespace wxue
     //////////////////////////////////////////////////////////////////////////
 
     // AI Context: This file provides wxue::string and wxue::string_view as modern replacements for
-    // legacy tt_string types. Both classes extend std::string/std::string_view with utility methods
-    // for string manipulation (locate, contains, trim, find_space/nonspace, stepover),
+    // legacy wxue::string types. Both classes extend std::string/std::string_view with utility
+    // methods for string manipulation (locate, contains, trim, find_space/nonspace, stepover),
     // case-insensitive comparisons, and file path operations (extension, filename,
     // replace_extension, make_relative). string_view includes moveto_* methods that modify the view
     // in-place for parsing. string adds mutation methods (erase_from, Replace, MakeLower/Upper) and
@@ -255,8 +255,6 @@ namespace wxue
         // If StepOverIfFound is true, start position is set to the first non-whitespace
         // character found after substr.
         auto moveto_substr(std::string_view substr, bool StepOverIfFound = false) noexcept -> bool;
-
-        auto operator==(string_view str) const -> bool { return this->is_sameas(str); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -272,7 +270,7 @@ namespace wxue
         using std_base = std::basic_string<char, std::char_traits<char>, std::allocator<char>>;
 
     public:
-        string() { assign(wxue::emptystring); }
+        string() = default;
         string(const char* psz) { assign(psz); }
         string(const char* psz, size_t len) : std_base(psz, len) {}
         string(std::string_view view) : std_base(view) {}
@@ -628,7 +626,7 @@ namespace wxue
         // change to.
         auto ChangeDir(bool is_dir = true) const -> bool;
 
-        auto operator<<(std::string_view str) -> string&
+        auto operator<<(wxue::string_view str) -> string&
         {
             *this += str;
             return *this;
@@ -680,4 +678,7 @@ namespace wxue
     {
         return { data(), size() };
     }
+
+    inline wxue::string wxue_empty_string;
+
 }  // namespace wxue

@@ -135,7 +135,7 @@ private:
 
     [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
 
-    static auto LoadProjectFile(const wxue::string& tt_filename, size_t generate_type,
+    static auto LoadProjectFile(const wxue::string& filename, size_t generate_type,
                                 bool& is_project_loaded) -> bool;
 
     static auto LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,

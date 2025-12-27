@@ -949,7 +949,7 @@ void GenValidatorSettings(Code& code)
     ASSERT(data_type.size())
     if (data_type.empty())
     {  // theoretically impossible
-        FAIL_MSG(wxue::string() << "No validator data type for " << node->get_NodeName());
+        FAIL_MSG(wxString() << "No validator data type for " << wxString(node->get_NodeName()));
         code.Add("wxDefaultValidator").EndFunction();
         return;
     }

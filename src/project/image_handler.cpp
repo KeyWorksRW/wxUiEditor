@@ -1306,7 +1306,7 @@ auto ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form) -> bool
     if (file_original.IsOpened())
     {
         auto file_size = file_original.Length();
-        tt_string size_comparison;
+        wxue::string size_comparison;
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
         size_comparison =
             std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",

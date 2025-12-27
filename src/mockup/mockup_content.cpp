@@ -391,9 +391,9 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 {
     if (auto minsize = node->as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
     {
-        ASSERT_MSG(!node->as_string(prop_minimum_size).contains("d", tt::CASE::either),
+        ASSERT_MSG(!node->as_string(prop_minimum_size).contains("d", wxue::CASE::either),
                    "Minimum size should not contain 'd' for dialog units");
-        if (node->as_string(prop_minimum_size).contains("d", tt::CASE::either))
+        if (node->as_string(prop_minimum_size).contains("d", wxue::CASE::either))
             window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
         else
             window->SetMinSize(convert_win->FromDIP(minsize));
@@ -401,9 +401,9 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 
     if (auto maxsize = node->as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
-        ASSERT_MSG(!node->as_string(prop_maximum_size).contains("d", tt::CASE::either),
+        ASSERT_MSG(!node->as_string(prop_maximum_size).contains("d", wxue::CASE::either),
                    "Maximum size should not contain 'd' for dialog units");
-        if (node->as_string(prop_maximum_size).contains("d", tt::CASE::either))
+        if (node->as_string(prop_maximum_size).contains("d", wxue::CASE::either))
         {
             window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
         }
@@ -455,7 +455,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
 
     if (auto& tooltip = node->as_string(prop_tooltip); tooltip.size())
     {
-        window->SetToolTip(tooltip.make_wxString());
+        window->SetToolTip(tooltip.wx());
     }
 }
 

@@ -128,7 +128,7 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
             return CreateToolNode(result->second);
         }
         FAIL_MSG(
-            tt_string()
+            wxue::string()
             << "No property enum type exists for dlg.GetWidget()! This should be impossible...")
     }
 }
@@ -157,7 +157,7 @@ void InsertWidget::OnChangeLimit(wxCommandEvent& /* event unused */)
 
 void InsertWidget::OnNameText(wxCommandEvent& /* event unused */)
 {
-    tt_string name = m_text_name->GetValue().utf8_string();
+    wxue::string name = m_text_name->GetValue().utf8_string();
     m_listbox->Clear();
     auto node = wxGetFrame().getSelectedNode();
     if (!node)

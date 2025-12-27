@@ -7,8 +7,9 @@
 
 #include "winres_form.h"
 
-#include "mainapp.h"       // App -- Main application class
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "mainapp.h"              // App -- Main application class
+#include "node_creator.h"         // NodeCreator -- Class used to create nodes
+#include "wxue_namespace/wxue.h"  // wxue::itoa
 
 void resForm::CreateDialogLayout()
 {
@@ -541,7 +542,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
             auto total_columns = result;  // This is just for readability
             auto grid_sizer = NodeCreation.CreateNode(gen_wxFlexGridSizer, box.getNode()).first;
-            grid_sizer->set_value(prop_cols, tt::itoa(total_columns));
+            grid_sizer->set_value(prop_cols, wxue::itoa(total_columns));
             static_box.getNode()->AdoptChild(grid_sizer);
 
             // TODO: [KeyWorks - 11-08-2021] The following code will handle cases where there are
@@ -819,8 +820,8 @@ void resForm::CheckForStdButtons()
 
             if (btn_node->as_string(prop_id) == "wxID_OK")
             {
-                if (btn_node->as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
-                    btn_node->as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Yes", wxue::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Yes", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Yes, "1");
@@ -829,8 +830,8 @@ void resForm::CheckForStdButtons()
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
-                else if (btn_node->as_string(prop_label).is_sameas("Save", tt::CASE::either) ||
-                         btn_node->as_string(prop_label).is_sameas("&Save", tt::CASE::either))
+                else if (btn_node->as_string(prop_label).is_sameas("Save", wxue::CASE::either) ||
+                         btn_node->as_string(prop_label).is_sameas("&Save", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Save, "1");
@@ -839,8 +840,8 @@ void resForm::CheckForStdButtons()
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
-                else if (btn_node->as_string(prop_label).is_sameas("OK", tt::CASE::either) ||
-                         btn_node->as_string(prop_label).is_sameas("&OK", tt::CASE::either))
+                else if (btn_node->as_string(prop_label).is_sameas("OK", wxue::CASE::either) ||
+                         btn_node->as_string(prop_label).is_sameas("&OK", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_OK, "1");
@@ -850,8 +851,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->as_string(prop_id) == "wxID_YES")
             {
-                if (btn_node->as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
-                    btn_node->as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Yes", wxue::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Yes", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Yes, "1");
@@ -863,8 +864,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->as_string(prop_id) == "wxID_NO")
             {
-                if (btn_node->as_string(prop_label).is_sameas("No", tt::CASE::either) ||
-                    btn_node->as_string(prop_label).is_sameas("&No", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("No", wxue::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&No", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_No, "1");
@@ -874,8 +875,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->as_string(prop_id) == "wxID_CANCEL")
             {
-                if (btn_node->as_string(prop_label).is_sameas("Close", tt::CASE::either) ||
-                    btn_node->as_string(prop_label).is_sameas("&Close", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Close", wxue::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Close", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Close, "1");
@@ -884,8 +885,8 @@ void resForm::CheckForStdButtons()
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
                     continue;
                 }
-                else if (btn_node->as_string(prop_label).is_sameas("Cancel", tt::CASE::either) ||
-                         btn_node->as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
+                else if (btn_node->as_string(prop_label).is_sameas("Cancel", wxue::CASE::either) ||
+                         btn_node->as_string(prop_label).is_sameas("&Cancel", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Cancel, "1");
@@ -897,8 +898,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->as_string(prop_id) == "wxID_APPLY")
             {
-                if (btn_node->as_string(prop_label).is_sameas("Apply", tt::CASE::either) ||
-                    btn_node->as_string(prop_label).is_sameas("&Apply", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Apply", wxue::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Apply", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Apply, "1");
@@ -908,8 +909,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->as_string(prop_id) == "wxID_HELP")
             {
-                if (btn_node->as_string(prop_label).is_sameas("Help", tt::CASE::either) ||
-                    btn_node->as_string(prop_label).is_sameas("&Help", tt::CASE::either))
+                if (btn_node->as_string(prop_label).is_sameas("Help", wxue::CASE::either) ||
+                    btn_node->as_string(prop_label).is_sameas("&Help", wxue::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->set_value(prop_Help, "1");

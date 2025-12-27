@@ -105,12 +105,7 @@
 #include <frozen/set.h>  // IWYU pragma: keep
 
 #include "wxue.h"
-#include "wxue_string.h"
-
-// ttwx namespace functions, classes, and declarations
-#include "ttwx.h"  // IWYU pragma: keep
-
-#include "tt_string.h"  // tt_string -- std::string with additional methods
+#include "wxue_string.h"  // wxue::string -- std::string with additional methods
 
 #ifndef wxBITMAP_TYPE_SVG
     #define wxBITMAP_TYPE_SVG static_cast<wxBitmapType>(wxBITMAP_TYPE_ANY - 1)
@@ -215,8 +210,8 @@ constexpr const int minRequiredVer = 15;
 // 1.2.9 == version 21 (beta of 1.3.0)
 // 1.3.0 == version 21 (1.3.0)
 
-// Use when you need to return an empty const tt_string&
-extern tt_string tt_empty_cstr;
+// Use when you need to return an empty const wxue::string&
+extern wxue::string wxue::wxue_empty_string;
 
 // Character used to separate the fields in a bitmap property
 constexpr const char BMP_PROP_SEPARATOR = ';';

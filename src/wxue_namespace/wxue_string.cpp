@@ -221,7 +221,7 @@ namespace wxue
         }
 
         size_t replacements = 0;
-        if (auto pos = locate(oldtext, 0, checkcase); ttwx::is_found(pos))
+        if (auto pos = locate(oldtext, 0, checkcase); wxue::is_found(pos))
         {
             do
             {
@@ -244,7 +244,7 @@ namespace wxue
                     break;
                 }
                 pos = locate(oldtext, pos, checkcase);
-            } while (ttwx::is_found(pos));
+            } while (wxue::is_found(pos));
         }
 
         return replacements;
@@ -301,12 +301,12 @@ namespace wxue
         }
 
         auto pos_file = find_filename();
-        if (!ttwx::is_found(pos_file))
+        if (!wxue::is_found(pos_file))
         {
             pos_file = 0;
         }
 
-        if (auto pos = find_last_of('.'); ttwx::is_found(pos) && pos > pos_file)
+        if (auto pos = find_last_of('.'); wxue::is_found(pos) && pos > pos_file)
         {
             // If the string only contains . or .. then it is a folder
             if (pos == 0 || (pos == 1 && at(0) != '.'))

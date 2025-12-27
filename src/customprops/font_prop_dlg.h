@@ -21,7 +21,7 @@ public:
     FontPropDlg(wxWindow* parent, NodeProperty* prop);
     FontPropDlg(wxWindow* parent, const wxString& font_description);
     const wxString& GetResults() { return m_value; }
-    tt_string_view GetFontDescription() { return m_font_description; }
+    wxue::string_view GetFontDescription() { return m_font_description; }
 
 protected:
     void Initialize();  // Call this from either of the constructors
@@ -44,7 +44,7 @@ protected:
     void OnOK(wxCommandEvent& /* event unused */) override;
 
     wxString m_value;
-    tt_string m_font_description;
+    wxue::string m_font_description;
 
 private:
     wxFontEnumerator m_font_enum;

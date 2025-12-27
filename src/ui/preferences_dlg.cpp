@@ -503,9 +503,9 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_check_right_propgrid->SetValue(UserPrefs.is_RightPropGrid());
     m_isWakaTimeEnabled = UserPrefs.is_WakaTimeEnabled();
 
-    m_choice_cpp_version->SetStringSelection(UserPrefs.get_CppWidgetsVersion().make_wxString());
-    m_choice_python_version->SetStringSelection(UserPrefs.get_PythonVersion().make_wxString());
-    m_choice_ruby_version->SetStringSelection(UserPrefs.get_RubyVersion().make_wxString());
+    m_choice_cpp_version->SetStringSelection(UserPrefs.get_CppWidgetsVersion().wx());
+    m_choice_python_version->SetStringSelection(UserPrefs.get_PythonVersion().wx());
+    m_choice_ruby_version->SetStringSelection(UserPrefs.get_RubyVersion().wx());
 
     m_colour_cpp->SetColour(UserPrefs.get_CppColour());
     m_colour_cpp_comment->SetColour(UserPrefs.get_CppCommentColour());

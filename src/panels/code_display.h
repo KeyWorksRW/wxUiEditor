@@ -11,7 +11,8 @@
 
 #include "codedisplay_base.h"
 
-#include "tt/tt_view_vector.h"  // tt_view_vector
+#include "wxue_view_vector.h"  // wxue::ViewVector
+
 #include "write_code.h"         // WriteCode -- Write code to Scintilla or file
 
 class wxFindDialogEvent;
@@ -52,6 +53,6 @@ protected:
     void doWrite(std::string_view code) override;
 
 private:
-    tt_view_vector m_view;
+    wxue::ViewVector m_view;
     GenLang m_panel_type;
 };

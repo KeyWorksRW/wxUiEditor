@@ -52,14 +52,14 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
         auto result = doc.load_string(doc_str.c_str());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()),
+            wxMessageBox("Error parsing XRC document: " + wxue::string(result.description()),
                          "XRC Import Test");
             return;
         }
     }
 
     auto root = doc.first_child();
-    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
     {
         wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
         return;
@@ -86,8 +86,8 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
     if (original_node_count != new_node_count)
     {
         // This isn't always a problem, but it's an indication that something might be wrong.
-        MSG_INFO(tt_string("Original node count: ") << original_node_count);
-        MSG_INFO(tt_string("New node count: ") << new_node_count);
+        MSG_INFO(wxue::string("Original node count: ") << original_node_count);
+        MSG_INFO(wxue::string("New node count: ") << new_node_count);
     }
     else
     {
@@ -123,14 +123,14 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         auto result = doc.load_string(doc_str.c_str());
         if (!result)
         {
-            wxMessageBox("Error parsing XRC document: " + tt_string(result.description()),
+            wxMessageBox("Error parsing XRC document: " + wxue::string(result.description()),
                          "XRC Import Test");
             return;
         }
     }
 
     auto root = doc.first_child();
-    if (!tt::is_sameas(root.name(), "resource", tt::CASE::either))
+    if (!wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
     {
         wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
         return;
@@ -143,7 +143,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     if (new_node)
     {
         Project.FixupDuplicatedNode(new_node.get());
-        tt_string undo_str("duplicate ");
+        wxue::string undo_str("duplicate ");
         undo_str << new_node->get_DeclName();
         auto pos = Project.get_ProjectNode()->FindInsertionPos(form_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), Project.get_ProjectNode(),

@@ -7,9 +7,9 @@
 
 #include "gen_doc_textctrl.h"
 
-#include "code.h"                // Code -- Helper class for generating code
-#include "ttwx_string_vector.h"  // ttwx::StringVector class
-#include "utils.h"               // Miscellaneous utility functions
+#include "code.h"                               // Code -- Helper class for generating code
+#include "utils.h"                              // Miscellaneous utility functions
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector class
 
 inline constexpr auto txt_TextCtrlDocBlock =
     R"===(wxIMPLEMENT_DYNAMIC_CLASS(%class%, wxDocument);
@@ -77,7 +77,7 @@ auto TextDocGenerator::ConstructionCode(Code& code) -> bool
 {
     if (code.is_cpp())
     {
-        ttwx::StringVector lines;
+        wxue::StringVector lines;
         lines.ReadString(std::string_view(txt_TextCtrlDocBlock));
         auto class_name = code.node()->as_view(prop_class_name);
         for (const auto& wxline: lines)
@@ -134,7 +134,7 @@ private:
 
 auto TextDocGenerator::HeaderCode(Code& code) -> bool
 {
-    ttwx::StringVector lines;
+    wxue::StringVector lines;
     lines.ReadString(std::string_view(txt_TextCtrlDocHdrBlock));
     auto class_name = code.node()->as_view(prop_class_name);
     for (const auto& wxline: lines)

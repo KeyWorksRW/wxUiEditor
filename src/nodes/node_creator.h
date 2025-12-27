@@ -119,7 +119,7 @@ public:
 
     void InitGenerators();
 
-    [[nodiscard]] auto is_OldHostType(tt_string_view old_type) const -> bool
+    [[nodiscard]] auto is_OldHostType(std::string_view old_type) const -> bool
     {
         return m_setOldHostTypes.contains(old_type);
     }

@@ -35,7 +35,8 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             code += "auto* ";
         }
         code.NodeName().Str("_item = ");
-        submenu_item_name = node->get_NodeName() + "_item";
+        submenu_item_name = node->get_NodeName();
+        submenu_item_name << "_item";
     }
 
     if (node->get_Parent()->is_Gen(gen_PopupMenu))

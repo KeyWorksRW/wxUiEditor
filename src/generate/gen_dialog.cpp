@@ -59,7 +59,7 @@ wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool DialogFormGenerator::ConstructionCode(Code& code)
 {
-    ASSERT_MSG(!code.node()->as_string(prop_size).contains("d", tt::CASE::either),
+    ASSERT_MSG(!code.node()->as_string(prop_size).contains("d", wxue::CASE::either),
                "Dialog units should not be used for wxDialog")
     if (code.is_cpp())
     {
@@ -162,7 +162,7 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
 
         code.EndFunction();
         code.Unindent();
-        if (auto indent_pos = code.GetCode().find("parent"); ttwx::is_found(indent_pos))
+        if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
         {
             indent_pos -= code.GetCode().find("\n");
             std::string spaces(indent_pos, ' ');

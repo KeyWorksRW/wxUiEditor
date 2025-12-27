@@ -792,11 +792,12 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
 {
     // var_comment property
     category.addProperty(prop_var_comment);
-    auto* prop_info = new PropDeclaration(
-        prop_var_comment, type_string_edit_single, PropDeclaration::DefaultValue(tt_empty_cstr),
-        PropDeclaration::HelpText(
-            "Comment to add to the variable name in the generated header file "
-            "if the class access is set to protected or public"));
+    auto* prop_info =
+        new PropDeclaration(prop_var_comment, type_string_edit_single,
+                            PropDeclaration::DefaultValue(wxue::wxue_empty_string),
+                            PropDeclaration::HelpText(
+                                "Comment to add to the variable name in the generated header file "
+                                "if the class access is set to protected or public"));
     node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_var_comment))] = prop_info;
 
     // class_access property
@@ -910,7 +911,7 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
     // Any time there is a var_name property, it needs to be followed by a var_comment and
     // class_access property. Rather than add this to all the XML generator specifications, we
     // simply insert it here if it doesn't exist.
-    if (tt::is_sameas(name, map_PropNames.at(prop_var_name)) &&
+    if (wxue::is_sameas(name, map_PropNames.at(prop_var_name)) &&
         !node_declaration->is_Gen(gen_data_string) && !node_declaration->is_Gen(gen_data_xml))
     {
         AddVarNameRelatedProperties(node_declaration, category);

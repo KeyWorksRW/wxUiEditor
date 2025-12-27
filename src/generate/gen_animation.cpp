@@ -26,7 +26,7 @@
 
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (tt::contains(node->as_string(prop_animation), ".ani", tt::CASE::either))
+    if (node->as_string(prop_animation).contains(".ani", wxue::CASE::either))
     {
         auto* widget = new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
                                                   wxNullAnimation, DlgPoint(node, prop_pos),
@@ -93,7 +93,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
     {
         // The generic version is required to display .ANI files on wxGTK.
         bool use_generic_version =
-            (code.node()->as_string(prop_animation).contains(".ani", tt::CASE::either) ||
+            (code.node()->as_string(prop_animation).contains(".ani", wxue::CASE::either) ||
              code.node()->as_string(prop_subclass).starts_with("wxGeneric"));
         code.AddAuto().NodeName().CreateClass(use_generic_version);
         code.ValidParentName()
@@ -220,7 +220,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     // effecitvely use wxGenericAnimationCtrl any way (since there are no native implementations of
     // wxAnimationCtrl) this shouldn't make any difference for them.
     if (node->HasValue(prop_animation) &&
-        node->as_string(prop_animation).contains(".gif", tt::CASE::either))
+        node->as_string(prop_animation).contains(".gif", wxue::CASE::either))
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     else
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
@@ -274,7 +274,7 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
     if ((node->HasValue(prop_animation) &&
-         !node->as_string(prop_animation).contains(".gif", tt::CASE::either)) ||
+         !node->as_string(prop_animation).contains(".gif", wxue::CASE::either)) ||
         node->as_string(prop_subclass).starts_with("wxGeneric"))
     {
         InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);

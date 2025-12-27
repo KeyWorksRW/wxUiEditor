@@ -68,6 +68,6 @@ protected:
 
 private:
     wxString m_client;
-    tt_string m_org_id;
+    wxue::string m_org_id;
     const char* m_id;
 };

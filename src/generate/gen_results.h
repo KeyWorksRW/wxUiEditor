@@ -64,6 +64,17 @@ public:
     // Main entry point - runs generation based on configured mode/nodes/languages
     [[nodiscard]] auto Generate() -> bool;
 
+    // Set the output path for combined file generation
+    // This overrides project settings when specified
+    void SetCombinedOutputPath(std::string_view path) { m_combined_output_path = path; }
+
+    // Generate all forms into a single combined output file for the specified language.
+    // language: must be exactly one language (error if multiple bits set)
+    // Requires SetCombinedOutputPath() or project prop_combined_xrc_file to be set.
+    // Currently supports GEN_LANG_XRC. Future: Python, Ruby, Perl.
+    // Returns true if file was written/needs updating, false otherwise.
+    [[nodiscard]] auto GenerateCombinedFile(GenLang language) -> bool;
+
     void StartClock();
     void EndClock();
     void Clear();
@@ -124,6 +135,10 @@ private:
     // Generate code for display in a panel (no file operations)
     [[nodiscard]] auto GenerateForDisplay() -> bool;
 
+    // Generate all XRC forms into a single combined file
+    // In compare mode, captures FileDiff. Returns true if file was updated/needs updating.
+    [[nodiscard]] auto GenerateCombinedXrcFile(bool comparison_only = false) -> bool;
+
     // Class members
     Mode m_mode { Mode::generate_and_write };
     Scope m_scope { Scope::unknown };
@@ -136,6 +151,9 @@ private:
     WriteCode* m_display_src { nullptr };
     WriteCode* m_display_hdr { nullptr };
     PANEL_PAGE m_panel_page { PANEL_PAGE::NOT_PANEL };  // Which panel is active (for line tracking)
+
+    // For combined file output
+    std::string m_combined_output_path;  // Override for combined output path
 
     size_t m_file_count { 0 };
     size_t m_elapsed { 0 };
@@ -158,16 +176,3 @@ auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList 
 
 // ../generate/gen_codefiles.cpp
 void GenInhertedClass(GenResults& results);
-
-// DEPRECATED: Use GenResults::Generate() with SetNodes(ProjectNode), SetLanguages(GEN_LANG_XRC).
-// If out_file contains a file, it will override project xrc_file and combine_xrc settings.
-//
-// If NeedsGenerateCheck is true, this will not write any files, but will return true if at
-// least one file needs to be generated.
-//
-// If pClassList is non-null, it will contain the base class name of every form that needs
-// updating.
-//
-// ../generate/gen_xrc.cpp
-[[deprecated("Use GenResults::Generate() with SetNodes(), SetLanguages(GEN_LANG_XRC)")]]
-auto GenerateXrcFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr) -> bool;

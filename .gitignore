@@ -5,6 +5,8 @@ __pycache__/
 tests/quick_test/
 Affinity/
 src/archived/
+build-fedora/
+build-ubuntu/
 
 # Ignore clangd cache
 .cache/

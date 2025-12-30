@@ -1824,9 +1824,23 @@ void CppCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>
         }
     }
 
+#if defined(_DEBUG)
+    #include "stack_monitor.h"
+#endif  // _DEBUG
+
     // Now parse all the children
     for (const auto& child: node->get_ChildNodePtrs())
     {
+#if defined(_DEBUG)
+        try
+        {
+            StackMonitor::checkStack();
+        }
+        catch (...)
+        {
+            FAIL_MSG("Stack overflow check exceeds safety margin in GatherGeneratorIncludes()");
+        }
+#endif  // _DEBUG
         GatherGeneratorIncludes(child.get(), set_src, set_hdr);
     }
 }

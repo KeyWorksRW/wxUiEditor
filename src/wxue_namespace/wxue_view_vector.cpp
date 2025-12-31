@@ -33,26 +33,29 @@ namespace
         return temp_end;
     }
 
-    // Find the first occurrence of any separator from the vector
+    // Find the first occurrence of any separator from the vector (optimized for performance)
     auto find_first_separator(std::string_view str, const std::vector<std::string_view>& separators,
                               size_t start_pos) -> std::pair<size_t, size_t>
     {
         size_t earliest_pos = std::string::npos;
         size_t sep_length = 0;
 
-        for (const auto& separator: separators)
+        // Scan through the string from start_pos, checking for any separator at each position
+        for (size_t pos = start_pos; pos < str.size(); ++pos)
         {
-            if (separator.empty())
+            // Check each separator against the current position
+            for (const auto& separator: separators)
             {
-                continue;
-            }
+                if (separator.empty() || pos + separator.size() > str.size())
+                {
+                    continue;
+                }
 
-            auto pos = str.find(separator, start_pos);
-            if (pos != std::string::npos &&
-                (earliest_pos == std::string::npos || pos < earliest_pos))
-            {
-                earliest_pos = pos;
-                sep_length = separator.size();
+                // Use substr comparison instead of find() - faster for small separators
+                if (str.substr(pos, separator.size()) == separator)
+                {
+                    return { pos, separator.size() };
+                }
             }
         }
 

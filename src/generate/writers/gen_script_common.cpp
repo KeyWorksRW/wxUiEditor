@@ -78,7 +78,7 @@ namespace ScriptCommon
 
         // If the user has defined any event handlers, add them to the code_lines set so we
         // don't generate them again.
-        if (!has_base_file || !org_file.ReadFile(std::string_view(path)))
+        if (!has_base_file || !path.file_exists() || !org_file.ReadFile(std::string_view(path)))
         {
             return false;
         }

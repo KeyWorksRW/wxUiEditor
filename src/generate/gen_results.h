@@ -17,8 +17,10 @@ class WriteCode;
 class wxProgressDialog;
 
 #include <chrono>
+#include <future>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "../internal/compare/diff.h"  // DiffResult, DiffLine, FileDiff
@@ -107,12 +109,10 @@ public:
     [[nodiscard]] auto GetFileDiffs() -> auto& { return m_file_diffs; }
     [[nodiscard]] auto GetFileDiffs() const -> const auto& { return m_file_diffs; }
 
-    // Generate code files using the incoming class list. If classes is nullptr, all forms
-    // in the project will be processed.
-    // If comparison_only is true, only checks if files need updating without writing
-    [[nodiscard]] auto GenerateLanguageFiles(GenLang language,
-                                             const std::map<std::string, Node*>* classes = nullptr,
-                                             bool comparison_only = false) -> bool;
+    // Generate code files for all forms. If comparison_only is true, only checks if files
+    // need updating without writing
+    [[nodiscard]] auto GenerateLanguageFiles(GenLang language, bool comparison_only = false)
+        -> bool;
 
 private:
     // Scope inference from node type
@@ -152,9 +152,12 @@ private:
     // language
     void RemoveFormsWithoutOutputPath(std::vector<Node*>& forms);
 
-    // Process file diff - checks size limit and either creates minimal entry for large files
-    // or performs full diff comparison. Helper method to reduce code duplication.
-    void ProcessFileDiff(const wxue::string& path, std::string_view content, Node* form);
+    // Process file diff asynchronously - checks size limit and either creates minimal entry for
+    // large files or performs full diff comparison. Launches async task for performance.
+    void ProcessFileDiff(wxue::string path, std::shared_ptr<std::string> content, Node* form);
+
+    // Wait for all pending diff computations to complete and collect results
+    void WaitForPendingDiffs();
 
     // Class members
     Mode m_mode { Mode::generate_and_write };
@@ -181,6 +184,10 @@ private:
     std::vector<FileDiff> m_file_diffs;        // Detailed diffs for compare_only mode
 
     std::chrono::steady_clock::time_point m_start_time;
+    bool m_clock_started { false };
+
+    // Threading support for ProcessFileDiff
+    std::vector<std::future<std::optional<FileDiff>>> m_pending_diffs;
 
     // Progress dialog support
     bool m_show_progress { false };  // Enable progress dialog in Generate()

@@ -76,10 +76,12 @@ void DiffViewer::CreateControls()
 
     m_original_text = new wxStyledTextCtrl(this, wxID_ANY);
     SetupTextControl(m_original_text);
+    m_original_text->Bind(wxEVT_STC_UPDATEUI, &DiffViewer::OnOriginalScroll, this);
     text_sizer->Add(m_original_text, 1, wxEXPAND | wxALL, 5);
 
     m_modified_text = new wxStyledTextCtrl(this, wxID_ANY);
     SetupTextControl(m_modified_text);
+    m_modified_text->Bind(wxEVT_STC_UPDATEUI, &DiffViewer::OnModifiedScroll, this);
     text_sizer->Add(m_modified_text, 1, wxEXPAND | wxALL, 5);
 
     main_sizer->Add(text_sizer, 1, wxEXPAND);
@@ -104,10 +106,6 @@ void DiffViewer::SetupTextControl(wxStyledTextCtrl* ctrl)
     // Basic setup
     ctrl->StyleClearAll();
     ctrl->SetLexer(wxSTC_LEX_CPP);
-
-    // Line numbers
-    ctrl->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    ctrl->SetMarginWidth(0, 50);
 
     // Colors for diff highlighting
     // Style 0: Normal text (unchanged)
@@ -176,6 +174,27 @@ void DiffViewer::DisplayDiff(size_t index)
     m_prev_button->Enable(index > 0);
     m_next_button->Enable(index < m_diffs.size() - 1);
 
+    // Clear and populate text controls
+    m_original_text->SetReadOnly(false);
+    m_modified_text->SetReadOnly(false);
+
+    m_original_text->ClearAll();
+    m_modified_text->ClearAll();
+
+    // Handle files that are too large to display
+    if (diff.is_too_large_to_display)
+    {
+        wxue::string info;
+        info << "File " << (index + 1) << " of " << m_diffs.size()
+             << " - Diff too large to display";
+        m_diff_info->SetLabel(info.wx());
+
+        m_original_text->AppendText("Diff too large to display");
+        m_original_text->SetReadOnly(true);
+        m_modified_text->SetReadOnly(true);
+        return;
+    }
+
     // Update info text
     if (diff.diff_result.has_differences)
     {
@@ -207,13 +226,6 @@ void DiffViewer::DisplayDiff(size_t index)
         info << "File " << (index + 1) << " of " << m_diffs.size() << " - No differences";
         m_diff_info->SetLabel(info.wx());
     }
-
-    // Clear and populate text controls
-    m_original_text->SetReadOnly(false);
-    m_modified_text->SetReadOnly(false);
-
-    m_original_text->ClearAll();
-    m_modified_text->ClearAll();
 
     // Build the display text with line-by-line coloring
     for (size_t line_idx = 0; line_idx < diff.diff_result.left_lines.size(); ++line_idx)
@@ -290,4 +302,30 @@ void DiffViewer::OnNext(wxCommandEvent& /* event */)
 void DiffViewer::OnClose(wxCommandEvent& /* event */)
 {
     EndModal(wxID_OK);
+}
+
+void DiffViewer::OnOriginalScroll(wxStyledTextEvent& /* event */)
+{
+    if (m_syncing_scroll)
+    {
+        return;
+    }
+
+    m_syncing_scroll = true;
+    m_modified_text->SetFirstVisibleLine(m_original_text->GetFirstVisibleLine());
+    m_modified_text->SetXOffset(m_original_text->GetXOffset());
+    m_syncing_scroll = false;
+}
+
+void DiffViewer::OnModifiedScroll(wxStyledTextEvent& /* event */)
+{
+    if (m_syncing_scroll)
+    {
+        return;
+    }
+
+    m_syncing_scroll = true;
+    m_original_text->SetFirstVisibleLine(m_modified_text->GetFirstVisibleLine());
+    m_original_text->SetXOffset(m_modified_text->GetXOffset());
+    m_syncing_scroll = false;
 }

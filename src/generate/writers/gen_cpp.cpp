@@ -504,7 +504,8 @@ void CppCodeGenerator::InitializeGenerationState()
     m_NeedSVGFunction = false;
 }
 
-auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) -> void
+auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
+                                     wxProgressDialog* progress) -> void
 {
     m_language = language;
     m_panel_type = panel_type;
@@ -571,13 +572,13 @@ auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type) ->
     {
         // m_thrd_collect_img_headers.join() has already been called
         m_thrd_need_img_func.join();
-        GenerateImagesForm();
+        GenerateImagesForm(progress);
         return;
     }
     if (m_form_node->is_Gen(gen_Data))
     {
         m_thrd_need_img_func.join();
-        GenerateDataForm();
+        GenerateDataForm(progress);
         return;
     }
 
@@ -1547,7 +1548,7 @@ inline constexpr const auto txt_get_data_function = R"===(
 
 // clang-format on
 
-void CppCodeGenerator::GenerateDataForm()
+void CppCodeGenerator::GenerateDataForm(wxProgressDialog* progress)
 {
     ASSERT_MSG(m_form_node, "Attempting to generate Data List when no form was located.");
 

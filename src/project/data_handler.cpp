@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/progdlg.h>  // wxProgressDialog
+
 #include "data_handler.h"
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -27,7 +29,7 @@
 
 DataHandler& ProjectData = DataHandler::getInstance();
 
-auto DataHandler::Initialize() -> void
+auto DataHandler::Initialize(wxProgressDialog* progress) -> void
 {
     auto* node_data_list = data_list::FindDataList();
     if (!node_data_list)
@@ -64,6 +66,7 @@ auto DataHandler::Initialize() -> void
 
     auto rlambda = [&](Node* parent, auto&& rlambda) -> void
     {
+        int progress_count = 0;
         for (const auto& node: parent->get_ChildNodePtrs())
         {
             if (node->is_Gen(gen_data_folder))
@@ -95,9 +98,22 @@ auto DataHandler::Initialize() -> void
                 // filename changed or it could not be found. Calling LoadAndCompress() will
                 // replace the EmbeddedData structure.
             }
+            if (progress)
+            {
+                wxString msg;
+                msg << "Generating embedded images: " << ++progress_count << " of "
+                    << (parent->get_ChildNodePtrs().size());
+                progress->Update(progress->GetValue() + 1, msg);
+            }
             LoadAndCompress(node.get());
         }
     };
+    if (progress)
+    {
+        wxString msg;
+        msg << "Generating data files: 1 of " << (node_data_list->get_ChildNodePtrs().size());
+        progress->Update(progress->GetValue(), msg);
+    }
 
     rlambda(node_data_list, rlambda);
 }

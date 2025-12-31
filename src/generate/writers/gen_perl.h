@@ -16,7 +16,8 @@ public:
 
     // All language generators must implement this method.
     void GenerateClass(GenLang language = GEN_LANG_PERL,
-                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
+                       wxProgressDialog* progress = nullptr) override;
 
 protected:
     // Helper methods to break down GenerateClass complexity
@@ -35,7 +36,7 @@ protected:
     void WriteUsageStatements();
     void ParseNodesForUsage(Node* node);
 
-    void GenerateImagesForm();
+    void GenerateImagesForm(wxProgressDialog* progress = nullptr);
 
     // This function simply generates unhandled event handlers in a multi-string comment.
     void GenUnhandledEvents(EventVector& events);

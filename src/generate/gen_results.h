@@ -14,6 +14,7 @@ namespace pugi
 
 class Node;
 class WriteCode;
+class wxProgressDialog;
 
 #include <chrono>
 #include <map>
@@ -79,6 +80,13 @@ public:
     void EndClock();
     void Clear();
 
+    // Enable progress dialog for next Generate() call.
+    // Title will be shown in the dialog (e.g., "Comparing C++ files...")
+    void EnableProgressDialog(const wxString& title = "Generating code...");
+
+    // Disable progress dialog (default state)
+    void DisableProgressDialog() { m_show_progress = false; }
+
     [[nodiscard]] auto GetFileCount() const { return m_file_count; }
     void SetFileCount(size_t count) { m_file_count = count; }
     void IncrementFileCount() { ++m_file_count; }
@@ -127,7 +135,8 @@ private:
     // Generate C++ code for a single form (both .h and .cpp files)
     // In compare mode, captures FileDiff for both files
     // Returns true if any file was updated/needs updating
-    [[nodiscard]] auto GenerateCppForm(Node* form, bool comparison_only = false) -> bool;
+    [[nodiscard]] auto GenerateCppForm(Node* form, bool comparison_only = false,
+                                       wxProgressDialog* progress = nullptr) -> bool;
 
     [[nodiscard]] auto GenerateLanguageForm(std::string_view class_name, Node* form,
                                             bool comparison_only = false) -> bool;
@@ -138,6 +147,14 @@ private:
     // Generate all XRC forms into a single combined file
     // In compare mode, captures FileDiff. Returns true if file was updated/needs updating.
     [[nodiscard]] auto GenerateCombinedXrcFile(bool comparison_only = false) -> bool;
+
+    // Remove forms from the vector that don't have an output file configured for the current
+    // language
+    void RemoveFormsWithoutOutputPath(std::vector<Node*>& forms);
+
+    // Process file diff - checks size limit and either creates minimal entry for large files
+    // or performs full diff comparison. Helper method to reduce code duplication.
+    void ProcessFileDiff(const wxue::string& path, std::string_view content, Node* form);
 
     // Class members
     Mode m_mode { Mode::generate_and_write };
@@ -164,6 +181,10 @@ private:
     std::vector<FileDiff> m_file_diffs;        // Detailed diffs for compare_only mode
 
     std::chrono::steady_clock::time_point m_start_time;
+
+    // Progress dialog support
+    bool m_show_progress { false };  // Enable progress dialog in Generate()
+    wxString m_progress_title;       // Dialog title
 };
 
 // DEPRECATED: Use GenResults::Generate() with SetNodes(ProjectNode),

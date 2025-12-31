@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/artprov.h>
+#include <wx/progdlg.h>  // wxProgressDialog
 
 #include <algorithm>
 #include <set>
@@ -418,7 +419,8 @@ auto RubyCodeGenerator::WriteRuboCopFooter() -> void
     }
 }
 
-void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
+                                      wxProgressDialog* progress)
 {
     m_language = language;
     m_panel_type = panel_type;
@@ -655,7 +657,7 @@ void RubyCodeGenerator::WriteImageRequireStatements(Code& code)
 
 constexpr std::uint32_t MAX_UINT32 = 0xFFFFFFFF;
 
-void RubyCodeGenerator::GenerateImagesForm()
+void RubyCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 {
     if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {
@@ -666,6 +668,7 @@ void RubyCodeGenerator::GenerateImagesForm()
 
     Code code(m_form_node, GEN_LANG_RUBY);
 
+    int progress_count = 0;
     for (const auto* iter_array: m_embedded_images)
     {
         if (iter_array->get_Form() != m_form_node)
@@ -688,6 +691,14 @@ void RubyCodeGenerator::GenerateImagesForm()
         }
         m_source->writeLine(code);
         code.clear();
+        if (progress && ++progress_count == result::progress_image_step)
+        {
+            wxString msg;
+            msg << "Generating embedded images: " << progress_count << " of "
+                << (m_embedded_images.size());
+            progress->Update(progress->GetValue() + 1, msg);
+            progress_count = 0;
+        }
         auto encoded =
             base64_encode(iter_array->base_image().array_data.data(),
                           iter_array->base_image().array_size & MAX_UINT32, GEN_LANG_RUBY);

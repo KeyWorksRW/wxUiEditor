@@ -35,6 +35,7 @@ class NodeEvent;
 class ProjectSettings;
 class WriteCode;
 class wxWindow;
+class wxProgressDialog;
 
 class EmbeddedImage;
 
@@ -54,6 +55,8 @@ namespace result
         ignored = 2,
         needs_writing = 3,
     };
+
+    constexpr int progress_image_step = 25;
 }  // namespace result
 
 // flag == 1 for test only, flag == 2 if temp filename in updated_files
@@ -75,7 +78,9 @@ public:
     void SetSrcWriteCode(WriteCode* code_to_write) { m_source = code_to_write; }
 
     // All language generators must implement this method.
-    virtual void GenerateClass(GenLang language, PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) = 0;
+    // If progress is provided, GenerateClass can call progress->Update() for long operations.
+    virtual void GenerateClass(GenLang language, PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
+                               wxProgressDialog* progress = nullptr) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
     virtual auto GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
@@ -112,7 +117,7 @@ protected:
     };
 
     // This method is in gen_images.cpp, and handles both source and header code generation
-    void GenerateImagesForm();
+    void GenerateImagesForm(wxProgressDialog* progress = nullptr);
 
     [[nodiscard]] static auto GetDeclaration(Node* node) -> wxue::string;
 

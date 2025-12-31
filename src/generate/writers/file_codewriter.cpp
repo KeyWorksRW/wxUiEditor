@@ -181,6 +181,8 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     // we don't know if the line endings are still the same, so the *safe* way to do it is to
     // create a vector of std::string_views that we can use to search for the comment line.
 
+    m_org_file.reserve(m_org_buffer.size() /
+                       150);  // Pre-allocate assuming average line length of 80 chars
     m_org_file.ReadString(std::string_view(m_org_buffer));
     auto line = FindAdditionalContentIndex();
     if (line == -1)

@@ -128,6 +128,7 @@ void CodeCompare::OnRadioButton(GenLang language)
     results.SetLanguages(language);
     results.SetMode(GenResults::Mode::compare_only);
     results.SetNodes(Project.get_ProjectNode());
+    results.EnableProgressDialog("Comparing Generated Code...");
 
     if (results.Generate())
     {

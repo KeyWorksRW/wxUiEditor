@@ -27,6 +27,7 @@
 
 class Code;
 class WriteCode;
+class wxProgressDialog;
 
 enum xml_flags : uint32_t
 {
@@ -65,7 +66,7 @@ public:
     auto Clear() -> void { m_embedded_data.clear(); }
 
     // Only call this when the datalist code needs to be generated.
-    auto Initialize() -> void;
+    auto Initialize(wxProgressDialog* progress = nullptr) -> void;
 
     // Generate data list construction code in source
     //

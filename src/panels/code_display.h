@@ -13,7 +13,7 @@
 
 #include "wxue_view_vector.h"  // wxue::ViewVector
 
-#include "write_code.h"         // WriteCode -- Write code to Scintilla or file
+#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 class wxFindDialogEvent;
 class Node;

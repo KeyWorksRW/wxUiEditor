@@ -7,11 +7,11 @@
 
 #include "import_wxglade.h"
 
-#include "base_generator.h"                   // BaseGenerator -- Base Generator class
-#include "dlg_msgs.h"                         // wxMessageDialog dialogs
-#include "node.h"                             // Node class
-#include "node_creator.h"                     // NodeCreator class
-#include "utils.h"                            // Utility functions that work with properties
+#include "base_generator.h"    // BaseGenerator -- Base Generator class
+#include "dlg_msgs.h"          // wxMessageDialog dialogs
+#include "node.h"              // Node class
+#include "node_creator.h"      // NodeCreator class
+#include "utils.h"             // Utility functions that work with properties
 #include "wxue_view_vector.h"  // wxue::ViewVector class
 
 WxGlade::WxGlade() {}

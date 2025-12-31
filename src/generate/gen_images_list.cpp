@@ -8,6 +8,7 @@
 #include <format>
 
 #include <wx/panel.h>              // Base header for wxPanel
+#include <wx/progdlg.h>            // wxProgressDialog
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/sizer.h>              // provide wxSizer class for layout
 #include <wx/statbmp.h>            // wxStaticBitmap class interface
@@ -168,7 +169,7 @@ inline constexpr const auto txt_get_bundle_svg_function = R"===(
 
 // clang-format on
 
-void BaseCodeGenerator::GenerateImagesForm()
+void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 {
     ASSERT_MSG(m_form_node, "Attempting to generate Images List when no form was located.");
 
@@ -207,6 +208,7 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         // Write all of the image data followed by the functions to access them.
 
+        int progress_count = 0;
         for (auto iter_array: m_embedded_images)
         {
             if (iter_array->get_Form() != m_form_node)
@@ -220,6 +222,14 @@ void BaseCodeGenerator::GenerateImagesForm()
             code << "const unsigned char " << iter_array->base_image().array_name << '[' << max_pos
                  << "] {";
             m_source->writeLine(code);
+            if (progress && ++progress_count % result::progress_image_step == 0)
+            {
+                wxString msg;
+                msg << "Generating embedded images: " << progress_count << " of "
+                    << (m_embedded_images.size());
+                progress->Update(progress->GetValue() + 1, msg);
+                progress_count = 0;
+            }
 
             size_t pos = 0;
             while (pos < max_pos)
@@ -240,8 +250,6 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         m_source->writeLine();
 
-        int svg_processed = 0;
-        int bundle_processed = 0;
         for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
             if (auto bundle = ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
@@ -279,16 +287,6 @@ void BaseCodeGenerator::GenerateImagesForm()
                     m_source->Unindent();
                     m_source->writeLine("}");
                     m_source->writeLine();
-
-                    ++svg_processed;
-                    if (auto* frame = wxGetMainFrame(); frame)
-                    {
-                        if (svg_processed == 1 || svg_processed % 10 == 0)
-                        {
-                            frame->setStatusText(
-                                std::format("Processed {} SVG bundles", svg_processed));
-                        }
-                    }
                 }
                 else
                 {
@@ -326,25 +324,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                     }
                     m_source->Unindent();  // end function block
                     m_source->writeLine("}");
-
-                    ++bundle_processed;
-                    if (auto* frame = wxGetMainFrame(); frame)
-                    {
-                        if (bundle_processed == 1 || bundle_processed % 50 == 0)
-                        {
-                            frame->setStatusText(
-                                std::format("Processed {} image bundles", bundle_processed));
-                        }
-                    }
                 }
-            }
-        }
-        if (svg_processed > 0 || bundle_processed > 0)
-        {
-            if (auto* frame = wxGetMainFrame(); frame)
-            {
-                frame->setStatusText(std::format("Completed {} SVG bundles, {} other bundles",
-                                                 svg_processed, bundle_processed));
             }
         }
 

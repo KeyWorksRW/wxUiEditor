@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/progdlg.h>  // wxProgressDialog
+
 #include <algorithm>
 #include <set>
 #include <thread>
@@ -335,7 +337,8 @@ auto PerlCodeGenerator::WriteEmbeddedImages(Code& code) -> void
     }
 }
 
-void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
+                                      wxProgressDialog* progress)
 {
     m_language = language;
     m_panel_type = panel_type;
@@ -391,7 +394,7 @@ void PerlCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         m_source->writeLine("use MIME::Base64;");
         thrd_get_events.join();
         thrd_need_img_func.join();
-        GenerateImagesForm();
+        GenerateImagesForm(progress);
         return;
     }
 
@@ -470,7 +473,7 @@ void PerlCodeGenerator::WriteUsageStatements()
     }
 }
 
-void PerlCodeGenerator::GenerateImagesForm()
+void PerlCodeGenerator::GenerateImagesForm(wxProgressDialog* /* progress */)
 {
     if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {

@@ -11,6 +11,7 @@
 #include <thread>
 
 #include <wx/artprov.h>
+#include <wx/progdlg.h>  // wxProgressDialog
 
 #include "gen_python.h"
 #include "gen_script_common.h"  // Common functions for generating Script Languages
@@ -327,7 +328,8 @@ auto PythonCodeGenerator::WriteWizardComment(Code& code) -> void
     }
 }
 
-void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
+void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
+                                        wxProgressDialog* progress)
 {
     m_language = language;
     m_panel_type = panel_type;
@@ -410,7 +412,7 @@ void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type)
         });
 }
 
-void PythonCodeGenerator::GenerateImagesForm()
+void PythonCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 {
     if (m_embedded_images.empty() || !m_form_node->get_ChildCount())
     {
@@ -422,6 +424,7 @@ void PythonCodeGenerator::GenerateImagesForm()
 
     Code code(m_form_node, GEN_LANG_PYTHON);
 
+    int progress_count = 0;
     for (const auto* iter_array: m_embedded_images)
     {
         if (iter_array->get_Form() != m_form_node)
@@ -446,6 +449,14 @@ void PythonCodeGenerator::GenerateImagesForm()
         m_source->writeLine(code);
         code.clear();
         constexpr std::uint32_t array_size_mask = 0xFFFFFFFF;
+        if (progress && ++progress_count == result::progress_image_step)
+        {
+            wxString msg;
+            msg << "Generating embedded images: " << progress_count << " of "
+                << (m_embedded_images.size());
+            progress->Update(progress->GetValue() + 1, msg);
+            progress_count = 0;
+        }
         auto encoded =
             base64_encode(iter_array->base_image().array_data.data(),
                           iter_array->base_image().array_size & array_size_mask, GEN_LANG_PYTHON);

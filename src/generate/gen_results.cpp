@@ -7,8 +7,12 @@
 
 #include <cstring>  // for std::memcmp
 #include <format>
+#include <future>    // for std::async, std::future
+#include <memory>    // for std::shared_ptr, std::make_shared
+#include <optional>  // for std::optional
 
-#include <wx/file.h>  // wxFile - raw file I/O
+#include <wx/file.h>     // wxFile - raw file I/O
+#include <wx/progdlg.h>  // wxProgressDialog
 
 #include "gen_results.h"
 
@@ -20,9 +24,8 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // Project
 
-#include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
-
-#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector (for Diff::Compare)
+#include "wxue_string.h"       // wxue::string, wxue::SaveCwd
+#include "wxue_view_vector.h"  // wxue::ViewVector (for Diff::Compare)
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_cpp.h"
@@ -225,7 +228,7 @@ auto GenResults::Generate() -> bool
                 auto saved_lang = m_languages;
                 m_languages = lang;
 
-                if (GenerateLanguageFiles(lang, nullptr, comparison_only))
+                if (GenerateLanguageFiles(lang, comparison_only))
                 {
                     generate_result = true;
                 }
@@ -237,6 +240,7 @@ auto GenResults::Generate() -> bool
 
     if (wxGetApp().isTestingMenuEnabled())
     {
+        WaitForPendingDiffs();  // Wait for all async diffs to complete
         EndClock();
     }
 
@@ -344,7 +348,12 @@ auto GenResults::GenerateForDisplay() -> bool
 
 void GenResults::StartClock()
 {
+    if (m_clock_started)
+    {
+        return;
+    }
     m_start_time = std::chrono::steady_clock::now();
+    m_clock_started = true;
 }
 
 void GenResults::EndClock()
@@ -353,12 +362,16 @@ void GenResults::EndClock()
     m_elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time).count();
     m_msgs.emplace_back(std::format("Elapsed time: {} milliseconds", m_elapsed));
+    m_clock_started = false;
 }
 
 void GenResults::Clear()
 {
+    WaitForPendingDiffs();  // Ensure all pending work completes
+
     m_elapsed = 0;
     m_file_count = 0;
+    m_clock_started = false;
     m_msgs.clear();
     m_updated_files.clear();
     m_created_files.clear();
@@ -376,9 +389,16 @@ void GenResults::Clear()
     m_combined_output_path.clear();
 }
 
-auto GenResults::GenerateLanguageFiles(GenLang language,
-                                       const std::map<std::string, Node*>* classes,
-                                       bool comparison_only) -> bool
+void GenResults::EnableProgressDialog(const wxString& title)
+{
+    m_show_progress = true;
+    m_progress_title = title;
+}
+
+constexpr int progress_forms_step = 50;
+constexpr size_t max_diff_file_size = (100 * 1024);  // 102,400 bytes
+
+auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -> bool
 {
     if (Project.get_ChildCount() == 0)
     {
@@ -390,7 +410,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
     auto saved_lang = m_languages;
     m_languages = language;
 
-    if (wxGetApp().isTestingMenuEnabled())
+    if (wxGetApp().isTestingMenuEnabled() && !m_clock_started)
     {
         StartClock();
     }
@@ -399,16 +419,6 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
     Project.ChangeDir();
 
     bool generate_result = false;
-
-    // Convert map keys to vector for compatibility with existing API
-    std::vector<std::string> class_list;
-    if (classes)
-    {
-        for (const auto& [class_name, node]: *classes)
-        {
-            class_list.push_back(class_name);
-        }
-    }
 
     // C++ uses GenerateCppFiles which handles CMake + loops through forms via GenerateCppForm
     // XRC combined mode uses GenerateCombinedXrcFile
@@ -430,8 +440,20 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
             std::vector<Node*> forms;
             Project.CollectForms(forms);
 
+            // Note that we do *not* use a progress dialog for XRC generation here even if
+            // requested to. XRC generation is so fast, that we should be able to handle
+            // extremely large projects without it.
+
             for (auto* form: forms)
             {
+                // CR: 448: Inconsistent result tracking - checking GetUpdatedFiles().size() instead
+                // of the return value from GenerateLanguageForm. This differs from the pattern in
+                // the else branch below (lines 495-501) where the return value is properly checked.
+                // Should use: if (GenerateLanguageForm(form->as_view(prop_class_name), form,
+                // comparison_only)) {
+
+                // TODO: [Randalphwa - 12-31-2025] Above is probably correct, but need to validate
+                // the the XRC code generator returns an expected value.
                 std::ignore =
                     GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
 
@@ -445,16 +467,59 @@ auto GenResults::GenerateLanguageFiles(GenLang language,
     else
     {
         std::vector<Node*> forms;
-        Project.CollectForms(forms);
+        ASSERT_MSG(!m_target_nodes.empty(),
+                   "GenerateLanguageFiles called with no target nodes for non-C++/XRC language");
+        forms = m_target_nodes;
 
+        RemoveFormsWithoutOutputPath(forms);
+        int max_progress = 0;
+        if (auto data_list = Project.get_DataForm(); data_list)
+        {
+            max_progress += static_cast<int>(data_list->get_ChildCount());
+        }
+        if (auto img_list = Project.get_ImagesForm(); img_list)
+        {
+            max_progress +=
+                static_cast<int>(img_list->get_ChildCount() / result::progress_image_step);
+        }
+        if (max_progress == 0 && forms.size() < (progress_forms_step * 2))
+        {
+            m_show_progress = false;  // No need for progress dialog
+        }
+        else
+        {
+            max_progress += static_cast<int>(forms.size() / progress_forms_step);
+        }
+
+        std::optional<wxProgressDialog> progress;
+        if (m_show_progress && !forms.empty())
+        {
+            progress.emplace(m_progress_title, "Processing forms...", max_progress,
+                             wxGetMainFrame(), wxPD_APP_MODAL | wxPD_AUTO_HIDE);
+        }
+
+        int progress_count = 0;
         for (auto* form: forms)
         {
+            // CR: 495: Inconsistent result tracking - same issue as line 448. Should directly check
+            // the return value from GenerateLanguageForm instead of checking
+            // GetUpdatedFiles().size(). The current approach relies on side effects and doesn't
+            // match the C++ generation pattern in GenerateCppFiles (line 896).
             std::ignore =
                 GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
 
             if (GetUpdatedFiles().size())
             {
                 generate_result = true;
+            }
+
+            if (progress && ++progress_count >= progress_forms_step && !form->is_Gen(gen_Images) &&
+                !form->is_Gen(gen_Data))
+            {
+                wxString msg("Processing: ");
+                msg << form->as_string(prop_class_name);
+                progress->Update(progress->GetValue() + 1, msg);
+                progress_count = 0;
             }
         }
     }
@@ -587,23 +652,8 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             // Capture detailed diff information if file exists on disk
             if (result == code::write_needed && src_path.file_exists())
             {
-                wxue::ViewVector disk_content;
-                disk_content.ReadFile(std::string_view(src_path));
-
-                wxue::ViewVector gen_content;
-                gen_content.ReadString(std::string_view(src_cw->GetString()));
-
-                auto diff_result = Diff::Compare(disk_content, gen_content);
-                if (diff_result.has_differences)
-                {
-                    FileDiff file_diff;
-                    file_diff.filename = src_path.filename();
-                    file_diff.original_content = disk_content.GetBuffer();
-                    file_diff.new_content = src_cw->GetString();
-                    file_diff.diff_result = std::move(diff_result);
-                    file_diff.form = form;
-                    m_file_diffs.push_back(std::move(file_diff));
-                }
+                auto content = std::make_shared<std::string>(src_cw->GetString());
+                ProcessFileDiff(src_path, content, form);
             }
             return true;
         }
@@ -632,7 +682,8 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     return false;
 }
 
-auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
+auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDialog* progress)
+    -> bool
 {
     if (!form || !form->is_Form())
     {
@@ -677,7 +728,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
     // m_languages should be GEN_LANG_CPLUSPLUS at this point (set in Generate() loop)
     ASSERT_MSG(m_languages == GEN_LANG_CPLUSPLUS,
                "GenerateCppForm expects m_languages to be GEN_LANG_CPLUSPLUS");
-    codegen.GenerateClass(m_languages);
+    codegen.GenerateClass(m_languages, PANEL_PAGE::NOT_PANEL, progress);
 
     bool any_updated = false;
     int write_flags = comparison_only ? (code::flag_test_only | code::flag_no_ui) : code::flag_none;
@@ -705,23 +756,8 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
             // Capture detailed diff information if file exists on disk
             if (hdr_result == code::write_needed && hdr_path.file_exists())
             {
-                wxue::ViewVector disk_content;
-                disk_content.ReadFile(std::string_view(hdr_path));
-
-                wxue::ViewVector gen_content;
-                gen_content.ReadString(std::string_view(hdr_cw->GetString()));
-
-                auto diff_result = Diff::Compare(disk_content, gen_content);
-                if (diff_result.has_differences)
-                {
-                    FileDiff file_diff;
-                    file_diff.filename = hdr_path.filename();
-                    file_diff.original_content = disk_content.GetBuffer();
-                    file_diff.new_content = hdr_cw->GetString();
-                    file_diff.diff_result = std::move(diff_result);
-                    file_diff.form = form;
-                    m_file_diffs.push_back(std::move(file_diff));
-                }
+                auto content = std::make_shared<std::string>(hdr_cw->GetString());
+                ProcessFileDiff(hdr_path, content, form);
             }
         }
     }
@@ -767,23 +803,8 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only) -> bool
             // Capture detailed diff information if file exists on disk
             if (src_result == code::write_needed && src_path.file_exists())
             {
-                wxue::ViewVector disk_content;
-                disk_content.ReadFile(std::string_view(src_path));
-
-                wxue::ViewVector gen_content;
-                gen_content.ReadString(std::string_view(src_cw->GetString()));
-
-                auto diff_result = Diff::Compare(disk_content, gen_content);
-                if (diff_result.has_differences)
-                {
-                    FileDiff file_diff;
-                    file_diff.filename = src_path.filename();
-                    file_diff.original_content = disk_content.GetBuffer();
-                    file_diff.new_content = src_cw->GetString();
-                    file_diff.diff_result = std::move(diff_result);
-                    file_diff.form = form;
-                    m_file_diffs.push_back(std::move(file_diff));
-                }
+                auto content = std::make_shared<std::string>(src_cw->GetString());
+                ProcessFileDiff(src_path, content, form);
             }
         }
     }
@@ -820,7 +841,35 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
         return false;
     }
 
-    // bool generate_result = false;
+    std::vector<Node*> forms;
+    forms = m_target_nodes;
+    Project.FindWxueFunctions(forms);
+
+    RemoveFormsWithoutOutputPath(forms);
+    int max_progress = 0;
+    if (auto data_list = Project.get_DataForm(); data_list)
+    {
+        max_progress += static_cast<int>(data_list->get_ChildCount());
+    }
+    if (auto img_list = Project.get_ImagesForm(); img_list)
+    {
+        max_progress += static_cast<int>(img_list->get_ChildCount() / result::progress_image_step);
+    }
+    if (max_progress == 0 && forms.size() < (progress_forms_step * 2))
+    {
+        m_show_progress = false;  // No need for progress dialog
+    }
+    else
+    {
+        max_progress += static_cast<int>(forms.size() / progress_forms_step);
+    }
+
+    std::optional<wxProgressDialog> progress;
+    if (m_show_progress && !forms.empty())
+    {
+        progress.emplace(m_progress_title, "Processing forms...", max_progress, wxGetMainFrame(),
+                         wxPD_APP_MODAL | wxPD_AUTO_HIDE);
+    }
 
     if (Project.as_bool(prop_generate_cmake))
     {
@@ -855,29 +904,22 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
         }
     }
 
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
-    Project.FindWxueFunctions(forms);
-
     bool generate_result = false;
-    auto remaining_forms = forms.size();
+    int progress_count = 0;
     for (const auto& form: forms)
     {
-        if (GenerateCppForm(form, comparison_only))
+        if (GenerateCppForm(form, comparison_only, progress ? progress.operator->() : nullptr))
         {
             generate_result = true;
         }
 
-        if (remaining_forms > 10)
+        if (progress && ++progress_count >= progress_forms_step && !form->is_Gen(gen_Images) &&
+            !form->is_Gen(gen_Data))
         {
-            --remaining_forms;
-            if (remaining_forms % 10 == 0)
-            {
-                if (auto* frame = wxGetMainFrame(); frame)
-                {
-                    frame->setStatusField(std::format("Remaining forms: {:L}", remaining_forms), 1);
-                }
-            }
+            wxString msg("Processing: ");
+            msg << form->as_string(prop_class_name);
+            progress->Update(progress->GetValue() + 1, msg);
+            progress_count = 0;
         }
     }
     if (auto* frame = wxGetMainFrame(); frame)
@@ -885,6 +927,20 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
         frame->setStatusText("Code generation completed");
     }
     return generate_result;
+}
+
+void GenResults::RemoveFormsWithoutOutputPath(std::vector<Node*>& forms)
+{
+    // Remove forms that don't have an output file configured for the current language
+    // Use erase-remove idiom for efficient removal
+    forms.erase(std::remove_if(forms.begin(), forms.end(),
+                               [this](Node* form)
+                               {
+                                   auto [path, has_base_file] =
+                                       Project.GetOutputPath(form, m_languages);
+                                   return !has_base_file;
+                               }),
+                forms.end());
 }
 
 auto GenResults::GenerateCombinedFile(GenLang language) -> bool
@@ -991,7 +1047,7 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
 
     // Collect all forms and add them to the XRC document
     std::vector<Node*> forms;
-    Project.CollectForms(forms);
+    forms = m_target_nodes;
 
     for (auto* form: forms)
     {
@@ -1034,25 +1090,8 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
         {
             // Size differs, file needs updating
             m_updated_files.emplace_back(output_path);
-
-            // Capture diff for display
-            wxue::ViewVector disk_content;
-            disk_content.ReadFile(std::string_view(output_path));
-
-            wxue::ViewVector gen_content;
-            gen_content.ReadString(std::string_view(xml_content));
-
-            auto diff_result = Diff::Compare(disk_content, gen_content);
-            if (diff_result.has_differences)
-            {
-                FileDiff file_diff;
-                file_diff.filename = output_path.filename();
-                file_diff.original_content = disk_content.GetBuffer();
-                file_diff.new_content = xml_content;
-                file_diff.diff_result = std::move(diff_result);
-                file_diff.form = nullptr;  // Combined file has no single form
-                m_file_diffs.push_back(std::move(file_diff));
-            }
+            auto content = std::make_shared<std::string>(xml_content);
+            ProcessFileDiff(output_path, content, nullptr);
             return true;
         }
 
@@ -1069,24 +1108,8 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
 
         // Content differs
         m_updated_files.emplace_back(output_path);
-
-        wxue::ViewVector disk_content;
-        disk_content.ReadFile(std::string_view(output_path));
-
-        wxue::ViewVector gen_content;
-        gen_content.ReadString(std::string_view(xml_content));
-
-        auto diff_result = Diff::Compare(disk_content, gen_content);
-        if (diff_result.has_differences)
-        {
-            FileDiff file_diff;
-            file_diff.filename = output_path.filename();
-            file_diff.original_content = disk_content.GetBuffer();
-            file_diff.new_content = xml_content;
-            file_diff.diff_result = std::move(diff_result);
-            file_diff.form = nullptr;
-            m_file_diffs.push_back(std::move(file_diff));
-        }
+        auto content = std::make_shared<std::string>(xml_content);
+        ProcessFileDiff(output_path, content, nullptr);
         return true;
     }
 
@@ -1109,4 +1132,97 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
     }
 
     return true;
+}
+
+void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string> content,
+                                 Node* form)
+{
+    // This function assumes it is being called from the main thread *only* and as such it does not
+    // protect m_pending_diffs from race conditions.
+    while (m_pending_diffs.size() >= std::thread::hardware_concurrency())
+    {
+        // Process and remove completed futures
+        for (auto it = m_pending_diffs.begin(); it != m_pending_diffs.end();)
+        {
+            if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+            {
+                auto diff = it->get();
+                if (diff.has_value())
+                {
+                    m_file_diffs.push_back(std::move(*diff));
+                }
+                it = m_pending_diffs.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+    // Launch async task to perform diff computation
+    m_pending_diffs.emplace_back(
+        std::async(std::launch::async,
+                   [path = std::move(path), content, form]() -> std::optional<FileDiff>
+                   {
+                       // Check if generated file is too large to process diff efficiently
+                       // Files larger than max_diff_file_size are flagged as too large to avoid
+                       // performance issues
+                       if (content->size() > max_diff_file_size)
+                       {
+                           FileDiff file_diff;
+                           file_diff.filename = path.filename();
+                           file_diff.form = form;
+                           file_diff.is_too_large_to_display = true;
+                           return file_diff;
+                       }
+
+                       wxue::ViewVector disk_content;
+                       if (!disk_content.ReadFile(std::string_view(path)))
+                       {
+                           // File doesn't exist or can't be read - skip diff
+                           return std::nullopt;
+                       }
+
+                       wxue::ViewVector gen_content;
+                       gen_content.ReadString(std::string_view(*content));
+
+                       auto diff_result = Diff::Compare(disk_content, gen_content);
+                       if (diff_result.has_differences)
+                       {
+                           FileDiff file_diff;
+                           file_diff.filename = path.filename();
+                           file_diff.original_content = disk_content.GetBuffer();
+                           file_diff.new_content = *content;
+                           file_diff.diff_result = std::move(diff_result);
+                           file_diff.form = form;
+                           return file_diff;
+                       }
+
+                       return std::nullopt;
+                   }));
+}
+
+void GenResults::WaitForPendingDiffs()
+{
+    for (auto& future: m_pending_diffs)
+    {
+        if (future.valid())
+        {
+            try
+            {
+                auto diff = future.get();
+                if (diff.has_value())
+                {
+                    m_file_diffs.push_back(std::move(diff.value()));
+                }
+            }
+            catch (const std::exception& e)
+            {
+                // Log error but continue processing other diffs
+                m_msgs.emplace_back(std::format("Diff computation error: {}", e.what()));
+            }
+        }
+    }
+    m_pending_diffs.clear();
 }

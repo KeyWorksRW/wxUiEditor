@@ -17,13 +17,14 @@ public:
 
     // All language generators must implement this method.
     void GenerateClass(GenLang language = GEN_LANG_RUBY,
-                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
+                       wxProgressDialog* progress = nullptr) override;
 
 protected:
     // This function simply generates unhandled event handlers in a multi-string comment.
     void GenUnhandledEvents(EventVector& events);
 
-    void GenerateImagesForm();
+    void GenerateImagesForm(wxProgressDialog* progress = nullptr);
 
     void WriteImageRequireStatements(Code& code);
 

@@ -36,6 +36,8 @@ private:
     void OnPrevious(wxCommandEvent& event);
     void OnNext(wxCommandEvent& event);
     void OnClose(wxCommandEvent& event);
+    void OnOriginalScroll(wxStyledTextEvent& event);
+    void OnModifiedScroll(wxStyledTextEvent& event);
 
     wxChoice* m_file_choice;
     wxStyledTextCtrl* m_original_text;
@@ -46,4 +48,5 @@ private:
 
     std::vector<FileDiff> m_diffs;
     size_t m_current_index { 0 };
+    bool m_syncing_scroll { false };
 };

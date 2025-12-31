@@ -14,7 +14,8 @@ public:
 
     // All language generators must implement this method.
     void GenerateClass(GenLang language = GEN_LANG_PYTHON,
-                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
+                       wxProgressDialog* progress = nullptr) override;
 
 protected:
     // Helper methods to break down GenerateClass complexity
@@ -45,7 +46,7 @@ protected:
     // This function simply generates unhandled event handlers in a multi-string comment.
     void GenUnhandledEvents(EventVector& events);
 
-    void GenerateImagesForm();
+    void GenerateImagesForm(wxProgressDialog* progress = nullptr);
 
     void WriteImageImportStatements(Code& code);
 

@@ -181,7 +181,14 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     // we don't know if the line endings are still the same, so the *safe* way to do it is to
     // create a vector of std::string_views that we can use to search for the comment line.
 
-    m_org_file.ReadString(std::string_view(m_org_buffer));
+    // Parse original file into lines if not already done (can be shared with
+    // AppendOriginalUserContent)
+    if (m_org_file.empty())
+    {
+        m_org_file.reserve(m_org_buffer.size() /
+                           150);  // Pre-allocate assuming average line length of 80 chars
+        m_org_file.ReadString(std::string_view(m_org_buffer));
+    }
     auto line = FindAdditionalContentIndex();
     if (line == -1)
     {
@@ -270,13 +277,36 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
 [[nodiscard]] auto FileCodeWriter::FindAdditionalContentIndex() -> std::ptrdiff_t
 {
     // Step 1: Find the "End of generated code" comment line
+    // Optimization: Check last ~15 lines first since most files won't have user content
     std::ptrdiff_t end_comment_line_index = -1;
-    for (size_t line_index = 0; line_index < m_org_file.size(); ++line_index)
+
+    if (!m_org_file.empty())
     {
-        if (m_org_file[line_index].starts_with(m_comment_line_to_find))
+        // Search backward from end, checking up to 15 lines
+        constexpr size_t lines_to_check = 15;
+        const size_t start_pos =
+            (m_org_file.size() > lines_to_check) ? m_org_file.size() - lines_to_check : 0;
+
+        for (size_t line_index = start_pos; line_index < m_org_file.size(); ++line_index)
         {
-            end_comment_line_index = static_cast<std::ptrdiff_t>(line_index);
-            break;
+            if (m_org_file[line_index].starts_with(m_comment_line_to_find))
+            {
+                end_comment_line_index = static_cast<std::ptrdiff_t>(line_index);
+                break;
+            }
+        }
+
+        // If not found in last 15 lines, search from beginning (file has user content)
+        if (end_comment_line_index == -1)
+        {
+            for (size_t line_index = 0; line_index < start_pos; ++line_index)
+            {
+                if (m_org_file[line_index].starts_with(m_comment_line_to_find))
+                {
+                    end_comment_line_index = static_cast<std::ptrdiff_t>(line_index);
+                    break;
+                }
+            }
         }
     }
 

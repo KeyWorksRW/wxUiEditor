@@ -48,7 +48,8 @@ struct FileDiff
     std::string original_content;
     std::string new_content;
     DiffResult diff_result;
-    Node* form { nullptr };  // The form node that generated this file
+    Node* form { nullptr };                  // The form node that generated this file
+    bool is_too_large_to_display { false };  // Indicates diff is too large to process/display
 };
 
 class Diff

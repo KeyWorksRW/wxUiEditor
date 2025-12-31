@@ -18,7 +18,8 @@ public:
 
     // All language generators must implement this method.
     auto GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
-                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) -> void override;
+                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
+                       wxProgressDialog* progress = nullptr) -> void override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
     auto GenerateDerivedClass(Node* project, Node* form_node,
@@ -59,7 +60,7 @@ protected:
     void GenHdrEvents();
 
     // Handles both source and header code generation
-    void GenerateDataForm();
+    void GenerateDataForm(wxProgressDialog* progress = nullptr);
 
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 

@@ -446,6 +446,14 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
 
             for (auto* form: forms)
             {
+                // CR: 448: Inconsistent result tracking - checking GetUpdatedFiles().size() instead
+                // of the return value from GenerateLanguageForm. This differs from the pattern in
+                // the else branch below (lines 495-501) where the return value is properly checked.
+                // Should use: if (GenerateLanguageForm(form->as_view(prop_class_name), form,
+                // comparison_only)) {
+
+                // TODO: [Randalphwa - 12-31-2025] Above is probably correct, but need to validate
+                // the the XRC code generator returns an expected value.
                 std::ignore =
                     GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
 
@@ -493,6 +501,10 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
         int progress_count = 0;
         for (auto* form: forms)
         {
+            // CR: 495: Inconsistent result tracking - same issue as line 448. Should directly check
+            // the return value from GenerateLanguageForm instead of checking
+            // GetUpdatedFiles().size(). The current approach relies on side effects and doesn't
+            // match the C++ generation pattern in GenerateCppFiles (line 896).
             std::ignore =
                 GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
 
@@ -1125,7 +1137,8 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
 void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string> content,
                                  Node* form)
 {
-    // Wait if too many concurrent tasks
+    // This function assumes it is being called from the main thread *only* and as such it does not
+    // protect m_pending_diffs from race conditions.
     while (m_pending_diffs.size() >= std::thread::hardware_concurrency())
     {
         // Process and remove completed futures
@@ -1135,7 +1148,9 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
             {
                 auto diff = it->get();
                 if (diff.has_value())
+                {
                     m_file_diffs.push_back(std::move(*diff));
+                }
                 it = m_pending_diffs.erase(it);
             }
             else
@@ -1151,8 +1166,8 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
                    [path = std::move(path), content, form]() -> std::optional<FileDiff>
                    {
                        // Check if generated file is too large to process diff efficiently
-                       // Files larger than 20KB are flagged as too large to avoid performance
-                       // issues
+                       // Files larger than max_diff_file_size are flagged as too large to avoid
+                       // performance issues
                        if (content->size() > max_diff_file_size)
                        {
                            FileDiff file_diff;

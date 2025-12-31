@@ -3,5 +3,6 @@
 ./src/xml
 ./src/art_src
 ./src/generate/archived
+./src/.vscode
 
 ./src/version.h

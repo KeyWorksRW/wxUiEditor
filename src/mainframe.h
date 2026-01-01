@@ -280,6 +280,24 @@ public:
 
     void OnInsertWidget(wxCommandEvent& /*event*/) override;
 
+    /*
+
+        It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime
+       logging is only updated once every two minutes. The exception is when a file is saved -- this
+       will always notify wakatime.
+
+        The following functions call UpdateWakaTime() automatically:
+
+            UpdateFrame()
+            ProjectSaved()
+            OnGenerateCode()
+            RemoveNode()
+            ChangeEventHandler()
+
+    */
+
+    auto UpdateWakaTime(bool FileSavedEvent = false) -> void;
+
 protected:
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;
@@ -341,24 +359,6 @@ protected:
 
     auto UpdateLayoutTools() -> void;
     auto UpdateMoveMenu() -> void;
-
-    /*
-
-        It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime
-       logging is only updated once every two minutes. The exception is when a file is saved -- this
-       will always notify wakatime.
-
-        The following functions call UpdateWakaTime() automatically:
-
-            UpdateFrame()
-            ProjectSaved()
-            OnGenerateCode()
-            RemoveNode()
-            ChangeEventHandler()
-
-    */
-
-    auto UpdateWakaTime(bool FileSavedEvent = false) -> void;
 
 private:
     // Helper methods for OnGenerateCode

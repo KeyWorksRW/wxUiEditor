@@ -22,7 +22,7 @@ Modernize C++ files: fix clang-tidy warnings (items 1-7), apply C++23 patterns (
 - These are code appearance/style improvements to resolve lint warnings only
 - When in doubt, leave the code unchanged
 
-### � Line Endings (ABSOLUTE)
+### 🔴 Line Endings (ABSOLUTE)
 **ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
 - All files in this project use Unix-style line endings (LF only)
 - This applies even when running on Windows

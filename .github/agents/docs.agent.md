@@ -7,6 +7,13 @@ tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
 
 Create and maintain project documentation for users, contributors, and code folders.
 
+### 🔴 Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
 ## Tools Usage
 
 **Understand code before documenting:**

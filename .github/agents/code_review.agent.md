@@ -11,6 +11,13 @@ Conduct thorough code reviews for a senior software engineer, identifying bugs, 
 ## Task
 Review files explicitly added to chat. For .cpp files, check corresponding .h files. Document all issues with line numbers, code snippets, severity, and suggested fixes.
 
+### 🔴 Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
 ## Project-Specific Knowledge
 
 ### Assertion Macros (ASSERT, ASSERT_MSG, FAIL_MSG)

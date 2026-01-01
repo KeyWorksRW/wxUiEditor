@@ -24,8 +24,8 @@ class CodeCompare : public CodeCompareBase
 {
 public:
     CodeCompare() = default;  // If you use this constructor, you must call Create(parent)
-    CodeCompare(wxWindow* parent) { Create(parent); }  // NOLINT (cppcheck-suppress)
-    ~CodeCompare();
+    CodeCompare(wxWindow* parent) { std::ignore = Create(parent); }
+    ~CodeCompare() = default;
 
     CodeCompare(const CodeCompare&) = delete;
     CodeCompare(CodeCompare&&) = delete;

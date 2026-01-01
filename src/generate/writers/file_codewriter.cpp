@@ -169,7 +169,12 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
             return write_current;
         }
 
-        // Files still differ after appending user content - write is needed
+        // Files still differ after appending user content - verify before writing
+        if (m_buffer.size() == m_org_buffer.size() &&
+            std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+        {
+            return write_current;
+        }
         return (m_flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
@@ -197,6 +202,12 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         // and add a warning comment. The fake user content (Ruby 'end' or C++ '};')
         // was already added by AppendEndOfFileBlock(), so we don't need to add it again.
         AppendMissingCommentBlockWarning();
+        // Verify buffers differ before writing
+        if (m_buffer.size() == m_org_buffer.size() &&
+            std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+        {
+            return write_current;
+        }
         return (m_flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
@@ -206,13 +217,24 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         // Set m_additional_content to mark where user content begins, then append it.
         m_additional_content = line;
         (void) AppendOriginalUserContent(0);
+        // Verify buffers differ before writing
+        if (m_buffer.size() == m_org_buffer.size() &&
+            std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+        {
+            return write_current;
+        }
         return (m_flags & flag_test_only) ? write_needed : WriteToFile();
     }
 
     // Original file had no user content after the comment block, but files still differ.
     // This means the generated code itself has changed.
     // The end-of-file block (including fake user content) was already added by
-    // AppendEndOfFileBlock(), so just write the file.
+    // AppendEndOfFileBlock(), so verify before writing.
+    if (m_buffer.size() == m_org_buffer.size() &&
+        std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+    {
+        return write_current;
+    }
     return (m_flags & flag_test_only) ? write_needed : WriteToFile();
 }
 

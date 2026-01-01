@@ -157,7 +157,7 @@ if( INTERNAL_BLD_TESTING )
     # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
     # and FAIL_MSG() in a Release build.
     add_compile_definitions( INTERNAL_TESTING )
-    include( src/verify/verify.cmake ) # This will set ${verify_files} with a list of source files
+    # include( src/verify/verify.cmake ) # This will set ${verify_files} with a list of source files
 
     set( wxui_internal_files
         src/internal/msg_logging.cpp

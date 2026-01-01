@@ -511,9 +511,9 @@ auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
         }
         if (embed.array_size >> 32 > 0 && Project.AddOptionalComments())
         {
-            header->writeLine(
-                std::format("extern const unsigned char {}[{}]; // Original size: {:L} bytes",
-                            var_name, (embed.array_size & 0xFFFFFFFF), (embed.array_size >> 32)));
+            header->writeLine(std::format(
+                std::locale(""), "extern const unsigned char {}[{}]; // Original size: {:L} bytes",
+                var_name, (embed.array_size & 0xFFFFFFFF), (embed.array_size >> 32)));
         }
         else
         {

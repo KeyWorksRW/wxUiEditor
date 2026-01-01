@@ -362,7 +362,8 @@ auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList)
             {
                 if (auto* frame = wxGetMainFrame(); frame)
                 {
-                    frame->setStatusField(std::format("Remaining forms: {:L}", remaining_forms), 1);
+                    frame->setStatusField(
+                        std::format(std::locale(""), "Remaining forms: {:L}", remaining_forms), 1);
                 }
             }
         }

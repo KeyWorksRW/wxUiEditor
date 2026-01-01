@@ -73,12 +73,21 @@ void CodeCompare::OnRadioButton(GenLang language)
         return;
     }
 
+    auto current_node = wxGetFrame().getSelectedNode();
+    if (!current_node)
+    {
+        current_node = Project.get_ProjectNode();
+    }
+
     // Use GenResults in compare_only mode to generate and capture diffs
     GenResults results;
     results.SetLanguages(language);
     results.SetMode(GenResults::Mode::compare_only);
-    results.SetNodes(Project.get_ProjectNode());
-    results.EnableProgressDialog("Comparing Generated Code...");
+    results.SetNodes(current_node);
+    if (current_node->is_Gen(gen_Project) && current_node->get_ChildCount() > 20)
+    {
+        results.EnableProgressDialog("Comparing Generated Code...");
+    }
 
     if (results.Generate())
     {

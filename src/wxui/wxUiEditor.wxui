@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0"?>bitmap_toggle_button
 <wxUiEditorData
   data_version="19">
   <node
@@ -5078,8 +5078,8 @@
         system_src_includes="wx/filedlg.h"
         header_preamble="class NodeProperty;"
         system_hdr_includes="wx/filehistory.h"
-        class_members="&quot;tt_string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;int m_language = GEN_LANG_CPLUSPLUS;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
-        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const tt_string&amp; GetResults() const { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
+        class_members="&quot;wxue::string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;int m_language = GEN_LANG_CPLUSPLUS;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
+        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxue::string&amp; GetResults() const { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
         private_members="1"
         use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
@@ -6830,8 +6830,8 @@
       title="Insert Widget"
       minimum_size="-1,-1"
       base_file="insert_widget"
-      inserted_hdr_code="tt_string GetWidget() { return m_widget; }"
-      class_members="&quot;tt_string m_widget;&quot;"
+      inserted_hdr_code="wxue::string GetWidget() { return m_widget; }"
+      class_members="&quot;wxue::string m_widget;&quot;"
       derived_class_name="InsertWidget"
       private_members="1"
       use_derived_class="0"

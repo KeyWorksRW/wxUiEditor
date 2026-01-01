@@ -18,56 +18,6 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
-CodeCompare::~CodeCompare()
-{
-    wxArrayString files;
-
-    // Some project files will be placed in a subdirectory which will be our current cwd.
-    // However, the actual generated files can be pretty much anywhere. In the following, we
-    // check to see if the parent directory is named "src" and if so, we change to the parent
-    // directory. This allows us to find the generated files no matter where they are located,
-    // or at least as long as they were generated under the src/ directory.
-    wxue::SaveCwd save_cwd(wxue::restore_cwd);
-    wxue::string cwd;
-    cwd.assignCwd();
-    cwd.remove_filename();
-    if (cwd.size() && (cwd.back() == '\\' || cwd.back() == '/'))
-    {
-        cwd.pop_back();
-    }
-    if (cwd.filename() == "src")
-    {
-        cwd.ChangeDir("..");
-    }
-
-    wxDir::GetAllFiles(".", &files, "~wxue_**.*");
-
-    for (auto& iter: files)
-    {
-        // ~wxue_.WinMerge will often be added to this list, but deleted before we start
-        // processing, so check first
-        if (wxFileExists(iter))
-        {
-            wxRemoveFile(iter);
-        }
-    }
-
-    if (Project.HasValue(prop_base_directory))
-    {
-        wxDir::GetAllFiles(Project.as_string(prop_base_directory).wx(), &files, "~wxue_**.*");
-
-        for (auto& iter: files)
-        {
-            // ~wxue_.WinMerge will often be added to this list, but deleted before we start
-            // processing, so check first
-            if (wxFileExists(iter))
-            {
-                wxRemoveFile(iter);
-            }
-        }
-    }
-}
-
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
     GenLang language = Project.get_CodePreference(wxGetFrame().getSelectedNode());

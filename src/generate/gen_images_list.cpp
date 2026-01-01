@@ -36,8 +36,7 @@ using namespace wxue_img;
 #include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
 #include "../mockup/mockup_parent.h"   // MockupParent -- Top-level MockUp Parent window
 
-//////////////////////////////////////////  ImagesGenerator
-/////////////////////////////////////////////
+///////////////////////////////////  ImagesGenerator //////////////////////////////////////
 
 wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
 {
@@ -138,8 +137,7 @@ bool EmbeddedImageGenerator::AllowPropertyChange(wxPropertyGridEvent* event, Nod
     return true;
 }
 
-//////////////////////////////////////////  Code Generator for Images
-/////////////////////////////////////////////
+///////////////////////////////////  Code Generator for Images //////////////////////////////////////
 
 // clang-format off
 
@@ -451,8 +449,7 @@ int ImagesGenerator::GetRequiredVersion(Node* node)
     return minRequiredVer;
 }
 
-//////////////////////////////////////////  Image List Functions
-/////////////////////////////////////////////
+//////////////////////////////////////////  Image List Functions /////////////////////////////////
 
 // clang-format off
 inline const auto lstBitmapoProps = {

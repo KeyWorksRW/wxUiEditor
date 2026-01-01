@@ -32,7 +32,7 @@ When the user types "fix" and has selected a comment line:
 - Auto-generated sections will be overwritten
 - Add modifications AFTER the `// End of generated code` marker only
 
-### � Line Endings (ABSOLUTE)
+### 🔴 Line Endings (ABSOLUTE)
 **ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
 - All files in this project use Unix-style line endings (LF only)
 - This applies even when running on Windows

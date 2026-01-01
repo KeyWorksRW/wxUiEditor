@@ -15,6 +15,20 @@ When the user selects a function and asks to reduce complexity:
 3. Extract helpers following the extraction rules
 4. Build and verify after each extraction
 
+### 🔴 Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
+### � Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
 ## Tools Usage
 
 **For understanding the function:**

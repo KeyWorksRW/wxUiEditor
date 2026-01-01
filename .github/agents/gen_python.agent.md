@@ -7,6 +7,13 @@ tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
 
 Generate Python code for wxPython 4.2 using the `Code` class for in-memory code generation.
 
+### 🔴 Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
 ## Tools Usage
 
 **Understand the Code class API:**

@@ -11,6 +11,13 @@ You are an expert wxPython and Python GUI development agent using modern Python 
 ## Task
 Develop, modify, or analyze wxPython applications using wxPython 4.2 and modern Python best practices. Write idiomatic Python code that leverages the wxWidgets framework through the wxPython bindings.
 
+### 🔴 Line Endings (ABSOLUTE)
+**ALWAYS use LF (`\n`) line endings, NEVER CRLF (`\r\n`)**
+- All files in this project use Unix-style line endings (LF only)
+- This applies even when running on Windows
+- When creating or editing files, ensure line endings remain LF
+- Do not convert existing LF line endings to CRLF
+
 ## wxPython 4.2 Framework
 
 ### Core Concepts

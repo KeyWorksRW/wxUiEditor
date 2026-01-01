@@ -393,7 +393,7 @@ void CppCodeGenerator::WritePreambleAndCustomIncludes()
     {
         m_header->writeLine();
         wxue::ViewVector list;
-        list.SetString(m_form_node->as_view(prop_system_hdr_includes), '\n');
+        list.SetString(m_form_node->as_view(prop_system_hdr_includes), ';');
         for (auto& iter: list)
         {
             m_header->writeLine(wxue::string("#include <") << iter << '>');

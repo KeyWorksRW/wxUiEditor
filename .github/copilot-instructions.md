@@ -193,6 +193,7 @@ Use these methods for building (in priority order):
 - Use structured bindings for clarity: `auto [x, y] = get_point();`
 - Prefer C++23 ranges library algorithms over manual loops when applicable
 - **Prefer prefix increment/decrement (`++i`, `--i`) over postfix (`i++`, `i--`)** – more efficient for iterators and user-defined types, better practice even for built-in types
+- **Discard return values using `std::ignore = `** not `(void)` – modern C++17+ idiom for intentionally discarding function return values
 
 ### Library Priority (in order)
 1. **C++ Standard Library (`std::`)** – Always check here first

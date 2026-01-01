@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Images List Embedded images generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,8 +15,8 @@ class wxStaticText;
 class ImagesGenerator : public BaseGenerator
 {
 public:
-    wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    int GetRequiredVersion(Node* /*node*/) override;
+    auto CreateMockup(Node* /* node */, wxObject* wxobject) -> wxObject* override;
+    auto GetRequiredVersion(Node* /*node*/) -> int override;
 
 private:
     wxStaticBitmap* m_bitmap;
@@ -27,7 +27,8 @@ private:
 class EmbeddedImageGenerator : public BaseGenerator
 {
 public:
-    bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
+    [[nodiscard]] auto AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
+                                           Node* node) -> bool override;
 };
 
 namespace img_list
@@ -39,9 +40,9 @@ namespace img_list
     void UpdateImagesList(int ProjectVersion);
 
     // Used to compare prop_bitmap descriptions -- this can be used in a sort() function
-    bool CompareImageNames(NodeSharedPtr a, NodeSharedPtr b);
+    [[nodiscard]] auto CompareImageNames(const NodeSharedPtr& lhs, const NodeSharedPtr& rhs) -> bool;
 
-    Node* FindImageList();
+    [[nodiscard]] auto FindImageList() -> Node*;
 
     void FixPropBitmap(Node* parent);
 

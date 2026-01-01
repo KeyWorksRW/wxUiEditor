@@ -9,6 +9,8 @@
 
 #include <wx/button.h>
 #include <wx/choice.h>
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
@@ -25,6 +27,8 @@ DiffViewer::DiffViewer(wxWindow* parent, const std::vector<FileDiff>& diffs) :
     {
         DisplayDiff(0);
     }
+
+    wxPersistentRegisterAndRestore(this, "DiffViewer");
 }
 
 void DiffViewer::CreateControls()

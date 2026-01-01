@@ -161,15 +161,9 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     {
         // Non-Ruby, same size but different content - try to append original user content.
         auto begin_user_content = m_buffer.size();
-        bool files_are_different = AppendOriginalUserContent(begin_user_content);
+        std::ignore = AppendOriginalUserContent(begin_user_content);
 
-        if (!files_are_different)
-        {
-            // After appending, files match exactly - no write needed
-            return write_current;
-        }
-
-        // Files still differ after appending user content - verify before writing
+        // Check if buffers match after appending (or attempting to append) user content
         if (m_buffer.size() == m_org_buffer.size() &&
             std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
         {

@@ -40,7 +40,8 @@ namespace img_list
     void UpdateImagesList(int ProjectVersion);
 
     // Used to compare prop_bitmap descriptions -- this can be used in a sort() function
-    [[nodiscard]] auto CompareImageNames(const NodeSharedPtr& lhs, const NodeSharedPtr& rhs) -> bool;
+    [[nodiscard]] auto CompareImageNames(const NodeSharedPtr& lhs, const NodeSharedPtr& rhs)
+        -> bool;
 
     [[nodiscard]] auto FindImageList() -> Node*;
 

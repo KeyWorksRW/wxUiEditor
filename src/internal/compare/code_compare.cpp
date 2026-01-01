@@ -118,7 +118,7 @@ void CodeCompare::OnRadioButton(GenLang language)
         {
             m_list_changes->AppendString(wxString::FromUTF8(name));
         }
-        m_btn->Enable();
+        m_btn->Enable(m_file_diffs.empty() ? false : true);
     }
 }
 

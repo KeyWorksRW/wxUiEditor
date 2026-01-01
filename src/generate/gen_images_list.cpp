@@ -296,7 +296,9 @@ void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
                     m_source->Indent();
                     code = "return get_bundle_svg(";
                     code << embed->base_image().array_name << ", "
-                         << (embed->base_image().array_size & 0x00000000FFFFFFFFULL) << ", ";
+                         << static_cast<size_t>(embed->base_image().array_size &
+                                                0x00000000FFFFFFFFULL)
+                         << ", ";
                     code << (embed->base_image().array_size >> (to_size_t) 32)
                          << ", wxSize(width, height));";
                     m_source->writeLine(code);
@@ -446,7 +448,8 @@ void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 
                 wxue::string line("extern const unsigned char ");
                 line << iter_array->base_image().array_name << '['
-                     << (iter_array->base_image().array_size & 0xFFFFFFFF) << "];";
+                     << static_cast<size_t>(iter_array->base_image().array_size & 0xFFFFFFFF)
+                     << "];";
                 if (iter_array->base_image().filename.size())
                 {
                     line << "  // " << iter_array->base_image().filename;

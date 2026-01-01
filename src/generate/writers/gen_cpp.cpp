@@ -172,18 +172,17 @@ void GenCppForm(GenData& gen_data, Node* form)
     auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
     if (!has_base_file)
     {
-        wxString msg("No filename specified for ");
+        wxue::string msg("No filename specified for ");
         if (form->HasValue(prop_class_name))
         {
-            msg += form->as_string(prop_class_name);
+            msg += form->as_view(prop_class_name);
         }
         else
         {
-            auto name = map_GenNames.at(form->get_GenName());
-            msg += wxString(name.data(), name.size());
+            msg += map_GenNames.at(form->get_GenName());
         }
         msg += '\n';
-        gen_data.AddResultMsg(msg.ToStdString());
+        gen_data.AddResultMsg(msg);
         return;
     }
 
@@ -671,8 +670,7 @@ void CppCodeGenerator::FinalizeNamespace(const wxue::StringVector& names, size_t
         while (current_indent > 0)
         {
             m_header->Unindent();
-            m_header->writeLine(
-                (wxString() << "} // namespace " << names[--current_indent]).ToStdString());
+            m_header->writeLine(wxue::string("} // namespace ") << names[--current_indent]);
         }
         m_header->writeLine();
     }
@@ -795,15 +793,16 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     {
         m_source->writeLine();
         wxue::ViewVector list;
-        list.SetString(wxString(Project.get_ProjectNode()->as_string(prop_project_src_includes)));
+        list.SetString(Project.get_ProjectNode()->as_view(prop_project_src_includes), ';',
+                       wxue::TRIM::both);
         for (auto& iter: list)
         {
-            wxFileName include(wxString(iter.data(), iter.size()));
+            wxFileName include(wxString::FromUTF8(iter.data(), iter.size()));
             include.MakeAbsolute();
             include.MakeRelativeTo(Project.get_BaseDirectory(m_form_node));
             wxString include_path = include.GetFullPath();
             include_path.Replace("\\", "/");
-            m_source->writeLine((wxString("#include \"") << include_path << '"').ToStdString());
+            m_source->writeLine(wxue::string("#include \"") << include_path.ToStdString() << '"');
         }
 
         m_source->writeLine();
@@ -829,12 +828,10 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
     {
         m_source->writeLine();
         wxue::ViewVector list;
-        list.SetString(wxString(m_form_node->as_string(prop_system_src_includes)));
+        list.SetString(m_form_node->as_view(prop_system_src_includes), ';', wxue::TRIM::both);
         for (auto& iter: list)
         {
-            m_source->writeLine(
-                (wxString("#include <") << wxString(iter.data(), iter.size()) << '>')
-                    .ToStdString());
+            m_source->writeLine(wxue::string("#include <") << iter << '>');
         }
     }
 
@@ -849,20 +846,18 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
         wxFileName file_copy(file);
         file_copy.SetExt(m_header_ext.substr(1));  // Remove leading dot from extension
         m_source->writeLine();
-        m_source->writeLine(
-            (wxString() << "#include \"" << file_copy.GetFullName() << "\"").ToStdString());
+        m_source->writeLine(wxue::string("#include \"")
+                            << file_copy.GetFullName().ToStdString() << '"');
     }
 
     if (m_form_node->HasValue(prop_local_src_includes))
     {
         m_source->writeLine();
         wxue::ViewVector list;
-        list.SetString(wxString(m_form_node->as_string(prop_local_src_includes)));
+        list.SetString(m_form_node->as_view(prop_local_src_includes), ';', wxue::TRIM::both);
         for (auto& iter: list)
         {
-            m_source->writeLine(
-                (wxString("#include \"") << wxString(iter.data(), iter.size()) << '"')
-                    .ToStdString());
+            m_source->writeLine((wxue::string("#include \"") << iter << '"'));
         }
     }
 
@@ -918,9 +913,8 @@ void CppCodeGenerator::GenerateClassIncludes(Code& code, PANEL_PAGE panel_type,
 
     if (Project.HasValue(prop_local_pch_file))
     {
-        m_source->writeLine(
-            (wxString() << "#include \"" << Project.as_string(prop_local_pch_file) << '"')
-                .ToStdString());
+        m_source->writeLine(wxue::string("#include \"")
+                            << Project.as_string(prop_local_pch_file) << '"');
         m_source->writeLine();
     }
 
@@ -1120,16 +1114,14 @@ void CppCodeGenerator::GenerateCppHandlers()
             {
                 {
                     auto type_sv = g_map_types.at(iter_img->base_image().type);
-                    m_source->writeLine((wxString("if (!wxImage::FindHandler(")
-                                         << wxString(type_sv.data(), type_sv.size()) << "))")
-                                            .ToStdString());
+                    m_source->writeLine(wxue::string("if (!wxImage::FindHandler(")
+                                        << type_sv << "))");
                 }
                 m_source->Indent();
                 {
                     auto handler_sv = g_map_handlers.at(iter_img->base_image().type);
-                    m_source->writeLine((wxString("\twxImage::AddHandler(new ")
-                                         << wxString(handler_sv.data(), handler_sv.size()) << ");")
-                                            .ToStdString());
+                    m_source->writeLine(wxue::string("\twxImage::AddHandler(new ")
+                                        << handler_sv << ");");
                 }
                 m_source->Unindent();
                 m_type_generated.insert(iter_img->base_image().type);
@@ -1460,8 +1452,7 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     if (Project.HasValue(prop_local_pch_file))
     {
         m_source->writeLine(
-            (wxString() << "#include \"" << Project.as_string(prop_local_pch_file) << '"')
-                .ToStdString());
+            (wxue::string("#include \"") << Project.as_string(prop_local_pch_file) << '"'));
         m_source->writeLine();
     }
 
@@ -1479,15 +1470,16 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
     {
         m_source->writeLine();
         wxue::ViewVector list;
-        list.SetString(wxString(Project.get_ProjectNode()->as_string(prop_project_src_includes)));
+        list.SetString(Project.get_ProjectNode()->as_view(prop_project_src_includes), ';',
+                       wxue::TRIM::both);
         for (auto& iter: list)
         {
-            wxFileName include(wxString(iter.data(), iter.size()));
+            wxFileName include(wxString::FromUTF8(iter.data(), iter.size()));
             include.MakeAbsolute();
             include.MakeRelativeTo(Project.get_BaseDirectory(m_form_node));
             wxString include_path = include.GetFullPath();
             include_path.Replace("\\", "/");
-            m_source->writeLine((wxString("#include \"") << include_path << '"').ToStdString());
+            m_source->writeLine(wxue::string("#include \"") << include_path.ToStdString() << '"');
         }
 
         m_source->writeLine();
@@ -1511,20 +1503,17 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
         path.replace_extension(m_header_ext);
         m_source->writeLine();
         auto filename = path.filename();
-        m_source->writeLine(
-            (wxString() << "#include \"" << std::string(filename) << "\"").ToStdString());
+        m_source->writeLine((wxue::string("#include \"") << std::string(filename) << '"'));
     }
 
     if (m_form_node->HasValue(prop_local_src_includes))
     {
         m_source->writeLine();
         wxue::ViewVector list;
-        list.SetString(wxString(m_form_node->as_string(prop_local_src_includes)));
+        list.SetString(m_form_node->as_view(prop_local_src_includes), ';', wxue::TRIM::both);
         for (auto& iter: list)
         {
-            m_source->writeLine(
-                (wxString("#include \"") << wxString(iter.data(), iter.size()) << '"')
-                    .ToStdString());
+            m_source->writeLine((wxue::string("#include \"") << iter << '"'));
         }
     }
 
@@ -1799,8 +1788,7 @@ void CppCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>
     if (!node->is_Form() && node->HasValue(prop_subclass) &&
         !node->is_PropValue(prop_class_access, "none"))
     {
-        set_hdr.insert(
-            (wxString() << "class " << node->as_string(prop_subclass) << ';').ToStdString());
+        set_hdr.insert((wxue::string("class ") << node->as_string(prop_subclass) << ';'));
     }
 
     // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes
@@ -1874,14 +1862,12 @@ void CppCodeGenerator::WriteImagePostHeader()
         }
         if (iter_array->base_image().filename.size())
         {
-            m_header->writeLine(
-                (wxString("// ") << iter_array->base_image().filename).ToStdString());
+            m_header->writeLine(wxue::string("// ") << iter_array->base_image().filename);
         }
-        m_header->writeLine((wxString("extern const unsigned char ")
-                             << iter_array->base_image().array_name << '['
-                             << (to_size_t) (iter_array->base_image().array_size & array_size_mask)
-                             << "];")
-                                .ToStdString());
+        m_header->writeLine(wxue::string("extern const unsigned char ")
+                            << iter_array->base_image().array_name << '['
+                            << (to_size_t) (iter_array->base_image().array_size & array_size_mask)
+                            << "];");
     }
 
     if (is_namespace_written)

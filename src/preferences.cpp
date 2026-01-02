@@ -21,7 +21,8 @@ void Prefs::ReadConfig()
     m_flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT |
                                             PREFS_MSG_WARNING);
     m_project_flags = config->ReadLong("project_flags", PREFS_PJT_MEMBER_PREFIX);
-    m_preview_type = static_cast<PREVIEW_TYPE>(config->ReadLong("preview_type", PREVIEW_TYPE_XRC));
+    m_preview_type = static_cast<PREVIEW_TYPE>(
+        config->ReadLong("preview_type", static_cast<long>(PREVIEW_TYPE::xrc)));
 
     m_sizers_all_borders = config->ReadBool("all_borders", true);
     m_sizers_always_expand = config->ReadBool("always_expand", true);

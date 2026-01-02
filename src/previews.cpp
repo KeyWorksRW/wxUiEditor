@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top level Preview functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -60,7 +60,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         return;
     }
 
-    auto form_node = m_selected_node.get();
+    auto* form_node = m_selected_node.get();
     if (!form_node->is_Form())
     {
         if (form_node->is_Gen(gen_Project) && form_node->get_ChildCount())
@@ -89,12 +89,12 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
             return;
     }
 
-    if (static_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_xrcPanel)
+    if (dynamic_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_xrcPanel)
     {
         PreviewXrc(form_node);
         return;
     }
-    else if (static_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_cppPanel)
+    if (dynamic_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_cppPanel)
     {
         PreviewCpp(form_node);
         return;
@@ -151,11 +151,11 @@ auto MainFrame::OnPreviewWinActivate(wxActivateEvent& event) -> void
 auto Preview(Node* form_node) -> void
 {
     PreviewSettings dlg_preview_settings(wxGetMainFrame());
-    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE::xrc)
     {
         dlg_preview_settings.set_type_xrc(true);
     }
-    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
+    else if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE::both)
     {
         dlg_preview_settings.set_type_both(true);
     }
@@ -171,18 +171,18 @@ auto Preview(Node* form_node) -> void
 
     if (dlg_preview_settings.is_type_xrc())
     {
-        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_XRC);
+        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE::xrc);
     }
     else if (dlg_preview_settings.is_type_both())
     {
-        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_BOTH);
+        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE::both);
     }
     else
     {
-        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE_CPP);
+        UserPrefs.SetPreviewType(Prefs::PREVIEW_TYPE::cpp);
     }
 
-    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_BOTH)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE::both)
     {
         if (!form_node->is_Gen(gen_wxDialog) && !form_node->is_Gen(gen_PanelForm))
         {
@@ -203,12 +203,12 @@ auto Preview(Node* form_node) -> void
         dlg_compare.ShowModal();
         return;
     }
-    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_CPP)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE::cpp)
     {
         wxGetMainFrame()->PreviewCpp(form_node);
         return;
     }
-    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE_XRC)
+    if (UserPrefs.GetPreviewType() == Prefs::PREVIEW_TYPE::xrc)
     {
         PreviewXrc(form_node);
         return;
@@ -252,7 +252,7 @@ auto PreviewXrc(Node* form_node) -> void
 auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node) -> void
 {
     pugi::xml_document doc;
-    if (auto result = doc.load_string(doc_str.c_str()); !result)
+    if (auto result = doc.load_string(doc_str); !result)
     {
         std::string msg =
             std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
@@ -369,7 +369,7 @@ auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
                     auto* wizard = wxStaticCast(object, wxWizard);
                     if (form_node->get_ChildCount())
                     {
-                        auto first_page =
+                        auto* first_page =
                             wizard->FindWindow(form_node->get_Child(0)->as_wxString(prop_var_name));
                         wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
                         wizard->Destroy();
@@ -420,7 +420,9 @@ void MainFrame::PreviewCpp(Node* form_node)
     {
         wxue::string modified_style("wxCLOSE_BOX|wxCAPTION");
         if (style.size())
+        {
             modified_style << '|' << style;
+        }
         form_node->set_value(prop_style, modified_style);
         wxMessageBox(
             "Caption and Close box temporarily added so that you can close the preview dialog.",
@@ -444,7 +446,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                     m_pxrc_dlg = &dlg;  // so event handlers can access it
                     dlg.Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, this);
 
-                    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+                    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
                     dlg_sizer->SetMinSize(wxSize(300, 400));
                     CreateMockupChildren(form_node, &dlg, nullptr, dlg_sizer, &dlg);
                     dlg.SetSizerAndFit(dlg_sizer);
@@ -481,7 +483,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                     }
 
                     CreateMockupChildren(form_node->get_Child(0), &dlg, &dlg, nullptr, &dlg);
-                    if (auto btn = dlg.FindWindowById(dlg.GetAffirmativeId()); btn)
+                    if (auto* btn = wxDialog::FindWindowById(dlg.GetAffirmativeId()); btn)
                     {
                         btn->Bind(wxEVT_BUTTON,
                                   [&dlg](wxCommandEvent&)
@@ -490,7 +492,7 @@ void MainFrame::PreviewCpp(Node* form_node)
                                   });
                     }
 
-                    if (auto btn = dlg.FindWindowById(dlg.GetEscapeId()); btn)
+                    if (auto* btn = wxDialog::FindWindowById(dlg.GetEscapeId()); btn)
                     {
                         btn->Bind(wxEVT_BUTTON,
                                   [&dlg](wxCommandEvent&)
@@ -567,7 +569,9 @@ void MainFrame::PreviewCpp(Node* form_node)
                     }
 
                     if (form_node->as_int(prop_border) != 5)
+                    {
                         wizard.SetBorder(form_node->as_int(prop_border));
+                    }
                     if (form_node->HasValue(prop_bmp_placement))
                     {
                         int placement = 0;
@@ -583,16 +587,20 @@ void MainFrame::PreviewCpp(Node* form_node)
                         wizard.SetBitmapPlacement(placement);
 
                         if (form_node->as_int(prop_bmp_min_width) > 0)
+                        {
                             wizard.SetMinimumBitmapWidth(form_node->as_int(prop_bmp_min_width));
+                        }
                         if (form_node->HasValue(prop_bmp_background_colour))
+                        {
                             wizard.SetBitmapBackgroundColour(
                                 form_node->as_wxColour(prop_bmp_background_colour));
+                        }
                     }
 
                     std::vector<wxWizardPageSimple*> pages;
                     for (auto& page: form_node->get_ChildNodePtrs())
                     {
-                        auto wiz_page = new wxWizardPageSimple;
+                        auto* wiz_page = new wxWizardPageSimple;
                         pages.emplace_back(wiz_page);
                         if (page->HasValue(prop_bitmap))
                         {
@@ -600,19 +608,27 @@ void MainFrame::PreviewCpp(Node* form_node)
                             wiz_page->Create(&wizard, nullptr, nullptr, bundle);
                         }
                         else
+                        {
                             wiz_page->Create(&wizard);
+                        }
 
                         if (page->get_ChildCount())
+                        {
                             CreateMockupChildren(page->get_Child(0), wiz_page, nullptr, nullptr,
                                                  &wizard);
+                        }
                     }
 
                     for (size_t idx = 0; idx < pages.size(); ++idx)
                     {
                         if (idx > 0)
+                        {
                             pages[idx]->SetPrev(pages[idx - 1]);
+                        }
                         if (idx + 1 < pages.size())
+                        {
                             pages[idx]->SetNext(pages[idx + 1]);
+                        }
                     }
 
                     wizard.RunWizard(wxStaticCast(pages[0], wxWizardPageSimple));
@@ -633,5 +649,7 @@ void MainFrame::PreviewCpp(Node* form_node)
 
     // Restore the original style if it was temporarily changed.
     if (form_node->as_string(prop_style) != style)
+    {
         form_node->set_value(prop_style, style);
+    }
 }

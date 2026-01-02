@@ -23,45 +23,54 @@
 
 using namespace GenEnum;
 
-static auto PostProcessBook(Node* book_node) -> void
+namespace
 {
-    auto page_node = book_node->CreateChildNode(gen_BookPage).first;
-    if (page_node->FixDuplicateName())
-        wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
-
-    if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+    auto PostProcessBook(Node* book_node) -> void
     {
-        sizer->set_value(prop_var_name, "page_sizer");
-        sizer->FixDuplicateName();
-        wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+        auto page_node = book_node->CreateChildNode(gen_BookPage).first;
+        if (page_node->FixDuplicateName())
+        {
+            wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
+        }
+
+        if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+        {
+            sizer->set_value(prop_var_name, "page_sizer");
+            sizer->FixDuplicateName();
+            wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+        }
     }
-}
 
-static auto PostProcessPage(Node* page_node) -> void
-{
-    if (page_node->FixDuplicateName())
-        wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
-
-    if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+    auto PostProcessPage(Node* page_node) -> void
     {
-        sizer->set_value(prop_var_name, "page_sizer");
-        sizer->FixDuplicateName();
-        wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+        if (page_node->FixDuplicateName())
+        {
+            wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
+        }
+
+        if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+        {
+            sizer->set_value(prop_var_name, "page_sizer");
+            sizer->FixDuplicateName();
+            wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+        }
     }
-}
 
-static auto PostProcessPanel(Node* panel_node) -> void
-{
-    if (panel_node->FixDuplicateName())
-        wxGetFrame().FirePropChangeEvent(panel_node->get_PropPtr(prop_var_name));
-
-    if (auto sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+    auto PostProcessPanel(Node* panel_node) -> void
     {
-        sizer->set_value(prop_var_name, "panel_sizer");
-        sizer->FixDuplicateName();
-        wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+        if (panel_node->FixDuplicateName())
+        {
+            wxGetFrame().FirePropChangeEvent(panel_node->get_PropPtr(prop_var_name));
+        }
+
+        if (auto sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+        {
+            sizer->set_value(prop_var_name, "panel_sizer");
+            sizer->FixDuplicateName();
+            wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+        }
     }
-}
+}  // anonymous namespace
 
 auto SetUniqueRibbonToolID(Node* node) -> void
 {
@@ -73,7 +82,9 @@ auto SetUniqueRibbonToolID(Node* node) -> void
     }
     ASSERT(bar_parent);
     if (!bar_parent)
+    {
         return;  // should never happen, but don't crash if it does
+    }
 
     std::unordered_set<std::string> name_set;
 
@@ -100,10 +111,10 @@ auto SetUniqueRibbonToolID(Node* node) -> void
 
     std::string new_name("tool1");
 
-    if (auto it = name_set.find(new_name); it != name_set.end())
+    if (auto iter = name_set.find(new_name); iter != name_set.end())
     {
         // Keep adding higher and higher numbers until we get a unique one.
-        for (int i = 2; it != name_set.end(); it = name_set.find(new_name), ++i)
+        for (int i = 2; iter != name_set.end(); iter = name_set.find(new_name), ++i)
         {
             new_name = std::format("tool{}", i);
         }
@@ -287,7 +298,7 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
         name = gen_ribbonTool;
     }
 
-    if (auto valid_parent = NodeCreation.is_ValidCreateParent(name, this);
+    if (auto* valid_parent = NodeCreation.is_ValidCreateParent(name, this);
         valid_parent && valid_parent != this)
     {
         if (valid_parent && valid_parent == get_Parent() &&
@@ -425,9 +436,9 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
         case gen_wxStaticBoxSizer:
         case gen_StaticCheckboxBoxSizer:
         case gen_StaticRadioBtnBoxSizer:
-            if (auto node = new_node->get_Parent(); node)
+            if (auto* node = new_node->get_Parent(); node)
             {
-                if (auto prop = node->get_PropPtr(prop_borders); prop)
+                if (auto* prop = node->get_PropPtr(prop_borders); prop)
                 {
                     if (UserPrefs.is_SizersAllBorders())
                     {
@@ -435,7 +446,7 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
                     }
                 }
 
-                if (auto prop = node->get_PropPtr(prop_flags); prop)
+                if (auto* prop = node->get_PropPtr(prop_flags); prop)
                 {
                     if (UserPrefs.is_SizersExpand())
                     {
@@ -468,7 +479,7 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
             break;
 
         case gen_wxContextMenuEvent:
-            if (auto event = new_node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU"); event)
+            if (auto* event = new_node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU"); event)
             {
                 event->set_value(new_node->as_string(prop_handler_name));
             }

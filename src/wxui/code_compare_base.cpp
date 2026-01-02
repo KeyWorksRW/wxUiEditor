@@ -11,7 +11,6 @@
 // cppcheck-suppress-begin *
 
 #include <wx/sizer.h>
-#include <wx/stattext.h>
 
 #include "code_compare_base.h"
 
@@ -57,8 +56,8 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     box_sizer->AddSpacer(15);
 
-    auto* staticText = new wxStaticText(this, wxID_ANY, "C&hanged Classes:");
-    box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
+    m_changed_classes_text = new wxStaticText(this, wxID_ANY, "C&hanged Classes:");
+    box_sizer->Add(m_changed_classes_text, wxSizerFlags().Border(wxALL));
 
     m_list_changes = new wxListBox(this, wxID_ANY);
     m_list_changes->Enable(false);

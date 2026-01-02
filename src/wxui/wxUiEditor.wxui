@@ -6401,9 +6401,8 @@
             height="15" />
           <node
             class="wxStaticText"
-            class_access="none"
             label="C&amp;hanged Classes:"
-            var_name="staticText" />
+            var_name="m_changed_classes_text" />
           <node
             class="wxListBox"
             var_name="m_list_changes"

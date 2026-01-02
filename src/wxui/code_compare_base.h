@@ -21,6 +21,7 @@
 #include <wx/image.h>
 #include <wx/listbox.h>
 #include <wx/radiobut.h>
+#include <wx/stattext.h>
 
 class CodeCompareBase : public wxDialog
 {
@@ -57,6 +58,7 @@ protected:
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
     wxRadioButton* m_radio_xrc;
+    wxStaticText* m_changed_classes_text;
 };
 
 // ************* End of generated code ***********

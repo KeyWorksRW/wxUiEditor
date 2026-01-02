@@ -26,7 +26,19 @@ void MainFrame::OnCodeCompare(wxCommandEvent& /* event */)
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    GenLang language = Project.get_CodePreference(wxGetFrame().getSelectedNode());
+    auto* node = wxGetFrame().getSelectedNode();
+    ASSERT_MSG(node, "No node selected for code comparison dialog");  // this should be impossible
+    if (node->is_Form())
+    {
+        m_changed_classes_text->SetLabel(node->as_string(prop_class_name));
+    }
+    else if (node->is_Folder())
+    {
+        wxString text = node->as_string(prop_label).wx() << " (Folder)";
+        m_changed_classes_text->SetLabel(text);
+    }
+
+    GenLang language = Project.get_CodePreference(node);
     wxCommandEvent dummy;
     switch (language)
     {
@@ -46,8 +58,8 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
             m_radio_cplusplus->SetValue(true);
             break;
 
-            // TODO: [Randalphwa - 12-17-2025] We need to support XRC, but we don't currently have a
-            // verified way of comparing XRC files
+            // TODO: [Randalphwa - 12-17-2025] We need to support XRC, but we don't currently
+            // have a verified way of comparing XRC files
 
         default:
             {
@@ -55,8 +67,8 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
                                        GenLangToString(language));
                 FAIL_MSG(msg);
 
-                // The dialog has not been shown yet, so we displaying a user message box won't make
-                // sense. Instead, default to C++ generation.
+                // The dialog has not been shown yet, so we displaying a user message box won't
+                // make sense. Instead, default to C++ generation.
                 m_radio_cplusplus->SetValue(true);
                 language = GEN_LANG_CPLUSPLUS;
             }

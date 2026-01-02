@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains user-modifiable node
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -788,7 +788,7 @@ auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
     }
 
     // Remove m_ prefix (common in imported projects)
-    if (member_name.starts_with("m_"))
+    if (member_name.starts_with("m_") && language != GEN_LANG_CPLUSPLUS)
     {
         member_name.erase(0, 2);
 

@@ -137,6 +137,7 @@ private:
     [[nodiscard]] auto GenerateCppForm(Node* form, bool comparison_only = false,
                                        wxProgressDialog* progress = nullptr) -> bool;
 
+    // Returns true if any file was updated
     [[nodiscard]] auto GenerateLanguageForm(std::string_view class_name, Node* form,
                                             bool comparison_only = false) -> bool;
 

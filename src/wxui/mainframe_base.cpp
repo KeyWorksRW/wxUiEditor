@@ -887,11 +887,17 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
         "Generates code for the selected language", wxITEM_NORMAL);
     menu_item19->SetBitmap(wxue_img::bundle_generate_svg(20, 20));
     m_menuTools->Append(menu_item19);
+    auto* menu_item20 = new wxMenuItem(m_menuTools, id_CompareCodeGenerate, "Compare Code Generation...",
+        "Generates code for the selected language", wxITEM_NORMAL);
+    menu_item20->SetBitmap(wxue_img::bundle_generate_svg(20, 20));
+    m_menuTools->Append(menu_item20);
     m_mi_preview = new wxMenuItem(m_menuTools, id_PreviewForm, "&Preview Form...\tF5", "Preview form using XRC and/or C++",
         wxITEM_NORMAL);
     m_mi_preview->SetBitmap(wxue_img::bundle_xrc_preview_svg(20, 20));
     m_menuTools->Append(m_mi_preview);
     auto* menu_item_8 = new wxMenuItem(m_menuTools, wxID_ANY, "&Global Edit Custom IDs...");
+    menu_item_8->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_TOOLBAR, wxSize(30, 30)));
+
     m_menuTools->Append(menu_item_8);
     m_menubar->Append(m_menuTools, "&Tools");
 
@@ -939,6 +945,7 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderLeft);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderRight);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderTop);
+    Bind(wxEVT_MENU, &MainFrameBase::OnCodeCompare, this, id_CompareCodeGenerate);
     Bind(wxEVT_MENU, &MainFrameBase::OnCopy, this, wxID_COPY);
     Bind(wxEVT_MENU, &MainFrameBase::OnCut, this, wxID_CUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnDelete, this, wxID_DELETE);

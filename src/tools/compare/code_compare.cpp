@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code Generation Comparison
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,12 @@
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
+
+void MainFrame::OnCodeCompare(wxCommandEvent& /* event */)
+{
+    CodeCompare dlg(this);
+    dlg.ShowModal();
+}
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
@@ -73,7 +79,7 @@ void CodeCompare::OnRadioButton(GenLang language)
         return;
     }
 
-    auto current_node = wxGetFrame().getSelectedNode();
+    auto* current_node = wxGetFrame().getSelectedNode();
     if (!current_node)
     {
         current_node = Project.get_ProjectNode();

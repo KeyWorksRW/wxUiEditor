@@ -166,6 +166,7 @@ public:
         MenuSingleGenRuby,
         MenuSingleGenXRC,
         MenuSingleGenPerl,
+        MenuCompareCode,
 
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,

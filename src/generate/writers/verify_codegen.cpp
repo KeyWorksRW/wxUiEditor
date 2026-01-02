@@ -26,7 +26,7 @@
 
 #include "verify_codegen.h"
 
-#include "../../internal/compare/code_compare.h"  // CodeCompare class
+#include "../../tools/compare/code_compare.h"  // CodeCompare class
 #include "mainapp.h"                              // App -- Main application class
 #include "project_handler.h"                      // ProjectHandler class
 #include "utils.h"                                // Utility functions that work with properties

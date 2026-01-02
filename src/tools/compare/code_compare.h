@@ -17,8 +17,8 @@
 #include <wx/listbox.h>
 #include <wx/radiobut.h>
 
-#include "../code_compare_base.h"  // CodeCompareBase -- Class for comparing generated code
-#include "diff_viewer.h"
+#include "code_compare_base.h"  // CodeCompareBase -- Class for comparing generated code
+#include "diff_viewer.h"        // DiffViewer -- Dialog for displaying file differences
 
 class CodeCompare : public CodeCompareBase
 {

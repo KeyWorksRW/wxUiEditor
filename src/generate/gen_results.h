@@ -18,13 +18,12 @@ class wxProgressDialog;
 
 #include <chrono>
 #include <future>
-#include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "../internal/compare/diff.h"  // DiffResult, DiffLine, FileDiff
-#include "../panels/base_panel.h"      // PANEL_PAGE enum
+#include "../panels/base_panel.h"   // PANEL_PAGE enum
+#include "../tools/compare/diff.h"  // DiffResult, DiffLine, FileDiff
 
 class GenResults
 {

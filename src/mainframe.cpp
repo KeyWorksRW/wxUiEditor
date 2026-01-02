@@ -55,7 +55,6 @@
 
 #include "wxui/ui_images.h"  // This is generated from the Images List
 
-#include "internal/compare/code_compare.h"  // CodeCompare
 #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 #include "internal/msg_logging.h"   // MsgLogging -- Message logging class
 #include "internal/node_info.h"     // NodeInfo
@@ -204,9 +203,6 @@ MainFrame::MainFrame() :
 
         auto* menuTesting = new wxMenu;
 
-        menuTesting->Append(
-            id_CodeDiffDlg, "Compare Code &Generation...",
-            "Dialog showing what class have changed, and optional viewing in WinMerge");
         menuTesting->Append(id_FindWidget, "&Find Widget...",
                             "Search for a widget starting with the current selected node");
         menuTesting->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
@@ -436,16 +432,6 @@ MainFrame::MainFrame() :
                 }
             },
             ID_EXPERIMENTAL_MDI_APP);
-
-        // Testing menu items
-        Bind(
-            wxEVT_MENU,
-            [this](wxCommandEvent&)
-            {
-                CodeCompare dlg(this);
-                dlg.ShowModal();
-            },
-            id_CodeDiffDlg);
 
         Bind(
             wxEVT_MENU,

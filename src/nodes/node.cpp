@@ -1126,7 +1126,7 @@ auto Node::FixDuplicateName() -> bool
     {
         if (const auto& name = as_string(iter); name.size())
         {
-            if (auto iter_find = name_set.find(name); iter_find != name_set.end())
+            if (name_set.contains(name))
             {
                 // We get here if the name has already been used.
 
@@ -1142,8 +1142,7 @@ auto Node::FixDuplicateName() -> bool
                 }
 
                 std::string new_name;
-                for (int i = 2; iter_find != name_set.end();
-                     iter_find = name_set.find(new_name), ++i)
+                for (int i = 2; name_set.contains(new_name); ++i)
                 {
                     new_name.clear();
                     new_name = org_name + std::to_string(i);
@@ -1235,7 +1234,7 @@ auto Node::GenerateUniqueNameFromBase(const std::string& base_name,
         org_name.erase(org_name.size() - 1, 1);
     }
 
-    std::string new_name;
+    std::string new_name(org_name);
     for (int i = 2; name_set.contains(new_name); ++i)
     {
         new_name.clear();
@@ -1251,7 +1250,7 @@ auto Node::FixDuplicateVariableNames(const std::unordered_set<std::string>& name
     {
         if (const auto& name = as_string(iter); name.size())
         {
-            if (auto iter_find = name_set.find(name); iter_find != name_set.end())
+            if (name_set.contains(name))
             {
                 // We get here if the name has already been used.
                 auto new_name = GenerateUniqueNameFromBase(name, name_set);

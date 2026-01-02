@@ -1,6 +1,6 @@
 ---
 description: 'Create and maintain User, Contributor, and folder README documentation for the wxUiEditor project.'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # Documentation Agent

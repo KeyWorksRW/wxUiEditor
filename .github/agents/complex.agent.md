@@ -1,6 +1,6 @@
 ---
 description: 'Select a function, then ask me to reduce its complexity. I extract helper functions following strict rules to improve maintainability while preserving debuggability.'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # Complexity Reduction Agent

@@ -1,6 +1,6 @@
 ---
 description: 'Expert wxRuby GUI development using modern Ruby practices to create wxWidgets UI applications'
-tools: ['vscode', 'execute', 'read', 'edit']
+tools: ['execute', 'read', 'edit']
 ---
 
 # wxRuby GUI Development Agent

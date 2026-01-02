@@ -1,6 +1,6 @@
 ---
 description: 'Generate Perl code for wxPerl 3.3 using the Code class for in-memory code generation'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # Perl Code Generator Agent

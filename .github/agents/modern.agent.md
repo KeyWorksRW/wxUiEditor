@@ -1,6 +1,6 @@
 ---
 description: 'Add files to chat, then ask me to modernize them. I fix common clang-tidy warnings and apply C++23 standards using a 20-point checklist, then build to verify.'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # C++23 Modernization Agent

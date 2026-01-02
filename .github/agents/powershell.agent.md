@@ -1,6 +1,6 @@
 ---
 description: 'Expert PowerShell scripting for testing, building, and automation tasks.'
-tools: ['vscode', 'execute', 'read', 'edit']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # PowerShell Automation Agent

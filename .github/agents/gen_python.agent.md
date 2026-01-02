@@ -1,6 +1,6 @@
 ---
 description: 'Generate Python code for wxPython 4.2 using the Code class for in-memory code generation'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # Python Code Generator Agent

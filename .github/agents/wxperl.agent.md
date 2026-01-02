@@ -1,6 +1,6 @@
 ---
 description: 'Expert wxPerl GUI development using modern Perl practices to create wxWidgets UI applications'
-tools: ['vscode', 'execute', 'read', 'edit']
+tools: ['execute', 'read', 'edit']
 ---
 
 # wxPerl GUI Development Agent

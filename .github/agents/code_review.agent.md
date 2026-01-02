@@ -1,6 +1,6 @@
 ---
 description: 'Add one or more files to chat, then type "run".'
-tools: ['vscode', 'read', 'edit', 'oraios/serena/*']
+tools: ['read', 'edit', 'oraios/serena/*']
 ---
 
 # Code Review Agent

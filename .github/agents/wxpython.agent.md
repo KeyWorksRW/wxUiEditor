@@ -1,6 +1,6 @@
 ---
 description: 'Expert wxPython GUI development using modern Python practices to create wxWidgets UI applications'
-tools: ['vscode', 'execute', 'read', 'edit']
+tools: ['execute', 'read', 'edit']
 ---
 
 # wxPython GUI Development Agent

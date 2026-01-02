@@ -1,6 +1,6 @@
 ---
 description: 'Analyze all branch changes and generate a comprehensive PR description for review in the chat panel. Reviews commits, diffs, and context to generate professional documentation.'
-tools: ['vscode', 'execute', 'read', 'oraios/serena/*']
+tools: ['execute', 'read', 'oraios/serena/*']
 ---
 
 # Pull Request Description Agent

@@ -1,6 +1,6 @@
 ---
 description: 'Adds AI Context Documentation.'
-tools: ['vscode', 'read', 'edit', 'oraios/serena/*']
+tools: ['read', 'edit', 'oraios/serena/*']
 ---
 
 # AI Context Documentation Agent

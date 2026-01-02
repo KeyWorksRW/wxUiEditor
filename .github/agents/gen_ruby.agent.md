@@ -1,6 +1,6 @@
 ---
 description: 'Generate Ruby code for wxRuby 1.6.1 using the Code class for in-memory code generation'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # Ruby Code Generator Agent

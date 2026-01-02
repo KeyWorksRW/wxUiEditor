@@ -1,6 +1,6 @@
 ---
 description: 'Use this when editing a custom agent.'
-tools: ['vscode', 'read', 'edit']
+tools: ['read', 'edit']
 ---
 
 # Agent Editing Agent

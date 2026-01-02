@@ -1,6 +1,6 @@
 ---
 description: 'Generate C++11 code for wxWidgets 3.2 using the Code class for in-memory code generation'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # C++ Code Generator Agent

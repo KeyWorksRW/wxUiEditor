@@ -1,6 +1,6 @@
 ---
 description: 'Analyze complex problems and create detailed architectural plans. I examine existing code, identify edge cases, and propose phased solutions for your review before implementation.'
-tools: ['vscode', 'execute', 'read', 'edit', 'oraios/serena/*']
+tools: ['execute', 'read', 'edit', 'oraios/serena/*']
 ---
 
 # Architectural Planning Agent

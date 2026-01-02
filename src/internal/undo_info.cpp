@@ -124,7 +124,13 @@ bool UndoInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void UndoInfo::OnInit(wxInitDialogEvent& event)
 {
-    NodeInfo::NodeMemory node_memory;
+    struct NodeMemory
+    {
+        size_t size { 0 };
+        size_t children { 0 };
+    };
+
+    NodeMemory node_memory;
 
     // The problem with getting the memory size is that it's a bit tricky to know what the
     // reference count needs to be under to indicate that a Node is only being held by the

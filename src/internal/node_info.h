@@ -31,15 +31,7 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    struct NodeMemory
-    {
-        size_t size { 0 };
-        size_t children { 0 };
-    };
-
     void SetNode(Node* node) { m_node = node; }
-
-    static void CalcNodeMemory(Node* node, NodeMemory& node_memory);
 
 protected:
 

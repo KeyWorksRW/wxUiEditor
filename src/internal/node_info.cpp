@@ -95,9 +95,6 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // cppcheck-suppress-end *
 // ***********************************************
 // </auto-generated>
-// The original file was missing the comment block ending the generated code!
-//
-// The entire original file has been copied below this comment block.
 
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Purpose:   Node memory usage dialog
@@ -113,19 +110,25 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 #include "project_handler.h"             // ProjectHandler class
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
-void NodeInfo::CalcNodeMemory(Node* node, NodeMemory& node_memory)
-{
-    node_memory.size += node->get_NodeSize();
-    ++node_memory.children;
-
-    for (auto& iter: node->get_ChildNodePtrs())
-    {
-        CalcNodeMemory(iter.get(), node_memory);
-    }
-}
-
 void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 {
+    struct NodeMemory
+    {
+        size_t size { 0 };
+        size_t children { 0 };
+    };
+
+    auto calc_node_memory = [](this auto&& self, Node* node, NodeMemory& node_memory) -> void
+    {
+        node_memory.size += node->get_NodeSize();
+        ++node_memory.children;
+
+        for (auto& iter: node->get_ChildNodePtrs())
+        {
+            self(iter.get(), node_memory);
+        }
+    };
+
     wxue::string label;
     NodeMemory node_memory;
 
@@ -141,24 +144,24 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 
         node_memory.size = 0;
         node_memory.children = 0;
-        CalcNodeMemory(cur_sel, node_memory);
+        calc_node_memory(cur_sel, node_memory);
         label = std::format(std::locale(""), "Memory: {:L} ({:L} node{})", node_memory.size,
                             node_memory.children, node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
     }
 
-    CalcNodeMemory(Project.get_ProjectNode(), node_memory);
+    calc_node_memory(Project.get_ProjectNode(), node_memory);
 
     label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size,
                         node_memory.children);
     m_txt_project->SetLabel(label);
 
-    auto clipboard = wxGetFrame().getClipboard();
+    auto *clipboard = wxGetFrame().getClipboard();
     if (clipboard)
     {
         node_memory.size = 0;
         node_memory.children = 0;
-        CalcNodeMemory(clipboard, node_memory);
+        calc_node_memory(clipboard, node_memory);
         label = std::format(std::locale(""), "Clipboard: {:L} ({:L} nodes)", node_memory.size,
                             node_memory.children);
         m_txt_clipboard->SetLabel(label);

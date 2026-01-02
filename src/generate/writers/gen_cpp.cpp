@@ -1538,7 +1538,7 @@ inline constexpr const auto txt_get_data_function = R"===(
 
 // clang-format on
 
-void CppCodeGenerator::GenerateDataForm(wxProgressDialog* progress)
+void CppCodeGenerator::GenerateDataForm(wxProgressDialog* /* progress */)
 {
     ASSERT_MSG(m_form_node, "Attempting to generate Data List when no form was located.");
 

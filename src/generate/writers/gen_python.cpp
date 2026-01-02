@@ -329,7 +329,7 @@ auto PythonCodeGenerator::WriteWizardComment(Code& code) -> void
 }
 
 void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
-                                        wxProgressDialog* progress)
+                                        wxProgressDialog* /* progress */)
 {
     m_language = language;
     m_panel_type = panel_type;

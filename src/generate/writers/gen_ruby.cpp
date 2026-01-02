@@ -420,7 +420,7 @@ auto RubyCodeGenerator::WriteRuboCopFooter() -> void
 }
 
 void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
-                                      wxProgressDialog* progress)
+                                      wxProgressDialog* /* progress */)
 {
     m_language = language;
     m_panel_type = panel_type;

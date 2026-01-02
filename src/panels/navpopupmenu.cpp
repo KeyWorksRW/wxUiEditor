@@ -296,6 +296,16 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             ChangeSizer(gen_wxWrapSizer);
             break;
 
+        case MenuCompareCode:
+            {
+                // Because this immediately creates a dialog, we need to be sure that MainFrame
+                // has the correct node selected first before the dialog queries it.
+                wxGetFrame().SelectNode(m_node);
+                wxCommandEvent dummy;
+                wxGetMainFrame()->OnCodeCompare(dummy);
+            }
+            break;
+
         case MenuSingleGenCpp:
             {
                 wxCommandEvent dummy;
@@ -490,8 +500,8 @@ void NavPopupMenu::CreateCommonMenu()
 
 void NavPopupMenu::MenuAddCommands()
 {
-    wxMenuItem* menu_item;
-    auto& dpi_size = wxGetFrame().GetMenuDpiSize();
+    wxMenuItem* menu_item = nullptr;
+    const auto& dpi_size = wxGetFrame().GetMenuDpiSize();
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -526,6 +536,7 @@ void NavPopupMenu::MenuAddCommands()
 
             if (count)
             {
+                Append(MenuCompareCode, "Compare Code for this form");
                 AppendSeparator();
             }
         }

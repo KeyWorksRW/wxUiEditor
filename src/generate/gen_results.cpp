@@ -16,13 +16,13 @@
 
 #include "gen_results.h"
 
-#include "../internal/compare/diff.h"  // Diff -- Compare for file diffs
-#include "file_codewriter.h"  // FileCodeWriter -- Write code to disk with test mode support
-#include "gen_common.h"       // GeneratorLibrary
-#include "mainapp.h"          // wxGetApp()
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // Project
+#include "../tools/compare/diff.h"  // Diff -- Compare for file diffs
+#include "file_codewriter.h"        // FileCodeWriter -- Write code to disk with test mode support
+#include "gen_common.h"             // GeneratorLibrary
+#include "mainapp.h"                // wxGetApp()
+#include "mainframe.h"              // MainFrame -- Main window frame
+#include "node.h"                   // Node class
+#include "project_handler.h"        // Project
 
 #include "wxue_string.h"       // wxue::string, wxue::SaveCwd
 #include "wxue_view_vector.h"  // wxue::ViewVector (for Diff::Compare)

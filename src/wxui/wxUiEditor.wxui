@@ -1,4 +1,4 @@
-<?xml version="1.0"?>bitmap_toggle_button
+<?xml version="1.0"?>
 <wxUiEditorData
   data_version="19">
   <node
@@ -2333,6 +2333,14 @@
               wxEVT_MENU="OnGenerateCode" />
             <node
               class="wxMenuItem"
+              bitmap="SVG;generate.svg;[20,20]"
+              help="Generates code for the selected language"
+              id="id_CompareCodeGenerate"
+              label="Compare Code Generation..."
+              var_name="menu_item20"
+              wxEVT_MENU="OnCodeCompare" />
+            <node
+              class="wxMenuItem"
               bitmap="SVG;xrc_preview.svg;[20,20]"
               class_access="protected:"
               help="Preview form using XRC and/or C++"
@@ -2343,6 +2351,7 @@
               wxEVT_MENU="OnPreviewXrc" />
             <node
               class="wxMenuItem"
+              bitmap="Art;wxART_EDIT|wxART_TOOLBAR;[30,30]"
               label="&amp;Global Edit Custom IDs..."
               var_name="menu_item_8"
               wxEVT_MENU="OnEditCustomIds" />
@@ -6333,6 +6342,93 @@
       </node>
     </node>
     <node
+      class="wxDialog"
+      class_name="CodeCompareBase"
+      title="Compare Code Generation"
+      base_file="./code_compare_base.cpp"
+      derived_class_name="CodeCompare"
+      private_members="1"
+      pure_virtual_functions="1"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Select the Project, a Folder, or a Form and this dialog will list the names of any classes that have changed from what you have on disk. Click the Diff button to see details of what has changed."
+            var_name="staticText_2"
+            wrap="320"
+            borders="wxTOP|wxRIGHT|wxLEFT" />
+          <node
+            class="wxGridSizer"
+            cols="3"
+            alignment="wxALIGN_CENTER_HORIZONTAL">
+            <node
+              class="wxRadioButton"
+              label="&amp;C++"
+              style="wxRB_GROUP"
+              var_name="m_radio_cplusplus"
+              wxEVT_RADIOBUTTON="OnCPlusPlus" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Python"
+              var_name="m_radio_python"
+              wxEVT_RADIOBUTTON="OnPython" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Ruby"
+              var_name="m_radio_ruby"
+              wxEVT_RADIOBUTTON="OnRuby" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Perl"
+              var_name="m_radio_perl"
+              wxEVT_RADIOBUTTON="OnPerl" />
+            <node
+              class="wxRadioButton"
+              label="&amp;XRC"
+              var_name="m_radio_xrc"
+              wxEVT_RADIOBUTTON="OnXRC" />
+          </node>
+          <node
+            class="spacer"
+            height="15" />
+          <node
+            class="wxStaticText"
+            label="C&amp;hanged Classes:"
+            var_name="m_changed_classes_text" />
+          <node
+            class="wxListBox"
+            var_name="m_list_changes"
+            minimum_size="250,200"
+            flags="wxEXPAND" />
+          <node
+            class="wxStaticText"
+            label="Diff Results"
+            var_name="m_diff_results" />
+          <node
+            class="wxButton"
+            label="View &amp;Diffs..."
+            bitmap="XPM;../internal/WinMerge.xpm"
+            disabled="1"
+            wxEVT_BUTTON="OnDiff" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="0"
+          Close="1"
+          OK="0"
+          default_button="Close"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
       class="PanelForm"
       class_name="CodeDisplayBase"
       base_file="codedisplay_base"
@@ -7243,91 +7339,6 @@
       </node>
       <node
         class="wxDialog"
-        class_name="CodeCompareBase"
-        title="Compare Code Generation"
-        base_file="..\internal\code_compare_base"
-        derived_class_name="CodeCompare"
-        private_members="1"
-        pure_virtual_functions="1"
-        wxEVT_INIT_DIALOG="OnInit">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="dlg_sizer"
-          flags="wxEXPAND">
-          <node
-            class="wxBoxSizer"
-            orientation="wxVERTICAL">
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.&#10;"
-              var_name="staticText_2"
-              wrap="320"
-              borders="wxTOP|wxRIGHT|wxLEFT" />
-            <node
-              class="wxGridSizer"
-              cols="3"
-              alignment="wxALIGN_CENTER_HORIZONTAL">
-              <node
-                class="wxRadioButton"
-                label="&amp;C++"
-                style="wxRB_GROUP"
-                var_name="m_radio_cplusplus"
-                wxEVT_RADIOBUTTON="OnCPlusPlus" />
-              <node
-                class="wxRadioButton"
-                label="&amp;Python"
-                var_name="m_radio_python"
-                wxEVT_RADIOBUTTON="OnPython" />
-              <node
-                class="wxRadioButton"
-                label="&amp;Ruby"
-                var_name="m_radio_ruby"
-                wxEVT_RADIOBUTTON="OnRuby" />
-              <node
-                class="wxRadioButton"
-                label="&amp;Perl"
-                var_name="m_radio_perl"
-                wxEVT_RADIOBUTTON="OnPerl" />
-              <node
-                class="wxRadioButton"
-                label="&amp;XRC"
-                var_name="m_radio_xrc"
-                wxEVT_RADIOBUTTON="OnXRC" />
-            </node>
-            <node
-              class="spacer"
-              height="15" />
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="C&amp;hanged Classes:"
-              var_name="staticText" />
-            <node
-              class="wxListBox"
-              var_name="m_list_changes"
-              disabled="1"
-              minimum_size="250,200"
-              flags="wxEXPAND" />
-            <node
-              class="wxButton"
-              label="&amp;Diff..."
-              bitmap="XPM;../internal/WinMerge.xpm"
-              disabled="1"
-              wxEVT_BUTTON="OnDiff" />
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            Cancel="0"
-            Close="1"
-            OK="0"
-            default_button="Close"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
         class_name="ConvertImageBase"
         cpp_conditional="defined(INTERNAL_TESTING)"
         title="Convert Image"
@@ -7615,9 +7626,8 @@
         class_name="NodeInfo"
         title="Node Information"
         base_file="..\internal\node_info"
-        inserted_hdr_code="struct NodeMemory@@{@@    size_t size { 0 };@@    size_t children { 0 };@@};"
         class_members="&quot;Node* m_node { nullptr };&quot;"
-        class_methods="&quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;static void CalcNodeMemory(Node* node, NodeMemory&amp; node_memory);&quot; &quot;&quot;"
+        class_methods="&quot;void SetNode(Node* node) { m_node = node; }&quot;"
         derived_class_name="NodeInfo"
         derived_file="node_info"
         private_members="1"

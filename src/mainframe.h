@@ -272,6 +272,7 @@ public:
     void OnSaveProject(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
 
+    void OnCodeCompare(wxCommandEvent& event) override;
     void OnGenSingleCpp(wxCommandEvent& event);
     void OnGenSinglePerl(wxCommandEvent& event);
     void OnGenSinglePython(wxCommandEvent& event);

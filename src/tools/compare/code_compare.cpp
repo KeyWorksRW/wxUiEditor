@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code Generation Comparison
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,9 +18,27 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
+void MainFrame::OnCodeCompare(wxCommandEvent& /* event */)
+{
+    CodeCompare dlg(this);
+    dlg.ShowModal();
+}
+
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    GenLang language = Project.get_CodePreference(wxGetFrame().getSelectedNode());
+    auto* node = wxGetFrame().getSelectedNode();
+    ASSERT_MSG(node, "No node selected for code comparison dialog");  // this should be impossible
+    if (node->is_Form())
+    {
+        m_changed_classes_text->SetLabel(node->as_string(prop_class_name));
+    }
+    else if (node->is_Folder())
+    {
+        wxString text = node->as_string(prop_label).wx() << " (Folder)";
+        m_changed_classes_text->SetLabel(text);
+    }
+
+    GenLang language = Project.get_CodePreference(node);
     wxCommandEvent dummy;
     switch (language)
     {
@@ -40,8 +58,8 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
             m_radio_cplusplus->SetValue(true);
             break;
 
-            // TODO: [Randalphwa - 12-17-2025] We need to support XRC, but we don't currently have a
-            // verified way of comparing XRC files
+            // TODO: [Randalphwa - 12-17-2025] We need to support XRC, but we don't currently
+            // have a verified way of comparing XRC files
 
         default:
             {
@@ -49,8 +67,8 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
                                        GenLangToString(language));
                 FAIL_MSG(msg);
 
-                // The dialog has not been shown yet, so we displaying a user message box won't make
-                // sense. Instead, default to C++ generation.
+                // The dialog has not been shown yet, so we displaying a user message box won't
+                // make sense. Instead, default to C++ generation.
                 m_radio_cplusplus->SetValue(true);
                 language = GEN_LANG_CPLUSPLUS;
             }
@@ -59,8 +77,12 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     OnRadioButton(language);
 }
 
+constexpr int MIN_CHILD_COUNT_FOR_PROGRESS = 25;
+
 void CodeCompare::OnRadioButton(GenLang language)
 {
+    wxGetMainFrame()->UpdateWakaTime();
+
     m_current_language = language;
     m_file_diffs.clear();
     m_list_changes->Clear();
@@ -73,7 +95,7 @@ void CodeCompare::OnRadioButton(GenLang language)
         return;
     }
 
-    auto current_node = wxGetFrame().getSelectedNode();
+    auto* current_node = wxGetFrame().getSelectedNode();
     if (!current_node)
     {
         current_node = Project.get_ProjectNode();
@@ -84,12 +106,12 @@ void CodeCompare::OnRadioButton(GenLang language)
     results.SetLanguages(language);
     results.SetMode(GenResults::Mode::compare_only);
     results.SetNodes(current_node);
-    if (current_node->is_Gen(gen_Project) && current_node->get_ChildCount() > 20)
+    if ((current_node->is_Gen(gen_Project) || current_node->is_Folder()) &&
+        current_node->get_ChildCount() > MIN_CHILD_COUNT_FOR_PROGRESS)
     {
         results.EnableProgressDialog("Comparing Generated Code...");
     }
 
-    wxGetMainFrame()->UpdateWakaTime();
     if (results.Generate())
     {
         m_file_diffs = std::move(results.GetFileDiffs());
@@ -119,9 +141,24 @@ void CodeCompare::OnRadioButton(GenLang language)
         {
             m_list_changes->AppendString(wxString::FromUTF8(name));
         }
-        m_btn->Enable(m_file_diffs.empty() ? false : true);
-        wxGetMainFrame()->UpdateWakaTime();
+        m_btn->Enable(!m_file_diffs.empty());
+        if (m_file_diffs.empty())
+        {
+            m_diff_results->SetLabel("No differences found.");
+        }
+        else
+        {
+            auto text = std::format(std::locale(""), "{} file difference{} found.",
+                                    m_file_diffs.size(), m_file_diffs.size() == 1 ? "" : "s");
+            m_diff_results->SetLabel(text);
+        }
     }
+    else
+    {
+        m_btn->Enable(false);
+        m_diff_results->SetLabel("No differences found.");
+    }
+    wxGetMainFrame()->UpdateWakaTime();
 }
 
 void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)

@@ -344,15 +344,16 @@ set( file_list
     internal/import_panel.cpp          # Panel to display original imported file
     internal/import_panel.cpp          # Panel to display original imported file
     tests/test_xrc_import.cpp          # XRC Import tests
-    internal/compare/code_compare.cpp  # Code Generation Comparison
-    internal/compare/diff.cpp          # Simple diff algorithm for comparing text files
-    internal/compare/diff_viewer.cpp   # Dialog for displaying file differences
 
     internal/xrcpreview.cpp            # Generated XrcPreview Dialog code
     internal/xrcpreview_handlers.cpp   # Handlers for XrcPreview Dialog class
     internal/xrc_list_dlg.cpp
 
     # Tools
+
+    tools/compare/code_compare.cpp  # Code Generation Comparison
+    tools/compare/diff.cpp          # Simple diff algorithm for comparing text files
+    tools/compare/diff_viewer.cpp   # Dialog for displaying file differences
 
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
     # tools/preview_settings.cpp    # Dialog for setting preview options
@@ -392,7 +393,6 @@ set( debug_files
     # These are just here to make it easier to open with a VSCode extension
     internal/convert_img.cpp
 
-    internal/code_compare.cpp
     internal/convert_img_base.cpp
     internal/debugsettings.cpp
     internal/msgframe_base.cpp

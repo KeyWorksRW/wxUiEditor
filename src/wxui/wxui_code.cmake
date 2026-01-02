@@ -50,9 +50,9 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/wxue_data.cpp
 
     # Base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp

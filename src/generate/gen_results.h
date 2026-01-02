@@ -18,13 +18,12 @@ class wxProgressDialog;
 
 #include <chrono>
 #include <future>
-#include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "../internal/compare/diff.h"  // DiffResult, DiffLine, FileDiff
-#include "../panels/base_panel.h"      // PANEL_PAGE enum
+#include "../panels/base_panel.h"   // PANEL_PAGE enum
+#include "../tools/compare/diff.h"  // DiffResult, DiffLine, FileDiff
 
 class GenResults
 {
@@ -138,6 +137,7 @@ private:
     [[nodiscard]] auto GenerateCppForm(Node* form, bool comparison_only = false,
                                        wxProgressDialog* progress = nullptr) -> bool;
 
+    // Returns true if any file was updated
     [[nodiscard]] auto GenerateLanguageForm(std::string_view class_name, Node* form,
                                             bool comparison_only = false) -> bool;
 

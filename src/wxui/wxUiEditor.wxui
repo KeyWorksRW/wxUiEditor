@@ -6406,12 +6406,15 @@
           <node
             class="wxListBox"
             var_name="m_list_changes"
-            disabled="1"
             minimum_size="250,200"
             flags="wxEXPAND" />
           <node
+            class="wxStaticText"
+            label="Diff Results"
+            var_name="m_diff_results" />
+          <node
             class="wxButton"
-            label="&amp;Diff..."
+            label="View &amp;Diffs..."
             bitmap="XPM;../internal/WinMerge.xpm"
             disabled="1"
             wxEVT_BUTTON="OnDiff" />

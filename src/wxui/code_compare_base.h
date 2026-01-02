@@ -59,6 +59,7 @@ protected:
     wxRadioButton* m_radio_ruby;
     wxRadioButton* m_radio_xrc;
     wxStaticText* m_changed_classes_text;
+    wxStaticText* m_diff_results;
 };
 
 // ************* End of generated code ***********

@@ -77,8 +77,12 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     OnRadioButton(language);
 }
 
+constexpr int MIN_CHILD_COUNT_FOR_PROGRESS = 25;
+
 void CodeCompare::OnRadioButton(GenLang language)
 {
+    wxGetMainFrame()->UpdateWakaTime();
+
     m_current_language = language;
     m_file_diffs.clear();
     m_list_changes->Clear();
@@ -102,12 +106,12 @@ void CodeCompare::OnRadioButton(GenLang language)
     results.SetLanguages(language);
     results.SetMode(GenResults::Mode::compare_only);
     results.SetNodes(current_node);
-    if (current_node->is_Gen(gen_Project) && current_node->get_ChildCount() > 20)
+    if ((current_node->is_Gen(gen_Project) || current_node->is_Folder()) &&
+        current_node->get_ChildCount() > MIN_CHILD_COUNT_FOR_PROGRESS)
     {
         results.EnableProgressDialog("Comparing Generated Code...");
     }
 
-    wxGetMainFrame()->UpdateWakaTime();
     if (results.Generate())
     {
         m_file_diffs = std::move(results.GetFileDiffs());
@@ -137,9 +141,24 @@ void CodeCompare::OnRadioButton(GenLang language)
         {
             m_list_changes->AppendString(wxString::FromUTF8(name));
         }
-        m_btn->Enable(m_file_diffs.empty() ? false : true);
-        wxGetMainFrame()->UpdateWakaTime();
+        m_btn->Enable(!m_file_diffs.empty());
+        if (m_file_diffs.empty())
+        {
+            m_diff_results->SetLabel("No differences found.");
+        }
+        else
+        {
+            auto text = std::format(std::locale(""), "{} file difference{} found.",
+                                    m_file_diffs.size(), m_file_diffs.size() == 1 ? "" : "s");
+            m_diff_results->SetLabel(text);
+        }
     }
+    else
+    {
+        m_btn->Enable(false);
+        m_diff_results->SetLabel("No differences found.");
+    }
+    wxGetMainFrame()->UpdateWakaTime();
 }
 
 void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)

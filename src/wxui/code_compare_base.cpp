@@ -60,11 +60,13 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer->Add(m_changed_classes_text, wxSizerFlags().Border(wxALL));
 
     m_list_changes = new wxListBox(this, wxID_ANY);
-    m_list_changes->Enable(false);
     m_list_changes->SetMinSize(FromDIP(wxSize(250, 200)));
     box_sizer->Add(m_list_changes, wxSizerFlags().Expand().Border(wxALL));
 
-    m_btn = new wxButton(this, wxID_ANY, "&Diff...");
+    m_diff_results = new wxStaticText(this, wxID_ANY, "Diff Results");
+    box_sizer->Add(m_diff_results, wxSizerFlags().Border(wxALL));
+
+    m_btn = new wxButton(this, wxID_ANY, "View &Diffs...");
         m_btn->SetBitmap(wxBitmapBundle::FromBitmap(wxImage(WinMerge_xpm)));
     m_btn->Enable(false);
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));

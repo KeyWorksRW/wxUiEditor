@@ -112,7 +112,7 @@ jobs:
         export VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
         ./linuxdeploy-x86_64.AppImage \
           --appdir AppDir \
-          --executable ${{github.workspace}}/build/wxUiEditor \
+          --executable ${{github.workspace}}/build/bin/Release/wxUiEditor \
           --desktop-file ${{github.workspace}}/wxUiEditor.desktop \
           --icon-file ${{github.workspace}}/src/art_src/wxUiEditor.svg \
           --output appimage

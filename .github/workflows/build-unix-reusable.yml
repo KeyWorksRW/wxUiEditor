@@ -113,10 +113,7 @@ jobs:
     - name: Create AppImage
       if: ${{ inputs.create-setup }}
       run: |
-        export OUTPUT=wxuieditor.AppImage
-        export VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
-
-        # Create temporary desktop file with correct executable path for AppImage
+        # Create temporary desktop file with correct paths for AppImage
         cp ${{github.workspace}}/wxUiEditor.desktop ${{github.workspace}}/wxUiEditor-appimage.desktop
         sed -i 's|Exec=/usr/bin/wxUiEditor|Exec=wxUiEditor|g' ${{github.workspace}}/wxUiEditor-appimage.desktop
         sed -i 's|Icon=/usr/share/icons/hicolor/scalable/apps/wxUiEditor.svg|Icon=wxUiEditor|g' ${{github.workspace}}/wxUiEditor-appimage.desktop
@@ -125,6 +122,10 @@ jobs:
         convert -density 96 -resize 256x256 \
           ${{github.workspace}}/src/art_src/wxUiEditor.svg \
           ${{github.workspace}}/wxUiEditor.png
+
+        # Use new environment variables (LDAI_OUTPUT instead of OUTPUT)
+        export LDAI_OUTPUT=wxuieditor.AppImage
+        export LINUXDEPLOY_OUTPUT_VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
 
         ./linuxdeploy-x86_64.AppImage \
           --appdir AppDir \

@@ -99,6 +99,11 @@ jobs:
         path: |
           build/wxUiEditor-*-Linux.deb
 
+    - name: Install additional tools
+      if: ${{ inputs.create-setup }}
+      run: |
+        sudo apt-get install -y imagemagick
+
     - name: Download linuxdeploy
       if: ${{ inputs.create-setup }}
       run: |
@@ -115,11 +120,16 @@ jobs:
         cp ${{github.workspace}}/wxUiEditor.desktop ${{github.workspace}}/wxUiEditor-appimage.desktop
         sed -i 's|Exec=/usr/bin/wxUiEditor|Exec=wxUiEditor|g' ${{github.workspace}}/wxUiEditor-appimage.desktop
 
+        # Convert SVG icon to PNG for AppImage (256x256)
+        convert -density 96 -resize 256x256 \
+          ${{github.workspace}}/src/art_src/wxUiEditor.svg \
+          ${{github.workspace}}/wxUiEditor.png
+
         ./linuxdeploy-x86_64.AppImage \
           --appdir AppDir \
           --executable ${{github.workspace}}/build/bin/wxUiEditor \
           --desktop-file ${{github.workspace}}/wxUiEditor-appimage.desktop \
-          --icon-file ${{github.workspace}}/src/art_src/wxUiEditor.svg \
+          --icon-file ${{github.workspace}}/wxUiEditor.png \
           --output appimage
 
         # Rename to simple name

@@ -119,6 +119,7 @@ jobs:
         # Create temporary desktop file with correct executable path for AppImage
         cp ${{github.workspace}}/wxUiEditor.desktop ${{github.workspace}}/wxUiEditor-appimage.desktop
         sed -i 's|Exec=/usr/bin/wxUiEditor|Exec=wxUiEditor|g' ${{github.workspace}}/wxUiEditor-appimage.desktop
+        sed -i 's|Icon=/usr/share/icons/hicolor/scalable/apps/wxUiEditor.svg|Icon=wxUiEditor|g' ${{github.workspace}}/wxUiEditor-appimage.desktop
 
         # Convert SVG icon to PNG for AppImage (256x256)
         convert -density 96 -resize 256x256 \

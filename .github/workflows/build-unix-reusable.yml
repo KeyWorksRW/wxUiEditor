@@ -110,10 +110,15 @@ jobs:
       run: |
         export OUTPUT=wxuieditor.AppImage
         export VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
+
+        # Create temporary desktop file with correct executable path for AppImage
+        cp ${{github.workspace}}/wxUiEditor.desktop ${{github.workspace}}/wxUiEditor-appimage.desktop
+        sed -i 's|Exec=/usr/bin/wxUiEditor|Exec=wxUiEditor|g' ${{github.workspace}}/wxUiEditor-appimage.desktop
+
         ./linuxdeploy-x86_64.AppImage \
           --appdir AppDir \
           --executable ${{github.workspace}}/build/bin/wxUiEditor \
-          --desktop-file ${{github.workspace}}/wxUiEditor.desktop \
+          --desktop-file ${{github.workspace}}/wxUiEditor-appimage.desktop \
           --icon-file ${{github.workspace}}/src/art_src/wxUiEditor.svg \
           --output appimage
 

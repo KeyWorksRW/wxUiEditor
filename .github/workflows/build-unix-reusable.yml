@@ -70,9 +70,6 @@ jobs:
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build --config ${{inputs.build-type}} --target wxUiEditor
 
-    - name: Show ccache statistics
-      run: ccache --show-stats
-
     - name: Save ccache
       if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
@@ -101,3 +98,31 @@ jobs:
         name: DebianSetup
         path: |
           build/wxUiEditor-*-Linux.deb
+
+    - name: Download linuxdeploy
+      if: ${{ inputs.create-setup }}
+      run: |
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage
+
+    - name: Create AppImage
+      if: ${{ inputs.create-setup }}
+      run: |
+        export OUTPUT=wxuieditor.AppImage
+        export VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
+        ./linuxdeploy-x86_64.AppImage \
+          --appdir AppDir \
+          --executable ${{github.workspace}}/build/wxUiEditor \
+          --desktop-file ${{github.workspace}}/wxUiEditor.desktop \
+          --icon-file ${{github.workspace}}/src/art_src/wxUiEditor.svg \
+          --output appimage
+
+        # Rename to simple name
+        mv wxuieditor-*.AppImage wxuieditor.AppImage || true
+
+    - name: Create AppImage Artifact
+      if: ${{ inputs.create-setup }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: AppImage
+        path: wxuieditor.AppImage

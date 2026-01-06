@@ -25,6 +25,14 @@ When the user types "fix" and has selected a comment line:
 - After fixing, remove the `// CR:` or `// TODO` comment block
 - **Fix ONLY the single comment at the cursor position** — do not scan for or fix other CR/TODO comments in the file
 
+## File Operations
+
+### Creating New Files
+**When creating a new file, ALWAYS open it in VSCode immediately after creation:**
+- After using `create_file` tool, the file path should be provided to the user
+- The user should be able to view the newly created file without manually searching for it
+- This applies to all file types: source code, configuration files, documentation, etc.
+
 ## Critical Project Rules
 
 ### 🚫 Protected Code Sections

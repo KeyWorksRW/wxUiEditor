@@ -14,14 +14,14 @@ Formal specifications, schemas, and reference documentation designed for machine
 
 AI agents should focus primarily on this directory for accurate, structured information.
 
-### [contributors/](contributors/)
-**For: Developers contributing to wxUiEditor**
+### [architecture/](architecture/)
+**For: Project successors and maintainers**
 
-Development documentation including:
+Technical documentation for anyone taking over maintenance of wxUiEditor:
+- [SUCCESSOR.md](architecture/SUCCESSOR.md) - Essential information for new maintainers
 - Build instructions and release procedures
 - Architecture and internal design
 - Testing procedures
-- Coding standards and practices
 
 ### [users/](users/)
 **For: Developers using wxUiEditor to build applications**
@@ -34,8 +34,9 @@ End-user documentation including:
 
 ## Quick Links
 
-- **Building wxUiEditor**: [contributors/build_notes.md](contributors/build_notes.md)
-- **Contributing**: [contributors/contributor_notes.md](contributors/contributor_notes.md)
+- **Taking over this project?**: [architecture/SUCCESSOR.md](architecture/SUCCESSOR.md)
+- **Architecture Overview**: [architecture/Overview.md](architecture/Overview.md)
+- **Building wxUiEditor**: [architecture/build_notes.md](architecture/build_notes.md)
 - **.wxui File Format**: [ai-context/wxui-format/](ai-context/wxui-format/)
 - **Working with Images**: [users/images.md](users/images.md)
 

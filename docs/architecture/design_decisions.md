@@ -4,7 +4,7 @@ This document records significant architectural and design decisions made during
 
 ---
 
-## Custom String Classes: `wxue::string` and `wxue::string_view`
+## Custom String Class: `wxue::string`
 
 **Date:** December 2025
 
@@ -24,10 +24,10 @@ The project originally used custom string types (`tt_string`, `tt_string_view`) 
 However, this migration revealed significant issues:
 
 1. **wxString limitations with `std::string_view`:**
-   - Construction: `wxString(std::string_view)` exists (explicit)
+   - Construction works: `wxString(std::string_view)` exists (explicit)
    - But `operator<<` does not support `std::string_view`
    - No method returns `std::string_view` directly
-   - `ToStdString()` returns `const std::string&`, not a view, nor can it be directly edited
+   - `ToStdString()` returns `const std::string&`, not a view
 
 2. **Private internals prevent extension:**
    - `wxString` stores its data in a private `m_impl` member
@@ -70,6 +70,11 @@ The namespace `wxue::` was chosen over the original `tt_` prefix for several rea
 
 3. **Use `wxString` as the primary type:**
    Rejected due to poor `std::string_view` support and inability to extend via inheritance.
+
+4. **Other namespace names considered:**
+   - `ttwx::` — retained the meaningless `tt` prefix
+   - `wxex::` — too generic ("wx extensions")
+   - `strx::` — doesn't indicate wx integration
 
 ### Consequences
 

@@ -121,6 +121,18 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         root.remove_child("sodipodi:namedview");
         root.remove_child("metadata");
 
+        // Security: Remove all script tags to prevent potential malware execution
+        // Use XPath to find all script elements (case-insensitive) anywhere in the document
+        auto script_nodes = doc.select_nodes("//script | //SCRIPT | //Script");
+        for (auto& node : script_nodes)
+        {
+            auto parent = node.node().parent();
+            if (!parent.empty())
+            {
+                parent.remove_child(node.node());
+            }
+        }
+
         std::ostringstream xml_stream;
         doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
         std::string str = xml_stream.str();

@@ -122,8 +122,9 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         root.remove_child("metadata");
 
         // Security: Remove all script tags to prevent potential malware execution
-        // Use XPath translate() function for case-insensitive matching of script elements
-        // This handles any case variation like <script>, <SCRIPT>, <ScRiPt>, etc.
+        // Use XPath translate() to convert element names to lowercase for case-insensitive matching.
+        // This is more thorough than explicit case enumeration and handles all 32 possible case
+        // combinations. Performance impact is negligible since this runs once per SVG file load.
         auto script_nodes = doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'script']");
         for (auto& node : script_nodes)
         {

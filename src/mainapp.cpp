@@ -692,7 +692,7 @@ auto App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
 auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
                                bool test_only, std::string_view language_type) -> void
 {
-    if (results.GetUpdatedFiles().size() || class_list.size())
+    if (results.GetUpdatedFiles().size() || results.GetCreatedFiles().size() || class_list.size())
     {
         if (test_only)
         {
@@ -708,6 +708,11 @@ auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
             {
                 auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
                 log_msg << "Updated: " << iter;
+            }
+            for (auto& iter: results.GetCreatedFiles())
+            {
+                auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+                log_msg << "Created: " << iter;
             }
         }
     }

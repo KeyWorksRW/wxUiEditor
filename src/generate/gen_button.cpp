@@ -5,6 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <array>
+#include <tuple>
+
 #include <wx/button.h>  // wxButtonBase class
 
 #include "gen_button.h"
@@ -306,52 +309,42 @@ bool ButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_im
 
 namespace
 {
+    // Map standard button IDs to their corresponding property and event names
+    constexpr auto std_button_mapping = std::to_array<
+        std::tuple<std::string_view, std::string_view, std::string_view, std::string_view>>({
+        { "wxID_OK", "OK", "OKButtonClicked", "OKButton" },
+        { "wxID_CANCEL", "Cancel", "CancelButtonClicked", "CancelButton" },
+        { "wxID_YES", "Yes", "YesButtonClicked", "YesButton" },
+        { "wxID_NO", "No", "NoButtonClicked", "NoButton" },
+        { "wxID_APPLY", "Apply", "ApplyButtonClicked", "ApplyButton" },
+        { "wxID_HELP", "Help", "HelpButtonClicked", "HelpButton" },
+        { "wxID_SAVE", "Save", "SaveButtonClicked", "SaveButton" },
+        { "wxID_CLOSE", "Close", "CloseButtonClicked", "CloseButton" },
+        { "wxID_CONTEXT_HELP", "ContextHelp", "ContextHelpButtonClicked", "ContextHelpButton" },
+    });
+
     // Check if the button ID is a standard dialog button ID
     [[nodiscard]] auto IsStandardDialogButtonId(std::string_view id) -> bool
     {
-        return (id == "wxID_OK" || id == "wxID_CANCEL" || id == "wxID_YES" || id == "wxID_NO" ||
-                id == "wxID_APPLY" || id == "wxID_HELP" || id == "wxID_SAVE" || id == "wxID_CLOSE" ||
-                id == "wxID_CONTEXT_HELP");
+        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
+        {
+            if (id == btn_id)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Map standard button IDs to wxStdDialogButtonSizer property names
     [[nodiscard]] auto GetStdButtonProperty(std::string_view id) -> std::string_view
     {
-        if (id == "wxID_OK")
+        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
         {
-            return "OK";
-        }
-        if (id == "wxID_CANCEL")
-        {
-            return "Cancel";
-        }
-        if (id == "wxID_YES")
-        {
-            return "Yes";
-        }
-        if (id == "wxID_NO")
-        {
-            return "No";
-        }
-        if (id == "wxID_APPLY")
-        {
-            return "Apply";
-        }
-        if (id == "wxID_HELP")
-        {
-            return "Help";
-        }
-        if (id == "wxID_SAVE")
-        {
-            return "Save";
-        }
-        if (id == "wxID_CLOSE")
-        {
-            return "Close";
-        }
-        if (id == "wxID_CONTEXT_HELP")
-        {
-            return "ContextHelp";
+            if (id == btn_id)
+            {
+                return prop;
+            }
         }
         return "";
     }
@@ -359,41 +352,12 @@ namespace
     // Map standard button IDs to wxStdDialogButtonSizer click event names
     [[nodiscard]] auto GetStdButtonClickEventName(std::string_view id) -> std::string_view
     {
-        if (id == "wxID_OK")
+        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
         {
-            return "OKButtonClicked";
-        }
-        if (id == "wxID_CANCEL")
-        {
-            return "CancelButtonClicked";
-        }
-        if (id == "wxID_YES")
-        {
-            return "YesButtonClicked";
-        }
-        if (id == "wxID_NO")
-        {
-            return "NoButtonClicked";
-        }
-        if (id == "wxID_APPLY")
-        {
-            return "ApplyButtonClicked";
-        }
-        if (id == "wxID_HELP")
-        {
-            return "HelpButtonClicked";
-        }
-        if (id == "wxID_SAVE")
-        {
-            return "SaveButtonClicked";
-        }
-        if (id == "wxID_CLOSE")
-        {
-            return "CloseButtonClicked";
-        }
-        if (id == "wxID_CONTEXT_HELP")
-        {
-            return "ContextHelpButtonClicked";
+            if (id == btn_id)
+            {
+                return click;
+            }
         }
         return "";
     }
@@ -401,43 +365,28 @@ namespace
     // Map standard button IDs to wxStdDialogButtonSizer update UI event names
     [[nodiscard]] auto GetStdButtonUpdateUIEventName(std::string_view id) -> std::string_view
     {
-        if (id == "wxID_OK")
+        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
         {
-            return "OKButton";
-        }
-        if (id == "wxID_CANCEL")
-        {
-            return "CancelButton";
-        }
-        if (id == "wxID_YES")
-        {
-            return "YesButton";
-        }
-        if (id == "wxID_NO")
-        {
-            return "NoButton";
-        }
-        if (id == "wxID_APPLY")
-        {
-            return "ApplyButton";
-        }
-        if (id == "wxID_HELP")
-        {
-            return "HelpButton";
-        }
-        if (id == "wxID_SAVE")
-        {
-            return "SaveButton";
-        }
-        if (id == "wxID_CLOSE")
-        {
-            return "CloseButton";
-        }
-        if (id == "wxID_CONTEXT_HELP")
-        {
-            return "ContextHelpButton";
+            if (id == btn_id)
+            {
+                return update;
+            }
         }
         return "";
+    }
+
+    // Helper function to transfer event handlers from button to sizer
+    auto TransferEventHandler(Node* button, Node* sizer, std::string_view button_event_name,
+                              std::string_view sizer_event_name) -> void
+    {
+        if (auto* btn_event = button->get_Event(button_event_name);
+            btn_event && !btn_event->get_value().empty())
+        {
+            if (auto* sizer_event = sizer->get_Event(sizer_event_name); sizer_event)
+            {
+                sizer_event->set_value(btn_event->get_value());
+            }
+        }
     }
 }  // namespace
 
@@ -529,35 +478,13 @@ bool ButtonGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
                     }
 
                     // Transfer event handlers
-                    // Map wxEVT_BUTTON to the corresponding sizer click event
-                    if (auto* button_evt = btn->get_Event("wxEVT_BUTTON"); 
-                        button_evt && button_evt->get_value().size())
-                    {
-                        const auto click_event_name = GetStdButtonClickEventName(btn_id);
-                        if (!click_event_name.empty())
-                        {
-                            if (auto* sizer_evt = std_btn_sizer.first->get_Event(click_event_name);
-                                sizer_evt)
-                            {
-                                sizer_evt->set_value(button_evt->get_value());
-                            }
-                        }
-                    }
-
-                    // Map wxEVT_UPDATE_UI to the corresponding sizer update UI event
-                    if (auto* update_evt = btn->get_Event("wxEVT_UPDATE_UI");
-                        update_evt && update_evt->get_value().size())
-                    {
-                        const auto update_event_name = GetStdButtonUpdateUIEventName(btn_id);
-                        if (!update_event_name.empty())
-                        {
-                            if (auto* sizer_evt = std_btn_sizer.first->get_Event(update_event_name);
-                                sizer_evt)
-                            {
-                                sizer_evt->set_value(update_evt->get_value());
-                            }
-                        }
-                    }
+                    const auto click_event_name = GetStdButtonClickEventName(btn_id);
+                    const auto update_event_name = GetStdButtonUpdateUIEventName(btn_id);
+                    
+                    TransferEventHandler(btn, std_btn_sizer.first.get(), "wxEVT_BUTTON",
+                                       click_event_name);
+                    TransferEventHandler(btn, std_btn_sizer.first.get(), "wxEVT_UPDATE_UI",
+                                       update_event_name);
 
                     // Note: Custom text (labels different from standard) cannot be transferred
                     // because wxStdDialogButtonSizer uses the standard platform-specific labels

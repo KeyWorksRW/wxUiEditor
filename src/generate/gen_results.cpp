@@ -647,7 +647,14 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
         // In compare mode, check if file differs or needs creation
         if (result == code::write_needed || result == code::write_cant_read)
         {
-            m_updated_files.emplace_back(src_path);
+            if (file_existed)
+            {
+                m_updated_files.emplace_back(src_path);
+            }
+            else
+            {
+                m_created_files.emplace_back(src_path);
+            }
 
             // Capture detailed diff information if file exists on disk
             if (result == code::write_needed && src_path.file_exists())
@@ -750,7 +757,14 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     {
         if (hdr_result == code::write_needed || hdr_result == code::write_cant_read)
         {
-            m_updated_files.emplace_back(hdr_path);
+            if (hdr_existed)
+            {
+                m_updated_files.emplace_back(hdr_path);
+            }
+            else
+            {
+                m_created_files.emplace_back(hdr_path);
+            }
             any_updated = true;
 
             // Capture detailed diff information if file exists on disk
@@ -797,7 +811,14 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     {
         if (src_result == code::write_needed || src_result == code::write_cant_read)
         {
-            m_updated_files.emplace_back(src_path);
+            if (src_existed)
+            {
+                m_updated_files.emplace_back(src_path);
+            }
+            else
+            {
+                m_created_files.emplace_back(src_path);
+            }
             any_updated = true;
 
             // Capture detailed diff information if file exists on disk
@@ -1071,7 +1092,7 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
         // In compare mode, check if file differs or needs creation
         if (!file_existed)
         {
-            m_updated_files.emplace_back(output_path);
+            m_created_files.emplace_back(output_path);
             return true;
         }
 

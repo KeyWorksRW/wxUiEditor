@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   EmbeddedImage struct
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -120,6 +120,23 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         // Remove some inkscape nodes that we don't need
         root.remove_child("sodipodi:namedview");
         root.remove_child("metadata");
+
+        // Security: Remove all script tags to prevent potential malware execution
+        // Use XPath translate() to convert element names to lowercase for case-insensitive
+        // matching. This is more thorough than explicit case enumeration and handles all 32
+        // possible case combinations. Performance impact is negligible since this runs once per SVG
+        // file load.
+        auto script_nodes = doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
+                                             "'abcdefghijklmnopqrstuvwxyz') = 'script']");
+        for (auto& xpath_node: script_nodes)
+        {
+            auto script_node = xpath_node.node();
+            auto parent = script_node.parent();
+            if (!parent.empty())
+            {
+                parent.remove_child(script_node);
+            }
+        }
 
         std::ostringstream xml_stream;
         doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);

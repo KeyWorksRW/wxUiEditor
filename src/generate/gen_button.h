@@ -27,4 +27,6 @@ public:
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
     bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
+
+    bool PopupMenuAddCommands(NavPopupMenu* menu, Node* node) override;
 };

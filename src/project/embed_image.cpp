@@ -122,8 +122,9 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         root.remove_child("metadata");
 
         // Security: Remove all script tags to prevent potential malware execution
-        // Use XPath to find all script elements (case-insensitive) anywhere in the document
-        auto script_nodes = doc.select_nodes("//script | //SCRIPT | //Script");
+        // Use XPath translate() function for case-insensitive matching of script elements
+        // This handles any case variation like <script>, <SCRIPT>, <ScRiPt>, etc.
+        auto script_nodes = doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'script']");
         for (auto& node : script_nodes)
         {
             auto parent = node.node().parent();

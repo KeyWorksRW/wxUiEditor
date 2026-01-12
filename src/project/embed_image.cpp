@@ -126,12 +126,13 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         // This is more thorough than explicit case enumeration and handles all 32 possible case
         // combinations. Performance impact is negligible since this runs once per SVG file load.
         auto script_nodes = doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'script']");
-        for (auto& node : script_nodes)
+        for (auto& xpath_node : script_nodes)
         {
-            auto parent = node.node().parent();
+            auto script_node = xpath_node.node();
+            auto parent = script_node.parent();
             if (!parent.empty())
             {
-                parent.remove_child(node.node());
+                parent.remove_child(script_node);
             }
         }
 

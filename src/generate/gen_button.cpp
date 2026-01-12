@@ -326,7 +326,7 @@ namespace
     // Check if the button ID is a standard dialog button ID
     [[nodiscard]] auto IsStandardDialogButtonId(std::string_view id) -> bool
     {
-        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
+        for (const auto& [btn_id, prop, click, update] : std_button_mapping)
         {
             if (id == btn_id)
             {
@@ -339,7 +339,7 @@ namespace
     // Map standard button IDs to wxStdDialogButtonSizer property names
     [[nodiscard]] auto GetStdButtonProperty(std::string_view id) -> std::string_view
     {
-        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
+        for (const auto& [btn_id, prop, click, update] : std_button_mapping)
         {
             if (id == btn_id)
             {
@@ -352,7 +352,7 @@ namespace
     // Map standard button IDs to wxStdDialogButtonSizer click event names
     [[nodiscard]] auto GetStdButtonClickEventName(std::string_view id) -> std::string_view
     {
-        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
+        for (const auto& [btn_id, prop, click, update] : std_button_mapping)
         {
             if (id == btn_id)
             {
@@ -365,7 +365,7 @@ namespace
     // Map standard button IDs to wxStdDialogButtonSizer update UI event names
     [[nodiscard]] auto GetStdButtonUpdateUIEventName(std::string_view id) -> std::string_view
     {
-        for (const auto& [btn_id, prop, click, update]: std_button_mapping)
+        for (const auto& [btn_id, prop, click, update] : std_button_mapping)
         {
             if (id == btn_id)
             {
@@ -480,7 +480,7 @@ bool ButtonGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
                     // Transfer event handlers
                     const auto click_event_name = GetStdButtonClickEventName(btn_id);
                     const auto update_event_name = GetStdButtonUpdateUIEventName(btn_id);
-                    
+
                     TransferEventHandler(btn, std_btn_sizer.first.get(), "wxEVT_BUTTON",
                                        click_event_name);
                     TransferEventHandler(btn, std_btn_sizer.first.get(), "wxEVT_UPDATE_UI",

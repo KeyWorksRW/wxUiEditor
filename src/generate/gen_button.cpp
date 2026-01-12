@@ -355,6 +355,90 @@ namespace
         }
         return "";
     }
+
+    // Map standard button IDs to wxStdDialogButtonSizer click event names
+    [[nodiscard]] auto GetStdButtonClickEventName(std::string_view id) -> std::string_view
+    {
+        if (id == "wxID_OK")
+        {
+            return "OKButtonClicked";
+        }
+        if (id == "wxID_CANCEL")
+        {
+            return "CancelButtonClicked";
+        }
+        if (id == "wxID_YES")
+        {
+            return "YesButtonClicked";
+        }
+        if (id == "wxID_NO")
+        {
+            return "NoButtonClicked";
+        }
+        if (id == "wxID_APPLY")
+        {
+            return "ApplyButtonClicked";
+        }
+        if (id == "wxID_HELP")
+        {
+            return "HelpButtonClicked";
+        }
+        if (id == "wxID_SAVE")
+        {
+            return "SaveButtonClicked";
+        }
+        if (id == "wxID_CLOSE")
+        {
+            return "CloseButtonClicked";
+        }
+        if (id == "wxID_CONTEXT_HELP")
+        {
+            return "ContextHelpButtonClicked";
+        }
+        return "";
+    }
+
+    // Map standard button IDs to wxStdDialogButtonSizer update UI event names
+    [[nodiscard]] auto GetStdButtonUpdateUIEventName(std::string_view id) -> std::string_view
+    {
+        if (id == "wxID_OK")
+        {
+            return "OKButton";
+        }
+        if (id == "wxID_CANCEL")
+        {
+            return "CancelButton";
+        }
+        if (id == "wxID_YES")
+        {
+            return "YesButton";
+        }
+        if (id == "wxID_NO")
+        {
+            return "NoButton";
+        }
+        if (id == "wxID_APPLY")
+        {
+            return "ApplyButton";
+        }
+        if (id == "wxID_HELP")
+        {
+            return "HelpButton";
+        }
+        if (id == "wxID_SAVE")
+        {
+            return "SaveButton";
+        }
+        if (id == "wxID_CLOSE")
+        {
+            return "CloseButton";
+        }
+        if (id == "wxID_CONTEXT_HELP")
+        {
+            return "ContextHelpButton";
+        }
+        return "";
+    }
 }  // namespace
 
 bool ButtonGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
@@ -444,8 +528,39 @@ bool ButtonGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
                         }
                     }
 
-                    // TODO: Transfer custom text (labels different from standard)
-                    // TODO: Transfer event handlers
+                    // Transfer event handlers
+                    // Map wxEVT_BUTTON to the corresponding sizer click event
+                    if (auto* button_evt = btn->get_Event("wxEVT_BUTTON"); 
+                        button_evt && button_evt->get_value().size())
+                    {
+                        const auto click_event_name = GetStdButtonClickEventName(btn_id);
+                        if (!click_event_name.empty())
+                        {
+                            if (auto* sizer_evt = std_btn_sizer.first->get_Event(click_event_name);
+                                sizer_evt)
+                            {
+                                sizer_evt->set_value(button_evt->get_value());
+                            }
+                        }
+                    }
+
+                    // Map wxEVT_UPDATE_UI to the corresponding sizer update UI event
+                    if (auto* update_evt = btn->get_Event("wxEVT_UPDATE_UI");
+                        update_evt && update_evt->get_value().size())
+                    {
+                        const auto update_event_name = GetStdButtonUpdateUIEventName(btn_id);
+                        if (!update_event_name.empty())
+                        {
+                            if (auto* sizer_evt = std_btn_sizer.first->get_Event(update_event_name);
+                                sizer_evt)
+                            {
+                                sizer_evt->set_value(update_evt->get_value());
+                            }
+                        }
+                    }
+
+                    // Note: Custom text (labels different from standard) cannot be transferred
+                    // because wxStdDialogButtonSizer uses the standard platform-specific labels
                 }
             }
 

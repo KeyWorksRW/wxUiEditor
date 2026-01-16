@@ -652,6 +652,12 @@ namespace wxue
             return *this;
         }
 
+        string& operator<<(uint64_t value)
+        {
+            *this += std::to_string(value);
+            return *this;
+        }
+
         auto assign_wx(const wxString& str) -> string&
         {
             *this = str.ToStdString();

@@ -33,7 +33,11 @@ bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_radio_combined = new wxRadioButton(this, wxID_ANY, "Combined File", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
     m_radio_combined->SetValidator(wxGenericValidator(&m_create_combined));
 
+#if defined(__WXOSX__)
+    m_combined_box = new wxStaticBoxSizer(wxVERTICAL, this, "Combined File");
+#else
     m_combined_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_combined), wxVERTICAL);
+#endif
 
     m_filePicker = new wxFilePickerCtrl(m_combined_box->GetStaticBox(), wxID_ANY, wxEmptyString, "Combined XRC File", "*.xrc",
         wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE);
@@ -43,7 +47,11 @@ bool GenerateXrcDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     dlg_sizer->Add(m_combined_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_radio_separate = new wxRadioButton(this, wxID_ANY, "Separate Files", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+#if defined(__WXOSX__)
+    m_separate_box = new wxStaticBoxSizer(wxVERTICAL, this, "Separate Files");
+#else
     m_separate_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_separate), wxVERTICAL);
+#endif
 
     auto* staticText = new wxStaticText(m_separate_box->GetStaticBox(), wxID_ANY,
         "Forms not listed do not have xrc_file set.");

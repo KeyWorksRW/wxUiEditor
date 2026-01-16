@@ -55,7 +55,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_cpp_radio_use_function = new wxRadioButton(m_cpp_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_cpp_function_box = new wxStaticBoxSizer(new wxStaticBox(m_cpp_bookpage, wxID_ANY, m_cpp_radio_use_function), wxVERTICAL);
+    m_cpp_function_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_cpp_bookpage, "Use function");
+#else
+    new wxStaticBox(m_cpp_bookpage, wxID_ANY,
+        m_cpp_radio_use_function), wxVERTICAL);
+#endif
 
     auto* box_sizer7 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -74,7 +80,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_cpp_radio_use_lambda = new wxRadioButton(m_cpp_bookpage, wxID_ANY, "Use lambda", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_cpp_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_cpp_bookpage, wxID_ANY, m_cpp_radio_use_lambda), wxVERTICAL);
+    m_cpp_lambda_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_cpp_bookpage, "Use lambda");
+#else
+    new wxStaticBox(m_cpp_bookpage, wxID_ANY,
+        m_cpp_radio_use_lambda), wxVERTICAL);
+#endif
 
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -131,8 +143,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_perl_radio_use_function = new wxRadioButton(m_perl_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_perl_function_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_bookpage, wxID_ANY, m_perl_radio_use_function),
-        wxVERTICAL);
+    m_perl_function_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_perl_bookpage, "Use function");
+#else
+    new wxStaticBox(m_perl_bookpage, wxID_ANY,
+        m_perl_radio_use_function), wxVERTICAL);
+#endif
 
     auto* box_sizer12 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -149,8 +166,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_perl_radio_use_anon_func = new wxRadioButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Anonymous function",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_perl_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_perl_function_box->GetStaticBox(), wxID_ANY,
+    m_perl_lambda_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_perl_function_box->GetStaticBox(), "Anonymous function");
+#else
+    new wxStaticBox(m_perl_function_box->GetStaticBox(), wxID_ANY,
         m_perl_radio_use_anon_func), wxVERTICAL);
+#endif
 
     auto* box_sizer4 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -202,8 +224,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_py_radio_use_function = new wxRadioButton(m_python_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_py_function_box = new wxStaticBoxSizer(new wxStaticBox(m_python_bookpage, wxID_ANY, m_py_radio_use_function),
-        wxVERTICAL);
+    m_py_function_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_python_bookpage, "Use function");
+#else
+    new wxStaticBox(m_python_bookpage, wxID_ANY,
+        m_py_radio_use_function), wxVERTICAL);
+#endif
 
     auto* box_sizer8 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -222,7 +249,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_py_radio_use_lambda = new wxRadioButton(m_python_bookpage, wxID_ANY, "Lambda", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_py_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_python_bookpage, wxID_ANY, m_py_radio_use_lambda), wxVERTICAL);
+    m_py_lambda_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_python_bookpage, "Use lambda");
+#else
+    new wxStaticBox(m_python_bookpage, wxID_ANY,
+        m_py_radio_use_lambda), wxVERTICAL);
+#endif
 
     auto* staticText_2 = new wxStaticText(m_py_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
     m_py_lambda_box->Add(staticText_2, wxSizerFlags().Border(wxALL));
@@ -241,8 +274,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_ruby_radio_use_function = new wxRadioButton(m_ruby_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_ruby_function_box = new wxStaticBoxSizer(new wxStaticBox(m_ruby_bookpage, wxID_ANY, m_ruby_radio_use_function),
-        wxVERTICAL);
+    m_ruby_function_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_ruby_bookpage, "Use function");
+#else
+    new wxStaticBox(m_ruby_bookpage, wxID_ANY,
+        m_ruby_radio_use_function), wxVERTICAL);
+#endif
 
     auto* box_sizer14 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -259,8 +297,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_ruby_radio_use_lambda = new wxRadioButton(m_ruby_function_box->GetStaticBox(), wxID_ANY, "Use lambda",
         wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_ruby_lambda_box = new wxStaticBoxSizer(new wxStaticBox(m_ruby_function_box->GetStaticBox(), wxID_ANY,
+    m_ruby_lambda_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+    wxVERTICAL, m_ruby_function_box->GetStaticBox(), "Label");
+#else
+    new wxStaticBox(m_ruby_function_box->GetStaticBox(), wxID_ANY,
         m_ruby_radio_use_lambda), wxVERTICAL);
+#endif
 
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 

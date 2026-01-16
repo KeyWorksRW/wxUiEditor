@@ -7,6 +7,7 @@
 
 #include <array>
 #include <format>
+#include <sstream>  // For std::ostringstream
 #include <utility>
 #include <vector>
 

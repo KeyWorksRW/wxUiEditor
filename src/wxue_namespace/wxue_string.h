@@ -70,10 +70,11 @@ namespace wxue
 
         // Locates the position of a substring.
         [[nodiscard]] size_t locate(std::string_view str, size_t posStart = 0,
-                                    CASE check = CASE::exact) const;
+                                    wxue::CASE check = wxue::CASE::exact) const;
 
         // Returns true if the sub string exists
-        [[nodiscard]] bool contains(std::string_view sub, CASE checkcase = CASE::exact) const
+        [[nodiscard]] bool contains(std::string_view sub,
+                                    wxue::CASE checkcase = wxue::CASE::exact) const
         {
             return (locate(sub, 0, checkcase) != npos);
         }
@@ -81,7 +82,7 @@ namespace wxue
         // Returns true if any string in the iteration list appears somewhere in the the main
         // string.
         template <class iterT>
-        [[nodiscard]] bool strContains(iterT iter, CASE checkcase = CASE::exact)
+        [[nodiscard]] bool strContains(iterT iter, wxue::CASE checkcase = wxue::CASE::exact)
         {
             for (auto& strIter: iter)
             {
@@ -118,12 +119,12 @@ namespace wxue
         [[nodiscard]] auto stepover(size_t start = 0) const -> size_t;
 
         // Returns true if the sub-string is identical to the first part of the main string
-        [[nodiscard]] auto is_sameas(std::string_view str, CASE checkcase = CASE::exact) const
-            -> bool;
+        [[nodiscard]] auto is_sameas(std::string_view str,
+                                     wxue::CASE checkcase = wxue::CASE::exact) const -> bool;
 
         // Returns true if the sub-string is identical to the first part of the main string
-        [[nodiscard]] auto is_sameprefix(std::string_view str, CASE checkcase = CASE::exact) const
-            -> bool;
+        [[nodiscard]] auto is_sameprefix(std::string_view str,
+                                         wxue::CASE checkcase = wxue::CASE::exact) const -> bool;
 
         [[nodiscard]] int atoi(size_t start = 0) const { return wxue::atoi(data() + start); }
 
@@ -160,12 +161,12 @@ namespace wxue
 
         // If string is found, view is truncated from the string on, and then
         // any trailing space is removed.
-        auto erase_from(std::string_view sub, CASE check = CASE::exact) -> string_view&;
+        auto erase_from(std::string_view sub, wxue::CASE check = wxue::CASE::exact) -> string_view&;
 
         // Removes whitespace: ' ', \t, \r, \\n, \f
         //
         // where: TRIM::right, TRIM::left, or TRIM::both
-        auto trim(TRIM where = TRIM::right) -> string_view&;
+        auto trim(wxue::TRIM where = wxue::TRIM::right) -> string_view&;
 
         // Unlike substr(), this will not throw an exception if start is out of range.
         [[nodiscard]] auto subview(size_t start = 0) const -> string_view
@@ -337,14 +338,14 @@ namespace wxue
 
         // Locates the position of a substring. Delegates to string_view.
         [[nodiscard]] size_t locate(std::string_view str, size_t posStart = 0,
-                                    CASE check = CASE::exact) const
+                                    wxue::CASE check = wxue::CASE::exact) const
         {
             return string_view(*this).locate(str, posStart, check);
         }
 
         // Returns true if the sub string exists. Delegates to string_view.
-        [[nodiscard]] auto contains(std::string_view sub, CASE checkcase = CASE::exact) const
-            -> bool
+        [[nodiscard]] auto contains(std::string_view sub,
+                                    wxue::CASE checkcase = wxue::CASE::exact) const -> bool
         {
             return string_view(*this).contains(sub, checkcase);
         }
@@ -352,7 +353,7 @@ namespace wxue
         // Returns true if any string in the iteration list appears somewhere in the the main
         // string.
         template <class iterT>
-        [[nodiscard]] auto strContains(iterT iter, CASE checkcase = CASE::exact) -> bool
+        [[nodiscard]] auto strContains(iterT iter, wxue::CASE checkcase = wxue::CASE::exact) -> bool
         {
             return string_view(*this).strContains(iter, checkcase);
         }
@@ -407,16 +408,16 @@ namespace wxue
 
         // Returns true if the sub-string is identical to the first part of the main string.
         // Delegates to string_view.
-        [[nodiscard]] auto is_sameas(std::string_view str, CASE checkcase = CASE::exact) const
-            -> bool
+        [[nodiscard]] auto is_sameas(std::string_view str,
+                                     wxue::CASE checkcase = wxue::CASE::exact) const -> bool
         {
             return string_view(*this).is_sameas(str, checkcase);
         }
 
         // Returns true if the sub-string is identical to the first part of the main string.
         // Delegates to string_view.
-        [[nodiscard]] auto is_sameprefix(std::string_view str, CASE checkcase = CASE::exact) const
-            -> bool
+        [[nodiscard]] auto is_sameprefix(std::string_view str,
+                                         wxue::CASE checkcase = wxue::CASE::exact) const -> bool
         {
             return string_view(*this).is_sameprefix(str, checkcase);
         }
@@ -437,7 +438,7 @@ namespace wxue
         // Removes whitespace: ' ', \t, \r, \\n, \f
         //
         // where: TRIM::right, TRIM::left, or TRIM::both
-        auto trim(TRIM where = TRIM::right) -> string&;
+        auto trim(wxue::TRIM where = wxue::TRIM::right) -> string&;
 
         // Remove locale-dependent whitespace from right side
         void RightTrim()
@@ -504,7 +505,8 @@ namespace wxue
 
         // Replace first (or all) occurrences of substring with another one
         size_t Replace(std::string_view oldtext, std::string_view newtext,
-                       bool replace_all = REPLACE::once, CASE checkcase = CASE::exact);
+                       bool replace_all = wxue::REPLACE::once,
+                       wxue::CASE checkcase = wxue::CASE::exact);
 
         // Replace everything from pos to the end of the current string with str
         auto replace_all(size_t pos, std::string_view str) -> string&

@@ -18,6 +18,7 @@
     #error "This code requires both wxUSE_UNICODE_UTF8 and wxUSE_UTF8_LOCALE_ONLY to be enabled."
 #endif
 
+#include <cstdint>
 #include <ranges>
 #include <string>
 #include <string_view>

@@ -190,20 +190,9 @@ endif()
 
 add_compile_definitions( $<$<CONFIG:Release>:NDEBUG> )
 
-set( stageDir ${CMAKE_CURRENT_BINARY_DIR} )
-
-include( GNUInstallDirs )
-
+# Output binary to root ./bin directory to avoid deletion when build directory is cleaned
 if( NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY )
-    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_BINDIR} )
-endif()
-
-if( NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY )
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR} )
-endif()
-
-if( NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY )
-    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR} )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 endif()
 
 # ###################### Set wxWidgets location macros #######################
@@ -298,6 +287,9 @@ add_executable( wxUiEditor WIN32
 if( BUILD_SHARED_LIBS )
     target_compile_definitions( wxUiEditor PRIVATE WXUSINGDLL )
 endif()
+
+# Add 'd' suffix to debug builds (wxUiEditord.exe)
+set_target_properties( wxUiEditor PROPERTIES DEBUG_POSTFIX "d" )
 
 if( UNIX )
     set( SYSTEM_LIBS

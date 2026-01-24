@@ -118,10 +118,8 @@ if( MSVC )
     set( CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG} CACHE STRING "C++ Debug flags" FORCE )
     set( CMAKE_C_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG} CACHE STRING "C Debug flags" FORCE )
 
-    # Use static runtime for Release builds to run with Wine without needing to install the dlls
-    if( NOT BUILD_SHARED_LIBS )
-        set( CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" )
-    endif()
+    # Use dynamic runtime (/MD for Release, /MDd for Debug)
+    set( CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" )
 
     # Enable AddressSanitizer in Debug builds
     if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
@@ -219,6 +217,7 @@ include( FetchContent )
 
 # Set wxWidgets build options BEFORE FetchContent_MakeAvailable
 set( wxBUILD_SHARED OFF CACHE BOOL "Build static wx libraries" )
+set( wxBUILD_USE_STATIC_RUNTIME OFF CACHE BOOL "Use dynamic runtime library" )
 set( wxUSE_UNICODE_UTF8 1 CACHE BOOL "Use UTF-8 internally in wxWidgets" )
 set( wxUSE_UTF8_LOCALE_ONLY 1 CACHE BOOL "Use UTF-8 locale only in wxWidgets" )
 set( wxUSE_GUI ON CACHE BOOL "This is a GUI application" FORCE )

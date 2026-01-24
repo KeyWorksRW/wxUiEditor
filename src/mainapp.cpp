@@ -406,16 +406,23 @@ auto App::OnRun() -> int
             switch_result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
         {
             auto& file_history = m_frame->getFileHistory();
-            wxue::string file = file_history.GetHistoryFile(0).utf8_string();
-            if (!file.file_exists())
+            if (file_history.GetCount() == 0)
             {
-                file_history.RemoveFileFromHistory(0);
-                wxMessageBox(wxue::string("Last project file does not exist: ") << file,
-                             "Missing Project File", wxOK | wxICON_ERROR);
+                is_project_loaded = false;
             }
             else
             {
-                is_project_loaded = Project.LoadProject(file);
+                wxue::string file = file_history.GetHistoryFile(0).utf8_string();
+                if (!file.file_exists())
+                {
+                    file_history.RemoveFileFromHistory(0);
+                    wxMessageBox(wxue::string("Last project file does not exist: ") << file,
+                                 "Missing Project File", wxOK | wxICON_ERROR);
+                }
+                else
+                {
+                    is_project_loaded = Project.LoadProject(file);
+                }
             }
         }
     }

@@ -516,16 +516,30 @@ auto BaseCodeGenerator::ProcessFormIcon(Node* node) -> void
         wxue::ViewVector parts(node->as_string(prop_icon), BMP_PROP_SEPARATOR, wxue::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
-            if (parts[IndexType] == "Header" || parts[IndexType] == "XPM")
+            // If ProjectImages returns a function name, then the function will be in the
+            // Images List header file, so we don't need to generate any functions for it in
+            // the source file.
+            if (ProjectImages.GetBundleFuncName(node->as_string(prop_icon)).empty())
             {
-                if (!wxue::is_sameas(parts[IndexImage].extension(), ".xpm", wxue::CASE::either))
+                if (parts[IndexType] == "Header" || parts[IndexType] == "XPM")
                 {
-                    m_NeedHeaderFunction = true;
+                    if (!wxue::is_sameas(parts[IndexImage].extension(), ".xpm", wxue::CASE::either))
+                    {
+                        m_NeedHeaderFunction = true;
+                    }
                 }
-            }
-            else if (parts[IndexType] == "Art")
-            {
-                m_NeedArtProviderHeader = true;
+                else if (parts[IndexType] == "SVG")
+                {
+                    m_NeedSVGFunction = true;
+                }
+                else if (parts[IndexType] == "Embed")
+                {
+                    m_NeedImageFunction = true;
+                }
+                else if (parts[IndexType] == "Art")
+                {
+                    m_NeedArtProviderHeader = true;
+                }
             }
         }
     }
@@ -589,6 +603,16 @@ auto BaseCodeGenerator::ProcessChildSVGType(const wxue::StringVector& parts,
                 m_NeedSVGFunction = true;
             }
         }
+        else
+        {
+            // Image not found in the embedded images
+            m_NeedSVGFunction = true;
+        }
+    }
+    else
+    {
+        // No bundle found for this SVG, need the function
+        m_NeedSVGFunction = true;
     }
 }
 

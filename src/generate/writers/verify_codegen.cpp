@@ -27,6 +27,7 @@
 #include "verify_codegen.h"
 
 #include "../../tools/compare/code_compare.h"  // CodeCompare class
+#include "internal/node_search_dlg.h"          // FindNodeByClassName
 #include "mainapp.h"                           // App -- Main application class
 #include "project_handler.h"                   // ProjectHandler class
 #include "utils.h"                             // Utility functions that work with properties
@@ -105,7 +106,8 @@ namespace
         return verify_codegen::VERIFY_SUCCESS;
     }
 
-    [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, size_t generate_type)
+    [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, size_t generate_type,
+                                                Node* form_node = nullptr)
         -> verify_codegen::VerifyResult
     {
         if (!(generate_type & language))
@@ -114,7 +116,7 @@ namespace
         }
 
         // Use CodeCompare to collect diffs between generated code and disk files
-        auto diffs = CodeCompare::CollectFileDiffsForLanguage(language);
+        auto diffs = CodeCompare::CollectFileDiffsForLanguage(language, form_node);
 
         if (diffs.empty())
         {
@@ -189,6 +191,13 @@ namespace
         wxGetApp().set_VerboseCodeGen(true);
     }
 
+    // Check for form filter option
+    wxString form_filter;
+    if (parser.Found("form", &form_filter))
+    {
+        wxGetApp().set_FormFilter(form_filter.ToStdString());
+    }
+
     wxString filename;
     if (parser.GetParamCount())
     {
@@ -220,6 +229,24 @@ namespace
         return result;
     }
 
+    // If a form filter is specified, find that form
+    Node* form_node = nullptr;
+    const auto& form_filter_str = wxGetApp().get_FormFilter();
+    if (!form_filter_str.empty())
+    {
+        form_node = FindNodeByClassName(Project.get_ProjectNode(), form_filter_str);
+        if (!form_node)
+        {
+            auto& log = wxGetApp().get_CmdLineLog();
+            log.clear();
+            log.emplace_back(std::format("Error: Form '{}' not found in project", form_filter_str));
+            std::filesystem::path log_file(Project.get_ProjectFile().ToStdString());
+            log_file.replace_extension(".log");
+            log.WriteFile(log_file.string());
+            return verify_codegen::VERIFY_INVALID;
+        }
+    }
+
     constexpr auto languages = std::to_array<GenLang>({
         GEN_LANG_CPLUSPLUS,
         GEN_LANG_PERL,
@@ -232,7 +259,7 @@ namespace
 
     for (auto lang: languages)
     {
-        result = VerifyLanguageGeneration(lang, generate_type);
+        result = VerifyLanguageGeneration(lang, generate_type, form_node);
         if (result != verify_codegen::VERIFY_SUCCESS)
         {
             return result;

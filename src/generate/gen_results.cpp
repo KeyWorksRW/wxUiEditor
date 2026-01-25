@@ -238,7 +238,12 @@ auto GenResults::Generate() -> bool
         }
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
+    // Always wait for pending diffs when in compare_only mode
+    if (comparison_only)
+    {
+        WaitForPendingDiffs();
+    }
+    else if (wxGetApp().isTestingMenuEnabled())
     {
         WaitForPendingDiffs();  // Wait for all async diffs to complete
         EndClock();

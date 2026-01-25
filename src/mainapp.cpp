@@ -19,16 +19,17 @@
 
 #include "mainapp.h"
 
-#include "gen_common.h"            // Common component functions
-#include "gen_results.h"           // Code generation file writing functions
-#include "internal/msg_logging.h"  // MsgLogging -- Message logging class
-#include "mainframe.h"             // MainFrame -- Main window frame
-#include "node_creator.h"          // NodeCreator class
-#include "preferences.h"           // Set/Get wxUiEditor preferences
-#include "project_handler.h"       // ProjectHandler class
-#include "utils.h"                 // Utility functions that work with properties
-#include "verify_codegen.h"        // VerifyCodeGen -- Verify that code generation did not change
-#include "version.h"               // Version numbers and other constants
+#include "gen_common.h"                // Common component functions
+#include "gen_results.h"               // Code generation file writing functions
+#include "internal/msg_logging.h"      // MsgLogging -- Message logging class
+#include "internal/node_search_dlg.h"  // FindNodeByClassName
+#include "mainframe.h"                 // MainFrame -- Main window frame
+#include "node_creator.h"              // NodeCreator class
+#include "preferences.h"               // Set/Get wxUiEditor preferences
+#include "project_handler.h"           // ProjectHandler class
+#include "utils.h"                     // Utility functions that work with properties
+#include "verify_codegen.h"  // VerifyCodeGen -- Verify that code generation did not change
+#include "version.h"         // Version numbers and other constants
 
 #include "frozen/map.h"  // frozen::map
 #include "frozen/set.h"  // frozen::set
@@ -244,6 +245,10 @@ auto App::OnRun() -> int
     // std::cerr will not work. Instead, messages are written to a log file. The log file is
     // the project filename with the extension changed to ".log".
 
+    // Used with gen_*, test_*, or verify_* to limit generation to a single form
+    parser.AddLongOption("form", "limit generation to specified form class name",
+                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
     parser.AddLongOption("gen_cpp", "generate C++ files and exit");
     parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_python", "generate python files and exit");
@@ -251,6 +256,30 @@ auto App::OnRun() -> int
     parser.AddLongOption("gen_xrc", "generate XRC files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
+
+    // verify_* options generate code internally and compare against existing files on disk.
+    // If differences are detected, the diff output is written to a .log file (same name as the
+    // project file but with .log extension) and a non-zero exit code is returned.
+    //
+    // With --form "ClassName", verification is limited to a single form's generated files.
+    // This is useful for debugging code generation issues with a specific form.
+    //
+    // Exit codes:
+    //   0 = Success (no differences found)
+    //   1 = Failure (differences detected - check log file)
+    //   2 = File not found
+    //   3 = Invalid (e.g., form name not found in project)
+    //
+    // Agent usage: To properly capture exit codes in PowerShell, use Start-Process:
+    //
+    //   $proc = Start-Process -FilePath "wxUiEditord.exe" `
+    //       -ArgumentList "--verify_cpp","project.wxui","--form","FormClassName" `
+    //       -Wait -NoNewWindow -PassThru
+    //   $exitCode = $proc.ExitCode
+    //
+    // If exit code is non-zero, open the log file to examine differences:
+    //   key_open with filePath: "<project_dir>/<project_name>.log"
+
     parser.AddLongSwitch("verify_cpp", "verify generating C++ files did not change",
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_perl", "verify generating Perl files did not change",
@@ -282,6 +311,25 @@ auto App::OnRun() -> int
     // possibility of using wxMessageOutputDebug() to write the file differences to Debug Console.
 
     parser.AddLongSwitch("verbose", "verbose log file", wxCMD_LINE_HIDDEN);
+
+    // test_* options run code generation logic without writing any files to disk.
+    // Unlike verify_*, test_* does NOT compare against existing files - it only exercises the
+    // code generation paths and writes timing/diagnostic info to a log file.
+    //
+    // Use test_* when you want to:
+    //   - Verify that code generation completes without errors/crashes
+    //   - Measure code generation performance (timing info in log)
+    //   - Debug code generation paths without modifying any files
+    //
+    // Use verify_* when you want to:
+    //   - Detect if generated code would differ from files on disk
+    //   - Validate that refactoring didn't change code generation output
+    //   - CI/CD pipelines that need to fail if code generation is out of sync
+    //
+    // With --form "ClassName", test generation is limited to a single form.
+    //
+    // Exit codes: Always returns 0 unless the project file cannot be loaded.
+    // The log file (project_name.log) contains generation timing and any warnings.
 
     parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
@@ -745,6 +793,20 @@ auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
 auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
                                std::vector<std::string>& class_list) -> void
 {
+    // If a form filter is specified, find that form
+    Node* form_node = nullptr;
+    const auto& form_filter = wxGetApp().get_FormFilter();
+    if (!form_filter.empty())
+    {
+        form_node = FindNodeByClassName(Project.get_ProjectNode(), form_filter);
+        if (!form_node)
+        {
+            auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+            log_msg << "Error: Form '" << form_filter << "' not found in project";
+            return;
+        }
+    }
+
     auto GenCode = [&](GenLang language)
     {
         if (generate_type & language)
@@ -752,7 +814,15 @@ auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
             results.Clear();
             class_list.clear();
 
-            results.SetNodes(Project.get_ProjectNode());
+            // Use filtered form if specified, otherwise entire project
+            if (form_node)
+            {
+                results.SetNodes(form_node);
+            }
+            else
+            {
+                results.SetNodes(Project.get_ProjectNode());
+            }
             results.SetLanguages(language);
 
             if (test_only)
@@ -794,6 +864,13 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     if (parser.FoundSwitch("verbose") == wxCMD_SWITCH_ON)
     {
         m_is_verbose_codegen = true;
+    }
+
+    // Check for form filter option
+    wxString form_filter;
+    if (parser.Found("form", &form_filter))
+    {
+        m_form_filter = form_filter.ToStdString();
     }
 
     auto [generate_type, test_only] = ParseGenerationType(parser);

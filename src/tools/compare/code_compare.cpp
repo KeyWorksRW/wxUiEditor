@@ -200,13 +200,23 @@ void CodeCompare::OnDiff(wxCommandEvent& /* event unused */)
 }
 
 // Static method for non-UI code comparison (used by verify_codegen)
-auto CodeCompare::CollectFileDiffsForLanguage(GenLang language) -> std::vector<FileDiff>
+auto CodeCompare::CollectFileDiffsForLanguage(GenLang language, Node* form_node)
+    -> std::vector<FileDiff>
 {
     // Use GenResults in compare_only mode to generate code and capture diffs
     GenResults results;
     results.SetLanguages(language);
     results.SetMode(GenResults::Mode::compare_only);
-    results.SetNodes(Project.get_ProjectNode());
+
+    // Use filtered form if specified, otherwise entire project
+    if (form_node)
+    {
+        results.SetNodes(form_node);
+    }
+    else
+    {
+        results.SetNodes(Project.get_ProjectNode());
+    }
 
     std::ignore = results.Generate();
 

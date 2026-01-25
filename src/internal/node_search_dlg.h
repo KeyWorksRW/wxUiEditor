@@ -106,3 +106,6 @@ private:
 // cppcheck-suppress-end *
 // ***********************************************
 // </auto-generated>
+
+// Find a form by its class_name property, searching recursively through folders
+[[nodiscard]] auto FindNodeByClassName(Node* node_start, const std::string& classname) -> Node*;

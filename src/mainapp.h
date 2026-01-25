@@ -102,6 +102,14 @@ public:
     [[nodiscard]] auto is_Generating() const noexcept -> bool { return m_is_generating; }
     auto set_Generating(bool value) noexcept -> void { m_is_generating = value; }
 
+    // Returns the form class name to filter code generation to a single form.
+    // Empty string means generate all forms.
+    [[nodiscard]] auto get_FormFilter() const noexcept -> const std::string&
+    {
+        return m_form_filter;
+    }
+    auto set_FormFilter(std::string_view value) noexcept -> void { m_form_filter = value; }
+
     // Add warning or error messages to this if is_Generating() is true (which means code is
     // being generated from the command line).
     auto get_CmdLineLog() -> wxue::StringVector& { return m_cmdline_log; }
@@ -167,6 +175,8 @@ private:
     bool m_is_coverage_testing {
         false
     };  // true if generating code for test coverage (--gen_coverage)
+
+    std::string m_form_filter;  // if set, only generate code for this form class name
 
 #if (DARK_MODE)
     bool m_isDarkMode { true };

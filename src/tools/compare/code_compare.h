@@ -33,7 +33,9 @@ public:
     auto operator=(CodeCompare&&) -> CodeCompare& = delete;
 
     // Static method for non-UI code comparison (used by verify_codegen)
-    [[nodiscard]] static auto CollectFileDiffsForLanguage(GenLang language)
+    // If form_node is provided, only compare that form; otherwise compare entire project
+    [[nodiscard]] static auto CollectFileDiffsForLanguage(GenLang language,
+                                                          Node* form_node = nullptr)
         -> std::vector<FileDiff>;
 
 protected:

@@ -210,7 +210,7 @@ set( wxBUILD_USE_STATIC_RUNTIME OFF CACHE BOOL "Use dynamic runtime library" )
 set( wxUSE_UNICODE_UTF8 1 CACHE BOOL "Use UTF-8 internally in wxWidgets" )
 set( wxUSE_UTF8_LOCALE_ONLY 1 CACHE BOOL "Use UTF-8 locale only in wxWidgets" )
 set( wxUSE_GUI ON CACHE BOOL "This is a GUI application" FORCE )
-set( wxUSE_LUNASVG ON CACHE BOOL "Use LunaSVG for rendering SVG images" FORCE )
+set( wxUSE_LUNASVG builtin CACHE BOOL "Use LunaSVG for rendering SVG images" FORCE )
 set( wxUSE_NANOSVG OFF CACHE BOOL "Use NanoSVG for rendering SVG images" FORCE )
 set( wxBUILD_INSTALL OFF CACHE BOOL "Don't build wxWidgets install" )
 

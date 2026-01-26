@@ -316,11 +316,6 @@ if( MSVC )
     set_target_properties( wxUiEditor PROPERTIES
         VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
     )
-
-    # Use /DEBUG:FASTLINK for faster linking in Debug builds. Note the we still use /Z7 which
-    # significantly speeds up compilation on multi-core systems, but it does diminish the benefit of
-    # /DEBUG:FASTLINK.
-    target_link_options( wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/DEBUG:FASTLINK>" )
 elseif( UNIX )
     target_compile_definitions( wxUiEditor PRIVATE __WXGTK__ )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS} )

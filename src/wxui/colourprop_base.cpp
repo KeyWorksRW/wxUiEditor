@@ -59,9 +59,9 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_radio_custom = new wxRadioButton(this, wxID_ANY, "Custom Colour", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
     m_staticbox_custom = new wxStaticBoxSizer(
 #if defined(__WXOSX__)
-    wxVERTICAL, this, "Custom Colour");
+        wxVERTICAL, this, "Custom Colour");
 #else
-    new wxStaticBox(this, wxID_ANY, m_radio_custom), wxVERTICAL);
+        new wxStaticBox(this, wxID_ANY, m_radio_custom), wxVERTICAL);
 #endif
     m_staticbox_custom->GetStaticBox()->Enable(false);
 

@@ -129,8 +129,6 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
         code.Str("# wxPython currently does not support a checkbox as a static box label").Eol();
     }
 
-    code.AddAuto();
-
     Code parent_name(code.node(), code.get_language());
     if (!node->get_Parent()->is_Form())
     {
@@ -163,24 +161,44 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
     {
         if (parent_name.ends_with("GetStaticBox"))
             parent_name += "()";
-        code.Eol().Str("#if defined(__WXOSX__)").Eol();
-        code.NodeName() << " = new wxStaticBoxSizer(" << code.as_string(prop_orientation)
-                        << ", " << parent_name;
+        // Generate the assignment with #if inside the constructor call to match the expected
+        // format:
+        //   m_var = new wxStaticBoxSizer(
+        //   #if defined(__WXOSX__)
+        //       wxVERTICAL, parent, "Label");
+        //   #else
+        //       new wxStaticBox(parent, wxID_ANY, checkbox_var), wxVERTICAL);
+        //   #endif
+        code.AddAuto().NodeName().Str(" = new wxStaticBoxSizer(").Eol();
+        code.Str("#if defined(__WXOSX__)").Eol();
+        code.Tab().Add(prop_orientation).Str(", ").Str(parent_name);
+        if (code.HasValue(prop_label))
+        {
+            code.Comma().QuotedString(prop_label);
+        }
+        code.Str(");").Eol();
+        code.Str("#else").Eol();
+        code.Tab().Str("new wxStaticBox(").Str(parent_name);
+        code.Str(", wxID_ANY, ").as_string(prop_checkbox_var_name).Str("), ");
+        code.Add(prop_orientation).Str(");").Eol();
+        code.Str("#endif");
+    }
+    else if (code.is_ruby())
+    {
+        code.Str("if Wx::PLATFORM == 'WXOSX'").Eol();
+        code.Indent();
+        code.Tab().NodeName().Assign("wxStaticBoxSizer").Str("(").Add(prop_orientation).Comma();
+        code.Str(parent_name);
         if (code.HasValue(prop_label))
         {
             code.Comma().QuotedString(prop_label);
         }
         code.EndFunction();
-        code.Eol().Str("#else").Eol();
-        code.NodeName() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name
-                        << ", wxID_ANY";
-        code.Comma();
-        code.as_string(prop_checkbox_var_name).Str("), ").as_string(prop_orientation).EndFunction();
-        code.Eol().Str("#endif").Eol();
-    }
-    else if (code.is_ruby())
-    {
-        code.NodeName()
+        code.Unindent();
+        code.Eol().Str("else").Eol();
+        code.Indent();
+        code.Tab()
+            .NodeName()
             .Assign("wxStaticBoxSizer")
             .Str("(")
             .CreateClass(false, "wxStaticBox", false);
@@ -191,6 +209,8 @@ bool StaticCheckboxBoxSizerGenerator::ConstructionCode(Code& code)
             .VarName(code.node()->as_string(prop_checkbox_var_name))
             .Str(")");
         code.Comma().Add(prop_orientation).EndFunction();
+        code.Unindent();
+        code.Eol().Str("end");
     }
     else
     {

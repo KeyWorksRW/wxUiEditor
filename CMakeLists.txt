@@ -126,6 +126,9 @@ if( MSVC )
     if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
         add_compile_options( /fsanitize=address )
         add_link_options( /fsanitize=address )
+        # REVIEW: [Randalphwa - 01-26-2026] Even with MSVC from 2026, incremental linking messes with debugging
+        # where you the code you see is not what is actually running as you step through it.
+        add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
     endif()
 
     # Increase stack size for large projects with many object files
@@ -206,6 +209,9 @@ else()
 endif()
 
 include( FetchContent )
+
+# Suppress verbose FetchContent git output (CMake 3.30+)
+set(FETCHCONTENT_QUIET ON)
 
 # Set wxWidgets build options BEFORE FetchContent_MakeAvailable
 set( wxBUILD_SHARED OFF CACHE BOOL "Build static wx libraries" )

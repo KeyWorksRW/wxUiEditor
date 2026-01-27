@@ -1,4 +1,5 @@
-cmake_minimum_required( VERSION 3.20 )
+# CMake 3.30 required for FetchContent performance improvements (CMP0168)
+cmake_minimum_required(VERSION 3.30)
 
 string( TIMESTAMP YEAR "%y" ) # e.g., "25"
 string( TIMESTAMP DOY "%j" ) # e.g., "192"
@@ -249,15 +250,12 @@ if( APPLE )
     set( wxUSE_REGEX OFF CACHE BOOL "Don't use pcre (problems compiling on Mac" )
 endif()
 
-# Prevent FetchContent from updating wxWidgets after initial download
-set( FETCHCONTENT_UPDATES_DISCONNECTED wxWidgets ON CACHE BOOL "Prevent FetchContent from updating wxWidgets after initial download" )
-
 message( STATUS "Fetching wxWidgets (this may take awhile) ..." )
 
 FetchContent_Declare(
     wxWidgets
-    GIT_REPOSITORY https://github.com/KeyWorksRW/wxFetch.git
-    GIT_TAG main
+    GIT_REPOSITORY https://github.com/KeyWorksRW/kwxFetch.git
+    GIT_TAG dev
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -307,7 +305,10 @@ if( MSVC )
     # /FC -- Full path to source code file in diagnostics
     target_compile_options( wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" )
 
-    target_link_options( wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/OPT:REF>" )
+    # REVIEW: [Randalphwa - 01-25-2026] I removed /OPT:REF which means builds will now
+    # be using incremental linking. While this makes for faster builds, it's a bit
+    # fragile, so if we have problems, I'll need to set /INCREMENTAL:NO. For now,
+    # I'll try it out and see how it goes.
 
     # Manifest is in the resource file
     target_link_options( wxUiEditor PRIVATE "/manifest:no" )

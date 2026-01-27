@@ -640,19 +640,22 @@ namespace wxue
             return *this;
         }
 
-        string& operator<<(int value)
+        auto operator<<(int value) -> string&
         {
             *this += std::to_string(value);
             return *this;
         }
 
-        string& operator<<(size_t value)
+        auto operator<<(size_t value) -> string&
         {
             *this += std::to_string(value);
             return *this;
         }
 
-        string& operator<<(uint64_t value)
+        // Only enabled when uint64_t and size_t are different types (LP64 platforms)
+        template <typename T>
+            requires(std::is_same_v<T, uint64_t> && !std::is_same_v<size_t, uint64_t>)
+        auto operator<<(T value) -> string&
         {
             *this += std::to_string(value);
             return *this;

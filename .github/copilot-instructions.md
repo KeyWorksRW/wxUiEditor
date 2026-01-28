@@ -159,6 +159,50 @@ Use these methods for building (in priority order):
    - Analyze and fix root cause in source code
    - Re-run build to verify the fix
 
+### Code Generation Verification (CRITICAL)
+
+**wxUiEditor command-line tools for verifying generated code matches committed files.**
+
+**⚠️ IMPORTANT: verify_* commands do NOT write files to disk.** They generate code in memory and compare against existing files. The log file shows what WOULD change if files were written:
+- `-` lines = content currently in the file (would be removed)
+- `+` lines = content the generator produces (would be added)
+
+**You cannot use `git diff` to verify results** since no files are modified. Analyze the log file directly.
+
+**Syntax:** All options use double-dash (`--`). No short options are defined.
+
+```powershell
+# Basic verification (from workspace root)
+./bin/Debug/wxUiEditor.exe --verify_cpp <project_file.wxui>
+
+# Verify specific form only
+./bin/Debug/wxUiEditor.exe --verify_cpp <project_file.wxui> --form <ClassName>
+
+# Example for this project
+./bin/Debug/wxUiEditor.exe --verify_cpp ./src/wxui/wxUiEditor.wxui
+```
+
+**Available verification commands:**
+- `--verify_cpp` - Verify C++ code generation
+- `--verify_perl` - Verify Perl code generation
+- `--verify_python` - Verify Python code generation
+- `--verify_ruby` - Verify Ruby code generation
+- `--verify_all` - Verify all language code generation
+
+**Exit codes:**
+- `0` = Success (no differences)
+- `1` = Differences detected (check log file)
+- `2` = File not found
+- `3` = Invalid (e.g., form name not found)
+
+**Log file location:** Same directory as project file, with `.log` extension.
+Example: `./src/wxui/wxUiEditor.wxui` → `./src/wxui/wxUiEditor.log`
+
+**⚠️ Common mistakes:**
+- ❌ `-v_cpp` - Short options not supported
+- ❌ `--verify_cpp=file.wxui` - Project file is positional, not an option value
+- ✅ `--verify_cpp file.wxui` - Correct format
+
 # Language-Specific Coding Standards
 
 ## C++ (Primary Language)

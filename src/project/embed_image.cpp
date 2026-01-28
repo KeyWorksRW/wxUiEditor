@@ -10,6 +10,8 @@
 #include <wx/wfstream.h>  // For wxFileInputStream
 #include <wx/zstream.h>   // For wxZlibInputStream
 
+#include <sstream>  // For std::ostringstream
+
 #include "embed_image.h"
 
 #include "mainframe.h"  // for wxGetMainFrame()

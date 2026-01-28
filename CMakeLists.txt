@@ -126,11 +126,14 @@ if( MSVC )
     if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
         add_compile_options( /fsanitize=address )
         add_link_options( /fsanitize=address )
+        # REVIEW: [Randalphwa - 01-26-2026] Even with MSVC from 2026, incremental linking messes with debugging
+        # where you the code you see is not what is actually running as you step through it.
+        add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
     endif()
 
     # Increase stack size for large projects with many object files
     string( APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608" ) # 8MB stack
-else()
+elseif( UNIX AND NOT APPLE )
     # Use the package PkgConfig to detect GTK+ headers/library files
     find_package( PkgConfig REQUIRED )
 
@@ -143,7 +146,9 @@ else()
     include_directories( ${X11_INCLUDE_DIRS} )
     link_directories( ${X11_LIBRARY_DIRS} )
     add_definitions( ${X11_CFLAGS_OTHER} )
+endif()
 
+if( NOT MSVC )
     # This should work for gcc and clang (including xcode which is based on clang)
     # -O2 can result in faster code than -O3 due to CPU caching.
     string( REPLACE "-O3" "-O2" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
@@ -204,6 +209,9 @@ else()
 endif()
 
 include( FetchContent )
+
+# Suppress verbose FetchContent git output (CMake 3.30+)
+set(FETCHCONTENT_QUIET ON)
 
 # Set wxWidgets build options BEFORE FetchContent_MakeAvailable
 set( wxBUILD_SHARED OFF CACHE BOOL "Build static wx libraries" )
@@ -286,10 +294,12 @@ if( BUILD_SHARED_LIBS )
     target_compile_definitions( wxUiEditor PRIVATE WXUSINGDLL )
 endif()
 
-# Add 'd' suffix to debug builds (wxUiEditord.exe)
-set_target_properties( wxUiEditor PROPERTIES DEBUG_POSTFIX "d" )
-
-if( UNIX )
+if( APPLE )
+    set( SYSTEM_LIBS
+        pthread
+        dl
+    )
+elseif( UNIX )
     set( SYSTEM_LIBS
         ${GTK3_LIBRARIES}
         ${X11_LIBRARIES}

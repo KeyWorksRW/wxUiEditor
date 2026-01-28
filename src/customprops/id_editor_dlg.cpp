@@ -29,7 +29,12 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_radioBtn_Standard = new wxRadioButton(this, wxID_ANY, "&wxWidgets Standard ID", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
-    m_std_id_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Standard), wxVERTICAL);
+    m_std_id_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+        wxVERTICAL, this, "&wxWidgets Standard ID");
+#else
+        new wxStaticBox(this, wxID_ANY, m_radioBtn_Standard), wxVERTICAL);
+#endif
 
     m_standard_ids = new wxChoice(m_std_id_box->GetStaticBox(), wxID_ANY);
     m_std_id_box->Add(m_standard_ids, wxSizerFlags().Expand().Border(wxALL));
@@ -53,7 +58,12 @@ bool IDEditorDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     dlg_sizer->Add(m_std_id_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_radioBtn_Custom = new wxRadioButton(this, wxID_ANY, "&Custom ID", wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_cstm_id_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioBtn_Custom), wxVERTICAL);
+    m_cstm_id_box = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+        wxVERTICAL, this, "&Custom ID");
+#else
+        new wxStaticBox(this, wxID_ANY, m_radioBtn_Custom), wxVERTICAL);
+#endif
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
 

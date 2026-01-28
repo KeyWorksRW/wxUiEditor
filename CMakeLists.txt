@@ -435,6 +435,11 @@ set( CPACK_PROJECT_CONFIG_FILE "${PROJECT_BINARY_DIR}/nsis_options.cmake" )
 
 if( WIN32 )
     set( CPACK_GENERATOR ZIP NSIS )
+elseif( APPLE )
+    set( CPACK_GENERATOR DragNDrop )
+    set( CPACK_DMG_VOLUME_NAME "wxUiEditor" )
+    set( CPACK_DMG_FORMAT "UDBZ" )  # Compressed DMG
+    set( CPACK_DMG_BACKGROUND_IMAGE ${CMAKE_CURRENT_LIST_DIR}/src/art_src/wxUiEditor.svg )
 elseif( UNIX )
     set( CPACK_GENERATOR "DEB RPM" )
 endif()

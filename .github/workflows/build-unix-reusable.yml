@@ -16,7 +16,7 @@ on:
 
 jobs:
   buildUnix:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, ubuntu]  # Either runner, adapts CPUs via nproc
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
 
     - name: Build wxUiEditor
-      run: cmake --build ${{github.workspace}}/build --config ${{inputs.build-type}} --target wxUiEditor
+      run: cmake --build ${{github.workspace}}/build -j$(($(nproc) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
       if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'

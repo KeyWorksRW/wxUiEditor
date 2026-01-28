@@ -38,3 +38,10 @@ jobs:
     with:
       create-setup: false
       build-type: Release
+
+  buildMacOS:
+    uses: ./.github/workflows/build-macos-reusable.yml
+    with:
+      create-setup: false
+      build-type: Release
+      runner-type: self-hosted-arm64

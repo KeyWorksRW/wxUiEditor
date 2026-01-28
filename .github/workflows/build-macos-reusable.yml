@@ -1,0 +1,100 @@
+name: "Reusable macOS Build"
+
+on:
+  workflow_call:
+    inputs:
+      create-setup:
+        description: 'Whether to create macOS DMG installer'
+        required: false
+        type: boolean
+        default: false
+      build-type:
+        description: 'Build type (Debug or Release)'
+        required: false
+        type: string
+        default: 'Release'
+      runner-type:
+        description: 'Runner type (self-hosted-arm64 or github-hosted-x64)'
+        required: false
+        type: string
+        default: 'self-hosted-arm64'
+
+jobs:
+  buildMacOS:
+    runs-on: ${{ inputs.runner-type == 'self-hosted-arm64' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - run: mkdir ${{github.workspace}}/build
+
+    - name: Install dependencies
+      run: |
+        brew install cmake ninja ccache
+        cmake --version
+        ccache --version
+
+    - name: Setup ccache
+      run: |
+        ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
+        ccache --set-config=compression=true
+        ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
+        ccache --set-config=hard_link=true
+        ccache --zero-stats
+        ccache --show-config
+
+    - name: Restore ccache
+      id: cache-ccache-restore
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{runner.workspace}}/.ccache
+        key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-ccache-
+        enableCrossOsArchive: false
+
+    - name: Restore CMake FetchContent
+      id: cache-fetchcontent-restore
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ${{github.workspace}}/build/_deps
+        key: ${{ runner.os }}-${{ runner.arch }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-fetchcontent-
+        enableCrossOsArchive: false
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja
+
+    - name: Build wxUiEditor
+      run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
+
+    - name: Save ccache
+      if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{runner.workspace}}/.ccache
+        key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
+
+    - name: Save CMake FetchContent
+      if: always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          ${{github.workspace}}/build/_deps
+        key: ${{ runner.os }}-${{ runner.arch }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
+
+    - name: Build DMG
+      if: ${{ inputs.create-setup }}
+      run: |
+        cd build
+        cpack -G DragNDrop -C ${{inputs.build-type}}
+
+    - name: Create DMG Artifact
+      if: ${{ inputs.create-setup }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: macOS-DMG-${{ runner.arch }}
+        path: |
+          build/wxUiEditor-*-Darwin.dmg

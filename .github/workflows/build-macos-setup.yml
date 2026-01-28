@@ -1,0 +1,15 @@
+name: "Build macOS Executable"
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  buildMacOS:
+    uses: ./.github/workflows/build-macos-reusable.yml
+    with:
+      create-setup: true
+      build-type: Release
+      runner-type: self-hosted-arm64

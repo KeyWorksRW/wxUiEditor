@@ -33,7 +33,6 @@ jobs:
         clangFormatVersion: 20
         style: file
 
-jobs:
   check-spelling:
     runs-on: ubuntu-latest
     name: Check Spelling

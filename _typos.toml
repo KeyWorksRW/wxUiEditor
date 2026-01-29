@@ -1,0 +1,53 @@
+# typos spell checker configuration
+# See: https://github.com/crate-ci/typos
+
+[files]
+# Exclude third-party code and generated files
+extend-exclude = [
+    "src/pugixml/",
+    "frozen/",
+    "src/import/rapidjson/",
+]
+
+[default]
+# Locale setting
+locale = "en-us"
+
+# Ignore any word containing an ampersand (UI accelerators like "Styl&e" or "Striket&hrough")
+extend-ignore-re = [
+    "\\b\\w*&\\w*\\b",
+]
+
+# Custom dictionary additions
+[default.extend-words]
+# Intentional typos
+Edtior = "Edtior"  # from "wxUiEdtior" (typo in original, kept for backward compat)
+
+# Intentional abbreviations used in code
+lamda = "lamda"  # Intentional abbreviation for lambda in comments/variables
+UE = "UE"  # Abbreviation for wxUiEditor (wxUE)
+parms = "parms"  # Common abbreviation for parameters
+minium = "minium"  # Used for minimum (misspelling but used consistently)
+
+# Technical terms and proper nouns
+SEH = "SEH"  # Structured Exception Handling (Windows)
+Warnng = "Warnng"  # Variable name (misspelling but in use)
+
+# wxWidgets uses British spellings
+colour = "colour"
+Colour = "Colour"
+colours = "colours"
+Colours = "Colours"
+coloured = "coloured"
+colourful = "colourful"
+pluralise = "pluralise"
+centre = "centre"
+Centre = "Centre"
+CENTRE = "CENTRE"
+behaviour = "behaviour"
+Behaviour = "Behaviour"
+licence = "licence"
+
+# Third-party or generated identifiers that aren't actually typos
+[default.extend-identifiers]
+# These get checked as whole identifiers before word-splitting

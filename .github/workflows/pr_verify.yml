@@ -33,6 +33,68 @@ jobs:
         clangFormatVersion: 20
         style: file
 
+jobs:
+  check-spelling:
+    runs-on: ubuntu-latest
+    name: Check Spelling
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spell Check
+        uses: crate-ci/typos@v1
+
+  check-whitespace:
+    runs-on: ubuntu-latest
+    name: Check Whitespace
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for trailing whitespace and TABs
+        run: |
+            git fetch --depth=1 origin main
+            git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol,tab-in-indent \
+                diff --check origin/main -- \
+                'src/*.cpp' \
+                'src/*.h' \
+                'src/customprops/' \
+                'src/custom_ctrls/' \
+                'src/generate/' \
+                'src/import/' \
+                'src/internal/' \
+                'src/mockup/' \
+                'src/newdialogs/' \
+                'src/nodes/' \
+                'src/panels/' \
+                'src/project/' \
+                'src/tests/' \
+                'src/tools/' \
+                'src/ui/' \
+                'src/utils/' \
+                'src/winres/' \
+                'src/wxue_namespace/' \
+                'src/wxui/' \
+                ':!src/pugixml/'
+
+  check-eol:
+    runs-on: ubuntu-latest
+    name: Check Line Endings (LF only)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dos2unix
+        run: |
+          sudo apt-get install -y dos2unix
+
+      - name: Check all files use LF line endings
+        run: |
+            ./scripts/check_eol.sh
+
   buildUnix:
     uses: ./.github/workflows/build-unix-reusable.yml
     with:

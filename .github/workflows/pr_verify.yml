@@ -92,7 +92,7 @@ jobs:
 
       - name: Check all files use LF line endings
         run: |
-            ./scripts/check_eol.sh
+            bash ./scripts/check_eol.sh
 
   buildUnix:
     uses: ./.github/workflows/build-unix-reusable.yml

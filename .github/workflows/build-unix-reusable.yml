@@ -16,7 +16,7 @@ on:
 
 jobs:
   buildUnix:
-    runs-on: [self-hosted, ubuntu]  # Either runner, adapts CPUs via nproc
+    runs-on: self-hosted  # Either runner, adapts CPUs via nproc
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

@@ -21,7 +21,7 @@ on:
 
 jobs:
   buildMacOS:
-    runs-on: ${{ inputs.runner-type == 'self-hosted-arm64' && fromJSON('["self-hosted", "macOS"]') || 'macos-latest' }}
+    runs-on: ${{ inputs.runner-type == 'self-hosted-arm64' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

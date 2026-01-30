@@ -16,7 +16,7 @@ on:
 
 jobs:
   buildUnix:
-    runs-on: [self-hosted, linux]  # Either runner, adapts CPUs via nproc
+    runs-on: [self-hosted, Linux, X64]  # Match exact labels from GitHub UI
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

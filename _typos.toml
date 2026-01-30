@@ -4,6 +4,7 @@
 [files]
 # Exclude third-party code and generated files
 extend-exclude = [
+    "scripts",
     "src/pugixml/",
     "frozen/",
     "src/import/rapidjson/",

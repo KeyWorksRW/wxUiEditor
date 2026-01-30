@@ -42,7 +42,7 @@ protected:
     // if force is set, this will update src bitmap display and re-enable Convert btn
     void OnComboXpmMask(wxCommandEvent& event) override;
 
-    void ImgageInHeaderOut();
+    void ImageInHeaderOut();
     void ImageInXpmOut();
 
     void SetOutputBitmap();
@@ -63,7 +63,7 @@ private:
     wxImage m_hdrImage;
     wxImage m_orgImage;
 
-    size_t m_orginal_size;
+    size_t m_original_size;
 
     wxue::string m_mime_type;  // mime string specifying the original image type
 };

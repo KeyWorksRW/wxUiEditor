@@ -182,14 +182,14 @@ auto DataHandler::LoadAndCompress(Node* node) -> bool
         wxMemoryInputStream stream(str.c_str(), str.size() + 1);
 
         wxMemoryOutputStream memory_stream;
-        wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
-        if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+        wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
+        if (!CopyStreamData(&stream, &save_stream, stream.GetLength()))
         {
             // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be
             // impossible
             return false;
         }
-        save_strem.Close();
+        save_stream.Close();
         size_t org_size = (str.size() & 0xFFFFFFFF);
         size_t compressed_size = memory_stream.TellO();
         auto* read_stream = memory_stream.GetOutputStreamBuffer();
@@ -219,14 +219,14 @@ auto DataHandler::LoadAndCompress(Node* node) -> bool
             wxMemoryInputStream stream(buffer.data(), fileSize);
 
             wxMemoryOutputStream memory_stream;
-            wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
-            if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+            wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
+            if (!CopyStreamData(&stream, &save_stream, stream.GetLength()))
             {
                 // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be
                 // impossible
                 return false;
             }
-            save_strem.Close();
+            save_stream.Close();
             size_t org_size = (buffer.size() & 0xFFFFFFFF);
             size_t compressed_size = memory_stream.TellO();
             auto* read_stream = memory_stream.GetOutputStreamBuffer();

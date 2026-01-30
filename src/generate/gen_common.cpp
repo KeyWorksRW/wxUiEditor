@@ -11,11 +11,11 @@
 
 #include "gen_common.h"
 
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
-#include "lambdas.h"          // Functions for formatting and storage of lamda events
+#include "lambdas.h"          // Functions for formatting and storage of lambda events
 #include "mainapp.h"          // wxGetApp()
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -305,7 +305,7 @@ inline constexpr auto btn_bmp_types = std::to_array<BTN_BMP_TYPES>({
     { .prop_name = prop_current, .function_name = "SetBitmapCurrent" },
 });
 
-auto GenBtnBimapCode(Node* node, wxue::string& code, bool is_single) -> bool
+auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single) -> bool
 {
     bool has_additional_bitmaps =
         (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||

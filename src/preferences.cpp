@@ -33,7 +33,7 @@ void Prefs::ReadConfig()
 
     m_enable_wakatime = config->ReadBool("enable_wakatime", true);
     m_dark_mode = config->ReadBool("dark_mode", false);
-    m_high_constrast = config->ReadBool("high_contrast", false);
+    m_high_contrast = config->ReadBool("high_contrast", false);
     m_is_load_last_project = config->ReadBool("load_last_project", false);
     m_is_right_propgrid = config->ReadBool("right_propgrid", false);
     m_is_cpp_snake_case = config->ReadBool("cpp_snake_case", true);
@@ -98,7 +98,7 @@ void Prefs::WriteConfig()
     config->Write("svg_images", m_svg_images);
 
     config->Write("enable_wakatime", m_enable_wakatime);
-    config->Write("high_contrast", m_high_constrast);
+    config->Write("high_contrast", m_high_contrast);
     config->Write("load_last_project", m_is_load_last_project);
     config->Write("right_propgrid", m_is_right_propgrid);
 

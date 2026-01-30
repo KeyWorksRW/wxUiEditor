@@ -42,7 +42,7 @@ protected:
 
     bool m_DisplayMsgEvent { false };
     bool m_DisplayMsgInfo { false };
-    bool m_DisplayMsgWarnng { false };
+    bool m_DisplayMsgWarning { false };
     bool m_DisplayMsgWindow { false };
     bool m_FireCreationMsgs { false };
 

@@ -35,7 +35,7 @@ class wxAuiNotebook;
 class wxAuiNotebookEvent;
 class wxInfoBar;
 class wxSplitterWindow;
-class wxFileHistroy;
+class wxFileHistory;
 
 class ueStatusBar;
 class NavigationPanel;
@@ -382,7 +382,7 @@ private:
 
     BasePanel* m_cppPanel { nullptr };
 
-    // Language panels -- whether they are actually created is dependent on defitions in pch.h as
+    // Language panels -- whether they are actually created is dependent on definitions in pch.h as
     // well as user preferences.
     BasePanel* m_perlPanel { nullptr };
     BasePanel* m_pythonPanel { nullptr };
@@ -438,7 +438,7 @@ private:
     wxDialog* m_pxrc_dlg { nullptr };
     wxFrame* m_pxrc_win { nullptr };
 
-    bool m_isXrcResourceInitalized { false };
+    bool m_isXrcResourceInitialized { false };
 
     bool m_isProject_modified { false };
 

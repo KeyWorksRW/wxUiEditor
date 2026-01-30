@@ -96,7 +96,7 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
     auto idx_cur_sel = 0;
     for (auto& form: forms)
     {
-        // THis list should be sychronized with the list of forms in previews.cpp
+        // THis list should be synchronized with the list of forms in previews.cpp
         // (MainFrame::OnPreviewXrc)
         switch (form->get_GenName())
         {

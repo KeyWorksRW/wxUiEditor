@@ -20,7 +20,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "comment_blocks.h"   // Shared generated comment blocks
 #include "common_strings.h"   // Common strings used in code generation
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
@@ -824,7 +824,7 @@ bool PythonBitmapList(Code& code, GenEnum::PropName prop)
 
 // REVIEW: [Randalphwa - 12-11-2025]
 // TODO this struct and auto btn_bmp_types are duplicated in gen_common.cpp. Why does Python need
-// it's own version of GenBtnBimapCode()?
+// it's own version of GenBtnBitmapCode()?
 struct BTN_BMP_TYPES
 {
     GenEnum::PropName prop_name;
@@ -839,7 +839,7 @@ inline constexpr auto btn_bmp_types = std::to_array<BTN_BMP_TYPES>({
     { .prop_name = prop_current, .function_name = "SetBitmapCurrent" },
 });
 
-void PythonBtnBimapCode(Code& code, bool is_single)
+void PythonBtnBitmapCode(Code& code, bool is_single)
 {
     for (const auto& iter: btn_bmp_types)
     {

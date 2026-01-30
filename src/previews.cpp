@@ -46,7 +46,7 @@
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                           wxSizer* parent_sizer, wxWindow* form_window);
 
-bool g_isXrcResourceInitalized { false };
+bool g_isXrcResourceInitialized { false };
 
 extern const char* txt_dlg_name;  // Defined in gen_xrc.cpp ("_wxue_temp_dlg")
 
@@ -264,9 +264,9 @@ auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
 
     auto* xrc_resource = wxXmlResource::Get();
 
-    if (!g_isXrcResourceInitalized)
+    if (!g_isXrcResourceInitialized)
     {
-        g_isXrcResourceInitalized = true;
+        g_isXrcResourceInitialized = true;
 
         xrc_resource->InitAllHandlers();
         xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);

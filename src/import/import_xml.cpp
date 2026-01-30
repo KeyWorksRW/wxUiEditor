@@ -349,7 +349,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     else if (node->is_Gen(gen_wxRadioBox))
     {
         wxString style(xml_prop.text().as_view());
-        // It's a bug to specifiy both styles, we fix that here
+        // It's a bug to specify both styles, we fix that here
         if (style.Contains("wxRA_SPECIFY_ROWS") && style.Contains("wxRA_SPECIFY_COLS"))
         {
             prop->set_value("wxRA_SPECIFY_ROWS");

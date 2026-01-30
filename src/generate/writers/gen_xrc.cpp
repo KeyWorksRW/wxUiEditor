@@ -81,7 +81,7 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 
         for (const auto& child: node->get_ChildNodePtrs())
         {
-            // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC
+            // Normally, the XRC hierarchy matches our node hierarchy with the exception of XRC
             // needing a sizeritem as the immediate parent of a widget node. The exception is
             // wxTreebook -- while our nodes have BookPages as children of BookPages, XRC expects
             // all BookPages to be children of the wxTreebook with a depth parameter indicating if

@@ -163,7 +163,7 @@ protected:
     auto AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
                               Node* form) -> bool;
 
-    // Reads the image, remove unused metadat, compresses it and stores it in m_map_embedded
+    // Reads the image, remove unused metadata, compresses it and stores it in m_map_embedded
     auto AddSvgBundleImage(wxue::string& path, Node* form) -> bool;
 
     // Read the image, compresses it and stores it in m_map_embedded

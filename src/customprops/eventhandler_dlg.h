@@ -26,7 +26,7 @@ public:
         is used, then the python section will begin with "[python:".
 
 
-        If wxPthon uses a lambda, it will be indicated with "[python:lambda]". If it's a
+        If wxPython uses a lambda, it will be indicated with "[python:lambda]". If it's a
         function name which is not the same as the C++ function name (either a name
         difference, or C++ uses a lambda) then the lambda will be "[python:name] with "name"
         being the function name.

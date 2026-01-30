@@ -795,8 +795,8 @@ void resForm::AdoptChild(const NodeSharedPtr& node, resCtrl& child)
         ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
         if (child.isAdded())
         {
-            MSG_ERROR(wxue::string()
-                      << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
+            MSG_ERROR(wxue::string() << "Control already added: " << m_form_id
+                                     << ":: " << child.GetOriginalLine());
         }
     }
     node->AdoptChild(child.GetNodePtr());

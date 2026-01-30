@@ -419,7 +419,7 @@ auto Code::CheckLineLength(size_t next_str_size) -> Code&
         next_str_size += (static_cast<size_t>(m_indent * m_indent_size));
     }
 
-    if (m_auto_break && size() > m_minium_length && size() + next_str_size > m_break_at)
+    if (m_auto_break && size() > m_minimum_length && size() + next_str_size > m_break_at)
     {
         if (back() == ' ')
         {
@@ -486,7 +486,7 @@ Code& Code::Eol(int flag)
     if (m_auto_break)
     {
         m_break_at = size() + m_break_length;
-        m_minium_length = size() + MIN_BREAK_LENGTH;
+        m_minimum_length = size() + MIN_BREAK_LENGTH;
     }
     return *this;
 }
@@ -596,7 +596,7 @@ void Code::InsertLineBreak(size_t cur_pos)
         insert(cur_pos, "\n");
     }
     m_break_at = cur_pos + m_break_length;
-    m_minium_length = cur_pos + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
+    m_minimum_length = cur_pos + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
 }
 
 auto Code::Tab(int tabs) -> Code&

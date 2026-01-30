@@ -848,10 +848,10 @@
             <option name="wxHELP"
                 help="Create a 'Help' button."/>wxOK|wxCANCEL</property>
         <property name="prop_outer_border" type="type_int"
-            help="Sets the border around the book control only. Size is in dialog units -- igorned if set to -1 (default).">
+            help="Sets the border around the book control only. Size is in dialog units -- ignored if set to -1 (default).">
             -1</property>
         <property name="prop_inner_border" type="type_int"
-            help="Sets the border around the whole dialog. Size is in dialog units -- igorned if set to -1 (default).">
+            help="Sets the border around the whole dialog. Size is in dialog units -- ignored if set to -1 (default).">
             -1</property>
         <property name="prop_persist" type="type_bool">0</property>
 
@@ -871,7 +871,7 @@
             <option name="wxMINIMIZE_BOX"
                 help="Displays a minimize box on the dialog."/>
             <option name="wxRESIZE_BORDER"
-                help="Display a resizeable frame around the dialog."/>
+                help="Display a resizable frame around the dialog."/>
             <option name="wxSTAY_ON_TOP"
                 help="The dialog stays on top of all other windows."/>
             <option name="wxSYSTEM_MENU"

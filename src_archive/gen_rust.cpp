@@ -18,7 +18,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
@@ -34,7 +34,8 @@
 using namespace code;
 using namespace GenEnum;
 
-static bool GenerateRustForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+static bool GenerateRustForm(Node* form, GenResults& results,
+                             std::vector<tt_string>* pClassList = nullptr);
 
 // clang-format off
 
@@ -136,7 +137,8 @@ static bool GenerateRustForm(Node* form, GenResults& results, std::vector<tt_str
         // For a lot of wxRuby testing of projects with multiple dialogs, there may
         // only be a few forms where wxRuby generation is being tested, so don't nag in
         // Debug builds. :-)
-        results.msgs.emplace_back() << "No Ruby filename specified for " << form->as_string(prop_class_name) << '\n';
+        results.msgs.emplace_back()
+            << "No Ruby filename specified for " << form->as_string(prop_class_name) << '\n';
 #endif  // _DEBUG
         return false;
     }
@@ -198,8 +200,11 @@ bool GenerateRustFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)
     {
-        results.msgs.emplace_back("You cannot generate any code until you have added a top level form.") << '\n';
-        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        results.msgs.emplace_back(
+            "You cannot generate any code until you have added a top level form.")
+            << '\n';
+        wxMessageBox("You cannot generate any code until you have added a top level form.",
+                     "Code Generation");
         return false;
     }
     tt_cwd cwd(true);
@@ -238,7 +243,8 @@ void BaseCodeGenerator::GenerateRustClass(PANEL_PAGE panel_type)
     SetImagesForm();
 
     EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(events));
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
     // thread until it has been set!

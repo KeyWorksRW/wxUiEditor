@@ -29,7 +29,7 @@ using namespace GenEnum;
 NodeProperty::NodeProperty(PropDeclaration* info, Node* node) : m_declaration(info), m_node(node) {}
 
 // The advantage of placing the one-line calls to PropDeclaration (m_declaration) here is that it
-// reduces the header-file dependency for other modeuls that need NodeProperty, and it allows for
+// reduces the header-file dependency for other modules that need NodeProperty, and it allows for
 // changes to PropDeclaration that don't require recompiling every module that included prop_decl.h.
 
 auto NodeProperty::isDefaultValue() const -> bool

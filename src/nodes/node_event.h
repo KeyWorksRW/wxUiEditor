@@ -39,7 +39,7 @@ private:
     wxue::string m_help;
 };
 
-// This class is used to store event information specific to what the user has requsted (node
+// This class is used to store event information specific to what the user has requested (node
 // containing the event, name of the event handler) along with a pointer to the fixed event
 // information.
 class NodeEvent

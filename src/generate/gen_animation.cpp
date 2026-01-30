@@ -217,7 +217,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto item = InitializeXrcObject(node, object);
 
     // wxGenericAnimationCtrl is required to display .ANI files on wxGTK. Since the other platforms
-    // effecitvely use wxGenericAnimationCtrl any way (since there are no native implementations of
+    // effectively use wxGenericAnimationCtrl any way (since there are no native implementations of
     // wxAnimationCtrl) this shouldn't make any difference for them.
     if (node->HasValue(prop_animation) &&
         node->as_string(prop_animation).contains(".gif", wxue::CASE::either))

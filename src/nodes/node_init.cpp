@@ -540,7 +540,7 @@ auto NodeCreator::DetermineGenType(pugi::xml_node& generator, bool is_interface)
     if (is_interface && type_name != "interface")
     {
         ASSERT_MSG(type_name == "interface",
-                   "Don't put a non-interface class in an interace xml file!");
+                   "Don't put a non-interface class in an interface xml file!");
     }
 #endif  // _DEBUG
 

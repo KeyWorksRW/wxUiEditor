@@ -13,7 +13,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
@@ -29,7 +29,8 @@
 using namespace code;
 using namespace GenEnum;
 
-static bool GeneratePhpForm(Node* form, GenResults& results, std::vector<tt_string>* pClassList = nullptr);
+static bool GeneratePhpForm(Node* form, GenResults& results,
+                            std::vector<tt_string>* pClassList = nullptr);
 
 // clang-format off
 
@@ -134,7 +135,8 @@ void BaseCodeGenerator::GeneratePhpClass(PANEL_PAGE panel_type)
     SetImagesForm();
     std::set<std::string> img_include_set;
 
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(m_events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(m_events));
     std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, m_form_node,
                                          std::ref(img_include_set));
 
@@ -158,8 +160,8 @@ void BaseCodeGenerator::GeneratePhpClass(PANEL_PAGE panel_type)
 #else
     if (m_panel_type != NOT_PANEL)
     {
-        m_source->writeLine(
-            "# The following comment block is only displayed in a _DEBUG build, or when written to a file.\n\n");
+        m_source->writeLine("# The following comment block is only displayed in a _DEBUG build, or "
+                            "when written to a file.\n\n");
     }
 #endif  // _DEBUG
     {
@@ -343,7 +345,8 @@ static bool GeneratePhpForm(Node* form, GenResults& results, std::vector<tt_stri
         // For a lot of wxPhp testing of projects with multiple dialogs, there may only be a
         // few forms where wxPhp generation is being tested, so don't nag in Debug builds.
         // :-)
-        results.msgs.emplace_back() << "No PHP filename specified for " << form->as_string(prop_class_name) << '\n';
+        results.msgs.emplace_back()
+            << "No PHP filename specified for " << form->as_string(prop_class_name) << '\n';
 #endif  // _DEBUG
         return false;
     }
@@ -403,8 +406,11 @@ bool GeneratePhpFiles(GenResults& results, std::vector<tt_string>* pClassList)
 {
     if (Project.getChildCount() == 0)
     {
-        results.msgs.emplace_back("You cannot generate any code until you have added a top level form.") << '\n';
-        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        results.msgs.emplace_back(
+            "You cannot generate any code until you have added a top level form.")
+            << '\n';
+        wxMessageBox("You cannot generate any code until you have added a top level form.",
+                     "Code Generation");
         return false;
     }
     tt_cwd cwd(true);

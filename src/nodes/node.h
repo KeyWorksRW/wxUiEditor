@@ -260,7 +260,7 @@ public:
     auto get_ValidatorType() const -> std::string_view;
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
-    // wxDefaultPosition, or non-sepcified bitmap)
+    // wxDefaultPosition, or non-specified bitmap)
     auto HasValue(PropName name) const -> bool;
 
     // Returns true if the property exists

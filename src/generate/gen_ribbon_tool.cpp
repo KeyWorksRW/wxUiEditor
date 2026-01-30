@@ -86,7 +86,7 @@ bool RibbonToolBarGenerator::SettingsCode(Code& code)
 bool RibbonToolBarGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */,
                                          std::set<std::string>& set_hdr, GenLang /* language */)
 {
-    // Normally we'd use the access property to determin if the header should be in the source or
+    // Normally we'd use the access property to determine if the header should be in the source or
     // header file. However, the two events used by this component are also in this header file and
     // the tools themselves are fairly useless without processing the events, so we just add the
     // header file to the header generated file.

@@ -6795,7 +6795,7 @@
               class="wxButton"
               label="&amp;Directory..."
               var_name="m_btnAddFile"
-              tooltip="You can add multiple formbuilder projects to a single wxUiEdtior project."
+              tooltip="You can add multiple wxFormBuilder projects to a single wxUiEditor project."
               alignment="wxALIGN_CENTER_VERTICAL"
               wxEVT_BUTTON="OnDirectory" />
             <node
@@ -7309,7 +7309,7 @@
                 class_access="none"
                 label="Display MSG_WARNING() messages"
                 var_name="checkBox4"
-                validator_variable="m_DisplayMsgWarnng" />
+                validator_variable="m_DisplayMsgWarning" />
             </node>
             <node
               class="spacer"

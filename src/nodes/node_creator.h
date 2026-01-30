@@ -111,10 +111,10 @@ public:
     // [[nodiscard]] auto get_ConstantAsInt(const std::string& name, int defValue = 0) const -> int;
     [[nodiscard]] auto get_ConstantAsInt(std::string_view name, int defValue = 0) const -> int;
 
-    // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
+    // Makes a copy, including the entire child hierarchy. The copy does not have a parent.
     [[nodiscard]] auto MakeCopy(Node* node, Node* parent = nullptr) -> NodeSharedPtr;
 
-    // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
+    // Makes a copy, including the entire child hierarchy. The copy does not have a parent.
     auto MakeCopy(const NodeSharedPtr& node) -> NodeSharedPtr { return MakeCopy(node.get()); };
 
     void InitGenerators();

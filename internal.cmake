@@ -70,7 +70,7 @@ if (INTERNAL_BLD_TESTING)
 
     if (WIN32)
         if (INTERNAL_BLD_WX_CMAKE)
-            # Both Debug and Release libaries are in the same location
+            # Both Debug and Release libraries are in the same location
             set(fork_wxlibraries
                 $<$<CONFIG:Debug>:wxmsw33ud>
                 $<$<CONFIG:Debug>:wxexpatd>

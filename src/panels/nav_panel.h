@@ -57,8 +57,8 @@ protected:
     [[nodiscard]] auto GetDisplayName(Node* node) const -> wxue::string;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
 
-    // Event handlers without parameters are called by lamda's, which means the function can also be
-    // called directly without needing an event.
+    // Event handlers without parameters are called by lambda's, which means the function can also
+    // be called directly without needing an event.
 
     void OnProjectUpdated();
 

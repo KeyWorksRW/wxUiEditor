@@ -16,7 +16,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "comment_blocks.h"   // Shared generated comment blocks
 #include "data_handler.h"     // DataHandler class
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_enums.h"
 #include "gen_results.h"      // Code generation file writing functions

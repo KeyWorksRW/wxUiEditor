@@ -1054,7 +1054,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "bitmap file"))
         {
-            ProcessBitmapPropety(node, value);
+            ProcessBitmapProperty(node, value);
             return prop_processed;
         }
 
@@ -1443,7 +1443,7 @@ auto WxCrafter::ValueProperty(Node* node, const Value& value) -> void
     }
 }
 
-auto WxCrafter::ProcessBitmapPropety(Node* node, const Value& object) -> void
+auto WxCrafter::ProcessBitmapProperty(Node* node, const Value& object) -> void
 {
     if (std::string_view path = object["m_path"].GetString(); path.size())
     {
@@ -1481,7 +1481,7 @@ auto WxCrafter::ProcessBitmapPropety(Node* node, const Value& object) -> void
     }
 }
 
-// For system fonts, wxCrafter doesn't support size or weigth -- you are limited to italic, bold,
+// For system fonts, wxCrafter doesn't support size or weight -- you are limited to italic, bold,
 // and underlined. Note that wxCrafter supports ALL of the system fonts, not just
 // wxSYS_DEFAULT_GUI_FONT.
 //

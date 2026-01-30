@@ -671,7 +671,7 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "custom_constructor" && node->is_Gen(gen_CustomControl))
     {
-        // wxGlade specifes the construction code on the right side of the = sign, so we need to
+        // wxGlade specifies the construction code on the right side of the = sign, so we need to
         // insert what should be on the left side.
         std::string construction;
         if (m_language == GEN_LANG_PYTHON)

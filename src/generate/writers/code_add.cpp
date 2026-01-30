@@ -126,7 +126,7 @@ void Code::AddFunctionNoOperatorWithWx(wxue::string_view text)
 
 void Code::AddFunctionWithOperatorRuby(wxue::string_view text)
 {
-    // Check for a preceeding empty "()" and remove it if found
+    // Check for a preceding empty "()" and remove it if found
     if (ends_with("())"))
     {
         resize(size() - 2);
@@ -442,8 +442,8 @@ auto Code::AddConstant(wxue::string_view text) -> Code&
     }
     if (is_perl())
     {
-        // In some cases, wxPerl doesn't supprt a constant, but if we use the numeric value instead,
-        // then it works fine.
+        // In some cases, wxPerl doesn't support a constant, but if we use the numeric value
+        // instead, then it works fine.
         if (text.contains("wxBU_NOTEXT"))
         {
             wxue::string new_value(text);

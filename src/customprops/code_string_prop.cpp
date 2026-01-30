@@ -12,7 +12,7 @@
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "../nodes/node_prop.h"  // NodeProperty class
-#include "lambdas.h"             // Functions for formatting and storage of lamda events
+#include "lambdas.h"             // Functions for formatting and storage of lambda events
 #include "mainframe.h"           // MainFrame -- Main window frame
 
 #include "utils.h"                     // Miscellaneous utility functions
@@ -39,10 +39,10 @@ EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeD
 
 void EditCodeDialog::OnInit(wxInitDialogEvent& /* event unused */)
 {
-    wxue::string lamda = m_value.ToStdString();
-    ExpandLambda(lamda);
+    wxue::string lambda = m_value.ToStdString();
+    ExpandLambda(lambda);
 
-    m_stc->AddTextRaw(lamda.c_str());
+    m_stc->AddTextRaw(lambda.c_str());
 }
 
 void EditCodeDialog::OnOK(wxCommandEvent& event)

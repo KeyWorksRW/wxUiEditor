@@ -16,7 +16,7 @@
 #include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // Common component functions
 #include "gen_enums.h"
-#include "lambdas.h"          // Functions for formatting and storage of lamda events
+#include "lambdas.h"          // Functions for formatting and storage of lambda events
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "mockup_parent.h"    // Top-level MockUp Parent window
 #include "node.h"             // Node class
@@ -134,7 +134,7 @@ bool BaseGenerator::AllowIdPropertyChange(wxPropertyGridEvent* event, NodeProper
 
     rlambda(form, rlambda);
 
-    // Same as NodeProperty::get_PropId() -- strip off any assginment
+    // Same as NodeProperty::get_PropId() -- strip off any assignment
     wxue::string new_id;
     if (auto pos = newValue.find('='); pos != wxue::npos)
     {

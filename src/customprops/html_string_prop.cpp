@@ -10,7 +10,7 @@
 #include "html_string_prop.h"  // auto-generated: wxui/edit_html_dialog_base.h and wxui/edit_html_dialog_base.cpp
 
 #include "../nodes/node_prop.h"  // NodeProperty class
-#include "lambdas.h"             // Functions for formatting and storage of lamda events
+#include "lambdas.h"             // Functions for formatting and storage of lambda events
 #include "mainframe.h"           // MainFrame -- Main window frame
 #include "utils.h"               // Miscellaneous utility functions
 

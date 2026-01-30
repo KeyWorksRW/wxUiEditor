@@ -13,7 +13,7 @@
 // methods to iterate through the entries, std::find_if, std::ranges::find_if, etc.
 
 // There already exists a wxTextFile class, however it is limited to files only, and because it is
-// not derived from std::vector, you cannot use standard vector methods such as interating through
+// not derived from std::vector, you cannot use standard vector methods such as iterating through
 // the entries, std::find_if, std::ranges::find_if, etc.
 
 // Note that unless you need to add, remove, or modify entries, you should consider using

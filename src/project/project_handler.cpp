@@ -159,7 +159,7 @@ auto ProjectHandler::FixupDuplicatedNode(Node* new_node) -> void
             new_name += "_copy";
         }
 
-        // If the name plus a "_copy" suffix is uniqe, then we're done. Otherewise find a
+        // If the name plus a "_copy" suffix is unique, then we're done. Otherwise find a
         // unique name by adding an increasing number to the end of the name.
         if (set_names.contains(new_name))
         {

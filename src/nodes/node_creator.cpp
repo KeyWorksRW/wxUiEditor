@@ -30,7 +30,7 @@ auto NodeCreator::get_NodeDeclaration(std::string_view class_name) -> NodeDeclar
     // Failure can happen for a new category that didn't get added to the interface section
     // of map_GenNames in gen_enums.cpp
 
-    FAIL_MSG(std::format("Attempt to get non-existant node declaration for {}", class_name));
+    FAIL_MSG(std::format("Attempt to get non-existent node declaration for {}", class_name));
     return nullptr;
 }
 
@@ -151,7 +151,7 @@ auto NodeCreator::CreateNode(GenName name, Node* parent, bool verify_language_su
     return { node, valid_node };
 }
 
-// Called when the GenName isn't availalble
+// Called when the GenName isn't available
 auto NodeCreator::CreateNode(std::string_view name, Node* parent, bool verify_language_support)
     -> std::pair<NodeSharedPtr, Node::Validity>
 {

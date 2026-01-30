@@ -18,7 +18,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
@@ -61,7 +61,8 @@ void BaseCodeGenerator::GenerateGoLangClass(PANEL_PAGE panel_type)
     SetImagesForm();
 
     EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node,
+                                std::ref(events));
 
     // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this
     // thread until it has been set!

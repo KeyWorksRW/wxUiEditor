@@ -11,7 +11,7 @@
 #include "eventhandler_dlg.h"
 
 #include "code.h"             // Code -- Helper class for generating code
-#include "lambdas.h"          // Functions for formatting and storage of lamda events
+#include "lambdas.h"          // Functions for formatting and storage of lambda events
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "node_event.h"       // NodeEventInfo -- NodeEvent and NodeEventInfo classes
@@ -238,14 +238,14 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
 
                     if (auto pos = value.find('{'); wxue::is_found(pos))
                     {
-                        wxue::string lamda = value.substr(pos + 1);
-                        if (lamda.back() == '}')
+                        wxue::string lambda = value.substr(pos + 1);
+                        if (lambda.back() == '}')
                         {
-                            lamda.pop_back();
+                            lambda.pop_back();
                         }
-                        ExpandLambda(lamda);
+                        ExpandLambda(lambda);
 
-                        m_cpp_stc_lambda->AddTextRaw(lamda.c_str());
+                        m_cpp_stc_lambda->AddTextRaw(lambda.c_str());
                     }
                     m_is_cpp_lambda = true;
                 }

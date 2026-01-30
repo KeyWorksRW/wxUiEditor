@@ -62,7 +62,7 @@ namespace code
         eol_always
     };
 
-// REVIEW: [Randalphwa - 04-22-2025] clangd version 18.1.4 claims this is an unsed variable, but
+// REVIEW: [Randalphwa - 04-22-2025] clangd version 18.1.4 claims this is an unused variable, but
 // it is used in several files that #include code.h and require this.
 #if defined(__clang__)
     #pragma clang diagnostic push
@@ -108,7 +108,7 @@ public:
         if (m_auto_break)
         {
             m_break_at = m_break_length;
-            m_minium_length = MIN_BREAK_LENGTH;
+            m_minimum_length = MIN_BREAK_LENGTH;
         }
         else
         {
@@ -250,14 +250,14 @@ public:
     void UpdateBreakAt()
     {
         m_break_at = size() + m_break_length;
-        m_minium_length = size() + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
+        m_minimum_length = size() + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral
     }
 
     // Equivalent to calling node->prop_as_string(prop_name).size()
     [[nodiscard]] auto PropSize(GenEnum::PropName prop_name) const -> size_t;
 
     // If the string starts with "wx", Python code will be converted to "wx." and then the
-    // string without the "wx" prefix. Ptyhon code will also handle multiple wx flags
+    // string without the "wx" prefix. Python code will also handle multiple wx flags
     // separated by |.
     //
     // If needed, the line will be broken *before* the string is added.
@@ -606,7 +606,7 @@ public:
     // list.
     void AddPublicRubyMembers();
 
-    // This will expand a lamda function according to the current language.
+    // This will expand a lambda function according to the current language.
     // Note that it takes a copy of the lambda string since it needs to modify it.
     auto ExpandEventLambda(wxue::string lambda) -> Code&;
 
@@ -712,7 +712,7 @@ private:
 
     size_t m_break_length { DEFAULT_BREAK_LENGTH };
     size_t m_break_at { DEFAULT_BREAK_LENGTH };  // this should be the same as m_break_length
-    size_t m_minium_length {
+    size_t m_minimum_length {
         MIN_BREAK_LENGTH  // if the line is shorter than this, don't break it
     };
 

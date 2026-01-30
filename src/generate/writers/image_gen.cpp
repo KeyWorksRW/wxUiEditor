@@ -25,7 +25,7 @@
 #include "wxue_namespace/wxue_string.h"         // wxue::string
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
-// Generate code after the construcor for embedded images not defined in the gen_Images node.
+// Generate code after the constructor for embedded images not defined in the gen_Images node.
 auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
 {
     code.clear();

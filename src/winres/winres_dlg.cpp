@@ -221,7 +221,7 @@ auto resForm::ParseControls(wxue::StringVector& txtfile, size_t& curTxtLine) -> 
         else if (control.getNode()->is_Gen(gen_wxSpinCtrl) &&
                  control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
         {
-            // A spin control can specifify that the previous control should be considered a "buddy"
+            // A spin control can specify that the previous control should be considered a "buddy"
             // that responds to changes in the spin control. In wxWidgets, a spin control already
             // includes an edit control, so we delete the previous edit control and use it's id for
             // the spin control.

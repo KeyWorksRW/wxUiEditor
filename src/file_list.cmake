@@ -271,7 +271,7 @@ set( file_list
 
     # Importers (also see Windows Resource importer below)
     import/import_dialogblocks.cpp    # Import a DialogBlocks project
-    import/import_formblder.cpp       # Import a wxFormBuider project
+    import/import_formblder.cpp       # Import a wxFormBuilder project
     import/import_wxcrafter.cpp       # Import a wxCrafter project
     import/import_wxglade.cpp         # Import a wxGlade file
     import/import_wxsmith.cpp         # Process XRC files

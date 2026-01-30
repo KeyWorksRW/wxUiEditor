@@ -507,7 +507,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     Node* node = code.node();
 
     // There are potentially a LOT of settings, so we put them all in a bracket pair to make them
-    // easier to identifiy. This is only done for C++ as Python syntax checkers don't like
+    // easier to identify. This is only done for C++ as Python syntax checkers don't like
     code.OpenBrace();
 
     if (code.HasValue(prop_stc_lexer) && !code.is_PropValue(prop_stc_lexer, "NULL"))

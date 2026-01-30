@@ -18,7 +18,7 @@
 #include "eventhandler_dlg.h"            // EventHandlerDlg static functions
 #include "gen_common.h"                  // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"               // Common XRC generating functions
-#include "lambdas.h"                     // Functions for formatting and storage of lamda events
+#include "lambdas.h"                     // Functions for formatting and storage of lambda events
 #include "node.h"                        // Node class
 #include "utils.h"                       // Utility functions that work with properties
 #include "wxue_namespace/wxue_string.h"  // wxue::string

@@ -92,7 +92,7 @@ public:
 
     // TODO: [Randalphwa - 12-09-2025] Verify() sets this, but no code generation functions check
     // it. This might be a good candidate for using wxMessageOutputDebug(), or just expanded
-    // messages for the log file if we are creating oen.
+    // messages for the log file if we are creating one.
 
     // Returns true if --verbose is specified on the command line.
     [[nodiscard]] auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }

@@ -99,10 +99,11 @@ jobs:
     with:
       create-setup: false
       build-type: Release
+      runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}
 
   buildMacOS:
     uses: ./.github/workflows/build-macos-reusable.yml
     with:
       create-setup: false
       build-type: Release
-      runner-type: self-hosted-arm64
+      runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}

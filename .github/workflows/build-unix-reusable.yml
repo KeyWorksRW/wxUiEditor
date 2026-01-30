@@ -13,10 +13,15 @@ on:
         required: false
         type: string
         default: 'Release'
+      runner-type:
+        description: 'Runner type (self-hosted or github-hosted)'
+        required: false
+        type: string
+        default: 'github-hosted'
 
 jobs:
   buildUnix:
-    runs-on: [self-hosted, Linux, X64]  # Match exact labels from GitHub UI
+    runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

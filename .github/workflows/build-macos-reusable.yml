@@ -14,14 +14,14 @@ on:
         type: string
         default: 'Release'
       runner-type:
-        description: 'Runner type (self-hosted-arm64 or github-hosted-x64)'
+        description: 'Runner type (self-hosted or github-hosted)'
         required: false
         type: string
-        default: 'self-hosted-arm64'
+        default: 'github-hosted'
 
 jobs:
   buildMacOS:
-    runs-on: ${{ inputs.runner-type == 'self-hosted-arm64' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
+    runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

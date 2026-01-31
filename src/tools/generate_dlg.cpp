@@ -111,7 +111,7 @@ namespace
 
 }  // anonymous namespace
 
-// This generates the base class files. For the derived class files, see OnGenInhertedClass()
+// This generates the base class files. For the derived class files, see OnGenInheritedClass()
 // in generate/gen_codefiles.cpp
 void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
 {
@@ -147,7 +147,7 @@ auto MainFrame::GenerateFromOutputType(GenResults& results) -> bool
 
     if (output_type == OUTPUT_DERIVED)
     {
-        GenInhertedClass(results);
+        GenInheritedClass(results);
         return true;
     }
 
@@ -240,7 +240,7 @@ auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
     gen_derived_code = dlg.is_gen_inherited();
     if (gen_derived_code)
     {
-        GenInhertedClass(results);
+        GenInheritedClass(results);
         code_generated = true;
     }
 

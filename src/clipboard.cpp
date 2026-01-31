@@ -7,7 +7,7 @@
 
 #include "clipboard.h"
 
-#include "import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
+#include "import/import_formblder.h"  // FormBuilder -- Import a wxFormBuilder project
 #include "import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
 
 #include "mainframe.h"     // Main window frame

@@ -49,7 +49,6 @@ src/version.rc
 *.mms
 *.obj
 *.ocx
-*.opendb
 *.pch
 *.pdb
 *.pdf
@@ -61,11 +60,9 @@ src/version.rc
 *.ps
 *.res
 *.rtf
-*.sh
 *.spec
 *.tiff
 *.tmp
-*.ttBld
 *.zip
 
 # Always allow CMakeLists.txt files

@@ -10,7 +10,7 @@
 // wxCrafter's JSON object structure to wxUiEditor Nodes via ProcessForm (top-level), ProcessChild
 // (recursive), ProcessProperties (property arrays), ProcessStyles/ProcessSizerFlags (style arrays),
 // ProcessEvents (event arrays), ProcessFont/ProcessScintillaProperty (complex properties), and
-// ProcessBitmapPropety (image handling). UnknownProperty/KnownProperty/ValueProperty handle
+// ProcessBitmapProperty (image handling). UnknownProperty/KnownProperty/ValueProperty handle
 // property mapping with wxCrafter-specific conversions. State tracking includes m_output_name (form
 // output file), m_is_output_name_used (prevents duplicate use), and m_generate_ids (project-wide ID
 // generation setting). Only supports GEN_LANG_CPLUSPLUS. The importer navigates wxCrafter's nested
@@ -45,7 +45,7 @@ public:
 protected:
     auto ProcessFont(Node* node, const rapidjson::Value& object) -> bool;
     auto ProcessScintillaProperty(Node* node, const rapidjson::Value& object) -> bool;
-    auto ProcessBitmapPropety(Node* parent, const rapidjson::Value& object) -> void;
+    auto ProcessBitmapProperty(Node* parent, const rapidjson::Value& object) -> void;
     auto ProcessChild(Node* parent, const rapidjson::Value& object) -> void;
     auto ProcessEvents(Node* parent, const rapidjson::Value& array) -> void;
     auto ProcessForm(const rapidjson::Value& value) -> void;

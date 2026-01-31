@@ -14,23 +14,29 @@ on:
         type: string
         default: 'Release'
       runner-type:
-        description: 'Runner type (self-hosted-arm64 or github-hosted-x64)'
+        description: 'Runner type (self-hosted or github-hosted)'
         required: false
         type: string
-        default: 'self-hosted-arm64'
+        default: 'github-hosted'
 
 jobs:
   buildMacOS:
-    runs-on: ${{ inputs.runner-type == 'self-hosted-arm64' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
+    runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Setup CMake 3.30+ and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: '~3.30.0'
+        ninjaVersion: 'latest'
 
     - run: mkdir ${{github.workspace}}/build
 
     - name: Install dependencies
       run: |
-        brew install cmake ninja ccache
+        brew install ccache
         cmake --version
         ccache --version
 
@@ -38,12 +44,14 @@ jobs:
       run: |
         ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
         ccache --set-config=compression=true
+        ccache --set-config=max_size=15G
         ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
         ccache --set-config=hard_link=true
         ccache --zero-stats
         ccache --show-config
 
     - name: Restore ccache
+      if: inputs.runner-type != 'self-hosted'
       id: cache-ccache-restore
       uses: actions/cache/restore@v4
       with:
@@ -54,6 +62,7 @@ jobs:
         enableCrossOsArchive: false
 
     - name: Restore CMake FetchContent
+      if: inputs.runner-type != 'self-hosted'
       id: cache-fetchcontent-restore
       uses: actions/cache/restore@v4
       with:
@@ -71,14 +80,14 @@ jobs:
       run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
-      if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      if: inputs.runner-type != 'self-hosted' && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: ${{runner.workspace}}/.ccache
         key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
 
     - name: Save CMake FetchContent
-      if: always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
+      if: inputs.runner-type != 'self-hosted' && always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: |

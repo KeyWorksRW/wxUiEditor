@@ -1255,18 +1255,18 @@ auto ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form) -> bool
     wxMemoryInputStream stream(str.c_str(), str.size() + 1);
 
     wxMemoryOutputStream memory_stream;
-    wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+    wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
     m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>(path, form);
     auto* embed = m_map_embedded[path.filename().as_str()].get();
 
     uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
 
-    if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+    if (!CopyStreamData(&stream, &save_stream, stream.GetLength()))
     {
         FAIL_MSG(wxue::string() << "Failed to copy stream data");
         return false;
     }
-    save_strem.Close();
+    save_stream.Close();
     auto compressed_size = static_cast<uint64_t>(memory_stream.TellO());
 
     auto* read_stream = memory_stream.GetOutputStreamBuffer();
@@ -1340,15 +1340,15 @@ auto ImageHandler::AddXpmBundleImage(const wxue::string& path, Node* form) -> bo
     embed->SetEmbedSize(image);
 
     wxMemoryOutputStream memory_stream;
-    wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+    wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
     stream.SeekI(0);
 
-    if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+    if (!CopyStreamData(&stream, &save_stream, stream.GetLength()))
     {
         // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
         return false;
     }
-    save_strem.Close();
+    save_stream.Close();
     auto compressed_size = memory_stream.TellO();
 
     auto* read_stream = memory_stream.GetOutputStreamBuffer();

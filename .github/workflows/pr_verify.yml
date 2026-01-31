@@ -91,18 +91,18 @@ jobs:
           sudo apt-get install -y dos2unix
 
       - name: Check all files use LF line endings
-        run: |
-            ./scripts/check_eol.sh
+        run: bash ./scripts/check_eol.sh
 
   buildUnix:
     uses: ./.github/workflows/build-unix-reusable.yml
     with:
       create-setup: false
       build-type: Release
+      runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}
 
   buildMacOS:
     uses: ./.github/workflows/build-macos-reusable.yml
     with:
       create-setup: false
       build-type: Release
-      runner-type: self-hosted-arm64
+      runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}

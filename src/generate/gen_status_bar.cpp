@@ -137,7 +137,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
 
 bool StatusBarGenerator::SettingsCode(Code& code)
 {
-    // A single field can be represeted by 1 which uses the older style of setting.
+    // A single field can be represented by 1 which uses the older style of setting.
     if (GetRequiredVersion(code.node()) <= minRequiredVer)
         return true;
 

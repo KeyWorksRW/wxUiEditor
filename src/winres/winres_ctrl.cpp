@@ -109,7 +109,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
         m_original_line.clear();
         auto temp_view = line.subview();
 
-        // First copy the diretive name without the leading whitespace
+        // First copy the directive name without the leading whitespace
         temp_view.moveto_nonspace();
         auto pos_space = temp_view.find_space();
         if (!wxue::is_found(pos_space))
@@ -133,7 +133,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
 
     // CONTROL statement is always followed by a label, but some specific directives like
     // COMBOBOX do not. It's possible that the label is a #defined value, and therefore
-    // non-quoted so we can't rely on the existance of a quote to know for sure that it is a
+    // non-quoted so we can't rely on the existence of a quote to know for sure that it is a
     // label or should be treated as an ID.
     bool label_required = true;
 
@@ -216,7 +216,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
         }
         else if (line.contains("\"SysDateTimePick32\"", wxue::CASE::either))
         {
-            // Visual Studio 16.09 formt:time simply displays "DTS_UPDOWN" to get the time picker.
+            // Visual Studio 16.09 format:time simply displays "DTS_UPDOWN" to get the time picker.
             if (line.contains("DTS_UPDOWN") && !line.contains("DTS_SHORTDATECENTURYFORMAT") &&
                 !line.contains("DTS_LONGDATEFORMAT"))
             {

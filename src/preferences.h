@@ -48,8 +48,8 @@ public:
     void set_DarkMode(bool value) { m_dark_mode = value; }
     void set_DarkModePending(size_t value) { m_dark_mode_pending = value; }
     // Only true if both dark mode and high contrast are enabled
-    auto is_HighContrast() const -> bool { return (m_dark_mode && m_high_constrast); }
-    void set_HighContrast(bool value) { m_high_constrast = value; }
+    auto is_HighContrast() const -> bool { return (m_dark_mode && m_high_contrast); }
+    void set_HighContrast(bool value) { m_high_contrast = value; }
 
     auto is_FullPathTitle() const -> bool { return m_fullpath_title; }
     void set_FullPathTitle(bool value) { m_fullpath_title = value; }
@@ -254,7 +254,7 @@ private:
     bool m_var_prefix { true };  // true to use "m_" prefix for member variables
 
     bool m_dark_mode { false };
-    bool m_high_constrast { false };
+    bool m_high_contrast { false };
 
     bool m_fullpath_title {
         false
@@ -271,7 +271,7 @@ private:
 
 extern Prefs& UserPrefs;
 
-// These are utiltiy functions for converting colors
+// These are utility functions for converting colors
 
 void wxColourToHSL(const wxColour& colour, double& hue, double& saturation, double& luminance);
 auto HSLToWxColour(double hue, double saturation, double luminance) -> wxColour;

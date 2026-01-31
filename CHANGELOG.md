@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - All coordinates using dialog units will automatically be converted to physical pixels. For C++ using wxWidgets 3.2 or higher along with wxPython and wxRuby, FromDIP() will be called to scale the UI as needed on high DPI displays.
 - In most cases, you no longer need to select a sizer or container before adding a widget. wxUiEditor will now attempt to find an appropriate parent for what you want to add starting from your current selection.
 - "Additional Comments" removed from Preferences and instead a new "optional_comments" has been added to Project settings.
-- Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPthon code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
+- Generic option removed for wxAnimationCtrl. The generic version is automatically generated when a ANI animation file is specified. This will correctly display the file on wxGTK when generating C++ and wxPython code. wxRuby3 does not support Wx::GenericAnimationCtrl in version 1.0, so only the regular version is generated.
 - derived_class property in the wxWindows category has been changed to subclass to better reflect that the generated class derives from your specified class. The derived_class_name in the various language categories remain unchanged to indicate you derive your class from the generated class.
 - wxRuby3 generated code now supports persistence property (`Wx.persistent_register_and_restore`)
 - wxRuby3 generated code includes a `attr_accessor` list of all class members that specify `public:` access
@@ -61,7 +61,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Dark Mode and High Contrast Dark Mode are now available in the Prefences dialog on Windows.
+- Dark Mode and High Contrast Dark Mode are now available in the Preferences dialog on Windows.
 - The font used in the code panels can now be set in the Preferences dialog.
 - XPM files are now supported in wxPython and wxRuby3.
 - Setting a static bitmap's scale mode will now use wxGenericStaticBitmap in wxPython (4.2.1) and wxRuby3 (0.9.3) to ensure that all platforms will support the scaling.
@@ -107,7 +107,7 @@ Starting with version 1.2.1, wxUiEditor uses LunaSVG instead of NanoSVG to displ
 - Code can now be generated for wxRuby3 -- see https://github.com/mcorino/wxRuby3
 - New Doc panel (Windows version only) will display a URL containing documentation for the currently selected widget. A toolbar in this panel lets you choose between C++, Python and Ruby documentation.
 - New Preferences dialog available under the File menu lets you set several global preferences
-- wxTimer is now supported as a child of a dialag, frame or form version of wxPanel
+- wxTimer is now supported as a child of a dialog, frame or form version of wxPanel
 - DialogBlocks projects saved as XML can be imported
 - wxAuiToolBar can now be created as a form (it creates a class instead of a child widget)
 - Added support for additional integer and floating point validators for wxTextCtrl

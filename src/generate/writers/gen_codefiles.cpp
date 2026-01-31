@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_results.h"      // Code generation file writing functions
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
@@ -23,7 +23,7 @@
 
 using namespace code;
 
-auto GenInhertedClass(GenResults& results) -> void
+auto GenInheritedClass(GenResults& results) -> void
 {
     wxue::SaveCwd cwd(wxue::restore_cwd);
     Project.ChangeDir();

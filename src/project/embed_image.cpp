@@ -148,15 +148,15 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         wxMemoryInputStream stream(str.c_str(), str.size() + 1);
 
         wxMemoryOutputStream memory_stream;
-        wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+        wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
 
         uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
 
-        if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+        if (!CopyStreamData(&stream, &save_stream, stream.GetLength()))
         {
             return;
         }
-        save_strem.Close();
+        save_stream.Close();
         auto compressed_size = static_cast<uint64_t>(memory_stream.TellO());
 
         auto* read_stream = memory_stream.GetOutputStreamBuffer();

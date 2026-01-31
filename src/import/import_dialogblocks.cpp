@@ -19,7 +19,7 @@
  * "proxy-" followed by the style name. For example, "proxy-wxTAB_TRAVERSAL" would be the name
  * for the wxTAB_TRAVERSAL style.
  *
- * The styles are not separated into individual properties -- they can aply to prop_style,
+ * The styles are not separated into individual properties -- they can apply to prop_style,
  * prop_ex_style, prop_window_style, prop_window_ex_style, prop_alignment, prop_borders, etc.
  */
 
@@ -934,7 +934,7 @@ auto DialogBlocks::ExtractQuotedString(pugi::xml_node& str_xml) -> wxString
 }
 
 // Performance on such small lists isn't going to be an issue, so we use a set rather than an
-// unordered_set to reduce the memory footprint. Using frozen::make_set means the set is orderd
+// unordered_set to reduce the memory footprint. Using frozen::make_set means the set is ordered
 // at compile time, so it has no impact on application startup time.
 
 constexpr auto set_window_styles = frozen::make_set<std::string_view>({

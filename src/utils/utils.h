@@ -83,7 +83,7 @@ auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize;
 // Given a width this will convert it using wxGetMainFrame()->getWindow()->FromDIP()
 auto DlgPoint(int width) -> int;
 
-// Convert a filename to a valid variable name. This will handle filnames with leading
+// Convert a filename to a valid variable name. This will handle filenames with leading
 // numbers, utf8 characters, and other characters that are not valid in a variable name.
 //
 // If max_length is exceeded, the name will be have ""_name_truncated" as a suffix

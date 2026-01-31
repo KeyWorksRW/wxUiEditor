@@ -77,7 +77,7 @@ public:
     }
 
     auto ParseDimensions(wxue::string_view line, wxRect& duRect, wxRect& pixelRect) -> bool;
-    auto& GetOrginalLine() { return m_original_line; }
+    auto& GetOriginalLine() { return m_original_line; }
 
     NodeSharedPtr SetNodePtr(NodeSharedPtr node)
     {

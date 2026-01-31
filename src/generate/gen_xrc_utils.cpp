@@ -26,7 +26,7 @@ const char* g_xrc_keywords =
     "caption caption_visible cellpos cellspan center center_pane centered centre centre_pane "
     "checkable checked class close_button col cols collapsed content current "
     "data default defaultdirectory defaultfilename defaultfilter defaultfolder default_pane "
-    "default_size depth digitis dimension disabled direction disabled-bitmap dock dock_fixed "
+    "default_size depth digits dimension disabled direction disabled-bitmap dock dock_fixed "
     "dontattachtoframe dropdown effectduration empty_cellsize enabled expanded "
     "exstyle extra-accels fields filter flag flexibledirection float floatable floating_size "
     "fg focus focused font gradient-end gradient-start gravity gripper growablecols growablerows "

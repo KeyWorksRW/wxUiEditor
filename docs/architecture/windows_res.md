@@ -1,6 +1,6 @@
 # Converting a Windows Resource
 
-Windows Dialogs use absolute positions and size which we have to convert into flexible-sized controls that are contained within sizers. Complicating this is that the resource controls may not be exactly aligned and they can appear in any order. While most resource files will be created by Visual Studio, then can also be created by tools like **RisohEditor** or even created by hand. That means there is a _lot_ of variation in what resource files look like.
+Windows Dialogs use absolute positions and size which we have to convert into flexible-sized controls that are contained within sizers. Complicating this is that the resource controls may not be exactly aligned and they can appear in any order. While most resource files will be created by Visual Studio or even created by hand. That means there is a _lot_ of variation in what resource files look like.
 
 The goal is not to get a perfect rendition of the original dialog, but to at least get all of the controls converted so that the user can make adjustments to get the dialog to look closer to the original Windows version. The closer we can get, the easier it will be for the user, but that will often result in special-case handling.
 
@@ -14,7 +14,8 @@ Two repositories are used as the main tests for conversion primarily because the
 
 ### WinFile
 
-[https://github.com/Microsoft/winfile]
+[WinFile](https://github.com/microsoft/winfile)
+
 
 `src/res.rc` pulls in all dialogs, including all language versions which will have the same name, but different text. Use this top open in Visual Studio to see what the original dialogs look like. Do _not_ import this resource into **wxUE** as you'll end up with multiple identically named dialogs.
 
@@ -22,6 +23,6 @@ Two repositories are used as the main tests for conversion primarily because the
 
 ### NotePadPlusPlus
 
-[https://github.com/notepad-plus-plus/notepad-plus-plus]
+[NotePad++](https://github.com/notepad-plus-plus/notepad-plus-plus)
 
-`PowerEditor/gcc/resources.rc` pulls in most of the dialogs and gives the most coverage. **wxUE** can import this, but Visual Studio cannot, so to compare you'll have to open the individual resource files in Vistual Studio.
+`PowerEditor/gcc/resources.rc` pulls in most of the dialogs and gives the most coverage. **wxUE** can import this, but Visual Studio cannot, so to compare you'll have to open the individual resource files in Visual Studio.

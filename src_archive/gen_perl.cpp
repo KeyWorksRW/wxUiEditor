@@ -18,7 +18,7 @@
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions

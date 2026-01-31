@@ -60,7 +60,7 @@ bool DebugSettings::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     box_sizer2->Add(checkBox3, wxSizerFlags().Border(wxALL));
 
     auto* checkBox4 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_WARNING() messages");
-    checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarnng));
+    checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarning));
     box_sizer2->Add(checkBox4, wxSizerFlags().Border(wxALL));
 
     static_box->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
@@ -149,7 +149,7 @@ void DebugSettings::OnInit(wxInitDialogEvent& event)
     m_DisplayMsgWindow = (m_orgFlags & Prefs::PREFS_MSG_WINDOW);
     m_DisplayMsgInfo = (m_orgFlags & Prefs::PREFS_MSG_INFO);
     m_DisplayMsgEvent = (m_orgFlags & Prefs::PREFS_MSG_EVENT);
-    m_DisplayMsgWarnng = (m_orgFlags & Prefs::PREFS_MSG_WARNING);
+    m_DisplayMsgWarning = (m_orgFlags & Prefs::PREFS_MSG_WARNING);
     m_FireCreationMsgs = (m_orgFlags & Prefs::PREFS_CREATION_MSG);
 
     event.Skip();  // transfer all validator data to their windows and update UI
@@ -180,7 +180,7 @@ void DebugSettings::OnOK(wxCommandEvent& event)
     else
         m_orgFlags &= ~Prefs::PREFS_MSG_EVENT;
 
-    if (m_DisplayMsgWarnng)
+    if (m_DisplayMsgWarning)
         m_orgFlags |= Prefs::PREFS_MSG_WARNING;
     else
         m_orgFlags &= ~Prefs::PREFS_MSG_WARNING;

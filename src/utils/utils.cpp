@@ -562,7 +562,7 @@ auto FileNameToVarName(wxue::string_view filename, size_t max_length) -> std::op
         {
             if (current_ch == '.')
             {
-                // Always convert a period to an underscore in case it is preceeding the extension
+                // Always convert a period to an underscore in case it is preceding the extension
                 var_name += '_';
             }
             else if (var_name.size() && var_name.back() != '_' && pos > 0 &&

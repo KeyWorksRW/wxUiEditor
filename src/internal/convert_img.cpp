@@ -132,7 +132,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
     m_bmpOriginal->Hide();
     m_staticOriginal->Hide();
 
-    m_orginal_size = 0;
+    m_original_size = 0;
 
     bool isImageLoaded { false };
     if (file.has_extension(".h_img") || file.has_extension(".h"))
@@ -140,7 +140,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
         {
             wxBusyCursor wait;
             wxue::string mime_type;
-            m_orgImage = GetHeaderImage(file, &m_orginal_size, &mime_type);
+            m_orgImage = GetHeaderImage(file, &m_original_size, &mime_type);
             m_mime_type = mime_type;
         }
 
@@ -181,7 +181,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& /* event unused */)
 
                     if (handler->LoadFile(&m_orgImage, stream))
                     {
-                        m_orginal_size = stream.GetSize();
+                        m_original_size = stream.GetSize();
                         isImageLoaded = true;
                         m_check_make_png->Show(isConvertibleMime(m_mime_type));
                         break;
@@ -410,14 +410,14 @@ void ConvertImageDlg::OnComboHdrMask(wxCommandEvent& /* event unused */)
 void ConvertImageDlg::OnConvert(wxCommandEvent& /* event unused */)
 {
     if (IsHeaderPage())
-        ImgageInHeaderOut();
+        ImageInHeaderOut();
     else
         ImageInXpmOut();
 
     SetOutputBitmap();
 }
 
-void ConvertImageDlg::ImgageInHeaderOut()
+void ConvertImageDlg::ImageInHeaderOut()
 {
     wxue::string in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
@@ -503,7 +503,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
     if (out_name.empty())
     {
         m_staticSize->SetLabelText(wxue::string()
-                                   << "Original size: " << std::to_string(m_orginal_size)
+                                   << "Original size: " << std::to_string(m_original_size)
                                    << " -- Output size if saved: " << std::to_string(buf_size));
         m_staticSize->Show();
     }
@@ -514,7 +514,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
             m_staticSave->SetLabelText(out_name.wx() << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(wxue::string()
-                                       << "Original size: " << std::to_string(m_orginal_size)
+                                       << "Original size: " << std::to_string(m_original_size)
                                        << " -- Output size: " << std::to_string(buf_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
@@ -561,7 +561,7 @@ void ConvertImageDlg::ImageInXpmOut()
             m_staticSave->Show();
             m_staticSize->SetLabelText(std::format(std::locale(""),
                                                    "Original size: {:L} -- XPM size: {:L}",
-                                                   m_orginal_size, output_size));
+                                                   m_original_size, output_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();

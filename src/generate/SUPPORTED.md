@@ -3,7 +3,7 @@
 The following tables indicate whether or not code is being generated in a specific language.
 
 - `---` indicates it has not been verified or not implemented yet.
-- `no` indcates that the language doesn't support it.
+- `no` indicates that the language doesn't support it.
 - `partial` means that not all properties for the control are supported.
 - 'y' means that wxPerl supports the control, but needs wxUiEditor to generate the code for it.
 - 'n' means that wxPerl does not support the control
@@ -237,7 +237,7 @@ The Unsupported lists below are for controls that the language port doesn't supp
 - wxStatusBar doesn't support wxSB_SUNKEN style, and it doesn't appear to allow more than one field.
 - wxREMOVE_LEADING_SPACES not a valid constant for wxWrapSizer
 - wxWRAPSIZER_DEFAULT_FLAGS not a valid constant for wxWrapSizer
-- wxBU_NOTEXT not supprted as a button style
+- wxBU_NOTEXT not supported as a button style
 - wxDefaultCoord not a valid constant
 
 ## Functions

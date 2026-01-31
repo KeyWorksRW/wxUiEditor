@@ -51,7 +51,7 @@ bool DebugSettingsBase::Create(wxWindow* parent, wxWindowID id, const wxString& 
     box_sizer2->Add(checkBox3, wxSizerFlags().Border(wxALL));
 
     auto* checkBox4 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_WARNING() messages");
-    checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarnng));
+    checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarning));
     box_sizer2->Add(checkBox4, wxSizerFlags().Border(wxALL));
 
     static_box->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));

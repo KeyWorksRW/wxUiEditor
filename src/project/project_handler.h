@@ -198,7 +198,7 @@ public:
     }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
-    // wxDefaultPosition, or non-sepcified bitmap)
+    // wxDefaultPosition, or non-specified bitmap)
     [[nodiscard]] auto HasValue(PropName name) const -> bool
     {
         return m_project_node->HasValue(name);

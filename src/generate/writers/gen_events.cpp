@@ -17,8 +17,8 @@
 #include "base_generator.h"                   // BaseGenerator -- Base widget generator class
 #include "code.h"                             // Code -- Helper class for generating code
 #include "common_strings.h"                   // Common strings used in code generation
-#include "file_codewriter.h"                  // FileCodeWriter -- Classs to write code to disk
-#include "lambdas.h"  // Functions for formatting and storage of lamda events
+#include "file_codewriter.h"                  // FileCodeWriter -- Class to write code to disk
+#include "lambdas.h"  // Functions for formatting and storage of lambda events
 
 #include "wxue_namespace/wxue_string.h"         // wxue::string
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
@@ -125,7 +125,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         else
         {
             // We don't know what module this function is in, so I'm not sure this will
-            // acutally work. The user will instead need to create a Python function
+            // actually work. The user will instead need to create a Python function
             // that starts with the module name.
             event_code.Replace("::", ".");
         }

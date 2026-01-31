@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Import a wxFormBuider project
+// Purpose:   Import a wxFormBuilder project
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2019-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE

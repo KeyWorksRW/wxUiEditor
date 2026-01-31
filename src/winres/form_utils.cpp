@@ -184,7 +184,7 @@ auto resForm::SortCtrls() -> void
     // a text control is preceded by a static text control that is centered vertically. We may add
     // other changes as well, such as moving OK/Cancel buttons that were set on the right side.
     // Changing the top position of a control will typically mean that it needs to be resorted
-    // horizonally, so we fix that here.
+    // horizontally, so we fix that here.
 
     for (size_t begin = 0; begin < m_ctrls.size() - 1; ++begin)
     {

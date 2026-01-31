@@ -8,7 +8,7 @@
 // AI Context: This file implements utility functions shared across all code generators for handling
 // common wxWidgets patterns. Key responsibilities: string escaping and internationalization
 // (GenerateQuotedString, ConvertToCodeString), bitmap/bundle code generation (GenerateBitmapCode,
-// GenerateBundleCode, GenBtnBimapCode), style bitflag conversion (GetStyleInt, GetBitlistInt), and
+// GenerateBundleCode, GenBtnBitmapCode), style bitflag conversion (GetStyleInt, GetBitlistInt), and
 // language-specific file generation orchestration (GenerateLanguageFiles, GenerateLanguageForm).
 // Helper functions generate code for colors (ColourCode), fonts, icons (GenerateIconCode), parent
 // name resolution (get_ParentName), validators (GenValidatorSettings), and Get/Set accessor methods
@@ -58,7 +58,7 @@ auto get_ParentName(Node* node, GenLang language) -> wxue::string;
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
 // Set is_single to true for a non-button control.
-auto GenBtnBimapCode(Node* node, wxue::string& code, bool is_single = false) -> bool;
+auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single = false) -> bool;
 
 // Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
@@ -142,8 +142,8 @@ auto PythonBundleCode(Code& code, GenEnum::PropName prop) -> bool;
 // location.
 auto MakePythonPath(Node* node) -> wxue::string;
 
-// Python version of GenBtnBimapCode()
-void PythonBtnBimapCode(Code& code, bool is_single = false);
+// Python version of GenBtnBitmapCode()
+void PythonBtnBitmapCode(Code& code, bool is_single = false);
 
 /////////////////////////////////////// wxRuby Functions ///////////////////////////////////////
 

@@ -80,7 +80,7 @@
             help="The header file that declares the class. If the first line does not start with #include then the entire contents will be placed in quotes and prefixed with #include. Python and Ruby code should use python_import_list and ruby_require_list instead of this property."
         />
         <property name="namespace" type="string"
-            help="C++ namespace the class is declared in. This property is ignored in any langauage besides C++."/>
+            help="C++ namespace the class is declared in. This property is ignored in any language besides C++."/>
         <property name="class_name" type="string"
             help="The name of the custom class.">CustomClass</property>
         <property name="construction" type="code_edit"
@@ -238,7 +238,7 @@
             <option name="wxSL_SELRANGE"
                 help="Allows the user to select a range on the slider. Windows only."/>
             <option name="wxSL_INVERSE"
-                help="Inverses the mininum and maximum endpoints on the slider. Not compatible with wxSL_SELRANGE."/>
+                help="Inverses the minimum and maximum endpoints on the slider. Not compatible with wxSL_SELRANGE."/>
         </property>
         <event name="wxEVT_SLIDER" class="wxCommandEvent"
             help="Generated after any change of wxSlider position."/>
@@ -482,7 +482,7 @@
                 help="Disable the month (and, implicitly, the year) changing"/>
 			<option
                 name="wxCAL_SHOW_SURROUNDING_WEEKS"
-                help="Show the neighbouring weeks in the previous and next months (only generic, always on for the native controls)"/>
+                help="Show the neighboring weeks in the previous and next months (only generic, always on for the native controls)"/>
 			<option
                 name="wxCAL_SEQUENTIAL_MONTH_SELECTION"
                 help="Use alternative, more compact, style for the month and year selection controls (only generic)"/>

@@ -126,8 +126,9 @@ if( MSVC )
     if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
         add_compile_options( /fsanitize=address )
         add_link_options( /fsanitize=address )
-        # REVIEW: [Randalphwa - 01-26-2026] Even with MSVC from 2026, incremental linking messes with debugging
-        # where you the code you see is not what is actually running as you step through it.
+        # REVIEW: [Randalphwa - 01-26-2026] Even with MSVC from 2026, incremental linking
+        # messes with debugging where you the code you see is not what is actually running as
+        # you step through it.
         add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
     endif()
 
@@ -248,6 +249,9 @@ else()
 endif()
 
 if( APPLE )
+    # Force Cocoa toolkit - prevents conflict if GTK is installed (e.g., via Homebrew)
+    set( wxBUILD_TOOLKIT "osx_cocoa" CACHE STRING "Use Cocoa toolkit on macOS" FORCE )
+
     # Ensure the stdlib extension macro is defined for all compilation units (including fetched
     # projects)
     add_definitions( -D__STDC_WANT_LIB_EXT1__=1 )
@@ -315,11 +319,6 @@ if( MSVC )
     # /FC -- Full path to source code file in diagnostics
     target_compile_options( wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8" )
 
-    # REVIEW: [Randalphwa - 01-25-2026] I removed /OPT:REF which means builds will now
-    # be using incremental linking. While this makes for faster builds, it's a bit
-    # fragile, so if we have problems, I'll need to set /INCREMENTAL:NO. For now,
-    # I'll try it out and see how it goes.
-
     # Manifest is in the resource file
     target_link_options( wxUiEditor PRIVATE "/manifest:no" )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} )
@@ -327,6 +326,9 @@ if( MSVC )
     set_target_properties( wxUiEditor PROPERTIES
         VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
     )
+elseif( APPLE )
+    target_compile_definitions( wxUiEditor PRIVATE __WXOSX_COCOA__ )
+    target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} )
 elseif( UNIX )
     target_compile_definitions( wxUiEditor PRIVATE __WXGTK__ )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS} )

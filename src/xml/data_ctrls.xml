@@ -531,7 +531,7 @@
                 name="wxPG_DEFAULT_STYLE"
                 help="Combines various styles."/>
 			<option name="wxTAB_TRAVERSAL"
-                help="wxTAB_TRAVERSAL allows using Tab/Shift-Tab to travel between properties in grid. Travelling forwards from last property will navigate to the next control, and backwards from first will navigate to the previous one."/>
+                help="wxTAB_TRAVERSAL allows using Tab/Shift-Tab to travel between properties in grid. Traveling forwards from last property will navigate to the next control, and backwards from first will navigate to the previous one."/>
             wxPG_DEFAULT_STYLE </property>
         <property name="extra_style" type="bitlist">
             <option name="wxPG_EX_INIT_NOCAT"
@@ -612,7 +612,7 @@
                 help="Disables wxTextCtrl based editors for properties which can be edited in another way."/>
 			<option
                 name="wxTAB_TRAVERSAL"
-                help="wxTAB_TRAVERSAL allows using Tab/Shift-Tab to travel between properties in grid. Travelling forwards from last property will navigate to the next control, and backwards from first will navigate to the previous one."/>
+                help="wxTAB_TRAVERSAL allows using Tab/Shift-Tab to travel between properties in grid. Traveling forwards from last property will navigate to the next control, and backwards from first will navigate to the previous one."/>
 			<option
                 name="wxPG_COMPACTOR"
                 help="Show compactor button that toggles hidden state of low-priority properties."/>

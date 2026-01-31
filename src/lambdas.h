@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Functions for formatting and storage of lamda events
+// Purpose:   Functions for formatting and storage of lambda events
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE

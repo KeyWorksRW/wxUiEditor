@@ -73,7 +73,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
 
     m_btnAddFile = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Directory...");
-    m_btnAddFile->SetToolTip("You can add multiple formbuilder projects to a single wxUiEdtior project.");
+    m_btnAddFile->SetToolTip("You can add multiple formbuilder projects to a single wxUiEditor project.");
     box_sizer6->Add(m_btnAddFile, wxSizerFlags().Center().Border(wxALL));
 
     m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "Set directory to list project files",

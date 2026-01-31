@@ -9,7 +9,7 @@
 
 #include <wx/aboutdlg.h>     // declaration of wxAboutDialog class
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
-#include <wx/clipbrd.h>      // wxClipboad class and clipboard functions
+#include <wx/clipbrd.h>      // wxClipboard class and clipboard functions
 #include <wx/config.h>       // wxConfig base header
 #include <wx/filedlg.h>      // wxFileDialog base header
 #include <wx/infobar.h>      // declaration of wxInfoBarBase defining common API of wxInfoBar

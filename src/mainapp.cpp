@@ -616,7 +616,7 @@ auto App::OnFatalException() -> void
     #endif  // _DEBUG
 
     // Let the user know something terrible happened.
-    wxMessageBox("A fatal exception has occured!", txtVersion);
+    wxMessageBox("A fatal exception has occurred!", txtVersion);
 }
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)

@@ -94,7 +94,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     out.at(out.size() - 1) << "set (" << var_name;
     out.emplace_back();
 
-    // Recrusive lambda to collect forms in derived and non-derived vectors
+    // Recursive lambda to collect forms in derived and non-derived vectors
     auto CollectForms = [](std::vector<Node*>& forms, std::vector<Node*>& derived_forms,
                            Node* node_start, auto&& CollectForms) -> void
     {

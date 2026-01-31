@@ -83,7 +83,7 @@
         <property name="add_externs" type="bool"
             help="If checked, each image data array will be added to the header file as an extern.">0</property>
         <property name="auto_add" type="bool"
-            help="If checked, then whenver you add an image file to a control, it will automatically be added to the Images List.">0</property>
+            help="If checked, then whenever you add an image file to a control, it will automatically be added to the Images List.">0</property>
     </gen>
 
     <gen class="embedded_image" image="bitmap" type="embed_image">

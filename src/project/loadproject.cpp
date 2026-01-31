@@ -9,6 +9,8 @@
 #include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>     // Miscellaneous utilities
 
+#include <format>  // for std::format
+
 #include "wxue_namespace/wxue.h"
 #include "wxue_namespace/wxue_string.h"
 #include "wxue_namespace/wxue_string_vector.h"
@@ -28,7 +30,7 @@
 using namespace GenEnum;
 
 #include "../import/import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
-#include "../import/import_formblder.h"     // FormBuilder -- Import a wxFormBuider project
+#include "../import/import_formblder.h"     // FormBuilder -- Import a wxFormBuilder project
 #include "../import/import_wxcrafter.h"     // WxCrafter -- Import a wxCrafter project
 #include "../import/import_wxglade.h"       // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"       // WxSmith -- Import a wxSmith file
@@ -1681,7 +1683,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
         if (node->as_int(prop_rows) > 0 && node->as_int(prop_cols) > 0)
         {
             // REVIEW: [Randalphwa - 08-29-2023] Need to check if it is a performance hit to make
-            // the sizer figure this out. We could set it whenver we generate the code for it.
+            // the sizer figure this out. We could set it whenever we generate the code for it.
             node->set_value(prop_rows, 0);
             m_isProject_updated = true;
             MSG_INFO((wxString() << "Removed row setting from " << node->as_string(prop_var_name)

@@ -116,7 +116,7 @@
             help="Sets a hint to be shown when the control is empty and does not have the focus."/>
         <property name="style" type="bitlist">
             <option name="wxRE_CENTRE_CARET"
-                help="The control will try to keep the caret line centred vertically while editing."/>
+                help="The control will try to keep the caret line centered vertically while editing."/>
             <option name="wxRE_READONLY"
                 help="The text will not be editable."/>
         </property>
@@ -128,7 +128,7 @@
         <event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
             help="Generated when enter is pressed in a text control (which must have wxTE_PROCESS_ENTER style for this event to be generated)."/>
         <event name="wxEVT_TEXT_URL" class="wxTextUrlEvent"
-            help="Generated when a mouse event occurrs over a URL in the text control (wxMSW and wxGTK2 only)"/>
+            help="Generated when a mouse event occurs over a URL in the text control (wxMSW and wxGTK2 only)"/>
 
         <event name="wxEVT_RICHTEXT_LEFT_CLICK" class="wxRichTextEvent"
             help="Generated when the user releases the left mouse button over an object."/>

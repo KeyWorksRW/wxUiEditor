@@ -533,7 +533,7 @@ void PropGridPanel::ReselectItem()
     }
 }
 
-// Replace internal cateogry names with user-friendly names
+// Replace internal category names with user-friendly names
 wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
 {
     wxString category_name = original;

@@ -390,7 +390,7 @@ void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
 
 void NavPopupMenu::CreateSizerMenu()
 {
-    // This needs to be added first to cover all menu ids that aren't specically bound to an id.
+    // This needs to be added first to cover all menu ids that aren't specially bound to an id.
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
 
@@ -489,7 +489,7 @@ void NavPopupMenu::CreateSizerMenu()
 
 void NavPopupMenu::CreateCommonMenu()
 {
-    // This needs to be added first to cover all menu ids that aren't specically bound to an id.
+    // This needs to be added first to cover all menu ids that aren't specially bound to an id.
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
 

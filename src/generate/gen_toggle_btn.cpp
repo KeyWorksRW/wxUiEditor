@@ -146,9 +146,9 @@ bool ToggleButtonGenerator::SettingsCode(Code& code)
         }
 
         if (code.is_cpp())
-            GenBtnBimapCode(code.node(), code.GetCode());
+            GenBtnBitmapCode(code.node(), code.GetCode());
         else
-            PythonBtnBimapCode(code);
+            PythonBtnBitmapCode(code);
     }
 
     return true;
@@ -279,9 +279,9 @@ bool BitmapToggleButtonGenerator::SettingsCode(Code& code)
         }
 
         if (code.is_cpp())
-            GenBtnBimapCode(code.node(), code.GetCode());
+            GenBtnBitmapCode(code.node(), code.GetCode());
         else
-            PythonBtnBimapCode(code);
+            PythonBtnBitmapCode(code);
     }
 
     return true;

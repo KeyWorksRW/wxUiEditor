@@ -692,13 +692,13 @@
             <option name="wxRIBBON_PANEL_DEFAULT_STYLE"
                 help="Defined as no other flags set."/>
 			<option name="wxRIBBON_PANEL_NO_AUTO_MINIMISE"
-                help="Prevents the panel from automatically minimising to conserve screen space."/>
+                help="Prevents the panel from automatically minimizing to conserve screen space."/>
 			<option
                 name="wxRIBBON_PANEL_EXT_BUTTON"
                 help="Causes an extension button to be shown in the panel's chrome (if the bar in which it is contained has wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS set). The behaviour of this button is application controlled, but typically will show an extended drop-down menu relating to the panel."/>
 			<option
                 name="wxRIBBON_PANEL_MINIMISE_BUTTON"
-                help="Causes a (de)minimise button to be shown in the panel's chrome (if the bar in which it is contained has the wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS style set). This flag is typically combined with wxRIBBON_PANEL_NO_AUTO_MINIMISE to make a panel which the user always has manual control over when it minimises."/>
+                help="Causes a (de)minimise button to be shown in the panel's chrome (if the bar in which it is contained has the wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS style set). This flag is typically combined with wxRIBBON_PANEL_NO_AUTO_MINIMISE to make a panel which the user always has manual control over when it minimizes."/>
 			<option
                 name="wxRIBBON_PANEL_STRETCH"
                 help="Stretches a single panel to fit the parent page."/>

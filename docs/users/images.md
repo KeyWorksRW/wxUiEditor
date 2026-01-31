@@ -43,9 +43,9 @@ Example:
 
 # SVG images
 
-Starting with **wxWidgets** 3.1.6, many SVG images can be used as bitmaps that will accuratele scale to any dimension. Support for SVG is somewhat limited, so it's generally a good idea to preview the image before you build you application execting the SVG images to work. If you are adding it to a control inside **wxUiEditor** you can simply check how it looks in the Mockup panel. Otherwise, you can use the Preview SVG command under the Tools menu to see what it looks at (this will also allow you to see it at different scaling sizes).
+Starting with **wxWidgets** 3.1.6, many SVG images can be used as bitmaps that will accuratele scale to any dimension. Support for SVG is somewhat limited, so it's generally a good idea to preview the image before you build you application expecting the SVG images to work. If you are adding it to a control inside **wxUiEditor** you can simply check how it looks in the Mockup panel. Otherwise, you can use the Preview SVG command under the Tools menu to see what it looks at (this will also allow you to see it at different scaling sizes).
 
-When you specify an SVG file, **wxUiEdiutor** will read the file, strip out some content that **wxWidgets** won't use, compress it, and then store it as an unsigned character array in one of your source files. This will typically reduce the size of the image in your executable file by 80%. When your program runs, the generated code that displays the image will automatically decompress the data and pass it to **wxBitMapBundle**.
+When you specify an SVG file, **wxUiEditor** will read the file, strip out some content that **wxWidgets** won't use, compress it, and then store it as an unsigned character array in one of your source files. This will typically reduce the size of the image in your executable file by 80%. When your program runs, the generated code that displays the image will automatically decompress the data and pass it to **wxBitMapBundle**.
 
 # XPM images
 

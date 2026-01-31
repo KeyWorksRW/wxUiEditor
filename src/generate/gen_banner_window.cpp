@@ -81,12 +81,12 @@ bool BannerWindowGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             wxue::string tmp;
-            GenBtnBimapCode(code.node(), tmp, true);
+            GenBtnBitmapCode(code.node(), tmp, true);
             code += tmp;
         }
         else
         {
-            PythonBtnBimapCode(code, true);
+            PythonBtnBitmapCode(code, true);
         }
     }
     else if (code.HasValue(prop_start_colour) && code.HasValue(prop_end_colour))

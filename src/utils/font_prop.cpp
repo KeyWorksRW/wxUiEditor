@@ -314,7 +314,7 @@ auto FontProperty::as_wxString() const -> wxString
         {
             // std::to_chars will return the smallest number of digits needed to represent the
             // number. Point sizes are usually whole numbers, so most of the time this will return a
-            // numnber without a decimal point.
+            // number without a decimal point.
 
             std::array<char, 10> float_str;
             if (auto [ptr, ec] =

@@ -48,7 +48,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
             sizer->ShowItems(getMockup()->IsShowingHidden());
     }
 
-    // For storing objects whose postion needs to be determined
+    // For storing objects whose position needs to be determined
     std::vector<std::pair<wxObject*, wxGBSizerItem*>> newNodes;
     wxGBPosition lastPosition(0, 0);
 

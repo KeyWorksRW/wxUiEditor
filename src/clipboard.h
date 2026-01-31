@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <wx/clipbrd.h>  // wxClipboad class and clipboard functions
+#include <wx/clipbrd.h>  // wxClipboard class and clipboard functions
 
 constexpr const char* txt_OurClipboardFormat = "wxUiEditor";
 

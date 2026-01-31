@@ -56,7 +56,7 @@ void resForm::ParseMenu(WinResource* pWinResource, wxue::StringVector& txtfile, 
         }
     }
 
-    // If there was only one POPUP directive and it didn't contain an acclerator, then assume this
+    // If there was only one POPUP directive and it didn't contain an accelerator, then assume this
     // is a popup menu
 
     if (popups <= 1)

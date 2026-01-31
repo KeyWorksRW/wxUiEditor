@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Import a wxFormBuider project
+// Purpose:   Import a wxFormBuilder project
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -56,7 +56,7 @@ auto FormBuilder::Import(const std::string& filename, bool write_doc) -> bool
         }
     }
 
-    // Using a try block means that if at any point it becomes obvious the formbuilder file is
+    // Using a try block means that if at any point it becomes obvious the FormBuilder file is
     // invalid and we cannot recover, then we can throw an error and give a standard response about
     // an invalid file.
 
@@ -65,7 +65,7 @@ auto FormBuilder::Import(const std::string& filename, bool write_doc) -> bool
         auto object = root.child("object");
         if (!object)
         {
-            FAIL_MSG("formbuilder project file does not have a root \"object\" node.")
+            FAIL_MSG("FormBuilder project file does not have a root \"object\" node.")
             throw std::runtime_error("Invalid project file");
         }
 
@@ -239,7 +239,7 @@ auto FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* siz
     {
         if (parent == nullptr)
         {
-            // This gets called when pasting a formbuilder node from the clipboard
+            // This gets called when pasting a FormBuilder node from the clipboard
             auto* owner = wxGetFrame().getSelectedNode();
             while (owner->get_GenType() == type_sizer)
             {
@@ -468,7 +468,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
         {
             // wxFormBuilder allows none as permission even though it then generates code that
             // destroys the wxTimer in the form's ctor. We force the member to be protected
-            // instead so that the timer will acutally work.
+            // instead so that the timer will actually work.
             newobject->set_value(prop_class_access, "protected:");
         }
         else

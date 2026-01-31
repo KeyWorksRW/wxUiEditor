@@ -17,7 +17,7 @@
 bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    // Scaling of pos and size are handled after the dialog
+    // Scaling of pos and typo size are handled after the dialog
     // has been created and controls added.
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
     {

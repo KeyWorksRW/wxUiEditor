@@ -20,7 +20,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "comment_blocks.h"   // Shared generated comment blocks
 #include "common_strings.h"   // Common strings used in code generation
-#include "file_codewriter.h"  // FileCodeWriter -- Classs to write code to disk
+#include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_common.h"       // Common component functions
 #include "gen_timer.h"        // TimerGenerator class
 #include "image_gen.h"        // Functions for generating embedded images
@@ -93,7 +93,7 @@ sub wxue_get_bundle {
 // extern constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>;
 
 // If the node contains the specified property, then the string contains all
-// possible contants that could be used separated by spaces.
+// possible constants that could be used separated by spaces.
 constexpr auto map_perl_constants = frozen::make_map<GenEnum::PropName, std::string_view>({
 
     { prop_bitmap, "wxNullBitmap" },

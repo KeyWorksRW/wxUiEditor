@@ -40,7 +40,7 @@ class wxProgressDialog;
 class EmbeddedImage;
 
 // The NodeEvent class is used to store event information specific to what the user has
-// requsted (node containing the event, name of the event handler) along with a pointer to
+// requested (node containing the event, name of the event handler) along with a pointer to
 // the fixed event information.
 using EventVector = std::vector<NodeEvent*>;
 
@@ -175,13 +175,13 @@ protected:
     std::vector<NodeEvent*> m_ctx_menu_events;
     std::vector<NodeEvent*> m_events;
 
-    // Maps platorm string to vector of NodeEvent pointers
+    // Maps platform string to vector of NodeEvent pointers
     std::map<wxue::string, std::vector<NodeEvent*>> m_map_conditional_events;
 
-    // Maps platorm string to set of public: member declarations
+    // Maps platform string to set of public: member declarations
     std::map<wxue::string, std::set<wxue::string>> m_map_public_members;
 
-    // Maps platorm string to set of protected: member declarations
+    // Maps platform string to set of protected: member declarations
     std::map<wxue::string, std::set<wxue::string>> m_map_protected;
 
     std::vector<const EmbeddedImage*> m_embedded_images;

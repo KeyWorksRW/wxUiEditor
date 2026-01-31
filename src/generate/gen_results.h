@@ -203,4 +203,4 @@ private:
 auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr) -> bool;
 
 // ../generate/gen_codefiles.cpp
-void GenInhertedClass(GenResults& results);
+void GenInheritedClass(GenResults& results);

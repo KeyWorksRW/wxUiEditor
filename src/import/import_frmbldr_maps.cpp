@@ -57,7 +57,7 @@ constexpr auto set_ignore_flags = frozen::make_set<std::string_view>({
     "show",
     "toolbar_pane",
 
-    // This are miscellanious properties that we don't support
+    // This are miscellaneous properties that we don't support
 
     "two_step_creation",
     "use_enum",

@@ -107,8 +107,8 @@ int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
     ADD_ITEM_PROP(prop_value, "value")
 
-    // Note that XRC calls SetDescriptiveText() instead of SetHint() which has a different apperance
-    // (SetDescription text is not greyed out).
+    // Note that XRC calls SetDescriptiveText() instead of SetHint() which has a different
+    // appearance (SetDescription text is not greyed out).
     ADD_ITEM_PROP(prop_hint, "hint")
 
     GenXrcStylePosSize(node, item);

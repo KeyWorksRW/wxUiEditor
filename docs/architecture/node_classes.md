@@ -2,7 +2,7 @@
 
 A project consists of a root node and any number of child nodes. Each **Node** class is created by the **NodeCreator** class and will either be a UI element (widget) or an abstract object that modifies it's parent widget.
 
-### Heirarchy
+### Hierarchy
 
 - **Node**: contains a created node that the user can modify
   - **NodeDeclaration**: contains declarations for properties, events, code generator, etc.
@@ -12,7 +12,7 @@ A project consists of a root node and any number of child nodes. Each **Node** c
 
 ## NodeCreator
 
-This class is initialized via XML files which declare each possible type of node along with their properties and events -- essentially everything needed to create the heirarchy of nodes that a project is made of.
+This class is initialized via XML files which declare each possible type of node along with their properties and events -- essentially everything needed to create the hierarchy of nodes that a project is made of.
 
 ### Node
 

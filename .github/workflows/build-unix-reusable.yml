@@ -76,14 +76,14 @@ jobs:
       run: cmake --build ${{github.workspace}}/build -j$(($(nproc) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
-      if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      if: steps.cache-ccache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: ${{runner.workspace}}/.ccache
         key: ${{ runner.os }}-ccache-${{ github.sha }}
 
     - name: Save CMake FetchContent
-      if: always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
+      if: steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: |

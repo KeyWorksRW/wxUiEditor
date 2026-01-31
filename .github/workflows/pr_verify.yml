@@ -91,8 +91,7 @@ jobs:
           sudo apt-get install -y dos2unix
 
       - name: Check all files use LF line endings
-        run: |
-            bash ./scripts/check_eol.sh
+        run: bash ./scripts/check_eol.sh
 
   buildUnix:
     uses: ./.github/workflows/build-unix-reusable.yml

@@ -9,6 +9,8 @@
 #include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>     // Miscellaneous utilities
 
+#include <format>  // for std::format
+
 #include "wxue_namespace/wxue.h"
 #include "wxue_namespace/wxue_string.h"
 #include "wxue_namespace/wxue_string_vector.h"

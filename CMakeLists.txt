@@ -248,6 +248,9 @@ else()
 endif()
 
 if( APPLE )
+    # Force Cocoa toolkit - prevents conflict if GTK is installed (e.g., via Homebrew)
+    set( wxBUILD_TOOLKIT "osx_cocoa" CACHE STRING "Use Cocoa toolkit on macOS" FORCE )
+
     # Ensure the stdlib extension macro is defined for all compilation units (including fetched
     # projects)
     add_definitions( -D__STDC_WANT_LIB_EXT1__=1 )

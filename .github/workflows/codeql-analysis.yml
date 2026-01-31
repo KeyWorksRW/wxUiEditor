@@ -26,6 +26,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup CMake 3.30+
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: '~3.30.0'
+
     - run: mkdir ${{github.workspace}}/build
 
     - name: Cache CMake FetchContent

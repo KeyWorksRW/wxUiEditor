@@ -26,6 +26,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup CMake 3.30+ and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: '~3.30.0'
+        ninjaVersion: 'latest'
+
     - run: mkdir ${{github.workspace}}/build
 
     - name: Install other dependencies
@@ -34,7 +40,7 @@ jobs:
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble main'
         sudo apt-get update
-        sudo apt-get install -y cmake ninja-build libgtk-3-dev ccache clang-20
+        sudo apt-get install -y libgtk-3-dev ccache clang-20
         clang-20 --version
         cmake --version
         ccache --version

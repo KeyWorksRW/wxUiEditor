@@ -52,12 +52,14 @@ jobs:
       run: |
         ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
         ccache --set-config=compression=true
+        ccache --set-config=max_size=15G
         ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
         ccache --set-config=hard_link=true
         ccache --zero-stats
         ccache --show-config
 
     - name: Restore ccache
+      if: inputs.runner-type != 'self-hosted'
       id: cache-ccache-restore
       uses: actions/cache/restore@v4
       with:
@@ -68,6 +70,7 @@ jobs:
         enableCrossOsArchive: false
 
     - name: Restore CMake FetchContent
+      if: inputs.runner-type != 'self-hosted'
       id: cache-fetchcontent-restore
       uses: actions/cache/restore@v4
       with:
@@ -85,14 +88,14 @@ jobs:
       run: cmake --build ${{github.workspace}}/build -j$(($(nproc) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
-      if: steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      if: inputs.runner-type != 'self-hosted' && steps.cache-ccache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: ${{runner.workspace}}/.ccache
         key: ${{ runner.os }}-ccache-${{ github.sha }}
 
     - name: Save CMake FetchContent
-      if: steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
+      if: inputs.runner-type != 'self-hosted' && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: |

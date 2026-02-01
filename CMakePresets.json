@@ -2,7 +2,7 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 30,
     "patch": 0
   },
   "configurePresets": [
@@ -11,13 +11,6 @@
             "displayName": "Ninja Multi-Config",
             "description": "Default build using Ninja Multi-Config generator",
             "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build"
-        },
-        {
-            "name": "fastbuild",
-            "displayName": "FASTBuild",
-            "description": "Distributed build using FASTBuild generator (requires CMake 4.2+)",
-            "generator": "FASTBuild",
             "binaryDir": "${sourceDir}/build"
         }
     ]

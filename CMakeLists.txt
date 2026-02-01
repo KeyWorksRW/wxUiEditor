@@ -131,7 +131,6 @@ if( MSVC )
         # REVIEW: [Randalphwa - 01-26-2026] Even with MSVC from 2026, incremental linking
         # messes with debugging where you the code you see is not what is actually running as
         # you step through it.
-        add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
         # add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
         add_link_options( /INCREMENTAL:YES /OPT:NOREF /OPT:ICF )
     endif()
@@ -271,9 +270,9 @@ message( STATUS "Fetching wxWidgets (this may take awhile) ..." )
 FetchContent_Declare(
     wxWidgets
     GIT_REPOSITORY https://github.com/KeyWorksRW/kwxFetch.git
-    GIT_TAG dev
+    GIT_TAG origin/dev
     GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
+    UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
 )
 
 message( NOTICE "Configuring wxWidgets..." )

@@ -41,9 +41,11 @@ set( CMAKE_CXX_STANDARD_REQUIRED True )
 set( CMAKE_CXX_EXTENSIONS OFF )
 
 # ###################### Options #######################
-
-# creates a compile_commands.json file in the build directory, suitable for clangd
-set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
+# Only generate compile_commands.json for local development
+if ( NOT DEFINED ENV{CI} )
+    # creates a compile_commands.json file in the build directory, suitable for clangd
+    set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
+endif()
 
 # Shared libs should *never* be used for a Release build! For Debug builds, static libraries
 # generally reduce link and startup debugger times.

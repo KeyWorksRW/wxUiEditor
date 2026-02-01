@@ -132,6 +132,8 @@ if( MSVC )
         # messes with debugging where you the code you see is not what is actually running as
         # you step through it.
         add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
+        # add_link_options( /INCREMENTAL:NO /OPT:REF /OPT:ICF )
+        add_link_options( /INCREMENTAL:YES /OPT:NOREF /OPT:ICF )
     endif()
 
     # Increase stack size for large projects with many object files

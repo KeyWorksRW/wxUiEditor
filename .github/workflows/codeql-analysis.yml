@@ -33,20 +33,16 @@ jobs:
 
     - run: mkdir ${{github.workspace}}/build
 
-    - name: Cache CMake FetchContent
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{github.workspace}}/build/_deps
-        key: ${{ runner.os }}-cmake-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-cmake-fetchcontent-
+    # Note: FetchContent cache is intentionally NOT cached for CodeQL builds.
+    # The kwxFetch repo updates weekly from wxWidgets master, and stale cache
+    # can cause build failures due to partial/mismatched source files.
+    # CodeQL runs daily, so fresh fetches are acceptable.
 
     - name: Configure CMake
       run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
 
@@ -54,4 +50,4 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4

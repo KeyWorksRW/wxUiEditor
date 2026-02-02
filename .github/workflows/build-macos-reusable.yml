@@ -61,17 +61,9 @@ jobs:
           ${{ runner.os }}-${{ runner.arch }}-ccache-
         enableCrossOsArchive: false
 
-    - name: Restore CMake FetchContent
-      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
-      id: cache-fetchcontent-restore
-      uses: actions/cache/restore@v4
-      with:
-        path: |
-          ${{github.workspace}}/build/_deps
-        key: ${{ runner.os }}-${{ runner.arch }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-fetchcontent-
-        enableCrossOsArchive: false
+    # Note: FetchContent is intentionally NOT cached. The kwxFetch repo updates
+    # weekly from wxWidgets master, and stale cache can cause build failures
+    # due to partial/mismatched source files.
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja
@@ -85,14 +77,6 @@ jobs:
       with:
         path: ${{runner.workspace}}/.ccache
         key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
-
-    - name: Save CMake FetchContent
-      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true' }}
-      uses: actions/cache/save@v4
-      with:
-        path: |
-          ${{github.workspace}}/build/_deps
-        key: ${{ runner.os }}-${{ runner.arch }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
 
     - name: Build DMG
       if: ${{ inputs.create-setup }}

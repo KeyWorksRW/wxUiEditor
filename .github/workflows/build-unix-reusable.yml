@@ -69,17 +69,9 @@ jobs:
           ${{ runner.os }}-ccache-
         enableCrossOsArchive: false
 
-    - name: Restore CMake FetchContent
-      if: inputs.runner-type != 'self-hosted'
-      id: cache-fetchcontent-restore
-      uses: actions/cache/restore@v4
-      with:
-        path: |
-          ${{github.workspace}}/build/_deps
-        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
-        restore-keys: |
-          ${{ runner.os }}-fetchcontent-
-        enableCrossOsArchive: false
+    # Note: FetchContent is intentionally NOT cached. The kwxFetch repo updates
+    # weekly from wxWidgets master, and stale cache can cause build failures
+    # due to partial/mismatched source files.
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
@@ -93,14 +85,6 @@ jobs:
       with:
         path: ${{runner.workspace}}/.ccache
         key: ${{ runner.os }}-ccache-${{ github.sha }}
-
-    - name: Save CMake FetchContent
-      if: inputs.runner-type != 'self-hosted' && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        path: |
-          ${{github.workspace}}/build/_deps
-        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
 
     - name: Build Setup
       if: ${{ inputs.create-setup }}
@@ -126,6 +110,9 @@ jobs:
       run: |
         wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
         chmod +x linuxdeploy-x86_64.AppImage
+        # Extract AppImage since FUSE is not available on GitHub runners
+        ./linuxdeploy-x86_64.AppImage --appimage-extract
+        mv squashfs-root linuxdeploy
 
     - name: Create AppImage
       if: ${{ inputs.create-setup }}
@@ -144,7 +131,8 @@ jobs:
         export LDAI_OUTPUT=wxuieditor.AppImage
         export LINUXDEPLOY_OUTPUT_VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
 
-        ./linuxdeploy-x86_64.AppImage \
+        # Run extracted linuxdeploy (no FUSE required)
+        ./linuxdeploy/AppRun \
           --appdir AppDir \
           --executable ${{github.workspace}}/build/bin/wxUiEditor \
           --desktop-file ${{github.workspace}}/wxUiEditor-appimage.desktop \

@@ -126,6 +126,9 @@ jobs:
       run: |
         wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
         chmod +x linuxdeploy-x86_64.AppImage
+        # Extract AppImage since FUSE is not available on GitHub runners
+        ./linuxdeploy-x86_64.AppImage --appimage-extract
+        mv squashfs-root linuxdeploy
 
     - name: Create AppImage
       if: ${{ inputs.create-setup }}
@@ -144,7 +147,8 @@ jobs:
         export LDAI_OUTPUT=wxuieditor.AppImage
         export LINUXDEPLOY_OUTPUT_VERSION=$(grep -oP 'set\(wxUE_VERSION "\K[^"]+' CMakeLists.txt || echo "dev")
 
-        ./linuxdeploy-x86_64.AppImage \
+        # Run extracted linuxdeploy (no FUSE required)
+        ./linuxdeploy/AppRun \
           --appdir AppDir \
           --executable ${{github.workspace}}/build/bin/wxUiEditor \
           --desktop-file ${{github.workspace}}/wxUiEditor-appimage.desktop \

@@ -14,14 +14,14 @@ on:
         type: string
         default: 'Release'
       runner-type:
-        description: 'Runner type (self-hosted or github-hosted)'
+        description: 'Runner label (macos-13 for x64, macos-14/macos-15 for ARM64, or self-hosted labels)'
         required: false
         type: string
-        default: 'github-hosted'
+        default: 'macos-14'
 
 jobs:
   buildMacOS:
-    runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "macOS", "ARM64"]') || 'macos-latest' }}
+    runs-on: ${{ inputs.runner-type }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
         ccache --show-config
 
     - name: Restore ccache
-      if: inputs.runner-type != 'self-hosted'
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       id: cache-ccache-restore
       uses: actions/cache/restore@v4
       with:
@@ -62,7 +62,7 @@ jobs:
         enableCrossOsArchive: false
 
     - name: Restore CMake FetchContent
-      if: inputs.runner-type != 'self-hosted'
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       id: cache-fetchcontent-restore
       uses: actions/cache/restore@v4
       with:
@@ -80,14 +80,14 @@ jobs:
       run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
-      if: inputs.runner-type != 'self-hosted' && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@v4
       with:
         path: ${{runner.workspace}}/.ccache
         key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
 
     - name: Save CMake FetchContent
-      if: inputs.runner-type != 'self-hosted' && always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true'
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-fetchcontent-restore.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@v4
       with:
         path: |

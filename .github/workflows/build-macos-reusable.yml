@@ -14,7 +14,7 @@ on:
         type: string
         default: 'Release'
       runner-type:
-        description: 'Runner label (macos-13 for x64, macos-14/macos-15 for ARM64, or self-hosted labels)'
+        description: 'Runner label (macos-14 for x64, macos-14 for ARM64, or self-hosted labels)'
         required: false
         type: string
         default: 'macos-14'

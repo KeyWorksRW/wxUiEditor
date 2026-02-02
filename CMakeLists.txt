@@ -40,6 +40,12 @@ set( CMAKE_CXX_STANDARD 23 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
 set( CMAKE_CXX_EXTENSIONS OFF )
 
+# ###################### macOS Settings #######################
+if( APPLE )
+    set( CMAKE_OSX_DEPLOYMENT_TARGET "14.0" CACHE STRING "Minimum macOS version required" FORCE )
+    message( STATUS "macOS deployment target: ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
+endif()
+
 # ###################### Options #######################
 # Only generate compile_commands.json for local development
 if ( NOT DEFINED ENV{CI} )

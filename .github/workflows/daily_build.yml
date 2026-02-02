@@ -35,4 +35,4 @@ jobs:
     with:
       create-setup: true
       build-type: Release
-      runner-type: macos-13
+      runner-type: macos-14

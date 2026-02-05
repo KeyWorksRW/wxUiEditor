@@ -62,7 +62,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
         code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
-            auto& description = node->as_string(prop_bitmap);
+            const auto& description = node->as_string(prop_bitmap);
             if (auto function_name = ProjectImages.GetBundleFuncName(description);
                 function_name.size())
             {

@@ -213,9 +213,13 @@ void resCtrl::ParseImageControl(wxue::string_view line)
         {
             final_name.remove_extension();
             if (line.contains("SS_ICON"))
+            {
                 final_name << "_ico.h";
+            }
             else
+            {
                 final_name << "_png.h";
+            }
             wxue::string prop;
             prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
 

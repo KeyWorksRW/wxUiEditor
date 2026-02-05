@@ -19,21 +19,29 @@
 
 wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_value),
                      node->as_int(prop_minValue), node->as_int(prop_maxValue),
                      DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->SetValue(node->as_int(prop_position));
     if (node->as_int(prop_line_size) > 0)
+    {
         widget->SetLineSize(node->as_int(prop_line_size));
+    }
     if (node->as_int(prop_page_size) > 0)
+    {
         widget->SetPageSize(node->as_int(prop_page_size));
+    }
 #if defined(_WIN32)
     if (node->as_int(prop_tick_frequency) > 0)
+    {
         widget->SetTickFreq(node->as_int(prop_tick_frequency));
+    }
     if (node->as_int(prop_thumb_length) > 0)
+    {
         widget->SetThumbLength(node->as_int(prop_thumb_length));
+    }
     if (node->as_int(prop_sel_start) >= 0 && node->as_int(prop_sel_end) >= 0)
     {
         widget->SetSelection(node->as_int(prop_sel_start), node->as_int(prop_sel_end));
@@ -131,7 +139,8 @@ bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProper
         }
         return true;
     }
-    else if (prop->isProp(prop_maxValue))
+
+    if (prop->isProp(prop_maxValue))
     {
         auto newValue = event->GetValue();
         if (newValue.GetInteger() < node->as_int(prop_minValue))
@@ -142,10 +151,8 @@ bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProper
         }
         return true;
     }
-    else
-    {
-        return BaseGenerator::AllowPropertyChange(event, prop, node);
-    }
+
+    return BaseGenerator::AllowPropertyChange(event, prop, node);
 }
 
 bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
@@ -153,7 +160,9 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/slider.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 

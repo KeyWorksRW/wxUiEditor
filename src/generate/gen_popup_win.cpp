@@ -125,7 +125,8 @@ bool PopupTransientWinGenerator::BaseClassNameCode(Code& code)
     return true;
 }
 
-int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_flags)
+int PopupWinGenerator::GenXrcObject([[maybe_unused]] Node* node, pugi::xml_node& object,
+                                    size_t xrc_flags)
 {
     if (xrc_flags & xrc::add_comments)
     {
@@ -135,7 +136,8 @@ int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_fl
     return BaseGenerator::xrc_form_not_supported;
 }
 
-int PopupTransientWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_flags)
+int PopupTransientWinGenerator::GenXrcObject([[maybe_unused]] Node* node, pugi::xml_node& object,
+                                             size_t xrc_flags)
 {
     if (xrc_flags & xrc::add_comments)
     {
@@ -286,7 +288,9 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
             {
                 SetChildFocus(iter.get(), SetChildFocus);
                 if (is_focus_set)
+                {
                     return;
+                }
             }
         }
     };
@@ -327,7 +331,9 @@ std::pair<bool, wxue::string> PopupWinBaseGenerator::isLanguageVersionSupported(
 {
     if (language == GEN_LANG_NONE ||
         (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY)))
+    {
         return { true, {} };
+    }
     // TODO: [Randalphwa - 10-01-2024] At some point, other languages may have versions that support
     // these, in which case call Project.get_LangVersion()
 

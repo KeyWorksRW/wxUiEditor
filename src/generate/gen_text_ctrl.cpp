@@ -22,7 +22,7 @@
 
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -38,15 +38,21 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->HasValue(prop_hint))
+    {
         widget->SetHint(node->as_wxString(prop_hint));
+    }
 
 #if wxUSE_SPELLCHECK
     if (node->as_string(prop_spellcheck).contains("enabled"))
     {
         if (node->as_string(prop_spellcheck).contains("grammar"))
+        {
             widget->EnableProofCheck(wxTextProofOptions::Default().GrammarCheck());
+        }
         else
+        {
             widget->EnableProofCheck(wxTextProofOptions::Default());
+        }
     }
 #endif
 
@@ -63,7 +69,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
         return true;
     }
 #if defined(_WIN32)
-    else if (prop->isProp(prop_spellcheck))
+    if (prop->isProp(prop_spellcheck))
     {
         if (prop->HasValue() && !node->as_string(prop_style).contains("wxTE_RICH2"))
         {
@@ -124,7 +130,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -217,7 +223,9 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed).NodeName()
                 << "->EnableProofCheck(wxTextProofOptions::Default()";
             if (code.PropContains(prop_spellcheck, "grammar"))
+            {
                 code << ".GrammarCheck()";
+            }
             code.EndFunction();
         }
         else if (code.is_perl())
@@ -237,7 +245,9 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
             code.Eol(eol_if_needed).NodeName().Function("EnableProofCheck(");
             code.Add("wxTextProofOptions").ClassMethod("Default");
             if (code.PropContains(prop_spellcheck, "grammar"))
+            {
                 code.Function("GrammarCheck");
+            }
             code << ')';
         }
         else
@@ -254,11 +264,11 @@ void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
 {
     if (changed_prop->isProp(prop_spellcheck))
     {
-        if (auto pg_parent = prop_grid->GetProperty("spellcheck"); pg_parent)
+        if (auto* pg_parent = prop_grid->GetProperty("spellcheck"); pg_parent)
         {
             for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
             {
-                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                if (auto* pg_setting = pg_parent->Item(idx); pg_setting)
                 {
                     auto label = pg_setting->GetLabel();
                     if (label == "grammar")
@@ -287,13 +297,21 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
         if (auto val_type = node->get_ValidatorType(); val_type.size())
         {
             if (node->as_string(prop_validator_data_type) == "wxFileName")
+            {
                 set_hdr.insert("#include <wx/filename.h>");
+            }
             if (val_type == "wxGenericValidator")
+            {
                 set_src.insert("#include <wx/valgen.h>");
+            }
             else if (val_type == "wxTextValidator")
+            {
                 set_src.insert("#include <wx/valtext.h>");
+            }
             else if (val_type == "wxIntegerValidator" || val_type == "wxFloatingPointValidator")
+            {
                 set_src.insert("#include <wx/valnum.h>");
+            }
         }
     }
     return true;

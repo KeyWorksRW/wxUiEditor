@@ -18,15 +18,17 @@ using namespace code;
 
 wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                DlgSize(node, prop_size), 0, nullptr,
-                                node->as_int(prop_type) | GetStyleInt(node));
+    auto* widget = new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                                 DlgSize(node, prop_size), 0, nullptr,
+                                 node->as_int(prop_type) | GetStyleInt(node));
 
     if (node->HasValue(prop_contents))
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
+        {
             widget->Append(iter.wx());
+        }
 
         if (node->as_string(prop_selection_string).size())
         {
@@ -36,7 +38,9 @@ wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
+            {
                 widget->SetSelection(sel);
+            }
         }
     }
 
@@ -55,9 +59,13 @@ bool ListBoxGenerator::ConstructionCode(Code& code)
         code.Comma().Pos().Comma().WxSize();
         code.Comma();
         if (code.is_cpp())
+        {
             code += "0, nullptr";
+        }
         else
+        {
             code += "[]";
+        }
         code.Comma().Style(nullptr, code.node()->as_string(prop_type));
 
         if (params_needed & window_name_needed)
@@ -74,7 +82,7 @@ bool ListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -116,7 +124,9 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/listbox.h>", set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 
@@ -143,12 +153,16 @@ int ListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
 
     // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
     if (node->HasValue(prop_selection_string))
+    {
         item.append_child("value").text().set(node->as_string(prop_selection_string));
+    }
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,
     // so we add the property here even if the above is set.
     if (node->as_int(prop_selection_int) >= 0)
+    {
         item.append_child("selection").text().set(node->as_string(prop_selection_int));
+    }
 
     GenXrcStylePosSize(node, item, prop_type);
     GenXrcWindowSettings(node, item);

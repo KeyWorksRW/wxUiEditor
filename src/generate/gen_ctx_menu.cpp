@@ -26,7 +26,7 @@ bool CtxMenuGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_
 
 static void GenCtxConstruction(Code& code)
 {
-    if (auto generator = code.node()->get_NodeDeclaration()->get_Generator(); generator)
+    if (auto* generator = code.node()->get_NodeDeclaration()->get_Generator(); generator)
     {
         code.Eol(eol_if_needed);
         generator->ConstructionCode(code);
@@ -112,7 +112,7 @@ bool CtxMenuGenerator::AfterChildrenCode(Code& code)
 
     for (auto& iter: m_CtxMenuEvents)
     {
-        if (auto generator = iter->getNode()->get_NodeDeclaration()->get_Generator(); generator)
+        if (auto* generator = iter->getNode()->get_NodeDeclaration()->get_Generator(); generator)
         {
             Code event_code(iter->getNode(), code.get_language());
             std::string parent_name(code.node()->get_ParentName(code.get_language()));

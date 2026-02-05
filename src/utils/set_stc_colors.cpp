@@ -88,8 +88,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
     wxColor clr_variables("#94e6fa");
 
     // These will adjust for both dark mode and high contrast mode if needed
-    auto fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    auto bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+    auto foreground = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    auto background = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
 
     if (UserPrefs.is_DarkMode() && UserPrefs.is_HighContrast())
     {
@@ -116,15 +116,19 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             // Add regular classes that have different generator class names
 
             wxue::string widget_keywords;
-            for (auto iter: lst_widgets_keywords)
+            for (const auto* iter: lst_widgets_keywords)
             {
                 if (widget_keywords.size())
+                {
                     widget_keywords << ' ' << iter;
+                }
                 else
+                {
                     widget_keywords = iter;
+                }
             }
 
-            for (auto iter: NodeCreation.get_NodeDeclarationArray())
+            for (auto* iter: NodeCreation.get_NodeDeclarationArray())
             {
                 if (!iter)
                 {
@@ -134,7 +138,9 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
                 if (!iter->get_DeclName().starts_with("wx") ||
                     iter->get_DeclName() == "wxContextMenuEvent")
+                {
                     continue;
+                }
                 widget_keywords << ' ' << iter->get_DeclName();
             }
             widget_keywords << " wxAuiToolBarItem wxToolBarToolBase";
@@ -149,8 +155,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
+                stc->StyleSetForeground(idx, foreground);
+                stc->StyleSetBackground(idx, background);
             }
         }
 
@@ -212,15 +218,19 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             // stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
 
             wxue::string wxPerl_keywords(g_perl_keywords);
-            for (auto iter: lst_widgets_keywords)
+            for (const auto* iter: lst_widgets_keywords)
             {
                 if (wxPerl_keywords.size())
+                {
                     wxPerl_keywords << ' ' << iter;
+                }
                 else
+                {
                     wxPerl_keywords = iter;
+                }
             }
 
-            for (auto iter: NodeCreation.get_NodeDeclarationArray())
+            for (auto* iter: NodeCreation.get_NodeDeclarationArray())
             {
                 if (!iter)
                 {
@@ -254,8 +264,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
+                stc->StyleSetForeground(idx, foreground);
+                stc->StyleSetBackground(idx, background);
             }
         }
 
@@ -287,15 +297,19 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
 
             wxue::string wxPython_keywords;
-            for (auto* iter: lst_widgets_keywords)
+            for (const auto* iter: lst_widgets_keywords)
             {
                 if (wxPython_keywords.size())
+                {
                     wxPython_keywords << ' ' << (iter + 2);
+                }
                 else
+                {
                     wxPython_keywords = (iter + 2);
+                }
             }
 
-            for (auto iter: NodeCreation.get_NodeDeclarationArray())
+            for (auto* iter: NodeCreation.get_NodeDeclarationArray())
             {
                 if (!iter)
                 {
@@ -305,7 +319,9 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
                 if (!iter->get_DeclName().starts_with("wx") ||
                     iter->get_DeclName() == "wxContextMenuEvent")
+                {
                     continue;
+                }
                 // wxPython_keywords << " wx." << iter->get_DeclName().subview(2);
                 wxPython_keywords << ' ' << iter->get_DeclName().substr(2);
             }
@@ -318,8 +334,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
+                stc->StyleSetForeground(idx, foreground);
+                stc->StyleSetBackground(idx, background);
             }
 
             double hue, saturation, luminance;
@@ -363,12 +379,12 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
                 "ALL LEFT RIGHT TOP BOTTOM DEFAULT_POSITION DEFAULT_SIZE HORIZONTAL VERTICAL "
                 "ID_ANY ID_OK ID_CANCEL ID_SAVE ID_YES ID_NO "
                 "TAB_TRAVERSAL FILTER_DIGITS Wx");
-            for (auto& iter: lst_widgets_keywords)
+            for (const auto* iter: lst_widgets_keywords)
             {
                 wxRuby_keywords << ' ' << (iter + 2);
             }
 
-            for (auto iter: NodeCreation.get_NodeDeclarationArray())
+            for (auto* iter: NodeCreation.get_NodeDeclarationArray())
             {
                 if (!iter)
                 {
@@ -401,8 +417,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
+                stc->StyleSetForeground(idx, foreground);
+                stc->StyleSetBackground(idx, background);
             }
         }
         stc->StyleSetForeground(
@@ -455,8 +471,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
+                stc->StyleSetForeground(idx, foreground);
+                stc->StyleSetBackground(idx, background);
             }
 
             stc->StyleSetForeground(
@@ -509,8 +525,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         {
             for (int idx = 0; idx <= wxSTC_STYLE_LASTPREDEFINED; idx++)
             {
-                stc->StyleSetForeground(idx, fg);
-                stc->StyleSetBackground(idx, bg);
+                stc->StyleSetForeground(idx, foreground);
+                stc->StyleSetBackground(idx, background);
             }
 
             stc->StyleSetForeground(

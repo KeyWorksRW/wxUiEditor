@@ -228,9 +228,13 @@ bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& /* set_s
     // https://github.com/wxWidgets/wxWidgets/issues/23060
 
     if (!node->as_bool(prop_underlined) || node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
         set_hdr.insert("#include <wx/hyperlink.h>\n#include <wx/generic/hyperlink.h>");
+    }
     else
+    {
         set_hdr.insert("#include <wx/hyperlink.h>");
+    }
 
     return true;
 }

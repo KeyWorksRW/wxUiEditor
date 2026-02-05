@@ -59,9 +59,13 @@ bool CtxHelpButtonGenerator::SettingsCode(Code& code)
         }
 
         if (code.is_cpp())
+        {
             GenBtnBitmapCode(code.node(), code.GetCode());
+        }
         else
+        {
             PythonBtnBitmapCode(code);
+        }
     }
 
     return true;
@@ -87,7 +91,7 @@ std::optional<wxue::string> CtxHelpButtonGenerator::GetWarning(Node* node, GenLa
         case GEN_LANG_XRC:
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

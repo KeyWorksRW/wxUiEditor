@@ -98,39 +98,48 @@ bool WxCrafter::Import(const std::string& filename, bool write_doc)
 
     try
     {
-        if (auto& metadata = FindValue(document, "metadata"); metadata.IsObject())
+        if (const auto& metadata = FindValue(document, "metadata"); metadata.IsObject())
         {
-            if (auto& result = FindValue(metadata, "m_useEnum"); result.IsBool())
+            if (const auto& result = FindValue(metadata, "m_useEnum"); result.IsBool())
             {
                 // wxCrafter is project wide, wxUiEditor is per-form.
                 m_generate_ids = result.GetBool();
             }
 
-            if (auto& include_files = FindValue(metadata, "m_includeFiles");
+            if (const auto& include_files = FindValue(metadata, "m_includeFiles");
                 include_files.IsArray())
             {
-                auto preamble_ptr = m_project->get_PropValuePtr(prop_src_preamble);
+                auto* preamble_ptr = m_project->get_PropValuePtr(prop_src_preamble);
                 for (const auto& iter: include_files.GetArray())
                 {
                     if (iter.IsString())
                     {
                         if (preamble_ptr->size())
+                        {
                             *preamble_ptr << "@@";
+                        }
                         *preamble_ptr << "#include \"" << iter.GetString() << "\"";
                     }
                 }
             }
 
-            if (auto& internationalize = FindValue(metadata, "m_useUnderscoreMacro");
+            if (const auto& internationalize = FindValue(metadata, "m_useUnderscoreMacro");
                 internationalize.IsBool())
+            {
                 m_project->set_value(prop_internationalize, internationalize.GetBool());
-            if (auto& out_file = FindValue(metadata, "m_outputFileName"); out_file.IsString())
+            }
+            if (const auto& out_file = FindValue(metadata, "m_outputFileName"); out_file.IsString())
+            {
                 m_output_name = out_file.GetString();
-            if (auto& out_dir = FindValue(metadata, "m_generatedFilesDir"); out_dir.IsString())
+            }
+            if (const auto& out_dir = FindValue(metadata, "m_generatedFilesDir");
+                out_dir.IsString())
+            {
                 m_project->set_value(prop_base_directory, out_dir.GetString());
+            }
         }
 
-        if (auto& windows = FindValue(document, "windows"); windows.IsArray())
+        if (const auto& windows = FindValue(document, "windows"); windows.IsArray())
         {
             for (const auto& iter: windows.GetArray())
             {
@@ -138,7 +147,9 @@ bool WxCrafter::Import(const std::string& filename, bool write_doc)
             }
 
             if (write_doc)
+            {
                 m_project->CreateDoc(m_docOut);
+            }
         }
     }
     catch (const std::exception& e)
@@ -175,7 +186,7 @@ auto WxCrafter::ProcessForm(const Value& form) -> void
         return;
     }
 
-    auto& value = form["m_type"];
+    const auto& value = form["m_type"];
     if (!value.IsNumber())
     {
         m_errors.emplace("Invalid wxCrafter file -- top level window is missing a numeric m_type "
@@ -259,7 +270,7 @@ auto WxCrafter::ProcessChild(Node* parent, const Value& object) -> void
                 std::string cur_headers = parent->as_string(prop_column_labels);
                 if (const auto& properties = object["m_properties"]; properties.IsArray())
                 {
-                    for (auto& iter: properties.GetArray())
+                    for (const auto& iter: properties.GetArray())
                     {
                         if (iter.IsObject())
                         {
@@ -464,8 +475,8 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
         {
             if (const auto& object = FindObject("m_label", "ID:", properties); !object.IsNull())
             {
-                std::string_view id = GetSelectedString(object);
-                if (id.size())
+                std::string_view button_id = GetSelectedString(object);
+                if (button_id.size())
                 {
                     // If there is at least one valid id, then clear all of the default settings
                     if (!is_default_cleared)
@@ -476,11 +487,13 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                         node->set_value(prop_default_button, "");
                     }
 
-                    if (id == "wxID_OK")
+                    if (button_id == "wxID_OK")
                     {
                         node->set_value(prop_OK, true);
                         if (!FindObject("m_label", "Default Button", properties).IsNull())
+                        {
                             node->set_value(prop_default_button, "OK");
+                        }
                         if (const auto& name = FindValue(iter, "m_events");
                             name.IsArray() && name.Size())
                         {
@@ -494,11 +507,13 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_YES")
+                    else if (button_id == "wxID_YES")
                     {
                         node->set_value(prop_Yes, true);
                         if (!FindObject("m_label", "Default Button", properties).IsNull())
+                        {
                             node->set_value(prop_default_button, "Yes");
+                        }
                         if (const auto& name = FindValue(iter, "m_events");
                             name.IsArray() && name.Size())
                         {
@@ -512,11 +527,13 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_SAVE")
+                    else if (button_id == "wxID_SAVE")
                     {
                         node->set_value(prop_Save, true);
                         if (!FindObject("m_label", "Default Button", properties).IsNull())
+                        {
                             node->set_value(prop_default_button, "Save");
+                        }
                         if (const auto& name = FindValue(iter, "m_events");
                             name.IsArray() && name.Size())
                         {
@@ -530,11 +547,13 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_CLOSE")
+                    else if (button_id == "wxID_CLOSE")
                     {
                         node->set_value(prop_Close, true);
                         if (!FindObject("m_label", "Default Button", properties).IsNull())
+                        {
                             node->set_value(prop_default_button, "Close");
+                        }
                         if (const auto& name = FindValue(iter, "m_events");
                             name.IsArray() && name.Size())
                         {
@@ -548,11 +567,13 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_CANCEL")
+                    else if (button_id == "wxID_CANCEL")
                     {
                         node->set_value(prop_Cancel, true);
                         if (!FindObject("m_label", "Default Button", properties).IsNull())
+                        {
                             node->set_value(prop_default_button, "Cancel");
+                        }
                         if (const auto& name = FindValue(iter, "m_events");
                             name.IsArray() && name.Size())
                         {
@@ -566,11 +587,13 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_NO")
+                    else if (button_id == "wxID_NO")
                     {
                         node->set_value(prop_No, true);
                         if (!FindObject("m_label", "Default Button", properties).IsNull())
+                        {
                             node->set_value(prop_default_button, "No");
+                        }
                         if (const auto& name = FindValue(iter, "m_events");
                             name.IsArray() && name.Size())
                         {
@@ -584,7 +607,7 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_APPLY")
+                    else if (button_id == "wxID_APPLY")
                     {
                         node->set_value(prop_Apply, true);
                         if (const auto& name = FindValue(iter, "m_events");
@@ -600,7 +623,7 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_HELP")
+                    else if (button_id == "wxID_HELP")
                     {
                         node->set_value(prop_Help, true);
                         if (const auto& name = FindValue(iter, "m_events");
@@ -616,7 +639,7 @@ auto WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array) -> void
                             }
                         }
                     }
-                    else if (id == "wxID_CONTEXT_HELP")
+                    else if (button_id == "wxID_CONTEXT_HELP")
                     {
                         node->set_value(prop_ContextHelp, true);
                         if (const auto& name = FindValue(iter, "m_events");
@@ -740,7 +763,8 @@ auto WxCrafter::ProcessEvents(Node* node, const Value& array) -> void
 
                 if (node_event)
                 {
-                    if (auto& handler = event["m_functionNameAndSignature"]; handler.IsString())
+                    if (const auto& handler = event["m_functionNameAndSignature"];
+                        handler.IsString())
                     {
                         std::string function = handler.GetString();
                         function.erase(function.find('('));
@@ -769,7 +793,7 @@ auto WxCrafter::ProcessSizerFlags(Node* node, const Value& array) -> void
         }
         else
         {
-            auto alignment = node->get_PropValuePtr(prop_alignment);
+            auto* alignment = node->get_PropValuePtr(prop_alignment);
 
             if (all_items.contains("wxALIGN_CENTER"))
             {
@@ -851,7 +875,7 @@ auto WxCrafter::ProcessSizerFlags(Node* node, const Value& array) -> void
         }
         else
         {
-            auto border_ptr = node->get_PropValuePtr(prop_border);
+            auto* border_ptr = node->get_PropValuePtr(prop_border);
             border_ptr->clear();
 
             if (all_items.contains("wxLEFT"))
@@ -895,7 +919,7 @@ auto WxCrafter::ProcessProperties(Node* node, const Value& array) -> void
     for (const auto& iter: array.GetArray())
     {
         const auto& value = iter;
-        std::string name = "";
+        std::string name;
         if (value["m_label"].IsString())
         {
             name = value["m_label"].GetString();
@@ -904,9 +928,9 @@ auto WxCrafter::ProcessProperties(Node* node, const Value& array) -> void
                 name.pop_back();
             }
             std::ranges::transform(name, name.begin(),
-                                   [](unsigned char c)
+                                   [](unsigned char chr)
                                    {
-                                       return std::tolower(c);
+                                       return std::tolower(chr);
                                    });
             auto prop_name = FindProp(name);
             if (prop_name == prop_unknown)
@@ -927,7 +951,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
 {
     GenEnum::PropName prop_name = prop_unknown;
 
-    if (auto result = map_crafter_props.find(name); result != map_crafter_props.end())
+    if (const auto* result = map_crafter_props.find(name); result != map_crafter_props.end())
     {
         prop_name = result->second;
     }
@@ -1017,7 +1041,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "gradient start"))
         {
-            if (auto& colour = FindValue(value, "colour"); colour.IsString())
+            if (const auto& colour = FindValue(value, "colour"); colour.IsString())
             {
                 node->set_value(prop_start_colour, ConvertColour(colour));
                 return prop_processed;
@@ -1025,7 +1049,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "combobox choices"))
         {
-            if (auto& choices = FindValue(value, "m_value"); choices.IsString())
+            if (const auto& choices = FindValue(value, "m_value"); choices.IsString())
             {
                 wxue::ViewVector mview(choices.GetString(), "\\n");
                 std::string contents;
@@ -1034,7 +1058,9 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
                     if (choice.size())
                     {
                         if (contents.size())
+                        {
                             contents += ' ';
+                        }
                         contents += '"';
                         contents += choice;
                         contents += '"';
@@ -1046,7 +1072,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "gradient end"))
         {
-            if (auto& colour = FindValue(value, "colour"); colour.IsString())
+            if (const auto& colour = FindValue(value, "colour"); colour.IsString())
             {
                 node->set_value(prop_end_colour, ConvertColour(colour));
                 return prop_processed;
@@ -1082,7 +1108,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "focused"))
         {
-            if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+            if (const auto& setting = FindValue(value, "m_value"); setting.IsBool())
             {
                 node->set_value(prop_focus, setting.GetBool());
             }
@@ -1090,34 +1116,44 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "selected") && node->is_Gen(gen_BookPage))
         {
-            if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+            if (const auto& setting = FindValue(value, "m_value"); setting.IsBool())
             {
                 node->set_value(prop_select, setting.GetBool());
             }
             return prop_processed;
         }
         else if (wxue::is_sameas(name, "virtual folder"))
+        {
             return prop_processed;  // this doesn't apply to wxUiEditor
+        }
         else if (wxue::is_sameas(name, "null page"))
+        {
             return prop_processed;  // unused
+        }
         else if (wxue::is_sameas(name, "enable spell checking") && node->HasProp(prop_spellcheck))
         {
             node->set_value(prop_spellcheck, "enabled");
             std::string style = node->as_string(prop_style);
             if (style.size() && style.find("wxTE_RICH2") == std::string::npos)
+            {
                 style += "|wxTE_RICH2";
+            }
             else
+            {
                 style += "wxTE_RICH2";
+            }
             node->set_value(prop_style, style);
         }
         else if (wxue::is_sameas(name, "keep as a class member"))
         {
             if (node->as_string(prop_class_access) == "none")
+            {
                 node->set_value(prop_class_access, "protected:");
+            }
         }
         else if (wxue::is_sameas(name, "Start the timer"))
         {
-            if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+            if (const auto& setting = FindValue(value, "m_value"); setting.IsBool())
             {
                 node->set_value(prop_auto_start, setting.GetBool());
             }
@@ -1125,7 +1161,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, std
         }
         else if (wxue::is_sameas(name, "One Shot Timer"))
         {
-            if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+            if (const auto& setting = FindValue(value, "m_value"); setting.IsBool())
             {
                 node->set_value(prop_auto_start, setting.GetBool());
             }
@@ -1150,8 +1186,10 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     if (node->is_Gen(gen_wxPopupWindow))
     {
         if (prop_name == prop_size || prop_name == prop_minimum_size || prop_name == prop_title)
+        {
             return;  // wxCrafter writes these, but doesn't use them (wxUiEditor does support size
                      // and minimum_size)
+        }
     }
 
     if (node->is_Gen(gen_ribbonTool) || node->is_Gen(gen_ribbonSeparator) ||
@@ -1162,16 +1200,15 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
             node->set_value(prop_kind, GetSelectedString(value));
             return;
         }
-        else if (prop_name == prop_statusbar)
+        if (prop_name == prop_statusbar)
         {
-            if (auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
+            if (const auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
             {
                 node->set_value(prop_help, prop_value.GetString());
             }
             return;
         }
-        else if (prop_name == prop_size || prop_name == prop_minimum_size ||
-                 prop_name == prop_var_name)
+        if (prop_name == prop_size || prop_name == prop_minimum_size || prop_name == prop_var_name)
         {
             return;
         }
@@ -1181,7 +1218,7 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         prop_name == prop_normal_color || prop_name == prop_visited_color ||
         prop_name == prop_hover_color)
     {
-        if (auto& colour = FindValue(value, "colour"); colour.IsString())
+        if (const auto& colour = FindValue(value, "colour"); colour.IsString())
         {
             node->set_value(prop_name, ConvertColour(colour));
             // Convert old style into #RRGGBB
@@ -1190,14 +1227,14 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     }
     else if (prop_name == prop_id)
     {
-        if (auto& setting = FindValue(value, "m_winid"); setting.IsString())
+        if (const auto& setting = FindValue(value, "m_winid"); setting.IsString())
         {
             node->set_value(prop_name, setting.GetString());
         }
     }
     else if (prop_name == prop_selection && !FindValue(value, "m_value").IsNull())
     {
-        auto& setting = FindValue(value, "m_value");
+        const auto& setting = FindValue(value, "m_value");
         // This is a bug in version 2.9 of wxCrafter -- the value should be an int, not a string. We
         // add the GetInt() variant in case they ever fix it.
         if (setting.IsString())
@@ -1206,9 +1243,13 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
             if (wxue::is_digit(result[0]))
             {
                 if (node->HasProp(prop_selection_int))
+                {
                     node->set_value(prop_selection_int, wxue::atoi(result));
+                }
                 else if (node->HasProp(prop_selection))
+                {
                     node->set_value(prop_selection, wxue::atoi(result));
+                }
             }
             else
             {
@@ -1216,11 +1257,13 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
             }
         }
         else if (setting.IsString())
+        {
             node->set_value(prop_selection_int, FindValue(value, "m_value").GetInt());
+        }
     }
     else if (prop_name == prop_orientation)
     {
-        if (auto& setting = value["m_selection"]; setting.IsInt())
+        if (const auto& setting = value["m_selection"]; setting.IsInt())
         {
             node->set_value(prop_orientation,
                             setting.GetInt() == 0 ? "wxVERTICAL" : "wxHORIZONTAL");
@@ -1253,19 +1296,21 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
 
     if (prop_name == prop_contents)
     {
-        if (auto& setting = FindValue(value, "m_value"); setting.IsString())
+        if (const auto& setting = FindValue(value, "m_value"); setting.IsString())
         {
             if (node->HasProp(prop_contents))
             {
                 wxue::StringVector contents(std::string_view(setting.GetString()), ';');
-                auto str_ptr = node->get_PropPtr(prop_contents)->as_raw_ptr();
+                auto* str_ptr = node->get_PropPtr(prop_contents)->as_raw_ptr();
                 str_ptr->clear();  // remove any default string
                 for (const auto& item: contents)
                 {
                     if (item.size())
                     {
                         if (str_ptr->size())
+                        {
                             *str_ptr << ' ';
+                        }
                         *str_ptr << '"' << item.ToStdString() << '"';
                     }
                 }
@@ -1283,7 +1328,7 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     }
     else if (prop_name == prop_statusbar && node->is_Gen(gen_ribbonButton))
     {
-        if (auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
+        if (const auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
         {
             node->set_value(prop_help, prop_value.GetString());
         }
@@ -1316,7 +1361,7 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
 
     if (prop_name != prop_unknown)
     {
-        if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
+        if (const auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
         {
             if (!node->HasProp(prop_name))
             {
@@ -1382,7 +1427,7 @@ auto WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
 
 auto WxCrafter::ValueProperty(Node* node, const Value& value) -> void
 {
-    if (auto& setting = FindValue(value, "m_value"); !setting.IsNull())
+    if (const auto& setting = FindValue(value, "m_value"); !setting.IsNull())
     {
         if (node->is_Gen(gen_wxSpinCtrl) || node->is_Gen(gen_wxSpinButton))
         {
@@ -1437,7 +1482,7 @@ auto WxCrafter::ValueProperty(Node* node, const Value& value) -> void
                                   map_GenNames.at(node->get_GenName())));
         }
     }
-    else if (auto& colour = FindValue(value, "colour"); !colour.IsNull())
+    else if (const auto& colour = FindValue(value, "colour"); !colour.IsNull())
     {
         node->set_value(prop_colour, ConvertColour(colour));
     }
@@ -1476,7 +1521,9 @@ auto WxCrafter::ProcessBitmapProperty(Node* node, const Value& object) -> void
         else if (IsSame(object["m_label"], "Disabled-Bitmap File"))
         {
             if (node->HasProp(prop_disabled_bmp))
+            {
                 node->set_value(prop_disabled_bmp, bitmap);
+            }
         }
     }
 }
@@ -1498,11 +1545,17 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
 
         FontProperty font_info;
         if (crafter_str.find("italic") != std::string::npos)
+        {
             font_info.Italic(wxFONTFLAG_ITALIC);
+        }
         if (crafter_str.find("bold") != std::string::npos)
+        {
             font_info.Bold(wxFONTFLAG_ITALIC);
+        }
         if (crafter_str.find("underlined") != std::string::npos)
+        {
             font_info.Underlined();
+        }
 
         if (!crafter_str.starts_with("wxSYS_DEFAULT_GUI_FONT"))
         {
@@ -1511,25 +1564,37 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
             wxue::ViewVector mstr(crafter_str, ',', wxue::TRIM::left);
 
             if (mstr[0] == "wxSYS_OEM_FIXED_FONT" || mstr[0] == "wxSYS_ANSI_FIXED_FONT")
+            {
                 font_info.Family(wxFONTFAMILY_TELETYPE);
+            }
 
             if (wxue::is_digit(mstr[0][0]))
             {
                 font_info.PointSize(wxue::atoi(mstr[0]));
 
                 if (mstr.size() > 3 && mstr[3] != "default")
+                {
                     font_info.Family(font_family_pairs.GetValue(mstr[3]));
+                }
                 if (mstr.size() > 4 && mstr[4] == "1")
+                {
                     font_info.Underlined();
+                }
                 if (mstr.size() > 5)
+                {
                     font_info.FaceName(wxString::FromUTF8(mstr[5].data(), mstr[5].size()));
+                }
             }
         }
 
         if (node->is_Gen(gen_wxFontPickerCtrl))
+        {
             node->set_value(prop_initial_font, font_info.as_string());
+        }
         else
+        {
             node->set_value(prop_font, font_info.as_string());
+        }
     }
     return true;
 }
@@ -1540,9 +1605,9 @@ bool WxCrafter::ProcessScintillaProperty(Node* node, const Value& object)
 
     std::string name = object["m_label"].GetString();
     std::ranges::transform(name, name.begin(),
-                           [](unsigned char c)
+                           [](unsigned char chr)
                            {
-                               return std::tolower(c);
+                               return std::tolower(chr);
                            });
     if (name == "fold margin")
     {
@@ -1553,7 +1618,7 @@ bool WxCrafter::ProcessScintillaProperty(Node* node, const Value& object)
         }
         return true;
     }
-    else if (name == "line number margin")
+    if (name == "line number margin")
     {
         if (object["m_value"].GetBool())
         {
@@ -1673,7 +1738,8 @@ bool WxCrafter::ProcessScintillaProperty(Node* node, const Value& object)
 GenEnum::GenName rapidjson::GetGenName(const Value& value)
 {
     ASSERT(value.IsInt())
-    if (auto result = map_id_generator.find(value.GetInt()); result != map_id_generator.end())
+    if (const auto* result = map_id_generator.find(value.GetInt());
+        result != map_id_generator.end())
     {
         return result->second;
     }
@@ -1688,10 +1754,12 @@ const Value& rapidjson::FindObject(const char* key, std::string_view value,
     {
         if (iter.IsObject())
         {
-            if (auto& pair = iter[key]; pair.IsString())
+            if (const auto& pair = iter[key]; pair.IsString())
             {
                 if (wxue::is_sameas(pair.GetString(), value))
+                {
                     return iter;
+                }
             }
         }
     }
@@ -1710,7 +1778,7 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
 
 std::string rapidjson::ConvertColour(const rapidjson::Value& colour)
 {
-    std::string result = "";
+    std::string result;
     if (colour.IsString())
     {
         std::string_view clr_string = colour.GetString();
@@ -1732,7 +1800,7 @@ std::string rapidjson::ConvertColour(const rapidjson::Value& colour)
             }
             else
             {
-                if (auto colour_pair = map_sys_colour_pair.find(clr_string);
+                if (const auto* colour_pair = map_sys_colour_pair.find(clr_string);
                     colour_pair != map_sys_colour_pair.end())
                 {
                     result = colour_pair->second;
@@ -1745,10 +1813,11 @@ std::string rapidjson::ConvertColour(const rapidjson::Value& colour)
 
 std::string_view rapidjson::GetSelectedString(const rapidjson::Value& object)
 {
-    if (auto& sel_value = FindValue(object, "m_selection"); sel_value.IsInt())
+    if (const auto& sel_value = FindValue(object, "m_selection"); sel_value.IsInt())
     {
         auto sel = sel_value.GetUint();
-        if (auto& array = FindValue(object, "m_options"); array.IsArray() && array.Size() > sel)
+        if (const auto& array = FindValue(object, "m_options");
+            array.IsArray() && array.Size() > sel)
         {
             return array[sel].GetString();
         }

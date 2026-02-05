@@ -245,13 +245,13 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         return;
     }
 
-    auto id = event.GetItem();
-    if (!id.IsOk())
+    auto tree_item = event.GetItem();
+    if (!tree_item.IsOk())
     {
         return;
     }
 
-    if (auto iter = m_tree_node_map.find(id); iter != m_tree_node_map.end())
+    if (auto iter = m_tree_node_map.find(tree_item); iter != m_tree_node_map.end())
     {
         // Selecting a node can result in multiple selection events getting fired as the
         // Mockup selects the current dialog, and the current book or page. In some cases a
@@ -323,8 +323,8 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
 
 void NavigationPanel::OnRightClick(wxTreeEvent& event)
 {
-    auto id = event.GetItem();
-    if (auto iter = m_tree_node_map.find(id); iter != m_tree_node_map.end())
+    auto tree_item = event.GetItem();
+    if (auto iter = m_tree_node_map.find(tree_item); iter != m_tree_node_map.end())
     {
         auto* menu = new NavPopupMenu(iter->second);
         auto pos = event.GetPoint();
@@ -379,14 +379,14 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         item = m_tree_ctrl->GetItemParent(item);
     }
 
-    auto node_src = getNode(itemSrc);
+    auto* node_src = getNode(itemSrc);
     ASSERT(node_src);
     if (!node_src)
     {
         return;
     }
 
-    auto node_dst = getNode(itemDst);
+    auto* node_dst = getNode(itemDst);
     ASSERT(node_dst);
     if (!node_dst)
     {
@@ -399,7 +399,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         return;
     }
 
-    auto dst_parent = node_dst;
+    auto* dst_parent = node_dst;
     while (!dst_parent->is_ChildAllowed(node_src))
     {
         if (dst_parent->is_Sizer())
@@ -440,7 +440,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         return;
     }
 
-    auto src_parent = node_src->get_Parent();
+    auto* src_parent = node_src->get_Parent();
     if (dst_parent->is_Gen(gen_wxGridBagSizer))
     {
         if (src_parent == dst_parent)
@@ -479,7 +479,7 @@ void NavigationPanel::RefreshParent(Node* parent)
 
 void NavigationPanel::InsertNode(Node* node)
 {
-    auto node_parent = node->get_Parent();
+    auto* node_parent = node->get_Parent();
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent);
@@ -508,7 +508,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
 
     for (const auto& iter_child: node_parent->get_ChildNodePtrs())
     {
-        auto node = iter_child.get();
+        auto* node = iter_child.get();
         auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx(),
                                                 GetImageIndex(node), -1);
 
@@ -537,23 +537,24 @@ auto NavigationPanel::GetImageIndex(Node* node) -> int
     {
         if (node->as_string(prop_bitmap).starts_with("SVG"))
         {
-            if (auto it = m_iconIdx.find(gen_svg_embedded_image); it != m_iconIdx.end())
+            if (auto found_iter = m_iconIdx.find(gen_svg_embedded_image);
+                found_iter != m_iconIdx.end())
             {
-                return it->second;
+                return found_iter->second;
             }
         }
     }
 
-    if (auto it = m_iconIdx.find(name); it != m_iconIdx.end())
+    if (auto found_iter = m_iconIdx.find(name); found_iter != m_iconIdx.end())
     {
-        return it->second;
+        return found_iter->second;
     }
     return 0;
 }
 
-void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
+void NavigationPanel::UpdateDisplayName(wxTreeItemId tree_item, Node* node)
 {
-    m_tree_ctrl->SetItemText(id, GetDisplayName(node).wx());
+    m_tree_ctrl->SetItemText(tree_item, GetDisplayName(node).wx());
 }
 
 auto NavigationPanel::GetDisplayName(Node* node) const -> wxue::string
@@ -696,7 +697,7 @@ void NavigationPanel::EraseAllMaps(Node* node)
 
 void NavigationPanel::OnNodeSelected(CustomEvent& event)
 {
-    auto node = event.getNode();
+    auto* node = event.getNode();
     if (node->get_Parent() && node->get_Parent()->is_Gen(gen_wxGridBagSizer))
     {
         wxGetFrame().setStatusText(wxString() << "Row: " << node->as_int(prop_row)
@@ -745,7 +746,7 @@ void NavigationPanel::OnMultiPropChange(CustomEvent& event)
 
 void NavigationPanel::OnNodePropChange(CustomEvent& event)
 {
-    auto prop = event.GetNodeProperty();
+    auto* prop = event.GetNodeProperty();
 
     if (prop->isProp(prop_var_name) || prop->isProp(prop_label) || prop->isProp(prop_class_name) ||
         prop->isProp(prop_bitmap))
@@ -753,55 +754,61 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
         auto class_name = prop->getNode()->get_DeclName();
         if (class_name.contains("bookpage"))
         {
-            if (auto it = m_node_tree_map.find(prop->getNode()->get_Child(0));
-                it != m_node_tree_map.end())
+            if (auto found_iter = m_node_tree_map.find(prop->getNode()->get_Child(0));
+                found_iter != m_node_tree_map.end())
             {
-                UpdateDisplayName(it->second, it->first);
+                UpdateDisplayName(found_iter->second, found_iter->first);
             }
         }
-        else if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
+        else if (auto found_iter = m_node_tree_map.find(prop->getNode());
+                 found_iter != m_node_tree_map.end())
         {
-            UpdateDisplayName(it->second, it->first);
+            UpdateDisplayName(found_iter->second, found_iter->first);
         }
     }
     else if (prop->isProp(prop_id) && prop->getNode()->is_Gen(gen_ribbonTool))
     {
-        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
+        if (auto found_iter = m_node_tree_map.find(prop->getNode());
+            found_iter != m_node_tree_map.end())
         {
-            UpdateDisplayName(it->second, it->first);
+            UpdateDisplayName(found_iter->second, found_iter->first);
         }
     }
 
     else if (prop->isProp(prop_orientation))
     {
-        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
+        if (auto found_iter = m_node_tree_map.find(prop->getNode());
+            found_iter != m_node_tree_map.end())
         {
-            if (it->first->is_Gen(gen_VerticalBoxSizer) || it->first->is_Gen(gen_wxBoxSizer))
+            if (found_iter->first->is_Gen(gen_VerticalBoxSizer) ||
+                found_iter->first->is_Gen(gen_wxBoxSizer))
             {
-                auto image_index = GetImageIndex(it->first);
-                m_tree_ctrl->SetItemImage(it->second, image_index);
+                auto image_index = GetImageIndex(found_iter->first);
+                m_tree_ctrl->SetItemImage(found_iter->second, image_index);
             }
         }
     }
     else if (prop->isProp(prop_handler_name))
     {
-        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
+        if (auto found_iter = m_node_tree_map.find(prop->getNode());
+            found_iter != m_node_tree_map.end())
         {
-            UpdateDisplayName(it->second, it->first);
+            UpdateDisplayName(found_iter->second, found_iter->first);
         }
     }
     else if (prop->isProp(prop_bitmap) && prop->getNode()->is_Gen(gen_embedded_image))
     {
-        if (auto it = m_node_tree_map.find(prop->getNode()); it != m_node_tree_map.end())
+        if (auto found_iter = m_node_tree_map.find(prop->getNode());
+            found_iter != m_node_tree_map.end())
         {
-            UpdateDisplayName(it->second, it->first);
+            UpdateDisplayName(found_iter->second, found_iter->first);
         }
     }
 }
 
 void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
 {
-    auto node = m_pMainFrame->getSelectedNode();
+    auto* node = m_pMainFrame->getSelectedNode();
     if (!node)
     {
         event.Enable(false);
@@ -845,7 +852,7 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 {
     wxWindowUpdateLocker freeze(this);
 
-    auto undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
+    auto* undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();
@@ -865,7 +872,7 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
 {
     wxWindowUpdateLocker freeze(this);
 
-    auto undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
+    auto* undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();
@@ -912,10 +919,10 @@ void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool ex
     }
 }
 
-void NavigationPanel::OnExpand(wxCommandEvent&)
+void NavigationPanel::OnExpand(wxCommandEvent& /* event */)
 {
     ASSERT(m_pMainFrame->getSelectedNode());
-    auto node = m_pMainFrame->getSelectedNode();
+    auto* node = m_pMainFrame->getSelectedNode();
     if (!node)
     {
         return;  // This is theoretically impossible
@@ -926,10 +933,10 @@ void NavigationPanel::OnExpand(wxCommandEvent&)
     ChangeExpansion(node, true, true);
 }
 
-void NavigationPanel::OnCollapse(wxCommandEvent&)
+void NavigationPanel::OnCollapse(wxCommandEvent& /* event */)
 {
     ASSERT(m_pMainFrame->getSelectedNode());
-    auto node = m_pMainFrame->getSelectedNode();
+    auto* node = m_pMainFrame->getSelectedNode();
     if (!node)
     {
         return;  // This is theoretically impossible
@@ -937,7 +944,7 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
 
     wxWindowUpdateLocker freeze(this);
 
-    auto parent = node->get_Parent();
+    auto* parent = node->get_Parent();
     if (parent && parent->get_ChildCount())
     {
         for (const auto& child: parent->get_ChildNodePtrs())
@@ -951,10 +958,10 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
     }
 }
 
-void NavigationPanel::OnCollExpand(wxCommandEvent&)
+void NavigationPanel::OnCollExpand(wxCommandEvent& /* event */)
 {
     ASSERT(m_pMainFrame->getSelectedNode());
-    auto node = m_pMainFrame->getSelectedNode();
+    auto* node = m_pMainFrame->getSelectedNode();
     if (!node)
     {
         return;  // This is theoretically impossible
@@ -967,7 +974,7 @@ void NavigationPanel::ExpandCollapse(Node* node)
 {
     wxWindowUpdateLocker freeze(this);
 
-    auto parent = node->get_Parent();
+    auto* parent = node->get_Parent();
     if (parent && parent->get_ChildCount())
     {
         for (const auto& child: parent->get_ChildNodePtrs())

@@ -24,7 +24,7 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto org_style = GetStyleInt(node);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
-    auto widget =
+    auto* widget =
         new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
 
     auto fields = node->as_statusbar_fields(prop_fields);
@@ -35,9 +35,13 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
         for (auto& iter: fields)
         {
             if (iter.width.size() && iter.width.atoi() != -1)
+            {
                 set_width = true;
+            }
             if (iter.style.size() && iter.style != "wxSB_NORMAL")
+            {
                 set_style = true;
+            }
         }
 
         if (set_width)
@@ -70,7 +74,9 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (org_style & wxSTB_SIZEGRIP)
+    {
         widget->SetStatusText("gripper not displayed in Mock Up");
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -86,9 +92,13 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     // GetRequiredVersion() checks see if the value starts with a digit -- if so, it's the
     // old style. If it isn't a digit, then it's a style which returns minRequiredVer+1.
     if (GetRequiredVersion(node) > minRequiredVer)
+    {
         num_fields = to_int(fields.size());
+    }
     else
+    {
         num_fields = node->as_int(prop_fields);
+    }
 
     if (node->HasValue(prop_subclass))
     {
@@ -107,10 +117,7 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
         code.Eol().FormFunction("SetStatusBar(").NodeName().EndFunction();
         return true;
     }
-    else
-    {
-        code.Eol(eol_if_needed).AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
-    }
+    code.Eol(eol_if_needed).AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
 
     if (node->HasValue(prop_window_name))
     {
@@ -139,17 +146,23 @@ bool StatusBarGenerator::SettingsCode(Code& code)
 {
     // A single field can be represented by 1 which uses the older style of setting.
     if (GetRequiredVersion(code.node()) <= minRequiredVer)
+    {
         return true;
+    }
 
     auto fields = code.node()->as_statusbar_fields(prop_fields);
     wxue::string widths, styles;
     for (auto& iter: fields)
     {
         if (widths.size())
+        {
             widths += ", ";
+        }
         widths += iter.width;
         if (styles.size())
+        {
             styles += ", ";
+        }
         styles += iter.style;
     }
 
@@ -208,9 +221,13 @@ bool StatusBarGenerator::SettingsCode(Code& code)
         for (auto& iter: fields)
         {
             if (is_first_style_set)
+            {
                 code.Comma();
+            }
             else
+            {
                 is_first_style_set = true;
+            }
             if (code.is_perl())
             {
                 if (iter.style == "wxSB_SUNKEN")
@@ -269,10 +286,14 @@ int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
             for (auto& iter: fields)
             {
                 if (widths.size())
+                {
                     widths += ",";
+                }
                 widths += iter.width;
                 if (styles.size())
+                {
                     styles += ",";
+                }
                 styles += iter.style;
             }
             item.append_child("fields").text().set(std::to_string(fields.size()));

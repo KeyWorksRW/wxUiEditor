@@ -117,7 +117,9 @@ auto GrowRowsDialog::OnOK(wxCommandEvent& event) -> void
         if (iter.index >= 0)
         {
             if (m_value.size())
+            {
                 m_value += ",";
+            }
             m_value += std::to_string(iter.index);
             if (iter.proportion != -1)
             {
@@ -145,7 +147,9 @@ auto GrowRowsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event) -> void
     for (auto& iter: m_grow_entries)
     {
         if (iter.index >= new_index)
+        {
             new_index = iter.index + 1;
+        }
     }
 
     m_grid->SetCellEditor(new_row, 0, new wxGridCellNumberEditor(0, 99));

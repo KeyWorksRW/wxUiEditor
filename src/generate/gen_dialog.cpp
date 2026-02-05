@@ -23,8 +23,8 @@
 // This is only used for Mockup Preview and XrcCompare -- it is not used by the Mockup panel
 wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                              DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                               DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_extra_style))
     {
@@ -78,22 +78,32 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         }
 
         if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+        {
             code.AddComment("Scaling of pos and size are handled after the dialog")
                 .AddComment("has been created and controls added.");
+        }
         code.Eol(eol_if_needed) += "if (!";
         if (code.node()->HasValue(prop_subclass))
+        {
             code.as_string(prop_subclass);
+        }
         else
+        {
             code += "wxDialog";
+        }
         code += "::Create(";
         if (code.node()->HasValue(prop_subclass_params))
         {
             code += code.node()->as_string(prop_subclass_params);
             code.RightTrim();
             if (code.back() != ',')
+            {
                 code.Comma();
+            }
             else
+            {
                 code += ' ';
+            }
         }
         code += "parent, id, title, pos, size, style, name))";
         code.OpenBrace().Str("return false;").CloseBrace();
@@ -116,9 +126,13 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code.Str("wx.DialogNameStr");
+        }
         code.Str("):");
         code.Unindent();
         code.Eol() += "wx.Dialog.__init__(self)";
@@ -182,9 +196,13 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
         code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
         code.Eol().Str("$name = ");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code += "\"frame\"";
+        }
         code.Str(" unless defined $name;");
 
         code.Eol().Str(
@@ -206,11 +224,17 @@ bool DialogFormGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         if (code.node()->is_PropValue(prop_variant, "small"))
+        {
             code.Add("wxWINDOW_VARIANT_SMALL");
+        }
         else if (code.node()->is_PropValue(prop_variant, "mini"))
+        {
             code.Add("wxWINDOW_VARIANT_MINI");
+        }
         else
+        {
             code.Add("wxWINDOW_VARIANT_LARGE");
+        }
 
         code.EndFunction();
     }
@@ -218,16 +242,20 @@ bool DialogFormGenerator::SettingsCode(Code& code)
     if (code.is_python())
     {
         if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+        {
             code.AddComment("Scaling of pos and size are handled after the dialog")
                 .AddComment("has been created and controls added.");
+        }
         code.Eol(eol_if_needed) += "if not self.Create(parent, id, title, pos, size, style, name):";
         code.Eol().Tab().Str("return");
     }
     else if (code.is_ruby())
     {
         if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+        {
             code.AddComment("Scaling of pos and size are handled after the dialog")
                 .AddComment("has been created and controls added.");
+        }
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
     }
 
@@ -376,7 +404,9 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
             {
                 SetChildFocus(iter.get(), SetChildFocus);
                 if (is_focus_set)
+                {
                     return;
+                }
             }
         }
     };
@@ -391,7 +421,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         }
     }
 
-    auto& center = form->as_string(prop_center);
+    const auto& center = form->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
         code.Eol().FormFunction("Centre(").Add(center).EndFunction();
@@ -411,29 +441,45 @@ bool DialogFormGenerator::HeaderCode(Code& code)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->HasValue(prop_style))
+    {
         code.as_string(prop_style);
+    }
     else
+    {
         code.Str("wxDEFAULT_DIALOG_STYLE");
+    }
 
     code.Comma().Str("const wxString &name = ");
     if (node->HasValue(prop_window_name))
+    {
         code.QuotedString(prop_window_name);
+    }
     else
+    {
         code.Str("wxDialogNameStr");
+    }
 
     code.Str(")")
         .Eol()
@@ -447,28 +493,44 @@ bool DialogFormGenerator::HeaderCode(Code& code)
     code.Comma().Str("const wxPoint& pos = ");
 
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->HasValue(prop_style))
+    {
         code.Style();
+    }
     else
+    {
         code.Str("wxDEFAULT_DIALOG_STYLE");
+    }
 
     code.Comma().Str("const wxString &name = ");
     if (node->HasValue(prop_window_name))
+    {
         code.QuotedString(prop_window_name);
+    }
     else
+    {
         code.Str("wxDialogNameStr");
+    }
 
     // Extra eols at end to force space before "Protected:" section
     code.EndFunction().Eol().Eol();
@@ -531,9 +593,13 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     }
 
     if (node->HasValue(prop_pos))
+    {
         item.append_child("pos").text().set(node->as_string(prop_pos));
+    }
     if (node->HasValue(prop_size))
+    {
         item.append_child("size").text().set(node->as_string(prop_size));
+    }
 
     if (node->HasValue(prop_center))
     {
@@ -577,8 +643,10 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
+        {
             item.append_child(pugi::node_comment)
                 .set_value(" persist is not supported in the XRC file. ");
+        }
 
         GenXrcComments(node, item);
     }

@@ -21,7 +21,7 @@
 
 wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 

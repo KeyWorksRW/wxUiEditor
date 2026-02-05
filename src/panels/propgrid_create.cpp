@@ -321,7 +321,7 @@ static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
 void PropGridPanel::CreateLayoutCategory(Node* node)
 {
-    auto* id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
+    auto* category_id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
     if (!node->is_Parent(gen_wxGridBagSizer))
     {
@@ -374,15 +374,15 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
         }
     }
 
-    m_prop_grid->Expand(id);
+    m_prop_grid->Expand(category_id);
 
     if (UserPrefs.is_DarkMode())
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#1d677c"));
+        m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#1d677c"));
     }
     else
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
+        m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#e1f3f8"));
     }
 }
 
@@ -785,7 +785,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 if (wxGetApp().isTestingMenuEnabled())
                 {
-                    for (auto& iter: umap_PropTypes)
+                    for (const auto& iter: umap_PropTypes)
                     {
                         if (iter.second == type)
                         {
@@ -807,13 +807,17 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     auto& category = declaration->GetCategory();
 
     if (!category.getCategoryCount() && !category.get_PropNameCount())
+    {
         return;
+    }
 
     auto generate_languages = Project.get_GenerateLanguages();
 
     // Ignore if the user doesn't want to generate this language
     if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
+    {
         return;
+    }
 
     if (name.contains("CheckBoxState Validator") || name.contains("Colour Validator"))
     {
@@ -826,7 +830,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         }
         // REVIEW: [Randalphwa - 09-01-2025] It's possible that wxPerl does support it, but it's
         // unlikely
-        else if (preferred_language == GEN_LANG_PYTHON || preferred_language == GEN_LANG_PERL)
+        if (preferred_language == GEN_LANG_PYTHON || preferred_language == GEN_LANG_PERL)
         {
             return;
         }
@@ -835,7 +839,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         // to be sure.
     }
 
-    auto id =
+    auto* category_id =
         m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);
 
@@ -844,127 +848,133 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     {
         // TODO: [KeyWorks - 07-25-2020] Need to see if parent is using AUI, and if so, don't
         // collapse this
-        m_prop_grid->Collapse(id);
+        m_prop_grid->Collapse(category_id);
     }
     else if (name.is_sameas("Bitmaps") || name.is_sameas("Command Bitmaps"))
     {
         if (!node->is_Gen(gen_wxBitmapToggleButton))
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#304869"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#304869"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#dce4ef"));
         }
     }
     else if (name.contains("Validator"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#996900"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#fff1d2"));
         }
 
         // It's going to be rare to want a validator for these classes, so collapse the validator
         // for them
         if (node->is_Gen(gen_wxButton) || node->is_Gen(gen_wxStaticText))
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("C++"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#000099"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#000099"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));  // Light blue
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccccff"));  // Light blue
         }
         if (Project.get_CodePreference(node) != GEN_LANG_CPLUSPLUS)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("wxPerl"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#996900"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ffe7b3"));  // Light yellow
         }
         if (Project.get_CodePreference(node) != GEN_LANG_PERL)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("wxPython"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#009900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#009900"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccffcc"));  // Light green
         }
         if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("wxRuby"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e0b3d"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#8e0b3d"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#f8a9c7"));  // Ruby
         }
         if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("XRC"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#00b35c"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#00b35c"));  // Gainsboro
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffe6"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccffe6"));  // Mint Cream
         }
         if (Project.get_CodePreference(node) != GEN_LANG_XRC)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
 
-    if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
-        it != m_expansion_map.end())
+    if (auto found_iter =
+            m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
+        found_iter != m_expansion_map.end())
     {
-        if (it->second)
+        if (found_iter->second)
         {
-            m_prop_grid->Expand(id);
+            m_prop_grid->Expand(category_id);
         }
         else
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
 }

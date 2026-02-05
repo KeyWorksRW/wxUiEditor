@@ -26,17 +26,17 @@ auto NodeDeclaration::get_PropDeclaration(size_t idx) const -> PropDeclaration*
 {
     ASSERT(idx < m_properties.size());
 
-    auto it = m_properties.begin();
+    auto iter = m_properties.begin();
     size_t i = 0;
-    while (i < idx && it != m_properties.end())
+    while (i < idx && iter != m_properties.end())
     {
         i++;
-        it++;
+        iter++;
     }
 
-    if (it != m_properties.end())
+    if (iter != m_properties.end())
     {
-        return it->second;
+        return iter->second;
     }
 
     return nullptr;
@@ -44,9 +44,9 @@ auto NodeDeclaration::get_PropDeclaration(size_t idx) const -> PropDeclaration*
 
 const NodeEventInfo* NodeDeclaration::get_EventInfo(wxue::string_view name) const
 {
-    if (auto it = m_events.find(name); it != m_events.end())
+    if (auto iter = m_events.find(name); iter != m_events.end())
     {
-        return it->second;
+        return iter->second;
     }
 
     return nullptr;
@@ -56,17 +56,17 @@ const NodeEventInfo* NodeDeclaration::get_EventInfo(size_t idx) const
 {
     ASSERT(idx < m_events.size());
 
-    auto it = m_events.begin();
+    auto iter = m_events.begin();
     size_t i = 0;
-    while (i < idx && it != m_events.end())
+    while (i < idx && iter != m_events.end())
     {
         i++;
-        it++;
+        iter++;
     }
 
-    if (it != m_events.end())
+    if (iter != m_events.end())
     {
-        return it->second;
+        return iter->second;
     }
 
     return nullptr;
@@ -174,7 +174,9 @@ std::optional<wxue::string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropNa
 wxBitmapBundle NodeDeclaration::GetBitmapBundle(int width, int height) const
 {
     if (m_bundle_function)
+    {
         return m_bundle_function(width, height);
+    }
 
     return wxBitmapBundle();
 }

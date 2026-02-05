@@ -96,7 +96,7 @@
         wxue::SaveCwd cwd(wxue::restore_cwd);
         if (Project.HasValue(prop_art_directory))
         {
-            if (auto dir = Project.get_ArtPath(); dir->DirExists())
+            if (const auto* dir = Project.get_ArtPath(); dir->DirExists())
             {
                 dir->SetCwd();
             }

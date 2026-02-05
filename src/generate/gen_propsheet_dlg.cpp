@@ -150,9 +150,13 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code.Str("wx.DialogNameStr");
+        }
         code.Str("):");
         code.Unindent();
         code.Eol().Str("wx.adv.PropertySheetDialog.__init__(self)");
@@ -278,11 +282,17 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
         // code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         code.Eol(eol_if_empty).FormFunction("GetBookCtrl()").Function("SetWindowVariant(");
         if (code.node()->is_PropValue(prop_variant, "small"))
+        {
             code.Add("wxWINDOW_VARIANT_SMALL");
+        }
         else if (code.node()->is_PropValue(prop_variant, "mini"))
+        {
             code.Add("wxWINDOW_VARIANT_MINI");
+        }
         else
+        {
             code.Add("wxWINDOW_VARIANT_LARGE");
+        }
 
         code.EndFunction();
     }
@@ -308,29 +318,45 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->HasValue(prop_style))
+    {
         code.as_string(prop_style);
+    }
     else
+    {
         code.Str("wxDEFAULT_DIALOG_STYLE");
+    }
 
     code.Comma().Str("const wxString &name = ");
     if (node->HasValue(prop_window_name))
+    {
         code.QuotedString(prop_window_name);
+    }
     else
+    {
         code.Str("wxDialogNameStr");
+    }
 
     code.Str(")")
         .Eol()
@@ -344,28 +370,44 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
     code.Comma().Str("const wxPoint& pos = ");
 
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     code.Comma().Eol().Tab().Str("long style = ");
     if (node->HasValue(prop_style))
+    {
         code.Style();
+    }
     else
+    {
         code.Str("wxDEFAULT_DIALOG_STYLE");
+    }
 
     code.Comma().Str("const wxString &name = ");
     if (node->HasValue(prop_window_name))
+    {
         code.QuotedString(prop_window_name);
+    }
     else
+    {
         code.Str("wxDialogNameStr");
+    }
 
     // Extra eols at end to force space before "Protected:" section
     code.EndFunction().Eol().Eol();
@@ -426,9 +468,13 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     }
 
     if (node->HasValue(prop_pos))
+    {
         item.append_child("pos").text().set(node->as_string(prop_pos));
+    }
     if (node->HasValue(prop_size))
+    {
         item.append_child("size").text().set(node->as_string(prop_size));
+    }
 
     if (node->HasValue(prop_center))
     {
@@ -472,8 +518,10 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
+        {
             item.append_child(pugi::node_comment)
                 .set_value(" persist is not supported in the XRC file. ");
+        }
 
         GenXrcComments(node, item);
     }

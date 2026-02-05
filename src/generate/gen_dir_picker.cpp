@@ -42,7 +42,7 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    if (auto& path = code.node()->as_string(prop_initial_path); path.size())
+    if (const auto& path = code.node()->as_string(prop_initial_path); path.size())
     {
         code.QuotedString(path);
     }
@@ -52,18 +52,24 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->as_string(prop_message); msg.size())
+    if (const auto& msg = code.node()->as_string(prop_message); msg.size())
     {
         code.QuotedString(msg);
     }
     else
     {
         if (code.is_ruby())
+        {
             code.Str("Wx::DIR_SELECTOR_PROMPT_STR");
+        }
         else if (code.is_perl())
+        {
             code.QuotedString(wxue::string_view("Select a directory"));
+        }
         else
+        {
             code.Add("wxDirSelectorPromptStr");
+        }
     }
 
     code.PosSizeFlags(code::allow_scaling, false, "wxDIRP_DEFAULT_STYLE");
@@ -75,7 +81,7 @@ bool DirPickerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {

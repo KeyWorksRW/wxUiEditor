@@ -19,7 +19,7 @@
 
 wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -38,9 +38,11 @@ wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxSimplebook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxSimplebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 
@@ -100,8 +102,10 @@ int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     {
         if (!node->is_PropValue(prop_show_effect, "no effects") ||
             !node->is_PropValue(prop_show_effect, "no effects"))
+        {
             item.append_child(pugi::node_comment)
                 .set_value("SetEffects() are not supported in XRC");
+        }
         GenXrcComments(node, item);
     }
 

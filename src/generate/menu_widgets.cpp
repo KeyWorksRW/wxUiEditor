@@ -30,12 +30,12 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
     // on one of the static text controls, then we locate which child menu node contains that
     // label and then create a Popup menu to display it.
 
-    auto panel = new wxPanel(wxStaticCast(parent, wxWindow));
-    auto sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* panel = new wxPanel(wxStaticCast(parent, wxWindow));
+    auto* sizer = new wxBoxSizer(wxHORIZONTAL);
 
     if (node->is_Gen(gen_PopupMenu))
     {
-        auto label = new wxStaticText(panel, wxID_ANY, node->as_wxString(prop_class_name));
+        auto* label = new wxStaticText(panel, wxID_ANY, node->as_wxString(prop_class_name));
         sizer->Add(label, wxSizerFlags().Border(wxALL));
         label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
     }
@@ -53,7 +53,7 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
             {
                 label = child->as_wxString(prop_label);
             }
-            auto menu_name = new wxStaticText(panel, wxID_ANY, label);
+            auto* menu_name = new wxStaticText(panel, wxID_ANY, label);
             sizer->Add(menu_name, wxSizerFlags().Border(wxALL));
             menu_name->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
         }
@@ -70,7 +70,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     // To simulate what a real wxMenuBar would do, we get the label from the static text
     // control, find the matching child, and create a popup menu based on that child.
 
-    auto menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
+    auto* menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
     wxue::string text = menu_label->GetLabel().utf8_string();
 
     Node* menu_node = nullptr;
@@ -103,7 +103,9 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     ASSERT_MSG(menu_node, "menu label and static text label don't match!");
 
     if (!menu_node)
+    {
         return;
+    }
 
     auto* popup_menu = MakeSubMenu(menu_node);
     getMockup()->PopupMenu(popup_menu);
@@ -112,16 +114,18 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
 
 wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 {
-    auto sub_menu = new wxMenu;
+    auto* sub_menu = new wxMenu;
 
     for (const auto& menu_item: menu_node->get_ChildNodePtrs())
     {
         if (menu_item->is_Type(type_submenu))
         {
-            auto result = MakeSubMenu(menu_item.get());
-            auto item = sub_menu->AppendSubMenu(result, menu_item->as_wxString(prop_label));
+            auto* result = MakeSubMenu(menu_item.get());
+            auto* item = sub_menu->AppendSubMenu(result, menu_item->as_wxString(prop_label));
             if (menu_item->HasValue(prop_bitmap))
+            {
                 item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
+            }
         }
         else if (menu_item->is_Gen(gen_separator))
         {
@@ -139,13 +143,16 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             // If the user specified a stock ID, then we need to use that id in order to have
             // wxWidgets generate the label and bitmap.
 
-            int id = wxID_ANY;
+            int menu_id = wxID_ANY;
             if (menu_item->as_string(prop_id) != "wxID_ANY" &&
                 menu_item->as_string(prop_id).starts_with("wxID_"))
-                id = NodeCreation.get_ConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
+            {
+                menu_id = NodeCreation.get_ConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
+            }
 
-            auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->as_wxString(prop_help),
-                                       (wxItemKind) menu_item->as_int(prop_kind));
+            auto* item =
+                new wxMenuItem(sub_menu, menu_id, menu_label, menu_item->as_wxString(prop_help),
+                               (wxItemKind) menu_item->as_int(prop_kind));
 
             if (menu_item->HasValue(prop_bitmap))
 #if !defined(__WXMSW__)
@@ -200,16 +207,20 @@ bool MenuBarBase::GetImports(Node* node, std::set<std::string>& set_imports, Gen
         for (auto& menu: node->get_ChildNodePtrs())
         {
             if (update_ui_found)
+            {
                 break;
+            }
             for (auto& menu_item: menu->get_ChildNodePtrs())
             {
                 if (update_ui_found)
+                {
                     break;
+                }
                 for (auto& iter: menu_item->get_MapEvents())
                 {
                     if (iter.second.get_value().size())
                     {
-                        auto& event_name = iter.first;
+                        const auto& event_name = iter.first;
                         if (event_name == "wxEVT_UPDATE_UI")
                         {
                             update_ui_found = true;

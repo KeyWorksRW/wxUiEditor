@@ -174,7 +174,9 @@ bool kwColourPickerCtrl::Create(wxWindow* parent, wxWindowID id, const wxColour&
 {
     if (!wxPickerBase::CreateBase(parent, id, color.GetAsString(wxC2S_HTML_SYNTAX), pos, size,
                                   style, validator, name))
+    {
         return false;
+    }
 
     m_picker = new wxColourPickerWidget(this, wxID_ANY, color, wxDefaultPosition, wxDefaultSize,
                                         GetPickerStyle(style));
@@ -185,7 +187,7 @@ bool kwColourPickerCtrl::Create(wxWindow* parent, wxWindowID id, const wxColour&
     {
         // This will add all of the CSS color names to the auto-complete list
         wxArrayString tmp_array;
-        for (auto& iter: kw_css_colors)
+        for (const auto& iter: kw_css_colors)
         {
             tmp_array.Add(iter.first);
         }
@@ -202,7 +204,9 @@ wxColour kwColourPickerCtrl::GetColorFromString(const wxString& color_string)
 {
     wxColour color;
     if (color_string.empty())
+    {
         return color;
+    }
 
     if (color_string.starts_with("wx"))
     {

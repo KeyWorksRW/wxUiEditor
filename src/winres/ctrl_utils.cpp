@@ -145,18 +145,18 @@ auto resCtrl::GetID(wxue::string_view line) -> wxue::string_view
         return line;
     }
 
-    wxue::string id;
+    wxue::string res_id;
     if (line.at(0) == ',')
     {
-        line = StepOverComma(line, id);
-        id.LeftTrim();
-        if (id.is_sameas("-1"))
+        line = StepOverComma(line, res_id);
+        res_id.LeftTrim();
+        if (res_id.is_sameas("-1"))
         {
-            id = "wxID_ANY";
+            res_id = "wxID_ANY";
         }
-        else if (wxue::is_digit(id[0]))
+        else if (wxue::is_digit(res_id[0]))
         {
-            id.insert(0, "id_");
+            res_id.insert(0, "id_");
         }
     }
     else
@@ -167,39 +167,40 @@ auto resCtrl::GetID(wxue::string_view line) -> wxue::string_view
             MSG_WARNING(wxue::string() << "Missing comma after ID :" << m_original_line);
             end = line.size();
         }
-        id = line.substr(0, end);
+        res_id = line.substr(0, end);
         line.remove_prefix(end < line.size() ? end + 1 : end);
     }
 
-    if (id == "IDOK" || id == "1" || id == "IDC_OK")
+    if (res_id == "IDOK" || res_id == "1" || res_id == "IDC_OK")
     {
         m_node->set_value(prop_id, "wxID_OK");
     }
-    else if (id == "IDCANCEL" || id == "2" || id == "IDC_CANCEL")
+    else if (res_id == "IDCANCEL" || res_id == "2" || res_id == "IDC_CANCEL")
     {
         m_node->set_value(prop_id, "wxID_CANCEL");
     }
-    else if (id == "IDYES" || id == "6" || id == "IDC_YES")
+    else if (res_id == "IDYES" || res_id == "6" || res_id == "IDC_YES")
     {
         m_node->set_value(prop_id, "wxID_YES");
     }
-    else if (id == "IDNO" || id == "7" || id == "IDC_NO")
+    else if (res_id == "IDNO" || res_id == "7" || res_id == "IDC_NO")
     {
         m_node->set_value(prop_id, "wxID_NO");
     }
-    else if (id == "IDABORT" || id == "3")
+    else if (res_id == "IDABORT" || res_id == "3")
     {
         m_node->set_value(prop_id, "wxID_ABORT ");
     }
-    else if (id == "IDCLOSE" || id == "8" || id == "IDC_CLOSE")
+    else if (res_id == "IDCLOSE" || res_id == "8" || res_id == "IDC_CLOSE")
     {
         m_node->set_value(prop_id, "wxID_CLOSE");
     }
-    else if (id == "IDHELP" || id == "9" || id == "IDD_HELP" || id == "IDC_HELP" || id == "ID_HELP")
+    else if (res_id == "IDHELP" || res_id == "9" || res_id == "IDD_HELP" || res_id == "IDC_HELP" ||
+             res_id == "ID_HELP")
     {
         m_node->set_value(prop_id, "wxID_HELP");
     }
-    else if (id == "IDC_APPLY")
+    else if (res_id == "IDC_APPLY")
     {
         m_node->set_value(prop_id, "wxID_APPLY");
     }
@@ -208,9 +209,9 @@ auto resCtrl::GetID(wxue::string_view line) -> wxue::string_view
         m_node->set_value(prop_id, "wxID_ANY");
     }
 
-    if (m_node->as_string(prop_id) != "wxID_ANY" || !id.starts_with("IDC_STATIC"))
+    if (m_node->as_string(prop_id) != "wxID_ANY" || !res_id.starts_with("IDC_STATIC"))
     {
-        m_node->set_value(prop_var_comment, id);
+        m_node->set_value(prop_var_comment, res_id);
     }
 
     line.moveto_nonspace();

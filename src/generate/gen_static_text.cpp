@@ -37,12 +37,18 @@ wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->as_bool(prop_markup) && node->as_int(prop_wrap) <= 0)
+    {
         widget->SetLabelMarkup(node->as_wxString(prop_label));
+    }
     else
+    {
         widget->SetLabel(node->as_wxString(prop_label));
+    }
 
     if (node->as_int(prop_wrap) > 0)
+    {
         widget->Wrap(node->as_int(prop_wrap));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -60,14 +66,20 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
         // If the text was wrapped previously, then it already has \n characters inserted in it, so
         // we need to restore it to it's original state before wrapping again.
 
-        auto ctrl = wxStaticCast(widget, wxStaticTextBase);
+        auto* ctrl = wxStaticCast(widget, wxStaticTextBase);
         if (node->as_bool(prop_markup))
+        {
             ctrl->SetLabelMarkup(node->as_wxString(prop_label));
+        }
         else
+        {
             ctrl->SetLabel(node->as_wxString(prop_label));
+        }
 
         if (node->as_int(prop_wrap) > 0)
+        {
             ctrl->Wrap(node->as_int(prop_wrap));
+        }
 
         return true;
     }
@@ -87,7 +99,9 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
         code.CreateClass(use_generic_version);
     }
     else
+    {
         code.CreateClass();
+    }
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.node()->as_bool(prop_markup) && !code.is_perl())
     {
@@ -95,7 +109,7 @@ bool StaticTextGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        auto& label = code.node()->as_string(prop_label);
+        const auto& label = code.node()->as_string(prop_label);
         if (label.size())
         {
             code.QuotedString(prop_label);
@@ -190,7 +204,9 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
         InsertGeneratorInclude(node, "#include <wx/generic/stattextg.h>", set_src, set_hdr);
     }
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
 
     return true;
 }

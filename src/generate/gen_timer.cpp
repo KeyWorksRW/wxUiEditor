@@ -31,7 +31,9 @@ bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
     if (!form->is_Type(type_frame_form) && !form->is_Gen(gen_wxDialog) &&
         !form->is_Gen(gen_PanelForm) && !form->is_Gen(gen_wxMdiWindow) &&
         !form->is_Gen(gen_wxAuiMDIChildFrame) && !form->is_Gen(gen_wxPopupTransientWindow))
+    {
         return false;
+    }
 
     for (auto& iter: form->get_ChildNodePtrs())
     {
@@ -39,7 +41,7 @@ bool TimerGenerator::StartIfChildTimer(Node* form, Code& code)
         {
             if (iter->as_bool(prop_auto_start))
             {
-                auto save_node = code.node();
+                auto* save_node = code.node();
                 code.set_node(iter.get());
                 if (code.is_ruby() || code.is_python())
                 {

@@ -24,16 +24,20 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         wxString msg = "wxRearrangeCtrl not available in ";
         if (Project.get_CodePreference() == GEN_LANG_RUBY)
+        {
             msg += "wxRuby3";
+        }
         else
+        {
             msg += "XRC";
+        }
         auto* widget =
             new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg, wxDefaultPosition,
                              wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
         widget->Wrap(DlgPoint(150));
         return widget;
     }
-    auto widget =
+    auto* widget =
         new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                             DlgSize(node, prop_size), wxArrayInt(), wxArrayString(),
                             node->as_int(prop_type) | GetStyleInt(node));
@@ -45,7 +49,9 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             auto pos = widget->GetList()->Append(iter.label.wx());
             if (iter.checked == "1")
+            {
                 widget->GetList()->Check(pos);
+            }
         }
 
         if (node->as_string(prop_selection_string).size())
@@ -56,7 +62,9 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) widget->GetList()->GetCount())
+            {
                 widget->GetList()->SetSelection(sel);
+            }
         }
     }
 
@@ -72,14 +80,18 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
     code.Comma().Pos().Comma().WxSize();
     code.Comma();
     if (code.is_cpp())
+    {
         code += "wxArrayInt(), wxArrayString()";
+    }
     else
+    {
         code += "[], []";
+    }
 
     Node* node = code.node();
-    auto& type = node->as_string(prop_type);
-    auto& style = node->as_string(prop_style);
-    auto& win_style = node->as_string(prop_window_style);
+    const auto& type = node->as_string(prop_type);
+    const auto& style = node->as_string(prop_style);
+    const auto& win_style = node->as_string(prop_window_style);
 
     if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
     {
@@ -106,7 +118,7 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -143,23 +155,29 @@ bool RearrangeCtrlGenerator::SettingsCode(Code& code)
         {
             code.OpenBrace();
             if (code.is_cpp())
+            {
                 code += "int item_position;";
+            }
             for (auto& iter: contents)
             {
                 code.Eol(eol_if_empty);
                 if (iter.checked == "1")
+                {
                     code += "item_position = ";
+                }
                 code.NodeName()
                     .Function("GetList()")
                     .Function("Append(")
                     .QuotedString(iter.label)
                     .EndFunction();
                 if (iter.checked == "1")
+                {
                     code.Eol()
                         .NodeName()
                         .Function("GetList()")
                         .Function("Check(item_position")
                         .EndFunction();
+                }
             }
             code.CloseBrace();
         }

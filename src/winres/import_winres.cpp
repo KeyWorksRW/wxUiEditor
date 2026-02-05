@@ -135,14 +135,14 @@ bool WinResource::ImportRc(const wxue::string& rc_file, std::vector<wxue::string
         if (file[idx].contains("ICON") || file[idx].contains("BITMAP"))
         {
             wxue::string_view line = file[idx].view_nonspace();
-            wxue::string id;
+            wxue::string res_id;
             if (line.at(0) == '"')
             {
-                id.AssignSubString(line);
+                res_id.AssignSubString(line);
             }
             else
             {
-                id = line.subview(0, line.find_space());
+                res_id = line.subview(0, line.find_space());
             }
             line.moveto_nextword();
             wxue::string type = line.subview(0, line.find_space());
@@ -167,11 +167,11 @@ bool WinResource::ImportRc(const wxue::string& rc_file, std::vector<wxue::string
             filename.make_relative(m_OutDirectory);
             if (type.is_sameas("ICON"))
             {
-                m_map_icons[id] = filename;
+                m_map_icons[res_id] = filename;
             }
             else
             {
-                m_map_bitmaps[id] = filename;
+                m_map_bitmaps[res_id] = filename;
             }
         }
     }
@@ -347,9 +347,9 @@ bool WinResource::ImportRc(const wxue::string& rc_file, std::vector<wxue::string
     if (!isNested)
     {
         std::sort(m_forms.begin(), m_forms.end(),
-                  [](const resForm& a, const resForm& b)
+                  [](const resForm& lhs, const resForm& rhs)
                   {
-                      return (a.GetFormName().compare(b.GetFormName()) < 0);
+                      return (lhs.GetFormName().compare(rhs.GetFormName()) < 0);
                   });
 
         InsertDialogs(forms);
@@ -449,18 +449,18 @@ void WinResource::ParseStringTable(wxue::StringVector& file)
         auto pos = line.find_space();
         if (wxue::is_found(pos))
         {
-            wxue::string id(line.substr(0, pos));
-            id.trim(wxue::TRIM::right);
-            if (id.back() == ',')
+            wxue::string res_id(line.substr(0, pos));
+            res_id.trim(wxue::TRIM::right);
+            if (res_id.back() == ',')
             {
-                id.pop_back();
+                res_id.pop_back();
             }
 
             pos = line.find_nonspace(pos);
             if (wxue::is_found(pos))
             {
                 auto text = ConvertCodePageString(line.view_substr(pos));
-                m_map_stringtable[id] = text;
+                m_map_stringtable[res_id] = text;
             }
         }
     }
@@ -517,27 +517,27 @@ void WinResource::FormToNode(resForm& form)
     }
 }
 
-std::optional<wxue::string> WinResource::FindIcon(const std::string& id)
+std::optional<wxue::string> WinResource::FindIcon(const std::string& res_id)
 {
-    if (auto result = m_map_icons.find(id); result != m_map_icons.end())
+    if (auto result = m_map_icons.find(res_id); result != m_map_icons.end())
     {
         return result->second;
     }
     return {};
 }
 
-std::optional<wxue::string> WinResource::FindBitmap(const std::string& id)
+std::optional<wxue::string> WinResource::FindBitmap(const std::string& res_id)
 {
-    if (auto result = m_map_bitmaps.find(id); result != m_map_bitmaps.end())
+    if (auto result = m_map_bitmaps.find(res_id); result != m_map_bitmaps.end())
     {
         return result->second;
     }
     return {};
 }
 
-std::optional<wxue::string> WinResource::FindStringID(const std::string& id)
+std::optional<wxue::string> WinResource::FindStringID(const std::string& res_id)
 {
-    if (auto result = m_map_stringtable.find(id); result != m_map_stringtable.end())
+    if (auto result = m_map_stringtable.find(res_id); result != m_map_stringtable.end())
     {
         return result->second;
     }

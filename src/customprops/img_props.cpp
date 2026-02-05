@@ -17,15 +17,21 @@ auto ImageProperties::InitValues(wxue::string_view value) -> void
     wxue::ViewVector mstr(value, ';', wxue::TRIM::both);
 
     if (mstr.size() > IndexImage)
+    {
         image = mstr[IndexImage];
+    }
     else
+    {
         image.clear();
+    }
 
     if (mstr.size() > IndexType)
     {
         type = mstr[IndexType];
         if (type == "Header" && image.extension().is_sameas(".xpm", wxue::CASE::either))
+        {
             type = "XPM";
+        }
 
         if ((type == "SVG" || type == "Art") && mstr.size() > IndexImage + 1)
         {

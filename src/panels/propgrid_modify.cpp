@@ -292,7 +292,9 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         auto result = Project.GetOutputPath(node_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
         auto path = result.first;
         if (result.second)  // true if the the base filename was returned
+        {
             path.remove_filename();
+        }
         newValue.make_relative(path);
         newValue.backslashestoforward();
         ModifyProperty(node_prop, newValue);

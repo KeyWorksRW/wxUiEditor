@@ -171,9 +171,9 @@ inline wxImage wxueImage(const unsigned char* long_parameter_name,size_t another
 
 wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                          DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                          GetStyleInt(node), node->as_wxString(prop_var_name));
+    auto* scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                           DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                           GetStyleInt(node), node->as_wxString(prop_var_name));
 
     // By default, scintilla sets this margin width to 16. We want to shut off all margins unless
     // the user specifically requests one.
@@ -530,10 +530,14 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_needed).NodeName();
         if (code.is_ruby())
+        {
             // code.Function() would convert EOL to e_o_l
             code.Str(".set_eol_mode(");
+        }
         else
+        {
             code.Function("SetEOLMode(");
+        }
         code.AddConstant(prop_eol_mode, "stc_").EndFunction();
     }
 
@@ -542,7 +546,9 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         // REVIEW wxPython 3.2.0 does not support SetViewEol
         if (!code.is_python())
+        {
             code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
+        }
     }
 
     if (!code.is_PropValue(prop_view_whitespace, "invisible"))
@@ -733,7 +739,9 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     wxue::string margin = node->as_string(prop_fold_margin);
     if (margin.is_sameas("none"))
+    {
         margin = "0";
+    }
 
     if (!code.is_PropValue(prop_line_margin, "none"))
     {
@@ -975,7 +983,9 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         margin = node->as_string(prop_separator_margin);
         if (margin.is_sameas("none"))
+        {
             margin = "0";
+        }
 
         code.Eol().NodeName().Function("SetMarginWidth(").Add(margin);
         code.Comma().as_string(prop_separator_width).EndFunction();
@@ -992,7 +1002,9 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         margin = node->as_string(prop_custom_margin);
         if (margin.is_sameas("none"))
+        {
             margin = "0";
+        }
 
         code.Eol()
             .NodeName()
@@ -1013,9 +1025,13 @@ bool StyledTextGenerator::SettingsCode(Code& code)
         {
             code.Eol().NodeName().Function("SetMarginMask").Str(margin).Comma();
             if (code.IsTrue(prop_custom_mask_folders))
+            {
                 code.Add("wxSTC_MASK_FOLDERS");
+            }
             else
+            {
                 code.Str("~").Add("wxSTC_MASK_FOLDERS");
+            }
             code.EndFunction();
         }
         if (code.IsTrue(prop_custom_mouse_sensitive))
@@ -1072,7 +1088,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -1105,25 +1121,25 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
                                             NodeProperty* changed_prop)
 {
     BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
-    auto changed_node = changed_prop->getNode();
+    auto* changed_node = changed_prop->getNode();
 
     if (changed_prop->isProp(prop_stc_wrap_mode))
     {
         bool is_wrapped = (changed_prop->as_string() != "no wrapping");
 
-        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_visual_flag"); pg_wrap_setting)
+        if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_visual_flag"); pg_wrap_setting)
         {
             pg_wrap_setting->Enable(is_wrapped);
         }
-        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_indent_mode"); pg_wrap_setting)
+        if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_indent_mode"); pg_wrap_setting)
         {
             pg_wrap_setting->Enable(is_wrapped);
         }
-        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_visual_location"); pg_wrap_setting)
+        if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_visual_location"); pg_wrap_setting)
         {
             pg_wrap_setting->Enable(is_wrapped);
         }
-        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+        if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
         {
             if (is_wrapped)
             {
@@ -1139,7 +1155,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     else if (changed_prop->isProp(prop_stc_wrap_indent_mode))
     {
         bool is_wrapped = (changed_node->as_string(prop_stc_wrap_mode) != "no wrapping");
-        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+        if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
         {
             if (is_wrapped)
             {
@@ -1154,19 +1170,19 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     else if (changed_prop->isProp(prop_multiple_selections))
     {
         bool is_multiple = changed_prop->as_bool();
-        if (auto pg_property = prop_grid->GetProperty("multiple_selection_typing"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("multiple_selection_typing"); pg_property)
         {
             pg_property->Enable(is_multiple);
         }
-        if (auto pg_property = prop_grid->GetProperty("additional_carets_visible"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("additional_carets_visible"); pg_property)
         {
             pg_property->Enable(is_multiple);
         }
-        if (auto pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
         {
             pg_property->Enable(is_multiple);
         }
-        if (auto pg_property = prop_grid->GetProperty("paste_multiple"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("paste_multiple"); pg_property)
         {
             pg_property->Enable(is_multiple);
         }
@@ -1176,7 +1192,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
         bool is_multiple = changed_node->as_bool(prop_multiple_selections);
         if (is_multiple)
         {
-            if (auto pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
+            if (auto* pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
             {
                 pg_property->Enable(changed_prop->as_bool());
             }
@@ -1184,29 +1200,29 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
     else if (changed_prop->isProp(prop_fold_margin))
     {
-        if (auto pg_property = prop_grid->GetProperty("automatic_folding"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("automatic_folding"); pg_property)
         {
             pg_property->Enable(changed_prop->as_string() != "none");
         }
-        if (auto pg_property = prop_grid->GetProperty("fold_width"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("fold_width"); pg_property)
         {
             pg_property->Enable(changed_prop->as_string() != "none");
         }
-        if (auto pg_property = prop_grid->GetProperty("fold_flags"); pg_property)
+        if (auto* pg_property = prop_grid->GetProperty("fold_flags"); pg_property)
         {
             pg_property->Enable(changed_prop->as_string() != "none");
         }
     }
     else if (changed_prop->isProp(prop_line_margin))
     {
-        if (auto pg_margin_setting = prop_grid->GetProperty("line_digits"); pg_margin_setting)
+        if (auto* pg_margin_setting = prop_grid->GetProperty("line_digits"); pg_margin_setting)
         {
             pg_margin_setting->Enable((changed_prop->as_string() != "none"));
         }
     }
     else if (changed_prop->isProp(prop_symbol_margin))
     {
-        if (auto pg_margin_setting = prop_grid->GetProperty("symbol_mouse_sensitive");
+        if (auto* pg_margin_setting = prop_grid->GetProperty("symbol_mouse_sensitive");
             pg_margin_setting)
         {
             pg_margin_setting->Enable((changed_prop->as_string() != "none"));
@@ -1214,7 +1230,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
     else if (changed_prop->isProp(prop_separator_margin))
     {
-        if (auto pg_margin_setting = prop_grid->GetProperty("separator_width"); pg_margin_setting)
+        if (auto* pg_margin_setting = prop_grid->GetProperty("separator_width"); pg_margin_setting)
         {
             pg_margin_setting->Enable((changed_prop->as_string() != "none"));
         }
@@ -1224,7 +1240,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
         bool is_enabled = (changed_prop->as_string() != "none");
         for (auto& iter: lst_margins)
         {
-            if (auto pg_margin_setting = prop_grid->GetProperty(iter); pg_margin_setting)
+            if (auto* pg_margin_setting = prop_grid->GetProperty(iter); pg_margin_setting)
             {
                 pg_margin_setting->Enable(is_enabled);
             }
@@ -1240,7 +1256,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     if (changed_prop->isProp(prop_custom_type))
     {
         bool is_enabled = (changed_node->as_string(prop_custom_margin) != "none");
-        if (auto pg_margin_setting = prop_grid->GetProperty("custom_colour"); pg_margin_setting)
+        if (auto* pg_margin_setting = prop_grid->GetProperty("custom_colour"); pg_margin_setting)
         {
             if (changed_prop->as_string() != "colour")
             {
@@ -1251,7 +1267,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
                 pg_margin_setting->Enable(is_enabled);
             }
         }
-        if (auto pg_margin_setting = prop_grid->GetProperty("custom_mask_folders");
+        if (auto* pg_margin_setting = prop_grid->GetProperty("custom_mask_folders");
             pg_margin_setting)
         {
             if (changed_prop->as_string() != "symbol" && changed_prop->as_string() != "number")
@@ -1299,15 +1315,13 @@ void StyledTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
     handlers.emplace("wxStyledTextCtrlXmlHandler");
 }
 
-bool StyledTextGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool StyledTextGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                     GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/stc'");
         return true;
-    }
-    else
-    {
     }
     return false;
 }

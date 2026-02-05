@@ -26,7 +26,9 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto headers = node->as_ArrayString(prop_column_labels);
         for (auto& label: headers)
+        {
             widget->AppendColumn(label.wx());
+        }
 
         if (node->HasValue(prop_contents))
         {
@@ -89,13 +91,19 @@ bool ListViewGenerator::SettingsCode(Code& code)
         {
             code.Eol(eol_if_needed);
             if (code.is_cpp())
+            {
                 code.Str("auto ");
+            }
             code.Str("info").Assign().Add("wxListItem").AddIfRuby(".new").Str("(").EndFunction();
             code.Eol().Str("info");
             if (code.is_ruby())
+            {
                 code.Str(".clear");
+            }
             else
+            {
                 code.Str(".Clear(").EndFunction();
+            }
             auto strings = code.node()->as_ArrayString(prop_contents);
             int row_id = -1;
             for (auto& row: strings)
@@ -103,14 +111,22 @@ bool ListViewGenerator::SettingsCode(Code& code)
                 ++row_id;
                 code.Eol().Str("info");
                 if (code.is_ruby())
+                {
                     code.Str(".set_id(");
+                }
                 else
+                {
                     code.Add(".SetId(");
+                }
                 code.itoa(row_id).EndFunction();
                 if (row_id == 0)
+                {
                     code.Eol().Str(code.is_cpp() ? "auto " : "").Str("idx").Assign();
+                }
                 else
+                {
                     code.Eol().Str("idx = ");
+                }
                 code.NodeName().Function("InsertItem(info").EndFunction();
                 wxue::StringVector columns(row, ';', wxue::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size();

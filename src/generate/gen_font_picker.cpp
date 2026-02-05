@@ -17,9 +17,9 @@
 
 wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                       node->as_wxFont(prop_initial_font), DlgPoint(node, prop_pos),
-                                       DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget = new wxFontPickerCtrl(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
+        DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_max_point_size))
     {
@@ -47,7 +47,9 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
             code.Add("wxNORMAL_FONT").Function("GetPointSize()");
         }
         else
+        {
             code.itoa(fontprop.GetPointSize());
+        }
 
         code.Comma()
             .Add(ConvertFontFamilyToString(fontprop.GetFamily()))
@@ -56,23 +58,35 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
         code.Comma().Add(font.GetWeightString().utf8_string()).Comma();
 
         if (fontprop.IsUnderlined())
+        {
             code.True();
+        }
         else
+        {
             code.False();
+        }
         code.Comma();
         if (fontprop.GetFaceName().size())
+        {
             code.QuotedString(fontprop.GetFaceName().utf8_string());
+        }
         else
+        {
             code.Add("wxEmptyString");
+        }
 
         code += ")";
     }
     else
     {
         if (code.is_ruby())
+        {
             code.Str("Wx::NULL_FONT");
+        }
         else
+        {
             code.Add("wxNullFont");
+        }
     }
 
     code.PosSizeFlags(code::allow_scaling, true);
@@ -127,9 +141,13 @@ int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_int(prop_min_point_size) != 0)
+        {
             ADD_ITEM_COMMENT("XRC does not support calling SetMinPointSize().")
+        }
         if (node->as_int(prop_max_point_size) != 100)
+        {
             ADD_ITEM_COMMENT("XRC does not support calling SetMaxPointSize().")
+        }
 
         GenXrcComments(node, item);
     }

@@ -21,22 +21,28 @@
 
 wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                           DlgSize(node, prop_size), GetStyleInt(node));
     if (node->as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
+    {
         widget->SetArtProvider(new wxAuiGenericTabArt());
+    }
     else if (node->as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
+    {
         widget->SetArtProvider(new wxAuiSimpleTabArt());
+    }
 
     if (node->as_int(prop_tab_height) > 0)
+    {
         widget->SetTabCtrlHeight(node->as_int(prop_tab_height));
+    }
 
     AddBookImageList(node, widget);
 
     for (size_t idx = 0; idx < node->get_ChildCount(); ++idx)
     {
-        auto child = node->get_Child(idx);
+        auto* child = node->get_Child(idx);
         if (child->HasValue(prop_tooltip))
         {
             widget->SetPageToolTip(idx, child->as_string(prop_tooltip));
@@ -68,11 +74,11 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                          bool /* is_preview */)
 {
-    if (auto notebook = wxStaticCast(wxobject, wxAuiNotebook); notebook)
+    if (auto* notebook = wxStaticCast(wxobject, wxAuiNotebook); notebook)
     {
         for (size_t idx = 0; idx < node->get_ChildCount(); ++idx)
         {
-            auto child = node->get_Child(idx);
+            auto* child = node->get_Child(idx);
             if (child->HasValue(prop_tooltip))
             {
                 notebook->SetPageToolTip(idx, child->as_string(prop_tooltip));
@@ -83,9 +89,11 @@ void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
 
 void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxNotebook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxNotebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 
@@ -152,7 +160,7 @@ bool AuiNotebookGenerator::AfterChildrenCode(Code& code)
     bool is_tooltip_set = false;
     for (size_t idx = 0; idx < code.node()->get_ChildCount(); ++idx)
     {
-        auto child = code.node()->get_Child(idx);
+        auto* child = code.node()->get_Child(idx);
         if (child->HasValue(prop_tooltip))
         {
             is_tooltip_set = true;
@@ -190,7 +198,9 @@ int AuiNotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
     GenXrcObjectAttributes(node, item, "wxAuiNotebook");
 
     if (node->as_string(prop_art_provider) == "wxAuiSimpleTabArt")
+    {
         item.append_child("art-provider").text().set("simple");
+    }
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
@@ -208,20 +218,18 @@ void AuiNotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxAuiXmlHandler");
 }
 
-bool AuiNotebookGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool AuiNotebookGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                      GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/aui'");
         return true;
     }
-    else if (language == GEN_LANG_PERL)
+    if (language == GEN_LANG_PERL)
     {
         set_imports.insert("use Wx::Aui;");
         return true;
-    }
-    else
-    {
     }
     return false;
 }

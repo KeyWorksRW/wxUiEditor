@@ -18,32 +18,44 @@
 
 wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                          node->as_wxString(prop_main_label),
-                                          node->as_wxString(prop_note), DlgPoint(node, prop_pos),
-                                          DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                           node->as_wxString(prop_main_label),
+                                           node->as_wxString(prop_note), DlgPoint(node, prop_pos),
+                                           DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_bool(prop_default))
+    {
         widget->SetDefault();
+    }
 
     if (node->as_bool(prop_auth_needed))
+    {
         widget->SetAuthNeeded();
+    }
 
     if (node->HasValue(prop_bitmap))
     {
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
+        {
             widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
+        }
 
         if (node->HasValue(prop_pressed_bmp))
+        {
             widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
+        }
 
         if (node->HasValue(prop_focus_bmp))
+        {
             widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
+        }
 
         if (node->HasValue(prop_current))
+        {
             widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
+        }
 
 #if 0
         // REVIEW: [KeyWorks - 05-30-2022] As of 3.1.7, these don't work property on Windows 10.
@@ -85,9 +97,13 @@ bool CommandLinkBtnGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_bitmap))
     {
         if (code.is_cpp())
+        {
             GenBtnBitmapCode(code.node(), code);
+        }
         else
+        {
             PythonBtnBitmapCode(code);
+        }
     }
     return true;
 }

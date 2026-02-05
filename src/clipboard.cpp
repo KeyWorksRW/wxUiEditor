@@ -75,7 +75,9 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
         if (!result)
         {
             if (warn_if_problems)
+            {
                 wxMessageBox("Unable to parse the object in the clipboard", "Paste Clipboard");
+            }
             return {};
         }
 
@@ -85,15 +87,15 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
         {
             return NodeCreation.CreateNodeFromXml(root);
         }
-        else if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
+        if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
         {
-            FormBuilder fb;
-            auto new_node = fb.CreateFbpNode(root, nullptr);
-            if (fb.GetErrors().size() && warn_if_problems)
+            FormBuilder formBuilder;
+            auto new_node = formBuilder.CreateFbpNode(root, nullptr);
+            if (formBuilder.GetErrors().size() && warn_if_problems)
             {
                 wxue::string errMsg(
                     "Not everything from the wxFormBuilder object could be converted:\n\n");
-                for (auto& iter: fb.GetErrors())
+                for (const auto& iter: formBuilder.GetErrors())
                 {
                     errMsg << iter << '\n';
                     MSG_INFO(wxue::string("Paste import problem: ") << iter);
@@ -113,7 +115,7 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
             {
                 wxue::string errMsg(
                     "Not everything from the wxSmith object could be converted:\n\n");
-                for (auto& iter: smith.GetErrors())
+                for (const auto& iter: smith.GetErrors())
                 {
                     errMsg << iter << '\n';
                     MSG_INFO(wxue::string("Paste import problem: ") << iter);

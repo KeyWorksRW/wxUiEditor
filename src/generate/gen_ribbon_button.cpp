@@ -21,8 +21,8 @@
 
 wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos),
-                                        DlgSize(node, prop_size), 0);
+    auto* widget = new wxRibbonButtonBar(wxStaticCast(parent, wxRibbonPanel), wxID_ANY,
+                                         DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -32,16 +32,20 @@ wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                              bool /* is_preview */)
 {
-    auto btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
+    auto* btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
         auto bundle = child->as_wxBitmapBundle(prop_bitmap);
         wxBitmap bmp;
         if (bundle.IsOk())
+        {
             bmp = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
+        }
         else
+        {
             bmp = GetInternalImage("default");
+        }
 
         btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bmp,
                            child->as_wxString(prop_help),

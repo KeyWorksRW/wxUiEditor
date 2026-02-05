@@ -71,15 +71,19 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         if (node->as_string(prop_stock_id) != "none")
         {
             if (code.is_perl())
+            {
                 code.Str(node->as_string(prop_stock_id)).EndFunction();
+            }
             else
+            {
                 code.Add(prop_stock_id).EndFunction();
+            }
             return true;
         }
         code.as_string(prop_id).Comma();
     }
 
-    auto& label = node->as_string(prop_label);
+    const auto& label = node->as_string(prop_label);
     if (label.size())
     {
         if (node->HasValue(prop_shortcut))
@@ -156,7 +160,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
-            auto& description = node->as_string(prop_bitmap);
+            const auto& description = node->as_string(prop_bitmap);
             if (auto function_name = ProjectImages.GetBundleFuncName(description);
                 function_name.size())
             {
@@ -222,7 +226,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.AddComment("Set the unchecked bitmap");
         if (code.is_cpp())
         {
-            auto& description = node->as_string(prop_unchecked_bitmap);
+            const auto& description = node->as_string(prop_unchecked_bitmap);
             if (auto function_name = ProjectImages.GetBundleFuncName(description);
                 function_name.size())
             {
@@ -347,12 +351,18 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     ADD_ITEM_PROP(prop_help, "help")
     ADD_ITEM_BOOL(prop_checked, "checked")
     if (node->as_bool(prop_disabled))
+    {
         item.append_child("enabled").text().set("0");
+    }
 
     if (node->as_string(prop_kind) == "wxITEM_RADIO")
+    {
         item.append_child("radio").text().set("1");
+    }
     else if (node->as_string(prop_kind) == "wxITEM_CHECK")
+    {
         item.append_child("checkable").text().set("1");
+    }
 
     GenXrcBitmap(node, item, xrc_flags);
 

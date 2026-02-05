@@ -813,7 +813,7 @@ void resForm::CheckForStdButtons()
     {
         if (m_ctrls[idx_child].is_Gen(gen_wxButton))
         {
-            auto btn_node = m_ctrls[idx_child].getNode();
+            auto* btn_node = m_ctrls[idx_child].getNode();
 
             // Both the id and the label need to match, since we can't auto-generate replacing the
             // label.
@@ -1026,7 +1026,7 @@ void resForm::CheckForCenteredText(Node* node_parent)
 {
     for (size_t idx = 0; idx < node_parent->get_ChildCount(); ++idx)
     {
-        auto child = node_parent->get_Child(idx);
+        auto* child = node_parent->get_Child(idx);
         if (child->is_Gen(gen_wxBoxSizer) && child->get_ChildCount() == 1 &&
             child->get_Child(0)->is_Gen(gen_wxStaticText) &&
             child->get_Child(0)->as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
@@ -1056,7 +1056,7 @@ void resForm::CheckForFlexGrid(Node* parent)
             // first_sizer needs to be a shared ptr so that we can access it even after parent has
             // deleted it's reference to it.
             auto first_sizer = parent->get_ChildPtr(idx_child);
-            auto second_sizer = parent->get_Child(idx_child + 1);
+            auto* second_sizer = parent->get_Child(idx_child + 1);
             if (first_sizer->get_ChildCount() != second_sizer->get_ChildCount())
                 continue;
             size_t box_child;

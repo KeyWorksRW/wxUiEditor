@@ -103,7 +103,9 @@ void SBarFieldsDialog::OnOK(wxCommandEvent& event)
     }
     m_value = m_prop->convert_statusbar_fields(m_fields);
     if (m_value == "wxSB_NORMAL|-1")
+    {
         m_value = "1";
+    }
 
     // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we
     // sometimes get a warning about undeleted events. Since none of the other custom property

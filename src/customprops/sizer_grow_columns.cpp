@@ -108,7 +108,9 @@ auto GrowColumnsDialog::OnOK(wxCommandEvent& event) -> void
         if (iter.column >= 0)
         {
             if (m_value.size())
+            {
                 m_value += ",";
+            }
             m_value += std::to_string(iter.column);
             if (iter.proportion != -1)
             {
@@ -136,7 +138,9 @@ auto GrowColumnsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event) -> void
     for (auto& iter: m_grow_columns)
     {
         if (iter.column >= new_column)
+        {
             new_column = iter.column + 1;
+        }
     }
 
     m_grid->SetCellEditor(new_row, 0, new wxGridCellNumberEditor(0, 99));

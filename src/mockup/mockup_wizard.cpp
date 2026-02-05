@@ -74,7 +74,7 @@ void MockupWizard::CreateBmpPageRow()
 
 void MockupWizard::CreateButtonRow()
 {
-    auto static_line = new wxStaticLine(this);
+    auto* static_line = new wxStaticLine(this);
     m_column_sizer->Add(static_line, wxSizerFlags().Expand().Border());
 
     wxBoxSizer* buttonRow = new wxBoxSizer(wxHORIZONTAL);
@@ -145,12 +145,18 @@ void MockupWizard::SetSelection(size_t pageIndex)
 
         auto bmp = m_pages[pageIndex]->GetBitmap();
         if (!bmp.IsOk())
+        {
             bmp = m_bitmap;
+        }
         if (!bmpPrev.IsOk())
+        {
             bmpPrev = m_bitmap;
+        }
 
         if (!bmp.IsSameAs(bmpPrev) && m_static_bitmap)
+        {
             m_static_bitmap->SetBitmap(bmp);
+        }
 
         m_pages[old_pageIndex]->Hide();
         m_pages[pageIndex]->Show();
@@ -164,9 +170,13 @@ void MockupWizard::SetSelection(size_t pageIndex)
 void MockupWizard::OnBackOrNext(wxCommandEvent& event)
 {
     if (event.GetId() == wxID_FORWARD && m_cur_page_index + 1 >= m_pages.size())
+    {
         return;
-    else if (event.GetId() == wxID_BACKWARD && m_cur_page_index == 0)
+    }
+    if (event.GetId() == wxID_BACKWARD && m_cur_page_index == 0)
+    {
         return;
+    }
 
     wxWindowUpdateLocker(this);
 
@@ -174,18 +184,28 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
 
     m_pages[m_cur_page_index]->Hide();
     if (event.GetEventObject() == m_btnNext)
-        m_cur_page_index++;
+    {
+        ++m_cur_page_index;
+    }
     else
-        m_cur_page_index--;
+    {
+        --m_cur_page_index;
+    }
 
     auto bmp = m_pages[m_cur_page_index]->GetBitmap();
     if (!bmp.IsOk())
+    {
         bmp = m_bitmap;
+    }
     if (!bmpPrev.IsOk())
+    {
         bmpPrev = m_bitmap;
+    }
 
     if (!bmp.IsSameAs(bmpPrev) && m_static_bitmap)
+    {
         m_static_bitmap->SetBitmap(bmp);
+    }
 
     m_pages[m_cur_page_index]->Show();
 
@@ -203,15 +223,17 @@ void MockupWizard::AddPage(MockupWizardPage* page)
 
     m_sizerPage->Add(page, wxSizerFlags(1).Expand());
 
-    if (auto page_sizer = page->GetSizer(); page_sizer)
+    if (auto* page_sizer = page->GetSizer(); page_sizer)
     {
         auto min_size = page_sizer->GetMinSize();
         min_size.IncBy(wxSizerFlags::GetDefaultBorder());
         m_largest_nonbmp_page.IncTo(min_size);
 
-        auto bmp = page->GetBitmapPtr();
+        auto* bmp = page->GetBitmapPtr();
         if (!bmp->IsOk() && m_bitmap.IsOk())
+        {
             bmp = &m_bitmap;
+        }
         if (bmp->IsOk())
         {
             auto bmp_size = bmp->GetScaledSize();
@@ -233,7 +255,9 @@ void MockupWizard::AddPage(MockupWizardPage* page)
         m_cur_page_index = 0;
     }
     else
+    {
         page->Hide();
+    }
 }
 
 void MockupWizard::AllChildrenAdded()
@@ -254,7 +278,9 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
 {
     m_bmp_placement = m_wizard_node->as_int(prop_bmp_placement);
     if (!m_bmp_placement || !bmp.IsOk())
+    {
         return false;
+    }
 
     // GetScaledWidth() and GetScaledHeight() are new to wxWidgets 3.1.5 and are not currently
     // documented, though they use GetScaleFactor() which is documented. E.g., GetScaledWidth() {
@@ -264,39 +290,56 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
     auto bmp_height = wxMax(m_largest_nonbmp_page.y, bmp.GetScaledHeight());
 
     wxBitmap bitmap(static_cast<int>(bmp_width), static_cast<int>(bmp_height));
-    wxMemoryDC dc;
-    dc.SelectObject(bitmap);
+    wxMemoryDC mem_dc;
+    mem_dc.SelectObject(bitmap);
     if (m_wizard_node->HasValue(prop_bmp_background_colour))
-        dc.SetBackground(wxBrush(m_wizard_node->as_wxColour(prop_bmp_background_colour)));
+    {
+        mem_dc.SetBackground(wxBrush(m_wizard_node->as_wxColour(prop_bmp_background_colour)));
+    }
     else
-        dc.SetBackground(wxBrush(*wxWHITE));
-    dc.Clear();
+    {
+        mem_dc.SetBackground(wxBrush(*wxWHITE));
+    }
+    mem_dc.Clear();
 
     if (m_bmp_placement & wxWIZARD_TILE)
     {
         wxWizard::TileBitmap(
-            wxRect(0, 0, static_cast<int>(bmp_width), static_cast<int>(bmp_height)), dc, bmp);
+            wxRect(0, 0, static_cast<int>(bmp_width), static_cast<int>(bmp_height)), mem_dc, bmp);
     }
     else
     {
-        int x, y;
+        int pos_x = 0;
+        int pos_y = 0;
 
         if (m_bmp_placement & wxWIZARD_HALIGN_LEFT)
-            x = 0;
+        {
+            pos_x = 0;
+        }
         else if (m_bmp_placement & wxWIZARD_HALIGN_RIGHT)
-            x = static_cast<int>(bmp_width - bmp.GetScaledWidth());
+        {
+            pos_x = static_cast<int>(bmp_width - bmp.GetScaledWidth());
+        }
         else
-            x = static_cast<int>((bmp_width - bmp.GetScaledWidth()) / 2);
+        {
+            pos_x = static_cast<int>((bmp_width - bmp.GetScaledWidth()) / 2);
+        }
 
         if (m_bmp_placement & wxWIZARD_VALIGN_TOP)
-            y = 0;
+        {
+            pos_y = 0;
+        }
         else if (m_bmp_placement & wxWIZARD_VALIGN_BOTTOM)
-            y = static_cast<int>(bmp_height - bmp.GetScaledHeight());
+        {
+            pos_y = static_cast<int>(bmp_height - bmp.GetScaledHeight());
+        }
         else
-            y = static_cast<int>((bmp_height - bmp.GetScaledHeight()) / 2);
+        {
+            pos_y = static_cast<int>((bmp_height - bmp.GetScaledHeight()) / 2);
+        }
 
-        dc.DrawBitmap(bmp, x, y, true);
-        dc.SelectObject(wxNullBitmap);
+        mem_dc.DrawBitmap(bmp, pos_x, pos_y, true);
+        mem_dc.SelectObject(wxNullBitmap);
     }
 
     bmp = bitmap;

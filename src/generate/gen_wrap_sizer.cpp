@@ -19,12 +19,14 @@
 
 wxObject* WrapSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxWrapSizer(node->as_int(prop_orientation), node->as_int(prop_flags));
+    auto* sizer = new wxWrapSizer(node->as_int(prop_orientation), node->as_int(prop_flags));
     sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
-    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
+        {
             dlg->SetSizer(sizer);
+        }
     }
     return sizer;
 }
@@ -34,8 +36,10 @@ void WrapSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
 {
     if (node->as_bool(prop_hide_children))
     {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        if (auto* sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        {
             sizer->ShowItems(getMockup()->IsShowingHidden());
+        }
     }
 }
 
@@ -50,15 +54,21 @@ bool WrapSizerGenerator::ConstructionCode(Code& code)
             // and is missing the other two. We generate numerical values so the the functionality
             // is at lest there.
             int flags = 0;
-            auto& wrap_flag_string = code.node()->as_string(prop_wrap_flags);
+            const auto& wrap_flag_string = code.node()->as_string(prop_wrap_flags);
             if (wrap_flag_string.contains("wxWRAPSIZER_DEFAULT_FLAGS"))
+            {
                 flags |= wxWRAPSIZER_DEFAULT_FLAGS;
+            }
             else
             {
                 if (wrap_flag_string.contains("wxEXTEND_LAST_ON_EACH_LINE"))
+                {
                     flags |= wxEXTEND_LAST_ON_EACH_LINE;
+                }
                 if (wrap_flag_string.contains("wxREMOVE_LEADING_SPACES"))
+                {
                     flags |= wxREMOVE_LEADING_SPACES;
+                }
             }
             code.itoa(flags);
         }
@@ -68,7 +78,9 @@ bool WrapSizerGenerator::ConstructionCode(Code& code)
         }
     }
     else
+    {
         code += "0";
+    }
     code.EndFunction();
 
     if (code.HasValue(prop_minimum_size))
@@ -86,7 +98,7 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -104,9 +116,13 @@ bool WrapSizerGenerator::AfterChildrenCode(Code& code)
             else
             {
                 if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                {
                     code.FormFunction("SetSizerAndFit(");
+                }
                 else  // Don't call Fit() if size has been specified
+                {
                     code.FormFunction("SetSizer(");
+                }
             }
             code.NodeName().EndFunction();
         }

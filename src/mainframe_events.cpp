@@ -47,7 +47,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxUiEditor_svg(int width, int height);
 }  // namespace wxue_img
 
-auto MainFrame::OnAbout(wxCommandEvent&) -> void
+auto MainFrame::OnAbout([[maybe_unused]] wxCommandEvent& event) -> void
 {
     wxAboutDialogInfo aboutInfo;
     aboutInfo.SetName(txtVersion);
@@ -368,7 +368,7 @@ auto MainFrame::OnClose(wxCloseEvent& event) -> void
 
 auto MainFrame::OnCopy(wxCommandEvent& /* event unused */) -> void
 {
-    if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
+    if (auto* win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
         wxStaticCast(win, wxStyledTextCtrl)->Copy();
         return;
@@ -424,13 +424,13 @@ auto MainFrame::OnFind(wxFindDialogEvent& event) -> void
     }
 }
 
-auto MainFrame::OnFindClose(wxFindDialogEvent&) -> void
+auto MainFrame::OnFindClose([[maybe_unused]] wxFindDialogEvent& event) -> void
 {
     m_findDialog->Destroy();
     m_findDialog = nullptr;
 }
 
-auto MainFrame::OnFindDialog(wxCommandEvent&) -> void
+auto MainFrame::OnFindDialog([[maybe_unused]] wxCommandEvent& event) -> void
 {
     if (!m_findDialog)
     {
@@ -451,7 +451,7 @@ auto MainFrame::OnFindDialog(wxCommandEvent&) -> void
     m_findDialog->Show(true);
 }
 
-auto MainFrame::OnImportProject(wxCommandEvent&) -> void
+auto MainFrame::OnImportProject([[maybe_unused]] wxCommandEvent& event) -> void
 {
     if (!SaveWarning())
     {
@@ -535,7 +535,7 @@ auto MainFrame::OnNodeSelected(CustomEvent& event) -> void
     UpdateFrame();
 }
 
-auto MainFrame::OnOpenProject(wxCommandEvent&) -> void
+auto MainFrame::OnOpenProject([[maybe_unused]] wxCommandEvent& event) -> void
 {
     if (!SaveWarning())
     {

@@ -19,10 +19,10 @@
 class wxCustomSplitterWindow : public wxSplitterWindow
 {
 public:
-    wxCustomSplitterWindow(wxWindow* parent, wxWindowID id,
+    wxCustomSplitterWindow(wxWindow* parent, wxWindowID win_id,
                            const wxPoint& point = wxDefaultPosition,
                            const wxSize& size = wxDefaultSize, long style = wxSP_3D) :
-        wxSplitterWindow(parent, id, point, size, style)
+        wxSplitterWindow(parent, win_id, point, size, style)
     {
     }
 
@@ -42,9 +42,9 @@ private:
 
 wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                               DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                               (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
+    auto* splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                                DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                                (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
 
     if (node->HasValue(prop_sashgravity))
     {
@@ -70,7 +70,7 @@ wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                             bool is_preview)
 {
-    auto splitter = wxStaticCast(wxobject, wxCustomSplitterWindow);
+    auto* splitter = wxStaticCast(wxobject, wxCustomSplitterWindow);
     if (!splitter)
     {
         FAIL_MSG("This should be a wxSplitterWindow");
@@ -78,18 +78,22 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     }
 
     // Remove default panel
-    auto firstChild = splitter->GetWindow1();
+    auto* firstChild = splitter->GetWindow1();
 
     size_t childCount = node->get_ChildCount();
     switch (childCount)
     {
         case 1:
             {
-                wxWindow* subwindow;
+                wxWindow* subwindow = nullptr;
                 if (!is_preview)
+                {
                     subwindow = wxDynamicCast(getMockup()->get_Child(wxobject, 0), wxWindow);
+                }
                 else
+                {
                     subwindow = wxDynamicCast(node->get_Child(0)->get_MockupObject(), wxWindow);
+                }
                 if (!subwindow)
                 {
                     FAIL_MSG("Child of splitter is not derived from wxWindow class.");
@@ -110,7 +114,8 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
 
         case 2:
             {
-                wxWindow *subwindow0, *subwindow1;
+                wxWindow* subwindow0 = nullptr;
+                wxWindow* subwindow1 = nullptr;
 
                 if (!is_preview)
                 {
@@ -228,9 +233,13 @@ int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     GenXrcObjectAttributes(node, item, "wxSplitterWindow");
 
     if (node->as_int(prop_sashpos) >= 0)
+    {
         item.append_child("sashpos").text().set(node->as_string(prop_sashpos));
+    }
     if (node->as_int(prop_min_pane_size) >= 0)
+    {
         item.append_child("minsize").text().set(node->as_string(prop_min_pane_size));
+    }
     ADD_ITEM_PROP(prop_sashgravity, "gravity")
     item.append_child("orientation")
         .text()
@@ -242,7 +251,9 @@ int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_int(prop_sashsize) >= 0)
+        {
             ADD_ITEM_COMMENT(" XRC does not support calling SetSashSize() ")
+        }
 
         GenXrcComments(node, item);
     }

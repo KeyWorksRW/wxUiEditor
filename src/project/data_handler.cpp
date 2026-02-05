@@ -329,9 +329,13 @@ auto DataHandler::WriteDataConstruction(Code& code, WriteCode* source) -> void
         {
             code.Eol().Str("// ").Str(embed.filename);
             if (embed.array_size >> 32 > 0)
+            {
                 code.Str(" (").itoa(embed.array_size >> 32).Str(" bytes)");
+            }
             else
+            {
                 code.Str(" (uncompressed file)");
+            }
         }
         code.Eol();
 
@@ -379,7 +383,7 @@ auto DataHandler::WriteDataConstruction(Code& code, WriteCode* source) -> void
 
     for (auto& iter_array: m_embedded_data)
     {
-        auto& var_name = iter_array.first;
+        const auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == wxue::npos)
         {
@@ -425,7 +429,7 @@ auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
 
     for (auto& iter_array: m_embedded_data)
     {
-        auto& var_name = iter_array.first;
+        const auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == wxue::npos)
         {
@@ -490,7 +494,7 @@ auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
 
     for (auto& iter_array: m_embedded_data)
     {
-        auto& var_name = iter_array.first;
+        const auto& var_name = iter_array.first;
         auto& embed = iter_array.second;
         if (embed.type == wxue::npos)
         {
@@ -531,9 +535,9 @@ auto DataHandler::WriteImagePostHeader(WriteCode* header) -> void
 
 bool DataHandler::NeedsUtilityHeader() const
 {
-    for (auto& iter_array: m_embedded_data)
+    for (const auto& iter_array: m_embedded_data)
     {
-        auto& embed = iter_array.second;
+        const auto& embed = iter_array.second;
         if (embed.array_size >> 32 == 0)
         {
             return true;

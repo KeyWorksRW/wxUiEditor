@@ -35,7 +35,7 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
         return;
     }
 
-    auto form_node = m_selected_node.get();
+    auto* form_node = m_selected_node.get();
     if (!form_node->is_Form())
     {
         if (!form_node->is_Gen(gen_Project))
@@ -109,7 +109,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         return;
     }
 
-    auto form_node = m_selected_node.get();
+    auto* form_node = m_selected_node.get();
     if (!form_node->is_Form())
     {
         form_node = form_node->get_Form();

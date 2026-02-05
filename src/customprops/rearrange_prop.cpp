@@ -47,7 +47,9 @@ void RearrangeDialog::OnInit(wxInitDialogEvent& /* event unused */)
         m_grid->SetCellValue(row, 1, iter.label);
         int width = m_grid->GetTextExtent(iter.label).GetWidth();
         if (width > m_label_width)
+        {
             m_label_width = width;
+        }
         m_grid->SetRowLabelValue(row, " ");
         ++row;
     }

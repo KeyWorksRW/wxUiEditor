@@ -103,7 +103,9 @@ auto GridBag::InsertNode(Node* gbsizer, Node* new_node) -> bool
         // We need to add this after the last column found.
         ++pos_append;
         if (pos_append >= static_cast<ptrdiff_t>(gbsizer->get_ChildCount()))
+        {
             pos_append = -1;  // Append the child at the very end
+        }
 
         wxGetFrame().PushUndoAction(
             std::make_shared<AppendGridBagAction>(new_node, gbsizer, pos_append));
@@ -192,14 +194,14 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
     return insert_position;
 }
 
-static auto CompareRowNodes(const NodeSharedPtr& a, const NodeSharedPtr& b) -> bool
+static auto CompareRowNodes(const NodeSharedPtr& node_a, const NodeSharedPtr& node_b) -> bool
 {
-    return a->as_int(prop_row) < b->as_int(prop_row);
+    return node_a->as_int(prop_row) < node_b->as_int(prop_row);
 }
 
-static auto CompareColumnNodes(const NodeSharedPtr& a, const NodeSharedPtr& b) -> bool
+static auto CompareColumnNodes(const NodeSharedPtr& node_a, const NodeSharedPtr& node_b) -> bool
 {
-    return a->as_int(prop_column) < b->as_int(prop_column);
+    return node_a->as_int(prop_column) < node_b->as_int(prop_column);
 }
 
 auto GridBag::GridBagSort(Node* gridbag) -> void
@@ -300,7 +302,7 @@ auto GridBag::MoveNode(Node* node, MoveDirection where, bool check_only) -> bool
 // Decrease column
 auto GridBag::MoveLeft(Node* node) -> void
 {
-    auto gbsizer = node->get_Parent();
+    auto* gbsizer = node->get_Parent();
     auto undo_str = std::format("Decrease column of {}", map_GenNames.at(node->get_GenName()));
 
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
@@ -314,7 +316,7 @@ auto GridBag::MoveLeft(Node* node) -> void
     auto cur_row = node->as_int(prop_row);
     auto cur_column = node->as_int(prop_column);
 
-    auto previous_node = gbsizer->get_Child(cur_position - 1);
+    auto* previous_node = gbsizer->get_Child(cur_position - 1);
     bool isColumnChangeOnly { false };
     if (previous_node->as_int(prop_row) != cur_row)
     {
@@ -325,7 +327,9 @@ auto GridBag::MoveLeft(Node* node) -> void
         auto previous_column =
             previous_node->as_int(prop_column) + (previous_node->as_int(prop_colspan) - 1);
         if (cur_column - 1 > previous_column)
+        {
             isColumnChangeOnly = true;
+        }
     }
 
     if (isColumnChangeOnly)
@@ -349,7 +353,7 @@ auto GridBag::MoveLeft(Node* node) -> void
 // Increase column
 auto GridBag::MoveRight(Node* node) -> void
 {
-    auto gbsizer = node->get_Parent();
+    auto* gbsizer = node->get_Parent();
 
     auto undo_str = std::format("Increase column of {}", map_GenNames.at(node->get_GenName()));
     // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than
@@ -363,9 +367,9 @@ auto GridBag::MoveRight(Node* node) -> void
     auto cur_row = node->as_int(prop_row);
     auto cur_column = node->as_int(prop_column);
 
-    auto next_node = (cur_position + 1 < gbsizer->get_ChildCount()) ?
-                         gbsizer->get_Child(cur_position + 1) :
-                         nullptr;
+    auto* next_node = (cur_position + 1 < gbsizer->get_ChildCount()) ?
+                          gbsizer->get_Child(cur_position + 1) :
+                          nullptr;
 
     bool isColumnChangeOnly { false };
     if (!next_node || next_node->as_int(prop_row) != cur_row)
@@ -398,7 +402,7 @@ auto GridBag::MoveRight(Node* node) -> void
 // Decrease row
 auto GridBag::MoveUp(Node* node) -> void
 {
-    auto gbsizer = node->get_Parent();
+    auto* gbsizer = node->get_Parent();
 
     std::string undo_str("Decrease row");
 
@@ -457,8 +461,10 @@ auto GridBag::MoveUp(Node* node) -> void
             --end_swap;
         }
         if (gbsizer->get_Child(end_swap)->as_int(prop_row) != new_row)
+        {
             break;
-        else if (end_swap == 0)
+        }
+        if (end_swap == 0)
         {
             gbsizer->get_Child(end_swap)->set_value(prop_row, cur_row);
             break;
@@ -476,7 +482,7 @@ auto GridBag::MoveUp(Node* node) -> void
 // Increase row
 auto GridBag::MoveDown(Node* node) -> void
 {
-    auto gbsizer = node->get_Parent();
+    auto* gbsizer = node->get_Parent();
 
     std::string undo_str("Increase row");
 

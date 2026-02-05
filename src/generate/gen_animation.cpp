@@ -32,8 +32,10 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
                                                   wxNullAnimation, DlgPoint(node, prop_pos),
                                                   DlgSize(node, prop_size), GetStyleInt(node));
         auto animation = widget->CreateAnimation();
-        if (auto prop = node->get_PropPtr(prop_animation); prop)
+        if (auto* prop = node->get_PropPtr(prop_animation); prop)
+        {
             prop->as_animation(&animation);
+        }
 
         widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
         if (animation.IsOk())
@@ -43,23 +45,23 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
         }
         return widget;
     }
-    else
+
+    auto* widget =
+        new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxNullAnimation,
+                            DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
+    auto animation = widget->CreateAnimation();
+    if (auto* prop = node->get_PropPtr(prop_animation); prop)
     {
-        auto* widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                           wxNullAnimation, DlgPoint(node, prop_pos),
-                                           DlgSize(node, prop_size), GetStyleInt(node));
-        auto animation = widget->CreateAnimation();
-        if (auto prop = node->get_PropPtr(prop_animation); prop)
-            prop->as_animation(&animation);
-
-        widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-        if (animation.IsOk())
-        {
-            widget->SetAnimation(animation);
-            widget->Play();
-        }
-        return widget;
+        prop->as_animation(&animation);
     }
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    if (animation.IsOk())
+    {
+        widget->SetAnimation(animation);
+        widget->Play();
+    }
+    return widget;
 }
 
 bool AnimationGenerator::ConstructionCode(Code& code)
@@ -151,7 +153,7 @@ bool AnimationGenerator::ConstructionCode(Code& code)
             name.LeftTrim();
             if (parts[IndexType].starts_with("Embed"))
             {
-                auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+                auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
                 if (embed)
                 {
                     name = "wxue_img::" + embed->base_image().array_name;
@@ -206,7 +208,9 @@ bool AnimationGenerator::ConstructionCode(Code& code)
 bool AnimationGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_play))
+    {
         code.NodeName().Function("Play(").EndFunction();
+    }
     return true;
 }
 
@@ -221,9 +225,13 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     // wxAnimationCtrl) this shouldn't make any difference for them.
     if (node->HasValue(prop_animation) &&
         node->as_string(prop_animation).contains(".gif", wxue::CASE::either))
+    {
         GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
+    }
     else
+    {
         GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
+    }
 
     GenXrcStylePosSize(node, item);
 
@@ -283,7 +291,7 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-bool AnimationGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
+bool AnimationGenerator::GetPythonImports(Node* /* node */, std::set<std::string>& set_imports)
 {
     set_imports.insert("import wx.adv");
     set_imports.insert("import io");

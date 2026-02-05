@@ -49,7 +49,9 @@ auto MockupContent::RemoveNodes() -> void
     m_parent_sizer = nullptr;
 
     if (m_variant != wxWINDOW_VARIANT_NORMAL)
+    {
         ResetWindowVariant();
+    }
 }
 
 // This is called by MockupParent in order to create all child components
@@ -60,9 +62,11 @@ auto MockupContent::CreateAllGenerators() -> void
     m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     ASSERT(m_mockupParent->getSelectedForm());
-    auto form = m_mockupParent->getSelectedForm();
+    auto* form = m_mockupParent->getSelectedForm();
     if (m_variant != wxWINDOW_VARIANT_NORMAL)
+    {
         ResetWindowVariant();
+    }
 
     if (form->is_Gen(gen_wxWizard))
     {
@@ -81,22 +85,26 @@ auto MockupContent::CreateAllGenerators() -> void
     {
         ASSERT_MSG(form->get_Generator(),
                    wxString() << "Missing component for " << wxString(form->get_DeclName()));
-        auto generator = form->get_Generator();
+        auto* generator = form->get_Generator();
         if (!generator)
+        {
             return;
+        }
 
-        auto sizer = generator->CreateMockup(form, this);
+        auto* sizer = generator->CreateMockup(form, this);
         m_parent_sizer->Add(wxStaticCast(sizer, wxBoxSizer), wxSizerFlags(1).Expand());
     }
     else if (form->is_Gen(gen_Data))
     {
         ASSERT_MSG(form->get_Generator(),
                    wxString() << "Missing component for " << wxString(form->get_DeclName()));
-        auto generator = form->get_Generator();
+        auto* generator = form->get_Generator();
         if (!generator)
+        {
             return;
+        }
 
-        auto sizer = generator->CreateMockup(form, this);
+        auto* sizer = generator->CreateMockup(form, this);
         // sizer type needs to match DataGenerator::CreateMockup in ../generate/gen_data_list.cpp
         m_parent_sizer->Add(wxStaticCast(sizer, wxFlexGridSizer), wxSizerFlags(1).Expand());
     }
@@ -105,7 +113,9 @@ auto MockupContent::CreateAllGenerators() -> void
         if (form->HasProp(prop_variant) && form->as_string(prop_variant) != "normal")
         {
             if (m_variant != wxWINDOW_VARIANT_NORMAL)
+            {
                 ResetWindowVariant();
+            }
 
             if (form->is_PropValue(prop_variant, "small"))
             {
@@ -137,31 +147,45 @@ auto MockupContent::CreateAllGenerators() -> void
             size_t pos_menu { wxue::npos };
             size_t pos_toolbar { wxue::npos };
             size_t pos_statusbar { wxue::npos };
-            for (size_t i = 0; i < form->get_ChildCount(); i++)
+            for (size_t i = 0; i < form->get_ChildCount(); ++i)
             {
                 if (form->get_Child(i)->is_Gen(gen_wxMenuBar))
+                {
                     pos_menu = i;
+                }
                 else if (form->get_Child(i)->is_Gen(gen_wxToolBar))
+                {
                     pos_toolbar = i;
+                }
                 else if (form->get_Child(i)->is_Gen(gen_wxStatusBar))
+                {
                     pos_statusbar = i;
+                }
             }
 
             // First create the menu and toolbar if they exist
 
             if (wxue::is_found(pos_menu))
+            {
                 CreateChildren(form->get_Child(pos_menu), this, this, m_parent_sizer);
+            }
             if (wxue::is_found(pos_toolbar))
+            {
                 CreateChildren(form->get_Child(pos_toolbar), this, this, m_parent_sizer);
+            }
 
-            for (size_t i = 0; i < form->get_ChildCount(); i++)
+            for (size_t i = 0; i < form->get_ChildCount(); ++i)
             {
                 if (i != pos_menu && i != pos_toolbar && i != pos_statusbar)
+                {
                     CreateChildren(form->get_Child(i), this, this, m_parent_sizer);
+                }
             }
 
             if (wxue::is_found(pos_statusbar))
+            {
                 CreateChildren(form->get_Child(pos_statusbar), this, this, m_parent_sizer);
+            }
         }
 
         else
@@ -186,11 +210,13 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 {
     ASSERT_MSG(node->get_Generator(),
                wxString() << "Missing component for " << wxString(node->get_DeclName()));
-    auto generator = node->get_Generator();
+    auto* generator = node->get_Generator();
     if (!generator)
+    {
         return;
+    }
 
-    auto created_object = generator->CreateMockup(node, parent);
+    auto* created_object = generator->CreateMockup(node, parent);
     if (!created_object)
     {
         if (node->is_Spacer() && parent_object)
@@ -246,12 +272,11 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         // We don't create any children because the only thing visible is the mock menu
         return;
     }
-    else if (node->is_Sizer() || node->is_Gen(gen_wxStdDialogButtonSizer) ||
-             node->is_Gen(gen_TextSizer))
+    if (node->is_Sizer() || node->is_Gen(gen_wxStdDialogButtonSizer) || node->is_Gen(gen_TextSizer))
     {
         if (node->is_StaticBoxSizer())
         {
-            auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
+            auto* staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
             created_window = staticBoxSizer->GetStaticBox();
             created_sizer = staticBoxSizer;
         }
@@ -292,13 +317,13 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (node->is_Gen(gen_wxCollapsiblePane))
     {
-        auto collpane = wxStaticCast(created_object, wxCollapsiblePane);
+        auto* collpane = wxStaticCast(created_object, wxCollapsiblePane);
         new_wxparent = collpane->GetPane();
     }
 
     if (node->is_Gen(gen_PageCtrl) && node->get_ChildCount())
     {
-        auto page_child = node->get_Child(0);
+        auto* page_child = node->get_Child(0);
         if (page_child)
         {
             for (const auto& child: page_child->get_ChildNodePtrs())
@@ -323,7 +348,7 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (parent && (created_window || created_sizer))
     {
-        auto obj_parent = getNode(parent_object);
+        auto* obj_parent = getNode(parent_object);
         if (obj_parent && obj_parent->is_Gen(gen_wxChoicebook) && node->is_Type(type_widget))
         {
             wxStaticCast(parent_object, wxChoicebook)
@@ -332,7 +357,7 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         }
         else if (obj_parent && obj_parent->is_Sizer())
         {
-            auto child_obj = getNode(created_object);
+            auto* child_obj = getNode(created_object);
             auto sizer_flags = child_obj->getSizerFlags();
             int border_size = child_obj->as_int(prop_border_size);
             if (child_obj->as_bool(prop_scale_border_size) && border_size != 0 &&
@@ -342,19 +367,23 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             }
             if (obj_parent->is_Gen(gen_wxGridBagSizer))
             {
-                auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
+                auto* sizer = wxStaticCast(parent_object, wxGridBagSizer);
                 wxGBPosition position(child_obj->as_int(prop_row), child_obj->as_int(prop_column));
                 wxGBSpan span(child_obj->as_int(prop_rowspan), child_obj->as_int(prop_colspan));
 
                 if (created_window)
+                {
                     sizer->Add(created_window, position, span, sizer_flags.GetFlags(),
                                sizer_flags.GetBorderInPixels());
+                }
                 else
+                {
                     sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(), border_size);
+                }
             }
             else
             {
-                auto sizer = wxStaticCast(parent_object, wxSizer);
+                auto* sizer = wxStaticCast(parent_object, wxSizer);
                 if (created_window && !child_obj->is_StaticBoxSizer())
                 {
                     sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
@@ -373,9 +402,13 @@ auto MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     if (parent_sizer)
     {
         if (created_window && !node->is_StaticBoxSizer())
+        {
             parent_sizer->Add(created_window, wxSizerFlags().Expand());
+        }
         else if (created_sizer)
+        {
             parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
+        }
     }
 
     else if ((created_sizer && wxDynamicCast(parent_object, wxWindow)) ||
@@ -394,9 +427,13 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         ASSERT_MSG(!node->as_string(prop_minimum_size).contains("d", wxue::CASE::either),
                    "Minimum size should not contain 'd' for dialog units");
         if (node->as_string(prop_minimum_size).contains("d", wxue::CASE::either))
+        {
             window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
+        }
         else
+        {
             window->SetMinSize(convert_win->FromDIP(minsize));
+        }
     }
 
     if (auto maxsize = node->as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
@@ -413,14 +450,20 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         }
     }
 
-    if (auto& variant = node->as_string(prop_variant); variant.size() && variant != "normal")
+    if (const auto& variant = node->as_string(prop_variant); variant.size() && variant != "normal")
     {
         if (variant == "small")
+        {
             window->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+        }
         else if (variant == "mini")
+        {
             window->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+        }
         else
+        {
             window->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+        }
     }
 
     if (node->HasValue(prop_font))
@@ -453,7 +496,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
         window->Show(false);
     }
 
-    if (auto& tooltip = node->as_string(prop_tooltip); tooltip.size())
+    if (const auto& tooltip = node->as_string(prop_tooltip); tooltip.size())
     {
         window->SetToolTip(tooltip.wx());
     }
@@ -501,7 +544,9 @@ static const GenEnum::GenName lst_select_nodes[] = {
 auto MockupContent::OnNodeSelected(Node* node) -> void
 {
     if (!node || node->is_Form())
+    {
         return;
+    }
 
     if (node->is_Type(type_embed_image))
     {
@@ -512,7 +557,7 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
     bool HavePageNode = false;
     for (;;)
     {
-        for (auto& iter: lst_select_nodes)
+        for (const auto& iter: lst_select_nodes)
         {
             if (node->is_Gen(iter))
             {
@@ -522,17 +567,21 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
         }
 
         if (HavePageNode)
+        {
             break;
+        }
 
         node = node->get_Parent();
         if (!node || node->is_Form())
+        {
             return;
+        }
     }
 
     if (m_wizard && node->is_Gen(gen_wxWizardPageSimple))
     {
         ASSERT(node->get_Parent());
-        if (auto parent = node->get_Parent(); parent)
+        if (auto* parent = node->get_Parent(); parent)
         {
             ASSERT(parent->is_Gen(gen_wxWizard));
             m_wizard->SetSelection(parent->get_ChildPosition(node));
@@ -543,7 +592,7 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
     if (node->is_Gen(gen_BookPage) || node->is_Gen(gen_PageCtrl))
     {
         ASSERT(node->get_Parent());
-        auto parent = node->get_Parent();
+        auto* parent = node->get_Parent();
         if (!parent)
         {
             return;
@@ -556,10 +605,10 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
             parent = parent->get_Parent();
             if (parent->is_Gen(gen_wxTreebook))
             {
-                auto tree_book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
+                auto* tree_book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
                 if (tree_book)
                 {
-                    auto this_book = m_node_obj_pair[node];
+                    auto* this_book = m_node_obj_pair[node];
                     if (this_book)
                     {
                         if (auto index = tree_book->FindPage(wxStaticCast(this_book, wxWindow));
@@ -576,7 +625,7 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
 
         for (size_t idx_child = 0; idx_child < parent->get_ChildCount(); ++idx_child)
         {
-            auto child = parent->get_ChildNodePtrs()[idx_child].get();
+            auto* child = parent->get_ChildNodePtrs()[idx_child].get();
             if (child == node)
             {
                 if (child->get_GenType() == type_page && !child->get_ChildCount())
@@ -588,7 +637,7 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
                 }
                 break;
             }
-            else if (parent->is_Gen(gen_wxTreebook))
+            if (parent->is_Gen(gen_wxTreebook))
             {
                 if (child->is_Gen(gen_BookPage))
                 {
@@ -601,15 +650,21 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
                             break;
                         }
                         if (grand_child->is_Gen(gen_BookPage))
+                        {
                             ++sel_pos;
+                        }
                     }
                     if (is_node_found)
+                    {
                         break;
+                    }
                 }
             }
 
             else if (child->get_GenType() == type_widget)
+            {
                 continue;
+            }
             else if (child->get_GenType() == type_page && !child->get_ChildCount())
             {
                 // PageCtrl is an abstract class -- until it has a child, the parent book cannot
@@ -618,7 +673,9 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
                 if (idx_child + 1 >= parent->get_ChildCount())
                 {
                     if (sel_pos > 0)
+                    {
                         --sel_pos;
+                    }
                     break;
                 }
                 continue;
@@ -632,19 +689,23 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
         }
         else
         {
-            auto book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
+            auto* book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
             if (book)
+            {
                 book->SetSelection(sel_pos);
+            }
         }
         m_mockupParent->ClearIgnoreSelection();
 
         return;
     }
-    else if (node->is_Gen(gen_propGridPage))
+    if (node->is_Gen(gen_propGridPage))
     {
-        auto parent = node->get_Parent();
+        auto* parent = node->get_Parent();
         if (!parent)
+        {
             return;
+        }
 
         if (parent->is_Gen(gen_wxPropertyGridManager))
         {
@@ -653,7 +714,7 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
                 auto* child = parent->get_ChildNodePtrs()[idx_child].get();
                 if (child == node)
                 {
-                    if (auto pgm = wxStaticCast(Get_wxObject(parent), wxPropertyGridManager); pgm)
+                    if (auto* pgm = wxStaticCast(Get_wxObject(parent), wxPropertyGridManager); pgm)
                     {
                         pgm->SelectPage((to_int) idx_child);
                     }
@@ -661,56 +722,56 @@ auto MockupContent::OnNodeSelected(Node* node) -> void
             }
         }
     }
-    else if (node->is_Gen(gen_wxRibbonPage))
+    if (node->is_Gen(gen_wxRibbonPage))
     {
         ASSERT(node->get_Parent());
-        if (auto parent = node->get_Parent(); parent)
+        if (auto* parent = node->get_Parent(); parent)
         {
-            ASSERT(parent->is_Gen(gen_wxRibbonBar) || parent->is_Gen(gen_RibbonBar));
+            ASSERT(parent->is_Gen(gen_wxRibbonBar));
 
-            auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
-            auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
+            auto* bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
+            auto* page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
             bar->SetActivePage(page);
         }
         return;
     }
-    else if (node->is_Gen(gen_wxRibbonPanel))
+    if (node->is_Gen(gen_wxRibbonPanel))
     {
         ASSERT(node->get_Parent());
-        if (auto parent = node->get_Parent(); parent)
+        if (auto* parent = node->get_Parent(); parent)
         {
             ASSERT(parent->is_Gen(gen_wxRibbonPage));
 
-            auto bar = wxStaticCast(Get_wxObject(parent->get_Parent()), wxRibbonBar);
-            auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+            auto* bar = wxStaticCast(Get_wxObject(parent->get_Parent()), wxRibbonBar);
+            auto* page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
             bar->SetActivePage(page);
         }
         return;
     }
-    else if (node->is_Gen(gen_wxRibbonButtonBar) || node->is_Gen(gen_wxRibbonToolBar))
+    if (node->is_Gen(gen_wxRibbonButtonBar) || node->is_Gen(gen_wxRibbonToolBar))
     {
         ASSERT(node->get_Parent());
         ASSERT(node->get_Parent()->get_Parent());
-        if (auto parent = node->get_Parent()->get_Parent(); parent)
+        if (auto* parent = node->get_Parent()->get_Parent(); parent)
         {
             ASSERT(parent->is_Gen(gen_wxRibbonPage));
-            auto bar = wxStaticCast(Get_wxObject(parent->get_Parent()), wxRibbonBar);
-            auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+            auto* bar = wxStaticCast(Get_wxObject(parent->get_Parent()), wxRibbonBar);
+            auto* page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
             bar->SetActivePage(page);
         }
         return;
     }
-    else if (node->is_Gen(gen_ribbonButton) || node->is_Gen(gen_ribbonTool))
+    if (node->is_Gen(gen_ribbonButton) || node->is_Gen(gen_ribbonTool))
     {
         ASSERT(node->get_Parent());
         ASSERT(node->get_Parent()->get_Parent());
         ASSERT(node->get_Parent()->get_Parent()->get_Parent());
-        if (auto parent = node->get_Parent()->get_Parent()->get_Parent(); parent)
+        if (auto* parent = node->get_Parent()->get_Parent()->get_Parent(); parent)
         {
             ASSERT(parent->is_Gen(gen_wxRibbonPage));
 
-            auto bar = wxStaticCast(Get_wxObject(parent->get_Parent()), wxRibbonBar);
-            auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+            auto* bar = wxStaticCast(Get_wxObject(parent->get_Parent()), wxRibbonBar);
+            auto* page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
             bar->SetActivePage(page);
         }
         return;
@@ -732,7 +793,9 @@ auto MockupContent::ResetWindowVariant() -> void
     // divides rather than multiplies if larger.
 
     if (m_variant == wxWINDOW_VARIANT_NORMAL)
+    {
         return;
+    }
 
     wxFont font = GetFont();
     double size = font.GetFractionalPointSize();

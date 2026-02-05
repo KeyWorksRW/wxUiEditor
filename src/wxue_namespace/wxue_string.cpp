@@ -190,7 +190,7 @@ namespace wxue
                 ++pos;
                 continue;
             }
-            else if (src[pos] == chEnd)
+            if (src[pos] == chEnd)
             {
                 break;
             }
@@ -519,7 +519,7 @@ namespace wxue
         {
             return false;
         }
-        auto pEnv = std::getenv(env_var);
+        auto* pEnv = std::getenv(env_var);
         if (!pEnv)
         {
             return false;
@@ -528,9 +528,9 @@ namespace wxue
         return true;
     }
 
-    void string::erase_from(char ch)
+    void string::erase_from(char chr)
     {
-        auto pos = find(ch);
+        auto pos = find(chr);
         if (pos != npos)
         {
             erase(pos);

@@ -20,8 +20,9 @@
 
 wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget =
+        new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), GetStyleInt(node));
 
     AddBookImageList(node, widget);
 
@@ -33,9 +34,11 @@ wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void NotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxNotebook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxNotebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 
@@ -75,7 +78,9 @@ int NotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
         if (styles.size())
+        {
             styles << '|';
+        }
         styles << node->as_string(prop_tab_position);
     }
 

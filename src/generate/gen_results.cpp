@@ -478,11 +478,11 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
 
         RemoveFormsWithoutOutputPath(forms);
         int max_progress = 0;
-        if (auto data_list = Project.get_DataForm(); data_list)
+        if (auto* data_list = Project.get_DataForm(); data_list)
         {
             max_progress += static_cast<int>(data_list->get_ChildCount());
         }
-        if (auto img_list = Project.get_ImagesForm(); img_list)
+        if (auto* img_list = Project.get_ImagesForm(); img_list)
         {
             max_progress +=
                 static_cast<int>(img_list->get_ChildCount() / result::progress_image_step);
@@ -873,11 +873,11 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
 
     RemoveFormsWithoutOutputPath(forms);
     int max_progress = 0;
-    if (auto data_list = Project.get_DataForm(); data_list)
+    if (auto* data_list = Project.get_DataForm(); data_list)
     {
         max_progress += static_cast<int>(data_list->get_ChildCount());
     }
-    if (auto img_list = Project.get_ImagesForm(); img_list)
+    if (auto* img_list = Project.get_ImagesForm(); img_list)
     {
         max_progress += static_cast<int>(img_list->get_ChildCount() / result::progress_image_step);
     }

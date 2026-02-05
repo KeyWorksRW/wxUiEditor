@@ -153,12 +153,16 @@ wxColour Prefs::GetColour(wxSystemColour index)
         {
             case wxSYS_COLOUR_WINDOW:
                 if (is_HighContrast())
+                {
                     return *wxWHITE;
+                }
                 break;
 
             case wxSYS_COLOUR_WINDOWTEXT:
                 if (is_HighContrast())
+                {
                     return *wxBLACK;
+                }
                 break;
 
             default:
@@ -180,9 +184,10 @@ wxColour Prefs::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_LISTBOX:
         case wxSYS_COLOUR_BTNFACE:
             if (is_HighContrast())
+            {
                 return *wxBLACK;
-            else
-                return wxColour(0x202020);
+            }
+            return wxColour(0x202020);
 
         case wxSYS_COLOUR_BTNTEXT:
         case wxSYS_COLOUR_CAPTIONTEXT:
@@ -192,21 +197,24 @@ wxColour Prefs::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_LISTBOXTEXT:
         case wxSYS_COLOUR_MENUTEXT:
             if (is_HighContrast())
+            {
                 return *wxWHITE;
-            else
-                return wxColour(0xe0e0e0);
+            }
+            return wxColour(0xe0e0e0);
 
         case wxSYS_COLOUR_WINDOW:
             if (is_HighContrast())
+            {
                 return *wxBLACK;
-            else
-                return wxColour(0x202020);
+            }
+            return wxColour(0x202020);
 
         case wxSYS_COLOUR_WINDOWTEXT:
             if (is_HighContrast())
+            {
                 return *wxWHITE;
-            else
-                return wxColour(0xe0e0e0);
+            }
+            return wxColour(0xe0e0e0);
 
         case wxSYS_COLOUR_HOTLIGHT:
             return wxColour(0x474747);

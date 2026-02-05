@@ -763,11 +763,11 @@ auto ConvertToCodeString(const wxue::string& text) -> wxue::string
 {
     wxue::string result;
 
-    for (auto c: text)
+    for (auto chr: text)
     {
-        switch (c)
+        switch (chr)
         {
-            case '"':
+            case '\"':
                 result += "\\\"";
                 break;
 
@@ -793,7 +793,7 @@ auto ConvertToCodeString(const wxue::string& text) -> wxue::string
                 break;
 
             default:
-                result += c;
+                result += chr;
                 break;
         }
     }

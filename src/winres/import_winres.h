@@ -39,11 +39,11 @@ public:
                   bool isNested = false);
     void InsertDialogs(std::vector<wxue::string>& dialogs);
 
-    std::optional<wxue::string> FindBitmap(const std::string& id);
-    std::optional<wxue::string> FindIcon(const std::string& id);
+    std::optional<wxue::string> FindBitmap(const std::string& res_id);
+    std::optional<wxue::string> FindIcon(const std::string& res_id);
 
     // The strings have already been run through ConvertCodePageString().
-    std::optional<wxue::string> FindStringID(const std::string& id);
+    std::optional<wxue::string> FindStringID(const std::string& res_id);
 
     auto& GetIncludeLines() { return m_include_lines; }
 

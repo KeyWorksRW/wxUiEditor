@@ -205,12 +205,12 @@ auto wxue::StringVector::FindLineContaining(std::string_view str, size_t startli
                                             CASE checkcase) const -> size_t
 {
     auto subrange = std::ranges::subrange(begin() + static_cast<std::ptrdiff_t>(startline), end());
-    auto it = std::ranges::find_if(subrange,
-                                   [&](const auto& line)
-                                   {
-                                       return line.contains(str, checkcase);
-                                   });
-    return it != end() ? static_cast<size_t>(std::distance(begin(), it)) : wxue::npos;
+    auto iter = std::ranges::find_if(subrange,
+                                     [&](const auto& line)
+                                     {
+                                         return line.contains(str, checkcase);
+                                     });
+    return iter != end() ? static_cast<size_t>(std::distance(begin(), iter)) : wxue::npos;
 }
 
 namespace

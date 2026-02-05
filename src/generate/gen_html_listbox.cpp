@@ -17,7 +17,7 @@
 
 wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                 DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
@@ -25,7 +25,9 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
+        {
             widget->Append(iter.wx());
+        }
 
         if (node->HasValue(prop_selection_string))
         {
@@ -35,7 +37,9 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
+            {
                 widget->SetSelection(sel);
+            }
         }
     }
 
@@ -78,7 +82,7 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -103,9 +107,13 @@ bool HtmlListBoxGenerator::SettingsCode(Code& code)
                 code.as_string(prop_validator_variable) << " = ";
                 code.QuotedString(prop_selection_string);
                 if (code.is_cpp())
+                {
                     code << ";  // set validator variable";
+                }
                 else
+                {
                     code << "  # set validator variable";
+                }
             }
             else
             {
@@ -137,16 +145,15 @@ bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     return true;
 }
 
-bool HtmlListBoxGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool HtmlListBoxGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                      GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/html'");
         return true;
     }
-    else
-    {
-    }
+
     return false;
 }
 

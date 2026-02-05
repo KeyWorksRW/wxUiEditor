@@ -18,13 +18,15 @@
 
 wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
-                                 node->as_int(prop_vgap), node->as_int(prop_hgap));
+    auto* sizer = new wxGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
+                                  node->as_int(prop_vgap), node->as_int(prop_hgap));
 
-    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
+        {
             dlg->SetSizer(sizer);
+        }
     }
 
     sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
@@ -37,8 +39,10 @@ void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
 {
     if (node->as_bool(prop_hide_children))
     {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        if (auto* sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        {
             sizer->ShowItems(getMockup()->IsShowingHidden());
+        }
     }
 }
 
@@ -73,7 +77,7 @@ bool GridSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -91,9 +95,13 @@ bool GridSizerGenerator::AfterChildrenCode(Code& code)
             else
             {
                 if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                {
                     code.FormFunction("SetSizerAndFit(");
+                }
                 else  // Don't call Fit() if size has been specified
+                {
                     code.FormFunction("SetSizer(");
+                }
             }
             code.NodeName().EndFunction();
         }

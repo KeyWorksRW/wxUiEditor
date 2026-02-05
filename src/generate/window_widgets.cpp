@@ -19,7 +19,7 @@
 
 wxObject* ScrolledCanvasGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxScrolled<wxWindow>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                  DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));
@@ -78,7 +78,7 @@ std::optional<wxue::string> ScrolledCanvasGenerator::GetWarning(Node* node, GenL
         case GEN_LANG_XRC:
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -94,7 +94,7 @@ std::optional<wxue::string> ScrolledCanvasGenerator::GetWarning(Node* node, GenL
 
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxScrolledWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                              DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->as_int(prop_scroll_rate_x), node->as_int(prop_scroll_rate_y));

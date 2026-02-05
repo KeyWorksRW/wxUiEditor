@@ -17,18 +17,22 @@
 
 wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                       node->as_wxString(prop_value), DlgPoint(node, prop_pos),
-                                       DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
+    auto* widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                        node->as_wxString(prop_value), DlgPoint(node, prop_pos),
+                                        DlgSize(node, prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->HasValue(prop_hint))
+    {
         widget->SetHint(node->as_wxString(prop_hint));
+    }
 
     if (node->HasValue(prop_contents))
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
+        {
             widget->Append(iter.wx());
+        }
 
         if (node->HasValue(prop_selection_string))
         {
@@ -38,7 +42,9 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
+            {
                 widget->SetSelection(sel);
+            }
         }
     }
 
@@ -50,14 +56,16 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
     if (!node->HasValue(prop_contents))
+    {
         return false;
+    }
 
     if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxBitmapComboBox)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->isProp(prop_selection_int))
+    if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxBitmapComboBox)->SetSelection(prop->as_int());
         return true;
@@ -113,7 +121,7 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -138,9 +146,13 @@ bool BitmapComboBoxGenerator::SettingsCode(Code& code)
                 code.as_string(prop_validator_variable) << " = ";
                 code.QuotedString(prop_selection_string);
                 if (code.is_cpp())
+                {
                     code << ";  // set validator variable";
+                }
                 else
+                {
                     code << "  # set validator variable";
+                }
             }
             else
             {
@@ -170,7 +182,9 @@ bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set
 {
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 
@@ -186,12 +200,18 @@ int BitmapComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     GenXrcObjectAttributes(node, item, "wxBitmapComboBox");
 
     if (node->HasValue(prop_selection_string))
+    {
         item.append_child("value").text().set(node->as_string(prop_selection_string));
+    }
     else if (node->as_int(prop_selection_int) >= 0)
+    {
         item.append_child("selection").text().set(node->as_string(prop_selection_int));
+    }
 
     if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
+    {
         item.append_child("hint").text().set(node->as_string(prop_hint));
+    }
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

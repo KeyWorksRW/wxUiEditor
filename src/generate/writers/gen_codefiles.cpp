@@ -86,7 +86,7 @@ auto GenInheritedClass(GenResults& results) -> void
                 std::format("Cannot create or write to the file {}\n", path.c_str()));
             continue;
         }
-        else if (retval == result::exists)
+        if (retval == result::exists)
         {
             path.replace_extension(header_ext);
             if (path.file_exists())

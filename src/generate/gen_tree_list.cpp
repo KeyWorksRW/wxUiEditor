@@ -16,7 +16,7 @@
 
 wxObject* TreeListCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                            DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -28,7 +28,7 @@ wxObject* TreeListCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
                                           bool /* is_preview */)
 {
-    auto widget = wxStaticCast(wxobject, wxTreeListCtrl);
+    auto* widget = wxStaticCast(wxobject, wxTreeListCtrl);
 
     for (const auto& iter: node->get_ChildNodePtrs())
     {
@@ -74,7 +74,7 @@ std::optional<wxue::string> TreeListCtrlGenerator::GetWarning(Node* node, GenLan
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -89,7 +89,9 @@ std::optional<wxue::string> TreeListCtrlGenerator::GetWarning(Node* node, GenLan
 std::pair<bool, wxue::string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
         return { true, {} };
+    }
 
     return { false, wxue::string()
                         << "wxTreeListCtrl is not supported by " << GenLangToString(language) };

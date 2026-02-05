@@ -17,7 +17,7 @@
 
 wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxGenericDirCtrl(
+    auto* widget = new wxGenericDirCtrl(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_defaultfolder),
         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node),
         node->as_wxString(prop_filter), node->as_int(prop_defaultfilter));
@@ -33,9 +33,13 @@ bool GenericDirCtrlGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.HasValue(prop_defaultfolder))
+    {
         code.QuotedString(prop_defaultfolder);
+    }
     else
+    {
         code.Add("wxDirDialogDefaultFolderStr");
+    }
 
     if (!code.HasValue(prop_filter) && code.IntValue(prop_defaultfilter) == 0 &&
         !code.HasValue(prop_window_name))
@@ -65,7 +69,7 @@ bool GenericDirCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {

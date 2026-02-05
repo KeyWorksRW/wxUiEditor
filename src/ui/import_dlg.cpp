@@ -41,7 +41,7 @@ auto ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */) -> void
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_radio_wxFormBuilder->SetFocus();
 
-    auto config = wxConfig::Get();
+    auto* config = wxConfig::Get();
     config->SetPath("/preferences");
     auto import_type = config->Read("import_type", IMPORT_FB);
 
@@ -64,17 +64,29 @@ auto ImportDlg::OnInitDialog(wxInitDialogEvent& /* event unused */) -> void
             m_checkListProjects->Clear();
 
             if (m_radio_wxCrafter->GetValue())
+            {
                 dir.GetAllFiles(".", &files, "*.wxcp");
+            }
             else if (m_radio_wxFormBuilder->GetValue())
+            {
                 dir.GetAllFiles(".", &files, "*.fbp");
+            }
             else if (m_radio_wxSmith->GetValue())
+            {
                 dir.GetAllFiles(".", &files, "*.wxs");
+            }
             else if (m_radio_wxGlade->GetValue())
+            {
                 dir.GetAllFiles(".", &files, "*.wxg");
+            }
             else if (m_radio_XRC->GetValue())
+            {
                 dir.GetAllFiles(".", &files, "*.xrc");
+            }
             else if (m_radio_DialogBlocks->GetValue())
+            {
                 dir.GetAllFiles(".", &files, "*.pjd");
+            }
             else if (m_radio_WindowsResource->GetValue())
             {
                 dir.GetAllFiles(".", &files, "*.rc");
@@ -161,22 +173,36 @@ void ImportDlg::OnOK(wxCommandEvent& event)
         }
     }
 
-    auto config = wxConfig::Get();
+    auto* config = wxConfig::Get();
     config->SetPath("/preferences");
     if (m_radio_wxCrafter->GetValue())
+    {
         config->Write("import_type", static_cast<long>(IMPORT_CRAFTER));
+    }
     else if (m_radio_wxSmith->GetValue())
+    {
         config->Write("import_type", static_cast<long>(IMPORT_SMITH));
+    }
     else if (m_radio_wxGlade->GetValue())
+    {
         config->Write("import_type", static_cast<long>(IMPORT_GLADE));
+    }
     else if (m_radio_XRC->GetValue())
+    {
         config->Write("import_type", static_cast<long>(IMPORT_XRC));
+    }
     else if (m_radio_WindowsResource->GetValue())
+    {
         config->Write("import_type", static_cast<long>(IMPORT_WINRES));
+    }
     else if (m_radio_DialogBlocks->GetValue())
+    {
         config->Write("import_type", static_cast<long>(IMPORT_DIALOGBLOCKS));
+    }
     else
+    {
         config->Write("import_type", static_cast<long>(IMPORT_FB));
+    }
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -193,7 +219,9 @@ void ImportDlg::OnDirectory(wxCommandEvent& /* event unused */)
                     wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
     dlg.SetPath(m_static_cwd->GetLabel());
     if (dlg.ShowModal() != wxID_OK)
+    {
         return;
+    }
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -215,17 +243,29 @@ void ImportDlg::OnDirectory(wxCommandEvent& /* event unused */)
     wxBusyCursor wait;
 
     if (m_radio_wxCrafter->GetValue())
+    {
         dir.GetAllFiles(".", &files, "*.wxcp");
+    }
     else if (m_radio_wxFormBuilder->GetValue())
+    {
         dir.GetAllFiles(".", &files, "*.fbp");
+    }
     else if (m_radio_wxSmith->GetValue())
+    {
         dir.GetAllFiles(".", &files, "*.wxs");
+    }
     else if (m_radio_wxGlade->GetValue())
+    {
         dir.GetAllFiles(".", &files, "*.wxg");
+    }
     else if (m_radio_XRC->GetValue())
+    {
         dir.GetAllFiles(".", &files, "*.xrc");
+    }
     else if (m_radio_DialogBlocks->GetValue())
+    {
         dir.GetAllFiles(".", &files, "*.pjd");
+    }
     else if (m_radio_WindowsResource->GetValue())
     {
         dir.GetAllFiles(".", &files, "*.rc");
@@ -234,7 +274,9 @@ void ImportDlg::OnDirectory(wxCommandEvent& /* event unused */)
     }
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnRecentDir(wxCommandEvent& /* event unused */)
@@ -257,17 +299,29 @@ void ImportDlg::OnRecentDir(wxCommandEvent& /* event unused */)
         wxBusyCursor wait;
 
         if (m_radio_wxCrafter->GetValue())
+        {
             dir.GetAllFiles(".", &files, "*.wxcp");
+        }
         else if (m_radio_wxFormBuilder->GetValue())
+        {
             dir.GetAllFiles(".", &files, "*.fbp");
+        }
         else if (m_radio_wxSmith->GetValue())
+        {
             dir.GetAllFiles(".", &files, "*.wxs");
+        }
         else if (m_radio_wxGlade->GetValue())
+        {
             dir.GetAllFiles(".", &files, "*.wxg");
+        }
         else if (m_radio_XRC->GetValue())
+        {
             dir.GetAllFiles(".", &files, "*.xrc");
+        }
         else if (m_radio_DialogBlocks->GetValue())
+        {
             dir.GetAllFiles(".", &files, "*.pjd");
+        }
         else if (m_radio_WindowsResource->GetValue())
         {
             dir.GetAllFiles(".", &files, "*.rc");
@@ -276,7 +330,9 @@ void ImportDlg::OnRecentDir(wxCommandEvent& /* event unused */)
         }
 
         if (files.size())
+        {
             m_checkListProjects->InsertItems(files, 0);
+        }
     }
 }
 
@@ -290,7 +346,7 @@ void ImportDlg::OnRemove(wxCommandEvent& event)
             if (m_FileHistory.GetHistoryFile(idx) == directory)
             {
                 m_FileHistory.RemoveFileFromHistory(idx);
-                auto config = wxConfig::Get();
+                auto* config = wxConfig::Get();
                 config->SetPath("/preferences");
                 m_FileHistory.Save(*config);
                 config->SetPath("/");
@@ -321,7 +377,9 @@ void ImportDlg::OnCrafter(wxCommandEvent& /* event unused */)
     dir.GetAllFiles(".", &files, "*.wxcp");
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnFormBuilder(wxCommandEvent& /* event unused */)
@@ -334,7 +392,9 @@ void ImportDlg::OnFormBuilder(wxCommandEvent& /* event unused */)
     dir.GetAllFiles(".", &files, "*.fbp");
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnDialogBlocks(wxCommandEvent& /* event unused */)
@@ -347,7 +407,9 @@ void ImportDlg::OnDialogBlocks(wxCommandEvent& /* event unused */)
     dir.GetAllFiles(".", &files, "*.pjd");
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnWindowsResource(wxCommandEvent& /* event unused */)
@@ -362,7 +424,9 @@ void ImportDlg::OnWindowsResource(wxCommandEvent& /* event unused */)
     CheckResourceFiles(files);
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnWxSmith(wxCommandEvent& /* event unused */)
@@ -375,7 +439,9 @@ void ImportDlg::OnWxSmith(wxCommandEvent& /* event unused */)
     dir.GetAllFiles(".", &files, "*.wxs");
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnXRC(wxCommandEvent& /* event unused */)
@@ -387,7 +453,9 @@ void ImportDlg::OnXRC(wxCommandEvent& /* event unused */)
     dir.GetAllFiles(".", &files, "*.xrc");
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnWxGlade(wxCommandEvent& /* event unused */)
@@ -400,7 +468,9 @@ void ImportDlg::OnWxGlade(wxCommandEvent& /* event unused */)
     dir.GetAllFiles(".", &files, "*.wxg");
 
     if (files.size())
+    {
         m_checkListProjects->InsertItems(files, 0);
+    }
 }
 
 void ImportDlg::OnSelectAll(wxCommandEvent& /* event unused */)
@@ -435,7 +505,9 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
             for (auto& line: rc_file)
             {
                 if (line.empty() || !wxue::is_alpha(line[0]))
+                {
                     continue;
+                }
 
                 auto type = line.view_stepover();
 

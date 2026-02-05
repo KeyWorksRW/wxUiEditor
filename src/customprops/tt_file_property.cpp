@@ -30,7 +30,7 @@ ttFileProperty::ttFileProperty(const wxString& label, const wxString& name, cons
     SetValue(value);
 }
 
-bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
+bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* propGrid, wxVariant& value)
 {
     wxFileName root_path;
     wxString wildcard;
@@ -43,33 +43,51 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
     {
         case prop_base_file:
             if (folder && folder->HasValue(prop_folder_base_directory))
+            {
                 root_path.AssignDir(folder->as_string(prop_folder_base_directory));
+            }
             else if (Project.get_ProjectNode()->HasValue(prop_base_directory))
+            {
                 root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_base_directory));
+            }
             else
+            {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
             title = "Base class filename";
             wildcard = "C++ Files|*.cpp;*.cc;*.cxx";
             break;
 
         case prop_derived_file:
             if (folder && folder->HasValue(prop_folder_derived_directory))
+            {
                 root_path.AssignDir(folder->as_string(prop_folder_derived_directory));
+            }
             else if (Project.get_ProjectNode()->HasValue(prop_derived_directory))
+            {
                 root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_derived_directory));
+            }
             else
+            {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
             title = "Derived class filename";
             wildcard = "C++ Files|*.cpp;*.cc;*.cxx";
             break;
 
         case prop_perl_file:
             if (folder && folder->HasValue(prop_folder_perl_output_folder))
+            {
                 root_path.AssignDir(folder->as_string(prop_folder_perl_output_folder));
+            }
             else if (Project.get_ProjectNode()->HasValue(prop_perl_output_folder))
+            {
                 root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_perl_output_folder));
+            }
             else
+            {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
             title = "Perl filename";
             wildcard = "Perl Files|*.pl;*.pm";
             break;
@@ -77,12 +95,18 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         case prop_python_file:
         case prop_python_combined_file:
             if (folder && folder->HasValue(prop_folder_python_output_folder))
+            {
                 root_path.AssignDir(folder->as_string(prop_folder_python_output_folder));
+            }
             else if (Project.get_ProjectNode()->HasValue(prop_python_output_folder))
+            {
                 root_path.AssignDir(
                     Project.get_ProjectNode()->as_string(prop_python_output_folder));
+            }
             else
+            {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
             title = "Python filename";
             wildcard = "Python Files|*.py";
             break;
@@ -90,11 +114,17 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         case prop_ruby_file:
         case prop_ruby_combined_file:
             if (folder && folder->HasValue(prop_folder_ruby_output_folder))
+            {
                 root_path.AssignDir(folder->as_string(prop_folder_ruby_output_folder));
+            }
             else if (Project.get_ProjectNode()->HasValue(prop_ruby_output_folder))
+            {
                 root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_ruby_output_folder));
+            }
             else
+            {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
             title = "Ruby filename";
             wildcard = "Ruby Files|*.rb;*.rbw";
             break;
@@ -103,11 +133,17 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         case prop_combined_xrc_file:
         case prop_folder_combined_xrc_file:
             if (folder && folder->HasValue(prop_folder_xrc_directory))
+            {
                 root_path.AssignDir(folder->as_string(prop_folder_xrc_directory));
+            }
             else if (Project.get_ProjectNode()->HasValue(prop_xrc_directory))
+            {
                 root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_xrc_directory));
+            }
             else
+            {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
             title = "XRC filename";
             wildcard = "XRC Files|*.xrc";
             break;
@@ -142,9 +178,13 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
                 auto result =
                     Project.GetOutputPath(m_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
                 if (!result.second)
+                {
                     root_path.AssignDir(result.first);
+                }
                 else
+                {
                     root_path.Assign(result.first);
+                }
             }
             if (m_prop->getNode()->is_Gen(gen_data_xml))
             {
@@ -179,8 +219,8 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         full_path.Assign(cur_path);
     }
     full_path.MakeAbsolute();
-    wxFileDialog dlg(pg->GetPanel(), title, full_path.GetPath(), full_path.GetFullName(), wildcard,
-                     wxFD_SAVE);
+    wxFileDialog dlg(propGrid->GetPanel(), title, full_path.GetPath(), full_path.GetFullName(),
+                     wildcard, wxFD_SAVE);
     if (dlg.ShowModal() == wxID_OK)
     {
         full_path.Assign(dlg.GetPath());
@@ -188,7 +228,9 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value)
         wxue::string final_path = full_path.GetFullPath().utf8_string();
         final_path.backslashestoforward();
         if (!final_path.contains("/"))
+        {
             final_path = "./" + full_path.GetFullPath().utf8_string();
+        }
         value = final_path.wx();
         return true;
     }
@@ -229,7 +271,9 @@ wxValidator* ttFileProperty::GetClassValidator()
 {
     static wxValidator* pValidator = nullptr;
     if (pValidator)
+    {
         return pValidator;
+    }
 
     pValidator = new wxTextValidator(wxFILTER_EXCLUDE_CHAR_LIST);
 

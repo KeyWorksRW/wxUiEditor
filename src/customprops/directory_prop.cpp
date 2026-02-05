@@ -35,7 +35,7 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
     }
 
     wxFileName path;
-    auto node = m_prop->getNode();
+    auto* node = m_prop->getNode();
     if (node->is_Gen(gen_wxFilePickerCtrl))
     {
         if (m_prop->as_string().size())
@@ -56,7 +56,7 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
         {
             wxFileName prop_path;
             prop_path.AssignDir(m_prop->as_string());
-            for (auto& iter: prop_path.GetDirs())
+            for (const auto& iter: prop_path.GetDirs())
             {
                 path.AppendDir(iter);
             }

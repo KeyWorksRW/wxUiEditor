@@ -59,10 +59,12 @@ static const StylePair lst_styles[] = {
 
 void resCtrl::ParseStyles(wxue::string_view line)
 {
-    for (auto& iter: lst_styles)
+    for (const auto& iter: lst_styles)
     {
         if (line.contains(iter.win_style))
+        {
             AppendStyle(prop_style, iter.wx_style);
+        }
     }
 }
 
@@ -91,30 +93,44 @@ void resCtrl::ParseButtonStyles(wxue::string_view line)
     if (m_node->is_Gen(gen_wxButton) || m_node->is_Gen(gen_wxToggleButton))
     {
         if (line.contains("BS_TOP"))
+        {
             AppendStyle(prop_style, "wxBU_TOP");
+        }
         else if (line.contains("BS_BOTTOM"))
+        {
             AppendStyle(prop_style, "wxBU_BOTTOM");
+        }
         else if (line.contains("BS_LEFT"))
+        {
             AppendStyle(prop_style, "wxBU_LEFT");
+        }
         else if (line.contains("BS_RIGHT"))
+        {
             AppendStyle(prop_style, "wxBU_RIGHT");
+        }
 
         if (line.contains("BS_FLAT"))
+        {
             AppendStyle(prop_window_style, "wxBORDER_NONE");
+        }
     }
     else
     {
         if (line.contains("BS_RIGHT"))
+        {
             // Note that for this to work, the parent sizer must be vertically aligned with the
             // wxEXPAND flag set.
             m_node->set_value(prop_alignment, "wxALIGN_RIGHT");
+        }
 
         // Bottom and top won't have any effect, and left is the default, so ignore the other
         // styles.
     }
 
     if (line.contains("WS_EX_STATICEDGE"))
+    {
         AppendStyle(prop_window_style, "wxBORDER_STATIC");
+    }
 }
 
 void resCtrl::ParseListViewStyles(wxue::string_view line)
@@ -122,33 +138,59 @@ void resCtrl::ParseListViewStyles(wxue::string_view line)
     m_node->set_value(prop_style, "");
 
     if (line.contains("LVS_ICON"))
+    {
         m_node->set_value(prop_mode, "wxLC_ICON");
+    }
     else if (line.contains("LVS_SMALLICON"))
+    {
         m_node->set_value(prop_mode, "wxLC_SMALL_ICON");
+    }
     else if (line.contains("LVS_LIST"))
+    {
         m_node->set_value(prop_mode, "wxLC_LIST");
+    }
     else if (line.contains("LVS_REPORT"))
+    {
         m_node->set_value(prop_mode, "wxLC_REPORT");
+    }
     else
+    {
         m_node->set_value(prop_mode, "wxLC_REPORT");
+    }
 
     if (line.contains("LVS_ALIGNLEFT"))
+    {
         AppendStyle(prop_style, "wxLC_ALIGN_LEFT");
+    }
     else if (line.contains("LVS_ALIGNTOP"))
+    {
         AppendStyle(prop_style, "wxLC_ALIGN_TOP");
+    }
 
     if (line.contains("LVS_AUTOARRANGE"))
+    {
         AppendStyle(prop_style, "wxLC_AUTOARRANGE");
+    }
     if (line.contains("LVS_EDITLABELS"))
+    {
         AppendStyle(prop_style, "wxLC_EDIT_LABELS");
+    }
     if (line.contains("LVS_NOCOLUMNHEADER"))
+    {
         AppendStyle(prop_style, "wxLC_NO_HEADER");
+    }
     if (line.contains("LVS_SINGLESEL"))
+    {
         AppendStyle(prop_style, "wxLC_SINGLE_SEL");
+    }
     if (line.contains("LVS_SORTASCENDING"))
+    {
         AppendStyle(prop_style, "wxLC_SORT_ASCENDING");
+    }
     if (line.contains("LVS_SORTDESCENDING"))
+    {
         AppendStyle(prop_style, "wxLC_SORT_DESCENDING");
+    }
 }
 
 void resCtrl::AddSpecialStyles(wxue::string_view line)
@@ -278,5 +320,7 @@ void resCtrl::AddSpecialStyles(wxue::string_view line)
     //////////// Scrollbar styles ////////////
 
     if (line.contains("SBS_VERT"))
+    {
         m_node->set_value(prop_style, "wxSB_VERTICAL");
+    }
 }

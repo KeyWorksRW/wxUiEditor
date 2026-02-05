@@ -51,7 +51,9 @@ bool InfoBarGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName();
     if (code.node()->as_string(prop_id) != "wxID_ANY")
+    {
         code.Comma().as_string(prop_id);
+    }
     code.EndFunction();
 
     return true;

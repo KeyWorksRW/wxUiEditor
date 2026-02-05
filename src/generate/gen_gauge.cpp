@@ -18,7 +18,7 @@
 
 wxObject* GaugeGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_int(prop_range),
                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
     widget->SetValue(node->as_int(prop_position));
@@ -60,7 +60,9 @@ bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 

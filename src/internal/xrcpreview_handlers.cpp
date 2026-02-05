@@ -40,8 +40,6 @@
 
 #include "xrc_list_dlg.h"
 
-#include "xrc_list_dlg.h"
-
 const int node_marker = 1;
 
 void MainFrame::OnXrcPreview(wxCommandEvent& /* event */)
@@ -77,7 +75,9 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     {
         const auto& import_file = wxGetFrame().getImportPanel()->GetImportFile();
         if (wxue::string(import_file.extension()).MakeLower() != ".xrc")
+        {
             m_btnCompare->Disable();
+        }
     }
 }
 
@@ -93,7 +93,9 @@ void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
     {
         XrcListDlg dlg(this);
         if (dlg.ShowModal() != wxID_OK)
+        {
             return;
+        }
 
         m_form_node = dlg.get_form();
     }
@@ -147,15 +149,17 @@ void XrcPreview::Generate(Node* form_node)
 
     m_contents->SetLabelText("Contents: " + search);
 
-    auto it = std::ranges::find_if(m_view,
-                                   [&search](const wxue::string_view& line)
-                                   {
-                                       return line.contains(search);
-                                   });
-    int line = (it != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), it)) : -1;
+    auto iter = std::ranges::find_if(m_view,
+                                     [&search](const wxue::string_view& line)
+                                     {
+                                         return line.contains(search);
+                                     });
+    int line = (iter != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), iter)) : -1;
 
     if (!wxue::is_found(line))
+    {
         return;
+    }
 
     m_scintilla->MarkerDeleteAll(node_marker);
     m_scintilla->MarkerAdd(line, node_marker);

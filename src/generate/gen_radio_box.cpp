@@ -48,7 +48,8 @@ bool RadioBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
         wxStaticCast(widget, wxRadioBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
-    else if (prop->isProp(prop_selection))
+
+    if (prop->isProp(prop_selection))
     {
         wxStaticCast(widget, wxRadioBox)->SetSelection(prop->as_int());
         return true;
@@ -73,7 +74,9 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     {
         choice_name = (code.node()->get_NodeName());
         if (choice_name.starts_with("m_"))
+        {
             choice_name.erase(0, 2);
+        }
         choice_name << "_choices";
         code.Str("wxString ") << choice_name << "[] = {";
         for (auto& iter: array)
@@ -92,9 +95,13 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     {
         code.itoa(array.size()).Comma();
         if (array.size())
+        {
             code.Str(choice_name);
+        }
         else
+        {
             code.Str("nullptr");
+        }
     }
     else
     {
@@ -132,7 +139,9 @@ bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/radiobox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
 
     return true;
 }

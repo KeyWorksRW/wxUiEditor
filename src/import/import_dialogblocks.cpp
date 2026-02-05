@@ -514,9 +514,9 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
     {
         if (parent->is_Gen(gen_wxStdDialogButtonSizer) && get_GenName == gen_wxButton)
         {
-            auto add_buttons = [&](std::string_view id, GenEnum::PropName propname)
+            auto add_buttons = [&](std::string_view button_id, GenEnum::PropName propname)
             {
-                if (auto value = child_xml.find_child_by_attribute("bool", "name", id);
+                if (auto value = child_xml.find_child_by_attribute("bool", "name", button_id);
                     value && value.text().as_bool())
                 {
                     parent->set_value(propname, true);

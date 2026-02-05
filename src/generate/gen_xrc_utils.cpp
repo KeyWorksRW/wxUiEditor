@@ -53,17 +53,23 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     {
         wxue::string platforms;
         if (node->as_string(prop_platforms).contains("Windows"))
+        {
             platforms += "msw";
+        }
         if (node->as_string(prop_platforms).contains("Unix"))
         {
             if (platforms.size())
+            {
                 platforms += "|";
+            }
             platforms += "unix";
         }
         if (node->as_string(prop_platforms).contains("Mac"))
         {
             if (platforms.size())
+            {
                 platforms += "|";
+            }
             platforms += "mac";
         }
         object.append_attribute("platform").set_value(platforms);
@@ -221,19 +227,33 @@ void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
     auto font_object = object.append_child("font");
     font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
     if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
+    {
         font_object.append_child("style").text().set("italic");
+    }
     else if (font_prop.GetStyle() == wxFONTSTYLE_SLANT)
+    {
         font_object.append_child("style").text().set("slant");
+    }
     if (font_prop.GetWeight() != wxFONTWEIGHT_NORMAL)
+    {
         font_object.append_child("weight").text().set(s_weight_pairs[font_prop.GetWeight()]);
+    }
     if (font_prop.GetFamily() != wxFONTFAMILY_DEFAULT)
+    {
         font_object.append_child("family").text().set(s_family_pairs[font_prop.GetFamily()]);
+    }
     if (font_prop.HasFaceName() && font_prop.GetFaceName() != "default")
+    {
         font_object.append_child("face").text().set(font_prop.GetFaceName().ToUTF8().data());
+    }
     if (font_prop.IsUnderlined())
+    {
         font_object.append_child("underlined").text().set("1");
+    }
     if (font_prop.IsStrikethrough())
+    {
         font_object.append_child("strikethrough").text().set("1");
+    }
 }
 
 void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, PropName prop)
@@ -243,19 +263,33 @@ void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, P
 
     font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
     if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
+    {
         font_object.append_child("style").text().set("italic");
+    }
     else if (font_prop.GetStyle() == wxFONTSTYLE_SLANT)
+    {
         font_object.append_child("style").text().set("slant");
+    }
     if (font_prop.GetWeight() != wxFONTWEIGHT_NORMAL)
+    {
         font_object.append_child("weight").text().set(s_weight_pairs[font_prop.GetWeight()]);
+    }
     if (font_prop.GetFamily() != wxFONTFAMILY_DEFAULT)
+    {
         font_object.append_child("family").text().set(s_family_pairs[font_prop.GetFamily()]);
+    }
     if (font_prop.HasFaceName() && font_prop.GetFaceName() != "default")
+    {
         font_object.append_child("face").text().set(font_prop.GetFaceName().ToUTF8().data());
+    }
     if (font_prop.IsUnderlined())
+    {
         font_object.append_child("underlined").text().set("1");
+    }
     if (font_prop.IsStrikethrough())
+    {
         font_object.append_child("strikethrough").text().set("1");
+    }
 }
 
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
@@ -340,7 +374,9 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             {
                 xrc_dir = Project.as_string(prop_xrc_art_directory);
                 if (xrc_dir.size())
+                {
                     xrc_dir.addtrailingslash();
+                }
             }
             wxue::StringVector parts(node->as_string(prop_pair.prop), ';', wxue::TRIM::both);
             ASSERT(parts.size() > 1)
@@ -374,10 +410,10 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             }
             else
             {
-                if (auto bundle = ProjectImages.GetPropertyImageBundle(&parts); bundle)
+                if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts); bundle)
                 {
                     wxue::string names;
-                    for (auto& file: bundle->lst_filenames)
+                    for (const auto& file: bundle->lst_filenames)
                     {
                         if (names.size())
                         {
@@ -423,7 +459,9 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
     // Note that forms can use either an ID or a class name.
 
     if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
+    {
         object.append_attribute("name").set_value(node->as_string(prop_id));
+    }
     else if (node->HasProp(prop_var_name))
     {
         object.append_attribute("name").set_value(node->as_string(prop_var_name));
@@ -434,7 +472,9 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
         }
     }
     else
+    {
         object.append_attribute("name").set_value(node->as_string(prop_class_name));
+    }
 }
 
 pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
@@ -445,20 +485,23 @@ pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
         GenXrcSizerItem(node, object);
         return object.append_child("object");
     }
-    else
-    {
-        return object;
-    }
+    return object;
 }
 
 void GenXrcToolProps(Node* node, pugi::xml_node& item, size_t xrc_flags)
 {
     if (node->as_string(prop_kind) == "wxITEM_RADIO")
+    {
         item.append_child("radio").text().set("1");
+    }
     else if (node->as_string(prop_kind) == "wxITEM_CHECK")
+    {
         item.append_child("toggle").text().set("1");
+    }
     else if (node->as_string(prop_kind) == "wxITEM_DROPDOWN" && !node->is_Gen(gen_tool_dropdown))
+    {
         item.append_child("dropdown").text().set("1");
+    }
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_tooltip, "tooltip")
     ADD_ITEM_PROP(prop_statusbar, "longhelp")

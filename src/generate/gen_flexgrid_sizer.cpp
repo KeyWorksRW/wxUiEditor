@@ -22,15 +22,17 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
                                       node->as_int(prop_vgap), node->as_int(prop_hgap));
-    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
+        {
             dlg->SetSizer(sizer);
+        }
     }
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->as_string(prop_name); growable.size())
+        if (const auto& growable = node->as_string(prop_name); growable.size())
         {
             wxue::ViewVector values(growable, ',');
             auto rows = node->as_int(prop_rows);
@@ -47,9 +49,13 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                         proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                     }
                     if (prop_name == prop_growablerows)
+                    {
                         sizer->AddGrowableRow(value, proportion);
+                    }
                     else
+                    {
                         sizer->AddGrowableCol(value, proportion);
+                    }
                 }
             }
         }
@@ -91,7 +97,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->as_string(prop_name); growable.size())
+        if (const auto& growable = node->as_string(prop_name); growable.size())
         {
             wxue::ViewVector values(growable, ',');
             auto rows = node->as_int(prop_rows);
@@ -113,16 +119,24 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
                         proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                     }
                     if (!wxue::is_whitespace(code.GetCode().back()))
+                    {
                         code.Eol();
+                    }
 
                     // Note that iter may start with a space, so using itoa() ensures that we
                     // don't add any extra space.
                     if (prop_name == prop_growablerows)
+                    {
                         code.NodeName().Function("AddGrowableRow(").itoa(val);
+                    }
                     else
+                    {
                         code.NodeName().Function("AddGrowableCol(").itoa(val);
+                    }
                     if (proportion > 0)
+                    {
                         code.Comma().itoa(proportion);
+                    }
                     code.EndFunction();
                 }
             }
@@ -131,11 +145,13 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     lambda(prop_growablecols);
     lambda(prop_growablerows);
 
-    auto& direction = node->as_string(prop_flexible_direction);
+    const auto& direction = node->as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (is_within_braces)
+        {
             code.CloseBrace();
+        }
         return true;
     }
 
@@ -145,16 +161,20 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
         .Add(direction)
         .EndFunction();
 
-    auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
+    const auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (is_within_braces)
+        {
             code.CloseBrace();
+        }
         return true;
     }
     code.NodeName().Function("SetNonFlexibleGrowMode").Add(non_flex_growth).EndFunction();
     if (is_within_braces)
+    {
         code.CloseBrace();
+    }
 
     return true;
 }
@@ -164,8 +184,10 @@ void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 {
     if (node->as_bool(prop_hide_children))
     {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        if (auto* sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        {
             sizer->ShowItems(getMockup()->IsShowingHidden());
+        }
     }
 }
 
@@ -176,7 +198,7 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -194,9 +216,13 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
             else
             {
                 if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                {
                     code.FormFunction("SetSizerAndFit(");
+                }
                 else  // Don't call Fit() if size has been specified
+                {
                     code.FormFunction("SetSizer(");
+                }
             }
             code.NodeName().EndFunction();
         }

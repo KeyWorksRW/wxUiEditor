@@ -32,9 +32,10 @@ void resForm::ParseMenu(WinResource* pWinResource, wxue::StringVector& txtfile, 
         {
             --nesting;
             if (nesting > 0)
+            {
                 continue;
-            else
-                break;
+            }
+            break;
         }
         else if (menu_line.starts_with("BEGIN") || menu_line.starts_with("{"))
         {
@@ -138,14 +139,16 @@ void resForm::ParseMenuItem(Node* parent, wxue::StringVector& txtfile, size_t& c
     {
         auto line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
+        {
             continue;
+        }
 
-        else if (line.starts_with("END") || line.starts_with("}"))
+        if (line.starts_with("END") || line.starts_with("}"))
         {
             break;
         }
 
-        else if (line.starts_with("BEGIN") || line.starts_with("{"))
+        if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
             if (sub_parent)
             {
@@ -196,14 +199,14 @@ void resForm::ParseMenuItem(Node* parent, wxue::StringVector& txtfile, size_t& c
                 auto pos = line.find("\",");
                 if (wxue::is_found(pos))
                 {
-                    wxue::string_view id = line.subview(pos + 3);
-                    id.moveto_nonspace();
-                    end = id.find_first_of(',');
+                    wxue::string_view menu_id = line.subview(pos + 3);
+                    menu_id.moveto_nonspace();
+                    end = menu_id.find_first_of(',');
                     if (!wxue::is_found(end))
                     {
-                        id.trim(wxue::TRIM::right);
-                        item->set_value(prop_id, id);
-                        auto help = m_pWinResource->FindStringID(wxue::string() << id);
+                        menu_id.trim(wxue::TRIM::right);
+                        item->set_value(prop_id, menu_id);
+                        auto help = m_pWinResource->FindStringID(wxue::string() << menu_id);
                         if (help)
                         {
                             item->set_value(prop_help, help.value());
@@ -211,16 +214,16 @@ void resForm::ParseMenuItem(Node* parent, wxue::StringVector& txtfile, size_t& c
                     }
                     else
                     {
-                        wxue::string_view item_id = id.substr(0, end);
+                        wxue::string_view item_id = menu_id.substr(0, end);
                         item_id.trim(wxue::TRIM::right);
                         item->set_value(prop_id, item_id);
-                        id.remove_prefix(end < id.size() ? end + 1 : end);
-                        id.moveto_nonspace();
-                        if (id.contains("CHECKED"))
+                        menu_id.remove_prefix(end < menu_id.size() ? end + 1 : end);
+                        menu_id.moveto_nonspace();
+                        if (menu_id.contains("CHECKED"))
                         {
                             item->set_value(prop_checked, true);
                         }
-                        if (id.contains("INACTIVE"))
+                        if (menu_id.contains("INACTIVE"))
                         {
                             item->set_value(prop_disabled, true);
                         }

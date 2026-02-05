@@ -229,10 +229,7 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
 
             return;
         }
-        else
-        {
-            m_pointSize = std::atof(std::string(mstr[font::idx_facename_point]).c_str());
-        }
+        m_pointSize = std::atof(std::string(mstr[font::idx_facename_point]).c_str());
     }
 
     // If we get here, this is an old-style and/or wxFormBuilder property
@@ -292,10 +289,14 @@ auto FontProperty::as_wxString() const -> wxString
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
+            {
                 prop_str.pop_back();
+            }
             str = prop_str;
             if (str == font_symbol_pairs.GetName(wxFONTSIZE_MEDIUM))
+            {
                 str.clear();
+            }
             return str;
         }
         prop_str << "," << (IsUnderlined() ? "underlined" : "");
@@ -338,7 +339,9 @@ auto FontProperty::as_wxString() const -> wxString
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
+            {
                 prop_str.pop_back();
+            }
             str = prop_str;
             return str;
         }
@@ -380,7 +383,9 @@ auto FontProperty::as_wxString() const -> wxString
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
+            {
                 prop_str.pop_back();
+            }
             str = prop_str;
             return str;
         }

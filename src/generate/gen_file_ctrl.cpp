@@ -22,20 +22,28 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString wild;
     if (node->HasValue(prop_wildcard))
+    {
         wild = node->as_wxString(prop_wildcard);
+    }
     else
+    {
         wild = wxFileSelectorDefaultWildcardStr;
+    }
 
-    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                 node->as_wxString(prop_initial_folder),
-                                 node->as_wxString(prop_initial_filename), wild, GetStyleInt(node),
-                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size));
+    auto* widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                  node->as_wxString(prop_initial_folder),
+                                  node->as_wxString(prop_initial_filename), wild, GetStyleInt(node),
+                                  DlgPoint(node, prop_pos), DlgSize(node, prop_size));
 
     if (!(node->as_int(prop_style) & wxFC_NOSHOWHIDDEN))
+    {
         widget->ShowHidden(node->as_bool(prop_show_hidden));
+    }
 
     if (node->as_int(prop_filter_index) > 0)
+    {
         widget->SetFilterIndex(node->as_int(prop_filter_index));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -49,13 +57,19 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
     code.Comma().QuotedString(prop_initial_folder).Comma().QuotedString(prop_initial_filename);
     code.Comma();
     if (code.HasValue(prop_wildcard))
+    {
         code.QuotedString(prop_wildcard);
+    }
     else
     {
         if (code.is_perl())
+        {
             code.Str("Wx::wxMSW() ? \"*.*\" : \"*\"");
+        }
         else
+        {
             code.AddType("wxFileSelectorDefaultWildcardStr");
+        }
     }
 
     // Unlike most controls, wxFileCtrl expects the style to be specified *before* the
@@ -69,7 +83,9 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
         {
             code.Comma().CheckLineLength().Pos().Comma().CheckLineLength().WxSize();
             if (what_params & window_name_needed)
+            {
                 code.Comma().QuotedString(prop_window_name);
+            }
         }
     }
     code.EndFunction();
@@ -86,7 +102,7 @@ bool FileCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -139,9 +155,13 @@ int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_int(prop_filter_index) > 0)
+        {
             ADD_ITEM_COMMENT("XRC does not support calling SetFilterIndex()")
+        }
         if (node->as_bool(prop_show_hidden))
+        {
             ADD_ITEM_COMMENT("XRC does not support calling ShowHidden()")
+        }
         GenXrcComments(node, item);
     }
 

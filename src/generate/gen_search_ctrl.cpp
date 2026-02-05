@@ -17,7 +17,7 @@
 
 wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_value),
                          DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -66,7 +66,7 @@ bool SearchCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -117,9 +117,13 @@ int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_search_button))
+        {
             ADD_ITEM_COMMENT("XRC does not support ShowSearchButton()")
+        }
         if (node->as_bool(prop_cancel_button))
+        {
             ADD_ITEM_COMMENT("XRC does not support ShowCancelButton()")
+        }
         GenXrcComments(node, item);
     }
 

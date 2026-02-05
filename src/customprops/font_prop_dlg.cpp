@@ -183,7 +183,7 @@ void FontPropDlg::OnEditPointSize(wxCommandEvent& event)
     if (auto digit = std::atof(event.GetString().ToStdString().c_str());
         digit >= -1.0 && digit <= 72.0)
     {
-        auto control = wxDynamicCast(event.GetEventObject(), wxSpinCtrlDouble);
+        auto* control = wxDynamicCast(event.GetEventObject(), wxSpinCtrlDouble);
         control->SetValue(digit);
         UpdateFontInfo();
     }
@@ -223,9 +223,13 @@ void FontPropDlg::UpdateFontInfo()
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
         auto facename = m_comboFacenames->GetStringSelection();
         if (facename == "default")
+        {
             m_custom_font.FaceName("");
+        }
         else
+        {
             m_custom_font.FaceName(facename);
+        }
     }
 
     m_staticCustomSample->SetFont(m_custom_font.GetFont());
@@ -263,9 +267,13 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
         m_custom_font.Family(
             font_family_pairs.GetValue((const char*) m_comboFamily->GetStringSelection().mb_str()));
         if (m_spinCustomPointSize->GetValue() <= 0.0)
+        {
             m_custom_font.PointSize(-1.0);
+        }
         else
+        {
             m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
+        }
         m_custom_font.Style(font_style_pairs.GetValue(
             (const char*) m_comboCustomStyles->GetStringSelection().mb_str()));
         m_custom_font.Weight(font_weight_pairs.GetValue(
@@ -274,9 +282,13 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
         auto facename = m_comboFacenames->GetStringSelection();
         if (facename == "default")
+        {
             m_custom_font.FaceName("");
+        }
         else
+        {
             m_custom_font.FaceName(facename);
+        }
         m_value = m_custom_font.as_wxString();
         m_font_description = m_custom_font.as_string();
     }

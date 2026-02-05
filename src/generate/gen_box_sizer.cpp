@@ -18,12 +18,14 @@
 
 wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto sizer = new wxBoxSizer(node->as_int(prop_orientation));
+    auto* sizer = new wxBoxSizer(node->as_int(prop_orientation));
     sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
-    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
+        {
             dlg->SetSizer(sizer);
+        }
     }
     return sizer;
 }
@@ -33,7 +35,7 @@ void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/
 {
     if (node->as_bool(prop_hide_children))
     {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        if (auto* sizer = wxStaticCast(wxobject, wxSizer); sizer)
         {
             sizer->ShowItems(getMockup()->IsShowingHidden());
         }
@@ -68,7 +70,7 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
         }
     }
 
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -90,9 +92,13 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
             else
             {
                 if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                {
                     code.FormFunction("SetSizerAndFit(");
+                }
                 else  // Don't call Fit() if size has been specified
+                {
                     code.FormFunction("SetSizer(");
+                }
             }
             code.NodeName().EndFunction();
         }
